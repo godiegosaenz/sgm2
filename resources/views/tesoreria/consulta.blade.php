@@ -53,7 +53,7 @@
                 </div>
             </div>
         </div>
-        <form action="{{route('store.tesoreria')}}" id="formExonerar" name="formExonerar" method="post" enctype="multipart/form-data">
+        <form class="" action="{{route('store.tesoreria')}}" id="formExonerar" name="formExonerar" method="post" enctype="multipart/form-data">
         <div class="row mt-3">
 
             <div class="col-12">
@@ -99,23 +99,24 @@
                 <div class="row mt-3">
                    <div class="col-6">
                         <div class="mb-3">
-                            <label for="diagnostico">* Codigo de resolución : </label>
-                            <input class="form-control {{$errors->has('diagnostico') ? 'is-invalid' : ''}}" id="diagnostico" name="diagnostico"/>
+                            <label for="num_resolucion">* Codigo de resolución : </label>
+                            <input class="form-control is-invalid" id="num_resolucion" name="num_resolucion"/>
+                            <div class="invalid-feedback">
+                                Please provide a valid city.
+                            </div>
                         </div>
                         <div class="mb-3">
-                            <label for="diagnostico">* Observacion : </label>
-                            <textarea class="form-control {{$errors->has('diagnostico') ? 'is-invalid' : ''}}" id="diagnostico" name="diagnostico" rows="3"></textarea>
-                            <div class="invalid-feedback">
-                                @if($errors->has('diagnostico'))
-                                    {{$errors->first('diagnostico')}}
-                                @endif
-                            </div>
+                            <label for="observacion">* Observacion : </label>
+                            <textarea class="form-control" id="observacion" name="observacion" rows="3"></textarea>
                         </div>
                    </div>
                    <div class="col-6">
                         <div class="mb-3">
-                            <label for="formFile" class="form-label">Cargar Resolución</label>
-                            <input class="form-control" type="file" id="formFile">
+                            <label for="ruta_resolucion" class="form-label">Cargar Resolución</label>
+                            <input class="form-control" type="file" id="ruta_resolucion" name="ruta_resolucion">
+                            <div class="invalid-feedback">
+                                Please provide a valid city.
+                            </div>
                         </div>
                    </div>
                 </div>
@@ -152,6 +153,7 @@
         formData.append('num_predio',inputMatricula);
         var aletMensajes = document.getElementById('aletMensajes');
         axios.post('/tesoreria/consulta',formData).then(function(res) {
+
             aletMensajes.setAttribute("style","display: none");
             if(res.status==200) {
                 if(res.data.estado == 'ok'){
@@ -166,10 +168,7 @@
                         for (let clave2 in array_urbano){
                             var contadorUrbano = 0;
                             for (let clave3 of array_urbano[clave2]) {
-                                console.log(array_urbano[clave2][contadorUrbano]['saldo']);
-                                console.log(array_urbano[clave2][contadorUrbano]['anio']);
 
-                                //d = new Date(array_rural[clave][0]['TitPr_FechaEmision']);
                                 tablahtmlUrbano += '<tr>';
 
                                 if(array_urbano[clave2][contadorUrbano]['estado_liquidacion'] == 1)
@@ -253,11 +252,12 @@
         let formData = new FormData(this);
         formData.append('num_predio',inputMatricula);
         axios.post('/tesoreria/exonerar',formData).then(function(res) {
+            console.log(res);
             if(res.status==200) {
                 if(res.data.estado == 'ok'){
 
                 }else{
-
+                    res.data.errors.forEach(MostrarCamposErrores);
 
                 }
 
@@ -274,7 +274,7 @@
                 console.log('Es posible que tu session haya caducado, vuelve a iniciar sesion');
             }
             if(err.response.status == 422){
-                //toastr.error('Revise la validacion del archivo');
+                toastr.error('Revise la validacion del archivo');
 
             }
         }).then(function() {
@@ -296,6 +296,10 @@
         {
             return false;
         }
+    }
+
+    function MostrarCamposErrores(item){
+        console.log('elemento '+item);
     }
 </script>
 @endpush
