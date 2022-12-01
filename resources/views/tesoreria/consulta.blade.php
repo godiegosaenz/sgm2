@@ -19,12 +19,12 @@
                     </div>
             </div>
         </div>
-        <form id="formConsulta" action="{{route('datatable.tesoreria')}}" method="post">
+        <form id="formConsulta" action="{{route('consulta.exoneracion')}}" method="post">
             <div class="row justify-content-md-center">
                 <div class="col-3">
                     <div class="mb-3">
                         <label for="inputMatricula">* Matricula inmobiliaria : </label>
-                        <input type="text" class="form-control {{$errors->has('inputMatricula') ? 'is-invalid' : ''}}" id="inputMatricula" name="inputMatricula" value="0">
+                        <input type="number" class="form-control {{$errors->has('inputMatricula') ? 'is-invalid' : ''}}" id="inputMatricula" name="inputMatricula" value="" autofocus required>
                         <div class="invalid-feedback">
                             @if($errors->has('inputMatricula'))
                                 {{$errors->first('inputMatricula')}}
@@ -96,34 +96,45 @@
                     <h6 id="exampleModalLabel">Exoneración de la tercera edad años anteriores</h6>
 
                 </div>
+                <div class="row">
+                    <div class="col">
+                            <div style="display:none" id="alerMensajesExoneracion" class="alert alert-warning">
+                                Llene todos los campos obligatorios
+                            </div>
+                    </div>
+                </div>
                 <div class="row mt-3">
                    <div class="col-6">
                         <div class="mb-3">
                             <label for="num_resolucion">* Codigo de resolución : </label>
-                            <input class="form-control is-invalid" id="num_resolucion" name="num_resolucion"/>
+                            <input class="form-control" id="num_resolucion" name="num_resolucion"/>
                             <div class="invalid-feedback">
-                                Please provide a valid city.
+
                             </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="observacion">* Observacion : </label>
-                            <textarea class="form-control" id="observacion" name="observacion" rows="3"></textarea>
-                        </div>
-                   </div>
-                   <div class="col-6">
-                        <div class="mb-3">
+                        </div><div class="mb-3">
                             <label for="ruta_resolucion" class="form-label">Cargar Resolución</label>
                             <input class="form-control" type="file" id="ruta_resolucion" name="ruta_resolucion">
                             <div class="invalid-feedback">
-                                Please provide a valid city.
+
                             </div>
+                        </div>
+
+
+                   </div>
+                   <div class="col-6">
+                        <div class="mb-3">
+                            <label for="observacion">* Observacion : </label>
+                            <textarea class="form-control" id="observacion" name="observacion" rows="5"></textarea>
                         </div>
                    </div>
                 </div>
             </div>
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-            <button type="submit" class="btn btn-primary">Aplicar</button>
+                <button type="submit" class="btn btn-primary" id="btnAplicar">
+                    <span id="spanConsultaExo" class="bi bi-save" role="status" aria-hidden="true"></span>
+                    Aplicar
+                </button>
             </div>
         </div>
         </div>
@@ -152,7 +163,7 @@
         formData.append('_token',token);
         formData.append('num_predio',inputMatricula);
         var aletMensajes = document.getElementById('aletMensajes');
-        axios.post('/tesoreria/consulta',formData).then(function(res) {
+        axios.post('/exoneracion/consulta',formData).then(function(res) {
 
             aletMensajes.setAttribute("style","display: none");
             if(res.status==200) {
@@ -224,7 +235,10 @@
         }).catch(function(err) {
             console.log(err);
             if(err.response.status == 500){
-                //toastr.error('Error al comunicarse con el servidor, contacte al administrador de Sistemas');
+                aletMensajes.removeAttribute('style');
+                aletMensajes.setAttribute('class','alert alert-danger');
+                aletMensajes.innerHTML = "¡ATENCIÓN!. Error de comunicacion, intenta mas tarde . Contacta al administrador de sistemas";
+                cambiarAtributoButton();
                 console.log('error al consultar al servidor');
             }
 
@@ -243,9 +257,16 @@
     var formExonerar = document.getElementById('formExonerar');
     formExonerar.addEventListener('submit', function(e) {
         e.preventDefault();
+        var btnAplicar = document.getElementById('btnAplicar');
+        var alerMensajesExoneracion = document.getElementById('alerMensajesExoneracion');
+        btnAplicar.setAttribute("disabled", "disabled");
+        btnAplicar.innerHTML = '<span id="spanConsultaExo" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Aplicando...';
         let verificar = verificarSeleccionCasillas();
         if(verificar == false){
-            alert('No se puede avanzar');
+            alerMensajesExoneracion.setAttribute('style','');
+            alerMensajesExoneracion.setAttribute('class','alert alert-danger');
+            alerMensajesExoneracion.innerHTML = '¡Informacion!. Seleccione al menos una liquidacion';
+            cambiarAtributoButtonAplicar();
             return false;
         }
         inputMatricula = document.getElementById('inputMatricula').value;
@@ -255,10 +276,17 @@
             console.log(res);
             if(res.status==200) {
                 if(res.data.estado == 'ok'){
-
+                    alerMensajesExoneracion.setAttribute('style','');
+                    alerMensajesExoneracion.setAttribute('class','alert alert-success');
+                    alerMensajesExoneracion.innerHTML = res.data.success;
+                    document.getElementById('formExonerar').reset();
+                    cambiarAtributoButtonAplicar();
                 }else{
-                    res.data.errors.forEach(MostrarCamposErrores);
-
+                    alerMensajesExoneracion.setAttribute('style','');
+                    alerMensajesExoneracion.setAttribute('class','alert alert-warning');
+                    alerMensajesExoneracion.innerHTML = '¡Informacion!. Llene todos los campos obligatorios';
+                    MostrarCamposErrores(res.data.errors);
+                    cambiarAtributoButtonAplicar();
                 }
 
             }
@@ -286,6 +314,11 @@
         btnConsulta.innerHTML = '<span id="spanConsulta" class="bi bi-search" role="status" aria-hidden="true"></span> Consultar';
     }
 
+    function cambiarAtributoButtonAplicar(){
+        btnAplicar.removeAttribute("disabled");
+        btnAplicar.innerHTML = '<span id="spanConsultaExo" class="bi bi-save" role="status" aria-hidden="true"></span> Aplicar';
+    }
+
     function verificarSeleccionCasillas(){
         let formData2 = new FormData(formExonerar);
         if(formData2.getAll("checkLiquidacion[]").length > 0)
@@ -298,8 +331,27 @@
         }
     }
 
-    function MostrarCamposErrores(item){
-        console.log('elemento '+item);
+    function MostrarCamposErrores(errores){
+        var num_resolucion = document.getElementById('num_resolucion');
+        var ruta_resolucion = document.getElementById('ruta_resolucion');
+        if(errores.num_resolucion != null){
+            num_resolucion.setAttribute('class','form-control is-invalid');
+            var elementosiguiente = num_resolucion.nextElementSibling;
+            elementosiguiente.innerHTML = errores.num_resolucion;
+        }else{
+            num_resolucion.setAttribute('class','form-control');
+        }
+        if(errores.ruta_resolucion != null){
+            ruta_resolucion.setAttribute('class','form-control is-invalid');
+            var elementosiguiente2 = ruta_resolucion.nextElementSibling;
+            elementosiguiente2.innerHTML = errores.ruta_resolucion;
+        }else{
+            ruta_resolucion.setAttribute('class','form-control');
+        }
+    }
+
+    function resetFormulario(){
+
     }
 </script>
 @endpush

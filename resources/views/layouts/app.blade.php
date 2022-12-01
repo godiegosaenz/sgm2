@@ -26,7 +26,7 @@
         @auth
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container-fluid">
-              <a class="navbar-brand" href="#">Navbar</a>
+              <a class="navbar-brand" href="#">SGM2</a>
               <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
               </button>
@@ -61,12 +61,12 @@
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li>
                             <a class="dropdown-item" href="{{ route('index.tesoreria') }}">
-                                Aplicacion de tercera edad
+                                Aplicacion de exoneracion
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="{{ route('ingresar.persona') }}">
-                                Lista de tercera edad
+                            <a class="dropdown-item" href="{{ route('lista.exoneracion') }}">
+                                Lista exoneracion
                             </a>
                         </li>
                         <li><hr class="dropdown-divider"></li>
@@ -90,7 +90,10 @@
                             </a>
                         </li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        <form action="{{route('logout')}}" method="post">
+                            @csrf
+                            <li><a onclick="this.closest('form').submit()" class="dropdown-item" href="#">Cerrar sesión</a></li>
+                        </form>
                     </ul>
                   </li>
                 </ul>

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\models\Persona;
+use App\models\Cita;
 use App\models\Archivo;
 use App\models\Consulta;
 use Validator;
@@ -21,7 +22,7 @@ class DetallarPacienteController extends Controller
 
     public function index(Request $r, $id){
         $persona = Persona::find($id);
-        //$archivo = Archivo::where('idpersona',$id)->get();
+
         return view('paciente.detallepaciente2',compact('persona'))->with('estado',$r->estado);
     }
 

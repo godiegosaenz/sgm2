@@ -24,25 +24,25 @@ class PersonasTableSeeder extends Seeder
             'ocupacion' => 'Ingeniero en Sistemas',
             'provincia' => 'MANABI',
             'provincia_id' => 13,
-            'canton' => 'SUCRE',
+            'canton' => 'SAN VICENTE',
             'canton_id' => 62,
             'direccion' => 'Leonidas Plaza - Cdla Marianita del Jesus',
             'telefono' => '0939120904',
             'discapacidad' => 'NO'
         ]);
         DB::table('personas')->insert([
-            'cedula' => '1314801340',
-            'apellidos' => 'Parraga Saenz',
-            'nombres' =>'Juan',
-            'fechaNacimiento' => '1992-03-16',
-            'estadoCivil' => 'SOLTERO/A',
-            'ocupacion' => 'Ingeniero en Sistemas',
+            'cedula' => '1723733729',
+            'apellidos' => 'Zambrano Solorzano',
+            'nombres' =>'Silvia Marlene',
+            'fechaNacimiento' => '1990-03-04',
+            'estadoCivil' => 'CASADO/A',
+            'ocupacion' => 'Tecnologia en administracion de empresas',
             'provincia' => 'MANABI',
             'provincia_id' => 13,
-            'canton' => 'SUCRE',
+            'canton' => 'SAN VICENTE',
             'canton_id' => 62,
-            'direccion' => 'Leonidas Plaza - Cdla Marianita del Jesus',
-            'telefono' => '0939120904',
+            'direccion' => 'San Vicente - Santa Martha',
+            'telefono' => '0969963569',
             'discapacidad' => 'NO'
         ]);
     }

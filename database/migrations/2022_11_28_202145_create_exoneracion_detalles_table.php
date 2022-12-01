@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('exoneracion_detalles', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('liquidacion_id');
-            $table->integer('cod_liquidacion');
+            $table->string('cod_liquidacion');
             $table->decimal('valor');
             $table->decimal('valor_anterior');
             $table->unsignedInteger('exoneracion_id');

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->increments('id');
             $table->integer('num_predio');
             $table->string('num_resolucion');
-            $table->text('observacion');
+            $table->text('observacion')->nullable();
             $table->text('ruta_resolucion');
             $table->string('usuario');
             $table->timestamps();

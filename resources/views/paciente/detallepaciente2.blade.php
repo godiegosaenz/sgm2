@@ -128,40 +128,6 @@
                 </table>
             </div>
         </div>
-        <div class="row justify-content-md-center">
-            <div class="col-10">
-                <table class="table table table-sm table-bordered table-hover">
-                    <thead>
-                        <tr style="background-color: #BCDCF9">
-                            <td colspan="5" style="text-align: center"><strong>Detalle de consultas</strong></td>
-                        </tr>
-                        <tr>
-                            <th>Especialista</th>
-                            <th>Fecha y Hora</th>
-                            <th>Motivo</th>
-                            <th>Diagnostico</th>
-                            <th style="width: 30%">Tratamiento</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($persona->cita as $c)
-                            <tr>
-                                <td>{{$c->persona->nombres.' '.$c->persona->apellidos}}</td>
-                                <td>{{$c->fecha.' '.$c->hora}}</td>
-                                <td>{{$c->motivo}}</td>
-                                @if($c->estado == 'pendiente')
-                                    <td></td>
-                                    <td></td>
-                                @else
-                                    <td>{{$c->consulta->diagnostico}}</td>
-                                    <td>{{$c->consulta->tratamiento}}</td>
-                                @endif
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
 
     </div>
 @endsection

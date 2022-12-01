@@ -10,8 +10,8 @@ use App\Http\Controllers\configuracion\CategoriaController;
 use App\Http\Controllers\citas\CitasController;
 use App\Http\Controllers\consultas\ConsultaController;
 use App\Http\Controllers\especialista\EspecialistaController;
-use App\Http\Controllers\reportes\CitaReporteController;
-use App\Http\Controllers\liquidaciones\PagoController;
+use App\Http\Controllers\reportes\ExoneracionReporteController;
+
 use GuzzleHttp\Psr7\Request;
 
 /*
@@ -33,6 +33,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('home', 'home')->name('home');
 });
 
+Route::get('/au',function(){
+    return auth()->user()->email;
+});
 
 
 Route::get('paciente/mostrar', [ListarPacienteController::class, 'index'])->name('mostrar.persona');
@@ -52,8 +55,12 @@ Route::post('usuario/guardar',[CrearUsuarioController::class, 'guardar'])->name(
 Route::post('usuario/verificar',[CrearUsuarioController::class, 'verificarUsuario'])->name('verificar.usuario');
 Route::get('usuario/detallar/{idusuario}/persona/{idpersona}', [DetallarUsuarioController::class, 'index'])->name('detallar.usuario');
 
-Route::get('tesoreria/terceraedad', [TesoreriaController::class, 'index'])->name('index.tesoreria');
-Route::post('tesoreria/datatable', [TesoreriaController::class, 'index'])->name('datatable.tesoreria');
-Route::post('tesoreria/consulta', [TesoreriaController::class, 'consulta'])->name('consulta.tesoreria');
+Route::get('tesoreria/terceraedad', [TesoreriaController::class, 'create'])->name('index.tesoreria');
+Route::get('exoneracion/lista', [TesoreriaController::class, 'index'])->name('lista.exoneracion');
+Route::post('exoneracion/datatables', [TesoreriaController::class, 'datatables'])->name('datatable.exoneracion');
+Route::post('exoneracion/consulta', [TesoreriaController::class, 'consulta'])->name('consulta.exoneracion');
 Route::post('tesoreria/exonerar', [TesoreriaController::class, 'store'])->name('store.tesoreria');
+Route::get('exoneracion/detalle/{id}', [TesoreriaController::class, 'show'])->name('detalle.exoneracion');
+Route::get('exoneracion/descargar/resolucion/{id}', [TesoreriaController::class, 'download'])->name('descargar.exoneracion');
 
+Route::get('exoneracionreporte/imprimir/{id}', [ExoneracionReporteController::class, 'reporteExoneracion'])->name('imprimir.reporte.exoneracion');
