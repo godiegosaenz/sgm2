@@ -4,7 +4,7 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-12 text-center mb-2">
-            <h1 class="">Sistema de gestión municipal 2</h1>
+            <h1 class="">Sistema de gestión municipal </h1>
             <h5>Bienvenid@, {{ auth()->user()->name }}</h5>
             <hr class="my-4">
             <div class="">
