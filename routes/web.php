@@ -11,6 +11,7 @@ use App\Http\Controllers\citas\CitasController;
 use App\Http\Controllers\consultas\ConsultaController;
 use App\Http\Controllers\especialista\EspecialistaController;
 use App\Http\Controllers\reportes\ExoneracionReporteController;
+use App\Http\Controllers\enlinea\ConsultaLineaController;
 
 use GuzzleHttp\Psr7\Request;
 
@@ -29,13 +30,13 @@ Route::get('/', function () {
     return view('auth.login');
 })->middleware('guest');
 
+Route::get('consultar/deudas', [ConsultaLineaController::class, 'index'])->name('deudas.consultar')->middleware('guest');;
+Route::post('consultar/deudas', [ConsultaLineaController::class, 'store'])->name('store.consultar')->middleware('guest');;
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('home', 'home')->name('home');
 });
 
-Route::get('/au',function(){
-    return auth()->user()->email;
-});
 
 
 Route::get('paciente/mostrar', [ListarPacienteController::class, 'index'])->name('mostrar.persona');

@@ -210,7 +210,11 @@
                                 tablahtmlUrbano += array_urbano[clave2][contadorUrbano]['clave_cat'];
                                 tablahtmlUrbano += '</td>';
                                 tablahtmlUrbano += '<td>';
-                                tablahtmlUrbano += array_urbano[clave2][contadorUrbano]['nombre_comprador']
+                                    if(array_urbano[clave2][contadorUrbano]['nombres'] != null){
+                                        tablahtmlUrbano += array_urbano[clave2][contadorUrbano]['nombres']+' '+array_urbano[clave2][contadorUrbano]['apellidos']
+                                    }else{
+                                        tablahtmlUrbano += array_urbano[clave2][contadorUrbano]['nombre_comprador'];
+                                    }
                                 tablahtmlUrbano += '</td>';
                                 tablahtmlUrbano += '</tr>';
                                 contadorUrbano = contadorUrbano + 1;
