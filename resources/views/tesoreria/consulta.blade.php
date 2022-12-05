@@ -71,6 +71,7 @@
                             <th>Liquidación</th>
                             <th scope="col">Cod. Catastral</th>
                             <th scope="col">Propietario</th>
+                            <th scope="col">Total de pago</th>
                             </tr>
                         </thead>
                         <tbody id="tbodyurban">
@@ -107,13 +108,13 @@
                    <div class="col-6">
                         <div class="mb-3">
                             <label for="num_resolucion">* Codigo de resolución : </label>
-                            <input class="form-control" id="num_resolucion" name="num_resolucion"/>
+                            <input class="form-control" id="num_resolucion" name="num_resolucion" disabled/>
                             <div class="invalid-feedback">
 
                             </div>
                         </div><div class="mb-3">
                             <label for="ruta_resolucion" class="form-label">Cargar Resolución</label>
-                            <input class="form-control" type="file" id="ruta_resolucion" name="ruta_resolucion">
+                            <input class="form-control" type="file" id="ruta_resolucion" name="ruta_resolucion" disabled>
                             <div class="invalid-feedback">
 
                             </div>
@@ -124,7 +125,7 @@
                    <div class="col-6">
                         <div class="mb-3">
                             <label for="observacion">* Observacion : </label>
-                            <textarea class="form-control" id="observacion" name="observacion" rows="5"></textarea>
+                            <textarea class="form-control" id="observacion" name="observacion" rows="5" disabled></textarea>
                         </div>
                    </div>
                 </div>
@@ -216,6 +217,9 @@
                                         tablahtmlUrbano += array_urbano[clave2][contadorUrbano]['nombre_comprador'];
                                     }
                                 tablahtmlUrbano += '</td>';
+                                tablahtmlUrbano += '<td>';
+                                tablahtmlUrbano += array_urbano[clave2][contadorUrbano]['total_pago'];
+                                tablahtmlUrbano += '</td>';
                                 tablahtmlUrbano += '</tr>';
                                 contadorUrbano = contadorUrbano + 1;
                             }
@@ -285,11 +289,11 @@
                     alerMensajesExoneracion.innerHTML = res.data.success;
                     document.getElementById('formExonerar').reset();
                     cambiarAtributoButtonAplicar();
+                    deshabilitarFormularioExoneracion();
                 }else{
                     alerMensajesExoneracion.setAttribute('style','');
                     alerMensajesExoneracion.setAttribute('class','alert alert-warning');
-                    alerMensajesExoneracion.innerHTML = '¡Informacion!. Llene todos los campos obligatorios';
-                    MostrarCamposErrores(res.data.errors);
+                    alerMensajesExoneracion.innerHTML = res.data.success;;
                     cambiarAtributoButtonAplicar();
                 }
 
@@ -297,7 +301,10 @@
         }).catch(function(err) {
             console.log(err);
             if(err.response.status == 500){
-                //toastr.error('Error al comunicarse con el servidor, contacte al administrador de Sistemas');
+                alerMensajesExoneracion.setAttribute('style','');
+                alerMensajesExoneracion.setAttribute('class','alert alert-warning');
+                alerMensajesExoneracion.innerHTML = '¡Error! '+err.message+' .Contacta al administrador de sistemas';
+                cambiarAtributoButtonAplicar();
                 console.log('error al consultar al servidor');
             }
 
@@ -353,9 +360,35 @@
             ruta_resolucion.setAttribute('class','form-control');
         }
     }
+    var modalExoneracion = document.getElementById('modalExoneracion');
+    modalExoneracion.addEventListener('show.bs.modal', function () {
+        var num_resolucion = document.getElementById('num_resolucion');
+        var btnAplicar = document.getElementById('btnAplicar');
+        num_resolucion.focus();
+        var verificar = verificarSeleccionCasillas();
+        if(verificar === true){
+            habilitarFormularioExoneracion();
+            alerMensajesExoneracion.setAttribute('style','display:none;');
+        }else{
+            deshabilitarFormularioExoneracion();
+            alerMensajesExoneracion.setAttribute('style','');
+            alerMensajesExoneracion.setAttribute('class','alert alert-danger');
+            alerMensajesExoneracion.innerHTML = '¡Advertencia!. Debe seleccionar al menos una liquidacion';
+        }
+    })
 
-    function resetFormulario(){
+    function deshabilitarFormularioExoneracion(){
+        document.getElementById('num_resolucion').setAttribute('disabled','disabled');
+        document.getElementById('ruta_resolucion').setAttribute('disabled','disabled');
+        document.getElementById('observacion').setAttribute('disabled','disabled');
+        btnAplicar.setAttribute('disabled','disabled');
+    }
 
+    function habilitarFormularioExoneracion(){
+        document.getElementById('num_resolucion').removeAttribute("disabled")
+        document.getElementById('ruta_resolucion').removeAttribute("disabled")
+        document.getElementById('observacion').removeAttribute("disabled")
+        btnAplicar.removeAttribute("disabled");
     }
 </script>
 @endpush

@@ -9,6 +9,7 @@ use App\models\ExoneracionDetalle;
 use Illuminate\Support\Facades\Validator;
 use Datatables;
 use Illuminate\Support\Facades\Storage;
+use Exception;
 
 class TesoreriaController extends Controller
 {
@@ -44,29 +45,28 @@ class TesoreriaController extends Controller
      */
     public function store(Request $r)
     {
-        $messages = [
-            'num_resolucion.required' => 'El campo Codigo de resolucion es requerido.',
-            'ruta_resolucion.required' => 'El campo cargar resolucion es requerido.',
-            'unique' => 'El numero de cedula ingresado ya existe',
-            'size' => 'El campo :attribute debe tener exactamente :size caracteres',
-            'max' => 'El campo :attribute no debe exceder los :max kb',
-            'mimes' => 'El campo :attribute debe ser pdf',
-        ];
-
-        $reglas = [
-            'num_resolucion' => 'required|max:30',
-            'ruta_resolucion' => 'required|file|mimes:pdf|max:2048',
-            'observacion' => 'required',
-        ];
-
-        $validator = Validator::make($r->all(),$reglas,$messages);
-
-        if ($validator->fails()) {
-
-            return response()->json(['estado' => 'error','errors'=>$validator->errors()]);
-        }
-
         try {
+            $messages = [
+                'num_resolucion.required' => 'El campo Codigo de resolucion es requerido.',
+                'ruta_resolucion.required' => 'El campo cargar resolucion es requerido.',
+                'unique' => 'El numero de cedula ingresado ya existe',
+                'size' => 'El campo :attribute debe tener exactamente :size caracteres',
+                'max' => 'El campo :attribute no debe exceder los :max kb',
+                'mimes' => 'El campo :attribute debe ser pdf',
+            ];
+
+            $reglas = [
+                'num_resolucion' => 'required|max:30',
+                'ruta_resolucion' => 'required|file|mimes:pdf|max:2048',
+                'observacion' => 'required',
+            ];
+
+            $validator = Validator::make($r->all(),$reglas,$messages);
+
+            if ($validator->fails()) {
+
+                return response()->json(['estado' => 'error','errors'=>$validator->errors()]);
+            }
 
             $archivo_exoneracion = $r->file('ruta_resolucion')->store('exoneracion');
 
@@ -77,6 +77,7 @@ class TesoreriaController extends Controller
             $ExoneracionAnterior->ruta_resolucion = $archivo_exoneracion;
             $ExoneracionAnterior->usuario = auth()->user()->email;
             $ExoneracionAnterior->save();
+
 
             foreach($r->checkLiquidacion as $clave => $valor){
                 //obtener los datos de la liquidacion
@@ -94,24 +95,27 @@ class TesoreriaController extends Controller
                                         ->get();
                     $total = 0;
                     $total_anterior = $l->total_pago;
-                    $valor = 0;
                     foreach($detalleliquidacion as $dl){
-                        $valor = $dl->valor;
-                        $total = $total + $valor;
+                        $arrayRubro[$dl->id] = $dl->rubro;
                         //se verifica si el rubro es 2 de impuesto predial
-                        if($dl->rubro == 2){
-                            $affected = DB::connection('pgsql')
-                                                ->table('sgm_financiero.ren_det_liquidacion')
-                                                ->where('id', $dl->id)
-                                                ->update(['valor' => 0]);
+                        if($dl->rubro === 2){
+                            DB::connection('pgsql')
+                                        ->table('sgm_financiero.ren_det_liquidacion')
+                                        ->where('id', $dl->id)
+                                        ->update(['valor' => 0]);
+                            $total = $total + 0;
+                        }else{
+                            $total = $total + $dl->valor;
                         }
                     }
+                    //return $total;
                     //actualizar el saldo en la liquidacion
                     DB::connection('pgsql')
                                 ->table('sgm_financiero.ren_liquidacion')
                                 ->where('id', $l->id)
                                 ->update(['saldo' => $total,'total_pago' => $total]);
 
+                    $arrayTotal[$l->id] = $total;
                     //insertar datos en la tabla exoneracion_anterior
                     $ExoneracionDetalle = new ExoneracionDetalle();
                     $ExoneracionDetalle->liquidacion_id = $l->id;
@@ -125,21 +129,12 @@ class TesoreriaController extends Controller
 
             }
             return response()->json(['estado' => 'ok','success'=>'La aplicacion de la exoneracion de años anteriores se aplicó con exito']);
-        } catch (\Exception $e){
-
+        } catch (Exception $e) {
+            // if an exception happened in the try block above
+            $ExoneracionAnterior->delete();
+            return response()->json(['estado' => 'error','success'=>'¡Importante! . La aplicacion presento un error de conexion, intente mas tarde','msj' => $e]);
         }
 
-
-
-
-        //1. obtener los id de las liquidaciones obtenidos en los checkboxs
-        //2. recorrer cada liquidacion
-        //3. en cada bucle obtener los datos de cada liquidacion
-        //4. con los datos obtenidos, se eliminará el valor del rubro de impuesto predial
-        //5. se sumara los valores de los demas rubros.
-        //6. se actualizara el total en las liquidaciones.
-        //7. Una vez completado ese procesos se guardara la informacion de la tabla exoneracion_anterior
-        //8. Luego se almacenará la información en la tabla exoneracion_det_liquidacion
 
     }
 

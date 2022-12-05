@@ -22,8 +22,8 @@ class UsersTableSeeder extends Seeder
             'idpersona' => 1
         ]);
         DB::table('users')->insert([
-            'name' => 'Diego',
-            'email' => 'tecnologia.informacion@sanvicente.gob.ec',
+            'name' => 'Silvia Marlene',
+            'email' => 'smzambrano@sanvicente.gob.ec',
             'password' => bcrypt('Silvia2022'),
             'idpersona' => 2
         ]);
