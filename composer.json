@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.0.2",
+        "abram/laravel-odbc": "dev-master",
         "barryvdh/laravel-dompdf": "^2.0",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/fortify": "^1.13",
@@ -58,7 +59,7 @@
         "optimize-autoloader": true,
         "preferred-install": "dist",
         "sort-packages": true,
-        "cache-dir": "/home/sanvice/public_html/sgf/cache"
+        "cache-dir": "/sgm/cache"
     },
     "minimum-stability": "dev",
     "prefer-stable": true

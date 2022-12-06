@@ -1,6 +1,59 @@
 {
     "packages": [
         {
+            "name": "abram/laravel-odbc",
+            "version": "dev-master",
+            "version_normalized": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/andreossido/laravel-odbc.git",
+                "reference": "a6be5f57681dc9488e657ccff36716f08d73b1e2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/andreossido/laravel-odbc/zipball/a6be5f57681dc9488e657ccff36716f08d73b1e2",
+                "reference": "a6be5f57681dc9488e657ccff36716f08d73b1e2",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": "~5.1 || >= 6.0",
+                "illuminate/support": "~5.1 || >= 6.0",
+                "php": "^5.3.3 || >=7.0"
+            },
+            "time": "2020-08-25T10:45:35+00:00",
+            "default-branch": true,
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Abram\\Odbc\\ODBCServiceProvider"
+                    ]
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "classmap": [
+                    "src"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Andrea Abram",
+                    "email": "andreossido@gmail.com",
+                    "homepage": "https://github.com/andreossido",
+                    "role": "Developer"
+                }
+            ],
+            "description": "ODBC integration for Laravel framework ",
+            "homepage": "https://github.com/andreossido/laravel-odbc",
+            "support": {
+                "issues": "https://github.com/andreossido/laravel-odbc/issues",
+                "source": "https://github.com/andreossido/laravel-odbc/tree/master"
+            },
+            "install-path": "../abram/laravel-odbc"
+        },
+        {
             "name": "bacon/bacon-qr-code",
             "version": "2.0.7",
             "version_normalized": "2.0.7.0",
@@ -2163,17 +2216,17 @@
         },
         {
             "name": "league/flysystem",
-            "version": "3.10.4",
-            "version_normalized": "3.10.4.0",
+            "version": "3.11.0",
+            "version_normalized": "3.11.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "a7790f3dd1b27af81d380e6b2afa77c16ab7e181"
+                "reference": "7e423e5dd240a60adfab9bde058d7668863b7731"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/a7790f3dd1b27af81d380e6b2afa77c16ab7e181",
-                "reference": "a7790f3dd1b27af81d380e6b2afa77c16ab7e181",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/7e423e5dd240a60adfab9bde058d7668863b7731",
+                "reference": "7e423e5dd240a60adfab9bde058d7668863b7731",
                 "shasum": ""
             },
             "require": {
@@ -2203,7 +2256,7 @@
                 "phpunit/phpunit": "^9.5.11",
                 "sabre/dav": "^4.3.1"
             },
-            "time": "2022-11-26T19:48:01+00:00",
+            "time": "2022-12-02T14:39:57+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -2237,7 +2290,7 @@
             ],
             "support": {
                 "issues": "https://github.com/thephpleague/flysystem/issues",
-                "source": "https://github.com/thephpleague/flysystem/tree/3.10.4"
+                "source": "https://github.com/thephpleague/flysystem/tree/3.11.0"
             },
             "funding": [
                 {
@@ -2630,17 +2683,17 @@
         },
         {
             "name": "nesbot/carbon",
-            "version": "2.63.0",
-            "version_normalized": "2.63.0.0",
+            "version": "2.64.0",
+            "version_normalized": "2.64.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/briannesbitt/Carbon.git",
-                "reference": "ad35dd71a6a212b98e4b87e97389b6fa85f0e347"
+                "reference": "889546413c97de2d05063b8cb7b193c2531ea211"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/ad35dd71a6a212b98e4b87e97389b6fa85f0e347",
-                "reference": "ad35dd71a6a212b98e4b87e97389b6fa85f0e347",
+                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/889546413c97de2d05063b8cb7b193c2531ea211",
+                "reference": "889546413c97de2d05063b8cb7b193c2531ea211",
                 "shasum": ""
             },
             "require": {
@@ -2651,7 +2704,7 @@
                 "symfony/translation": "^3.4 || ^4.0 || ^5.0 || ^6.0"
             },
             "require-dev": {
-                "doctrine/dbal": "^2.0 || ^3.0",
+                "doctrine/dbal": "^2.0 || ^3.1.4",
                 "doctrine/orm": "^2.7",
                 "friendsofphp/php-cs-fixer": "^3.0",
                 "kylekatarnls/multi-tester": "^2.0",
@@ -2663,7 +2716,7 @@
                 "phpunit/phpunit": "^7.5.20 || ^8.5.26 || ^9.5.20",
                 "squizlabs/php_codesniffer": "^3.4"
             },
-            "time": "2022-10-30T18:34:28+00:00",
+            "time": "2022-11-26T17:36:00+00:00",
             "bin": [
                 "bin/carbon"
             ],
@@ -8712,17 +8765,17 @@
         },
         {
             "name": "yajra/laravel-datatables-oracle",
-            "version": "v10.2.0",
-            "version_normalized": "10.2.0.0",
+            "version": "v10.2.1",
+            "version_normalized": "10.2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yajra/laravel-datatables.git",
-                "reference": "8c909eae598fc487deeb252b912cf32b4d1bc803"
+                "reference": "314f0dbffd25600e0b6452f3f87be1072c34f5ee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yajra/laravel-datatables/zipball/8c909eae598fc487deeb252b912cf32b4d1bc803",
-                "reference": "8c909eae598fc487deeb252b912cf32b4d1bc803",
+                "url": "https://api.github.com/repos/yajra/laravel-datatables/zipball/314f0dbffd25600e0b6452f3f87be1072c34f5ee",
+                "reference": "314f0dbffd25600e0b6452f3f87be1072c34f5ee",
                 "shasum": ""
             },
             "require": {
@@ -8744,7 +8797,7 @@
                 "yajra/laravel-datatables-fractal": "Plugin for server-side response using Fractal.",
                 "yajra/laravel-datatables-html": "Plugin for server-side HTML builder of dataTables."
             },
-            "time": "2022-11-03T04:25:32+00:00",
+            "time": "2022-12-06T01:09:13+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -8786,7 +8839,7 @@
             ],
             "support": {
                 "issues": "https://github.com/yajra/laravel-datatables/issues",
-                "source": "https://github.com/yajra/laravel-datatables/tree/v10.2.0"
+                "source": "https://github.com/yajra/laravel-datatables/tree/v10.2.1"
             },
             "funding": [
                 {

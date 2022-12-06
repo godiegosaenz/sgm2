@@ -188,8 +188,10 @@ return [
         App\Providers\FortifyServiceProvider::class,
         Yajra\Datatables\DatatablesServiceProvider::class,
         Barryvdh\DomPDF\ServiceProvider::class,
+        Abram\Odbc\ODBCServiceProvider::class,
         /*
          * Application Service Providers...
+         *
          */
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,

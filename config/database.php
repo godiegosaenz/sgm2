@@ -92,6 +92,14 @@ return [
             // 'encrypt' => env('DB_ENCRYPT', 'yes'),
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
+        'odbc-connection-ame' => [
+            'driver' => 'odbc',
+            'dsn' => 'CONEXION_AME',
+            'database' => 'dbame',
+            'host' => '192.168.56.2',
+            'username' => 'AME',
+            'password' => 'Bersaenz16'
+        ]
 
     ],
 
