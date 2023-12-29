@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\ConsultaPredioController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,5 +16,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get("/", function () {
-    return view("welcome");
+
+
 });
+Route::get('/consulta', [ConsultaPredioController::class, 'index'])->name('welcome');
+Route::post('/consulta', [ConsultaPredioController::class, 'store'])->name('catpredio.consulta');
