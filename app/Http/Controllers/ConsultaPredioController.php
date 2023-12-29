@@ -91,7 +91,7 @@ class ConsultaPredioController extends Controller
             }
         } catch (Exception $e) {
             // if an exception happened in the try block above
-            return redirect('/consulta')->with('status', 'Problema de conexion, comuniquese con el administrador de sistemas');
+            return redirect('/consulta')->with('status', 'Problema de conexion, comuniquese con el administrador de sistemas. '.$e->getMessage());
 
         }
     }
