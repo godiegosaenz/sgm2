@@ -49,7 +49,7 @@
                         </select>
                     </div>
                     <div class="col-5">
-                        <input name="catCedula" id="catCedula" type="text" class="form-control" placeholder="ingrese numero de cédula">
+                        <input name="catCedula" id="catCedula" type="text" class="form-control" placeholder="ingrese numero de cédula" value="{{old('catCedula')}}">
                     </div>
                     <div class="col-3">
                         <button id="btnConsulta" class="btn btn-primary" type="submit">

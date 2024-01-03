@@ -183,7 +183,9 @@ return [
         /*
          * Package Service Providers...
          */
-
+        App\Providers\FortifyServiceProvider::class,
+        Yajra\Datatables\DatatablesServiceProvider::class,
+        Barryvdh\DomPDF\ServiceProvider::class,
         /*
          * Application Service Providers...
          */
