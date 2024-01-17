@@ -5,10 +5,10 @@ namespace App\Http\Controllers\paciente;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\models\Persona;
-use App\models\Cita;
-use App\models\Archivo;
-use App\models\Consulta;
+use App\Models\Persona;
+use App\Models\Cita;
+use App\Models\Archivo;
+use App\Models\Consulta;
 use Validator;
 use Illuminate\Validation\Rule;
 

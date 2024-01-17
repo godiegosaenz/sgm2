@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\models\ExoneracionAnterior;
-use App\models\ExoneracionDetalle;
+use App\Models\ExoneracionAnterior;
+use App\Models\ExoneracionDetalle;
 use Illuminate\Support\Facades\Validator;
 use Datatables;
 use Illuminate\Support\Facades\Storage;

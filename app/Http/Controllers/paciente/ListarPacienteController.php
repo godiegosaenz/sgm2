@@ -5,7 +5,7 @@ namespace App\Http\Controllers\paciente;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Datatables;
-use App\models\Persona;
+use App\Models\Persona;
 
 class ListarPacienteController extends Controller
 {

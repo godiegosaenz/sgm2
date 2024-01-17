@@ -47,7 +47,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('paciente/detallar/{id}',[DetallarPacienteController::class, 'index'])->name('detallar.persona');
     Route::get('paciente/editar/{id}',[PacienteController::class, 'edit'])->name('editar.paciente');
     Route::post('paciente/verificar', [PacienteController::class, 'verificarCedula'])->name('verificar.persona');
-    //Route::post('canton/obtener', [CantonController::class, 'obtener'])->name('canton.obtener');
+    Route::post('canton/obtener', [CantonController::class, 'obtener'])->name('canton.obtener');
 
     Route::get('tesoreria/terceraedad', [TesoreriaController::class, 'create'])->name('index.tesoreria');
     Route::get('exoneracion/lista', [TesoreriaController::class, 'index'])->name('lista.exoneracion');
