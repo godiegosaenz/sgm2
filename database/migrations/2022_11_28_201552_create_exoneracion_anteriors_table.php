@@ -20,6 +20,7 @@ return new class extends Migration
             $table->text('observacion')->nullable();
             $table->text('ruta_resolucion');
             $table->string('usuario');
+            $table->enum('tipo', ['tercera_edad', 'discapacidad']);
             $table->timestamps();
         });
     }

@@ -7,8 +7,13 @@
         <div class="row">
             <div class="col-12">
                 <div class="col-md-12">
-                    <h2 class="text-center">Tercera edad años anteriores </h2>
+                    <h2 class="text-center">Exoneración urbano</h2>
                 </div>
+            </div>
+            <div class="col-12">
+                <div class="alert alert-info" role="alert">
+                    ¡Informacion!. Puede realizar la exoneración de años anteriores de los predios urbanos para lo cual debe ingresar la justificacion y documentacion.
+                  </div>
             </div>
         </div>
         <br>
@@ -106,6 +111,13 @@
                 </div>
                 <div class="row mt-3">
                    <div class="col-6">
+                        <div class="mb-3">
+                            <label for="tipo">* Tipo de exoneración : </label>
+                            <select id="tipo" name="tipo" class="form-select" aria-label="Default select example" disabled>
+                                <option value="tercera_edad">Tercera edad</option>
+                                <option value="discapacidad">Discapacidad</option>
+                            </select>
+                        </div>
                         <div class="mb-3">
                             <label for="num_resolucion">* Codigo de resolución : </label>
                             <input class="form-control" id="num_resolucion" name="num_resolucion" disabled/>
@@ -293,7 +305,7 @@
                 }else{
                     alerMensajesExoneracion.setAttribute('style','');
                     alerMensajesExoneracion.setAttribute('class','alert alert-warning');
-                    alerMensajesExoneracion.innerHTML = res.data.success;;
+                    alerMensajesExoneracion.innerHTML = 'Verifique los campos, y recuerde que el peso maximo de los archivos son 2 mb';
                     cambiarAtributoButtonAplicar();
                 }
 
@@ -345,6 +357,7 @@
     function MostrarCamposErrores(errores){
         var num_resolucion = document.getElementById('num_resolucion');
         var ruta_resolucion = document.getElementById('ruta_resolucion');
+        var tipo = document.getElementById('tipo');
         if(errores.num_resolucion != null){
             num_resolucion.setAttribute('class','form-control is-invalid');
             var elementosiguiente = num_resolucion.nextElementSibling;
@@ -358,6 +371,13 @@
             elementosiguiente2.innerHTML = errores.ruta_resolucion;
         }else{
             ruta_resolucion.setAttribute('class','form-control');
+        }
+        if(errores.tipo != null){
+            tipo.setAttribute('class','form-control is-invalid');
+            var elementosiguiente2 = tipo.nextElementSibling;
+            elementosiguiente2.innerHTML = errores.tipo;
+        }else{
+            tipo.setAttribute('class','form-control');
         }
     }
     var modalExoneracion = document.getElementById('modalExoneracion');
@@ -378,6 +398,7 @@
     })
 
     function deshabilitarFormularioExoneracion(){
+        document.getElementById('tipo').setAttribute('disabled','disabled');
         document.getElementById('num_resolucion').setAttribute('disabled','disabled');
         document.getElementById('ruta_resolucion').setAttribute('disabled','disabled');
         document.getElementById('observacion').setAttribute('disabled','disabled');
@@ -385,6 +406,7 @@
     }
 
     function habilitarFormularioExoneracion(){
+        document.getElementById('tipo').removeAttribute("disabled")
         document.getElementById('num_resolucion').removeAttribute("disabled")
         document.getElementById('ruta_resolucion').removeAttribute("disabled")
         document.getElementById('observacion').removeAttribute("disabled")

@@ -15,7 +15,11 @@
     <br>
     <div class="row justify-content-center align-items-center" style="font-family: Arial, Helvetica, sans-serif;">
         <div class="col-12">
-            <h3>INFORME DE EXONERACIÓN DE TERCERA EDAD</h3>
+            @if($ExoneracionAnterior->tipo == 'tercera_edad')
+                <h3>INFORME DE EXONERACIÓN DE TERCERA EDAD</h3>
+            @else
+                <h3>INFORME DE EXONERACIÓN DE DISCAPACIDAD</h3>
+            @endif
         </div>
     </div>
     <br>

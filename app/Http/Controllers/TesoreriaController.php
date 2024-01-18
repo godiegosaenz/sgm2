@@ -61,6 +61,7 @@ class TesoreriaController extends Controller
                 'num_resolucion' => 'required|max:30',
                 'ruta_resolucion' => 'required|file|mimes:pdf|max:2048',
                 'observacion' => 'required',
+                'tipo' => 'required',
             ];
 
             $validator = Validator::make($r->all(),$reglas,$messages);
@@ -77,6 +78,7 @@ class TesoreriaController extends Controller
             $ExoneracionAnterior->num_resolucion = $r->num_resolucion;
             $ExoneracionAnterior->observacion = $r->observacion;
             $ExoneracionAnterior->ruta_resolucion = $archivo_exoneracion;
+            $ExoneracionAnterior->tipo = $r->tipo;
             $ExoneracionAnterior->usuario = auth()->user()->email;
             $ExoneracionAnterior->save();
 
@@ -101,11 +103,22 @@ class TesoreriaController extends Controller
                         $arrayRubro[$dl->id] = $dl->rubro;
                         //se verifica si el rubro es 2 de impuesto predial
                         if($dl->rubro === 2){
-                            DB::connection('pgsql')
-                                        ->table('sgm_financiero.ren_det_liquidacion')
-                                        ->where('id', $dl->id)
-                                        ->update(['valor' => 0]);
-                            $total = $total + 0;
+                            if($r->tipo == 'tercera_edad'){
+                                DB::connection('pgsql')
+                                                ->table('sgm_financiero.ren_det_liquidacion')
+                                                ->where('id', $dl->id)
+                                                ->update(['valor' => 0]);
+                                $total = $total + 0;
+                            }else{
+                                $valor_discapacidad = $dl->valor - ($dl->valor * 0.50);
+                                $total = $total + $valor_discapacidad;
+                                DB::connection('pgsql')
+                                                ->table('sgm_financiero.ren_det_liquidacion')
+                                                ->where('id', $dl->id)
+                                                ->update(['valor' => $valor_discapacidad]);
+
+                            }
+
                         }else{
                             $total = $total + $dl->valor;
                         }

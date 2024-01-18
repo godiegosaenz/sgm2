@@ -61,14 +61,10 @@
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li>
                             <a class="dropdown-item" href="{{ route('index.tesoreria') }}">
-                                Aplicacion de exoneracion - urbano
+                                Exoneracion urbano
                             </a>
                         </li>
-                        <li>
-                            <a class="dropdown-item" href="{{ route('rural.exoneracion') }}">
-                                Aplicacion de exoneracion - rural
-                            </a>
-                        </li>
+
                         <li>
                             <a class="dropdown-item" href="{{ route('lista.exoneracion') }}">
                                 Lista exoneracion

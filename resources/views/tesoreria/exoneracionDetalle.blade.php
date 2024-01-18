@@ -16,7 +16,7 @@
                 <table id="exoneraciontable" class="table table-sm table-bordered table-hover">
                     <tbody>
                         <tr style="background-color: #BCDCF9">
-                            <td colspan="4" style="text-align: center"><strong>Informacion de exoneracion</strong></td>
+                            <td colspan="4" style="text-align: center"><strong>Informacion de exoneracion de {{ $ExoneracionAnterior->tipo }}</strong></td>
                         </tr>
                         <tr>
                             <td><i class="fa fa-user"></i> Matricula Inmobiliaria :</td>
