@@ -6,10 +6,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\ExoneracionAnterior;
 use App\Models\ExoneracionDetalle;
+use App\Models\ExoneracionDetalleLiquidacion;
 use Illuminate\Support\Facades\Validator;
 use Datatables;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\File;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 
 use Exception;
 
@@ -47,7 +50,8 @@ class TesoreriaController extends Controller
      */
     public function store(Request $r)
     {
-        //try {
+        //DB::beginTransaction();
+        try {
             $messages = [
                 'num_resolucion.required' => 'El campo Codigo de resolucion es requerido.',
                 'ruta_resolucion.required' => 'El campo cargar resolucion es requerido.',
@@ -82,6 +86,9 @@ class TesoreriaController extends Controller
             $ExoneracionAnterior->usuario = auth()->user()->email;
             $ExoneracionAnterior->save();
 
+            $impuesto_predial = 0;
+            $impuesto_predial_anterior = 0;
+
 
             foreach($r->checkLiquidacion as $clave => $valor){
                 //obtener los datos de la liquidacion
@@ -94,8 +101,9 @@ class TesoreriaController extends Controller
                 foreach($liquidacion as $l){
                     //obtener el detalle de la liquidacion
                     $detalleliquidacion = DB::connection('pgsql')->table('sgm_financiero.ren_det_liquidacion')
-                                        ->select('id','liquidacion','rubro','valor','estado')
-                                        ->where('liquidacion','=',$l->id)
+                                        ->join('sgm_financiero.ren_rubros_liquidacion', 'sgm_financiero.ren_det_liquidacion.rubro', '=', 'sgm_financiero.ren_rubros_liquidacion.id')
+                                        ->select('ren_det_liquidacion.*','ren_rubros_liquidacion.descripcion')
+                                        ->where('ren_det_liquidacion.liquidacion','=',$l->id)
                                         ->get();
                     $total = 0;
                     $total_anterior = $l->total_pago;
@@ -103,19 +111,28 @@ class TesoreriaController extends Controller
                         $arrayRubro[$dl->id] = $dl->rubro;
                         //se verifica si el rubro es 2 de impuesto predial
                         if($dl->rubro === 2){
+                            $impuesto_predial_anterior = $dl->valor;
                             if($r->tipo == 'tercera_edad'){
+                                $impuesto_predial = 0;
                                 DB::connection('pgsql')
                                                 ->table('sgm_financiero.ren_det_liquidacion')
                                                 ->where('id', $dl->id)
                                                 ->update(['valor' => 0]);
                                 $total = $total + 0;
-                            }else{
-                                $valor_discapacidad = $dl->valor - ($dl->valor * 0.50);
-                                $total = $total + $valor_discapacidad;
+                            }elseif($r->tipo == 'tercera_edad_50'){
+                                $impuesto_predial = $dl->valor - ($dl->valor * 0.50);
+                                $total = $total + $impuesto_predial;
                                 DB::connection('pgsql')
                                                 ->table('sgm_financiero.ren_det_liquidacion')
                                                 ->where('id', $dl->id)
-                                                ->update(['valor' => $valor_discapacidad]);
+                                                ->update(['valor' => $impuesto_predial]);
+                            }else{
+                                $impuesto_predial = $dl->valor - ($dl->valor * 0.50);
+                                $total = $total + $impuesto_predial;
+                                DB::connection('pgsql')
+                                                ->table('sgm_financiero.ren_det_liquidacion')
+                                                ->where('id', $dl->id)
+                                                ->update(['valor' => $impuesto_predial]);
 
                             }
 
@@ -132,23 +149,39 @@ class TesoreriaController extends Controller
 
                     $arrayTotal[$l->id] = $total;
                     //insertar datos en la tabla exoneracion_anterior
+
                     $ExoneracionDetalle = new ExoneracionDetalle();
                     $ExoneracionDetalle->liquidacion_id = $l->id;
                     $ExoneracionDetalle->cod_liquidacion = $l->id_liquidacion;
                     $ExoneracionDetalle->valor = $total;
                     $ExoneracionDetalle->valor_anterior = $total_anterior;
+                    $ExoneracionDetalle->impuesto_predial_anterior = $impuesto_predial_anterior;
+                    $ExoneracionDetalle->impuesto_predial_actual = $impuesto_predial;
+                    $ExoneracionDetalle->det_liquidacion = $detalleliquidacion;
                     $ExoneracionDetalle->exoneracion_id = $ExoneracionAnterior->id;
                     $ExoneracionDetalle->save();
+
+                    //guardar el detalle
+                    foreach($detalleliquidacion as $det){
+                        $ExoneracionDetalleLiquidacion = new ExoneracionDetalleLiquidacion();
+                        $ExoneracionDetalleLiquidacion->rubro = $det->rubro;
+                        $ExoneracionDetalleLiquidacion->descripcion = $det->descripcion;
+                        $ExoneracionDetalleLiquidacion->valor = $det->valor;
+                        $ExoneracionDetalleLiquidacion->exoneracion_detalles_id = $ExoneracionDetalle->id;
+                        $ExoneracionDetalleLiquidacion->save();
+                    }
 
                 }
 
             }
+            //DB::commit();
             return response()->json(['estado' => 'ok','success'=>'La aplicacion de la exoneracion de años anteriores se aplicó con exito']);
-       // } catch (Exception $e) {
+        } catch (Exception $e) {
+            //DB::rollback();
             // if an exception happened in the try block above
-           // $ExoneracionAnterior->delete();
-            //return response()->json(['estado' => 'error','success'=>'¡Importante! . La aplicacion presento un error de conexion, intente mas tarde','msj' => $e]);
-        //}
+            // $ExoneracionAnterior->delete();
+            return response()->json(['estado' => 'error','success'=>'¡Importante! . La aplicacion presento un error de conexion, intente mas tarde'.$e,'msj' => $e],500);
+        }
 
 
     }
@@ -162,6 +195,7 @@ class TesoreriaController extends Controller
     public function show(Request $r, $id)
     {
         $ExoneracionAnterior = ExoneracionAnterior::find($id);
+
         return view('tesoreria.exoneracionDetalle',compact('ExoneracionAnterior'));
     }
 

@@ -19,6 +19,9 @@ return new class extends Migration
             $table->string('cod_liquidacion');
             $table->decimal('valor');
             $table->decimal('valor_anterior');
+            $table->decimal('impuesto_predial_anterior');
+            $table->decimal('impuesto_predial_actual');
+            $table->json('det_liquidacion')->nullable();
             $table->unsignedInteger('exoneracion_id');
             $table->foreign('exoneracion_id')->references('id')->on('exoneracion_anteriors');
             $table->timestamps();

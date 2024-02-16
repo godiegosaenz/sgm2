@@ -41,29 +41,84 @@
                 </table>
                 {{$ExoneracionAnterior->ruta_archivo}}
             </div>
-            <div class="col-10">
-                <table class="table table-sm table-bordered table-hover">
-                    <tr style="background-color: #BCDCF9">
-                        <th colspan="6" style="text-align: center">Detalle de liquidaciones afectadas</th>
-                    </tr>
-                    <tr>
-                        <th>Id</th>
-                        <th>Liquidaciones</th>
-                        <th>Valor</th>
-                        <th>Valor anterior</th>
-                        <th>fecha</th>
-                    </tr>
+            <div class="col-5">
+
                     @foreach ($ExoneracionAnterior->exoneracion_detalle as $ed)
+                    <table class="table table-sm table-bordered table-hover">
+                        <tr style="background-color: #BCDCF9">
+                            <th colspan="6" style="text-align: center">Detalle liquidacion anterior</th>
+                        </tr>
+                        <tr>
+                            <th>Id</th>
+                            <th>Liquidaciones</th>
+
+                            <th>fecha</th>
+                            <th>Total</th>
+                        </tr>
                         <tr>
                             <td>{{$ed->liquidacion_id}}</td>
                             <td>{{$ed->cod_liquidacion}}</td>
-                            <td>{{$ed->valor}}</td>
-                            <td>{{$ed->valor_anterior}}</td>
-                            <td>{{$ed->created_at}}</td>
-                        </tr>
-                    @endforeach
-                </table>
 
+                            <td>{{$ed->created_at}}</td>
+                            <td>{{$ed->valor_anterior}}</td>
+                        </tr>
+                        <tr>
+                            <th colspan="3">Rubros</th>
+                            <th>Valor</th>
+                        </tr>
+                           @foreach ($ed->detalle_liquidacion as $detalle)
+                            <tr>
+                                <td colspan="3">{{$detalle->descripcion}}</td>
+                                <td>{{$detalle->valor}}</td>
+                            </tr>
+                           @endforeach
+                           <tr>
+                            <th colspan="3">Total</th>
+                            <th>{{$ed->valor_anterior}}</th>
+                            </tr>
+                    </table>
+                    @endforeach
+            </div>
+            <div class="col-5">
+
+                    @foreach ($ExoneracionAnterior->exoneracion_detalle as $ed)
+                    <table class="table table-sm table-bordered table-hover">
+                        <tr style="background-color: #BCDCF9">
+                            <th colspan="6" style="text-align: center">Detalle liquidacion afectada</th>
+                        </tr>
+                        <tr>
+                            <th>Id</th>
+                            <th>Liquidaciones</th>
+                            <th>fecha</th>
+                            <th>Total</th>
+
+                        </tr>
+                        <tr>
+                            <td>{{$ed->liquidacion_id}}</td>
+                            <td>{{$ed->cod_liquidacion}}</td>
+                            <td>{{$ed->created_at}}</td>
+                            <td>{{$ed->valor}}</td>
+                        </tr>
+                        <tr>
+                            <th colspan="3">Rubros</th>
+                            <th>Valor</th>
+                        </tr>
+                           @foreach ($ed->detalle_liquidacion as $detalle)
+                            <tr>
+                                <td colspan="3">{{$detalle->descripcion}}</td>
+                                @if($detalle->rubro == 2)
+                                <td colspan="3">{{$ed->impuesto_predial_actual}}</td>
+                                @else
+                                <td>{{$detalle->valor}}</td>
+                                @endif
+                            </tr>
+                           @endforeach
+                           <tr>
+                            <th colspan="3">Total</th>
+                            <th>{{$ed->valor}}</th>
+                            </tr>
+                    </table>
+                    @endforeach
             </div>
             <div class="col-10">
                 <a class="btn btn-secondary" href="{{route('imprimir.reporte.exoneracion',$ExoneracionAnterior->id)}}" target="_blank" rel="noopener noreferrer"><i class="bi bi-filetype-pdf"></i> Imprimir</a>

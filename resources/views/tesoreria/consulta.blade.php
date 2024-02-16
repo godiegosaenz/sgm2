@@ -114,8 +114,9 @@
                         <div class="mb-3">
                             <label for="tipo">* Tipo de exoneración : </label>
                             <select id="tipo" name="tipo" class="form-select" aria-label="Default select example" disabled>
-                                <option value="tercera_edad">Tercera edad</option>
-                                <option value="discapacidad">Discapacidad</option>
+                                <option value="tercera_edad">Exoneracion Tercera Edad</option>
+                                <option value="tercera_edad_50">Exoneracion Tercera Edad 50%</option>
+                                <option value="discapacidad">Exoneracion Discapacidad</option>
                             </select>
                         </div>
                         <div class="mb-3">
