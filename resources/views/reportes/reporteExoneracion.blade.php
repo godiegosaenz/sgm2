@@ -1,20 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Generacion de recibo</title>
-    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/bootstrap-icons.css') }}" rel="stylesheet">
-    <link href="{{ asset('font/font.css') }}" rel="stylesheet">
+    <title>INFORME</title>
+
 </head>
 <body>
-    <div class="row justify-content-center align-items-center">
-        <div class="col-12">
+    <div class="">
+        <div class="">
             <img src="{{ asset('img/cabecera_tesoreria.png') }}" alt="" width="100%" >
         </div>
     </div>
     <br>
-    <div class="row justify-content-center align-items-center" style="font-family: Arial, Helvetica, sans-serif;">
-        <div class="col-12">
+    <div class="" style="font-family: Arial, Helvetica, sans-serif;">
+        <div class="">
             @if($ExoneracionAnterior->tipo == 'tercera_edad')
                 <h3>INFORME DE EXONERACIÓN DE TERCERA EDAD</h3>
             @else

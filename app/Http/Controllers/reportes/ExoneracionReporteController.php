@@ -4,7 +4,7 @@ namespace App\Http\Controllers\reportes;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use PDF;
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\ExoneracionAnterior;
 
 class ExoneracionReporteController extends Controller
