@@ -10,9 +10,9 @@ use App\Models\ExoneracionDetalleLiquidacion;
 use Illuminate\Support\Facades\Validator;
 use Datatables;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Http\File;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
+
+
+use Illuminate\Support\Str;
 
 use Exception;
 
@@ -52,11 +52,17 @@ class TesoreriaController extends Controller
     {
         //DB::beginTransaction();
         try {
+            $attributes = [
+                'num_resolucion' => 'Codigo de resolución',
+                'ruta_resolucion' => 'Archivo',
+                'observacion' => 'Observacion',
+                'tipo' => 'Tipo de exoneracion',
+            ];
             $messages = [
                 'num_resolucion.required' => 'El campo Codigo de resolucion es requerido.',
                 'ruta_resolucion.required' => 'El campo cargar resolucion es requerido.',
                 'unique' => 'El numero de cedula ingresado ya existe',
-                'size' => 'El campo :attribute debe tener exactamente :size caracteres',
+                'size' => 'El campo :attribute debe tener menos :size',
                 'max' => 'El campo :attribute no debe exceder los :max kb',
                 'mimes' => 'El campo :attribute debe ser pdf',
             ];
@@ -68,11 +74,25 @@ class TesoreriaController extends Controller
                 'tipo' => 'required',
             ];
 
-            $validator = Validator::make($r->all(),$reglas,$messages);
+            $validator = Validator::make($r->all(),$reglas,$messages,$attributes);
+
+            foreach($r->checkLiquidacion as $clave => $valor){
+                $liquidacion = DB::connection('pgsql')
+                                                ->table('sgm_financiero.ren_liquidacion')
+                                                ->join('sgm_app.cat_predio', 'sgm_financiero.ren_liquidacion.predio', '=', 'sgm_app.cat_predio.id')
+                                                ->where('sgm_financiero.ren_liquidacion.id','=',$valor)
+                                                ->count();
+                if($liquidacion == 1){
+                    $validator->errors()->add(
+                        'num_resolucion', 'Una de las liquidaciones seleccionadas ya tiene aplicada exoneracion de años anteriores'
+                    );
+                    return response()->json(['estado' => 'error','errors'=>$validator->errors()],419);
+                }
+            }
 
             if ($validator->fails()) {
 
-                return response()->json(['estado' => 'error','errors'=>$validator->errors()]);
+                return response()->json(['estado' => 'error','errors'=>$validator->errors()],419);
             }
 
             $archivo_exoneracion = $r->file('ruta_resolucion')->store('exoneracion');
@@ -238,8 +258,8 @@ class TesoreriaController extends Controller
         return Datatables($ExoneracionAnterior)
                 ->addColumn('action', function ($ExoneracionAnterior) {
                     $botonesCita = '';
-                    $botonesCita .= '<a href="'.route('detalle.exoneracion',$ExoneracionAnterior->id).'" class="btn btn-primary btn-sm"><i class="bi bi-eye"></i> Ver</a> ';
-                    $botonesCita .= '<a target="_blank" href="'.route('imprimir.reporte.exoneracion',$ExoneracionAnterior->id).'" class="btn btn-secondary btn-sm"><i class="bi bi-x-circle-fill"></i> Reporte</a>';
+                    $botonesCita .= '<a href="'.route('detalle.exoneracion',$ExoneracionAnterior->id).'" class="btn btn-primary btn-sm"><i class="bi bi-eye"></i></a> ';
+                    $botonesCita .= '<a target="_blank" href="'.route('imprimir.reporte.exoneracion',$ExoneracionAnterior->id).'" class="btn btn-secondary btn-sm"><i class="bi bi-filetype-pdf"></i></a>';
 
                     return $botonesCita;
                 })
@@ -275,6 +295,24 @@ class TesoreriaController extends Controller
 
     public function download($id){
         $ExoneracionAnterior = ExoneracionAnterior::find($id);
-        return Storage::download($ExoneracionAnterior->ruta_resolucion);
+        /*$file = Storage::disk('public')->get('y8sxSozFXd1vmWrfxw7Vlsg5ENpLY7D1RnNBG1ex.pdf');
+        $header = [
+        'Content-Type' => 'pdf'
+        ];*/
+        $path = $ExoneracionAnterior->ruta_resolucion;
+
+            //Name of the file the user will see
+        $slug = Str::slug($ExoneracionAnterior->num_resolucion).'.pdf';
+
+            $headers = [
+                'Content-Type' => 'application/pdf',
+            ];
+
+            return Storage::download($path, $slug, $headers);
+
+        //return  response()->download('app/'.$ExoneracionAnterior->ruta_resolucion);
+        //$fileSize = \File::size(public_path('image/house2.jpeg'));
+        //return Storage::download($ExoneracionAnterior->ruta_resolucion,'holamundo',$header);
+        //dd(Storage::url('exoneracion/y8sxSozFXd1vmWrfxw7Vlsg5ENpLY7D1RnNBG1ex.pdf'));
     }
 }

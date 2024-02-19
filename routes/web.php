@@ -26,7 +26,8 @@ use App\Http\Controllers\enlinea\ConsultaLineaController;
 Route::get('/login', function () {
     return view('auth.login');
 })->name('login')->middleware('guest');
-Route::get('/', [ConsultaPredioController::class, 'index'])->name('welcome');
+Route::redirect('/', '/login');
+//Route::get('/', [ConsultaPredioController::class, 'index'])->name('welcome');
 Route::get('/consulta', [ConsultaPredioController::class, 'index'])->name('welcome');
 
 Route::get('consultar/deudas', [ConsultaLineaController::class, 'index'])->name('deudas.consultar')->middleware('guest');

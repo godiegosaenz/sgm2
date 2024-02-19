@@ -322,8 +322,20 @@
             }
 
             if(err.response.status == 419){
-                //toastr.error('Es posible que tu session haya caducado, vuelve a iniciar sesion');
-                console.log('Es posible que tu session haya caducado, vuelve a iniciar sesion');
+                alerMensajesExoneracion.setAttribute('style','');
+                alerMensajesExoneracion.setAttribute('class','alert alert-warning');
+
+                cambiarAtributoButtonAplicar();
+                var array_errors = err.response.data.errors;
+                var countErrors = Object.keys(array_errors).length;
+                var tablehtmlErrors = '';
+                if(countErrors > 0){
+                    for (let clave2 in array_errors){
+                        tablehtmlErrors = array_errors[clave2][0];
+                    }
+                }
+                alerMensajesExoneracion.innerHTML = tablehtmlErrors;
+
             }
             if(err.response.status == 422){
                 toastr.error('Revise la validacion del archivo');

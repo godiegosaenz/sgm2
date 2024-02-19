@@ -23,7 +23,7 @@
                             <th scope="col">Acciones</th>
                             <th scope="col">Matricula</th>
                             <th scope="col">Resolucion</th>
-                            <th scope="col">usuario</th>
+                            <th scope="col">Tipo de exoneracion</th>
                             <th scope="col">fecha</th>
                             <th scope="col">Observacion</th>
                             </tr>
@@ -70,7 +70,7 @@
                 {width: '',data: 'action', name: 'action', orderable: false, searchable: false},
                 {width: '',data: 'num_predio'},
                 {width: '',data: 'num_resolucion'},
-                {width: '',data: 'usuario'},
+                {width: '',data: 'tipo'},
                 {width: '',data: 'created_at'},
                 {width: '',data: 'observacion'},
 

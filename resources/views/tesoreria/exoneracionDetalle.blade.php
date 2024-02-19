@@ -69,7 +69,11 @@
                            @foreach ($ed->detalle_liquidacion as $detalle)
                             <tr>
                                 <td colspan="3">{{$detalle->descripcion}}</td>
+                                @if($detalle->rubro == 2)
+                                <td colspan="3">{{$ed->impuesto_predial_anterior}}</td>
+                                @else
                                 <td>{{$detalle->valor}}</td>
+                                @endif
                             </tr>
                            @endforeach
                            <tr>
