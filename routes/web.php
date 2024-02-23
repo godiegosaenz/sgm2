@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\ConsultaPredioController;
 use App\Http\Controllers\TesoreriaController;
+use App\Http\Controllers\RemisionInteresController;
 use App\Http\Controllers\ExoneracionRuralController;
 use App\Http\Controllers\paciente\ListarPacienteController;
 use App\Http\Controllers\paciente\PacienteController;
@@ -63,5 +64,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('exoneracion/rural', [ExoneracionRuralController::class, 'create'])->name('rural.exoneracion');
     Route::post('exoneracion/rural/consulta', [ExoneracionRuralController::class, 'consulta'])->name('consulta.rural.exoneracion');
 
+    Route::get('remision', [RemisionInteresController::class, 'create'])->name('create.remision');
+    Route::post('remision', [RemisionInteresController::class, 'store'])->name('store.remision');
+    Route::patch('remision/{id}', [RemisionInteresController::class, 'update'])->name('update.remision');
+    Route::post('remision/datatables', [RemisionInteresController::class, 'datatables'])->name('datatables.remision');
+    Route::get('remision/lista', [RemisionInteresController::class, 'index'])->name('index.remision');
+    Route::get('remision/detalle/{id}', [RemisionInteresController::class, 'show'])->name('show.remision');
+    Route::get('remision/consulta/liquidacion', [RemisionInteresController::class, 'consultaLiquidacionConRemision'])->name('consulta.liquidacion.remision');
+    Route::post('remision/consulta/liquidacion', [RemisionInteresController::class, 'storeConsultaLiquiadacionesConRemision'])->name('store.liquidacion.remision');
 });
 

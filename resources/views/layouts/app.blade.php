@@ -70,8 +70,18 @@
                                 Lista exoneracion
                             </a>
                         </li>
+                        <li>
+                            <a class="dropdown-item" href="{{ route('create.remision') }}">
+                                Remisión de interes
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{{ route('index.remision') }}">
+                                Lista de remisiones
+                            </a>
+                        </li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#">Reportes</a></li>
+                        <li><a class="dropdown-item" href="{{ route('consulta.liquidacion.remision')}}">Reportes</a></li>
                     </ul>
                   </li>
 
