@@ -51,7 +51,7 @@
                         </tr>
                         <tr>
                             <td><i class="fa fa-user"></i> Documento adjunto :</td>
-                            <td><a href="{{route('descargar.exoneracion',$RemisionInteres->id)}}" target="_blank" rel="noopener noreferrer">{{$RemisionInteres->num_resolucion}}</a></td>
+                            <td><a href="{{route('descargar.remision',$RemisionInteres->id)}}" target="_blank" rel="noopener noreferrer">{{$RemisionInteres->num_resolucion}}</a></td>
                             <td><i class="fa fa-user"></i> Fecha de creacion :</td>
                             <td>{{$RemisionInteres->created_at}}</td>
                         </tr>

@@ -10,7 +10,9 @@ use App\Http\Controllers\paciente\ListarPacienteController;
 use App\Http\Controllers\paciente\PacienteController;
 use App\Http\Controllers\paciente\DetallarPacienteController;
 use App\Http\Controllers\configuracion\CantonController;
+use App\Http\Controllers\configuracion\UsuarioController;
 use App\Http\Controllers\reportes\ExoneracionReporteController;
+use App\Http\Controllers\reportes\LiquidacionReporteController;
 use App\Http\Controllers\enlinea\ConsultaLineaController;
 
 /*
@@ -32,6 +34,9 @@ Route::redirect('/', '/login');
 Route::get('/consulta', [ConsultaPredioController::class, 'index'])->name('welcome');
 Route::get('/consultapruebaame', function (){
     return DB::connection('sqlsrv')->select('select * from TITULOS_PREDIO where Pre_CodigoCatastral = "132250510101022000"');
+});
+Route::get('/reporteprueba', function (){
+    return view('reportes.reporteDePrueba');
 });
 
 
@@ -76,5 +81,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('remision/detalle/{id}', [RemisionInteresController::class, 'show'])->name('show.remision');
     Route::get('remision/consulta/liquidacion', [RemisionInteresController::class, 'consultaLiquidacionConRemision'])->name('consulta.liquidacion.remision');
     Route::post('remision/consulta/liquidacion', [RemisionInteresController::class, 'storeConsultaLiquiadacionesConRemision'])->name('store.liquidacion.remision');
+    Route::get('remision/descargar/resolucion/{id}', [RemisionInteresController::class, 'download'])->name('descargar.remision');
+
+    Route::get('liquidacion/imprimir/{id}', [LiquidacionReporteController::class, 'reporteRemision'])->name('imprimir.reporte.liquidacion');
+
+    Route::get('usuario', [UsuarioController::class, 'create'])->name('create.usuario');
+    Route::post('usuario/datatables', [UsuarioController::class, 'datatables'])->name('datatable.usuario');
+    Route::get('usuario/lista', [UsuarioController::class, 'index'])->name('lista.usuario');
 });
 

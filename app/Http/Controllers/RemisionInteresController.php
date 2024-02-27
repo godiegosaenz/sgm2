@@ -10,6 +10,8 @@ use App\Models\RemisionInteres;
 use App\Models\RemisionLiquidacion;
 use Exception;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class RemisionInteresController extends Controller
 {
@@ -353,6 +355,29 @@ class RemisionInteresController extends Controller
 
         }
 
+    }
+
+    public function download($id){
+        $RemisionInteres = RemisionInteres::find($id);
+        /*$file = Storage::disk('public')->get('y8sxSozFXd1vmWrfxw7Vlsg5ENpLY7D1RnNBG1ex.pdf');
+        $header = [
+        'Content-Type' => 'pdf'
+        ];*/
+        $path = $RemisionInteres->ruta_resolucion;
+
+            //Name of the file the user will see
+        $slug = Str::slug($RemisionInteres->num_resolucion).'.pdf';
+
+            $headers = [
+                'Content-Type' => 'application/pdf',
+            ];
+
+            return Storage::download($path, $slug, $headers);
+
+        //return  response()->download('app/'.$ExoneracionAnterior->ruta_resolucion);
+        //$fileSize = \File::size(public_path('image/house2.jpeg'));
+        //return Storage::download($ExoneracionAnterior->ruta_resolucion,'holamundo',$header);
+        //dd(Storage::url('exoneracion/y8sxSozFXd1vmWrfxw7Vlsg5ENpLY7D1RnNBG1ex.pdf'));
     }
 
 }

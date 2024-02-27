@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Lista de remisiones')
+@section('title', 'Crear usuario')
 @push('styles')
 @endpush
 @section('content')
@@ -7,25 +7,21 @@
         <div class="row">
             <div class="col-12">
                 <div class="col-md-12">
-                    <h2 class="text-center">Lista de remisiones de interes</h2>
+                    <h2 class="text-center">Usuarios</h2>
                 </div>
             </div>
         </div>
-
-        <br>
         <div class="row">
             <div class="col-md-12">
                 @csrf
                 <div class="table-responsive">
-                    <table class="table table-bordered" id="tableExoneracion" style="width: 100%">
+                    <table class="table table-bordered" id="tableUsuarios" style="width: 100%">
                         <thead>
                             <tr>
                             <th scope="col">Acciones</th>
-                            <th scope="col">Matricula</th>
-                            <th scope="col">Resolucion</th>
+                            <th>nombres</th>
+                            <th scope="col">Correo</th>
                             <th scope="col">Estado</th>
-                            <th scope="col">fecha</th>
-                            <th scope="col">Observacion</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -48,7 +44,7 @@
 <script>
 
     $(document).ready(function(){
-        tableExoneracion = $("#tableExoneracion").DataTable({
+        tableCita = $("#tableUsuarios").DataTable({
             "lengthMenu": [ 5, 10],
             "language" : {
                 "url": '{{ asset("/js/spanish.json") }}',
@@ -59,7 +55,7 @@
             "processing" : true,
             "serverSide": true,
             "ajax": {
-                "url": '{{ url("/remision/datatables") }}',
+                "url": '{{ url("/usuario/datatables") }}',
                 "type": "post",
                 "data": function (d){
                     d._token = $("input[name=_token]").val();
@@ -68,11 +64,9 @@
             //"columnDefs": [{ targets: [3], "orderable": false}],
             "columns": [
                 {width: '',data: 'action', name: 'action', orderable: false, searchable: false},
-                {width: '',data: 'num_predio'},
-                {width: '',data: 'num_resolucion'},
-                {width: '',data: 'estado'},
+                {width: '',data: 'name'},
+                {width: '',data: 'email'},
                 {width: '',data: 'created_at'},
-                {width: '',data: 'observacion'},
 
             ],
             "fixedColumns" : true

@@ -24,7 +24,7 @@
                 <div class="col-3">
                     <div class="mb-3">
                         <label for="inputMatricula">* Matricula inmobiliaria : </label>
-                        <input type="number" class="form-control {{$errors->has('inputMatricula') ? 'is-invalid' : ''}}" id="inputMatricula" name="inputMatricula" value="" autofocus required>
+                        <input type="number" class="form-control {{$errors->has('inputMatricula') ? 'is-invalid' : ''}}" id="inputMatricula" name="inputMatricula" value="{{old('inputMatricula')}}" autofocus required>
                         <div class="invalid-feedback">
                             @if($errors->has('inputMatricula'))
                                 {{$errors->first('inputMatricula')}}
@@ -39,12 +39,17 @@
                             <span id="spanConsulta" class="bi bi-search" role="status" aria-hidden="true"></span>
                             Consultar
                         </button>
+        </form>
+                        <a id="reporteLiquidacion" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">
+                            <i class="bi bi-filetype-pdf"></i>
+                            Imprimir
+                        </a>
                     </div>
                 </div>
 
             </div>
 
-        </form>
+
 
         <div class="row mt-3">
 
@@ -111,5 +116,17 @@
 
 @endsection
 @push('scripts')
+<script>
+    let inputMatricula = document.getElementById('inputMatricula');
+    const reporteLiquidacion = document.getElementById('reporteLiquidacion');
 
+    reporteLiquidacion.addEventListener('click', (e) => {
+        if(inputMatricula.value != ''){
+            let url = '{{ url("liquidacion/imprimir/")}}';
+            reporteLiquidacion.setAttribute("href", url+'/'+inputMatricula.value);
+        }else{
+            return false;
+        }
+    });
+</script>
 @endpush

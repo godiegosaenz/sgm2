@@ -81,10 +81,27 @@
                             </a>
                         </li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="{{ route('consulta.liquidacion.remision')}}">Reportes</a></li>
+                        <li><a class="dropdown-item" href="{{ route('consulta.liquidacion.remision')}}">Reporte Liquidaciones</a></li>
                     </ul>
                   </li>
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Configuraciones
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li>
+                            <a class="dropdown-item" href="{{route('lista.usuario')}}">
+                                Lista de usuarios
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{{ route('create.usuario') }}">
+                                Crear usuario
+                            </a>
+                        </li>
 
+                    </ul>
+                  </li>
                   <li class="nav-item dropdown me-auto">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                       Bienvenido {{auth()->user()->name}}
