@@ -76,7 +76,7 @@ class TesoreriaController extends Controller
 
             $validator = Validator::make($r->all(),$reglas,$messages,$attributes);
 
-            foreach($r->checkLiquidacion as $clave => $valor){
+            /*foreach($r->checkLiquidacion as $clave => $valor){
                 $liquidacion = DB::connection('pgsql')
                                                 ->table('sgm_financiero.ren_liquidacion')
                                                 ->join('sgm_app.cat_predio', 'sgm_financiero.ren_liquidacion.predio', '=', 'sgm_app.cat_predio.id')
@@ -88,7 +88,7 @@ class TesoreriaController extends Controller
                     );
                     return response()->json(['estado' => 'error','errors'=>$validator->errors()],419);
                 }
-            }
+            }*/
 
             if ($validator->fails()) {
 
