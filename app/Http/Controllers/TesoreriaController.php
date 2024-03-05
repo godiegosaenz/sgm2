@@ -94,8 +94,14 @@ class TesoreriaController extends Controller
 
                 return response()->json(['estado' => 'error','errors'=>$validator->errors()],419);
             }
-
-            $archivo_exoneracion = $r->file('ruta_resolucion')->store('exoneracion');
+            $liquidacion = DB::connection('pgsql')
+                                                ->table('sgm_financiero.ren_liquidacion')
+                                                ->join('sgm_app.cat_predio', 'sgm_financiero.ren_liquidacion.predio', '=', 'sgm_app.cat_predio.id')
+                                                ->select('sgm_financiero.ren_liquidacion.id','sgm_financiero.ren_liquidacion.id_liquidacion','sgm_financiero.ren_liquidacion.total_pago','sgm_financiero.ren_liquidacion.estado_liquidacion','sgm_financiero.ren_liquidacion.predio','sgm_financiero.ren_liquidacion.anio','sgm_financiero.ren_liquidacion.nombre_comprador','sgm_app.cat_predio.clave_cat')
+                                                ->where('sgm_financiero.ren_liquidacion.id','=',$valor)
+                                                ->get();
+            dd($liquidacion)
+            /*$archivo_exoneracion = $r->file('ruta_resolucion')->store('exoneracion');
 
             $ExoneracionAnterior = new ExoneracionAnterior();
             $ExoneracionAnterior->num_predio = $r->num_predio;
@@ -193,7 +199,7 @@ class TesoreriaController extends Controller
 
                 }
 
-            }
+            }*/
             //DB::commit();
             return response()->json(['estado' => 'ok','success'=>'La aplicacion de la exoneracion de años anteriores se aplicó con exito']);
         } catch (Exception $e) {
