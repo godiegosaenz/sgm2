@@ -29,7 +29,18 @@
                             </tr>
                         </thead>
                         <tbody>
-
+                            @isset($RemisionInteres)
+                                @foreach ($RemisionInteres as $item)
+                                    <tr>
+                                        <td><a href="{{route('show.remision',$item->id)}}" class="btn btn-primary btn-sm"><i class="bi bi-eye"></i></a></td>
+                                        <td>{{$item->num_predio}}</td>
+                                        <td>{{$item->num_resolucion}}</td>
+                                        <td>{{$item->estado}}</td>
+                                        <td>{{$item->created_at}}</td>
+                                        <td>{{$item->observacion}}</td>
+                                    </tr>
+                                @endforeach
+                            @endisset
                         </tbody>
                     </table>
                 </div>
@@ -46,7 +57,7 @@
  <script src="//cdn.datatables.net/rowreorder/1.2.8/js/dataTables.rowReorder.min.js"></script>
 
 <script>
-
+/*
     $(document).ready(function(){
         tableExoneracion = $("#tableExoneracion").DataTable({
             "lengthMenu": [ 5, 10],
@@ -77,6 +88,6 @@
             ],
             "fixedColumns" : true
         });
-    });
+    });*/
 </script>
 @endpush

@@ -20,7 +20,8 @@ class RemisionInteresController extends Controller
      */
     public function index()
     {
-        return view('tesoreria.remisionInteresLista');
+        $RemisionInteres = RemisionInteres::all();
+        return view('tesoreria.remisionInteresLista', compact('RemisionInteres'));
     }
 
     /**
