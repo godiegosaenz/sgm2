@@ -11,8 +11,8 @@
                 </h2>
             </div>
         </div>
-        <div class="row">
-            <div class="col-12">
+        <div class="row justify-content-md-center mt-3">
+            <div class="col-10">
                 @session('success')
                 <div class="alert alert-info" role="alert">
                         {{ $value }}
@@ -20,9 +20,11 @@
                 @endsession
             </div>
             @if($RemisionInteres->estado == 'creado')
+            <div class="col-10">
                 <div class="alert alert-info" role="alert">
                     Antes de aplicar la remision debe realizar el cobro en el sistema de gestion municipal
                 </div>
+            </div>
             @endif
         </div>
         <div class="row justify-content-md-center mt-3">

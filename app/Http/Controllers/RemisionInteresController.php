@@ -20,7 +20,7 @@ class RemisionInteresController extends Controller
      */
     public function index()
     {
-        $RemisionInteres = RemisionInteres::all();
+        $RemisionInteres = RemisionInteres::orderBy('id', 'desc')->get();
         return view('tesoreria.remisionInteresLista', compact('RemisionInteres'));
     }
 
@@ -29,7 +29,32 @@ class RemisionInteresController extends Controller
      */
     public function create()
     {
-        return view('tesoreria.remisionInteres');
+        $num_predio = 0;
+        return view('tesoreria.remisionInteresNuevo',compact('num_predio'));
+    }
+
+    public function consulta(Request $r)
+    {
+
+        $data = array();
+        $predio_id = DB::connection('pgsql')->table('sgm_app.cat_predio')->select('id')->where('num_predio', '=', $r->num_predio)->first();
+        //se obtiene las liquidaciones urbanas
+        $num_predio = $r->num_predio;
+
+
+        $liquidacionUrbana = DB::connection('pgsql')->table('sgm_financiero.ren_liquidacion')
+                                        ->join('sgm_app.cat_predio', 'sgm_financiero.ren_liquidacion.predio', '=', 'sgm_app.cat_predio.id')
+                                        ->leftJoin('sgm_app.cat_ente', 'sgm_financiero.ren_liquidacion.comprador', '=', 'sgm_app.cat_ente.id')
+                                        ->select('sgm_financiero.ren_liquidacion.id','sgm_financiero.ren_liquidacion.id_liquidacion','sgm_financiero.ren_liquidacion.total_pago','sgm_financiero.ren_liquidacion.estado_liquidacion','sgm_financiero.ren_liquidacion.predio','sgm_financiero.ren_liquidacion.anio','sgm_financiero.ren_liquidacion.nombre_comprador','sgm_app.cat_predio.clave_cat','sgm_app.cat_ente.nombres','sgm_app.cat_ente.apellidos')
+                                        ->where('predio','=',$predio_id->id)
+                                        ->whereNot(function($query){
+                                            $query->where('estado_liquidacion', 4)
+                                            ->orWhere('estado_liquidacion', '=', 5);
+                                        })
+                                        ->orderBy('anio', 'desc')
+                                        ->get();
+
+        return view('tesoreria.remisionInteresNuevo',compact('liquidacionUrbana','num_predio'));
     }
 
     /**
@@ -38,7 +63,7 @@ class RemisionInteresController extends Controller
     public function store(Request $r)
     {
          //DB::beginTransaction();
-         try {
+         //try {
             $attributes = [
                 'num_resolucion' => 'Codigo de resolución',
                 'ruta_resolucion' => 'Archivo',
@@ -85,7 +110,7 @@ class RemisionInteresController extends Controller
             $archivo_exoneracion = $r->file('ruta_resolucion')->store('remision');
 
             $RemisionInteres = new RemisionInteres();
-            $RemisionInteres->num_predio = $r->num_predio;
+            $RemisionInteres->num_predio = $r->inputMatricula;
             $RemisionInteres->num_resolucion = $r->num_resolucion;
             $RemisionInteres->observacion = $r->observacion;
             $RemisionInteres->ruta_resolucion = $archivo_exoneracion;
@@ -133,14 +158,15 @@ class RemisionInteresController extends Controller
                 }
 
             }
+            return redirect()->route('show.remision', ['id' => $RemisionInteres->id]);
             //DB::commit();
-            return response()->json(['estado' => 'ok','success'=>'La remision ha sido creada, realice el pago para luego aplicarla']);
-        } catch (Exception $e) {
+            //return response()->json(['estado' => 'ok','success'=>'La remision ha sido creada, realice el pago para luego aplicarla']);
+        //} catch (Exception $e) {
             //DB::rollback();
             // if an exception happened in the try block above
             // $ExoneracionAnterior->delete();
-            return response()->json(['estado' => 'error','success'=>'¡Importante! . La aplicacion presento un error de conexion, intente mas tarde'.$e,'msj' => $e],500);
-        }
+            //return response()->json(['estado' => 'error','success'=>'¡Importante! . La aplicacion presento un error de conexion, intente mas tarde'.$e,'msj' => $e],500);
+        //}
 
     }
 

@@ -25,6 +25,8 @@
                             <th scope="col">Resolucion</th>
                             <th scope="col">Estado</th>
                             <th scope="col">fecha</th>
+                            <th scope="col">Interes</th>
+                            <th scope="col">Total</th>
                             <th scope="col">Observacion</th>
                             </tr>
                         </thead>
@@ -35,8 +37,14 @@
                                         <td><a href="{{route('show.remision',$item->id)}}" class="btn btn-primary btn-sm"><i class="bi bi-eye"></i></a></td>
                                         <td>{{$item->num_predio}}</td>
                                         <td>{{$item->num_resolucion}}</td>
-                                        <td>{{$item->estado}}</td>
+                                        @if ($item->estado == 'creado')
+                                        <td><span class="badge bg-primary">Creado</span></td>
+                                        @else
+                                        <td><span class="badge bg-success">Aplicado</span></td>
+                                        @endif
                                         <td>{{$item->created_at}}</td>
+                                        <td>{{$item->valorInteres}}</td>
+                                        <td>{{$item->valorTotal}}</td>
                                         <td>{{$item->observacion}}</td>
                                     </tr>
                                 @endforeach
