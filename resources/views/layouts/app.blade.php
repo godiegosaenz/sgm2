@@ -80,6 +80,11 @@
                                 Lista de remisiones
                             </a>
                         </li>
+                        <li>
+                            <a class="dropdown-item" href="{{ route('index.titulocredito') }}">
+                                Titulos de creditos para coactiva
+                            </a>
+                        </li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="{{ route('consulta.liquidacion.remision')}}">Reporte Liquidaciones</a></li>
                     </ul>
