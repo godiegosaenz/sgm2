@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.appv2')
 @section('title', 'Tercera edad')
 @push('styles')
 @endpush

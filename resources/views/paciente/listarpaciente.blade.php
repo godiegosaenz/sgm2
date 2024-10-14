@@ -1,7 +1,7 @@
-@extends('layouts.app')
+@extends('layouts.appv2')
 @push('styles')
-<link rel="stylesheet" href="//cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css">
-<link rel="stylesheet" href="//cdn.datatables.net/rowreorder/1.2.8/css/rowReorder.bootstrap5.min.css">
+<link href="{{ asset('css/dataTables.bootstrap5.min.css') }}" rel="stylesheet">
+<link href="{{ asset('css/rowReorder.bootstrap5.min.css') }}" rel="stylesheet">
 @endpush
 @section('content')
     <div class="container-fluid">
@@ -39,11 +39,12 @@
 @endsection
 @push('scripts')
  <!-- jQuery -->
- <script src="//code.jquery.com/jquery-3.5.1.js"></script>
+ <script src="{{ asset('js/jquery-3.5.1.js') }}"></script>
  <!-- DataTables -->
- <script src="//cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
- <script src="//cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
- <script src="//cdn.datatables.net/rowreorder/1.2.8/js/dataTables.rowReorder.min.js"></script>
+
+ <script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
+ <script src="{{ asset('js/dataTables.bootstrap5.min.js') }}"></script>
+ <script src="{{ asset('js/dataTables.rowReorder.min.js') }}"></script>
 
 <script>
     $(document).ready(function(){

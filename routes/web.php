@@ -38,7 +38,8 @@ Route::get('/consultapruebaame', function (){
     return DB::connection('sqlsrv')->select('select * from TITULOS_PREDIO where Pre_CodigoCatastral = "132250510101022000"');
 });
 Route::get('/reporteprueba', function (){
-    return view('reportes.reporteDePrueba');
+    return view('layouts.appv2');
+    //return view('reportes.reporteDePrueba');
 });
 
 
@@ -90,6 +91,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('liquidacion/imprimir/{id}', [LiquidacionReporteController::class, 'reporteRemision'])->name('imprimir.reporte.liquidacion');
 
     Route::get('usuario', [UsuarioController::class, 'create'])->name('create.usuario');
+    Route::post('usuario', [UsuarioController::class, 'store'])->name('store.usuario');
     Route::post('usuario/datatables', [UsuarioController::class, 'datatables'])->name('datatable.usuario');
     Route::get('usuario/lista', [UsuarioController::class, 'index'])->name('lista.usuario');
 

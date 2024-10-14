@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.appv2')
 
 @section('content')
     <div class="container-fluid">
@@ -50,7 +50,7 @@
                                     <li class="list-group-item"><strong>Nombres : </strong></li>
                                     <li class="list-group-item"><strong>Apellidos : </strong></li>
                                     <li class="list-group-item"><strong>Fecha Nacimiento : </strong></li>
-                                    
+
                                 </ul>
                             </div>
                             <div class="col-md-4">
@@ -60,7 +60,7 @@
                                     <li class="list-group-item"><span>{{ $persona->nombres}}</span></li>
                                     <li class="list-group-item"><span>{{ $persona->apellidos}}</span></li>
                                     <li class="list-group-item"><span>{{ $persona->fechaNacimiento}}</span></li>
-                                    
+
                                 </ul>
                             </div>
                         </div>
@@ -76,7 +76,7 @@
                             </div>
                             <div class="col-md-8">
                                 <ul class="list-group list-group-flush">
-                                    <li class="list-group-item"><span>{{ $persona->estadoCivil}}</span></li>    
+                                    <li class="list-group-item"><span>{{ $persona->estadoCivil}}</span></li>
                                     <li class="list-group-item"><span>{{ $persona->created_at}}</span></li>
                                     <li class="list-group-item"><span>{{ $persona->ocupacion}}</span></li>
                                     <li class="list-group-item">
@@ -97,7 +97,7 @@
                                                 @endisset
                                         </span>
                                     </li>
-                                    
+
                                 </ul>
                             </div>
                         </div>

@@ -1,6 +1,8 @@
-@extends('layouts.app')
+@extends('layouts.appv2')
 @section('title', 'Crear usuario')
 @push('styles')
+<link href="{{ asset('css/dataTables.bootstrap5.min.css') }}" rel="stylesheet">
+<link href="{{ asset('css/rowReorder.bootstrap5.min.css') }}" rel="stylesheet">
 @endpush
 @section('content')
     <div class="container-fluid">
@@ -11,42 +13,78 @@
                 </div>
             </div>
         </div>
+        @if(@session('error'))
+                <div class="alert alert-danger">
+                    {{session('error')}}
+                </div>
+        @endif
+        @if(@session('success'))
+                <div class="alert alert-success">
+                    {{session('success')}}
+                </div>
+        @endif
 
-
-        <form action="/action_page.php">
+        <form action="{{route('store.usuario')}}" class="needs-validation" method="post" novalidate>
+            @csrf
             <div class="row justify-content-center">
                 <div class="col-5">
                     <div class="mb-3">
                         <label for="email" class="form-label">Correo:</label>
-                        <input type="email" class="form-control" id="email" placeholder="Enter email" name="email">
+                        <input type="email" class="form-control {{$errors->has('email') ? 'is-invalid' : ''}}" id="email" placeholder="Enter email" name="email" value="{{old('email')}}" required>
+                        <div class="invalid-feedback">
+                            @if($errors->has('email'))
+                                {{$errors->first('email')}}
+                            @endif
+                        </div>
                     </div>
                     <div class="mb-3">
-                        <label for="email" class="form-label">Email:</label>
-                        <input type="email" class="form-control" id="email" placeholder="Enter email" name="email">
+                        <label for="password" class="form-label">Contraseña:</label>
+                        <input type="password" class="form-control {{$errors->has('password') ? 'is-invalid' : ''}}" id="password" placeholder="Enter Contraseña" name="password" value="{{old('password')}}">
+                        <div class="invalid-feedback">
+                            @if($errors->has('password'))
+                                {{$errors->first('password')}}
+                            @endif
+                        </div>
                     </div>
                     <div class="mb-3">
-                        <label for="pwd" class="form-label">Password:</label>
-                        <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="pswd">
-                    </div>
-                    <div class="mb-3">
-                        <label for="pwd" class="form-label">Password:</label>
-                        <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="pswd">
+                        <label for="password_confirmation" class="form-label">Confirmacion de contraseña:</label>
+                        <input type="password" class="form-control {{$errors->has('password_confirmation') ? 'is-invalid' : ''}}" id="password_confirmation" placeholder="Enter password" name="password_confirmation" value="{{old('password_confirmation')}}">
+                        <div class="invalid-feedback">
+                            @if($errors->has('password_confirmation'))
+                                {{$errors->first('password_confirmation')}}
+                            @endif
+                        </div>
                     </div>
                 </div>
                 <div class="col-5">
                     <label class="mb-2" for="">Seleccione a una persona:</label>
                     <div class="input-group mb-3">
                         <button id="buttonBuscar" class="btn btn-outline-secondary" type="button" id="button-addon1">Buscar</button>
-                        <input id="inputCedulaPersona" type="text" class="form-control" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1" disabled>
-                    </div>
-                    <div class="mb-3">
-                        <label for="inputNombresPersona" class="form-label">Nombres :</label>
-                        <input type="text" class="form-control" id="inputNombresPersona" placeholder="Enter email" name="inputNombresPersona" disabled>
+                        <input id="inputNombresPersona" name="inputNombresPersona" type="text" class="form-control {{$errors->has('persona_id') ? 'is-invalid' : ''}}" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1" value="{{old('name')}}" disabled>
+                        <div class="invalid-feedback">
+                            @if($errors->has('persona_id'))
+                                {{$errors->first('persona_id')}}
+                            @endif
+                        </div>
                     </div>
                     <input type="hidden" name="persona_id" id="persona_id" value="{{old('persona_id')}}">
+                    <input type="hidden" name="name" id="name" value="{{old('name')}}">
+                    <div class="mb-3">
+                        <label for="status" class="form-label">Estado:</label>
+                        <select name="status" id="status" class="form-select mb-0 {{$errors->has('status') ? 'is-invalid' : ''}}" aria-label="Large select example">
+                            <option value="" selected>Seleccione estado</option>
+                            <option value="1" {{ old('status') == '1' ? 'selected' : '' }}>Activo</option>
+                            <option value="0" {{ old('status') == '0' ? 'selected' : '' }}>Inactivo</option>
+                        </select>
+                        <div class="invalid-feedback">
+                            @if($errors->has('status'))
+                                {{$errors->first('status')}}
+                            @endif
+                        </div>
+                    </div>
                 </div>
                 <div class="col-5">
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="submit" class="btn btn-primary">Registrar usuario</button>
                 </div>
 
             </div>
@@ -89,11 +127,12 @@
 @endsection
 @push('scripts')
 <!-- jQuery -->
-<script src="//code.jquery.com/jquery-3.5.1.js"></script>
+<script src="{{ asset('js/jquery-3.5.1.js') }}"></script>
 <!-- DataTables -->
-<script src="//cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-<script src="//cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
-<script src="//cdn.datatables.net/rowreorder/1.2.8/js/dataTables.rowReorder.min.js"></script>
+
+<script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('js/dataTables.bootstrap5.min.js') }}"></script>
+<script src="{{ asset('js/dataTables.rowReorder.min.js') }}"></script>
 <script>
     $(document).ready(function(){
         tablepersona = $("#tablepersona").DataTable({
@@ -137,11 +176,11 @@
     });
 
     function seleccionarpersona(id,cedula,nombres,apellidos){
-        var inputCedulaPersona = document.getElementById('inputCedulaPersona');
         var inputNombresPersona = document.getElementById('inputNombresPersona');
+        var name = document.getElementById('name');
         var persona_id = document.getElementById('persona_id');
-        inputCedulaPersona.value = cedula;
         inputNombresPersona.value = nombres+' '+apellidos;
+        name.value = nombres+' '+apellidos;
         persona_id.value = id;
         var modal = bootstrap.Modal.getInstance(modalPersona)
         modal.hide();

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
+use Exception;
 
 class UsuarioController extends Controller
 {
@@ -31,41 +32,47 @@ class UsuarioController extends Controller
      */
     public function store(Request $r)
     {
-        $messages = [
-            'required' => 'El campo :attribute es requerido.',
-            'unique' => 'El dato del campo :attribute ya existe',
-            'size' => 'El campo :attribute debe tener exactamente :size caracteres',
-            'max' => 'El campo :attribute no debe exceder los :max caracteres',
-            'confirmed' => 'El campo :attribute no coincide la contraseña'
-        ];
-        $reglas = [
-            'name' => 'bail|required|max:250',
-            'email' => 'bail|required|max:250|unique:users,email',
-            'idpersona' => 'bail|required|unique:users,idpersona',
-            'password' => 'bail|required|min:6|max:250|confirmed',
-            'password_confirmation' => 'bail|required|min:6|max:250'
-        ];
-        $validator = Validator::make($r->all(), $reglas,$messages);//->validate();
-        $validator->after(function ($validator) {
-            if($validator->errors()->has('idpersona')){
-                $validator->errors()->add('txtpersonanombre', 'Seleccione a una persona');
+        try {
+            $messages = [
+                'required' => 'El campo :attribute es requerido.',
+                'unique' => 'El dato del campo :attribute ya existe',
+                'size' => 'El campo :attribute debe tener exactamente :size caracteres',
+                'max' => 'El campo :attribute no debe exceder los :max caracteres',
+                'confirmed' => 'El campo :attribute no coincide la contraseña'
+            ];
+            $reglas = [
+                'name' => 'bail|required|max:250',
+                'email' => 'bail|required|max:250|unique:users,email',
+                'persona_id' => 'bail|required|unique:users,idpersona',
+                'password' => 'bail|required|min:6|max:250|confirmed',
+                'password_confirmation' => 'bail|required|min:6|max:250',
+                'status' => 'bail|required'
+            ];
+            $validator = Validator::make($r->all(), $reglas,$messages);//->validate();
+            $validator->after(function ($validator) {
+                if($validator->errors()->has('persona_id')){
+                    $validator->errors()->add('inputNombresPersona', 'Seleccione a una persona');
+                }
+            });
+
+
+            if ($validator->fails()) {
+                return redirect('/usuario')
+                            ->withErrors($validator)
+                            ->withInput();
             }
-        });
 
-
-        if ($validator->fails()) {
-            return redirect('/api/usuario/crear')
-                        ->withErrors($validator)
-                        ->withInput();
+            $u = new User;
+            $u->name = $r->name;
+            $u->email = $r->email;
+            $u->password = bcrypt($r->password);
+            $u->idpersona = $r->persona_id;
+            $u->status = $r->status;
+            $u->save();
+            return redirect()->route('create.usuario')->with('success', 'Se creo el usuario correctamente');
+        } catch (Exception $e) {
+            return redirect()->route('create.usuario')->with('error', 'Hubo un problema al crear el usuario');
         }
-
-        $u = new User;
-        $u->name = $r->name;
-        $u->email = $r->email;
-        $u->password = bcrypt($r->password);
-        $u->idpersona = $r->idpersona;
-        $u->save();
-        return redirect('/api/usuario/detallar/'.$u->id.'/persona/'.$r->idpersona);
     }
 
     /**
