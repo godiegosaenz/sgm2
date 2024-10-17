@@ -102,9 +102,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('tituloscoactiva/', [TituloCreditoCoactivaController::class, 'consulta'])->name('consulta.titulocredito');
     Route::post('tituloscoactiva/imprimir', [TituloCreditoCoactivaController::class, 'reporteTitulosCoactiva'])->name('reportecoactiva.titulos');
     Route::get('/pruebatitulo', function () {
-        $cedula = '1704597200';
-        return DB::connection('sqlsrv')->select('select * from CIUDADANO where name = ?', [$cedula]);
+        try {
+            DB::connection('sqlsrv')->getPdo();
+            return 'La conexión con la base de datos es exitosa.';
+        } catch (\Exception $e) {
+            return 'No se pudo conectar a la base de datos: ' . $e->getMessage();
+        }
     });
-    ##pruebaa
 });
 

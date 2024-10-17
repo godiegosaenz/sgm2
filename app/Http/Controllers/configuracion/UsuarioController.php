@@ -145,7 +145,7 @@ class UsuarioController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+
     }
 
     public function datatables(Request $r){
