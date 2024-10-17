@@ -92,6 +92,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('usuario', [UsuarioController::class, 'create'])->name('create.usuario');
     Route::post('usuario', [UsuarioController::class, 'store'])->name('store.usuario');
+    Route::get('usuario/{User}/edit', [UsuarioController::class, 'edit'])->name('edit.usuario');
+    Route::patch('usuario/{User}/edit', [UsuarioController::class, 'update'])->name('update.usuario');
     Route::post('usuario/datatables', [UsuarioController::class, 'datatables'])->name('datatable.usuario');
     Route::get('usuario/lista', [UsuarioController::class, 'index'])->name('lista.usuario');
 
@@ -100,19 +102,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('tituloscoactiva/', [TituloCreditoCoactivaController::class, 'consulta'])->name('consulta.titulocredito');
     Route::post('tituloscoactiva/imprimir', [TituloCreditoCoactivaController::class, 'reporteTitulosCoactiva'])->name('reportecoactiva.titulos');
     Route::get('/pruebatitulo', function () {
-        $predio_id = DB::connection('pgsql')->table('sgm_app.cat_predio')->select('id')->where('num_predio', '=', 545)->first();
-
-        return $liquidacionUrbana = DB::connection('pgsql')->table('sgm_financiero.ren_liquidacion')
-                                        ->join('sgm_app.cat_predio', 'sgm_financiero.ren_liquidacion.predio', '=', 'sgm_app.cat_predio.id')
-                                        ->leftJoin('sgm_app.cat_ente', 'sgm_financiero.ren_liquidacion.comprador', '=', 'sgm_app.cat_ente.id')
-                                        ->select('sgm_financiero.ren_liquidacion.id','sgm_financiero.ren_liquidacion.id_liquidacion','sgm_financiero.ren_liquidacion.total_pago','sgm_financiero.ren_liquidacion.estado_liquidacion','sgm_financiero.ren_liquidacion.predio','sgm_financiero.ren_liquidacion.anio','sgm_financiero.ren_liquidacion.nombre_comprador','sgm_app.cat_predio.clave_cat','sgm_app.cat_ente.nombres','sgm_app.cat_ente.apellidos')
-                                        ->where('predio','=',$predio_id->id)
-                                        ->whereNot(function($query){
-                                            $query->where('estado_liquidacion', 4)
-                                            ->orWhere('estado_liquidacion', '=', 5);
-                                        })
-                                        ->orderBy('anio', 'desc')
-                                        ->get();
+        $cedula = '1704597200';
+        return DB::connection('sqlsrv')->select('select * from CIUDADANO where name = ?', [$cedula]);
     });
+    ##pruebaa
 });
 
