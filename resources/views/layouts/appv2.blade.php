@@ -10,6 +10,7 @@
     <link href="{{ asset('css/bootstrap-icons.css') }}" rel="stylesheet">
     <script src="{{ asset('js/FontAwesomeKit.js') }}" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    @stack('styles')
 </head>
 
 <body>
@@ -77,7 +78,10 @@
                         </a>
                         <ul id="auth" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
                             <li class="sidebar-item">
-                                <a href="{{route('lista.usuario')}}" class="sidebar-link">Catastro Patentes</a>
+                                <a href="{{route('create.catastro')}}" class="sidebar-link">Registrar catastro patente</a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a href="{{route('create.patente')}}" class="sidebar-link">Crear Patente</a>
                             </li>
                         </ul>
                     </li>
@@ -92,6 +96,12 @@
                             </li>
                             <li class="sidebar-item">
                                 <a href="{{ route('create.usuario') }}" class="sidebar-link">Crear usuario</a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a href="{{ route('mostrar.persona') }}" class="sidebar-link">Lista de empleados</a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a href="{{ route('ingresar.persona') }}" class="sidebar-link">Crear empleado</a>
                             </li>
                         </ul>
                     </li>
@@ -130,12 +140,14 @@
                     <ul class="navbar-nav">
                         <li class="nav-item dropdown">
                             <a href="#" data-bs-toggle="dropdown" class="nav-icon pe-md-0">
-                                <img src="image/profile.jpg" class="avatar img-fluid rounded" alt="">
+                                <img style="background:white;" src="{{asset('img/User-avatar.png')}}" class="avatar img-fluid rounded" alt="">
                             </a>
                             <div class="dropdown-menu dropdown-menu-end">
-                                <a href="#" class="dropdown-item">Profile</a>
-                                <a href="#" class="dropdown-item">Setting</a>
-                                <a href="#" class="dropdown-item">Logout</a>
+                                <a href="#" class="dropdown-item">{{Auth()->user()->name}}</a>
+                                <form action="{{route('logout')}}" method="post">
+                                    @csrf
+                                    <a onclick="this.closest('form').submit()" class="dropdown-item" href="#">Cerrar sesión</a>
+                                </form>
                             </div>
                         </li>
                     </ul>

@@ -14,8 +14,11 @@ use App\Http\Controllers\configuracion\CantonController;
 use App\Http\Controllers\configuracion\UsuarioController;
 use App\Http\Controllers\reportes\ExoneracionReporteController;
 use App\Http\Controllers\reportes\LiquidacionReporteController;
-use App\Http\Controllers\reportes\TitulosCoactivaController;
 use App\Http\Controllers\enlinea\ConsultaLineaController;
+use App\Http\Controllers\rentas\CatastroContribuyente;
+use App\Http\Controllers\rentas\PatenteController;
+use App\Http\Controllers\psql\ente\EnteController;
+use App\Http\Controllers\psql\actividad\ActividadComercialController;
 
 /*
 |--------------------------------------------------------------------------
@@ -103,11 +106,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('tituloscoactiva/imprimir', [TituloCreditoCoactivaController::class, 'reporteTitulosCoactiva'])->name('reportecoactiva.titulos');
     Route::get('/pruebatitulo', function () {
         try {
-            DB::connection('sqlsrv')->getPdo();
-            return 'La conexión con la base de datos es exitosa.';
+            return App\Models\PsqlEnte::all();
         } catch (\Exception $e) {
             return 'No se pudo conectar a la base de datos: ' . $e->getMessage();
         }
     });
+
+    Route::get('catastrocontribuyente', [CatastroContribuyente::class, 'create'])->name('create.catastro');
+    Route::post('catastrocontribuyente', [CatastroContribuyente::class, 'store'])->name('store.catastro');
+    Route::post('catastrocontribuyente/canton', [CatastroContribuyente::class, 'getCanton'])->name('getcanton.catastro');
+    Route::post('catastrocontribuyente/parroquia', [CatastroContribuyente::class, 'getParroquia'])->name('getparroquia.catastro');
+    Route::get('patente', [PatenteController::class, 'create'])->name('create.patente');
+
+    Route::post('ente/datatables', [EnteController::class, 'datatables'])->name('datatables.ente');
+    Route::post('ente/cedula', [EnteController::class, 'getEnteCedula'])->name('getentecedula.ente');
+    Route::post('actividadcomercial/datatables', [ActividadComercialController::class, 'datatables'])->name('datatables.actividad');
 });
 
