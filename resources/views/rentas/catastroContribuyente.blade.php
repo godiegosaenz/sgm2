@@ -118,7 +118,7 @@
             "processing" : true,
             "serverSide": true,
             "ajax": {
-                "url": '{{ url("/catastrocontribuyente/datatables") }}',
+                "url": '{{ url("/catastrocontribuyente/datatables2") }}',
                 "type": "post",
                 "data": function (d){
                     d._token = $("input[name=_token]").val();

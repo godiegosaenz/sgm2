@@ -116,6 +116,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('catastrocontribuyente/ver/{id}', [CatastroContribuyente::class, 'show'])->name('show.catastro');
     Route::post('catastrocontribuyente/obtener', [CatastroContribuyente::class, 'getCatastroContribuyente'])->name('get.catastro');
     Route::post('catastrocontribuyente/datatables', [CatastroContribuyente::class, 'datatable'])->name('datatable.catastro');
+    Route::post('catastrocontribuyente/datatables2', [CatastroContribuyente::class, 'datatable2'])->name('datatable2.catastro');
     Route::get('catastrocontribuyente', [CatastroContribuyente::class, 'create'])->name('create.catastro');
     Route::post('catastrocontribuyente', [CatastroContribuyente::class, 'store'])->name('store.catastro');
     Route::post('catastrocontribuyente/canton', [CatastroContribuyente::class, 'getCanton'])->name('getcanton.catastro');

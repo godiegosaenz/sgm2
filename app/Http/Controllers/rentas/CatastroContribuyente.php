@@ -224,58 +224,56 @@ class CatastroContribuyente extends Controller
     }
 
     public function datatable(Request $r){
-        if($r->ajax()){
+        $listacatastro = PsqlCatastroContribuyente::all();
+        return Datatables($listacatastro)
+        ->editColumn('obligado_contabilidad', function($listacatastro){
+                if($listacatastro->estado_contribuyente_id == true){
+                    return 'SI';
+                }else{
+                    return 'NO';
+                }
+            })
+        ->editColumn('estado_contribuyente_id', function($listacatastro){
+                if($listacatastro->estado_contribuyente_id == 1){
+                    return '<span class="badge text-bg-success">Activo</span>';
+                }else{
+                    return '<span class="badge text-bg-danger">Inactivo</span>';
+                }
+            })
+        ->addColumn('action', function ($listacatastro) {
+            return '<a class="btn btn-primary btn-sm" onclick="seleccionarcontribuyente(\''.$listacatastro->id.'\')">Seleccionar</a>';
+        })
+        ->rawColumns(['action','estado_contribuyente_id','obligado_contabilidad'])
+        ->make(true);
+    }
 
-            $listacatastro = PsqlCatastroContribuyente::all();
-            if($r->tipo = 'contribuyente'){
-                return Datatables($listacatastro)
-                ->editColumn('obligado_contabilidad', function($listacatastro){
-                     if($listacatastro->estado_contribuyente_id == true){
-                         return 'SI';
-                     }else{
-                         return 'NO';
-                     }
-                 })
-                ->editColumn('estado_contribuyente_id', function($listacatastro){
-                     if($listacatastro->estado_contribuyente_id == 1){
-                         return '<span class="badge text-bg-success">Activo</span>';
-                     }else{
-                         return '<span class="badge text-bg-danger">Inactivo</span>';
-                     }
-                 })
-                ->addColumn('action', function ($listacatastro) {
-                    return '<a class="btn btn-primary btn-sm" onclick="seleccionarcontribuyente(\''.$listacatastro->id.'\')">Seleccionar</a>';
-                })
-                ->rawColumns(['action','estado_contribuyente_id','obligado_contabilidad'])
-                ->make(true);
+    public function datatable2(Request $r){
+        $listacatastro = PsqlCatastroContribuyente::all();
+
+        return Datatables($listacatastro)
+        ->editColumn('obligado_contabilidad', function($listacatastro){
+            if($listacatastro->estado_contribuyente_id == true){
+                return 'SI';
             }else{
-                return Datatables($listacatastro)
-               ->editColumn('obligado_contabilidad', function($listacatastro){
-                    if($listacatastro->estado_contribuyente_id == true){
-                        return 'SI';
-                    }else{
-                        return 'NO';
-                    }
-                })
-               ->editColumn('estado_contribuyente_id', function($listacatastro){
-                    if($listacatastro->estado_contribuyente_id == 1){
-                        return '<span class="badge text-bg-success">Activo</span>';
-                    }else{
-                        return '<span class="badge text-bg-danger">Inactivo</span>';
-                    }
-                })
-               ->addColumn('action', function ($listacatastro) {
-                   $buttonPersona = '';
-                   $buttonPersona .= '<a class="btn btn-primary btn-sm" href="'.route('show.catastro',$listacatastro->id).'">Ver</a> ';
-                   return $buttonPersona;
-
-               })
-               ->rawColumns(['action','estado_contribuyente_id','obligado_contabilidad'])
-               ->make(true);
+                return 'NO';
             }
+        })
+        ->editColumn('estado_contribuyente_id', function($listacatastro){
+            if($listacatastro->estado_contribuyente_id == 1){
+                return '<span class="badge text-bg-success">Activo</span>';
+            }else{
+                return '<span class="badge text-bg-danger">Inactivo</span>';
+            }
+        })
+        ->addColumn('action', function ($listacatastro) {
+            $buttonPersona = '';
+            $buttonPersona .= '<a class="btn btn-primary btn-sm" href="'.route('show.catastro',$listacatastro->id).'">Ver</a> ';
+            return $buttonPersona;
 
+        })
+        ->rawColumns(['action','estado_contribuyente_id','obligado_contabilidad'])
+        ->make(true);
 
-        };
     }
 
     public function getCatastroContribuyente(Request $r){
