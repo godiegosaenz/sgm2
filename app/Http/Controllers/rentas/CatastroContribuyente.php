@@ -20,7 +20,11 @@ class CatastroContribuyente extends Controller
      */
     public function index()
     {
-        //
+        $data = PsqlCatastroContribuyente::all();
+        $totalCatastro = $data->count();
+        $totalCatastroActivo = $data->where('estado', '1')->count();
+        $totalCatastroInactivo = $data->where('estado', '2')->count();
+        return view('rentas.catastroContribuyente',compact('totalCatastro','totalCatastroActivo','totalCatastroInactivo'));
     }
 
     /**
@@ -150,8 +154,8 @@ class CatastroContribuyente extends Controller
             'es_matriz' => $validatedData['es_matriz']  ?? false, // Opcional
             'es_turismo' => $validatedData['es_turismo']  ?? false, // Opcional
             'usuario_ingreso' => auth()->user()->id, // Usuario que crea el registro
-            'propietario' => $validatedData['propietario_id']?? null, // Usuario que crea el registro
-            'representante_legal' => $validatedData['representante_id']?? null, // Usuario que crea el registro
+            'propietario_id' => $validatedData['propietario_id']?? null, // Usuario que crea el registro
+            'representante_legal_id' => $validatedData['representante_id']?? null, // Usuario que crea el registro
         ]);
 
         // 4. Guardar las actividades relacionadas (solo los IDs como mencionaste)
@@ -171,7 +175,8 @@ class CatastroContribuyente extends Controller
      */
     public function show(string $id)
     {
-        //
+        $contribuyente = PsqlCatastroContribuyente::findOrFail($id);
+        return view('rentas.catastroContribuyenteVer',compact('contribuyente'));
     }
 
     /**
@@ -216,6 +221,77 @@ class CatastroContribuyente extends Controller
         }
         //echo json_encode($cantones);
         return $html;
+    }
+
+    public function datatable(Request $r){
+        if($r->ajax()){
+
+            $listacatastro = PsqlCatastroContribuyente::all();
+            if($r->tipo = 'contribuyente'){
+                return Datatables($listacatastro)
+                ->editColumn('obligado_contabilidad', function($listacatastro){
+                     if($listacatastro->estado_contribuyente_id == true){
+                         return 'SI';
+                     }else{
+                         return 'NO';
+                     }
+                 })
+                ->editColumn('estado_contribuyente_id', function($listacatastro){
+                     if($listacatastro->estado_contribuyente_id == 1){
+                         return '<span class="badge text-bg-success">Activo</span>';
+                     }else{
+                         return '<span class="badge text-bg-danger">Inactivo</span>';
+                     }
+                 })
+                ->addColumn('action', function ($listacatastro) {
+                    return '<a class="btn btn-primary btn-sm" onclick="seleccionarcontribuyente(\''.$listacatastro->id.'\')">Seleccionar</a>';
+                })
+                ->rawColumns(['action','estado_contribuyente_id','obligado_contabilidad'])
+                ->make(true);
+            }else{
+                return Datatables($listacatastro)
+               ->editColumn('obligado_contabilidad', function($listacatastro){
+                    if($listacatastro->estado_contribuyente_id == true){
+                        return 'SI';
+                    }else{
+                        return 'NO';
+                    }
+                })
+               ->editColumn('estado_contribuyente_id', function($listacatastro){
+                    if($listacatastro->estado_contribuyente_id == 1){
+                        return '<span class="badge text-bg-success">Activo</span>';
+                    }else{
+                        return '<span class="badge text-bg-danger">Inactivo</span>';
+                    }
+                })
+               ->addColumn('action', function ($listacatastro) {
+                   $buttonPersona = '';
+                   $buttonPersona .= '<a class="btn btn-primary btn-sm" href="'.route('show.catastro',$listacatastro->id).'">Ver</a> ';
+                   return $buttonPersona;
+
+               })
+               ->rawColumns(['action','estado_contribuyente_id','obligado_contabilidad'])
+               ->make(true);
+            }
+
+
+        };
+    }
+
+    public function getCatastroContribuyente(Request $r){
+        $PsqlCatastroContribuyente = PsqlCatastroContribuyente::find($r->id);
+        // Verifica si se encontró el registro
+        if ($PsqlCatastroContribuyente) {
+            return response()->json([
+                'contribuyente' => $PsqlCatastroContribuyente,
+                'propietarios' => $PsqlCatastroContribuyente->propietario, // Incluye los datos de los propietarios
+                'representante_legal' => $PsqlCatastroContribuyente->representante_legal, // Incluye los datos de los propietarios
+                'clase_contribuyente' => $PsqlCatastroContribuyente->clase_contribuyente, // Incluye los datos de los propietarios
+                'actividades' => $PsqlCatastroContribuyente->actividades, // Incluye los datos de los propietarios
+            ]);
+        } else {
+            return response()->json(['message' => 'Registro no encontrado'], 404);
+        }
     }
 
 }

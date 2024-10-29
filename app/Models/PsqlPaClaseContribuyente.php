@@ -11,4 +11,9 @@ class PsqlPaClaseContribuyente extends Model
 
     protected $connection = 'pgsql'; // Nombre de la conexión configurada
     protected $table = 'sgm_patente.pa_clase_contribuyente';
+
+    public function contribuyentes()
+    {
+        return $this->hasMany(PsqlCatastroContribuyente::class);
+    }
 }

@@ -78,10 +78,13 @@
                         </a>
                         <ul id="auth" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
                             <li class="sidebar-item">
+                                <a href="{{route('index.catastro')}}" class="sidebar-link">Catastro contribuyente</a>
+                            </li>
+                            <li class="sidebar-item">
                                 <a href="{{route('create.catastro')}}" class="sidebar-link">Registrar catastro patente</a>
                             </li>
                             <li class="sidebar-item">
-                                <a href="{{route('create.patente')}}" class="sidebar-link">Crear Patente</a>
+                                <a href="{{route('create.patente')}}" class="sidebar-link">Declaracion de Patente</a>
                             </li>
                         </ul>
                     </li>

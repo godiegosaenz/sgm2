@@ -12,4 +12,9 @@ class PsqlProvincia extends Model
     protected $connection = 'pgsql'; // Nombre de la conexión configurada
     protected $table = 'sgm_app.cat_provincia';
 
+    public function contribuyentes()
+    {
+        return $this->hasMany(PsqlCatastroContribuyente::class);
+    }
+
 }

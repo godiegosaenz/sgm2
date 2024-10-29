@@ -38,8 +38,9 @@ class PsqlCatastroContribuyente extends Model
                             'usuario_ingreso',
                             'created_at',
                             'updated_at',
-                            'propietario',
-                            'representante_legal',
+                            'propietario_id',
+                            'representante_legal_id',
+                            'clase_contribuyente_id',
                         ];
 
      // Relación muchos a muchos con actividades comerciales
@@ -47,4 +48,36 @@ class PsqlCatastroContribuyente extends Model
      {
          return $this->belongsToMany(PsqlPaActividadesComerciales::class, 'sgm_patente.pa_actividad_contribuyente', 'Catastro_contribuyente_id', 'Actividad_comercial_id');
      }
+
+     public function clase_contribuyente()
+    {
+        return $this->belongsTo(PsqlPaClaseContribuyente::class);
+    }
+
+    public function provincia()
+    {
+        return $this->belongsTo(PsqlProvincia::class);
+    }
+
+    public function canton()
+    {
+        return $this->belongsTo(PsqlCanton::class);
+    }
+
+    public function parroquia()
+    {
+        return $this->belongsTo(PsqlParroquia::class);
+    }
+
+    public function propietario()
+    {
+        return $this->belongsTo(PsqlEnte::class,'propietario_id','id');
+    }
+
+    public function representante_legal()
+    {
+        return $this->belongsTo(PsqlEnte::class,'representante_legal_id');
+    }
+
+
 }

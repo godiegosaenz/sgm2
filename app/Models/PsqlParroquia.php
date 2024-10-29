@@ -11,4 +11,9 @@ class PsqlParroquia extends Model
 
     protected $connection = 'pgsql'; // Nombre de la conexión configurada
     protected $table = 'sgm_app.cat_parroquia';
+
+    public function contribuyentes()
+    {
+        return $this->hasMany(PsqlCatastroContribuyente::class);
+    }
 }

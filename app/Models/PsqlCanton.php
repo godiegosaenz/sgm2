@@ -11,4 +11,9 @@ class PsqlCanton extends Model
 
     protected $connection = 'pgsql'; // Nombre de la conexión configurada
     protected $table = 'sgm_app.cat_canton';
+
+    public function contribuyentes()
+    {
+        return $this->hasMany(PsqlCatastroContribuyente::class);
+    }
 }

@@ -28,4 +28,9 @@ class PsqlEnte extends Model
         return true;
     }
 
+    public function contribuyentes()
+    {
+        return $this->hasMany(PsqlCatastroContribuyente::class);
+    }
+
 }
