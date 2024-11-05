@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\ConsultaPredioController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\TesoreriaController;
 use App\Http\Controllers\tesoreria\TituloCreditoCoactivaController;
 use App\Http\Controllers\RemisionInteresController;
@@ -50,8 +51,11 @@ Route::get('consultar/deudas', [ConsultaLineaController::class, 'index'])->name(
 Route::post('consultar/deudas', [ConsultaLineaController::class, 'store'])->name('store.consultar')->middleware('guest');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::view('home', 'home')->name('home');
-
+    Route::get('home', [HomeController::class, 'index'])->name('home');
+    Route::get('/dashboard/data', [HomeController::class, 'getData']);
+    Route::get('/dashboard/contribuyentes', [HomeController::class, 'getContribuyentesData']);
+    Route::get('/dashboard/datadistribuibles', [HomeController::class, 'obtenerDatosDistribucion']);
+    Route::get('/dashboard/discapacidad', [HomeController::class, 'obtenerDatosDiscapacidad']);
     Route::post('/consulta', [ConsultaPredioController::class, 'store'])->name('catpredio.consulta');
 
     Route::get('paciente/mostrar', [ListarPacienteController::class, 'index'])->name('mostrar.persona');
@@ -124,7 +128,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('patente', [PatenteController::class, 'create'])->name('create.patente');
 
     Route::post('ente/datatables', [EnteController::class, 'datatables'])->name('datatables.ente');
+    Route::post('ente/datatables/listar', [EnteController::class, 'datatablesente'])->name('listar.ente');
     Route::post('ente/cedula', [EnteController::class, 'getEnteCedula'])->name('getentecedula.ente');
     Route::post('actividadcomercial/datatables', [ActividadComercialController::class, 'datatables'])->name('datatables.actividad');
+
+    Route::get('ente/listar', [EnteController::class, 'index'])->name('index.ente');
+    Route::get('ente', [EnteController::class, 'create'])->name('create.ente');
+    Route::get('ente/editar/{id}', [EnteController::class, 'edit'])->name('edit.ente');
+    Route::patch('ente/editar/{id}', [EnteController::class, 'update'])->name('update.ente');
+    Route::get('ente/mostrar/{id}', [EnteController::class, 'show'])->name('show.ente');
+
+
 });
 

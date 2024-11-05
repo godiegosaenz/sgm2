@@ -5,58 +5,60 @@
 <link href="{{ asset('css/rowReorder.bootstrap5.min.css') }}" rel="stylesheet">
 @endpush
 @section('content')
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <div class="col-md-12">
-                    <h2 class="text-center">Lista de remisiones de interes</h2>
-                </div>
-            </div>
-        </div>
-
-        <br>
-        <div class="row">
-            <div class="col-md-12">
-                @csrf
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="tableExoneracion" style="width: 100%">
-                        <thead>
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h4 class="h2">Lista de remisiones</h4>
+    <div class="btn-toolbar mb-2 mb-md-0">
+    <div class="btn-group me-2">
+        <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+    </div>
+    <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center gap-1">
+        <svg class="bi"><use xlink:href="#calendar3"/></svg>
+        This week
+    </button>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        @csrf
+        <div class="table-responsive">
+            <table class="table table-bordered" id="tableremison" style="width: 100%">
+                <thead>
+                    <tr>
+                    <th scope="col">Acciones</th>
+                    <th scope="col">Matricula</th>
+                    <th scope="col">Resolucion</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col">fecha</th>
+                    <th scope="col">Interes</th>
+                    <th scope="col">Total</th>
+                    <th scope="col">Observacion</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @isset($RemisionInteres)
+                        @foreach ($RemisionInteres as $item)
                             <tr>
-                            <th scope="col">Acciones</th>
-                            <th scope="col">Matricula</th>
-                            <th scope="col">Resolucion</th>
-                            <th scope="col">Estado</th>
-                            <th scope="col">fecha</th>
-                            <th scope="col">Interes</th>
-                            <th scope="col">Total</th>
-                            <th scope="col">Observacion</th>
+                                <td><a href="{{route('show.remision',$item->id)}}" class="btn btn-primary btn-sm"><i class="bi bi-eye"></i></a></td>
+                                <td>{{$item->num_predio}}</td>
+                                <td>{{$item->num_resolucion}}</td>
+                                @if ($item->estado == 'creado')
+                                <td><span class="badge bg-primary">Creado</span></td>
+                                @else
+                                <td><span class="badge bg-success">Aplicado</span></td>
+                                @endif
+                                <td>{{$item->created_at}}</td>
+                                <td>{{$item->valorInteres}}</td>
+                                <td>{{$item->valorTotal}}</td>
+                                <td>{{$item->observacion}}</td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @isset($RemisionInteres)
-                                @foreach ($RemisionInteres as $item)
-                                    <tr>
-                                        <td><a href="{{route('show.remision',$item->id)}}" class="btn btn-primary btn-sm"><i class="bi bi-eye"></i></a></td>
-                                        <td>{{$item->num_predio}}</td>
-                                        <td>{{$item->num_resolucion}}</td>
-                                        @if ($item->estado == 'creado')
-                                        <td><span class="badge bg-primary">Creado</span></td>
-                                        @else
-                                        <td><span class="badge bg-success">Aplicado</span></td>
-                                        @endif
-                                        <td>{{$item->created_at}}</td>
-                                        <td>{{$item->valorInteres}}</td>
-                                        <td>{{$item->valorTotal}}</td>
-                                        <td>{{$item->observacion}}</td>
-                                    </tr>
-                                @endforeach
-                            @endisset
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                        @endforeach
+                    @endisset
+                </tbody>
+            </table>
         </div>
     </div>
+</div>
 @endsection
 @push('scripts')
  <!-- jQuery -->
@@ -67,9 +69,8 @@
 <script src="{{ asset('js/dataTables.bootstrap5.min.js') }}"></script>
 <script src="{{ asset('js/dataTables.rowReorder.min.js') }}"></script>
 <script>
-/*
     $(document).ready(function(){
-        tableExoneracion = $("#tableExoneracion").DataTable({
+        tableremison = $("#tableremison").DataTable({
             "lengthMenu": [ 5, 10],
             "language" : {
                 "url": '{{ asset("/js/spanish.json") }}',
@@ -77,27 +78,10 @@
             "autoWidth": true,
             "rowReorder": true,
             "order": [], //Initial no order
-            "processing" : true,
-            "serverSide": true,
-            "ajax": {
-                "url": '{{ url("/remision/datatables") }}',
-                "type": "post",
-                "data": function (d){
-                    d._token = $("input[name=_token]").val();
-                }
-            },
-            //"columnDefs": [{ targets: [3], "orderable": false}],
-            "columns": [
-                {width: '',data: 'action', name: 'action', orderable: false, searchable: false},
-                {width: '',data: 'num_predio'},
-                {width: '',data: 'num_resolucion'},
-                {width: '',data: 'estado'},
-                {width: '',data: 'created_at'},
-                {width: '',data: 'observacion'},
-
-            ],
+            "processing" : false,
+            "serverSide": false,
             "fixedColumns" : true
         });
-    });*/
+    });
 </script>
 @endpush

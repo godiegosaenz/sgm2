@@ -3,116 +3,118 @@
 @push('styles')
 @endpush
 @section('content')
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <div class="col-md-12">
-                    <h2 class="text-center">Remisión de intereses</h2>
-                </div>
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h4 class="h2">Remision de interes</h4>
+    <div class="btn-toolbar mb-2 mb-md-0">
+    <div class="btn-group me-2">
+        <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+    </div>
+    <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center gap-1">
+        <svg class="bi"><use xlink:href="#calendar3"/></svg>
+        This week
+    </button>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        @if (session('status'))
+            <div class="alert alert-success">
+                {{ session('status') }}
             </div>
-
-        </div>
-        <br>
-        <div class="row">
-            <div class="col">
-                @if (session('status'))
-                    <div class="alert alert-success">
-                        {{ session('status') }}
-                    </div>
+        @endif
+    </div>
+</div>
+<form id="formConsulta" action="{{route('consulta.exoneracion.remision')}}" method="post">
+    @csrf
+    <div class="row justify-content-md-center">
+        <div class="col-3">
+            <div class="mb-3">
+                <label for="num_predio">* Matricula inmobiliaria : </label>
+                @if($num_predio == 0)
+                <input type="number" class="form-control {{$errors->has('inputMatricula') ? 'is-invalid' : ''}}" id="num_predio" name="num_predio" value="{{old('num_predio')}}" autofocus required>
+                @else
+                <input type="number" class="form-control {{$errors->has('inputMatricula') ? 'is-invalid' : ''}}" id="num_predio" name="num_predio" value="{{$num_predio}}" autofocus required>
                 @endif
-            </div>
-        </div>
-        <form id="formConsulta" action="{{route('consulta.exoneracion.remision')}}" method="post">
-            @csrf
-            <div class="row justify-content-md-center">
-                <div class="col-3">
-                    <div class="mb-3">
-                        <label for="num_predio">* Matricula inmobiliaria : </label>
-                        @if($num_predio == 0)
-                        <input type="number" class="form-control {{$errors->has('inputMatricula') ? 'is-invalid' : ''}}" id="num_predio" name="num_predio" value="{{old('num_predio')}}" autofocus required>
-                        @else
-                        <input type="number" class="form-control {{$errors->has('inputMatricula') ? 'is-invalid' : ''}}" id="num_predio" name="num_predio" value="{{$num_predio}}" autofocus required>
-                        @endif
-                        <div class="invalid-feedback">
-                            @if($errors->has('num_predio'))
-                                {{$errors->first('num_predio')}}
-                            @endif
-                        </div>
-                    </div>
-                </div>
-                <div class="col-3">
-                    <div class="mb-3">
-                        <br>
-                        <button id="btnConsulta" class="btn btn-primary" type="submit">
-                            <span id="spanConsulta" class="bi bi-search" role="status" aria-hidden="true"></span>
-                            Consultar
-                        </button>
-                    </div>
-                </div>
-
-            </div>
-
-        </form>
-        <div class="row">
-            <div class="col-3">
-                <div class="mb-3">
-                    <br>
-                    <button id="buttonExoneracion" class="btn btn-primary"><i class="bi bi-fullscreen"></i> Crear remision</button>
+                <div class="invalid-feedback">
+                    @if($errors->has('num_predio'))
+                        {{$errors->first('num_predio')}}
+                    @endif
                 </div>
             </div>
         </div>
-        <form class="" action="{{route('store.remision')}}" id="formExonerar" name="formExonerar" method="post" enctype="multipart/form-data">
-        <div class="row mt-3">
-            @if ($num_predio > 0)
-            <input type="hidden" class="form-control {{$errors->has('inputMatricula') ? 'is-invalid' : ''}}" id="inputMatricula" name="inputMatricula" value="{{$num_predio}}" autofocus required>
-            @endif
-            <div class="col-12">
-                <h3>Lista de liquidaciones</h3>
+        <div class="col-3">
+            <div class="mb-3">
+                <br>
+                <button id="btnConsulta" class="btn btn-primary" type="submit">
+                    <span id="spanConsulta" class="bi bi-search" role="status" aria-hidden="true"></span>
+                    Consultar
+                </button>
             </div>
-            <div class="col-md-12">
-                @csrf
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover" id="tableCita" style="width: 100%">
-                        <thead>
-                            <tr>
-                            <th scope="col">*</th>
-                            <th scope="col">Seleccionar</th>
-                            <th scope="col">Año</th>
-                            <th>Liquidación</th>
-                            <th scope="col">Cod. Catastral</th>
-                            <th scope="col">Propietario</th>
-                            <th scope="col">Total de pago</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbodyurban">
+        </div>
 
-                            @isset($liquidacionUrbana)
-                                @foreach ($liquidacionUrbana as $it )
-                                    <tr>
-                                        @if ($it->estado_liquidacion == 1)
-                                        <td><i class="bi bi-circle-fill" style="color:green;"></i></td>
-                                        @else
-                                        <td><i class="bi bi-circle-fill" style="color:red;"></i></td>
-                                        @endif
-                                        <td><input class="form-check-input" type="checkbox" value="{{$it->id}}" name="checkLiquidacion[]"></td>
-                                        <td>{{$it->anio}}</td>
-                                        <td>{{$it->id_liquidacion}}</td>
-                                        <td>{{$it->clave_cat}}</td>
-                                        @if($it->nombres != '')
-                                        <td>{{$it->nombres.' '.$it->apellidos}}</td>
-                                        @else
-                                        <td>{{$it->nombre_comprador}}</td>
-                                        @endif
-                                        <td>{{$it->total_pago}}</td>
-                                    </tr>
-                                @endforeach
-                            @endisset
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+    </div>
+
+</form>
+<div class="row">
+    <div class="col-3">
+        <div class="mb-3">
+            <br>
+            <button id="buttonExoneracion" class="btn btn-primary"><i class="bi bi-fullscreen"></i> Crear remision</button>
         </div>
     </div>
+</div>
+<form class="" action="{{route('store.remision')}}" id="formExonerar" name="formExonerar" method="post" enctype="multipart/form-data">
+<div class="row mt-3">
+    @if ($num_predio > 0)
+    <input type="hidden" class="form-control {{$errors->has('inputMatricula') ? 'is-invalid' : ''}}" id="inputMatricula" name="inputMatricula" value="{{$num_predio}}" autofocus required>
+    @endif
+    <div class="col-12">
+        <h3>Lista de liquidaciones</h3>
+    </div>
+    <div class="col-md-12">
+        @csrf
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover" id="tableCita" style="width: 100%">
+                <thead>
+                    <tr>
+                    <th scope="col">*</th>
+                    <th scope="col">Seleccionar</th>
+                    <th scope="col">Año</th>
+                    <th>Liquidación</th>
+                    <th scope="col">Cod. Catastral</th>
+                    <th scope="col">Propietario</th>
+                    <th scope="col">Total de pago</th>
+                    </tr>
+                </thead>
+                <tbody id="tbodyurban">
+
+                    @isset($liquidacionUrbana)
+                        @foreach ($liquidacionUrbana as $it )
+                            <tr>
+                                @if ($it->estado_liquidacion == 1)
+                                <td><i class="bi bi-circle-fill" style="color:green;"></i></td>
+                                @else
+                                <td><i class="bi bi-circle-fill" style="color:red;"></i></td>
+                                @endif
+                                <td><input class="form-check-input" type="checkbox" value="{{$it->id}}" name="checkLiquidacion[]"></td>
+                                <td>{{$it->anio}}</td>
+                                <td>{{$it->id_liquidacion}}</td>
+                                <td>{{$it->clave_cat}}</td>
+                                @if($it->nombres != '')
+                                <td>{{$it->nombres.' '.$it->apellidos}}</td>
+                                @else
+                                <td>{{$it->nombre_comprador}}</td>
+                                @endif
+                                <td>{{$it->total_pago}}</td>
+                            </tr>
+                        @endforeach
+                    @endisset
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
     <!-- Modal Exoneracion -->
     <div class="modal fade" id="modalExoneracion" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">

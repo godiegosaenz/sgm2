@@ -1,0 +1,88 @@
+.bi {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+  }
+
+  /*
+   * Sidebar
+   */
+
+  @media (min-width: 768px) {
+    .sidebar .offcanvas-lg {
+      position: -webkit-sticky;
+      position: sticky;
+      top: 48px;
+    }
+    .navbar-search {
+      display: block;
+    }
+  }
+
+  .sidebar .nav-link {
+    font-size: .875rem;
+    font-weight: 500;
+  }
+
+  .sidebar .nav-link.active {
+    color: #2470dc;
+  }
+
+  .sidebar-heading {
+    font-size: .75rem;
+  }
+
+  /*
+   * Navbar
+   */
+
+  .navbar-brand {
+    padding-top: .75rem;
+    padding-bottom: .75rem;
+    background-color: rgba(0, 0, 0, .25);
+    box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25);
+  }
+
+  .navbar .form-control {
+    padding: .75rem 1rem;
+  }
+
+  /* Estilos para el submenú en tema oscuro */
+  .sidebar .collapse {
+    background-color: #343a40; /* Fondo oscuro para submenús */
+  }
+
+  .sidebar .btn-toggle-nav .nav-item a {
+    color: #adb5bd;
+    font-size: 0.875rem;
+    text-decoration: none;
+    padding-left: 2rem; /* Aumenta el espacio de los submenús para indicar que son subniveles */
+  }
+
+  .sidebar .btn-toggle-nav .nav-item svg {
+    color: #adb5bd; /* Iconos en tema oscuro */
+    margin-right: 0.5rem; /* Espacio entre el icono y el texto */
+  }
+
+  /* Color de los enlaces y los iconos del sidebar y submenús */
+  .sidebar .nav-link svg,
+  .sidebar .btn-toggle-nav .nav-item svg,
+  .sidebar .toggle-icon {
+    color: #adb5bd; /* Color uniforme para los iconos del menú principal y submenú */
+  }
+
+  .sidebar .nav-link:hover,
+  .sidebar .btn-toggle-nav .nav-item a:hover {
+    color: #ffffff;
+    text-decoration: none;
+  }
+
+  /* Estilo para la flecha que indica si el menú está abierto o cerrado */
+  .sidebar .toggle-icon {
+    color: #adb5bd;
+    transition: transform 0.3s;
+  }
+
+  .sidebar .nav-link[aria-expanded="true"] .toggle-icon {
+    transform: rotate(90deg); /* Rotación de la flecha cuando el menú está abierto */
+  }
