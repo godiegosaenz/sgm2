@@ -21,8 +21,6 @@ return new class extends Migration
             $table->json('new_values')->nullable(); // Nuevos valores (como JSON)
             $table->timestamp('created_at')->useCurrent(); // Marca de tiempo del cambio
 
-            // Llaves foráneas
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
         });
     }
 
