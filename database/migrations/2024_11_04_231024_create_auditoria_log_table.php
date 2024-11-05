@@ -11,17 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('auditoria_log', function (Blueprint $table) {
-            $table->id(); // Identificador único
-            $table->unsignedBigInteger('user_id')->nullable(); // ID del usuario que realizó el cambio
-            $table->string('table_name'); // Nombre de la tabla afectada
-            $table->unsignedBigInteger('record_id'); // ID del registro modificado
-            $table->enum('operation', ['INSERT', 'UPDATE', 'DELETE']); // Tipo de operación
-            $table->json('old_values')->nullable(); // Valores anteriores (como JSON)
-            $table->json('new_values')->nullable(); // Nuevos valores (como JSON)
-            $table->timestamp('created_at')->useCurrent(); // Marca de tiempo del cambio
 
-        });
     }
 
     /**
@@ -29,6 +19,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('auditoria_log');
+
     }
 };
