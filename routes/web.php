@@ -99,8 +99,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('usuario', [UsuarioController::class, 'create'])->name('create.usuario');
     Route::post('usuario', [UsuarioController::class, 'store'])->name('store.usuario');
-    Route::get('usuario/{User}/edit', [UsuarioController::class, 'edit'])->name('edit.usuario');
-    Route::patch('usuario/{User}/edit', [UsuarioController::class, 'update'])->name('update.usuario');
+    Route::get('usuario/{id}/edit', [UsuarioController::class, 'edit'])->name('edit.usuario');
+    Route::patch('usuario/{id}/edit', [UsuarioController::class, 'update'])->name('update.usuario');
     Route::post('usuario/datatables', [UsuarioController::class, 'datatables'])->name('datatable.usuario');
     Route::get('usuario/lista', [UsuarioController::class, 'index'])->name('lista.usuario');
 

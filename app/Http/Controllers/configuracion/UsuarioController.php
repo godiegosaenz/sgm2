@@ -9,6 +9,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use Exception;
+use Illuminate\Console\View\Components\Warn;
 
 class UsuarioController extends Controller
 {
@@ -87,17 +88,19 @@ class UsuarioController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(User $User)
+    public function edit(Request $r, String $id)
     {
+        $User = User::find($id);
         return view('configuraciones.usuarioEditar', compact('User'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $r, User $User)
+    public function update(Request $r, String $id)
     {
         try {
+            $User = User::find($id);
             $messages = [
                 'required' => 'El campo :attribute es requerido.',
                 'unique' => 'El dato del campo :attribute ya existe',
@@ -107,10 +110,8 @@ class UsuarioController extends Controller
             ];
             $reglas = [
                 'name' => 'bail|required|max:250',
-                'email' => ['bail','required','max:250',Rule::unique('users', 'email')->ignore($User->id)],
+                'email' => ['bail','required','max:250',Rule::unique('users', 'email')->ignore($id)],
                 'persona_id' => ['bail','required',Rule::unique('users', 'idpersona')->ignore($User->idpersona)],
-                'password' => 'bail|required|min:6|max:250|confirmed',
-                'password_confirmation' => 'bail|required|min:6|max:250',
                 'status' => 'bail|required',
 
             ];
@@ -123,7 +124,7 @@ class UsuarioController extends Controller
 
 
             if ($validator->fails()) {
-                return redirect('/usuario')
+                return redirect('usuario/'.$id.'/edit')
                             ->withErrors($validator)
                             ->withInput();
             }
@@ -134,9 +135,9 @@ class UsuarioController extends Controller
             $User->idpersona = $r->persona_id;
             $User->status = $r->status;
             $User->save();
-            return redirect()->route('edit.usuario',$User)->with('success', 'Se actualizo el usuario correctamente');
+            return redirect()->route('edit.usuario',$id)->with('success', 'Se actualizo el usuario correctamente');
         } catch (Exception $e) {
-            return redirect()->route('edit.usuario',$User)->with('error', 'Hubo un problema al actualizar el usuario : '.$e->getMessage());
+            return redirect()->route('edit.usuario',$id)->with('error', 'Hubo un problema al actualizar el usuario : '.$e->getMessage());
         }
     }
 

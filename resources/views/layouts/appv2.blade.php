@@ -273,6 +273,11 @@
                 'subMenu' => [
                     [
                         'name' => 'Exoneracion tercera edad',
+                        'route' => 'index.tesoreria',
+                        'active' => request()->routeIs('index.tesoreria')
+                    ],
+                    [
+                        'name' => 'Lista exoneracion',
                         'route' => 'lista.exoneracion',
                         'active' => request()->routeIs('lista.exoneracion')
                     ],
