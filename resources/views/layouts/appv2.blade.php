@@ -319,12 +319,17 @@
                         'active' => request()->routeIs('create.catastro')
                     ],
                     [
+                        'name' => 'Lista de patente',
+                        'route' => 'index.patente',
+                        'active' => request()->routeIs('index.patente')
+                    ],
+                    [
                         'name' => 'Declarar patente',
                         'route' => 'create.patente',
                         'active' => request()->routeIs('create.patente')
                     ],
                 ],
-                'active' => request()->routeIs('index.catastro') || request()->routeIs('create.catastro') || request()->routeIs('create.patente')
+                'active' => request()->routeIs('index.catastro') || request()->routeIs('create.catastro') || request()->routeIs('create.patente') || request()->routeIs('create.patente') || request()->routeIs('index.patente')
             ],
             [
                 'name' => 'CONFIGURACION',

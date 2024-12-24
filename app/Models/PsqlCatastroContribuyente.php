@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\PsqlPaPatente;
 
 class PsqlCatastroContribuyente extends Model
 {
@@ -77,6 +79,11 @@ class PsqlCatastroContribuyente extends Model
     public function representante_legal()
     {
         return $this->belongsTo(PsqlEnte::class,'representante_legal_id');
+    }
+
+    public function patente(): HasMany
+    {
+        return $this->hasMany(PsqlPaPatente::class);
     }
 
 

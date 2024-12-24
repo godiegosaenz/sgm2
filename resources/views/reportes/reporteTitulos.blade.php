@@ -74,6 +74,9 @@
     </style>
 </head>
 <body>
+    @php
+        $sumatotal = 0;
+    @endphp
     @foreach ($DatosLiquidacion as $d)
     <table class="cabecera">
         <tr>
@@ -186,7 +189,47 @@
     <hr style="border:Dotted;"/>
     <br>
     <br>
+    @php
+        $sumatotal = $sumatotal + $d[0]->total_pago + $d[0]->valor_complemento;
+    @endphp
     @endforeach
+    <h2 style="text-align: center">TOTAL DE TÍTULO DE CRÉDITO: <span class="badge text-bg-secondary">{{$sumatotal}};</span></h2>
+    <p>CONCEPTO POR EL CUAL SE EMITE: PAGO DE IMPUESTO PREDIAL VENCIDO.
+        EL VALOR TOTAL DEL TÍTULO DE CRÉDITO CAUSARÁ EL INTERES RESPECTIVO A PARTIR DE LA FECHA DE
+        NOTIFICACIÓN SEGÚN LO EXPUESTO Y CONFORME LO ESTABLECE EL ART. 265 DEL COA LIQUIDACIÓN DE
+        INTERESES Y MULTAS</p>
+    <br>
+    <br>
+    <br>
+    <br>
+    <table width="100%">
+        <tbody>
+            <tr>
+                <td style="text-align: center">
+                    __________________________________________
+                </td>
+                <td style="text-align: center">
+                    __________________________________________
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: center">
+                    Ing. Jacinta María Mendoza Cusme
+                </td>
+                <td style="text-align: center">
+                    Mgs. Lucía Alvarez Zambrano
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: center">
+                    Tesorera Municipal Juez de Coactiva
+                </td>
+                <td style="text-align: center">
+                    Directora Financiera
+                </td>
+            </tr>
+        </tbody>
+    </table>
 
 </body>
 </html>

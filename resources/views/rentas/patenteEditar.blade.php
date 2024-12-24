@@ -1,5 +1,5 @@
 @extends('layouts.appv2')
-@section('title', 'Declaracion de patente')
+@section('title', 'Editar patente')
 @push('styles')
 <style>
 .checkbox-grande {
@@ -11,10 +11,10 @@
 @endpush
 @section('content')
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h4 class="h2">Declaracion de patente</h4>
+    <h4 class="h2">Editar declaracion de patente</h4>
     <div class="btn-toolbar mb-2 mb-md-0">
         <button type="button" class="btn btn-sm btn-primary d-flex align-items-center gap-1 me-2" onclick="enviarFormulario()">
-            Guardar Declaracion
+            Actualizar Declaracion
         </button>
         <a href="{{ route('create.patente') }}" class="btn btn-sm btn-secondary d-flex align-items-center gap-1">
             Nuevo Declaracion
@@ -40,8 +40,10 @@
         </ul>
     </div>
 @endif
-<form id="formPatente" method="POST" action="{{route('store.patente')}}">
+
+<form id="formPatente" method="POST" action="{{route('update.patente',['id' => $patente->id])}}">
     @csrf
+    @method('PATCH')
         <!-- Información General -->
     <fieldset class="border p-3 mb-4">
         <legend class="float-none w-auto px-3 fs-5">Seleccione contribuyente</legend>

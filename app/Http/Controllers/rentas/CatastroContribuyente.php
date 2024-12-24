@@ -69,12 +69,13 @@ class CatastroContribuyente extends Controller
                 'array' => 'El campo :attribute debe ser una lista.',
                 'min' => 'El campo :attribute debe tener al menos :min elementos.',
                 'nullable' => 'El campo :attribute es opcional.',
+                'unique' => 'El valor del campo :attribute ya ha sido registrado y debe ser único.',
             ];
             $reglas = [
-                'propietario_id' => 'required',
+                'propietario_id' => ['bail','required', Rule::unique('App\Models\PsqlCatastroContribuyente','propietario_id')],
                 'representante_id' => 'nullable',
                 //'ruc' => 'required|size:13|unique:psql_catastro_contribuyente,ruc',
-                'ruc' => ['bail','required',
+                'ruc' => ['bail','size:13','required',
                     function ($attribute, $value, $fail) {
                         // Consulta en la segunda base de datos
                         $exists = PsqlCatastroContribuyente::where('ruc', $value)->exists();
@@ -99,6 +100,7 @@ class CatastroContribuyente extends Controller
                 'es_matriz' => 'nullable|boolean',
                 'es_turismo' => 'nullable|boolean',
                 'actividades' => 'required|array|min:1',
+
                 'fecha_inicio_actividad' => 'required|date',
                 'fecha_actualizacion_actividades' => 'nullable|date',
                 'fecha_reinicio_actividades' => 'nullable|date',
@@ -108,7 +110,7 @@ class CatastroContribuyente extends Controller
                 'parroquia_id' => 'required',
                 'calle_principal' => 'required|max:255',
                 'calle_secundaria' => 'max:255',
-                'referencia_ubicacion' => 'max:255',
+                'referencia_ubicacion' => 'required|max:255',
                 'direccion' => 'max:255',
                 'correo' => 'required|email',
                 'telefono' => 'required|numeric|digits:10|regex:/^09[0-9]{8}$/',
@@ -153,14 +155,14 @@ class CatastroContribuyente extends Controller
             'local_propio' => $validatedData['tipo_local'] ?? null, // Opcional
             'es_matriz' => $validatedData['es_matriz']  ?? false, // Opcional
             'es_turismo' => $validatedData['es_turismo']  ?? false, // Opcional
-            'usuario_ingreso' => auth()->user()->id, // Usuario que crea el registro
+            'usuario_ingreso' => auth()->user()->name, // Usuario que crea el registro
             'propietario_id' => $validatedData['propietario_id']?? null, // Usuario que crea el registro
             'representante_legal_id' => $validatedData['representante_id']?? null, // Usuario que crea el registro
+            'clase_contribuyente_id' => $validatedData['clase_contribuyente_id'], // Usuario que crea el registro
         ]);
-
         // 4. Guardar las actividades relacionadas (solo los IDs como mencionaste)
-        foreach ($r->actividades as $actividad_id) {
-            $contribuyente->actividades()->attach($actividad_id['id']); // Asume que hay una relación 'actividades'
+        foreach ($r->actividades as $key => $actividad) {
+            $contribuyente->actividades()->attach($key);
         }
 
         return redirect('catastrocontribuyente')->with('success', 'Contribuyente creado exitosamente');

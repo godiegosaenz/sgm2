@@ -15,13 +15,12 @@
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <h3 class="h2">Registrar contribuyente de Patentes</h3>
         <div class="btn-toolbar mb-2 mb-md-0">
-            <div class="btn-group me-2">
-                <button type="button" class="btn btn-sm btn-outline-primary">Guardar registro</button>
-            </div>
-            <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center gap-1">
-                <svg class="bi"><use xlink:href="#calendar3"/></svg>
-                This week
+            <button type="button" class="btn btn-sm btn-primary d-flex align-items-center gap-1 me-2" onclick="enviarFormulario()">
+                Guardar Contribuyente
             </button>
+            <a href="{{ route('create.catastro') }}" class="btn btn-sm btn-secondary d-flex align-items-center gap-1">
+                Nuevo Contribuyente
+            </a>
         </div>
     </div>
     @if(@session('error'))
@@ -37,15 +36,11 @@
     <!-- Mensaje general de errores -->
     @if($errors->any())
         <div class="alert alert-danger">
-            "Por favor, revise los campos obligatorios y corrija los errores antes de continuar."
+            "Por favor, revisa los campos obligatorios y corrige los errores indicados para poder continuar."
         </div>
     @endif
     <form id="formularioCatastroContribuyente" method="POST" action="{{route('store.catastro')}}" class="needs-validation" novalidate enctype="multipart/form-data" class="position-relative">
         @csrf
-        <div class="form-toolbar d-flex justify-content-end mb-3">
-            <button type="submit" id="submitBtn" class="btn btn-primary btn-sm">Guardar</button>
-            <button type="button" class="btn btn-secondary btn-sm">Cancelar</button>
-        </div>
         <!-- Propietario y Representante Legal -->
         <fieldset class="border p-3 mb-4">
             <div class="row">
@@ -271,13 +266,8 @@
                     <div class="invalid-feedback">
                         @if($errors->has('fecha_inicio_actividad'))
                             {{$errors->first('fecha_inicio_actividad')}}
-                        @endif
-                    </div>
-                    <div class="invalid-feedback">
-                        @if($errors->has('fecha_inicio_actividad'))
-                            {{$errors->first('fecha_inicio_actividad')}}
                         @else
-                        El campo tipo de local es requerido
+                        El campo fecha de inicio de actividad es requerido
                         @endif
                     </div>
                 </div>
@@ -653,7 +643,10 @@
         var modal = bootstrap.Modal.getInstance(representanteModal)
         modal.hide();
     }
-
+    function enviarFormulario() {
+            // Selecciona el formulario y lo envía
+            document.getElementById("formularioCatastroContribuyente").submit();
+    }
     function seleccionarActividad(id, nombre, ciiu) {
         // Crear un nuevo elemento <tr>
         const nuevaFila = document.createElement("tr");
@@ -829,6 +822,7 @@
 
         });
     }
+    /*
     (() => {
         'use strict'
 
@@ -846,7 +840,7 @@
             form.classList.add('was-validated')
             }, false)
         })
-    })()
+    })()*/
 </script>
 @endpush
 

@@ -128,10 +128,10 @@ class HomeController extends Controller
     {
         $clientesTerceraEdad = PsqlEnte::where('fecha_nacimiento', '<=', now()->subYears(65))->count();
 
-        $clientesConDiscapacidad = PsqlEnte::whereIn('discapacidad', [201, 202, 203])->count();
+        $clientesConDiscapacidad = PsqlEnte::whereIn('discapacidad', [201, 202])->count();
 
         $clientesLlevanContabilidad = PsqlEnte::where('lleva_contabilidad', true)->count();
-        $clientesNoLlevanContabilidad = PsqlEnte::where('lleva_contabilidad', false)->count();
+        $clientesNoLlevanContabilidad = 0;
 
         return response()->json([
             'terceraEdad' => $clientesTerceraEdad,

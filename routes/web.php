@@ -110,7 +110,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('tituloscoactiva/imprimir', [TituloCreditoCoactivaController::class, 'reporteTitulosCoactiva'])->name('reportecoactiva.titulos');
     Route::get('/pruebatitulo', function () {
         try {
-            return App\Models\PsqlEnte::all();
+            $patente = App\Models\PsqlPaPatente::find(1);
+            return $patente->contribuyente;
         } catch (\Exception $e) {
             return 'No se pudo conectar a la base de datos: ' . $e->getMessage();
         }
@@ -125,7 +126,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('catastrocontribuyente', [CatastroContribuyente::class, 'store'])->name('store.catastro');
     Route::post('catastrocontribuyente/canton', [CatastroContribuyente::class, 'getCanton'])->name('getcanton.catastro');
     Route::post('catastrocontribuyente/parroquia', [CatastroContribuyente::class, 'getParroquia'])->name('getparroquia.catastro');
+
     Route::get('patente', [PatenteController::class, 'create'])->name('create.patente');
+    Route::post('patente', [PatenteController::class, 'store'])->name('store.patente');
+    Route::get('patente/editar/{id}', [PatenteController::class, 'edit'])->name('edit.patente');
+    Route::get('patente/previsualizar/{id}', [PatenteController::class, 'previsualizar'])->name('previsualizar.patente');
+    Route::post('patente/editar/{id}', [PatenteController::class, 'update'])->name('update.patente');
+    Route::get('patente/lista', [PatenteController::class, 'index'])->name('index.patente');
+    Route::post('patente/datatables', [PatenteController::class, 'datatable'])->name('datatables.patente');
 
     Route::post('ente/datatables', [EnteController::class, 'datatables'])->name('datatables.ente');
     Route::post('ente/datatables/listar', [EnteController::class, 'datatablesente'])->name('listar.ente');
@@ -137,7 +145,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('ente/editar/{id}', [EnteController::class, 'edit'])->name('edit.ente');
     Route::patch('ente/editar/{id}', [EnteController::class, 'update'])->name('update.ente');
     Route::get('ente/mostrar/{id}', [EnteController::class, 'show'])->name('show.ente');
-
-
 });
 
