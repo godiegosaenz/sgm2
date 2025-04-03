@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:form id="frmResponsables" > <!-- EXTRAER DESDE LA TABLET -->
+        <div align="right">
+            <p:remoteCommand name="rc8" actionListener="#{fichaPredial.saveResponsable(fichaPredial.actualizadorPredio, fichaPredial.fiscalizadorPredio, null)}" rendered="#{fichaPredial.editable}" />
+            <p:commandButton id="btnS8" value="Guardar" rendered="#{fichaPredial.editable}"  icon="ui-icon-disk" 
+                             actionListener="#{fichaPredial.openDialog}" action="#{fichaPredial.setRemotteCommand('rc8')}" update="frmSubirDocumentosDialog"/>
+        </div>
+        <!--<div align="center">-->
+        <h:panelGrid columns="2">
+            <p:fieldset legend="LEVANTADO POR" style="font-size: 13px;" id="actPredial">
+                <h:panelGrid columns="3" id="pngObsVn">
+                    <h:outputText value="CI/RUC"/>  
+                    <p:inputText value="#{fichaPredial.predio.ciuActualizador}" readonly="false" style="width: 270px;"/>
+                    <p:commandLink id="btnActualizadorResponsable" rendered="#{fichaPredial.editable}" actionListener="#{fichaPredial.buscarCiudadano}"  >
+                        <p:graphicImage value="/css/homeIconsImages/buscar.png" height="25" width="25"/>
+                    </p:commandLink>
+                </h:panelGrid>
+                <h:panelGrid columns="2">
+                    <!--                                <p:outputLabel value="Nombres:" rendered="# {fichaPredial.actualizadorPredio.esPersona}"/>
+                                                    <p:inputText value="# {fichaPredial.actualizadorPredio.nombres}" rendered="# {fichaPredial.actualizadorPredio.esPersona}" readonly="true" style="width: 250px;"/>
+                                                    <p:outputLabel value="Razón Social:" rendered="# {!fichaPredial.actualizadorPredio.esPersona}"/>
+                                                    <p:inputText value="# {fichaPredial.actualizadorPredio.razonSocial}" rendered="# {!fichaPredial.actualizadorPredio.esPersona}" readonly="true" style="width: 250px;"/>
+                                                    <p:outputLabel value="Nombre Comercial:" rendered="# {!fichaPredial.actualizadorPredio.esPersona}"/>
+                                                    <p:inputText value="# {fichaPredial.actualizadorPredio.nombreComercial}" rendered="# {!fichaPredial.actualizadorPredio.esPersona}" readonly="true" style="width: 250px;"/>
+                                                    <p:outputLabel value="Apellidos:" rendered="# {fichaPredial.actualizadorPredio.esPersona}"/>
+                                                    <p:inputText value="# {fichaPredial.actualizadorPredio.apellidos}" rendered="# {fichaPredial.actualizadorPredio.esPersona}" readonly="true" style="width: 250px;"/>    -->
+                    <p:outputLabel value="Nombres Completos:" />
+                    <p:inputText value="#{fichaPredial.predio.ciuNombresActualizador}" readonly="true" style="width: 250px;"/>  
+                </h:panelGrid>
+            </p:fieldset>
+            <p:fieldset legend="REVISADO POR" style="font-size: 13px;" id="actFisc">
+                <h:panelGrid columns="3">
+                    <h:outputText value="CI/RUC"/>
+                    <p:inputText value="#{fichaPredial.predio.ciuFiscalizador}" readonly="false" style="width: 270px;"/>
+                    <p:commandLink id="btnFiscalizadorResponsable" rendered="#{fichaPredial.editable}" actionListener="#{fichaPredial.buscarCiudadano}" >
+                        <p:graphicImage value="/css/homeIconsImages/buscar.png" height="25" width="25"/>
+                    </p:commandLink>
+                </h:panelGrid>
+                <h:panelGrid columns="2">
+<!--                                <p:outputLabel value="Nombres:" rendered="#{fichaPredial.fiscalizadorPredio.esPersona}"/>
+                    <p:inputText value="#{fichaPredial.fiscalizadorPredio.nombres}" readonly="true" rendered="#{fichaPredial.fiscalizadorPredio.esPersona}" style="width: 250px;"/>
+                    <p:outputLabel value="Razón Social:" rendered="#{!fichaPredial.fiscalizadorPredio.esPersona}"/>
+                    <p:inputText value="#{fichaPredial.fiscalizadorPredio.razonSocial}" readonly="true" rendered="#{!fichaPredial.fiscalizadorPredio.esPersona}" style="width: 250px;"/>
+                    <p:outputLabel value="Nombre Comercial:" rendered="#{!fichaPredial.fiscalizadorPredio.esPersona}"/>
+                    <p:inputText value="#{fichaPredial.fiscalizadorPredio.nombreComercial}" rendered="#{!fichaPredial.fiscalizadorPredio.esPersona}" readonly="true" style="width: 250px;"/>
+                    <p:outputLabel value="Apellidos:" rendered="#{fichaPredial.fiscalizadorPredio.esPersona}"/>
+                    <p:inputText value="#{fichaPredial.fiscalizadorPredio.apellidos}" rendered="#{fichaPredial.fiscalizadorPredio.esPersona}" readonly="true" style="width: 250px;"/>    -->
+                    <p:outputLabel value="Nombres Completos:" />
+                    <p:inputText value="#{fichaPredial.predio.ciuNombresFiscalizador}" readonly="true" style="width: 250px;"/>  
+
+                </h:panelGrid>
+            </p:fieldset>
+        </h:panelGrid>
+        <p:fieldset toggleable="true" legend="Observaciones">
+                <div align="right" >
+                    <p:commandButton  id="btnObs1" value="Guardar"
+                                      icon="ui-icon-disk" actionListener="#{fichaPredial.openDialog}" 
+                                      process="@form" action="#{fichaPredial.setRemotteCommand('rc1')}" update="frmSubirDocumentosDialog"  rendered="#{fichaPredial.editable}"/>
+                </div>
+                <p:inputTextarea id="observaciones" cols="85" value="#{fichaPredial.predio.observaciones}" style="width: 95%" disabled="#{!fichaPredial.editable}"/>
+            </p:fieldset>
+        <!--</div>-->
+    </h:form>
+</html>

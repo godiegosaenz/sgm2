@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+    <h:outputText value="Tiene Contrato:" style="font-weight: bolder" rendered="#{infoExtrasView.renderviewCatPredioPropitarioExtra}"/>
+    <p:selectBooleanCheckbox value="#{propietarios.pro.ente.llevaContabilidad}" rendered="#{infoExtrasView.renderviewCatPredioPropitarioExtra}"/>
+    <p:outputLabel value="Fecha Contrato:" rendered="#{infoExtrasView.renderviewCatPredioPropitarioExtra}"/>
+    <p:calendar value="#{propietarios.pro.ente.fechaNacimiento}" rendered="#{infoExtrasView.renderviewCatPredioPropitarioExtra}"/>
+</html>

@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{ingresarLiquidacionAntigua.doPreRenderView()}"/>
+        </f:metadata>
+    </ui:define>
+    <ui:define name="top"><h3>Buscar Liquidacion - Registro Propiedad</h3></ui:define>
+    <ui:define name="content">
+        <h:form id="mainForm">
+            <p:panelGrid styleClass="noBorder" style="margin: 0 auto">
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="Numero de Seguimiento:"/>
+                    </p:column>
+                    <p:column>
+                        <p:inputText value="#{ingresarLiquidacionAntigua.numero}"/>
+                    </p:column>
+                    <p:column>
+                        <p:commandButton value="Buscar" icon="ui-icon-search" styleClass="btnStyle" disabled="#{ingresarLiquidacionAntigua.mostrar}"
+                                         actionListener="#{ingresarLiquidacionAntigua.buscarTramite()}"/>
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+            <p:panel header="Informacion del Tramite" rendered="#{ingresarLiquidacionAntigua.mostrar}">
+                <p:panelGrid styleClass="noBorder" style="width: 100%;font-weight: bolder;font-size: 12px;">
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="No Tramite Registro:"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{ingresarLiquidacionAntigua.liq.numTramiteRp}"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="Fecha Liquidacion:"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{ingresarLiquidacionAntigua.liq.fecha}">
+                                <f:convertDateTime pattern="dd-MM-yyyy HH:mm"/>
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="Valor Liquidacion:"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{ingresarLiquidacionAntigua.liq.totalPagar}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Beneficiario:"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{ingresarLiquidacionAntigua.ht.nombrePropietario}"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="Correos:"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{ingresarLiquidacionAntigua.ht.correos}"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="Telefonos:"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{ingresarLiquidacionAntigua.ht.telefonos}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="3">
+                            <p:dataTable value="#{ingresarLiquidacionAntigua.listInterv}"
+                                         var="inter" style="text-align: center;width: 500px" scrollable="true" scrollHeight="200">
+                                <f:facet name="header">
+                                    Intervinientes
+                                </f:facet>
+                                <p:column headerText="Nombres">
+                                    <p:outputLabel value="#{inter.nombres}"/>
+                                </p:column>
+                                <p:column headerText="Papel" width="200">
+                                    <p:outputLabel value="#{inter.papel.papel}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:column>
+                        <p:column colspan="3">
+                            <p:dataTable value="#{ingresarLiquidacionAntigua.actosPorPagar}"
+                                         var="det" style="text-align: center;width: 500px" scrollable="true" scrollHeight="200">
+                                <f:facet name="header">
+                                    Actos del Tramite
+                                </f:facet>
+                                <p:column headerText="Acto">
+                                    <p:outputLabel value="#{det.acto.nombre}"/>
+                                </p:column>
+                                <p:column headerText="Cantidad" width="70">
+                                    <p:outputLabel value="#{det.cantidad}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="6" style="text-align: center;">
+                            <p:commandButton value="Guardar Liquidacion" icon="ui-icon-check" styleClass="btnStyle" rendered="#{ingresarLiquidacionAntigua.btnState == 1}"
+                                             actionListener="#{ingresarLiquidacionAntigua.guardarTramite()}"/>                           
+                            <p:commandButton value="Ingresar Tramite" icon="ui-icon-plus" styleClass="btnStyle" rendered="#{ingresarLiquidacionAntigua.btnState == 2}"
+                                             actionListener="#{ingresarLiquidacionAntigua.ingresarTramite()}"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:panel>
+        </h:form>
+    </ui:define>
+</ui:composition>
+

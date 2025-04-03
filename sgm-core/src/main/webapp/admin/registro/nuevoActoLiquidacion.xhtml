@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{nuevoActoLiquidacion.doPreRenderView()}"/>
+            <f:viewParam name="code" value="#{nuevoActoLiquidacion.codigo}"/>
+        </f:metadata>
+    </ui:define>
+    <ui:define name="top"><h3>Acto de Liquidacion</h3></ui:define>
+    <ui:define name="content">
+        <h:form id="mainForm">
+            <p:panelGrid styleClass="noBorder" style="margin: 0 auto;">
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="Nombre:"/>
+                    </p:column>
+                    <p:column colspan="3">
+                        <p:inputText value="#{nuevoActoLiquidacion.nombre}" style="width: 100%"/>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="Estado:"/>
+                    </p:column>
+                    <p:column>
+                        <p:selectOneMenu value="#{nuevoActoLiquidacion.acto.estado}">
+                            <f:selectItem itemLabel="Activo" itemValue="#{true}" />
+                            <f:selectItem itemLabel="Inactivo" itemValue="#{false}" />
+                        </p:selectOneMenu>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="Tipo Acto:"/>
+                    </p:column>
+                    <p:column>
+                        <p:selectOneMenu value="#{nuevoActoLiquidacion.tipoActo}" converter="entityConverter">  
+                            <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}" />
+                            <f:selectItems value="#{nuevoActoLiquidacion.listTipoActo}" var="ta" itemLabel="#{ta.nombre}" itemValue="#{ta}"/>
+                        </p:selectOneMenu>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="Tipo Cobro:"/>
+                    </p:column>
+                    <p:column>
+                        <p:selectOneMenu value="#{nuevoActoLiquidacion.tipoCobro}" converter="entityConverter">  
+                            <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}" />
+                            <f:selectItems value="#{nuevoActoLiquidacion.listTipoCobro}" var="tc" itemLabel="#{tc.nombre}" itemValue="#{tc}"/>
+                        </p:selectOneMenu>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="Tipo Tarea:"/>
+                    </p:column>
+                    <p:column>
+                        <p:selectOneMenu value="#{nuevoActoLiquidacion.tipoTarea}" converter="entityConverter">  
+                            <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}" />
+                            <f:selectItems value="#{nuevoActoLiquidacion.listTipoTarea}" var="tt" itemLabel="#{tt.nombre}" itemValue="#{tt}"/>
+                        </p:selectOneMenu>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="Codigo Ordenanza:"/>
+                    </p:column>
+                    <p:column>
+                        <p:inputText value="#{nuevoActoLiquidacion.acto.codigoOrdenanza}" style="width: 100%"/>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="Valor:"/>
+                    </p:column>
+                    <p:column>
+                        <pe:inputNumber value="#{nuevoActoLiquidacion.acto.valor}" symbol="$ "/>
+                    </p:column>
+                    <p:column colspan="2">
+                        <p:selectBooleanCheckbox itemLabel="  ¿Es re-liquidacion?" value="#{nuevoActoLiquidacion.acto.reliquidacion}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="Porcentaje:"/>
+                    </p:column>
+                    <p:column>
+                        <pe:inputNumber value="#{nuevoActoLiquidacion.acto.porcentaje}" symbol="% "/>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="Valor Max.:"/>
+                    </p:column>
+                    <p:column>
+                        <pe:inputNumber value="#{nuevoActoLiquidacion.acto.valorMax}" symbol="$ "/>
+                    </p:column>
+                    <p:column colspan="2">
+                        <p:selectBooleanCheckbox itemLabel="  ¿Realiza Transferencia de Dominio?" value="#{nuevoActoLiquidacion.acto.realizaTransferencia}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="2">
+                        <p:selectBooleanCheckbox itemLabel="  ¿Sube Documento?" value="#{nuevoActoLiquidacion.acto.subeDocumento}"/>
+                    </p:column>
+                    <p:column colspan="2">
+                        <p:selectBooleanCheckbox itemLabel="  ¿Aplica gastos Generales?" value="#{nuevoActoLiquidacion.acto.gastosGenerales}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="6">
+                        <center><p:commandButton value="Guardar" icon="ui-icon-disk" styleClass="btnStyle"
+                                                 actionListener="#{nuevoActoLiquidacion.guardar()}"/></center>
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+        </h:form>
+    </ui:define>
+</ui:composition>

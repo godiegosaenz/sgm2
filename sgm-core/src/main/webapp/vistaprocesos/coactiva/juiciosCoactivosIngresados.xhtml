@@ -1,0 +1,528 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    template="/template/template.xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html" 
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:dialog="http://xmlns.jcp.org/jsf/composite/dialog">
+    <ui:define name="head">
+        <script src="../../resources/pfJs/keyPress.js" type="text/javascript"></script>
+        <style type="text/css">
+            .ui-datepicker .ui-datepicker-title select {
+                font-size: 1em;
+                margin: 1px 0;
+                color: black;
+            }
+        </style>
+    </ui:define>
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{juiciosCoactivos.doPreRenderView()}"/>
+        </f:metadata>
+    </ui:define>
+    <ui:define name="content">
+        <center>
+            <h1>Juicios Ingresados</h1>
+        </center>
+        <h:form id="mainForm">
+            <p:accordionPanel activeIndex="-1">
+                <p:tab title="REPORTES - JUICIOS" titleStyle="font-weight: bold;background: #0b4170; font-size: 14px; color: #ffffff;">
+                    <h:panelGrid columns="3" styleClass="ui-panelgrid-blank" style="width: 100%;">
+                        <h:panelGroup style="border-color: #252525; border-width: 1px; ">
+                            <center>
+                            <p:outputLabel value="Juicios Ingresados" style="font-size: 14px; font-weight: bold; padding: 0px; "/><br/>
+                            <p:commandLink title="Juicios Ingresados" oncomplete="PF('dlgReportesJuicios').show();" update="formReportesJuicios">
+                                <f:setPropertyActionListener target="#{juiciosCoactivos.tipoReporte}" value="#{1}" />
+                                <p:graphicImage value="/css/homeIconsImages/catalogos.png" height="50"/>
+                            </p:commandLink>
+                            </center>
+                        </h:panelGroup>
+                        <h:panelGroup style="border-color: #252525; border-width: 1px; ">
+                            <center>
+                            <p:outputLabel value="Juicios por Abogado/Funcionario" style="font-size: 14px; font-weight: bold; padding: 0px; "/><br/>
+                            <p:commandLink title="Juicios por Abogado/Funcionario" oncomplete="PF('dlgReportesJuicios').show();" update="formReportesJuicios">
+                                <f:setPropertyActionListener target="#{juiciosCoactivos.tipoReporte}" value="#{2}" />
+                                <p:graphicImage value="/css/homeIconsImages/preferences-contact.png" height="50"/>
+                            </p:commandLink>
+                            </center>
+                        </h:panelGroup>
+                        <h:panelGroup style="border-color: #252525; border-width: 1px; ">
+                            <center>
+                            <p:outputLabel value="Consulta Titulos en Juicio" style="font-size: 14px; font-weight: bold; padding: 0px; "/><br/>
+                            <p:commandLink title="Consulta Titulos en Juicio" oncomplete="PF('dlgReportesJuicios').show();" update="formReportesJuicios">
+                                <f:setPropertyActionListener target="#{juiciosCoactivos.tipoReporte}" value="#{3}" />
+                                <p:graphicImage value="/css/homeIconsImages/urbano.png" height="50"/>
+                            </p:commandLink>
+                            </center>
+                        </h:panelGroup>
+                        <h:panelGroup style="border-color: #252525; border-width: 1px; ">
+                            <center>
+                            <p:outputLabel value="Detalle de Juicios Por Estado" style="font-size: 14px; font-weight: bold; padding: 0px; "/><br/>
+                            <p:commandLink title="Detalle de Juicios Por Estado" oncomplete="PF('dlgReportesJuicios').show();" update="formReportesJuicios">
+                                <f:setPropertyActionListener target="#{juiciosCoactivos.tipoReporte}" value="#{5}" />
+                                <p:graphicImage value="/css/homeIconsImages/list_requirements.png" height="50"/>
+                            </p:commandLink>
+                            </center>
+                        </h:panelGroup>
+                        <h:panelGroup style="border-color: #252525; border-width: 1px; ">
+                            <center>
+                            <p:outputLabel value="Cobros de Juicios Coactivos Por Ab." style="font-size: 14px; font-weight: bold; padding: 0px; "/><br/>
+                            <p:commandLink title="Cobros de Juicios Coactivos Por Ab." oncomplete="PF('dlgReportesJuicios').show();" update="formReportesJuicios">
+                                <f:setPropertyActionListener target="#{juiciosCoactivos.tipoReporte}" value="#{6}" />
+                                <p:graphicImage value="/css/homeIconsImages/administrator.png" height="50"/>
+                            </p:commandLink>
+                            </center>
+                        </h:panelGroup>
+                        <h:panelGroup style="border-color: #252525; border-width: 1px; ">
+                            <center>
+                            <p:outputLabel value="Inventario de Juicios Por Abogado" style="font-size: 14px; font-weight: bold; padding: 0px; "/><br/>
+                            <p:commandLink title="Inventario de Juicios Por Abogado" oncomplete="PF('dlgReportesJuicios').show();" update="formReportesJuicios">
+                                <f:setPropertyActionListener target="#{juiciosCoactivos.tipoReporte}" value="#{7}" />
+                                <p:graphicImage value="/css/homeIconsImages/icono_caja.png" height="50"/>
+                            </p:commandLink>
+                            </center>
+                        </h:panelGroup>
+                    </h:panelGrid>
+                </p:tab>
+            </p:accordionPanel>
+            <p:dataTable paginator="true" lazy="true" rows="20" rowsPerPageTemplate="20,50,100" style="text-align: center;"
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         value="#{juiciosCoactivos.juicios}" var="jui" filterEvent="enter">
+                <p:column headerText="Numero" filterBy="#{jui.numeroJuicio}" sortBy="#{jui.numeroJuicio}" width="80" filterStyle="width: 95%"><h:outputText value="#{jui.numeroJuicio}"/></p:column>
+                <p:column headerText="Anio" filterBy="#{jui.anioJuicio}" sortBy="#{jui.anioJuicio}" width="60" filterStyle="width: 95%"><h:outputText value="#{jui.anioJuicio}"/></p:column>
+                <p:column headerText="Fec.Juicio" width="100">
+                    <h:outputText value="#{jui.fechaJuicio}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                </p:column>
+                <p:column headerText="Total Deuda" width="100"><h:outputText value="#{jui.totalDeuda}"/></p:column>
+                <p:column headerText="Estado" width="150"><h:outputText value="#{jui.estadoJuicio.descripcion}"/></p:column>
+                <p:column headerText="Fec.Ingreso" width="100">
+                    <h:outputText value="#{jui.fechaIngreso}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                </p:column>
+                <p:column headerText="Nº Control" width="75" filterBy="#{jui.tramite.id}"><h:outputText value="#{jui.tramite.id}"/></p:column>
+                <p:column headerText="Doc." width="35">
+                    <p:commandLink actionListener="#{juiciosCoactivos.generarTitulosJuicio(jui)}">
+                        <p:graphicImage value="/css/homeIconsImages/reporte.png" height="16"/>   
+                    </p:commandLink>
+                </p:column>
+                <p:column headerText="Info" width="35">
+                    <p:commandLink actionListener="#{juiciosCoactivos.showDlgInfJuicio(jui)}" title="#{jui.numeroJuicio}-#{jui.anioJuicio}">
+                        <p:graphicImage value="/css/homeIconsImages/abrir.png" height="16"/>   
+                    </p:commandLink>
+                </p:column>
+                <p:column headerText="Editar" width="35">
+                    <p:commandLink actionListener="#{juiciosCoactivos.showDlgEditJuicio(jui)}" disabled="#{jui.tramite ne null or !jui.estado}" update="formJuicio" oncomplete="PF('dlgEditJuicio').show();">
+                        <p:graphicImage value="/css/homeIconsImages/edit.png" height="16"/>   
+                    </p:commandLink>
+                </p:column>
+                <p:column headerText="Inactivar" width="35">
+                    <p:commandLink actionListener="#{juiciosCoactivos.showDlgEditJuicio(jui)}" disabled="#{!jui.estado || (jui.tramite ne null?!jui.tramite.estado.equalsIgnoreCase('Pendiente'):false)}" update="formInactivarJuicio" oncomplete="PF('dlgInactivarJuicio').show();">
+                        <p:graphicImage value="/css/homeIconsImages/delete.png" height="16"/>   
+                    </p:commandLink>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+        
+        <p:dialog header="DATOS CONSULTA - REPORTE" widgetVar="dlgReportesJuicios" resizable="true" closeOnEscape="true" modal="true" position="center" width="90%">
+            <h:form id="formReportesJuicios">
+                <p:fieldset legend="#{juiciosCoactivos.tipoReporte eq 1?'JUICIOS INGRESADOS':juiciosCoactivos.tipoReporte eq 2?'POR ABOGADO/FUNCIONARIO':juiciosCoactivos.tipoReporte eq 3?'CONSULTA TITULOS EN JUICIO':juiciosCoactivos.tipoReporte eq 4?'CONSULTA TITULOS':juiciosCoactivos.tipoReporte eq 5?'DETALLE DE JUICIOS POR ESTADO':juiciosCoactivos.tipoReporte eq 6?'COBROS DE JUICIOS COACTIVOS POR ABOGADO':juiciosCoactivos.tipoReporte eq 7?'INVENTARIO DE JUICIO POR INVENTARIO':''}">
+                    <p:panelGrid rendered="#{juiciosCoactivos.tipoReporte eq 1 or juiciosCoactivos.tipoReporte eq 2 or juiciosCoactivos.tipoReporte eq 5 or juiciosCoactivos.tipoReporte eq 6 or juiciosCoactivos.tipoReporte eq 7}" style="margin: 0 auto;">
+                        <p:row>
+                            <p:column></p:column>
+                            <p:column rendered="#{juiciosCoactivos.tipoReporte eq 1 or juiciosCoactivos.tipoReporte eq 2}"><p:selectBooleanCheckbox value="#{juiciosCoactivos.porNumero}" itemLabel="NUM. JUICIO" style="float: left; font-weight: bold; font-size: 13px;"><p:ajax update="formReportesJuicios" process="@all"/></p:selectBooleanCheckbox></p:column>
+                            <p:column rendered="#{juiciosCoactivos.tipoReporte eq 1 or juiciosCoactivos.tipoReporte eq 2}"><p:selectBooleanCheckbox value="#{juiciosCoactivos.porAnio}" itemLabel="AÑO JUICIO" style="float: left; font-weight: bold; font-size: 13px;"><p:ajax update="formReportesJuicios" process="@all"/></p:selectBooleanCheckbox></p:column>
+                            <p:column rendered="#{juiciosCoactivos.tipoReporte eq 1 or juiciosCoactivos.tipoReporte eq 2}"><p:selectBooleanCheckbox value="#{juiciosCoactivos.porFechaJuicio}" itemLabel="FECHA JUICIO" style="float: left; font-weight: bold; font-size: 13px;"><p:ajax update="formReportesJuicios" process="@all"/></p:selectBooleanCheckbox></p:column>
+                            <p:column><p:selectBooleanCheckbox value="#{juiciosCoactivos.porFechaIngreso}" itemLabel="FECHA INGRESO" style="float: left; font-weight: bold; font-size: 13px;"><p:ajax update="formReportesJuicios" process="@all"/></p:selectBooleanCheckbox></p:column>
+                            <p:column rendered="#{juiciosCoactivos.tipoReporte eq 1 or juiciosCoactivos.tipoReporte eq 2 or juiciosCoactivos.tipoReporte eq 5}"><p:outputLabel value="ESTADOS" style="float: left; font-weight: bold; font-size: 13px;"/></p:column>
+                            <p:column rendered="#{juiciosCoactivos.tipoReporte eq 2}"><p:outputLabel value="FUNCIONARIO" style="float: left; font-weight: bold; font-size: 13px;"/></p:column>
+                            <p:column rendered="#{juiciosCoactivos.tipoReporte eq 2 or juiciosCoactivos.tipoReporte eq 6 or juiciosCoactivos.tipoReporte eq 7}"><p:outputLabel value="ABOGADOS" style="float: left; font-weight: bold; font-size: 13px;"/></p:column>
+                            <p:column><p:outputLabel value="TIPO DE REPORTE" style="float: left; font-weight: bold; font-size: 13px;"/></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column><p:outputLabel value="DESDE" style="float: left; font-weight: bold; font-size: 13px;"/></p:column>
+                            <p:column rendered="#{juiciosCoactivos.tipoReporte eq 1 or juiciosCoactivos.tipoReporte eq 2}"><p:inputText type="number" value="#{juiciosCoactivos.numDesde}" size="10" disabled="#{!juiciosCoactivos.porNumero}"/></p:column>
+                            <p:column rendered="#{juiciosCoactivos.tipoReporte eq 1 or juiciosCoactivos.tipoReporte eq 2}"><p:inputText type="number" value="#{juiciosCoactivos.anioDesde}" size="10" disabled="#{!juiciosCoactivos.porAnio}"/></p:column>
+                            <p:column rendered="#{juiciosCoactivos.tipoReporte eq 1 or juiciosCoactivos.tipoReporte eq 2}"><p:calendar value="#{juiciosCoactivos.fechaJuicioDesde}" navigator="true" pattern="dd/MM/yyyy" maxdate="sysdate" size="15" disabled="#{!juiciosCoactivos.porFechaJuicio}"/></p:column>
+                            <p:column><p:calendar value="#{juiciosCoactivos.fechaIngresoDesde}" navigator="true" pattern="dd/MM/yyyy" maxdate="sysdate" size="15" disabled="#{!juiciosCoactivos.porFechaIngreso}"/></p:column>
+                            <p:column rendered="#{juiciosCoactivos.tipoReporte eq 1 or juiciosCoactivos.tipoReporte eq 2 or juiciosCoactivos.tipoReporte eq 5}" rowspan="2">
+                                <p:selectManyCheckbox value="#{juiciosCoactivos.listEstadosReporte}" layout="grid" columns="1">
+                                    <f:selectItems value="#{juiciosCoactivos.listEstados}" var="estado" itemLabel="#{estado.descripcion}" itemValue="#{estado.id}" />
+                                </p:selectManyCheckbox>
+                            </p:column>
+                            <p:column rendered="#{juiciosCoactivos.tipoReporte eq 2}" rowspan="2">
+                                <p:selectManyCheckbox value="#{juiciosCoactivos.funcionariosReporte}" layout="grid" columns="1">
+                                    <f:selectItems value="#{juiciosCoactivos.funcionarios}" var="funcionario" itemLabel="#{funcionario.ente.apellidos} #{funcionario.ente.nombres}" itemValue="#{funcionario.id}" />
+                                </p:selectManyCheckbox>
+                            </p:column>
+                            <p:column rendered="#{juiciosCoactivos.tipoReporte eq 2 or juiciosCoactivos.tipoReporte eq 6 or juiciosCoactivos.tipoReporte eq 7}" rowspan="2">
+                                <p:selectManyCheckbox value="#{juiciosCoactivos.listAbogadosReporte}" layout="grid" columns="1">
+                                    <f:selectItems value="#{juiciosCoactivos.listAbogados}" var="ab" itemLabel="#{ab.detalle}" itemValue="#{ab.id}" />
+                                </p:selectManyCheckbox>
+                            </p:column>
+                            
+                            <p:column  rowspan="2">
+                                <p:selectBooleanCheckbox value="#{juiciosCoactivos.esPdf}" itemLabel="Pdf" style="float: left; font-weight: bold; font-size: 13px;"><p:ajax update="formReportesJuicios" listener="#{juiciosCoactivos.cambiarBoolean}"/></p:selectBooleanCheckbox>
+                                <p:selectBooleanCheckbox value="#{juiciosCoactivos.esExcel}" itemLabel="Excel " style="float: left; font-weight: bold; font-size: 13px;"><p:ajax update="formReportesJuicios" listener="#{juiciosCoactivos.cambiarBoolean2}"/></p:selectBooleanCheckbox>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column><p:outputLabel value="HASTA" style="float: left; font-weight: bold; font-size: 13px;"/></p:column>
+                            <p:column rendered="#{juiciosCoactivos.tipoReporte eq 1 or juiciosCoactivos.tipoReporte eq 2}"><p:inputText type="number" value="#{juiciosCoactivos.numHasta}" disabled="#{!juiciosCoactivos.porNumero}"/></p:column>
+                            <p:column rendered="#{juiciosCoactivos.tipoReporte eq 1 or juiciosCoactivos.tipoReporte eq 2}"><p:inputText type="number" value="#{juiciosCoactivos.anioHasta}" disabled="#{!juiciosCoactivos.porAnio}"/></p:column>
+                            <p:column rendered="#{juiciosCoactivos.tipoReporte eq 1 or juiciosCoactivos.tipoReporte eq 2}"><p:calendar value="#{juiciosCoactivos.fechaJuicioHasta}" navigator="true" pattern="dd/MM/yyyy" maxdate="sysdate" size="15" disabled="#{!juiciosCoactivos.porFechaJuicio}"/></p:column>
+                            <p:column><p:calendar value="#{juiciosCoactivos.fechaIngresoHasta}" navigator="true" pattern="dd/MM/yyyy" maxdate="sysdate" size="15" disabled="#{!juiciosCoactivos.porFechaIngreso}"/></p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    
+                    <p:panelGrid rendered="#{juiciosCoactivos.tipoReporte eq 3 or juiciosCoactivos.tipoReporte eq 4}">
+                        <p:commandButton value="LIMPIAR" actionListener="#{juiciosCoactivos.limpiarConsultaJuicios()}" update="formReportesJuicios" icon="ui-icon-refresh" styleClass="btnStyle"/>
+                        <p:selectOneRadio value="#{juiciosCoactivos.predioModel.tipoConsultaUrbano}">
+                            <f:selectItem itemLabel="MATRICULA INMOBILIARIA" itemValue="1" />
+                            <f:selectItem itemLabel="CODIGO PREDIAL" itemValue="3" />
+                            <f:selectItem itemLabel="URBANIZACION-MZ/SL" itemValue="4" />
+                            <p:ajax update="consulta"/>
+                        </p:selectOneRadio>
+                        <p:panel id="consulta">
+                            <p:outputLabel value="MATRICULA INMOBILIARIA" style="font-size: 13px; font-weight: bolder;" rendered="#{juiciosCoactivos.predioModel.tipoConsultaUrbano eq 1}"/>
+                            <p:inputText value="#{juiciosCoactivos.predioModel.numPredio}" style="font-size: 13px; font-weight: bolder;" rendered="#{juiciosCoactivos.predioModel.tipoConsultaUrbano eq 1}"/>
+                            <p:panelGrid style="width: 100%;" rendered="#{juiciosCoactivos.predioModel.tipoConsultaUrbano eq 3}">
+                                <p:row>
+                                    <p:column><p:outputLabel value="SECTOR" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                    <p:column><p:outputLabel value="MZ" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                    <p:column><p:outputLabel value="CDLA " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                    <p:column><p:outputLabel value="MZ-DIV " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                    <p:column><p:outputLabel value="SOLAR " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                    <p:column><p:outputLabel value="DIV1 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                    <p:column><p:outputLabel value="DIV2 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                    <p:column><p:outputLabel value="DIV3 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                    <p:column><p:outputLabel value="DIV4 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                    <p:column><p:outputLabel value="DIV5 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                    <p:column><p:outputLabel value="DIV6 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                    <p:column><p:outputLabel value="DIV7 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                    <p:column><p:outputLabel value="DIV8 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                    <p:column><p:outputLabel value="DIV9 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                    <p:column><p:outputLabel value="PHV " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                    <p:column><p:outputLabel value="PHH " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column><p:inputText value="#{juiciosCoactivos.predioModel.sector}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                    <p:column><p:inputText value="#{juiciosCoactivos.predioModel.mz}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                    <p:column><p:inputText value="#{juiciosCoactivos.predioModel.cdla}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                    <p:column><p:inputText value="#{juiciosCoactivos.predioModel.mzDiv}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                    <p:column><p:inputText value="#{juiciosCoactivos.predioModel.solar}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                    <p:column><p:inputText value="#{juiciosCoactivos.predioModel.div1}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                    <p:column><p:inputText value="#{juiciosCoactivos.predioModel.div2}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                    <p:column><p:inputText value="#{juiciosCoactivos.predioModel.div3}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                    <p:column><p:inputText value="#{juiciosCoactivos.predioModel.div4}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                    <p:column><p:inputText value="#{juiciosCoactivos.predioModel.div5}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                    <p:column><p:inputText value="#{juiciosCoactivos.predioModel.div6}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                    <p:column><p:inputText value="#{juiciosCoactivos.predioModel.div7}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                    <p:column><p:inputText value="#{juiciosCoactivos.predioModel.div8}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                    <p:column><p:inputText value="#{juiciosCoactivos.predioModel.div9}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                    <p:column><p:inputText value="#{juiciosCoactivos.predioModel.phv}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                    <p:column><p:inputText value="#{juiciosCoactivos.predioModel.phh}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <p:panelGrid styleClass="noBorder" rendered="#{juiciosCoactivos.predioModel.tipoConsultaUrbano eq 4}">
+                                <p:row>
+                                    <p:column><p:outputLabel value="URBANIZACION" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                    <p:column><p:outputLabel value="MANZANA" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                    <p:column><p:outputLabel value="SOLAR" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <p:selectOneMenu  value="#{juiciosCoactivos.predioModel.ciudadela}" effect="fade" converter="entityConverter"  style="width:300px;">
+                                            <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+                                            <f:selectItems value="#{inicioCoactiva.ciudadelasEntidad}" var="c" itemLabel="#{c.nombre}" itemValue="#{c}"/>  
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                    <p:column><p:inputText value="#{juiciosCoactivos.predioModel.mzUrb}"/></p:column>
+                                    <p:column><p:inputText value="#{juiciosCoactivos.predioModel.slUrb}"/></p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <br/>
+                            <center><p:commandButton value="CONSULTAR PREDIO" actionListener="#{juiciosCoactivos.consultarPredioUrbano()}" update="predioConsulta" styleClass="btnStyle" icon="ui-icon-search" iconPos="right"/></center>
+                        </p:panel>
+                        <p:outputLabel id="predioConsulta" value="PREDIO.- Matricula Inmobiliaria: #{juiciosCoactivos.predioConsulta.numPredio} , Cod: #{juiciosCoactivos.predioConsulta.codigoPredialCompleto}"/>
+                    </p:panelGrid>
+                </p:fieldset>
+                <br/>
+                <center>
+                    <p:commandButton styleClass="btnStyle" value="Generar Reporte" icon="ui-icon-print" actionListener="#{juiciosCoactivos.generarMemo()}" rendered="#{juiciosCoactivos.tipoReporte eq 1 or juiciosCoactivos.tipoReporte eq 2 or juiciosCoactivos.tipoReporte eq 5 or juiciosCoactivos.tipoReporte eq 6 or juiciosCoactivos.tipoReporte eq 7}"/>
+                    <p:commandButton styleClass="btnStyle" value="CONSULTAR JUICIOS" icon="ui-icon-search" actionListener="#{juiciosCoactivos.consultarTitulosEnJuicios}" rendered="#{juiciosCoactivos.tipoReporte eq 3}" update="juiciosxPredios"/>
+                    <p:commandButton styleClass="btnStyle" value="CONSULTAR TITULOS" icon="ui-icon-search" actionListener="#{juiciosCoactivos.consultarTituloPorPredio()}" rendered="#{juiciosCoactivos.tipoReporte eq 4}" update="dtTitulos"/>
+                </center>
+                <center>
+                <p:dataTable id="juiciosxPredios" value="#{juiciosCoactivos.juiciosConsulta}" var="juicio" rendered="#{juiciosCoactivos.tipoReporte eq 3}" emptyMessage="Sin elementos..." scrollable="true" scrollHeight="300" style="text-align: center;width: 70%">
+                    <p:column headerText="NUMERO - AÑO" ><p:outputLabel value="#{juicio.numeroJuicio}-#{juicio.anioJuicio}"/></p:column>
+                    <p:column headerText="FECHA" ><p:outputLabel value="#{juicio.fechaJuicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></p:outputLabel></p:column>
+                    <p:column headerText="Total Deuda"><p:outputLabel value="#{juicio.totalDeuda}"/></p:column>
+                    <p:column headerText="Estado"><p:outputLabel value="#{juicio.estadoJuicio.descripcion}"/></p:column>
+                    <p:column headerText="Nº Control"><p:outputLabel value="#{juicio.tramite.id}"/></p:column>
+                    <p:column headerText="Info" width="35">
+                        <p:commandLink actionListener="#{juiciosCoactivos.showDlgInfJuicio(juicio)}" title="#{juicio.numeroJuicio}-#{juicio.anioJuicio}">
+                            <p:graphicImage value="/css/homeIconsImages/abrir.png" height="16"/>   
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+                    
+                <p:dataTable id="dtTitulos" value="#{juiciosCoactivos.titulosConsulta}" var="titulo" rendered="#{juiciosCoactivos.tipoReporte eq 4}" emptyMessage="Sin elementos..." scrollable="true" scrollHeight="300" style="text-align: center;width: 70%;" rowIndexVar="index">
+                    <f:facet name="header">Titulos de Credito Consulta</f:facet>
+                    <p:column headerText="No" width="35"><p:outputLabel value="#{index+1}"/></p:column>
+                    <p:column headerText="Mat. Inmob." width="150"><p:outputLabel value="#{titulo.predio.numPredio}"/></p:column>
+                    <p:column headerText="Cod. Predial"><p:outputLabel value="#{titulo.predio.codigoPredialCompleto}"/></p:column>
+                    <p:column headerText="Anio Deuda" width="100"><p:outputLabel value="#{titulo.anio}"/></p:column>
+                    <p:column headerText="Total Deuda" width="150"><p:outputLabel value="#{titulo.totalPago}"/></p:column>
+                    <p:column headerText="Estado Pago" width="100"><p:outputLabel value="#{titulo.estadoLiquidacion.descripcion}"/></p:column>
+                    <p:column headerText="Del." width="50">
+                        <p:commandLink actionListener="#{juiciosCoactivos.deleteLiquidacion(index)}" update="dtTitulos">
+                            <p:graphicImage value="/css/homeIconsImages/delete.png" height="16"/>   
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+                    <br/>
+                    <p:commandButton styleClass="btnStyle" value="AGREGAR TITULOS" icon="ui-icon-disk" actionListener="#{juiciosCoactivos.agregarEmisionesJuicio()}" rendered="#{juiciosCoactivos.tipoReporte eq 4}" oncomplete="PF('dlgReportesJuicios').hide();" update="dtTitulos,formInformCoa">
+                        <p:confirm header="Confirmacion" message="Grabar Datos?" icon="ui-icon-alert" />
+                    </p:commandButton>
+                </center>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Editar Juicio" widgetVar="dlgEditJuicio" resizable="false" modal="true" width="80%" height="500" position="center">
+            <h:form id="formJuicio">
+                <p:panelGrid styleClass="noBorder" columns="5" style="width: 90%; margin: 0 auto;">
+                    <p:outputLabel value="No Juicio:" style="font-size: 12px;font-weight: bolder;"/>
+                    <p:outputLabel value="Año Juicio:" style="font-size: 12px;font-weight: bolder;"/>
+                    <p:outputLabel value="Fecha Juicio:" style="font-size: 12px;font-weight: bolder;"/>
+                    <p:outputLabel value="Abogado:" style="font-size: 12px;font-weight: bolder;"/>
+                    <p:outputLabel value="Estado Juicio:" style="font-size: 12px;font-weight: bolder;"/>
+                    
+                    <p:inputText value="#{juiciosCoactivos.juicio.numeroJuicio}" readonly="true" size="10"/>
+                    <p:inputText value="#{juiciosCoactivos.juicio.anioJuicio}" readonly="true" size="10"/>
+                    <p:inputText value="#{juiciosCoactivos.juicio.fechaJuicio}" readonly="true" size="10">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </p:inputText>
+                    <p:selectOneMenu value="#{juiciosCoactivos.juicio.abogadoJuicio}" converter="entityConverter">
+                        <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}" />  
+                        <f:selectItems value="#{juiciosCoactivos.listAbogados}" var="ab" itemLabel="#{ab.detalle}" itemValue="#{ab}"/>  
+                    </p:selectOneMenu>
+                    <p:selectOneMenu value="#{juiciosCoactivos.juicio.estadoJuicio}" converter="entityConverter">
+                        <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}" />  
+                        <f:selectItems value="#{juiciosCoactivos.listEstados}" var="es" itemLabel="#{es.descripcion}" itemValue="#{es}"/>  
+                    </p:selectOneMenu>
+                </p:panelGrid>
+                <p:dataTable value="#{juiciosCoactivos.juicio.coaJuicioPredioCollection}" emptyMessage="Sin elementos..." var="jui" scrollable="true" scrollHeight="300" style="text-align: center;width: 99%">
+                    <p:column headerText="Titulo" ><p:outputLabel value="#{jui.liquidacion.idLiquidacion}"/></p:column>
+                    <p:column headerText="Predio" width="60"><p:outputLabel value="#{jui.liquidacion.predio.numPredio}"/></p:column>
+                    <p:column headerText="Año" width="60"><p:outputLabel value="#{jui.liquidacion.anio}"/></p:column>
+                    <p:column headerText="Codigo" ><p:outputLabel value="#{jui.liquidacion.predio.codigoPredialCompleto}"/></p:column>
+                    <p:column headerText="Valor" ><p:outputLabel value="#{jui.liquidacion.totalPago}" style="font-weight: bold; font-size: 14px;"/></p:column>
+                    <p:column headerText="Estado" width="100"><p:outputLabel value="#{jui.liquidacion.estadoLiquidacion.descripcion}" style="font-weight: bold; font-size: 14px;"/></p:column>
+                    <p:column headerText="Abogado" ><p:outputLabel value="#{jui.abogadoJuicio.detalle}"/></p:column>
+                </p:dataTable>
+                <div align="center">
+                    <p:commandButton styleClass="btnStyle" value="Guardar" icon="ui-icon-home" actionListener="#{juiciosCoactivos.updateJuicio()}"/>
+                </div>
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog header="Informacion de Juicio" widgetVar="dlgVerInfoCoa" resizable="false" closeOnEscape="true" modal="true" width="80%" height="500" position="center">
+            <h:form id="formInformCoa">
+                <p:tabView>
+                    <p:tab title="Detalle Juicio (#{juiciosCoactivos.juicio.numeroJuicio}-#{juiciosCoactivos.juicio.anioJuicio})">
+                        <p:panelGrid styleClass="noBorder" columns="2" style="font-size: 12px;font-weight: bolder; width: 100%;">
+                            No Juicio:
+                            <p:inputText value="#{juiciosCoactivos.juicio.numeroJuicio}" readonly="true" size="80"/>
+                            Año Juicio:
+                            <p:inputText value="#{juiciosCoactivos.juicio.anioJuicio}" readonly="true" size="80"/>
+                            Año Juicio:
+                            <p:inputText value="#{juiciosCoactivos.juicio.totalDeuda}" readonly="true" size="80"/>
+                            Fecha Juicio:
+                            <p:inputText value="#{juiciosCoactivos.juicio.fechaJuicio}" readonly="true" size="80">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </p:inputText>
+                            Abogado:
+                            <p:inputText value="#{juiciosCoactivos.juicio.abogadoJuicio.detalle}" readonly="true" size="80"/>
+                            Estado Juicio:
+                            <p:inputText value="#{juiciosCoactivos.juicio.estadoJuicio.descripcion}" readonly="true" size="80"/>
+                            Observacion:
+                            <p:inputTextarea value="#{juiciosCoactivos.juicio.observacion}" readonly="true" cols="80"/>
+                        </p:panelGrid>
+                    </p:tab>
+                    <p:tab title="Emisiones Prediales">
+                        <p:commandButton value="Agregar Titulos A Juicio" actionListener="#{juiciosCoactivos.seleccionarJuicioPredio(null)}" oncomplete="PF('dlgReportesJuicios').show();" update="formReportesJuicios" styleClass="btnStyle" icon="ui-icon-plus" style="float: right;">
+                            <f:setPropertyActionListener target="#{juiciosCoactivos.tipoReporte}" value="#{4}" />
+                        </p:commandButton>
+                        <p:commandButton value="Actualizar Todos Ab." actionListener="#{juiciosCoactivos.seleccionarJuicioPredio(null)}" oncomplete="PF('dlgAbogado').show();" update="formAb" styleClass="btnStyle" icon="ui-icon-plus" style="float: right;"/>
+                        <div style="clear: both"/>
+                        <p:dataTable value="#{juiciosCoactivos.juicio.coaJuicioPredioCollection}" emptyMessage="Sin elementos..." var="jui" scrollable="true" scrollHeight="300" style="text-align: center;width: 99%">
+                            <p:column headerText="Titulo" ><p:outputLabel value="#{jui.liquidacion.idLiquidacion}"/></p:column>
+                            <p:column headerText="Predio" ><p:outputLabel value="#{jui.liquidacion.predio.numPredio}"/></p:column>
+                            <p:column headerText="Año" ><p:outputLabel value="#{jui.liquidacion.anio}"/></p:column>
+                            <p:column headerText="Codigo" ><p:outputLabel value="#{jui.liquidacion.predio.codigoPredialCompleto}"/></p:column>
+                            <p:column headerText="Valor" ><p:outputLabel value="#{jui.liquidacion.totalPago}" style="font-weight: bold; font-size: 15px;"/></p:column>
+                            <p:column headerText="Estado" ><p:outputLabel value="#{jui.liquidacion.estadoLiquidacion.descripcion}" style="font-weight: bold; font-size: 15px;"/></p:column>
+                            <p:column headerText="Abogado" ><p:outputLabel value="#{jui.abogadoJuicio.detalle}"/></p:column>
+                            <p:column headerText="Editar Ab." width="50">
+                                <p:commandLink actionListener="#{juiciosCoactivos.seleccionarJuicioPredio(jui)}" oncomplete="PF('dlgAbogado').show();" update="formAb">
+                                    <p:graphicImage value="/css/homeIconsImages/edit.png" height="16"/>   
+                                </p:commandLink>
+                            </p:column>
+                            <p:column headerText="Inactivar" width="70">
+                                <p:commandLink actionListener="#{juiciosCoactivos.seleccionarJuicioPredio(jui)}" disabled="#{!jui.estado}" oncomplete="PF('dlgEmision').show();" update="formEmision">
+                                    <f:setPropertyActionListener target="#{juiciosCoactivos.inactivar}" value="#{true}" />
+                                    <p:graphicImage value="/css/homeIconsImages/delete.png" height="16"/>   
+                                </p:commandLink>
+                            </p:column>
+                            <!--<p:column headerText="Eliminar" width="70">
+                                <p:commandLink actionListener="# {juiciosCoactivos.seleccionarJuicioPredio(jui)}" disabled="# {!jui.estado}" oncomplete="PF('dlgEmision').show();" update="formEmision">
+                                    <f:setPropertyActionListener target="# {juiciosCoactivos.inactivar}" value="# {false}" />
+                                    <p:graphicImage value="/css/homeIconsImages/trash.png" height="16"/>   
+                                </p:commandLink>
+                            </p:column>-->
+                        </p:dataTable>
+                    </p:tab>
+                    <p:tab title="Observaciones">
+                        <p:dataTable value="#{juiciosCoactivos.juicio.tramite.observacionesCollection}" emptyMessage="Sin elementos..."
+                                     var="obs" scrollable="true" scrollHeight="400" style="text-align: center;width: 99%">
+                            <p:column headerText="Tarea" width="250">
+                                <p:outputLabel value="#{obs.tarea}"/>
+                            </p:column>
+                            <p:column headerText="Observacion">
+                                <p:outputLabel value="#{obs.observacion}"/>
+                            </p:column>
+                            <p:column headerText="Usuario" width="100">
+                                <p:outputLabel value="#{obs.userCre}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                    <p:tab title="Tareas">
+                        <p:dataTable value="#{juiciosCoactivos.tareas}" emptyMessage="El tramite no ha sido ingresado." var="tarea" scrollable="true" scrollHeight="400" style="text-align: center;width: 99%">
+                            <p:column headerText="Nombre Tarea">
+                                <p:outputLabel value="#{tarea.name}"/>
+                            </p:column>
+                            <p:column headerText="Usuario" width="140">
+                                <p:outputLabel value="#{tarea.assignee}"/>
+                            </p:column>
+                            <p:column headerText="Fech.Inicio" width="140">
+                                <p:outputLabel value="#{tarea.createTime}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+                                </p:outputLabel>
+                            </p:column>
+                            <p:column headerText="Fech.Fin" width="140">
+                                <p:outputLabel value="#{tarea.endTime}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+                                </p:outputLabel>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                    <p:tab title="Documentos">
+                        <dialog:detalleArchivosAct archivos="#{juiciosCoactivos.listAttach}" />
+                    </p:tab>
+                </p:tabView>
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog header="Seleccionar Abogado" widgetVar="dlgAbogado" resizable="false" closeOnEscape="true" modal="true">
+            <h:form id="formAb">
+                <p:selectOneMenu value="#{juiciosCoactivos.juicioPredio.abogadoJuicio}" converter="entityConverter">
+                    <f:selectItems value="#{juiciosCoactivos.listAbogados}" var="ab" itemLabel="#{ab.detalle}" itemValue="#{ab}"/>  
+                </p:selectOneMenu>
+                <br/>
+                <br/>
+                <br/>
+                <center>
+                <p:commandButton value="Grabar" actionListener="#{juiciosCoactivos.actualizarAbogadoPredio()}" oncomplete="PF('dlgAbogado').hide();" update="formInformCoa" styleClass="btnStyle" icon="ui-icon-disk">
+                    <p:confirm header="Confirmacion" message="Grabar Datos?" icon="ui-icon-alert" />
+                </p:commandButton>
+                </center>
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                </p:confirmDialog>
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog header="Inactivar Juicio" widgetVar="dlgInactivarJuicio" resizable="false" closeOnEscape="true" modal="true" width="75%">
+            <h:form id="formInactivarJuicio">
+                <p:outputLabel value="Inactivar Juicio?" style="font-weight: bold; font-size: 14px;"/>
+                <p:dataTable value="#{juiciosCoactivos.juicio.coaJuicioPredioCollection}" emptyMessage="Sin elementos..." var="jui" scrollable="true" scrollHeight="150" style="text-align: center;width: 95%">
+                    <p:column headerText="ID liquidación" ><p:outputLabel value="#{jui.liquidacion.idLiquidacion}"/></p:column>
+                    <p:column headerText="Predio" ><p:outputLabel value="#{jui.liquidacion.predio.numPredio}"/></p:column>
+                    <p:column headerText="Anio" ><p:outputLabel value="#{jui.liquidacion.anio}"/></p:column>
+                    <p:column headerText="Valor" ><p:outputLabel value="#{jui.liquidacion.totalPago}" style="font-weight: bold; font-size: 15px;"/></p:column>
+                    <p:column headerText="Estado" ><p:outputLabel value="#{jui.liquidacion.estadoLiquidacion.descripcion}" style="font-weight: bold; font-size: 15px;"/></p:column>
+                    <p:column headerText="Abogado" ><p:outputLabel value="#{jui.abogadoJuicio.detalle}"/></p:column>
+                </p:dataTable>
+                <br/>
+                <p:outputLabel value="Observación" style="font-weight: bold; font-size: 14px;"/><br/>
+                <p:inputTextarea value="#{juiciosCoactivos.observacionInactivo.observacion}" style="width: 95%;" cols="4" placeholder="DESCRIPCION DE LA ACCION A REALIZAR. CAMPO OBLIGATORIO" required="true"/>
+                <center>
+                    <p:commandButton value="Aceptar" actionListener="#{juiciosCoactivos.inactivarJuicio()}" styleClass="btnStyle" style="font-size: 15px;"/>
+                    <p:spacer width="25"/>
+                    <p:commandButton value="Cancelar" oncomplete="PF('dlgInactivarJuicio').hide();" styleClass="btnStyle" style="font-size: 15px;"/>
+                </center>
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog header="Inactivar Emision de Juicio" widgetVar="dlgEmision" resizable="false" closeOnEscape="true" modal="true">
+            <h:form id="formEmision">
+                <p:panelGrid>
+                    <p:row>
+                        <p:column>TITULO</p:column>
+                        <p:column>PREDIO</p:column>
+                        <p:column>AÑO</p:column>
+                        <p:column>VALOR</p:column>
+                        <p:column>ESTADO</p:column>
+                        <p:column>ABOGADO</p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>#{juiciosCoactivos.juicioPredio.liquidacion.idLiquidacion}</p:column>
+                        <p:column>#{juiciosCoactivos.juicioPredio.liquidacion.predio.numPredio}</p:column>
+                        <p:column>#{juiciosCoactivos.juicioPredio.liquidacion.anio}</p:column>
+                        <p:column>#{juiciosCoactivos.juicioPredio.liquidacion.saldo}</p:column>
+                        <p:column>#{juiciosCoactivos.juicioPredio.liquidacion.estadoLiquidacion.descripcion}</p:column>
+                        <p:column>#{juiciosCoactivos.juicioPredio.abogadoJuicio.detalle}</p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <br/>
+                <br/>
+                <center>
+                <p:commandButton value="Inactivar" actionListener="#{juiciosCoactivos.desactivarJuicioPredio()}" rendered="#{juiciosCoactivos.inactivar}" oncomplete="PF('dlgEmision').hide();" update="formInformCoa" styleClass="btnStyle" icon="ui-icon-disk">
+                    <p:confirm header="Confirmacion" message="Grabar Datos?" icon="ui-icon-alert" />
+                </p:commandButton>
+                <p:commandButton value="Eliminar" actionListener="#{juiciosCoactivos.removerEmisionJuicioPredio()}" rendered="#{!juiciosCoactivos.inactivar}" oncomplete="PF('dlgEmision').hide();" update="formInformCoa" styleClass="btnStyle" icon="ui-icon-disk">
+                    <p:confirm header="Confirmacion" message="Grabar Datos?" icon="ui-icon-alert" />
+                </p:commandButton>
+                </center>
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                </p:confirmDialog>
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog header="Listado de Predios - Seleccione Predio" widgetVar="dlgPrediosConsulta" appendTo="@(body)" width="90%" responsive="true" closable="true" closeOnEscape="true" modal="true" position="center">
+            <h:form id="frmPredios">
+                <p:dataTable value="#{juiciosCoactivos.prediosUrbanosConsulta}" var="p" selection="#{juiciosCoactivos.prediosUrbanosConsultaSeleccionados}" rowKey="#{p.id}" style="width: 90%; margin: 0 auto;" reflow="true" paginator="true" rows="15" filterEvent="enter" paginatorPosition="center">
+                    <p:column selectionMode="multiple" style="width:30px;text-align:center"/>
+                    <p:column headerText="No. Predio" sortBy="#{p.numPredio}" filterBy="#{p.numPredio}" filterMatchMode="exact" filterStyle="width: 95%;"><h:outputText value="#{p.numPredio}"/></p:column>
+                    <p:column headerText="Urbanizacion" filterBy="#{p.ciudadela.nombre}" filterMatchMode="contains" filterStyle="width: 95%;"><h:outputText value="#{p.ciudadela.nombre}"/></p:column>
+                    <p:column headerText="Mz" filterBy="#{p.urbMz}" filterMatchMode="contains" filterStyle="width: 95%;"><h:outputText value="#{p.urbMz}"/></p:column>
+                    <p:column headerText="Sl" filterBy="#{p.urbSolarnew}" filterMatchMode="contains" filterStyle="width: 95%;"><h:outputText value="#{p.urbSolarnew}"/></p:column>
+                    <p:column headerText="Cod. Predial"><h:outputText value="#{p.codigoPredialCompleto}"/></p:column>
+                    <f:facet name="footer">
+                        <p:commandButton value="Seleccionar" actionListener="#{juiciosCoactivos.seleccionarPredio(1)}"/>
+                    </f:facet>
+                </p:dataTable>         
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

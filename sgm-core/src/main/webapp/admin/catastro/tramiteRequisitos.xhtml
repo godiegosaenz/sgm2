@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Listado de Requisitos Trámites</title>
+        <style type="text/css">
+            .ui-widget {
+                text-align: center;
+                font-size: 80%;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <h:form id="FormtramiteRequisitos">
+            <div align="right">
+                <p:commandButton value="Nuevo" icon="ui-icon-plus" actionListener="#{tramiteRequisitos.showDlgNew()}" styleClass="btnStyle"></p:commandButton>
+                <br/><br/>
+            </div>
+            <p:dataTable id="dtuser" reflow="true"
+                         paginator="true" lazy="true" rows="20" rowsPerPageTemplate="20,50,100"
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         value="#{tramiteRequisitos.tramiteRequisitosLazy}" var="tramite" emptyMessage="No se encontró ningun Item">
+                <p:column headerText="Nombre" style="text-align: center;padding-left: 1px; padding-right: 1px" filterBy="#{tramite.nombre}" sortBy="#{tramite.nombre}" filterStyle="width: 60%;">
+                    <h:outputText value="#{tramite.nombre}" style="text-align: center; font-size: 12px"/>
+                </p:column>
+
+                <p:column headerText="Descripción" style="text-align: center; width:10%;"  filterStyle="width: 40%;" filterBy="#{tramite.descripcion}" sortBy="#{tramite.descripcion}">
+                    <h:outputText value="#{tramite.descripcion}" style="text-align: center; font-size: 12px"/>
+                </p:column>
+
+                <p:column  id="constipo"  filterBy="#{tramite.tipoConsultaId.consultaPor}"
+                           headerText="Tipo Consulta"
+                           filterOptions="#{tramiteRequisitos.lisTipoConsulta}"
+                           filterMatchMode="exact"
+                           style="text-align: center;padding-left: 1px; padding-right: 1px; width:20%;" >
+                    <h:outputText value="#{tramite.tipoConsultaId.consultaPor}"/>
+                </p:column>
+
+                <p:column headerText="Editar" style="text-align: center; width:10%; ">
+                    <p:commandLink value="Editar" style="color: #0033FF" actionListener="#{tramiteRequisitos.showDlgEdit(tramite)}" />
+                </p:column>
+            </p:dataTable>
+        </h:form>
+
+        <p:dialog id="dlgNTramiteRequisitos" header="Agregar Requisitos Trámite" widgetVar="dlgAgrgTramiteRequisitos" resizable="false" modal="true"
+                  position="center" closeOnEscape="true" style="margin: 0 auto;" width="600">
+            <h:form  id="formNewTramiteRequisitos">
+                <p:panelGrid styleClass="noBorder">
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="Ingrese Nombre: " style="font-weight: bolder"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="#{tramiteRequisitos.nuevaTramiteRequisitos.nombre}" style="width: 200px;"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="Ingrese Descripción: " style="font-weight: bolder"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="#{tramiteRequisitos.nuevaTramiteRequisitos.descripcion}" style="width: 200px;"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="Tipo Consulta: " style="font-weight: bolder"/>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu id="tipoConsulta" value="#{tramiteRequisitos.nuevaTramiteRequisitos.tipoConsultaId}" effect="fade" converter="entityConverter" style="width: 200px">
+                                <f:selectItems value="#{tramiteRequisitos.geTipoConsultas}" var="g" itemLabel="#{g.consultaPor}" itemValue="#{g}"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <p:spacer height="20" /><br/>
+
+                <p:panel id="tipoTramitesPanel">
+                    <p:panelGrid styleClass="noBorder" style="margin: 0 auto;width: 100%">
+                        <p:row>
+                            <p:column>
+                                <p:dataTable id="dtTipoTramites" var="item"
+                                             emptyMessage="No agregó ningún elemento..."
+                                             value="#{tramiteRequisitos.lisGeTipoTramite}"
+                                             style="width: 100%;margin: 0 auto;">
+                                    <f:facet name="header">
+                                        <h:outputText value="Tipos Trámite asociados al Requisito"/>
+                                        <div style="float: right">
+                                            <p:commandButton value="Agregar" actionListener="#{tramiteRequisitos.abrirDialogTipoTramite()}"/>
+                                        </div>
+                                    </f:facet>
+                                    <p:column headerText="Descripción" style="text-align: center">
+                                        <h:outputText value="#{item.descripcion}"/>
+                                    </p:column>
+                                    <p:column headerText="Carpeta" style="text-align: center">
+                                        <h:outputText value="#{item.carpeta}"/>
+                                    </p:column>
+                                    <p:column headerText="Estado" style="text-align: center; width:20%; ">
+                                        <h:outputText value="ACTIVO" rendered="#{item.estado}"/>
+                                        <h:outputText value="NO ACTIVO" rendered="#{!item.estado}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Eliminar" style="text-align: center; width:20%; ">
+                                        <center><p:commandLink value="::Eliminar" style="font-weight: bolder;color: #0033FF"
+                                                               actionListener="#{tramiteRequisitos.eliminarTipoTramite(item)}"/></center>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:panel>
+                <br/><center><p:commandButton value="Grabar" actionListener="#{tramiteRequisitos.guardarTramiteRequisitosNuevo()}"/></center>
+                <br/>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="dlgEditTramiteRequisitos" header="Editar Requisitos Trámite" widgetVar="dlgEditTramiteRequisitos" resizable="false" modal="true"
+                  position="center" closeOnEscape="true" style="margin: 0 auto;" width="600">
+            <h:form id="frmEditarTramiteRequisitos">
+                <p:panelGrid styleClass="noBorder">
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="Ingrese Nombre: " style="font-weight: bolder"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="#{tramiteRequisitos.editTramiteRequisitos.nombre}" style="width: 200px;"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="Ingrese Descripción: " style="font-weight: bolder"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="#{tramiteRequisitos.editTramiteRequisitos.descripcion}" style="width: 200px;"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="Tipo Trámite: " style="font-weight: bolder"/>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu id="tipoConsultaEdit" value="#{tramiteRequisitos.editTramiteRequisitos.tipoConsultaId}" effect="fade" converter="entityConverter" style="width: 200px">
+                                <f:selectItems value="#{tramiteRequisitos.geTipoConsultas}" var="g" itemLabel="#{g.consultaPor}" itemValue="#{g}"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <p:spacer height="20" /><br/>
+
+                <p:panel id="tipoTramitesPanelEdit">
+                    <p:panelGrid styleClass="noBorder" style="margin: 0 auto;width: 100%">
+                        <p:row>
+                            <p:column>
+                                <p:dataTable id="dtTipoTramitesEdit" var="item"
+                                             emptyMessage="No agregó ningún elemento..." value="#{tramiteRequisitos.lisGeTipoTramite}"
+                                             style="margin: 0 auto;width: 100%">
+                                    <f:facet name="header">
+                                        <h:outputText value="Tipos Trámite asociados al Requisito"/>
+                                        <div style="float: right">
+                                            <p:commandButton value="Agregar" actionListener="#{tramiteRequisitos.abrirDialogTipoTramiteEdit()}"/>
+                                        </div>
+                                    </f:facet>
+                                    <p:column headerText="Descripción" style="text-align: center">
+                                        <h:outputText value="#{item.descripcion}"/>
+                                    </p:column>
+                                    <p:column headerText="Carpeta" style="text-align: center">
+                                        <h:outputText value="#{item.carpeta}"/>
+                                    </p:column>
+                                    <p:column headerText="Estado" style="text-align: center; width:20%; ">
+                                        <h:outputText value="ACTIVO" rendered="#{item.estado}"/>
+                                        <h:outputText value="NO ACTIVO" rendered="#{!item.estado}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Eliminar" style="text-align: center; width:20%; ">
+                                        <center><p:commandLink value="::Eliminar" style="font-weight: bolder;color: #0033FF"
+                                                               actionListener="#{tramiteRequisitos.eliminarTipoTramite(item)}"/></center>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:panel>
+                <br/><center><p:commandButton value="Grabar" actionListener="#{tramiteRequisitos.guardarTramiteRequisitosEditado()}" update="FormtramiteRequisitos" /></center>
+                <br/>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="dlgListaTipoTramites" header="Seleccionar Tipo Trámite" widgetVar="dlgTiposTramiteLazy"
+                  resizable="false" modal="true" style="z-index: 3" position="center" width="800">
+            <h:form id="formSelectTramite">
+                <p:panelGrid styleClass="noBorder">
+                    <p:row>
+                        <p:column>
+                            <p:dataTable id="dataTramites" style="margin: 0 auto;"
+                                         paginator="true" lazy="true"
+                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rows="10" rowsPerPageTemplate="10,20,50,100"
+                                         emptyMessage="No se encontró ningún elemento..."
+                                         value="#{tramiteRequisitos.tiposTramiteLazy}" var="item">
+                                <f:facet name="header">
+                                    <p:outputLabel value="Tipo Trámite" style="font-weight: bold"/>
+                                </f:facet>
+                                <p:column headerText="Descripción" style="text-align: center" filterBy="#{item.descripcion}"
+                                          sortBy="#{item.descripcion}">
+                                    <h:outputText value="#{item.descripcion}"/>
+                                </p:column>
+                                <p:column headerText="Carpeta" style="text-align: center" filterBy="#{item.carpeta}"
+                                          sortBy="#{item.carpeta}">
+                                    <h:outputText value="#{item.carpeta}"/>
+                                </p:column>
+                                <p:column headerText="Estado" sortBy="#{item.estado}" style="text-align: center; width:20%; ">
+                                    <h:outputText value="ACTIVO" rendered="#{item.estado}"/>
+                                    <h:outputText value="NO ACTIVO" rendered="#{!item.estado}"/>
+                                </p:column>
+                                <p:column headerText="Seleccionar" style="text-align: center; width:20%; ">
+                                    <center><p:commandLink value="::Seleccionar" style="font-weight: bolder;color: #0033FF"
+                                                           actionListener="#{tramiteRequisitos.agregarTiposTramite(item)}"/></center>
+                                </p:column>
+                            </p:dataTable>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
+
+    </h:body>
+
+</html>

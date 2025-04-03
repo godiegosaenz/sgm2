@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://java.sun.com/jsf/html">
+    <!-- INTERFACE -->
+    <cc:interface componentType="seccionesFicha" >
+        <cc:attribute name="headerDialog"/>
+        <cc:attribute name="predio" type="com.origami.sgm.entities.CatPredio" required="true"/>
+        <cc:attribute name="predioant" type="com.origami.sgm.entities.CatPredio" required="true"/>
+    </cc:interface>
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <h:form id="frmSeccion4">
+            <p:tab id="s4" title="4. Infraestructura, Instalaciones y Servicios">
+                <h:form id="frmServicios">
+                    <p:fieldset legend="Vias" toggleable="true">
+                        <p:fieldset legend="Material de Rodadura">
+                            <p:dataTable value="#{cc.attrs.predio.catPredioS6.ctlgItemCollection}" var="pp" reflow="true"
+                                         paginator="true" rows="5" paginatorPosition="top" style="width: 100%" paginatorAlwaysVisible="false"
+                                         rowStyleClass="#{cc.buscarObjeto(pp,cc.attrs.predioant.catPredioS6.ctlgItemCollection)}">
+                                <p:column headerText="Materiales">
+                                    <h:outputText value="#{pp.valor}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:fieldset>
+                        <br/>
+                        <br/>
+                        <p:fieldset legend="Tipo">
+                            <p:panelGrid columns="4" layout="grid" style="width: 100%">
+                                <h:outputText value="Aceras " style="font-weight: bolder"/>
+                                <p:inputText value="#{cc.attrs.predio.catPredioS6.tieneAceras ? 'SI' : 'NO'}" styleClass="#{cc.comparar(cc.attrs.predio.catPredioS6.tieneAceras, cc.attrs.predioant.catPredioS6.tieneAceras)}"  readonly="true" />
+                                <h:outputText value="Bordillo " style="font-weight: bolder"/>
+                                <p:inputText value="#{cc.attrs.predio.catPredioS6.tieneBordillo ? 'SI' : 'NO'}" styleClass="#{cc.comparar(cc.attrs.predio.catPredioS6.tieneBordillo, cc.attrs.predioant.catPredioS6.tieneBordillo)}"  readonly="true" />
+                                <h:outputText value="Tipo de via:" style="font-weight: bolder"/>
+                                <p:inputText value="#{cc.attrs.predio.tipovia.valor}"  styleClass="#{cc.comparar(cc.attrs.predio.tipovia, cc.attrs.predioant.tipovia)}" readonly="true"/>
+                                <h:outputText value="Otro Tipo de via:" style="font-weight: bolder"/>
+                                <p:inputText value="#{cc.attrs.predio.otroTipovia.valor}"  styleClass="#{cc.comparar(cc.attrs.predio.otroTipovia.valor, cc.attrs.predioant.otroTipovia.valor)}" readonly="true"/>
+                            </p:panelGrid>
+                        </p:fieldset>
+                        <br/>
+                        <br/>
+                    </p:fieldset>
+                    <p:fieldset legend="Instalaciones Nivel Vivienda" toggleable="true">
+                        <p:fieldset legend="Alcantarillado" toggleable="true">
+                            <p:panelGrid columns="4" layout="grid" style="width: 100%">
+                                <h:outputText value="Alcantarillado pluvial :" style="font-weight: bolder"/>
+                                <p:inputText value="#{cc.attrs.predio.catPredioS6.alcantarilladoPluvial ? 'SI' : 'NO'}" styleClass="#{cc.comparar(cc.attrs.predio.catPredioS6.alcantarilladoPluvial, cc.attrs.predioant.catPredioS6.alcantarilladoPluvial)}"  readonly="true" />
+                                <h:outputText value="Alcantarillado Sanitario :" style="font-weight: bolder"/>
+                                <p:inputText value="#{cc.attrs.predio.catPredioS6.tieneAlcantarillado ? 'SI' : 'NO'}" styleClass="#{cc.comparar(cc.attrs.predio.catPredioS6.tieneAlcantarillado, cc.attrs.predioant.catPredioS6.tieneAlcantarillado)}"  readonly="true" />
+                            </p:panelGrid>
+                        </p:fieldset>
+                        <p:fieldset legend="Agua potable" toggleable="true">
+                            <p:panelGrid columns="4" layout="grid" style="width: 100%">
+                                <h:outputText value="Conexion domiciliaria :" style="font-weight: bolder"/>
+                                <p:inputText value="#{cc.attrs.predio.catPredioS6.tieneAguaPotable ? 'SI' : 'NO'}" styleClass="#{cc.comparar(cc.attrs.predio.catPredioS6.tieneAguaPotable, cc.attrs.predioant.catPredioS6.tieneAguaPotable)}"  readonly="true" />
+                                <h:outputText value="No. Medidor :" style="font-weight: bolder"/>
+                                <p:inputText value="#{cc.attrs.predio.catPredioS6.medidorAgua ? 'SI' : 'NO'}" styleClass="#{cc.comparar(cc.attrs.predio.catPredioS6.medidorAgua, cc.attrs.predioant.catPredioS6.medidorAgua)}"  readonly="true" />
+                            </p:panelGrid>
+                        </p:fieldset>
+                        <p:fieldset legend="Energia electrica" toggleable="true">
+                            <p:panelGrid columns="4" layout="grid" style="width: 100%">
+                                <h:outputText value="Electricidad :" style="font-weight: bolder"/>
+                                <p:inputText value="#{cc.attrs.predio.catPredioS6.tieneElectricidad ? 'SI' : 'NO'}" styleClass="#{cc.comparar(cc.attrs.predio.catPredioS6.tieneElectricidad, cc.attrs.predioant.catPredioS6.tieneElectricidad)}"  readonly="true" />
+                                <h:outputText value="Alumbrado publico :" style="font-weight: bolder"/>
+                                <p:inputText value="#{cc.attrs.predio.catPredioS6.alumbrado ? 'SI' : 'NO'}" styleClass="#{cc.comparar(cc.attrs.predio.catPredioS6.alumbrado, cc.attrs.predioant.catPredioS6.alumbrado)}"  readonly="true" />
+                                <h:outputText value="Medidor energia :" style="font-weight: bolder"/>
+                                <p:inputText value="#{cc.attrs.predio.catPredioS6.medidorEe ? 'SI' : 'NO'}" styleClass="#{cc.comparar(cc.attrs.predio.catPredioS6.medidorEe, cc.attrs.predioant.catPredioS6.medidorEe)}"  readonly="true" />
+                                <h:outputText value="No. Medidor :" style="font-weight: bolder"/>
+                                <p:inputText value="#{cc.attrs.predio.catPredioS6.medidorElectrico}" styleClass="#{cc.comparar(cc.attrs.predio.catPredioS6.medidorElectrico, cc.attrs.predioant.catPredioS6.medidorElectrico)}"  readonly="true" />
+                            </p:panelGrid>
+                        </p:fieldset>
+                        <p:fieldset legend="Servicios" toggleable="true">
+                            <p:panelGrid columns="4" layout="grid" style="width: 100%">
+                                <h:outputText value="Recoleccion. Basura :" style="font-weight: bolder"/>
+                                <p:inputText value="#{cc.attrs.predio.catPredioS6.recoleccionbasura ? 'SI' : 'NO'}" styleClass="#{cc.comparar(cc.attrs.predio.catPredioS6.recoleccionbasura, cc.attrs.predioant.catPredioS6.recoleccionbasura)}"  readonly="true" />
+                                <h:outputText value="Aseo calles :" style="font-weight: bolder"/>
+                                <p:inputText value="#{cc.attrs.predio.catPredioS6.aseoCalles ? 'SI' : 'NO'}" styleClass="#{cc.comparar(cc.attrs.predio.catPredioS6.aseoCalles, cc.attrs.predioant.catPredioS6.aseoCalles)}"  readonly="true" />
+                                <h:outputText value="Trans. Publico :" style="font-weight: bolder"/>
+                                <p:inputText value="#{cc.attrs.predio.catPredioS6.tpublico ? 'SI' : 'NO'}" styleClass="#{cc.comparar(cc.attrs.predio.catPredioS6.tpublico, cc.attrs.predioant.catPredioS6.tpublico)}"  readonly="true" />
+                                <h:outputText value="Alarmas Comunitarias :" style="font-weight: bolder"/>
+                                <p:inputText value="#{cc.attrs.predio.catPredioS6.alarmas_comunitarias ? 'SI' : 'NO'}" styleClass="#{cc.comparar(cc.attrs.predio.catPredioS6.alarmas_comunitarias, cc.attrs.predioant.catPredioS6.alarmas_comunitarias)}"  readonly="true" />
+                            </p:panelGrid>
+                        </p:fieldset>
+                        <p:fieldset  legend="Comunicaciones" toggleable="true" >
+                            <p:panelGrid columns="4" layout="grid" style="width: 100%">
+                                <h:outputText value="Tv. Pagada :" style="font-weight: bolder"/>
+                                <p:inputText value="#{cc.attrs.predio.catPredioS6.tvPag ? 'SI' : 'NO'}" styleClass="#{cc.comparar(cc.attrs.predio.catPredioS6.tvPag, cc.attrs.predioant.catPredioS6.tvPag)}"  readonly="true" />
+                                <h:outputText value="Internet :" style="font-weight: bolder"/>
+                                <p:inputText value="#{cc.attrs.predio.catPredioS6.tieneInternet ? 'SI' : 'NO'}" styleClass="#{cc.comparar(cc.attrs.predio.catPredioS6.tieneInternet, cc.attrs.predioant.catPredioS6.tieneInternet)}"  readonly="true" />
+                                <h:outputText value="Telefonia Satelital :" style="font-weight: bolder"/>
+                                <p:inputText value="#{cc.attrs.predio.catPredioS6.telefoniasatelital ? 'SI' : 'NO'}" styleClass="#{cc.comparar(cc.attrs.predio.catPredioS6.telefoniasatelital, cc.attrs.predioant.catPredioS6.telefoniasatelital)}"  readonly="true" />
+                                <h:outputText value="Red Telefonica :" style="font-weight: bolder"/>
+                                <p:inputText value="#{cc.attrs.predio.catPredioS6.tieneTelfFijo ? 'SI' : 'NO'}" styleClass="#{cc.comparar(cc.attrs.predio.catPredioS6.tieneTelfFijo, cc.attrs.predioant.catPredioS6.tieneTelfFijo)}"  readonly="true" />
+                                <h:outputText value="Cobertura Celular :" style="font-weight: bolder"/>
+                                <p:inputText value="#{cc.attrs.predio.catPredioS6.coberturaCelular ? 'SI' : 'NO'}" styleClass="#{cc.comparar(cc.attrs.predio.catPredioS6.coberturaCelular, cc.attrs.predioant.catPredioS6.coberturaCelular)}"  readonly="true" />
+                            </p:panelGrid>
+                        </p:fieldset>
+                    </p:fieldset>
+                    <p:fieldset  legend="Instalaciones Especiales " toggleable="true" >
+                        <p:dataTable value="#{cc.attrs.predio.catPredioS6.ctlgItemCollectionInstalacionEspecial}" var="pp" reflow="true"
+                                     paginator="true" rows="5" paginatorPosition="top" style="width: 100%" paginatorAlwaysVisible="false"
+                                     rowStyleClass="#{cc.buscarObjeto(pp,cc.attrs.predioant.catPredioS6.ctlgItemCollectionInstalacionEspecial)}">
+                            <p:column headerText="Instalaciones">
+                                <h:outputText value="#{pp.valor}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:fieldset>
+                </h:form>
+            </p:tab>
+        </h:form>
+    </cc:implementation>
+</html>

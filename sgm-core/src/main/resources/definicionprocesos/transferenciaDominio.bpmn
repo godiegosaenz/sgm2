@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <collaboration id="Collaboration">
+    <participant id="pool1" name="Registro de la Propiedad" processRef="transferenciaDominio"></participant>
+  </collaboration>
+  <process id="transferenciaDominio" name="Registro de la Propiedad" isExecutable="true">
+    <laneSet id="laneSet_transferenciaDominio">
+      <lane id="lane1" name="Liquidador">
+        <flowNodeRef>startevent1</flowNodeRef>
+        <flowNodeRef>entregaDocumentosRp</flowNodeRef>
+        <flowNodeRef>callSubProcessAsignar</flowNodeRef>
+        <flowNodeRef>exclusivegateway1</flowNodeRef>
+        <flowNodeRef>endevent1</flowNodeRef>
+        <flowNodeRef>exclusivegateway2</flowNodeRef>
+      </lane>
+      <lane id="lane2" name="Tecnico Registro">
+        <flowNodeRef>callSubProcessDigitalizar</flowNodeRef>
+      </lane>
+      <lane id="lane3" name="Tecnico Registro">
+        <flowNodeRef>inscribirCertificarRp</flowNodeRef>
+      </lane>
+      <lane id="lane4" name="Digitalizador">
+        <flowNodeRef>exclusivegateway3</flowNodeRef>
+        <flowNodeRef>digitalizaInscripcionRp</flowNodeRef>
+      </lane>
+      <lane id="lane5" name="Tecnico Catastro">
+        <flowNodeRef>transferenciaDominioRp</flowNodeRef>
+        <flowNodeRef>exclusivegateway4</flowNodeRef>
+      </lane>
+    </laneSet>
+    <startEvent id="startevent1" name="Start">
+      <documentation>Registro de la Propiedad</documentation>
+    </startEvent>
+    <sequenceFlow id="flow2" sourceRef="startevent1" targetRef="exclusivegateway1"></sequenceFlow>
+    <userTask id="entregaDocumentosRp" name="Entrega Documentos Finales" activiti:candidateUsers="${listaLiquidadores}" activiti:formKey="/vistaprocesos/registroPropiedad/entregaDocumentosRp.xhtml" activiti:priority="${prioridad}">
+      <documentation>Registro de la Propiedad</documentation>
+    </userTask>
+    <sequenceFlow id="flow21" sourceRef="entregaDocumentosRp" targetRef="exclusivegateway2"></sequenceFlow>
+    <callActivity id="callSubProcessAsignar" name="Sub Proceso Asignar" calledElement="subProcessAsignar">
+      <documentation>Registro de la Propiedad</documentation>
+      <extensionElements>
+        <activiti:in source="prioridad" target="prioridad"></activiti:in>
+        <activiti:in source="tramite" target="tramite"></activiti:in>
+        <activiti:in source="cantidad" target="cantidad"></activiti:in>
+        <activiti:in source="digitalizador" target="digitalizador"></activiti:in>
+        <activiti:in source="supervisor" target="supervisor"></activiti:in>
+        <activiti:in source="abogado" target="abogado"></activiti:in>
+        <activiti:in source="tecnico" target="tecnico"></activiti:in>
+        <activiti:in source="listaLiquidadores" target="listaLiquidadores"></activiti:in>
+        <activiti:in source="iniciarTramite" target="iniciarTramite"></activiti:in>
+        <activiti:in source="listaArchivos" target="listaArchivos"></activiti:in>
+        <activiti:in source="listaArchivosFinal" target="listaArchivosFinal"></activiti:in>
+        <activiti:in source="carpeta" target="carpeta"></activiti:in>
+        <activiti:in source="asignado" target="asignado"></activiti:in>
+        <activiti:in source="subCarpeta" target="subCarpeta"></activiti:in>
+        <activiti:in source="to" target="to"></activiti:in>
+        <activiti:in source="subject" target="subject"></activiti:in>
+        <activiti:in source="entregado" target="entregado"></activiti:in>
+        <activiti:out source="revision" target="revision"></activiti:out>
+        <activiti:out source="abogado" target="abogado"></activiti:out>
+        <activiti:out source="tecnico" target="tecnico"></activiti:out>
+        <activiti:out source="listaArchivosFinal" target="listaArchivosFinal"></activiti:out>
+      </extensionElements>
+    </callActivity>
+    <exclusiveGateway id="exclusivegateway1" name="Exclusive Gateway"></exclusiveGateway>
+    <sequenceFlow id="flow5" sourceRef="exclusivegateway1" targetRef="inscribirCertificarRp">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${iniciarTramite==3}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow4" sourceRef="exclusivegateway1" targetRef="callSubProcessDigitalizar">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${iniciarTramite==2}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow3" sourceRef="exclusivegateway1" targetRef="callSubProcessAsignar">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${iniciarTramite==1}]]></conditionExpression>
+    </sequenceFlow>
+    <callActivity id="callSubProcessDigitalizar" name="Sub Proceso Digitalizar" calledElement="subProcessDigitalizar">
+      <documentation>Registro de la Propiedad</documentation>
+      <extensionElements>
+        <activiti:in source="prioridad" target="prioridad"></activiti:in>
+        <activiti:in source="tramite" target="tramite"></activiti:in>
+        <activiti:in source="cantidad" target="cantidad"></activiti:in>
+        <activiti:in source="digitalizador" target="digitalizador"></activiti:in>
+        <activiti:in source="abogado" target="abogado"></activiti:in>
+        <activiti:in source="tecnico" target="tecnico"></activiti:in>
+        <activiti:in source="listaLiquidadores" target="listaLiquidadores"></activiti:in>
+        <activiti:in source="iniciarTramite" target="iniciarTramite"></activiti:in>
+        <activiti:in source="carpeta" target="carpeta"></activiti:in>
+        <activiti:in source="listaArchivos" target="listaArchivos"></activiti:in>
+        <activiti:in source="listaArchivosFinal" target="listaArchivosFinal"></activiti:in>
+        <activiti:in source="subCarpeta" target="subCarpeta"></activiti:in>
+        <activiti:in source="to" target="to"></activiti:in>
+        <activiti:in source="subject" target="subject"></activiti:in>
+        <activiti:in source="entregado" target="entregado"></activiti:in>
+        <activiti:out source="revision" target="revision"></activiti:out>
+        <activiti:out source="listaArchivosFinal" target="listaArchivosFinal"></activiti:out>
+      </extensionElements>
+    </callActivity>
+    <userTask id="inscribirCertificarRp" name="Realizar Inscripcion/Certificado" activiti:assignee="${tecnico}" activiti:formKey="/vistaprocesos/registroPropiedad/realizarProcesoRp.xhtml" activiti:priority="${prioridad}">
+      <documentation>Registro de la Propiedad</documentation>
+    </userTask>
+    <sequenceFlow id="flow10" sourceRef="inscribirCertificarRp" targetRef="exclusivegateway3"></sequenceFlow>
+    <userTask id="transferenciaDominioRp" name="Transferencia Dominio" activiti:assignee="${tecnicoCatastro}" activiti:formKey="/vistaprocesos/registroPropiedad/catastrarEscriturasRp.xhtml" activiti:priority="${prioridad}">
+      <documentation>Registro de la Propiedad</documentation>
+    </userTask>
+    <endEvent id="endevent1" name="End"></endEvent>
+    <sequenceFlow id="flow23" sourceRef="callSubProcessDigitalizar" targetRef="inscribirCertificarRp"></sequenceFlow>
+    <sequenceFlow id="flow24" sourceRef="callSubProcessAsignar" targetRef="inscribirCertificarRp"></sequenceFlow>
+    <exclusiveGateway id="exclusivegateway3" name="Exclusive Gateway"></exclusiveGateway>
+    <sequenceFlow id="flow16" sourceRef="exclusivegateway3" targetRef="entregaDocumentosRp">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${catastrar==1}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow15" sourceRef="exclusivegateway3" targetRef="transferenciaDominioRp">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${catastrar==2}]]></conditionExpression>
+    </sequenceFlow>
+    <userTask id="digitalizaInscripcionRp" name="Digitalizacion Final" activiti:assignee="${digitalizador}" activiti:formKey="/vistaprocesos/registroPropiedad/digitalizarDocumentosRp.xhtml" activiti:priority="${prioridad}">
+      <documentation>Registro de la Propiedad</documentation>
+    </userTask>
+    <exclusiveGateway id="exclusivegateway2" name="Exclusive Gateway"></exclusiveGateway>
+    <sequenceFlow id="flow26" sourceRef="exclusivegateway2" targetRef="endevent1">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${catastrar==1}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow27" sourceRef="exclusivegateway2" targetRef="digitalizaInscripcionRp">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${catastrar==3}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow19" sourceRef="transferenciaDominioRp" targetRef="entregaDocumentosRp"></sequenceFlow>
+    <sequenceFlow id="flow28" sourceRef="digitalizaInscripcionRp" targetRef="endevent1"></sequenceFlow>
+    <exclusiveGateway id="exclusivegateway4" name="Exclusive Gateway"></exclusiveGateway>
+    <sequenceFlow id="flow29" sourceRef="transferenciaDominioRp" targetRef="exclusivegateway4"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_Collaboration">
+    <bpmndi:BPMNPlane bpmnElement="Collaboration" id="BPMNPlane_Collaboration">
+      <bpmndi:BPMNShape bpmnElement="pool1" id="BPMNShape_pool1">
+        <omgdc:Bounds height="750.0" width="1081.0" x="20.0" y="20.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lane1" id="BPMNShape_lane1">
+        <omgdc:Bounds height="150.0" width="1061.0" x="40.0" y="20.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lane2" id="BPMNShape_lane2">
+        <omgdc:Bounds height="150.0" width="1061.0" x="40.0" y="170.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lane3" id="BPMNShape_lane3">
+        <omgdc:Bounds height="150.0" width="1061.0" x="40.0" y="320.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lane4" id="BPMNShape_lane4">
+        <omgdc:Bounds height="150.0" width="1061.0" x="40.0" y="470.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lane5" id="BPMNShape_lane5">
+        <omgdc:Bounds height="150.0" width="1061.0" x="40.0" y="620.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="130.0" y="80.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="entregaDocumentosRp" id="BPMNShape_entregaDocumentosRp">
+        <omgdc:Bounds height="71.0" width="105.0" x="670.0" y="62.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="callSubProcessAsignar" id="BPMNShape_callSubProcessAsignar">
+        <omgdc:Bounds height="71.0" width="105.0" x="440.0" y="62.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway1" id="BPMNShape_exclusivegateway1">
+        <omgdc:Bounds height="40.0" width="40.0" x="330.0" y="77.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="callSubProcessDigitalizar" id="BPMNShape_callSubProcessDigitalizar">
+        <omgdc:Bounds height="71.0" width="105.0" x="440.0" y="213.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="inscribirCertificarRp" id="BPMNShape_inscribirCertificarRp">
+        <omgdc:Bounds height="66.0" width="105.0" x="440.0" y="370.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="transferenciaDominioRp" id="BPMNShape_transferenciaDominioRp">
+        <omgdc:Bounds height="71.0" width="121.0" x="480.0" y="670.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="950.0" y="80.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway3" id="BPMNShape_exclusivegateway3">
+        <omgdc:Bounds height="40.0" width="40.0" x="520.0" y="525.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="digitalizaInscripcionRp" id="BPMNShape_digitalizaInscripcionRp">
+        <omgdc:Bounds height="55.0" width="121.0" x="800.0" y="518.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway2" id="BPMNShape_exclusivegateway2">
+        <omgdc:Bounds height="40.0" width="40.0" x="840.0" y="77.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway4" id="BPMNShape_exclusivegateway4">
+        <omgdc:Bounds height="40.0" width="40.0" x="646.0" y="686.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="165.0" y="97.0"></omgdi:waypoint>
+        <omgdi:waypoint x="330.0" y="97.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow21" id="BPMNEdge_flow21">
+        <omgdi:waypoint x="775.0" y="97.0"></omgdi:waypoint>
+        <omgdi:waypoint x="840.0" y="97.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
+        <omgdi:waypoint x="350.0" y="117.0"></omgdi:waypoint>
+        <omgdi:waypoint x="285.0" y="159.0"></omgdi:waypoint>
+        <omgdi:waypoint x="285.0" y="402.0"></omgdi:waypoint>
+        <omgdi:waypoint x="440.0" y="403.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
+        <omgdi:waypoint x="350.0" y="117.0"></omgdi:waypoint>
+        <omgdi:waypoint x="349.0" y="248.0"></omgdi:waypoint>
+        <omgdi:waypoint x="440.0" y="248.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="370.0" y="97.0"></omgdi:waypoint>
+        <omgdi:waypoint x="440.0" y="97.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow10" id="BPMNEdge_flow10">
+        <omgdi:waypoint x="492.0" y="436.0"></omgdi:waypoint>
+        <omgdi:waypoint x="492.0" y="545.0"></omgdi:waypoint>
+        <omgdi:waypoint x="520.0" y="545.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow23" id="BPMNEdge_flow23">
+        <omgdi:waypoint x="492.0" y="284.0"></omgdi:waypoint>
+        <omgdi:waypoint x="492.0" y="370.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow24" id="BPMNEdge_flow24">
+        <omgdi:waypoint x="545.0" y="97.0"></omgdi:waypoint>
+        <omgdi:waypoint x="597.0" y="96.0"></omgdi:waypoint>
+        <omgdi:waypoint x="597.0" y="402.0"></omgdi:waypoint>
+        <omgdi:waypoint x="545.0" y="403.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow16" id="BPMNEdge_flow16">
+        <omgdi:waypoint x="560.0" y="545.0"></omgdi:waypoint>
+        <omgdi:waypoint x="630.0" y="544.0"></omgdi:waypoint>
+        <omgdi:waypoint x="630.0" y="97.0"></omgdi:waypoint>
+        <omgdi:waypoint x="670.0" y="97.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow15" id="BPMNEdge_flow15">
+        <omgdi:waypoint x="540.0" y="565.0"></omgdi:waypoint>
+        <omgdi:waypoint x="540.0" y="670.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow26" id="BPMNEdge_flow26">
+        <omgdi:waypoint x="880.0" y="97.0"></omgdi:waypoint>
+        <omgdi:waypoint x="950.0" y="97.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow27" id="BPMNEdge_flow27">
+        <omgdi:waypoint x="860.0" y="117.0"></omgdi:waypoint>
+        <omgdi:waypoint x="860.0" y="518.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow19" id="BPMNEdge_flow19">
+        <omgdi:waypoint x="601.0" y="705.0"></omgdi:waypoint>
+        <omgdi:waypoint x="722.0" y="705.0"></omgdi:waypoint>
+        <omgdi:waypoint x="722.0" y="133.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow28" id="BPMNEdge_flow28">
+        <omgdi:waypoint x="921.0" y="545.0"></omgdi:waypoint>
+        <omgdi:waypoint x="967.0" y="546.0"></omgdi:waypoint>
+        <omgdi:waypoint x="967.0" y="115.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow29" id="BPMNEdge_flow29">
+        <omgdi:waypoint x="601.0" y="705.0"></omgdi:waypoint>
+        <omgdi:waypoint x="646.0" y="706.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

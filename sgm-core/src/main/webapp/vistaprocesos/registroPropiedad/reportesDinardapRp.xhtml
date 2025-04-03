@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    template="/template/template.xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{reportesDinardapRp.doPreRenderView()}"/>
+        </f:metadata>
+    </ui:define>
+    <ui:define name="top"><h3>Reportes de la Dinardap</h3></ui:define>
+    <ui:define name="content">
+        <h:form id="mainForm">
+            <center>
+                <p:panelGrid styleClass="noBorder" style="width: 60%">
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Fecha Reporte: " style="font-weight: bolder;font-size: 14px"/>
+                        </p:column>
+                        <p:column>
+                            <p:calendar value="#{reportesDinardapRp.fechaInicio}" pattern="dd-MMM-yyyy"
+                                        maxdate="sysdate"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="Tipo de Reporte:" style="font-weight: bolder;font-size: 14px;"/>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu value="#{reportesDinardapRp.tipoAnexo}">
+                                <f:selectItem itemLabel="Seleccionar..." itemValue="#{0}" />
+                                <f:selectItem itemLabel="Anexo 1" itemValue="#{1}" />
+                                <f:selectItem itemLabel="Anexo 2" itemValue="#{2}" itemDisabled="true"/>
+                                <f:selectItem itemLabel="Anexo 3" itemValue="#{3}" itemDisabled="true"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                        <!--<p:column>
+                            <p:outputLabel value="Fecha Fin: " style="font-weight: bolder;font-size: 14px"/>
+                        </p:column>
+                        <p:column>
+                            <p:calendar value="# {reportesDinardapRp.fechaFin}" pattern="dd-MMM-yyyy"/>
+                        </p:column>-->
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="4" style="text-align: center">
+                            <p:commandButton value="Generar Reporte" icon="ui-icon-document" styleClass="btnStyle"
+                                             actionListener="#{reportesDinardapRp.generarReporteTxt()}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="4">
+                            <p:spacer width="1" height="20"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="4" style="font-size: 14px;font-weight: bolder">
+                            NOTA:<br/>
+                            Anexo 1 : Dato Publico Registro de la Propiedad.<br/>
+                            Anexo 2 : Dato Mercantil Contratos.<br/>
+                            Anexo 3 : Dato Mercantil Societario y Nombramientos.<br/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </center>
+        </h:form>
+    </ui:define>
+</ui:composition>

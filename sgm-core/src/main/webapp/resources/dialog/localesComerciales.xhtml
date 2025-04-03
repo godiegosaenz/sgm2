@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      >
+    <h:head>
+        <link href="#{appConfig.urlbase}resources/css/main.css" rel="stylesheet" type="text/css" />
+        <title>Lista de locales comerciales</title>
+        <style type="text/css">
+            .ui-widget {
+                text-align: left;
+                font-size: 100%;
+            }
+            .ui-column-title{
+                font-size: 11px;
+            }
+            datatable tbody td {
+                border-color: inherit;
+                font-size: 11px;
+            }
+            .ui-datatable-even {
+                background: #ece3a5;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <h:form >
+            <center>
+                <p:commandButton style="float: right" styleClass="btnStyle"
+                                 value="Nuevo Local" actionListener="#{localesComercialesBusq.nuevoLocal()}"/>
+            </center>
+
+            <br></br><br></br>
+            <p:dataTable id="dtLocales" lazy="true" value="#{localesComercialesBusq.localesLazy}" widgetVar="cdls"
+                         var="local" rows="10" paginator="true" paginatorPosition="top" filterEvent="enter"
+                         rowsPerPageTemplate="10,20,50,100">
+
+                <p:column headerText="Nombre del local" filterBy="#{local.nombreLocal}" width="20%" filterStyle="width: 95%">
+                    <h:outputText value="#{local.nombreLocal}" style="font-size: 11px"/>
+                </p:column>
+                <p:column headerText="Razon Social" width="15%" filterStyle="width: 95%" filterBy="#{local.razonSocial.razonSocial}">
+                    <h:outputText value="#{local.razonSocial.nombreCompleto}" style="font-size: 10px"/>
+                </p:column>
+                <p:column headerText="Núm. local" filterBy="#{local.numLocal}" width="10%" filterStyle="width: 95%">
+                    <h:outputText value="#{local.numLocal} - Area #{local.area}" style="font-size: 10px"/>
+                </p:column>
+                <p:column headerText="Propietario" width="20%" filterBy="#{local.propietario.apellidos}"
+                          filterStyle="width: 95%" >
+                    <h:outputText value="#{local.propietario.nombreCompleto}" style="font-size: 10px;"/>
+                </p:column>
+                <p:column headerText="Actividad" width="10%" >
+                    <!--                    <f:facet name="filter"  >
+                                            <p:selectOneMenu id="at1" onchange="PF('cdls').filter()" converter="entityConverter" style="width: 75%" >
+                                                <f:selectItem itemLabel="Categoria" itemValue="#{null}" noSelectionOption="true"/>
+                                                <f:selectItems value="#{localesComercialesBusq.actividadesLocal}" var="at1" itemLabel="#{at1.descripcion}" itemValue="#{at1}"/>
+                                            </p:selectOneMenu>
+                                        </f:facet>-->
+                    <h:outputText id="actvdd" style="font-size: 10px;"
+                                  value="#{localesComercialesBusq.getActividad(local).descripcion}" />
+                    <p:tooltip id="toolTipContent" for="actvdd" trackMouse="true">
+                        <p:dataList value="#{localesComercialesBusq.getActividadesLocal(local)}" var="act1" type="ordered">
+                            <f:facet name="header">
+                                Actividades del Local
+                            </f:facet>
+                            #{act1.descripcion}
+                        </p:dataList>
+                    </p:tooltip>
+                </p:column>
+                <p:column headerText="Categoria" filterBy="#{local.categoria}"
+                          width="10%" filterMatchMode="contains" filterStyle="width: 80%" >
+                    <f:facet name="filter"  >
+                        <p:selectOneMenu id="cat" onchange="PF('cdls').filter()" converter="entityConverter"
+                                         style="width: 75%; font-size: 11px;" >
+                            <f:selectItem itemLabel="Categoria" itemValue="#{null}" noSelectionOption="true"/>
+                            <f:selectItems value="#{localesComercialesBusq.categorias}" var="c1" itemLabel="#{c1.descripcion}" itemValue="#{c1}"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+                    <h:outputText value="#{local.categoria.descripcion}" style="font-size: 10px" title="#{local.categoria.descripcion}"/>
+                </p:column>
+                <p:column headerText="Es Turistico" width="7%" filterBy="#{local.turismo}"
+                          filterMatchMode="contains" filterStyle="width: 80%" style="font-size: 11px;" >
+                    <f:facet name="filter"  >
+                        <p:selectOneMenu id="tur" onchange="PF('cdls').filter()" style="width: 75%; font-size: 11px;" >
+                            <f:selectItem itemLabel="Seleccione" itemValue="#{null}" noSelectionOption="true"/>
+                            <f:selectItem itemLabel="Si" itemValue="#{true}" />
+                            <f:selectItem itemLabel="No" itemValue="#{false}" />
+                        </p:selectOneMenu>
+                    </f:facet>
+                    <p:outputLabel value="Si" style="font-size: 10px" rendered="#{local.turismo}"/>
+                    <p:outputLabel value="No" style="font-size: 10px" rendered="#{!local.turismo}"/>
+                </p:column>
+                <p:column headerText="Opc." width="3%" >
+                    <p:commandLink actionListener="#{localesComercialesBusq.selectLocal(local)}">
+                        <p:graphicImage value="/css/homeIconsImages/ir.png" width="18" height="18"/>
+                    </p:commandLink>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+    </h:body>
+</html>
+

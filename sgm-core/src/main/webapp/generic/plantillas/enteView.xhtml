@@ -1,0 +1,86 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <p:tabView style="width: 100%;height: 400px">
+        <p:tab title="Datos Principales">
+            <p:panelGrid styleClass="noBorder" style="width: 100%">
+                <p:row>
+                    <p:column colspan="4">
+                        <p:outputLabel value="NOTA: CAMPOS OBLIGATORIOS (*)" style="font-weight: bolder;color: #0033FF"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="(*)Cédula:" rendered="#{ente.esPersona}" style="font-weight: bolder"/>
+                        <p:outputLabel value="(*)R.U.C.:" rendered="#{!ente.esPersona}" style="font-weight: bolder"/>
+                    </p:column>
+                    <p:column>
+                        <p:inputText value="#{ente.ciRuc}" readonly="true"/>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="Fec. Nacimiento:" rendered="#{ente.esPersona}" style="font-weight: bolder"/>
+                        <p:outputLabel value="Fec. Constitución:" rendered="#{!ente.esPersona}" style="font-weight: bolder"/>
+                    </p:column>
+                    <p:column>
+                        <p:calendar value="#{ente.fechaNacimiento}" placeholder="DÍA-MES-AÑO" maxdate="sysdate"
+                                    pattern="dd-MM-yyyy" mask="true" readonly="true">
+                            <f:validator validatorId="dateValidator"/>
+                        </p:calendar>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="(*)Nombres:" rendered="#{ente.esPersona}" style="font-weight: bolder"/>
+                        <p:outputLabel value="(*)Razón Social:" rendered="#{!ente.esPersona}" style="font-weight: bolder"/>
+                    </p:column>
+                    <p:column colspan="3">
+                        <p:inputText value="#{ente.nombres}" rendered="#{ente.esPersona}" style="width: 100%" readonly="true"/>
+                        <p:inputText value="#{ente.razonSocial}" rendered="#{!ente.esPersona}" style="width: 100%" readonly="true"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="(*)Apellidos:" rendered="#{managedEnte.esPersona}" style="font-weight: bolder"/>
+                        <p:outputLabel value="Nombre Comercial:" rendered="#{!managedEnte.esPersona}" style="font-weight: bolder"/>
+                    </p:column>
+                    <p:column colspan="3">
+                        <p:inputText value="#{ente.apellidos}" rendered="#{ente.esPersona}" style="width: 100%" readonly="true"/>
+                        <p:inputText value="#{ente.nombreComercial}" rendered="#{!ente.esPersona}" style="width: 100%" readonly="true"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="Dirección:" style="font-weight: bolder"/>
+                    </p:column>
+                    <p:column colspan="3">
+                        <p:inputText value="#{ente.direccion}" style="width: 100%" readonly="true"/>
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+        </p:tab>
+        <p:tab title="Información Adicional">
+            <p:panelGrid styleClass="noBorder" style="width: 100%">
+                <p:row>
+                    <p:column>
+                        <p:dataTable value="#{listCorreos}" var="cor" scrollable="true" scrollHeight="100">
+                            <p:column headerText="Correos" style="text-align: center">
+                                <p:outputLabel value="#{cor.email}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="3">
+                        <p:dataTable value="#{listTlfns}" var="tlf" scrollable="true" scrollHeight="100">
+                            <p:column headerText="Teléfonos" style="text-align: center">
+                                <p:outputLabel value="#{tlf.telefono}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+        </p:tab>
+    </p:tabView>
+</ui:composition>

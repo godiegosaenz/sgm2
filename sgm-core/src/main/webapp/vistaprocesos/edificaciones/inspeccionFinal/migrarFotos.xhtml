@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:define name="top" >
+        <h1>Inspecciones Migradas</h1>
+    </ui:define>
+    <ui:define name="content">
+        <h:form id="formPermConsTIng">
+            <p:dataTable id="dtPermisoConsulta" paginator="true" rows="20" rowsPerPageTemplate="20, 50, 100"  
+                         value="#{inspeccionFinalFotos.inspeccionlazy}" var="insp"  lazy="true" filterEvent="enter"
+                         emptyMessage="No se encontró ningun Item" style="margin: 0px;">
+                <p:column headerText="Ciudadela" style="text-align: center; width: 230px;" filterStyle="width: 100%;" >
+                    <p:outputLabel value="#{insp.predio.ciudadela.nombre}"/>
+                </p:column>
+                <p:column headerText="Num Reporte" style="text-align: center;" filterBy="#{insp.numReporte}" sortBy="#{insp.numReporte}" filterStyle="width: 55px;"> 
+                    <p:outputLabel value="#{insp.numReporte}"/>
+                </p:column>
+                <p:column headerText="Año Inspección" style="text-align: center;" filterBy="#{insp.anioInspeccion}" sortBy="#{insp.anioInspeccion}" >
+                    <p:outputLabel value="#{insp.anioInspeccion}"/>
+                </p:column>
+                <p:column headerText="Número Tramite" style="text-align: center;" filterBy="#{insp.tramite.idTramite}" sortBy="#{insp.tramite.idTramite}">
+                    <p:outputLabel value="#{insp.tramite.id}"/>
+                </p:column>
+                <p:column headerText="Fecha Liquidación" style="text-align: center;">
+                    <p:outputLabel value="#{insp.fechaInspeccion}"/>
+                </p:column>
+                <p:column headerText="Observación" style="text-align: center;">
+                    <p:outputLabel value="#{insp.tramite.observacion}"/>
+                </p:column>
+                <!--p:column headerText="Visualizar"  style="width: 70px; text-align: center;">
+                    <p:commandLink value="Ver" actionListener="#{inspeccionFinalConsulta.redirectVistaInspeccion(insp)}" style="font-size: 12px; color: #0033FF; font-weight: bold; "/>
+                </p:column-->
+                <p:column headerText="Migrar Fotos" style="width: 120px; text-align: center;">
+                    <p:commandLink value="Migrar Fotos" actionListener="#{inspeccionFinalFotos.migrarFotos(insp)}" style="font-size: 12px; color: #0033FF; font-weight: bold; "/>
+                </p:column>
+                <!--p:column headerText="Fotos" style="width: 90px; text-align: center;">
+                    <p:commandLink value="Imprimir" actionListener="#{inspeccionFinalConsulta.imprimirCertificado(insp)}" style="font-size: 12px; color: #0033FF; font-weight: bold; "/>
+                </p:column-->
+            </p:dataTable>
+        </h:form>
+    </ui:define>
+</ui:composition>

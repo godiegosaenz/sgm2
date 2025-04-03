@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="detalleCalculoEmisionOracle" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="10" uuid="fee01144-072c-411f-8984-85de0a5183c8">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="185"/>
+	<parameter name="LOGO" class="java.lang.String"/>
+	<parameter name="LOGO_FOOTER" class="java.lang.String"/>
+	<parameter name="ANIO" class="java.lang.Integer"/>
+	<parameter name="ID_AVAL_HISTORICO" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="USUARIO" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/home/andysanchez/NetBeansProjects/main-reportes/trunk/src/main/resources/reportes/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO2" class="java.lang.String"/>
+	<parameter name="ANIO_INICIO" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ANIO_FIN" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR_TITLE" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT 1 AS DUMMY ]]>
+	</queryString>
+	<field name="dummy" class="java.lang.Integer"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="80" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="60" width="541" height="20" uuid="96ecc5b6-d4ab-4948-b370-aa4ea6469e9f"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="14" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[DETALLES DE COEFICIENTES DE AVALUOS]]></text>
+			</staticText>
+			<subreport>
+				<reportElement x="1" y="0" width="555" height="53" uuid="c110c078-0fef-4caf-9d6d-3999f455aab6"/>
+				<subreportParameter name="LOGO">
+					<subreportParameterExpression><![CDATA[$P{LOGO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "titleReporteOracle.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="51" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="21" width="280" height="15" uuid="652fdf37-9446-4570-a1bb-86d115576a4f"/>
+				<textElement verticalAlignment="Bottom" markup="styled">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["AÑO INICIO "+$P{ANIO_INICIO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="363" y="21" width="192" height="15" uuid="6c2b5808-fef2-4566-8eb7-05d8554c58a7"/>
+				<textElement verticalAlignment="Bottom" markup="styled">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["AÑO FIN "+$P{ANIO_FIN}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="22" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="114" splitType="Stretch">
+			<subreport>
+				<reportElement x="2" y="40" width="555" height="66" uuid="93ee4d25-928e-4dc2-beb9-239d694657a1"/>
+				<subreportParameter name="ANIO_INICIAL">
+					<subreportParameterExpression><![CDATA[$P{ANIO_INICIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ANIO_FIN">
+					<subreportParameterExpression><![CDATA[$P{ANIO_FIN}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "catastro/avaluos/coeficientesSolar.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement x="2" y="7" width="553" height="20" uuid="2f125d36-cd06-45f1-8016-1bbb68d994f7"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[COEFICIENTES DEL SOLAR]]></text>
+			</staticText>
+		</band>
+		<band height="123" splitType="Stretch">
+			<staticText>
+				<reportElement x="2" y="16" width="553" height="20" uuid="dbbf0538-022c-46c8-ae5b-4e396cf9c008"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[COEFICIENTES DE LA CONSTRUCCION]]></text>
+			</staticText>
+			<subreport>
+				<reportElement x="2" y="48" width="554" height="75" uuid="85ed3771-1844-43e6-9bb0-1523451ab085"/>
+				<subreportParameter name="ANIO_INICIAL">
+					<subreportParameterExpression><![CDATA[$P{ANIO_INICIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ANIO_FIN">
+					<subreportParameterExpression><![CDATA[$P{ANIO_FIN}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "catastro/avaluos/coeficientesConstruccion.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="83" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="0" width="555" height="1" uuid="9fad98ea-9fd8-4b77-a5d9-3ac1ef68b1ab"/>
+			</line>
+			<textField pattern="dd/MMMMM/yyyy h:mm a">
+				<reportElement x="215" y="13" width="124" height="12" uuid="b8896d24-a766-46ed-a2fb-25cca6125cf7"/>
+				<textElement textAlignment="Center">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="13" width="147" height="12" uuid="9ed5dafa-248d-4ac0-80f5-1098e77e6710"/>
+				<textElement>
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["USUARIO: "+$P{USUARIO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="435" y="13" width="80" height="12" uuid="5b977a0b-6e8f-4fcc-8e10-6d4dc7529e9b"/>
+				<textElement textAlignment="Right">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pag. "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="515" y="13" width="40" height="12" uuid="af1b9d42-ef01-4c8d-87bb-6a5910131b56"/>
+				<textElement>
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="1" splitType="Stretch"/>
+	</summary>
+</jasperReport>

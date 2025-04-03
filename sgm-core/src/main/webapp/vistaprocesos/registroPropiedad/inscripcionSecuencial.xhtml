@@ -1,0 +1,209 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+    <ui:define name="metada">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{inscripcionSecuencial.doPreRenderView()}" />
+        </f:metadata>
+    </ui:define>
+    <ui:define name="top"><h3>Generar Inscripción Secuencial</h3></ui:define>
+    <ui:define name="content">
+        <h:form  id="formInscripSec">
+            <p:fieldset legend="Datos Inscripción">
+                <p:panelGrid styleClass="noBorder">
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Libro :"/><br/>
+                            <p:selectOneMenu value="#{inscripcionSecuencial.libro}" converter="entityConverter">
+                                <f:selectItem itemLabel="Seleccionar" itemValue="#{null}" />  
+                                <f:selectItems value="#{inscripcionSecuencial.libros}" var="libro" 
+                                               itemLabel="#{libro.nombre}" itemValue="#{libro}"/>  
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="Inscripción :"/><br/>
+                            <pe:inputNumber value="#{inscripcionSecuencial.inscripcion}" decimalPlaces="0"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="Repertorio :"/><br/>
+                            <pe:inputNumber value="#{inscripcionSecuencial.repertorio}" decimalPlaces="0"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="Fecha :"/><br/>
+                            <p:calendar value="#{inscripcionSecuencial.fecha}" pattern="dd/MM/yyyy" placeholder="dd/MM/yyyy"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="Secuencia :"/><br/>
+                            <pe:inputNumber value="#{inscripcionSecuencial.secuencia}" decimalPlaces="0"/>
+                        </p:column>
+                        <p:column>
+                            <br/>
+                            <p:commandButton value="Generar" icon="ui-icon-refresh" styleClass="btnStyle" actionListener="#{inscripcionSecuencial.buscarInscripcion}"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:fieldset>
+            <p:spacer height="10"/>
+            <p:fieldset legend="Inscripción Generada" rendered="#{inscripcionSecuencial.movimientoGenerado!=null}">
+                <p:panelGrid style="margin: 0 auto; width: 100%;" styleClass="noBorder">
+                    <p:row>
+                        <p:column style="width: 120px;">
+                            <p:outputLabel value="Libro :"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{inscripcionSecuencial.movimientoGenerado.libro.nombre}"/>
+                        </p:column>
+                        <p:column style="width: 120px;">
+                            <p:outputLabel value="Acto :"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{inscripcionSecuencial.movimientoGenerado.acto.nombre}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Inscripción :"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="#{inscripcionSecuencial.movimientoGenerado.numInscripcion}" readonly="true"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="Folio Inicial :"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{inscripcionSecuencial.movimientoGenerado.folioInicio}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Repertorio :"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="#{inscripcionSecuencial.movimientoGenerado.numRepertorio}" readonly="true"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="Folio Fin :"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{inscripcionSecuencial.movimientoGenerado.folioFin}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Fecha Inscripción:"/><br/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="#{inscripcionSecuencial.movimientoGenerado.fechaInscripcion}" readonly="true">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </p:inputText>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="Fecha Otorgamiento:"/><br/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="#{inscripcionSecuencial.movimientoGenerado.fechaOto}" readonly="true">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </p:inputText>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Fecha Resolución"/><br/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="#{inscripcionSecuencial.movimientoGenerado.fechaResolucion}" readonly="true">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </p:inputText>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="Escrit/Juic/Provi/Resolucion: "/><br/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{inscripcionSecuencial.movimientoGenerado.escritJuicProvResolucion}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Secuencia :"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="#{inscripcionSecuencial.movimientoGenerado.indice}" readonly="true"/>
+                        </p:column>
+                        <p:column colspan="2">
+                            <p:commandButton value="Editar Mov." icon="ui-icon-circle-arrow-e" styleClass="btnStyle" actionListener="#{inscripcionSecuencial.redirectEditarMovimiento(inscripcionSecuencial.movimientoGenerado.id)}"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:fieldset>
+        </h:form>
+        
+        <p:dialog header="Información - Inscripcion a Generar" widgetVar="infInscripcion" resizable="false" modal="true" closeOnEscape="true" width="50%">
+            <h:form id="formInfInscripcion">
+                <p:spacer height="10"/>
+                <p:outputLabel value="Se crea el movimiento con la secuencia :#{inscripcionSecuencial.secuenciaMax+1}" style="font-weight: bold;"/>
+                <p:panelGrid style="margin: 0 auto; width: 95%;" styleClass="noBorder">
+                    <p:row>
+                        <p:column style="width: 120px;">
+                            <p:outputLabel value="Libro :"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{inscripcionSecuencial.movimiento.libro.nombre}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Inscripción :"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="#{inscripcionSecuencial.movimiento.numInscripcion}" readonly="true"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Repertorio :"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="#{inscripcionSecuencial.movimiento.numRepertorio}" readonly="true"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Fecha :"/><br/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="#{inscripcionSecuencial.movimiento.fechaInscripcion}" readonly="true">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </p:inputText>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Secuencia :"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="#{inscripcionSecuencial.secuenciaMax+1}" readonly="true"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <p:spacer height="10"/>
+                <center>
+                    <p:commandButton value="Cancelar" icon="ui-icon-circle-close" styleClass="btnStyle" oncomplete="PF('infInscripcion').hide();"/>
+                    <p:spacer width="15"/>
+                    <p:commandButton value="Confirmar" icon="ui-icon-circle-check" styleClass="btnStyle" actionListener="#{inscripcionSecuencial.generarInscripcion()}">
+                        <p:confirm header="Confirmacion" message="Generar Movimiento?" icon="ui-icon-alert" />
+                    </p:commandButton>
+                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                        <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                    </p:confirmDialog>
+                </center>
+                <p:spacer height="10"/>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

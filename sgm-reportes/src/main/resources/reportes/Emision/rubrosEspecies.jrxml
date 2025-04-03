@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rubrosEdificaciones" pageWidth="300" pageHeight="140" whenNoDataType="AllSectionsNoDetail" columnWidth="300" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="c086c928-0029-46a6-9ac1-bd87d1a321be">
+	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="liquidacion" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="titulo_reporte" class="java.lang.String" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[SELECT
+     ren_rubros_liquidacion."descripcion" AS ren_rubros_liquidacion_descripcion,
+     ren_det_liquidacion."valor" AS ren_det_liquidacion_valor,
+     ren_det_liquidacion.cantidad AS ren_det_liquidacion_cantidad,
+     ren_det_liquidacion.desde AS ren_det_liquidacion_desde,
+     ren_det_liquidacion.hasta AS ren_det_liquidacion_hasta
+FROM
+     sgm_financiero."ren_rubros_liquidacion" ren_rubros_liquidacion RIGHT OUTER JOIN sgm_financiero."ren_det_liquidacion" ren_det_liquidacion ON ren_rubros_liquidacion."id" = ren_det_liquidacion."rubro"
+WHERE
+     ren_det_liquidacion."liquidacion" = $P{liquidacion}
+ AND ren_det_liquidacion.estado = true
+ORDER BY
+    ren_rubros_liquidacion.codigo_rubro ASC]]>
+	</queryString>
+	<field name="ren_rubros_liquidacion_descripcion" class="java.lang.String"/>
+	<field name="ren_det_liquidacion_valor" class="java.math.BigDecimal"/>
+	<field name="ren_det_liquidacion_cantidad" class="java.lang.Integer"/>
+	<field name="ren_det_liquidacion_desde" class="java.lang.Long"/>
+	<field name="ren_det_liquidacion_hasta" class="java.lang.Long"/>
+	<variable name="ren_det_liquidacion_valor_1" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{ren_det_liquidacion_valor}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="60">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="597287c9-ea9b-4adb-9f77-d76a880fb3e1" x="0" y="0" width="300" height="13" forecolor="#000000"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{titulo_reporte}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="d4a052a0-4772-4f4c-862b-759dfb37a23e" x="155" y="51" width="23" height="9" forecolor="#000000"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cant.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a0658cb7-a460-4d64-ab65-8ca3066cacca" x="177" y="51" width="24" height="9" forecolor="#000000"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Desde]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9dafb0b1-d18a-45b2-be29-307bdd7285e8" x="200" y="51" width="23" height="9" forecolor="#000000"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hasta]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="9">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="058d6a2b-07e0-4c96-b837-be10d390fce7" x="1" y="0" width="154" height="9" forecolor="#000000"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_rubros_liquidacion_descripcion}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="8becc3f2-d3ea-49a8-82fb-23b9087558c1" x="222" y="0" width="39" height="9" forecolor="#000000"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_det_liquidacion_valor}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement uuid="3a12a6be-18ad-4f1f-8e72-56fff8d642c1" x="155" y="0" width="23" height="9" forecolor="#000000"/>
+				<textElement textAlignment="Center">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_det_liquidacion_cantidad}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement uuid="0c1ca338-49b1-4eb2-9ba4-273e9bf0e441" x="177" y="0" width="24" height="9" forecolor="#000000"/>
+				<textElement textAlignment="Center">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_det_liquidacion_desde}==0?null:$F{ren_det_liquidacion_desde}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement uuid="c46f4cee-95cc-4bb5-b22c-249067e86d2a" x="200" y="0" width="23" height="9" forecolor="#000000"/>
+				<textElement textAlignment="Center">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_det_liquidacion_hasta}==0?null:$F{ren_det_liquidacion_hasta}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="9">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="3261696d-e961-49be-bd87-5011a7508e1a" x="222" y="0" width="39" height="9" forecolor="#000000"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="SansSerif" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{ren_det_liquidacion_valor_1}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="dcf8c240-ef6a-40fb-8779-3a48ac27e2f8" x="233" y="-1" width="29" height="1" forecolor="#000000"/>
+			</line>
+		</band>
+	</columnFooter>
+</jasperReport>

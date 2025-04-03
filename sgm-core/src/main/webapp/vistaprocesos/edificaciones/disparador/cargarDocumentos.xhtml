@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:define name="content">
+        <h:form id="frmMain">
+            <p:panelGrid styleClass="noBorder" columns="4" style="width: 100%;font-size: 14px;">
+                <p:outputLabel value="Tarea: #{cargarDocumentosDisp.taskDataByTaskID.name}" style="font-weight: bolder;color: #005f9c"/>
+                <p:outputLabel value="No Tramite: #{cargarDocumentosDisp.ht.id}" style="font-weight: bolder;color: #005f9c"/>
+                <p:outputLabel value="Responsable: #{cargarDocumentosDisp.taskDataByTaskID.assignee}" style="font-weight: bolder;color: #005f9c"/>
+            </p:panelGrid>
+            <p:panel id="pRequisitos" header="#{cargarDocumentosDisp.ht.tipoTramite.descripcion}" style="width: 100%" toggleable="true">
+                <p:tabView id="tDatos">
+                    <p:tab id="tGral" title="Datos Generales">
+                        <p:panel id="ppredios" header="Datos del Solicitante " style="width: 100%">
+                            <p:panelGrid columns="1" layout="grid">
+                                <h:outputText value="No. Identificacion: #{cargarDocumentosDisp.ht.solicitante.ciRuc}" style="text-transform: uppercase;"/>
+                                <h:outputText value="Razon Social: #{cargarDocumentosDisp.ht.solicitante.nombreComercial}" rendered="#{!cargarDocumentosDisp.ht.solicitante.esPersona}" style="text-transform: uppercase;"/>
+                                <h:outputText value="Nombre: #{cargarDocumentosDisp.ht.solicitante.nombres} #{cargarDocumentosDisp.ht.solicitante.apellidos}" rendered="#{cargarDocumentosDisp.ht.solicitante.esPersona}" style="text-transform: uppercase;"/>
+                            </p:panelGrid>
+                            <br/>
+                            <p:dataTable id="dtrequisitos" value="#{cargarDocumentosDisp.requisitos}"
+                                         var="req" reflow="true"  emptyMessage="No se encontró ningun Requisito">
+                                <f:facet name="header">Listado de Requisitos: #{cargarDocumentosDisp.ht.tipoTramite.descripcion} - No. Predio: #{cargarDocumentosDisp.ht.numPredio}</f:facet>
+                                <p:column headerText="Requisito" style="width: 50%;">
+                                    <h:outputText value="#{req.nombre}" style="text-transform: uppercase;"/>
+                                </p:column>
+                                <p:column headerText="Presentar Documento">
+                                    <center>
+                                        <p:inputText value="#{validarRequisito.entrada}"  rendered="#{req.tieneComprobante}" />
+                                        <p:fileUpload  rendered="#{!req.tieneComprobante}" fileUploadListener="#{cargarDocumentosDisp.handleFileUpload}"
+                                                       multiple="true"
+                                                       mode="advanced"
+                                                       fileLimit="3"
+                                                       label="Seleccionar"
+                                                       uploadLabel="Subir"
+                                                       cancelLabel="Cancelar"
+                                                       skinSimple="true"
+                                                       update="messages"
+                                                       sizeLimit="35000000" 
+                                                       allowTypes="/(\.|\/)(gif|jpe?g|dwg|png|pdf)$/"/>
+                                        <p:growl id="messages" showDetail="true"/>
+                                    </center>
+                                </p:column>
+                            </p:dataTable>
+                            <br/>
+                            <center><p:commandButton value="Validar archivos" onclick="PF('obs').show()" style="color: #ffffff; background: #616161 !important; font-weight: bold; height: 30px"/></center>
+                        </p:panel>
+                    </p:tab>
+                    <p:tab id="tObs" title="Observaciones">
+                        <p:dataTable id="dtobs" value="#{cargarDocumentosDisp.ht.observacionesCollection}" var="obs" reflow="true" style="width: 100%">
+                            <p:column headerText="Descripcion" style="width: 40%">
+                                #{obs.observacion}
+                            </p:column>
+                            <p:column headerText="tarea" style="width: 25%">
+                                #{obs.tarea}
+                            </p:column>
+                            <p:column headerText="Responsable" style="width: 20%">
+                                #{obs.userCre}
+                            </p:column>
+                            <p:column headerText="Fecha" style="width: 15%">
+                                #{obs.fecCre}
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                </p:tabView>
+            </p:panel>
+        </h:form>
+        <p:dialog id="dlgObs" widgetVar="obs" header="#{cargarDocumentosDisp.ht.tipoTramite.descripcion}" appendTo="@(body)" modal="true" width="500" resizable="false" closable="true" closeOnEscape="true">
+            <h:form id="frmObs" target="_blank">
+                <p:panel id="pobs" header="Ingrese sus observaciones" style="width: 100%">
+                    <p:commandButton value="Observación Default" icon="ui-icon-plus" styleClass="btnStyle" update="obsservacion" actionListener="#{cargarDocumentosDisp.observacionDefault()}" process="@this"/>
+                    <div align="center">
+                        <p:inputTextarea id="obsservacion" value="#{cargarDocumentosDisp.obs.observacion}" rows="4" style="width: 100%; text-transform: uppercase" required="true" placeholder="Las observaciones son obligatorias para continuar con el tramite"/>
+                        <br/>
+                        <p:commandButton id="btnValidar" value="Validar requisitos" actionListener="#{cargarDocumentosDisp.validarDocumentos()}" oncomplete="PF('obs').hide()" style="color: #ffffff; background: #616161 !important; font-weight: bold; height: 30px"/>
+                    </div>
+                </p:panel>
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+</ui:composition>

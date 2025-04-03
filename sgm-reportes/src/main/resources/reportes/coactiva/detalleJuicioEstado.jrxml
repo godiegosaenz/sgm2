@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="detalleJuicioEstado" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="565" leftMargin="15" rightMargin="15" topMargin="20" bottomMargin="10" uuid="c2bf6ee5-c349-4347-b1f5-3afec419731f">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="17"/>
+	<parameter name="LOGO" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\origami\\Documents\\NetBeansProjects\\sgm\\src\\main\\webapp\\reportes\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="USUARIO" class="java.lang.String"/>
+	<parameter name="LOGO_FOOTER" class="java.lang.String"/>
+	<parameter name="DESDE" class="java.util.Date"/>
+	<parameter name="HASTA" class="java.util.Date"/>
+	<parameter name="ESTADOS" class="java.util.Collection"/>
+	<parameter name="ES_PDF" class="java.lang.Boolean"/>
+	<queryString>
+		<![CDATA[SELECT ej.descripcion, j.numero_juicio||'-'||j.anio_juicio AS juicio, j.fecha_juicio,p.num_predio,
+p.clave_cat as cod_predial,l.anio,
+CASE WHEN l.comprador IS NULL THEN l.nombre_comprador ELSE upper(CASE e.es_persona WHEN TRUE THEN
+TRIM(COALESCE(e.nombres,'')||' '||COALESCE(e.apellidos,''))ELSE TRIM(e.razon_social)END)END as contribuyente,
+l.total_pago, CASE l.estado_liquidacion WHEN 1 THEN 'S' WHEN 2 THEN 'N' END AS pagado, ab.abreviatura
+FROM sgm_financiero.coa_juicio j
+INNER JOIN sgm_financiero.coa_estado_juicio ej ON (j.estado_juicio=ej.id)
+INNER JOIN sgm_financiero.coa_juicio_predio jp ON (j.id=jp.juicio)
+INNER JOIN sgm_financiero.ren_liquidacion l ON (jp.liquidacion=l.id)
+INNER JOIN sgm_app.cat_predio p ON (l.predio=p.id)
+LEFT OUTER JOIN sgm_financiero.coa_abogado ab ON (jp.abogado_juicio=ab.id)
+LEFT OUTER JOIN sgm_app.cat_ente e ON (l.comprador=e.id)
+WHERE j.estado=TRUE AND (j.fecha_ingreso::DATE BETWEEN $P{DESDE} AND $P{HASTA})
+AND jp.estado=TRUE AND $X{IN,j.estado_juicio,ESTADOS}
+ORDER BY j.estado_juicio, j.numero_juicio ASC, j.anio_juicio ASC, p.num_predio ASC, l.anio ASC]]>
+	</queryString>
+	<field name="descripcion" class="java.lang.String"/>
+	<field name="juicio" class="java.lang.String"/>
+	<field name="fecha_juicio" class="java.sql.Timestamp"/>
+	<field name="num_predio" class="java.lang.Long"/>
+	<field name="cod_predial" class="java.lang.String"/>
+	<field name="anio" class="java.lang.Integer"/>
+	<field name="contribuyente" class="java.lang.String"/>
+	<field name="total_pago" class="java.math.BigDecimal"/>
+	<field name="pagado" class="java.lang.String"/>
+	<field name="abreviatura" class="java.lang.String"/>
+	<variable name="SUM_JUICIO" class="java.math.BigDecimal" resetType="Group" resetGroup="juicio" calculation="Sum">
+		<variableExpression><![CDATA[$F{total_pago}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_JUICIOS" class="java.lang.Integer" calculation="DistinctCount">
+		<variableExpression><![CDATA[$F{juicio}]]></variableExpression>
+	</variable>
+	<group name="estado_juicio">
+		<groupExpression><![CDATA[$F{descripcion}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<textField>
+					<reportElement x="0" y="0" width="565" height="20" uuid="b9b89dbf-08fa-44f2-88c5-ad30a726a859"/>
+					<textElement verticalAlignment="Bottom">
+						<font size="14" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{descripcion}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="17"/>
+		</groupFooter>
+	</group>
+	<group name="juicio">
+		<groupExpression><![CDATA[$F{juicio}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="15">
+				<staticText>
+					<reportElement x="310" y="0" width="130" height="15" uuid="78d79d28-b8de-45fa-87fa-467f08ab4033"/>
+					<textElement textAlignment="Right">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[TOTAL>>>]]></text>
+				</staticText>
+				<textField pattern="¤ #,##0.00">
+					<reportElement x="440" y="0" width="75" height="15" uuid="22b479ba-1f8a-425d-93e5-4b62d31e4adf"/>
+					<textElement textAlignment="Right">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_JUICIO}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="44" splitType="Stretch">
+			<subreport>
+				<reportElement x="33" y="3" width="509" height="39" uuid="cec7f7e2-36aa-4e78-997b-59a8b572c8bf"/>
+				<subreportParameter name="LOGO">
+					<subreportParameterExpression><![CDATA[$P{LOGO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "titleReporte.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="40" splitType="Stretch">
+			<printWhenExpression><![CDATA[!$P{ES_PDF} ? $V{PAGE_NUMBER} == 1 ? true : false : true]]></printWhenExpression>
+			<textField>
+				<reportElement x="60" y="20" width="450" height="20" uuid="6c626f6a-69a0-4da5-9d79-78b86a7e31bc"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["DESDE:"+new SimpleDateFormat("dd/MM/yyyy").format($P{DESDE})+"       HASTA:"+new SimpleDateFormat("dd/MM/yyyy").format($P{HASTA})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="60" y="0" width="450" height="20" uuid="98e10374-1f15-453d-a8be-1523981b7c3b"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DETALLE DE JUICIOS EN PROCESO DE COACTIVA]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="25" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="50" height="25" uuid="d3577b20-74ff-4b85-bc2f-45e01f63145e"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NUMERO JUICIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="0" width="50" height="25" uuid="dfd2a7e2-952e-48f3-a0d6-8e94f371c5c5"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA JUICIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="100" y="0" width="50" height="25" uuid="c973adce-8c48-47a5-a8ef-21d4ab57f7a3"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MATRICULA INMB.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="150" y="0" width="129" height="25" uuid="4818d6ef-5952-4213-ae37-c4c899933429"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CODIGO PREDIAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="279" y="0" width="30" height="25" uuid="2884d795-500f-4af2-8da7-2c95f045dd21"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AÑO DEUDA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="310" y="0" width="130" height="25" uuid="cd4f18ba-98ac-430b-8fcc-186e13db4300"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PROPIETARIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="440" y="0" width="75" height="25" uuid="9d14f195-498a-4951-8c8e-920eb2daa7d4"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VALOR DEUDA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="515" y="0" width="27" height="25" uuid="7212be72-2751-40e0-b266-bbb5bd7e97eb"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PAG.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="542" y="0" width="23" height="25" uuid="272ce33d-f878-4ad8-b152-bc39c66bc46d"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AB.]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="50" height="12" uuid="8f262dbf-45de-4663-935e-ad1f6e4ba403"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{juicio}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="50" y="0" width="50" height="12" uuid="6048250f-6081-48c0-9d06-af5882f2bf23"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha_juicio}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="100" y="0" width="50" height="12" uuid="7e9c3f90-e2bf-4353-88d8-cd16b2009ca5"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{num_predio}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="150" y="0" width="130" height="12" uuid="b1b4d3a6-3065-488e-a3f8-c4ab521c29b3"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cod_predial}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="280" y="0" width="30" height="12" uuid="edcb0c0b-03e7-47e6-b87b-2c6e289ee241"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{anio}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="310" y="0" width="130" height="12" uuid="1e10554d-93c7-4239-bda7-e9c39a0a0424"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{contribuyente}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement x="440" y="0" width="75" height="12" uuid="dfc9abc6-0a54-4a22-b59e-39e4e9b12ee3"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{total_pago}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="515" y="0" width="27" height="12" uuid="a4764c12-ffb9-4fc6-8e56-b55764c7feac"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pagado}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="542" y="0" width="23" height="12" uuid="0ad97c38-bb70-4f30-98c4-6ece307d34d5"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{abreviatura}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="16" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="41" splitType="Stretch">
+			<printWhenExpression><![CDATA[$P{ES_PDF}]]></printWhenExpression>
+			<image vAlign="Middle">
+				<reportElement x="0" y="1" width="100" height="40" uuid="b84ad8f0-3bc6-4aff-8e8f-1d615995aa27"/>
+				<imageExpression><![CDATA[$P{LOGO_FOOTER}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="179" y="1" width="100" height="20" uuid="e34a493d-7e5b-4eab-b34f-eac8b178b03b"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{USUARIO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH:mm">
+				<reportElement x="297" y="1" width="110" height="20" uuid="06413da2-f580-49ff-98bd-420806943487"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="440" y="1" width="75" height="20" uuid="08558bd7-4627-4a50-8ea9-aad4cb898bc1"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pag. "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="515" y="1" width="40" height="20" uuid="4aa6df14-3915-45ad-a7ae-65a414571c49"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="100" y="1" width="75" height="20" uuid="6ffd7a94-2b36-4564-a707-dcd768f13e04"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[USUARIO:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="1" width="565" height="1" uuid="ff178c00-2482-40dd-8c16-3ba670f2fec8"/>
+			</line>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="417" y="0" width="148" height="20" uuid="2fdc7832-7de6-4e27-9b5c-4ff96b8522fe"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Total Nº de Juicios: "+$V{TOTAL_JUICIOS}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

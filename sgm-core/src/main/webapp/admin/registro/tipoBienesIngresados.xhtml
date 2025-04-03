@@ -1,0 +1,149 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="/template/template.xhtml">
+            <ui:define name="page_title">
+                Tipo de Bienes Ingresados
+            </ui:define>
+
+            <ui:define name="top">
+                <h1>Tipo de Bienes Ingresados</h1>
+            </ui:define>
+
+            <ui:define name="content">
+                <h:form id="formBienIng">
+                    <p:dataTable style="width: 60%;margin: 0 auto;" value="#{tipoBienes.listBien}" var="tb"
+                                 emptyMessage="No se encontró ningún elemento..." paginator="true" rows="20" rowsPerPageTemplate="20,50,100">
+                        <f:facet name="header">
+                            <!--p:outputLabel value="Tipo Bienes" style="font-size: 20px;font-weight: bold"/-->
+                            <p:commandButton id="btnNuevoBien" value="Nuevo" onclick="PF('nuevoBien').show();" style="float: right" styleClass="btnStyle"/>
+                        </f:facet>
+                        <p:column headerText="Nombre" style="text-align: center">
+                            <h:outputText value="#{tb.nombre}"/>
+                        </p:column>
+                        <p:column headerText="Estado" style="text-align: center">
+                            <h:outputText value="ACTIVO" rendered="#{tb.estado}"/>
+                            <h:outputText value="NO ACTIVO" rendered="#{!tb.estado}"/>
+                        </p:column>
+                        <p:column headerText="Editar" style="text-align: center">
+                            <p:commandLink value="::Editar" style="font-weight: bolder;color: #0033FF" actionListener="#{tipoBienes.editarBien(tb)}"/>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+
+                <p:dialog id="dialogNewTipoBien" header="Nuevo Tipo de Bien" widgetVar="nuevoBien" resizable="false"
+                          modal="true" position="center" closable="false" width="40%">
+                    <h:form id="formNewTipoBien">
+                        <p:panelGrid layout="grid" columns="3">
+                            <h:outputText value="Nombre: " />
+                            <p:inputText value="#{tipoBienes.tipoBien.nombre}" style="width: 160px;"/>
+                            <p:selectBooleanCheckbox value="#{tipoBienes.tipoBien.estado}" itemLabel="  Activo"/>
+                        </p:panelGrid>
+                        <h:outputText style="font-weight: bolder" value="* Solo una Caracteristica del bien puede ser seleccionada como principal."/>
+                        <br/>
+                        <h:outputText style="font-weight: bolder" value="* Será el identificador del bien."/>
+                        <br/>
+                        <br/>
+                        <p:dataTable id="dtTbCaractNews" style="width: 100%;margin: 0 auto;" emptyMessage="No se encontró ningún elemento..."
+                                     paginator="true" rows="10" rowsPerPageTemplate="10,20,50" value="#{tipoBienes.caractBien}"
+                                     var="crctNew" paginatorPosition="top" scrollHeight="100" scrollable="true">
+                            <f:facet name="header">
+                                <p:outputLabel value="Caracteristicas del Bien" style="font-size: 20px;font-weight: bold; margin: 0px;"/>
+                                <p:commandButton id="btnNewCarct" actionListener="#{tipoBienes.nuevaCaracteristicaBien()}" value="Nuevo" styleClass="btnStyle" style="float: right"/>
+                            </f:facet>
+                            <p:column headerText="Nombre" style="text-align: center">
+                                <h:outputText value="#{crctNew.nombre}"/>
+                            </p:column>
+                            <p:column headerText="Estado" style="text-align: center">
+                                <h:outputText value="ACTIVO" rendered="#{crctNew.estado}"/>
+                                <h:outputText value="NO ACTIVO" rendered="#{!crctNew.estado}"/>
+                            </p:column>
+                            <p:column headerText="Identificador" style="text-align: center">
+                                <h:outputText value="SI" rendered="#{crctNew.isMain}" />
+                                <h:outputText value="NO" rendered="#{!crctNew.isMain}"/>
+                            </p:column>
+                            <p:column headerText="Editar" style="text-align: center">
+                                <p:commandLink value="::Editar" style="font-weight: bolder;color: #0033FF" actionListener="#{tipoBienes.EditCaract(crctNew)}"/>
+                            </p:column>
+                        </p:dataTable>
+                        <br/>
+                        <p:commandButton value="Guardar" actionListener="#{tipoBienes.guardarCaract()}" styleClass="btnStyle"/>
+                        <p:spacer width="10"/>
+                        <p:commandButton value="Cancelar" onclick="PF('nuevoBien').hide();" update="formBienIng" styleClass="btnStyle"/>
+                    </h:form>
+                </p:dialog>
+
+                <p:dialog id="editTipoBien" header="Edición de Tipo de Bien" widgetVar="EditBien" resizable="false"
+                          modal="true" position="center" closable="false" width="40%">
+                    <h:form id="formEditTipoBien">
+                        <p:panelGrid layout="grid" columns="3" columnClasses="col-xs-2">
+                            <h:outputText value="Nombre: " />
+                            <p:inputText value="#{tipoBienes.tipoBien.nombre}" style="width: 160px;"/>
+                            <p:selectBooleanCheckbox value="#{tipoBienes.tipoBien.estado}" itemLabel="  Activo"/>
+                        </p:panelGrid>
+                        <h:outputText style="font-weight: bolder" value="* Solo una Caracteristica del bien puede ser seleccionada como principal."/>
+                        <br/>
+                        <h:outputText style="font-weight: bolder" value="* Será el identificador del bien."/>
+                        <br/>
+                        <br/>
+                        <p:dataTable id="dtTbCaractNews" style="width: 100%;margin: 0 auto;" emptyMessage="No se encontró ningún elemento..."
+                                     paginator="true" rows="10" rowsPerPageTemplate="10,20,50" value="#{tipoBienes.tipoBien.regTipoBienCaracteristicaCollection}"
+                                     var="caractEdit" paginatorPosition="top" scrollHeight="100" scrollable="true">
+                            <f:facet name="header">
+                                <p:outputLabel value="Caracteristicas del Bien" style="font-size: 20px;font-weight: bold; margin: 0px;"/>
+                                <p:commandButton id="btnNewCarct" actionListener="#{tipoBienes.nuevaCaracteristicaBien()}" value="Nuevo" styleClass="btnStyle" style="float: right"/>
+                            </f:facet>
+                            <p:column headerText="Nombre" style="text-align: center">
+                                <h:outputText value="#{caractEdit.nombre}"/>
+                            </p:column>
+                            <p:column headerText="Estado" style="text-align: center">
+                                <h:outputText value="ACTIVO" rendered="#{caractEdit.estado}"/>
+                                <h:outputText value="NO ACTIVO" rendered="#{!caractEdit.estado}"/>
+                            </p:column>
+                            <p:column headerText="Identificador" style="text-align: center">
+                                <h:outputText value="SI" rendered="#{caractEdit.isMain}" />
+                                <h:outputText value="NO" rendered="#{!caractEdit.isMain}"/>
+                            </p:column>
+                            <p:column headerText="Editar" style="text-align: center">
+                                <p:commandLink value="::Editar" style="font-weight: bolder;color: #0033FF" actionListener="#{tipoBienes.EditCaract(caractEdit)}"/>
+                            </p:column>
+                        </p:dataTable>
+                        <br/>
+                        <p:commandButton value="Guardar" actionListener="#{tipoBienes.guardarCaractEdit()}" styleClass="btnStyle"/>
+                        <p:spacer width="10"/>
+                        <p:commandButton value="Cancelar" onclick="PF('EditBien').hide();" update="formBienIng" styleClass="btnStyle"/>
+                    </h:form>
+                </p:dialog>
+
+                <p:dialog id="dialogNewCaracterist" header="Caracteristica de Bien" widgetVar="agregarCaractBien"
+                          resizable="false" modal="true" position="center" closable="false" width="450">
+                    <h:form id="formNueCaractBien">
+                        <p:panelGrid columns="2" layout="grid" style="width: 90%;" columnClasses="col-xs-3">
+                            <h:outputText value="Nombre: "/>
+                            <p:inputText value="#{tipoBienes.agragarCaract.nombre}" size="40"/>
+                            <p:selectBooleanCheckbox value="#{tipoBienes.agragarCaract.estado}" itemLabel="  Activo"/>
+                            <p:selectBooleanCheckbox value="#{tipoBienes.agragarCaract.isMain}" itemLabel="  Principal"/>
+                        </p:panelGrid>
+                        <br/>
+                        <p:commandButton value="Guardar" actionListener="#{tipoBienes.agregarCaracteristicaBien()}" rendered="#{!tipoBienes.edit}" styleClass="btnStyle" />
+                        <p:commandButton value="Guardar" rendered="#{tipoBienes.edit}" actionListener="#{tipoBienes.agregarCaractEdit()}" styleClass="btnStyle"/>
+                        <p:spacer width="10"/>
+                        <p:commandButton value="Cancelar" actionListener="#{tipoBienes.cancelarCaract()}" rendered="#{!tipoBienes.edit}" styleClass="btnStyle" />
+                        <br/>
+
+                    </h:form>
+                </p:dialog>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

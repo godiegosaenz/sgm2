@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="informeResolucion" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c4dfc6ae-0dfb-47bb-a9e6-d89e2ffd7c79">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="14"/>
+	<style name="timeBold" fontName="Times New Roman" fontSize="14" isBold="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Times-Bold"/>
+	<style name="timeNormal" fontName="Times New Roman" fontSize="14" isBold="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Times-Roman"/>
+	<parameter name="LOGO" class="java.lang.String"/>
+	<parameter name="LOGO_FOOTER" class="java.lang.String"/>
+	<parameter name="NUM_MEMORANDUM" class="java.lang.String"/>
+	<parameter name="DIR_FINANCIERO" class="java.lang.String"/>
+	<parameter name="TESORERA" class="java.lang.String"/>
+	<parameter name="MEMO" class="java.lang.String"/>
+	<parameter name="SOLICITANTE" class="java.lang.String"/>
+	<parameter name="TRAMITE" class="java.lang.String"/>
+	<parameter name="PREDIOS" class="java.util.Collection"/>
+	<parameter name="TIPO_PREDIOS" class="java.lang.Long"/>
+	<parameter name="OBSERVACION" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT p.num_predio, p.clave_cat as cod_predial, l.anio, l.saldo,
+(SELECT STRING_AGG(TRIM(TRIM(COALESCE(ent.apellidos, '') || ' ' || COALESCE(ent.nombres, ''))  || ' ' ||  TRIM(COALESCE(ent.razon_social, ''))), ',  ' ORDER BY PP.ID ASC) FROM sgm_app.cat_predio_propietario PP
+  INNER JOIN sgm_app.cat_ente ENT ON ENT.ID=PP.ENTE WHERE PP.ESTADO='A' AND PP.PREDIO =P.ID) as propietario,
+    (SELECT razon_social from sgm_application.empresa) AS nombre_empresa,
+    (SELECT cc.nombre FROM sgm_application.empresa e, sgm_app.cat_provincia p
+INNER JOIN sgm_app.cat_canton cc ON  cc.id_provincia=p.id
+WHERE e.codigo_canton=cc.cod_nac AND e.codigo_provincia=p.cod_nac) AS NOMBRE_CANTON
+FROM sgm_app.cat_predio p
+
+LEFT OUTER JOIN ( SELECT predio,anio, saldo FROM sgm_financiero.ren_liquidacion WHERE tipo_liquidacion=13 AND estado_liquidacion=2) AS l ON (l.predio=p.id )
+WHERE $X{IN,p.id,PREDIOS}
+ORDER BY p.num_predio,l.anio ASC]]>
+	</queryString>
+	<field name="num_predio" class="java.lang.Long"/>
+	<field name="cod_predial" class="java.lang.String"/>
+	<field name="anio" class="java.lang.Integer"/>
+	<field name="saldo" class="java.math.BigDecimal"/>
+	<field name="propietario" class="java.lang.String"/>
+	<field name="nombre_empresa" class="java.lang.String"/>
+	<field name="nombre_canton" class="java.lang.String"/>
+	<variable name="predio_valor" class="java.math.BigDecimal" resetType="Group" resetGroup="predio" calculation="Sum">
+		<variableExpression><![CDATA[$F{saldo}]]></variableExpression>
+	</variable>
+	<group name="predio">
+		<groupExpression><![CDATA[$F{num_predio}]]></groupExpression>
+		<groupHeader>
+			<band height="71">
+				<staticText>
+					<reportElement style="timeBold" x="62" y="0" width="128" height="14" uuid="6aadbe4a-87ee-47a7-bc36-73e5887ec67d"/>
+					<textElement>
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Matricula Inmobiliaria]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="timeBold" x="62" y="14" width="121" height="14" uuid="ed4d2b5e-ca53-4f39-9c11-4e6b05884155"/>
+					<textElement>
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Codigo Predial]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement style="timeNormal" x="190" y="0" width="332" height="14" uuid="d7324a85-5b70-4f82-a6d8-ee443617081f"/>
+					<textElement>
+						<font size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{num_predio}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement style="timeNormal" x="190" y="14" width="332" height="14" uuid="4d42c5db-c560-44f9-bc18-0390f68df2e5"/>
+					<textElement>
+						<font size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{cod_predial}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement style="timeBold" positionType="Float" x="63" y="42" width="81" height="20" uuid="9a1a152d-f5ac-4c2c-b6f4-ca3742765b8a"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font size="12" isBold="true"/>
+						<paragraph lineSpacing="Fixed"/>
+					</textElement>
+					<text><![CDATA[AÑO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="timeBold" positionType="Float" x="146" y="42" width="102" height="20" uuid="d07067f8-ecae-4b76-bcc5-bfb7c28d1cbe"/>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[VALOR]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="timeBold" positionType="Float" stretchType="RelativeToTallestObject" x="62" y="28" width="121" height="14" uuid="97d245bf-c2b5-4685-b0fd-0e184bcf5fb3"/>
+					<textElement>
+						<font size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[PROPIETARIO]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="timeNormal" x="190" y="28" width="332" height="14" uuid="c94b3639-19f7-42ad-b64b-faa59cd26e8f"/>
+					<textElement>
+						<font size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{propietario}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="33">
+				<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+					<reportElement x="144" y="6" width="102" height="20" uuid="b4e2b71f-10c0-48f0-a14d-d6b496a41ed0"/>
+					<box>
+						<topPen lineWidth="0.75" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{predio_valor}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement style="timeBold" positionType="Float" x="63" y="6" width="81" height="20" uuid="fdc1b720-d28e-4d6e-9ecd-5b096bcea005"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="12" isBold="true"/>
+						<paragraph lineSpacing="Fixed"/>
+					</textElement>
+					<text><![CDATA[TOTAL]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="324" splitType="Stretch">
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="220" y="0" width="115" height="55" uuid="12294b13-a94c-4cd4-b4f9-ac311a80fd81"/>
+				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement style="timeBold" x="131" y="91" width="322" height="22" uuid="7327a789-b976-4bfa-a771-5f580ed6faf7"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MEMORANDUM]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="timeNormal" x="116" y="112" width="322" height="20" uuid="1c675d4b-87c0-4624-9a81-cc5bb33f7d14"/>
+				<textElement textAlignment="Center">
+					<font size="13" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Nº. "+$P{NUM_MEMORANDUM}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="timeNormal" x="62" y="135" width="43" height="16" uuid="c37f3651-eaf0-46ca-868f-2d8776de565c"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[A:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="timeNormal" x="62" y="151" width="43" height="16" uuid="3b13c2fb-0962-452c-baeb-8c677b661007"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[De:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="timeNormal" x="62" y="167" width="43" height="16" uuid="14da09ea-a1b6-4601-b172-da8672fb8e4a"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Asunto:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="timeNormal" x="62" y="183" width="43" height="16" uuid="e992a093-5b97-4e67-95e5-5e3f58da3bf5"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Fecha:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="timeNormal" x="62" y="199" width="43" height="16" uuid="18920c21-439a-4eba-b146-67bbef7a84de"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[C.C:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="62" y="221" width="460" height="1" uuid="c224613b-3464-4dca-935e-a0261a7f6e8f"/>
+				<graphicElement>
+					<pen lineWidth="1.5"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement style="timeNormal" x="107" y="199" width="415" height="16" uuid="c694eda5-fa22-4b32-a038-6b20c58a6881"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Archivo.]]></text>
+			</staticText>
+			<textField pattern="dd &apos;de&apos; MMMMM &apos;del&apos; yyyy" isBlankWhenNull="true">
+				<reportElement style="timeNormal" x="107" y="183" width="415" height="16" uuid="7499482c-7187-4e40-8d1e-0f3db615d889"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_canton} + ", " + new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="timeNormal" x="107" y="167" width="415" height="16" uuid="2472236c-ae8d-4f39-bace-09afb567d6ae"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[INFORME SOBRE DEUDA]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="timeNormal" x="107" y="135" width="415" height="16" uuid="c08fd5eb-875d-44b0-a8e7-c086711c0c66"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{DIR_FINANCIERO}+" .-DIRECTORA FINANCIERA"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="timeNormal" x="107" y="151" width="415" height="16" uuid="ea7f984b-3ed7-4049-938f-41ad07def6d8"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TESORERA}+" .- TESORERA"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="timeNormal" x="62" y="227" width="460" height="50" uuid="5f5f77a8-585c-4d49-aabb-5b6ab666aa59"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[En cumplimiento a la petición de la Dirección Financiera, a continuación informo sobre los títulos pendientes de cobro que reposan en la Tesorería Municipal.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="timeNormal" x="62" y="277" width="121" height="14" uuid="16a0c4ab-546f-4e66-8cbd-93450bcdb669"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MEMO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="timeBold" x="62" y="291" width="121" height="14" uuid="8276da1d-0c0b-4071-813f-ca813464e9fc"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SOLICITANTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="timeBold" x="62" y="305" width="121" height="14" uuid="07386795-c869-48b4-bf6a-a9e84b0e1663"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TRAMITE]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="190" y="277" width="332" height="14" uuid="e15d8887-e422-41db-a17c-a4d0bd5fba89"/>
+				<textElement>
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{MEMO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="timeNormal" x="190" y="291" width="332" height="14" uuid="8e8e66a7-b919-47ed-8848-61638831658a"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{SOLICITANTE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="timeNormal" x="190" y="305" width="332" height="14" uuid="9aee3e2f-3b66-4684-a4c1-df9c31cd6038"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TRAMITE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="26" y="55" width="522" height="36" uuid="2a38a509-3a56-4db2-a93b-934d11267d6a"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_empresa}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="29" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="63" y="0" width="81" height="11" isRemoveLineWhenBlank="true" uuid="b8460d1f-8105-4532-9508-55f487702bd6"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{anio}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement x="146" y="0" width="102" height="11" isRemoveLineWhenBlank="true" uuid="5d3ecb58-5d21-4367-89f3-dfd640da94d0"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{saldo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="timeBold" positionType="Float" x="63" y="11" width="298" height="17" isRemoveLineWhenBlank="true" uuid="c07015ea-d2d9-4466-abc0-e277e250b550"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{anio}==null?"ESTE PREDIO NO MANTIENE DEUDA ALGUNA":null]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="50" splitType="Stretch">
+			<subreport>
+				<reportElement x="26" y="0" width="496" height="50" uuid="f083306e-0b57-4896-83f1-404b370e2446"/>
+				<subreportParameter name="LOGO">
+					<subreportParameterExpression><![CDATA[$P{LOGO_FOOTER}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "footerReporte.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="140" splitType="Stretch">
+			<staticText>
+				<reportElement style="timeNormal" x="63" y="35" width="459" height="20" uuid="b708323f-8529-486a-a1ac-205c9cff42c9"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Particular que comunico a usted para los fines legales consiguientes.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="timeNormal" x="153" y="63" width="249" height="20" uuid="765102db-efbe-44d7-9167-64366925be82"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Atentamente,]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="timeBold" x="153" y="120" width="249" height="20" uuid="74cbb008-545b-4fd0-85a9-574d4c31ea34"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TESORERA]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="timeNormal" x="153" y="100" width="249" height="20" uuid="2699a18e-ba74-4c8c-be8e-dd5a59bc4d61"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TESORERA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="timeNormal" x="63" y="0" width="459" height="31" isRemoveLineWhenBlank="true" uuid="3e898e85-1f8a-4ef2-a608-e13cf73a2cf0"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{OBSERVACION}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

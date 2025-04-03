@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="estadoCuentaPredial" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="10" uuid="8b35a29e-98d9-42db-a8f8-d1ad358a1d47">
+	<property name="ireport.zoom" value="1.6963904734899393"/>
+	<property name="ireport.x" value="19"/>
+	<property name="ireport.y" value="384"/>
+	<parameter name="LOGO" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\Users\\origami\\Documents\\NetBeansProjects\\sgm\\src\\main\\webapp\\template\\balcon\\logonew.png"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\origami\\Documents\\NetBeansProjects\\sgm\\src\\main\\webapp\\reportes\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PREDIOS" class="java.util.Collection"/>
+	<queryString>
+		<![CDATA[SELECT l.anio,p.num_predio,p.CLAVE_CAT as cod_predial, COALESCE(c.nombre, '') || ' Mz:'||COALESCE(p.urb_mz,'')||' Sl:'||COALESCE(p.urb_solarnew,'') as direccion,
+CASE WHEN l.comprador IS NULL THEN l.nombre_comprador ELSE upper(CASE e.es_persona WHEN TRUE THEN TRIM(COALESCE(e.nombres, '') || ' ' || COALESCE(e.apellidos, '')) ELSE TRIM(e.razon_social) END) END as contribuyente,l.saldo,
+CASE
+WHEN (l.anio= EXTRACT(YEAR FROM now())) AND (EXTRACT(MONTH FROM now())<7) THEN
+	ROUND( d.valor*(SELECT porcentaje FROM sgm_app.ctlg_descuento_emision WHERE num_mes=EXTRACT(MONTH FROM now()) AND num_quincena=(CASE WHEN EXTRACT(DAY FROM now())>15 THEN 2 ELSE 1 END))/100,2)
+WHEN (l.anio<EXTRACT(YEAR FROM now())) THEN
+	(ROUND((d.valor*0.1),2) +ROUND( (l.saldo)*(SELECT SUM(porcentaje*dias)/360
+					FROM sgm_financiero.ren_intereses i
+					WHERE i.desde>=TO_DATE('01-01-'||l.anio+1,'DD-MM-YYYY') AND i.hasta<= TO_DATE('01-'||EXTRACT(MONTH FROM now())+1||'-'||EXTRACT(YEAR FROM now()),'DD-MM-YYYY')
+					),2))
+ELSE ROUND((d.valor*0.1),2) END as valor_complemento,l.estado_coactiva
+FROM sgm_financiero.ren_liquidacion l
+INNER JOIN sgm_financiero.ren_det_liquidacion d ON (l.id=d.liquidacion AND d.rubro=2)
+INNER JOIN sgm_app.cat_predio p ON (l.predio=p.id)
+LEFT OUTER JOIN sgm_app.cat_ente e ON (l.comprador=e.id)
+LEFT OUTER JOIN sgm_app.cat_ciudadela c ON (p.ciudadela=c.id)
+WHERE l.estado_liquidacion=2 AND l.tipo_liquidacion=13
+AND $X{IN,l.predio,PREDIOS}
+ORDER BY 2 DESC,1 ASC]]>
+	</queryString>
+	<field name="anio" class="java.lang.Integer"/>
+	<field name="num_predio" class="java.lang.Long"/>
+	<field name="cod_predial" class="java.lang.String"/>
+	<field name="direccion" class="java.lang.String"/>
+	<field name="contribuyente" class="java.lang.String"/>
+	<field name="saldo" class="java.math.BigDecimal"/>
+	<field name="valor_complemento" class="java.math.BigDecimal"/>
+	<field name="estado_coactiva" class="java.lang.Integer"/>
+	<variable name="IMPUESTO" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{saldo}.add( $F{valor_complemento} )]]></variableExpression>
+	</variable>
+	<variable name="COACTIVA" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{estado_coactiva}==2?$V{IMPUESTO}.multiply( new BigDecimal("0.1") ).setScale(2, RoundingMode.HALF_UP): new BigDecimal("0.00")]]></variableExpression>
+	</variable>
+	<variable name="TOTAL" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$V{IMPUESTO}.add( $V{COACTIVA}.setScale(2, RoundingMode.HALF_UP) )]]></variableExpression>
+	</variable>
+	<variable name="SUM_TOTAL" class="java.math.BigDecimal" resetType="Group" resetGroup="predio" calculation="Sum">
+		<variableExpression><![CDATA[$V{TOTAL}]]></variableExpression>
+	</variable>
+	<group name="predio" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{num_predio}]]></groupExpression>
+		<groupHeader>
+			<band height="183">
+				<subreport>
+					<reportElement x="0" y="0" width="555" height="40" uuid="3404ad4c-23a9-4d1b-8c36-b36f805088c9"/>
+					<subreportParameter name="LOGO">
+						<subreportParameterExpression><![CDATA[$P{LOGO}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "titleReporteGobiernoAutonomo.jasper"]]></subreportExpression>
+				</subreport>
+				<textField>
+					<reportElement x="138" y="142" width="395" height="15" uuid="1b81ae98-0299-4985-9835-9ad56a00aec1"/>
+					<textFieldExpression><![CDATA[$F{num_predio}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="157" y="40" width="363" height="18" uuid="13fbee89-18f5-4247-bc82-83e88ce9d992"/>
+					<box>
+						<pen lineWidth="2.0" lineStyle="Double"/>
+						<topPen lineWidth="2.0" lineStyle="Double"/>
+						<leftPen lineWidth="2.0" lineStyle="Double"/>
+						<bottomPen lineWidth="2.0" lineStyle="Double"/>
+						<rightPen lineWidth="2.0" lineStyle="Double"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[ESTADO DE CUENTA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="157" y="58" width="363" height="20" uuid="731b1305-7fb4-454b-a89b-bc26055183a9"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[IMPUESTO PREDIAL URBANO Y ADICIONALES]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="25" y="97" width="113" height="15" uuid="972b11b8-9466-44c2-bc8a-3d9a695ee42e"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Contribuyente:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="25" y="112" width="113" height="15" uuid="5eec6ea3-fac9-4666-b33c-a5a0c4f4190f"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Dirección:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="25" y="127" width="113" height="15" uuid="1a5dbafb-e20c-42fd-8513-7821b908cd64"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Código Predial:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="25" y="142" width="113" height="15" uuid="6985f45c-81ae-44df-8ec5-7b4722cb981e"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Mat. Inmobiliaria:]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="138" y="127" width="395" height="15" uuid="3e415b03-dbac-4ab8-b13c-a8b80c6c220b"/>
+					<textFieldExpression><![CDATA[$F{cod_predial}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="138" y="97" width="395" height="15" uuid="2a40da04-d093-4f98-bff8-d33f144eed79"/>
+					<textFieldExpression><![CDATA[$F{contribuyente}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="157" y="166" width="75" height="14" uuid="c02a212e-249f-40b1-b95c-e4613a5edd76"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[Año]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="248" y="166" width="75" height="14" uuid="2e29fa62-afa3-4fd9-8ce6-0deb2aa71794"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[Impuesto]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="339" y="166" width="75" height="14" uuid="da8597ea-70b3-4e4f-92c6-7c4afcff9c1d"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[Coactiva]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="429" y="166" width="75" height="14" uuid="0a61c471-07b3-4194-90df-5bb85eaccee7"/>
+					<box>
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[Total]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="138" y="112" width="395" height="15" uuid="907d9e3c-74fd-4846-b3c1-20cda168aa1f"/>
+					<textFieldExpression><![CDATA[$F{direccion}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="238">
+				<staticText>
+					<reportElement x="157" y="0" width="240" height="12" uuid="f5078b14-495c-4be6-a712-f68d5a372c34"/>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[TOTAL IMPUESTO PREDIAL::::::::::::::]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="12" y="32" width="530" height="25" uuid="2bd01db4-86c4-45f3-a6e1-42ea81b895de"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font size="8" isItalic="true" isUnderline="false"/>
+					</textElement>
+					<text><![CDATA[Usted puede cancelar sus impuestos en las siguientes modalidades: efectivo, cheque certificado, tarjeta de crédito, convenio de pago y las bancas virtuales de las siguientes instituciones: Banco Bolivariano, Banco de Guayaquil y Diners Club del Ecuador.]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="12" y="62" width="530" height="108" uuid="c0e1998f-dec3-4960-bd87-e34b4f3730f6"/>
+					<textElement textAlignment="Justified" markup="styled">
+						<font isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["<style isBold='true'>Señor contribuyente:</style>\n"+
+"<style isBold='true'>-La Ilustre Municipalidad de San Vicente</style> agradece a usted, por su aporte ciudadano y comunitario al pagar los impuestos oportunamente y ratifica su compromiso con la comunidad para seguir mejorando la calidad de nuestros servicios, y que Samborondón continue siendo \"EL MEJOR LUGAR PARA VIVIR.\"\n\n"+
+"<style isBold='true'>Recuerde:</style> \"Pagar oportunamente sus impuestos es un significativo ahorro para usted, evite pagar intereses, elevados recargos y honorarios judiciales por coactiva que la Ley nos obliga a imponerle\""]]></textFieldExpression>
+				</textField>
+				<textField pattern="¤ #,##0.00">
+					<reportElement x="408" y="0" width="75" height="12" uuid="c52c6045-7421-4413-8886-d41b8441c24b"/>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_TOTAL}]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd &apos;de&apos; MMMMM &apos;del&apos; yyyy">
+					<reportElement x="96" y="170" width="268" height="20" uuid="5f42ca45-01d3-452e-98f0-ef96b0f1bff6"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new Date(System.currentTimeMillis() + 24*3600*1000*(new java.lang.Integer((new java.util.GregorianCalendar().getActualMaximum((java.util.GregorianCalendar.DAY_OF_MONTH))) - (new java.util.GregorianCalendar().get(java.util.GregorianCalendar.DATE)))).longValue())]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="12" y="170" width="84" height="20" uuid="a475bd00-5940-4af2-a2c8-a87a214aa953"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Valor valido:]]></text>
+				</staticText>
+				<subreport>
+					<reportElement x="0" y="193" width="555" height="45" uuid="3527bc85-d3cc-4e6a-989f-8ddd5c09049c"/>
+					<subreportParameter name="LOGO">
+						<subreportParameterExpression><![CDATA[$P{LOGO}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "footerReporte.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="11" splitType="Stretch">
+			<textField>
+				<reportElement x="157" y="0" width="75" height="11" uuid="88bdb190-c40c-4e42-ad29-6bcb93774473"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{anio}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00">
+				<reportElement x="233" y="0" width="75" height="11" uuid="a7b14c13-70ce-4ae0-ba4d-4380497b927b"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{IMPUESTO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00">
+				<reportElement x="322" y="0" width="75" height="11" uuid="579204e6-ba86-46cc-97eb-14b0101663bd"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{COACTIVA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00">
+				<reportElement x="408" y="0" width="75" height="11" uuid="ceb9dad8-5e47-4581-b7c8-cf39a93b7c33"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

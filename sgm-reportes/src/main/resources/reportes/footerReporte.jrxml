@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="footerReporte" pageWidth="555" pageHeight="802" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="0934bb17-43b2-42da-9d61-1e926f8ebc3d">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="298"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="LOGO" class="java.lang.String"/>
+	<pageFooter>
+		<band height="40">
+			<image vAlign="Bottom">
+				<reportElement x="0" y="0" width="160" height="40" uuid="e5ed037a-ffc3-417f-8f01-3311ed1a9644"/>
+				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement x="160" y="0" width="190" height="40" uuid="100d2726-d495-4c4c-a117-33d504a376b5"/>
+				<textElement verticalAlignment="Bottom" markup="styled">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="385" y="0" width="170" height="40" uuid="1df43a2d-558f-4832-bce4-432012a96a5a"/>
+				<textElement verticalAlignment="Bottom" markup="styled">
+					<font size="7"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<style isBold='true'>San Vicente:</style>\nTelf: 5000535 - 5000536 - 5000251 \nWeb site: www.sanvicente.gob.ec"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

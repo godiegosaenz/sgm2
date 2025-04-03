@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="top">
+        <h1>TIPO SOLICITUD DE SERVICIOS</h1>
+    </ui:define>
+
+    <ui:define name="content">
+        <div align="right">
+            <p:commandButton value="Nuevo" icon="ui-icon-plus" styleClass="btnStyle" actionListener="#{tipoSolicitudServicio.mantenimientoTipoSolicitud(null)}" update="frmMantTipoSolicitud"/>
+        </div>
+        <h:form id="formTipoSolicitudes">
+            <p:dataTable id="dtTipoSolicitudes" reflow="true" paginator="true" lazy="true" rows="20" rowsPerPageTemplate="20,50,100"
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         value="#{tipoSolicitudServicio.tipoSolicitudes}" var="tipoSol" emptyMessage="No se encontró ningún Item.">
+                <p:column headerText="Nombre" filterBy="#{tipoSol.nombre}" sortBy="#{tipoSol.nombre}" filterStyle="width: 75%">
+                    <h:outputText value="#{tipoSol.nombre}"/>
+                </p:column>
+                <p:column headerText="Acción" style="text-align: center" width="80">
+                    <p:commandLink value="Editar" style="font-weight: bolder; color: #0033FF;" title="#{tipoSol.nombre}" actionListener="#{tipoSolicitudServicio.mantenimientoTipoSolicitud(tipoSol)}" update="frmMantTipoSolicitud"/>                          
+                </p:column>
+            </p:dataTable>
+        </h:form>
+        
+        <p:dialog header="Mantenimiento Tipo de Solicitud" widgetVar="dlgTipoSolicitud" modal="true" resizable="false" closeOnEscape="true" position="center">
+            <h:form id="frmMantTipoSolicitud">
+                <p:panelGrid columns="2" styleClass="noBorder">
+                    <p:outputLabel value="Catalogo: " style="font-weight: bolder;"/>
+                    <p:outputLabel value="#{tipoSolicitudServicio.catalogo.nombre}"/>
+                    <p:outputLabel value="Tipo de Solicitud " style="font-weight: bolder;"/>
+                    <p:inputText value="#{tipoSolicitudServicio.vuItem.nombre}" size="100" placeholder="INGRESE NOMBRE DEL TIPO DE SOLICITUD A REGISTRAR" required="true"/>
+                </p:panelGrid>
+                <br/>
+                <center>
+                    <p:commandButton value="Guardar" icon="ui-icon-check" actionListener="#{tipoSolicitudServicio.guardarCambios()}" styleClass="btnStyle" update="formTipoSolicitudes">
+                        <p:confirm header="Confirmacion" message="Registrar Cambios?" icon="ui-icon-alert" />
+                    </p:commandButton>
+                    <p:spacer width="15"/>
+                    <p:commandButton value="Cancelar" icon="ui-icon-cancel" styleClass="btnStyle" oncomplete="PF('dlgTipoSolicitud').hide();"/>
+                </center>
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                </p:confirmDialog>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+
+</ui:composition>

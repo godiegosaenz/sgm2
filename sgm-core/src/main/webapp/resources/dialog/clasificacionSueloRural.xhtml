@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:poue="http://primefaces.org/ui/extensions">
+    <f:metadata >
+        <f:event type="preRenderView" listener="#{clasificacionSueloRural.initView()}"/>
+        <f:viewParam name="idPredio" value="#{clasificacionSueloRural.idPredio}"/>
+        <f:viewParam name="idCatClasiSueloRural" value="#{clasificacionSueloRural.idCatClasiSueloRural}"/>
+        <f:viewParam name="nuevo" value="#{clasificacionSueloRural.esNuevo}"/>
+    </f:metadata>
+    <h:head>
+        <title>Clasificación Del Suelo Rural</title>
+        <style type="text/css">
+            .ui-widget {
+                font-size: 100%;
+            }
+            .ui-column-title{
+                font-size: 11px;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <h:outputStylesheet name="css/font-icon-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/sentinel-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/core-layout.css" library="sentinel-layout" />
+        <h:form id="formProp">
+            <p:growl autoUpdate="true" globalOnly="true" showDetail="true"/>
+            <h:panelGrid columns="3" cellspacing="5" cellpadding="5" class="Wid100">
+                <h:panelGroup layout="block">
+                    <h:outputText value="Sector Homogéneo: " class="FontBold DispBlock Wid100" style="font-weight: bolder"/>                   
+                    <p:selectOneMenu id="cboSectorHomogeneo" value="#{clasificacionSueloRural.preClaRu.sectorHomogeneo}" class="Wid65" effect="fade" converter="entityConverter" >                                
+                        <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+                        <f:selectItems value="#{fichaPredial.getListado('sector.homogeneo')}" var="est1" itemLabel="#{est1.valor}" itemValue="#{est1}"/>                                
+                    </p:selectOneMenu>
+                </h:panelGroup>
+                <h:panelGroup layout="block">
+                    <h:outputText value="Calidad del Suelo " class="FontBold DispBlock Wid100" style="font-weight: bold"/>                 
+                    <p:selectOneMenu id="cboCalidadSuelo" value="#{clasificacionSueloRural.preClaRu.calidadSuelo}" effect="fade" converter="entityConverter" class="Wid65" >                                
+                        <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+                        <f:selectItems value="#{fichaPredial.getListado('calidad.suelo')}" var="est2" itemLabel="#{est2.valor}" itemValue="#{est2}"/>                                
+                    </p:selectOneMenu>
+                </h:panelGroup>
+                <h:panelGroup layout="block">
+                    <h:outputText value="Uso del Predio " style="font-weight: bold" class="FontBold DispBlock Wid100"/> 
+                    <p:selectOneMenu id="cboUsoPredio" value="#{clasificacionSueloRural.preClaRu.usoPredio}" effect="fade" converter="entityConverter" class="Wid65" >                                
+                        <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+                        <f:selectItems value="#{fichaPredial.getListado('predio.uso_solar')}" var="est3" itemLabel="#{est3.valor}" itemValue="#{est3}"/>                                
+                    </p:selectOneMenu> 
+                </h:panelGroup>
+                <h:panelGroup layout="block">
+                    <h:outputText value="Superficie " style="font-weight: bold" class="FontBold DispBlock Wid100"/> 
+                    <pe:inputNumber id="superficie" value="#{clasificacionSueloRural.preClaRu.superficie}" decimalPlaces="2" class="Wid65"/> 
+                </h:panelGroup>
+
+                <h:panelGroup layout="block">
+                    <h:outputText value="Valor del Terreno " style="font-weight: bold" class="FontBold DispBlock Wid100"/> 
+                    <pe:inputNumber  value="#{clasificacionSueloRural.preClaRu.valorTerreno}" decimalPlaces="2" class="Wid65"/> 
+                </h:panelGroup>
+                <h:panelGroup layout="block">
+                    <h:outputText value="Valor Unitario por Hectarea " style="font-weight: bold" class="FontBold DispBlock Wid100"/> 
+                    <pe:inputNumber  value="#{clasificacionSueloRural.preClaRu.valorUnitarioHectareaTerreno}" decimalPlaces="2" class="Wid65"/>  
+                </h:panelGroup>    
+            </h:panelGrid>
+
+            <center style="float: bottom; ">
+                <p:commandButton actionListener="#{clasificacionSueloRural.agregarClasificSueloRural()}" value="Agregar" rendered="#{clasificacionSueloRural.nuevo and clasificacionSueloRural.idPredio != null}" icon="ui-icon-plus" style="height: 30px;" styleClass="btnStyle"/>
+                <p:commandButton actionListener="#{clasificacionSueloRural.modificarClasificSueloRural()}" value="Modificar" rendered="#{!clasificacionSueloRural.nuevo and clasificacionSueloRural.idPredio != null}" icon="ui-icon-pencil" style="height: 30px;" styleClass="btnStyle"/>
+                <p:commandButton actionListener="#{clasificacionSueloRural.cerrar()}" value="Cerrar" icon="ui-icon-close" style="height: 30px;" styleClass="btnStyle"/>
+            </center>
+        </h:form>
+    </h:body>
+</html>
+

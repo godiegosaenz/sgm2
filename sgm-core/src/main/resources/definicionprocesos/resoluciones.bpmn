@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <collaboration id="Collaboration">
+    <participant id="resolucionPool" name="Resoluciones" processRef="resoluciones"></participant>
+  </collaboration>
+  <process id="resoluciones" name="Resoluciones" isExecutable="true">
+    <laneSet id="laneSet_resoluciones">
+      <lane id="lane1">
+        <flowNodeRef>startevent1</flowNodeRef>
+        <flowNodeRef>generarResolucion</flowNodeRef>
+        <flowNodeRef>subriResolucion</flowNodeRef>
+      </lane>
+      <lane id="lane2" name="Consejo">
+        <flowNodeRef>exclusivegateway1</flowNodeRef>
+        <flowNodeRef>endevent1</flowNodeRef>
+        <flowNodeRef>aprobarResolucion</flowNodeRef>
+      </lane>
+    </laneSet>
+    <startEvent id="startevent1" name="Start"></startEvent>
+    <userTask id="generarResolucion" name="Generar Resolucion" activiti:assignee="${secretaria}" activiti:formKey="${rutaFormulario}" activiti:priority="${prioridad}">
+      <documentation>${descripcion}</documentation>
+    </userTask>
+    <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="generarResolucion"></sequenceFlow>
+    <serviceTask id="subriResolucion" name="Subir Resolucion" activiti:async="true" activiti:expression="${subirDocumentosCarpeta.execute(execution)}"></serviceTask>
+    <sequenceFlow id="flow2" sourceRef="generarResolucion" targetRef="subriResolucion"></sequenceFlow>
+    <sequenceFlow id="flow3" sourceRef="subriResolucion" targetRef="aprobarResolucion"></sequenceFlow>
+    <userTask id="aprobarResolucion" name="Aprobar Resolucion" activiti:assignee="${director}" activiti:formKey="${frmAprobar}" activiti:priority="${prioridad}">
+      <documentation>${descripcion}</documentation>
+    </userTask>
+    <exclusiveGateway id="exclusivegateway1" name="Exclusive Gateway"></exclusiveGateway>
+    <sequenceFlow id="flow4" sourceRef="aprobarResolucion" targetRef="exclusivegateway1"></sequenceFlow>
+    <endEvent id="endevent1" name="End"></endEvent>
+    <sequenceFlow id="flow5" sourceRef="exclusivegateway1" targetRef="endevent1">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${aprobadoRes == true}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow6" sourceRef="exclusivegateway1" targetRef="generarResolucion">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${aprobadoRes == false}]]></conditionExpression>
+    </sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_Collaboration">
+    <bpmndi:BPMNPlane bpmnElement="Collaboration" id="BPMNPlane_Collaboration">
+      <bpmndi:BPMNShape bpmnElement="resolucionPool" id="BPMNShape_resolucionPool">
+        <omgdc:Bounds height="300.0" width="500.0" x="0.0" y="0.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lane1" id="BPMNShape_lane1">
+        <omgdc:Bounds height="150.0" width="480.0" x="20.0" y="0.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lane2" id="BPMNShape_lane2">
+        <omgdc:Bounds height="150.0" width="480.0" x="20.0" y="150.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="30.0" y="50.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="generarResolucion" id="BPMNShape_generarResolucion">
+        <omgdc:Bounds height="55.0" width="105.0" x="140.0" y="40.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="subriResolucion" id="BPMNShape_subriResolucion">
+        <omgdc:Bounds height="55.0" width="105.0" x="330.0" y="40.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="aprobarResolucion" id="BPMNShape_aprobarResolucion">
+        <omgdc:Bounds height="55.0" width="105.0" x="330.0" y="190.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway1" id="BPMNShape_exclusivegateway1">
+        <omgdc:Bounds height="40.0" width="40.0" x="172.0" y="197.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="60.0" y="200.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="65.0" y="67.0"></omgdi:waypoint>
+        <omgdi:waypoint x="140.0" y="67.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="245.0" y="67.0"></omgdi:waypoint>
+        <omgdi:waypoint x="330.0" y="67.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="382.0" y="95.0"></omgdi:waypoint>
+        <omgdi:waypoint x="382.0" y="190.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
+        <omgdi:waypoint x="330.0" y="217.0"></omgdi:waypoint>
+        <omgdi:waypoint x="212.0" y="217.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
+        <omgdi:waypoint x="172.0" y="217.0"></omgdi:waypoint>
+        <omgdi:waypoint x="95.0" y="217.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow6" id="BPMNEdge_flow6">
+        <omgdi:waypoint x="192.0" y="197.0"></omgdi:waypoint>
+        <omgdi:waypoint x="192.0" y="95.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

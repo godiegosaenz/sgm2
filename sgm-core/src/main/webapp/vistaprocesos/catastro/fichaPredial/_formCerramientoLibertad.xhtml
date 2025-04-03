@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition>
+
+        <p:dialog id="cerramiento-dlg" widgetVar="cerramientoDialog"
+                  modal="true" resizable="false" appendTo="@(body)"
+                  header="Longitud y tipos de cerramientos" >
+            <p:ajax event="close"  listener="#{fichaPredialExtras.cancelarCerramiento()}" />
+            <h:panelGroup layout="block" class="Container Container100">
+                <p:panel class="sentinel-panel">
+                    <h:form id="cerramiento-form" prependId="false">
+                        <p:messages id="cerramiento_messages" globalOnly="true" showSummary="false" showDetail="true" autoUpdate="false" closable="true" />
+                        <h:panelGroup layout="block" class="Wid100" >
+                            <h:panelGrid columns="1" class="Wid100">
+                                <h:panelGrid columns="2" class="Wid100">
+                                    <h:panelGroup layout="block" class="MarRight20">
+                                        <p:outputLabel for="longitud" value="Longitud:" class="DispBlock Wid100"/>
+                                        <p:inputText id="longitud" value="#{fichaPredialExtras.cerramientoSeleccionado.longitud}" required="true"
+                                                     styleClass="inputWidth190" onkeypress="validateFloatValueAndFocusNext(event, 'tdatos:altura')"/>
+                                    </h:panelGroup>
+                                    <h:panelGroup layout="block" >
+                                        <p:outputLabel for="altura" value="Altura:" class="DispBlock Wid100"/>
+                                        <p:inputText id="altura" value="#{fichaPredialExtras.cerramientoSeleccionado.altura}" required="true"
+                                                     styleClass="inputWidth190" onkeypress="validateFloatValueAndFocusNext(event, 'tdatos:area')"/>
+                                    </h:panelGroup>
+                                    <h:panelGroup layout="block" class="MarRight20">
+                                        <p:outputLabel for="area" value="Área:" class="DispBlock Wid100"/>
+                                        <p:inputText id="area" value="#{fichaPredialExtras.cerramientoSeleccionado.area}" required="true"
+                                                     styleClass="inputWidth190" onkeypress="validateFloatValueAndFocusNext(event, 'tdatos:frmEdificaciones:add-cerramiento-btn')"/>
+                                    </h:panelGroup>
+                                    <h:panelGroup layout="block" >
+                                        <p:outputLabel for="descripcion_cerramiento" value="Descripción:" class="DispBlock Wid100"/>
+                                        <p:selectOneMenu id="descripcion_cerramiento" value="#{fichaPredialExtras.cerramientoSeleccionado.descripcion}" effect="fade" converter="entityConverter" required="true" styleClass="selectWidth170">
+                                            <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}" noSelectionOption="true"/>
+                                            <f:selectItems value="#{fichaPredial.getListado('cerramiento.tipo')}" var="a" itemLabel="#{a.valor}" itemValue="#{a}"/>
+                                        </p:selectOneMenu>
+                                    </h:panelGroup>
+                                </h:panelGrid>
+
+                                <h:panelGroup layout="block" class="MarTop20">
+                                    <p:commandButton id="add-cerramiento-btn"
+                                                     icon="fa fa-save" styleClass="white Fright" value="Guardar"
+                                                     process="cerramiento-form"
+                                                     actionListener="#{fichaPredialExtras.addCerramiento()}"
+                                                     update="tdatos:cerramiento-form,tdatos:frmEdificaciones:tvEdificaciones:cerramiento_list,tdatos:frmEdificaciones:tvEdificaciones:panel_cerramientos"
+                                                     />
+
+                                    <p:commandButton id="cancelar-obra-btn" process="@this"
+                                                     icon="fa fa-ban" styleClass="white" value="Cancelar" actionListener="#{fichaPredialExtras.cancelarCerramiento()}"
+                                                     onclick="PF('cerramientoDialog').hide();"
+                                                     />
+                                </h:panelGroup>
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </h:form>
+                </p:panel>
+            </h:panelGroup>
+        </p:dialog>
+
+    </ui:composition>
+</html>

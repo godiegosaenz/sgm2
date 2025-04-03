@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:dialog="http://xmlns.jcp.org/jsf/composite/dialog">
+    <h:head>
+<!--        <script src="#{appConfig.urlbase}template/responsive/js/vendor/modernizr-2.7.1-respond-1.4.2.min.js"></script>
+        <link href="#{appConfig.urlbase}resources/css/main.css" rel="stylesheet" type="text/css" />
+        -->
+        <title>Ingreso de Menu y Acceso por roles</title>
+        <style type="text/css">
+            .ui-widget {
+                /*text-align: center;*/
+                font-size: 100%;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <h:outputStylesheet name="css/font-icon-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/sentinel-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/core-layout.css" library="sentinel-layout" />
+        <h:form id="frmMenuRol">
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+            </p:confirmDialog>
+            <p:growl id="growl" showDetail="true" sticky="false" life="2000" />
+            <div align="right">
+                <p:commandButton value="Agregar Menu" styleClass="btnStyle" actionListener="#{menuRol.nuevoMenu(true, null)}" />
+            </div>
+            <br/>
+            <p:dataTable value="#{menuRol.padre}" var="m1" reflow="true" paginator="true" paginatorAlwaysVisible="false"
+                         rows="10" rowsPerPageTemplate="10,15,20" emptyMessage="No se encontró ningun Item" >
+                <p:column headerText="Mostrar" style="width: 80px;">
+                    <p:rowToggler  />
+                </p:column>
+                <p:column headerText="Nombre" >
+                    <p:outputLabel value="#{m1.nombre}" />
+                </p:column>
+                <p:column headerText="Posición" width="10%">
+                    <p:outputLabel value="#{m1.numPosicion}" />
+                </p:column>
+                <p:column headerText="Tipo Acceso" width="15%">
+                    <p:outputLabel value="#{m1.tipoAcceso.identificador}" />
+                </p:column>
+                <p:column headerText="Opción"  width="15%">
+                    <p:commandLink actionListener="#{menuRol.editarMenu(m1)}" >
+                        <p:tooltip value="Editar Menu"/>
+                        <p:graphicImage value="/css/homeIconsImages/edicion.png"  height="20" width="20"/>
+                    </p:commandLink>
+                    <p:spacer width="10" height="0"/>
+                    <p:commandLink actionListener="#{menuRol.verPermiso(m1)}" >
+                        <p:tooltip value="Agregar Roles de Acceso"/>
+                        <p:graphicImage value="/css/homeIconsImages/preferences-contact.png"  height="20" width="20"/>
+                    </p:commandLink>
+                    <p:spacer width="10" height="0"/>
+                    <p:commandLink actionListener="#{menuRol.eliminar(m1)}" update="frmMenuRol" >
+                        <p:tooltip value="Eliminar Menu"/>
+                        <p:graphicImage value="/css/homeIconsImages/delete.png"  height="20" width="20"/>
+                    </p:commandLink>
+                </p:column>
+                <p:rowExpansion  >
+                    <p:dataTable reflow="true" paginator="true" rowsPerPageTemplate="10,15,20" paginatorPosition="top"
+                                 emptyMessage="No se encontró ningun Item" var="h1" value="#{menuRol.getHijos(m1)}"
+                                 rows="5" style="display: inline-block;" paginatorAlwaysVisible="false" >
+                        <f:facet name="header" >
+                            <p:commandLink value="Agregar SubMenu" style="float: top;" actionListener="#{menuRol.nuevoMenu(false, m1)}" />
+                        </f:facet>
+                        <p:column headerText="Nombre" width="25%">
+                            <p:outputLabel value="#{h1.nombre}" />
+                        </p:column>
+                        <p:column headerText="Posición" width="10%">
+                            <p:outputLabel value="#{h1.numPosicion}" />
+                        </p:column>
+                        <p:column headerText="Url">
+                            <p:outputLabel value="#{h1.hrefUrl}" />
+                        </p:column>
+                        <p:column headerText="Tipo Acceso" width="15%">
+                            <p:outputLabel value="#{h1.tipoAcceso.identificador}" />
+                        </p:column>
+                        <p:column headerText="Opción" style="text-align: right;" width="14%">
+                            <p:commandLink  actionListener="#{menuRol.editarMenu(h1)}" >
+                                <p:tooltip value="Editar Menu"/>
+                                <p:graphicImage value="/css/homeIconsImages/edicion.png"  height="20" width="20"/>
+                            </p:commandLink>
+                            <p:spacer width="5" height="0"/>
+                            <p:commandLink actionListener="#{menuRol.verPermiso(h1)}" >
+                                <p:tooltip value="Agregar Roles de Acceso"/>
+                                <p:graphicImage value="/css/homeIconsImages/preferences-contact.png"  height="20" width="20"/>
+                            </p:commandLink>
+                            <p:spacer width="5" height="0"/>
+                            <p:commandLink actionListener="#{menuRol.eliminar(h1)}" update="frmMenuRol" >
+                                <p:graphicImage value="/css/homeIconsImages/delete.png"  height="20" width="20"/>
+                                <p:tooltip value="Eliminar Menu"/>
+                            </p:commandLink>
+                        </p:column>
+                    </p:dataTable>
+                </p:rowExpansion>
+            </p:dataTable>
+        </h:form>
+
+        <dialog:menu id="agregarM"
+                     menu="#{menuRol.entradas['menu']}"
+                     esPadre="#{menuRol.entradas['esPadre']}"
+                     headerDialog="#{menuRol.entradas['header']}"
+                     selector="#{menuRol.menuBars}"
+                     tipoAcceso="#{menuRol.accesos}"
+                     actionButton="#{menuRol.guardar()}"
+                     update="frmMenuRol" />
+
+        <p:dialog id="dlgPermiso"  widgetVar="dlgPermiso" header="Permiso por Menu"
+                  height="400" width="450" modal="true" closeOnEscape="true"
+                  closable="true" position="center"
+                  resizable="false" responsive="true" appendTo="@(body)">
+
+            <h:form id="frmPermiso">
+                <p:panelGrid columns="2" columnClasses="ui-grid-col-3, ui-grid-col-8" layout="grid" >
+                    <p:outputLabel value="Nombre"/>
+                    <p:inputText value="#{menuRol.entradas['menu'].nombre}" style="width: 100%" readonly="true"/>
+                </p:panelGrid>
+                <br/>
+                <p:commandButton value="Agregar" actionListener="#{menuRol.nuevoPermiso()}" styleClass="btnStyle"/>
+                <p:dataTable reflow="true" paginator="true" rowsPerPageTemplate="10,15,20" paginatorPosition="top"
+                             emptyMessage="No se encontró ningun Item" var="p1" value="#{menuRol.entradas['permisosMenu']}"
+                             rows="5" style="display: inline-block;" >
+                    <p:column headerText="Rol" >
+                        <p:outputLabel value="#{menuRol.getNombreRol(p1.rol)}" />
+                    </p:column>
+                    <p:column headerText="Es Director" width="15%">
+                        <p:outputLabel value="#{p1.esDirector}" />
+                    </p:column>
+                    <p:column headerText="Opción" style="text-align: center;" width="15%">
+                        <p:commandLink  actionListener="#{menuRol.editarPermiso(p1)}" >
+                            <p:graphicImage value="/css/homeIconsImages/edicion.png"  height="15" width="15"/>
+                        </p:commandLink>
+                        <p:spacer width="5" height="0"/>
+                        <p:commandLink actionListener="#{menuRol.elimiarAccesoRol(p1)}" >
+                            <p:confirm header="Eliminar Permiso" message="¿Esta seguro de continuar?"/>
+                            <p:graphicImage value="/css/homeIconsImages/trash.png"  height="15" width="15"/>
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="dlgRol"  widgetVar="dlgRol" header="Acceso Rol"
+                  height="200" width="350" modal="true" closeOnEscape="true"
+                  closable="true" position="center"
+                  resizable="false" responsive="true" appendTo="@(body)">
+            <h:form id="frmRol">
+                <p:panelGrid columnClasses="ui-grid-col-4, ui-grid-col-8" columns="2" layout="grid">
+                    <h:outputLabel value="Departamento: " style="font-weight: bolder"/>
+                    <p:selectOneMenu id="dep1" value="#{menuRol.entradas['dep']}" effect="fade" >
+                        <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                        <f:selectItems value="#{menuRol.departamentos}" var="d1" itemLabel="#{d1.nombre}" itemValue="#{d1.id}"/>
+                        <p:ajax update="rolEdit"/>
+                    </p:selectOneMenu>
+
+                    <h:outputLabel value="Tipo Rol: " style="font-weight: bolder"/>
+                    <p:selectOneMenu id="rolEdit" value="#{menuRol.permisoMenu.rol}" >
+                        <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                        <f:selectItems value="#{menuRol.roles}" var="r1" itemLabel="#{r1.nombre}" itemValue="#{r1.id}"/>
+                    </p:selectOneMenu>
+
+                    <h:outputLabel value="Es Director: " style="font-weight: bolder"/>
+                    <p:selectBooleanCheckbox value="#{menuRol.permisoMenu.esDirector}" label="Es Director"/>
+                </p:panelGrid>
+                <br/>
+                <center>
+                    <p:commandButton value="Guardar" styleClass="btnStyle" icon="ui-icon-disk" actionListener="#{menuRol.guardarAccesoRol()}"/>
+                </center>
+            </h:form>
+        </p:dialog>
+
+    </h:body>
+</html>
+

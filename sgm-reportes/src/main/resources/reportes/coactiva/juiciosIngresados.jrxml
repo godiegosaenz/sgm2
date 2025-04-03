@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="juiciosIngresados" language="groovy" pageWidth="595" pageHeight="842" columnWidth="585" leftMargin="5" rightMargin="5" topMargin="20" bottomMargin="20" uuid="859be879-78ab-4596-8e74-d37ff16ed8f5">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="LOGO" class="java.lang.String"/>
+	<parameter name="LOGO_FOOTER" class="java.lang.String"/>
+	<parameter name="NUM_DESDE" class="java.lang.Integer"/>
+	<parameter name="NUM_HASTA" class="java.lang.Integer"/>
+	<parameter name="ANIO_DESDE" class="java.lang.Integer"/>
+	<parameter name="ANIO_HASTA" class="java.lang.Integer"/>
+	<parameter name="F_JUICIO_DESDE" class="java.util.Date"/>
+	<parameter name="F_JUICIO_HASTA" class="java.util.Date"/>
+	<parameter name="F_INGRESO_DESDE" class="java.util.Date"/>
+	<parameter name="F_INGRESO_HASTA" class="java.util.Date"/>
+	<parameter name="ESTADOS" class="java.util.Collection"/>
+	<parameter name="POR_JUICIO" class="java.lang.Boolean"/>
+	<parameter name="POR_INGRESO" class="java.lang.Boolean"/>
+	<parameter name="ES_PDF" class="java.lang.Boolean"/>
+	<queryString>
+		<![CDATA[SELECT j.numero_juicio,j.anio_juicio,j.fecha_juicio,j.fecha_ingreso,j.total_deuda,h.id as tramite, e.descripcion as estado, p.num_predio,l.anio,  p.clave_cat as cod_predial,c.nombre as ciudadela,p.urb_solarnew,p.urb_mz,
+    (SELECT razon_social from sgm_application.empresa) AS nombre_empresa
+FROM sgm_financiero.coa_juicio j
+INNER JOIN sgm_financiero.coa_estado_juicio e ON (j.estado_juicio=e.id)
+INNER JOIN sgm_financiero.coa_juicio_predio jp ON (j.id=jp.juicio)
+INNER JOIN sgm_financiero.ren_liquidacion l ON (jp.liquidacion=l.id)
+INNER JOIN sgm_app.cat_predio p ON (l.predio=p.id)
+INNER JOIN sgm_app.cat_ciudadela c ON (p.ciudadela=c.id)
+LEFT OUTER JOIN sgm_flow.historico_tramites h ON (j.tramite=h.id_tramite)
+WHERE $X{IN,j.estado_juicio,ESTADOS}
+AND (CASE WHEN $P{ANIO_DESDE} IS NOT NULL THEN j.anio_juicio>= $P{ANIO_DESDE} ELSE TRUE END)
+AND (CASE WHEN $P{ANIO_HASTA} IS NOT NULL THEN j.anio_juicio<= $P{ANIO_HASTA} ELSE TRUE END)
+AND (CASE WHEN $P{NUM_DESDE} IS NOT NULL THEN j.numero_juicio>= $P{NUM_DESDE} ELSE TRUE END)
+AND (CASE WHEN $P{NUM_HASTA} IS NOT NULL THEN j.numero_juicio<= $P{NUM_HASTA} ELSE TRUE END)
+AND (CASE WHEN $P{POR_JUICIO} THEN (j.fecha_juicio::DATE BETWEEN $P{F_JUICIO_DESDE} AND $P{F_JUICIO_HASTA}) ELSE TRUE END)
+AND (CASE WHEN $P{POR_INGRESO} THEN (j.fecha_ingreso::DATE BETWEEN $P{F_INGRESO_DESDE} AND $P{F_INGRESO_HASTA}) ELSE TRUE END)
+ORDER BY j.anio_juicio,j.numero_juicio,j.estado_juicio,j.fecha_juicio,j.fecha_ingreso,j.estado_juicio]]>
+	</queryString>
+	<field name="numero_juicio" class="java.lang.Integer"/>
+	<field name="anio_juicio" class="java.lang.Integer"/>
+	<field name="fecha_juicio" class="java.sql.Timestamp"/>
+	<field name="fecha_ingreso" class="java.sql.Timestamp"/>
+	<field name="total_deuda" class="java.math.BigDecimal"/>
+	<field name="tramite" class="java.lang.Long"/>
+	<field name="estado" class="java.lang.String"/>
+	<field name="num_predio" class="java.lang.Long"/>
+	<field name="anio" class="java.lang.Integer"/>
+	<field name="cod_predial" class="java.lang.String"/>
+	<field name="ciudadela" class="java.lang.String"/>
+	<field name="urb_solarnew" class="java.lang.String"/>
+	<field name="urb_mz" class="java.lang.String"/>
+	<field name="nombre_empresa" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="70" splitType="Stretch">
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="14" y="0" width="106" height="70" uuid="e082a4bc-3a98-4c7c-aa01-0a551716536b"/>
+				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="119" y="50" width="466" height="20" uuid="530bfd5d-321c-4903-8901-d412a7a0d0f6"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[JUICIOS INGRESADOS]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="119" y="0" width="466" height="51" uuid="3e8a7515-d6f9-4683-8d25-3ccb84737504"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_empresa}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="25" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="15" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="46" height="15" uuid="29b5f423-75b2-4533-9dfa-827bd31f2a52"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Juicio]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="46" y="0" width="55" height="15" uuid="0164d2a8-41b3-4b3a-abb2-5808a6a072d2"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Juicio]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="398" y="0" width="55" height="15" uuid="548cbb16-82e3-4407-87b6-6c4d7203afc3"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="453" y="0" width="45" height="15" uuid="c7ff129c-fed2-4baa-946e-c155fb2a8144"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Control]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="498" y="0" width="87" height="15" uuid="5a99948f-54d7-485b-9dde-f7707d41ab71"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Estado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="101" y="0" width="47" height="15" uuid="28ea2731-42d4-4caa-b712-9be15acf431a"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[M. Inmb.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="148" y="0" width="91" height="15" uuid="79e3c29b-3003-4bea-ac9d-3d6518ee4c9b"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Codigo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="368" y="0" width="30" height="15" uuid="a2d88c43-660b-4253-b0c1-067507f39c92"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Año]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="244" y="0" width="86" height="15" uuid="5b3e1191-7e95-42e4-b90a-08d4a3b6eaad"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ciudadela]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="330" y="0" width="38" height="15" uuid="1bb42061-4982-4695-becd-2b01f1739c48"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Mz; Sl]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="46" height="15" uuid="26f270ee-1474-4c74-99f4-ffef744c0e1b"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numero_juicio}+"-"+$F{anio_juicio}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="46" y="0" width="56" height="15" uuid="101adb73-fcfd-4aec-a327-59987988d14e"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha_juicio}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement x="398" y="0" width="55" height="15" uuid="7a5dafa8-1564-4270-adb3-24060e686e8c"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{total_deuda}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="453" y="0" width="45" height="15" uuid="343387dd-6997-43f8-8f42-d77a9d7af21e"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tramite}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="498" y="0" width="87" height="15" uuid="a235800f-4712-4772-8322-6dd85f2b7373"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{estado}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="0" width="48" height="15" uuid="c2be3cc1-9425-4c26-92a8-5f8a16ba0151"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{num_predio}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="148" y="0" width="91" height="15" uuid="e7c0fdcd-1a20-470b-858b-7e11df4378b0"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cod_predial}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="368" y="0" width="30" height="15" uuid="81edce72-fe6b-4201-9886-dc9b029f6bf4"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{anio}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="244" y="0" width="86" height="15" uuid="ccf8cf49-e823-4c62-976c-501dccca18c0"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ciudadela}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="330" y="0" width="38" height="15" uuid="c4982989-0c58-4ce3-b89f-39845d0fb9d9"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{urb_mz}+" ; "+$F{urb_solarnew}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="10" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="40" splitType="Stretch">
+			<printWhenExpression><![CDATA[$P{ES_PDF}]]></printWhenExpression>
+			<image vAlign="Bottom">
+				<reportElement x="14" y="0" width="100" height="40" uuid="e131c8e7-9501-4143-b698-d4bff9d31109"/>
+				<imageExpression><![CDATA[$P{LOGO_FOOTER}]]></imageExpression>
+			</image>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="227" y="20" width="100" height="20" uuid="1cb4da2c-5e3f-4171-af0b-0f4e50f8262e"/>
+				<textElement verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="453" y="20" width="80" height="20" uuid="08c43b41-fef9-44d6-9ed9-a840cc0ebc5d"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA["Pag "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="533" y="20" width="40" height="20" uuid="48362ec0-7781-45f2-b72c-235580971e6d"/>
+				<textElement verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

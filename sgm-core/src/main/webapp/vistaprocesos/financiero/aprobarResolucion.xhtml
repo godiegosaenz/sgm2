@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:dialog="http://xmlns.jcp.org/jsf/composite/dialog">
+
+    <ui:define name="head">
+
+    </ui:define>
+
+    <ui:define name="page_title">
+        
+    </ui:define>
+
+    <ui:define name="top">
+        <p:panelGrid styleClass="noBorder" columns="4" style="width: 100%;font-size: 14px;">
+            <p:outputLabel value="Trámite: #{aprobarResolucion.ht.id}" style="font-weight: bolder;color: #005f9c"/>
+            <p:outputLabel value="Tarea: #{aprobarResolucion.taskDataByTaskID.name}" style="font-weight: bolder;color: #005f9c"/>
+            <p:outputLabel value="Responsable: #{aprobarResolucion.taskDataByTaskID.assignee}" style="font-weight: bolder;color: #005f9c"/>
+        </p:panelGrid>
+    </ui:define>
+
+    <ui:define name="content">
+        <div align="center">
+            <h1>Aplicar Exoneraci&#243;n</h1>    
+        </div>
+        <h:form id="frmAprRes">
+            <p:tabView id="tvSolicitud">
+                <p:tab title="SOLICITUD">
+                    <p:panelGrid style="width: 100%;">
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:outputLabel value="SOLICITANTE: #{aprobarResolucion.entradas['solicitud'].solicitante.ciRuc} - #{aprobarResolucion.entradas['solicitud'].solicitante.apellidos} #{aprobarResolucion.entradas['solicitud'].solicitante.nombres} #{aprobarResolucion.entradas['solicitud'].solicitante.razonSocial}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="SOLICITUD: "/><p:inputText value="#{aprobarResolucion.entradas['solicitud'].id}" readonly="true"/>
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="FECHA INGRESO: "/><p:outputLabel value="#{aprobarResolucion.entradas['solicitud'].fechaIngreso}"><f:convertDateTime pattern="dd/MM/yyyy"/></p:outputLabel>
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="DESDE:#{aprobarResolucion.entradas['solicitud'].anioInicio} - HASTA:#{aprobarResolucion.entradas['solicitud'].anioFin}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="CLASE: #{aprobarResolucion.entradas['solicitud'].exoneracionTipo.exoneracionClase.descripcion}"/>
+                            </p:column>
+                            <p:column colspan="2">
+                                <p:outputLabel value="TIPO: #{aprobarResolucion.entradas['solicitud'].exoneracionTipo.descripcion}"/>
+                            </p:column>
+                        </p:row>
+                        
+                    </p:panelGrid>
+                    <center>
+                        <p:dataTable style="margin-top: 15px; width: 60%;" value="#{ingresoSolCatFinView.predios}" var="p" paginator="true" paginatorPosition="top" rows="5" emptyMessage="Sin datos...">
+                            <f:facet name="header">
+                                Lista de predios urbanos
+                            </f:facet>
+                            <p:column headerText="Num. Predio" style="text-align: center;" width="20%">
+                                <h:outputText value="#{p.numPredio}"/>
+                            </p:column>
+                            <p:column headerText="Cod. Catastral" style="text-align: center;" width="35%">
+                                <h:outputText value="#{p.codigoPredialCompleto}"/>
+                            </p:column>
+                            <p:column headerText="Propietario" style="text-align: center;" width="45%">
+                                <h:outputText value="#{p.nombrePropietarios}"/>
+                            </p:column>
+                        </p:dataTable>
+                        <p:dataTable style="margin-bottom: 15px; width: 60%;" value="#{ingresoSolCatFinView.rusticos}" var="r" paginator="true" paginatorPosition="top" rows="5" emptyMessage="Sin datos...">
+                            <f:facet name="header">
+                                Lista de predios rústicos
+                            </f:facet>
+                            <p:column headerText="ID predial" style="text-align: center;" width="20%">
+                                <h:outputText value="#{r.idPredial}"/>
+                            </p:column>
+                            <p:column headerText="Cod. Catastral" style="text-align: center;" width="35%">
+                                <h:outputText value="#{r.parroquia.descripcion}"/>
+                            </p:column>
+                            <p:column headerText="Propietario" style="text-align: center;" width="40%">
+                                <h:outputText value="#{r.propietario.nombreCompleto}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </center>
+                </p:tab>
+                <p:tab title="DETALLE TRAMITE">
+                    <dialog:detalleTareas archivos="#{aprobarResolucion.listAttAttachmentByProcessInstance}"
+                                  observaciones="#{aprobarResolucion.ht.observacionesCollection}" 
+                                  mostraPredios="true" 
+                                  predios="#{aprobarResolucion.entradas['predios']}"/>
+                </p:tab>
+            </p:tabView>
+            <br/>
+            <center>
+                <p:commandButton actionListener="#{aprobarResolucion.mostrarObs()}" value="Aprobar" styleClass="btnStyle"/>
+                <p:commandButton actionListener="#{aprobarResolucion.mostrarObs()}" value="Rechazar" styleClass="btnStyle"/>
+            </center>
+
+
+        </h:form>
+        
+        <dialog:observaciones observaciones="#{aprobarResolucion.entradas['obs']}"
+                              actionButton="#{aprobarResolucion.procesar()}"/>
+    </ui:define>
+</ui:composition>

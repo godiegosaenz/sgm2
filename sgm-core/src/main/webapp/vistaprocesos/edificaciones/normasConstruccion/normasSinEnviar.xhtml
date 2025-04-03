@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui">
+
+    <body>
+
+        <ui:composition template="/template/template.xhtml">
+
+            <ui:define name="page_title">
+                Norma Construcción
+            </ui:define>
+
+            <ui:define name="content">
+                <h:form id="formNormaConst">
+                    <p:panelGrid styleClass="noBorder" columns="4" style="width: 100%;font-size: 14px;">
+                        <p:outputLabel value="Tarea: #{normasSinEnviar.taskDataByTaskID.name}" style="font-weight: bolder;color: #005f9c"/>
+                        <p:outputLabel value="No Trámite: #{normasSinEnviar.ht.id}" style="font-weight: bolder;color: #005f9c"/>
+                        <p:outputLabel value="Responsable: #{normasSinEnviar.taskDataByTaskID.assignee}" style="font-weight: bolder;color: #005f9c"/>
+                    </p:panelGrid>
+                    
+                    <p:panel toggleable="true" header="Observaciones" >
+                        <p:dataTable id="dtObs" value="#{normasSinEnviar.ht.observacionesCollection}" var="obs" reflow="true" style="width: 100%">
+                            <p:column headerText="Observacion" style="width: 60%">
+                                <h:outputText value="#{obs.observacion}" style="text-transform: uppercase"/>
+                            </p:column>
+                            <p:column headerText="Responsable" style="width: 25%">
+                                <h:outputText value="#{obs.userCre}" style="text-transform: uppercase"/>
+                            </p:column>
+                            <p:column headerText="Tarea" style="width: 25%">
+                                <h:outputText value="#{obs.tarea}" style="text-transform: uppercase"/>
+                            </p:column>
+                            <p:column headerText="Fecha" style="width: 20%">
+                                <p:outputLabel value="#{obs.fecCre}" style="text-transform: uppercase"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+
+                    <br/>
+                    <br/>
+                    <p:outputLabel value="Correos del Usuario : 'NOTA LOS CORREOS DEBEN ESTAR SEPARADOS POR COMA (,)'" style="color: #0033FF;font-weight: bolder;font-size: 14px"/><br/>
+                    <p:inputTextarea value="#{normasSinEnviar.ht.correos}" cols="60" rows="3" />
+
+                    <br/>
+                    <br/>
+                    <p:commandButton value="Validar" actionListener="#{normasSinEnviar.validar()}" styleClass="btnStyle" style="height: 30px;"/>
+                </h:form>
+                
+                <p:dialog id="dlgObs" widgetVar="obs" header="#{normasSinEnviar.taskDataByTaskID.name}" appendTo="@(body)" modal="true" width="500" resizable="false" closable="true" closeOnEscape="true">
+                    <h:form id="frmObsCor">
+                <h1>Ingrese las observaciones</h1>
+                <div align="center">
+                    <p:inputTextarea id="obsservacion" value="#{normasSinEnviar.obs.observacion}" rows="4" style="width: 100%; text-transform: uppercase" required="true" placeholder="Las observaciones son obligatorias para continuar con el tramite"/>
+                    <br/>
+                    <p:commandButton value="Enviar Norma al Nuevo Correo" actionListener="#{normasSinEnviar.completar(false)}" styleClass="btnStyle" style="height: 30px;"/>
+                    <p:spacer width="30"/>
+                    <p:commandButton value="Finalizar Trámite sin Enviar Correo" actionListener="#{normasSinEnviar.completar(true)}" styleClass="btnStyle" style="height: 30px;"/>
+
+                </div>
+            </h:form>
+        </p:dialog>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

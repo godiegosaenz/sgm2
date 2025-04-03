@@ -1,0 +1,85 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:dialog="http://xmlns.jcp.org/jsf/composite/dialog">
+    <ui:define name="top"><h3>Títulos de Crédito</h3></ui:define>
+    <ui:define name="head">
+        <style type="text/css">
+            .ui-datepicker .ui-datepicker-title select {
+                font-size: 1em;
+                margin: 1px 0;
+                color: black;
+            }
+        </style>
+    </ui:define>
+    <ui:define name="content">
+        <center>
+            <h1>Reporte de Fondos Ajenos</h1>
+        </center>
+        <h:form id="mainForm">
+            <center>
+                
+                <h:panelGrid columns="1">  
+                    <p:row>
+                        <center style="text-align: center">
+                            <h:outputText value ="Reporte de fondos ajenos" style="font-style: oblique"/>
+                            <p:selectBooleanCheckbox value="#{fondosAjenosView.esFondoAjeno}">
+                                <p:ajax update="mainForm" listener="#{fondosAjenosView.cambiarDT}"/>
+                            </p:selectBooleanCheckbox>
+                        </center>
+                    </p:row>
+                    <p:spacer height="1"/>
+                    <p:row>
+                        <h:outputText value="Fecha inicio: "/>
+                        <p:spacer width="5"/>
+                        <p:calendar value="#{fondosAjenosView.fechaIn}" pattern="dd/MM/yyy" navigator="true"/>
+                        <h:outputText value=" Fecha fin: "/>
+                        <p:spacer width="5"/>
+                        <p:calendar value="#{fondosAjenosView.fechaFin}" pattern="dd/MM/yyy" navigator="true"/>
+                    </p:row>
+                    <p:row>
+                        <center>
+                            <p:commandButton value="Generar reporte" actionListener="#{fondosAjenosView.generarReporte()}"/>
+                            <p:spacer width="5"/>
+                            <p:commandButton value="Generar reporte excel" actionListener="#{fondosAjenosView.generarReporteExcel()}"/>
+                        </center>
+                    </p:row>                
+                </h:panelGrid>
+                
+                <!-- -->
+                
+                <p:dataTable id="singleDT" var="tipoLiq" selectionMode="single" value="#{fondosAjenosView.tipos}" filterEvent="enter" 
+                             selection="#{fondosAjenosView.tipoSeleccionado}" rowKey="#{tipoLiq.id}" style="margin-top: 15px;" rows="20" paginator="true" paginatorPosition="top">                    
+                    <p:column headerText="Nombre de la liquidación" filterBy="#{tipoLiq.nombreTipoLiq}" width="50%" style="text-align: center">
+                        <h:outputText value ="#{tipoLiq.nombreTipoLiq}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Tiene rubros ajenos" style="text-align: center" width="25%">
+                        <h:outputText value ="Tiene rubros ajenos" rendered="#{tipoLiq.tieneRubrosAjenos}"/>
+                        <h:outputText value ="No tiene rubros ajenos" rendered="#{!tipoLiq.tieneRubrosAjenos}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Tiene rubros propios" style="text-align: center" width="25%">
+                        <h:outputText value ="Tiene rubros propios" rendered ="#{tipoLiq.tieneRubrosPropios}"/>
+                        <h:outputText value ="No tiene rubros propios" rendered ="#{!tipoLiq.tieneRubrosPropios}"/>
+                    </p:column>
+                </p:dataTable>
+                
+                
+            </center>
+        </h:form>        
+        
+        
+        <p:dialog id="dlgSolicitante" widgetVar="dlgSolicitante" header="Listado de contribuyentes" appendTo="@(body)" width="700" responsive="true" closable="true" closeOnEscape="true" modal="true">
+            <h:form id="frmSolicitante">
+                
+            </h:form>
+        </p:dialog>
+        
+    </ui:define>
+</ui:composition>

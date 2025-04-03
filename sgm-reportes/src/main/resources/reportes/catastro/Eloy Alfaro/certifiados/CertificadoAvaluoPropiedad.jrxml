@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CertificadoAvaluoPropiedad" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6796b79a-9949-4773-b3f5-3c9baff272d6">
+	<property name="ireport.zoom" value="1.1"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="1227"/>
+	<parameter name="logo" class="java.lang.String"/>
+	<parameter name="id" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FachadaFrontal" class="java.io.InputStream" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{FachadaFrontal}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FachadaIzquierda" class="java.io.InputStream" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{FachadaIzquierda}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FachadaDerecha" class="java.io.InputStream" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{FachadaDerecha}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FachadaPosterior" class="java.io.InputStream" isForPrompting="false">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[$P{FachadaPosterior}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO2" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[java.lang.System.getProperty("user.home") + "\\Desktop\\PROYECTO_SAN-MIGUEL\\sgm\\src\\main\\webapp\\css\\smb\\logomunicipal.png"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="IMAGEN_PREDIO" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="firma" class="java.lang.String"/>
+	<parameter name="NOMBRECANTON" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT CA.ID,CA.FECHA,CA.SECUENCIA,CP.NUM_PREDIO,
+(CASE WHEN CE.ES_PERSONA = TRUE THEN COALESCE(CE.APELLIDOS,'')||' '||COALESCE(CE.NOMBRES,'') ELSE CE.RAZON_SOCIAL END) AS SOLICITANTE, CA.DETALLE, CA.CODIGO_ACTUAL, CA.CODIGO_ANTERIOR, CA.AREA_SOLAR, CA.AVAL_SOLAR, CA.AVAL_CONSTRUCCION, CA.AVAL_CATASTRAL, CA.AVAL_PROPIEDAD, CA.USUARIO, CA.DIR_CAT, CA.POLIGONO, CA.ALICUOTA,
+(SELECT descripcion from sgm_app.cat_provincia WHERE cod_nac = (select codigo_provincia from sgm_application.empresa)) as provincia,
+(SELECT nombre from sgm_app.cat_canton WHERE codigo_nacional = (select codigo_canton from sgm_application.empresa)
+AND id_provincia = (SELECT id from sgm_app.cat_provincia WHERE cod_nac = (select codigo_provincia from sgm_application.empresa))) as canton,
+'ECUADOR' as pais
+FROM sgm_app.CAT_CERTIFICADO_AVALUO CA
+	INNER JOIN sgm_app.CAT_ENTE CE ON CE.ID = CA.SOLICITANTE
+	INNER JOIN sgm_app.CAT_PREDIO CP ON CP.ID = CA.PREDIO
+WHERE CA.ID = $P{id}]]>
+	</queryString>
+	<field name="id" class="java.lang.Long"/>
+	<field name="fecha" class="java.sql.Timestamp"/>
+	<field name="secuencia" class="java.lang.Long"/>
+	<field name="num_predio" class="java.lang.Long"/>
+	<field name="solicitante" class="java.lang.String"/>
+	<field name="detalle" class="java.lang.String"/>
+	<field name="codigo_actual" class="java.lang.String"/>
+	<field name="codigo_anterior" class="java.lang.String"/>
+	<field name="area_solar" class="java.math.BigDecimal"/>
+	<field name="aval_solar" class="java.math.BigDecimal"/>
+	<field name="aval_construccion" class="java.math.BigDecimal"/>
+	<field name="aval_catastral" class="java.math.BigDecimal"/>
+	<field name="aval_propiedad" class="java.math.BigDecimal"/>
+	<field name="usuario" class="java.lang.String"/>
+	<field name="dir_cat" class="java.lang.String"/>
+	<field name="poligono" class="java.lang.Long"/>
+	<field name="alicuota" class="java.lang.String"/>
+	<field name="provincia" class="java.lang.String"/>
+	<field name="canton" class="java.lang.String"/>
+	<field name="pais" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="220">
+			<staticText>
+				<reportElement x="153" y="39" width="348" height="18" uuid="48bd04ba-3b51-481a-91d2-6e7e22aede40"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[DIRECCIÓN DE AVALÚOS Y CATASTRO ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="153" y="63" width="348" height="21" uuid="b6e299f3-353f-4c28-a223-2231af0d41c9"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="14" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+				</textElement>
+				<text><![CDATA[CERTIFICADO AVALÚO DE LA PROPIEDAD]]></text>
+			</staticText>
+			<image onErrorType="Blank">
+				<reportElement x="20" y="7" width="100" height="88" uuid="90093045-0933-4341-8a2f-74bf9dbf9235"/>
+				<imageExpression><![CDATA[$P{logo}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="153" y="13" width="348" height="23" uuid="610b4118-7169-4277-a1b5-5911a9ee013d"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["GAD MUNICIPAL "+  $F{canton}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="20" y="120" width="78" height="16" uuid="5e88ca47-c399-4a7f-9e3c-7c4474b57c13"/>
+				<text><![CDATA[Sr(a):]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="20" y="162" width="100" height="20" uuid="48e278d4-09f8-45a3-b3b4-5cbe32276f6c"/>
+				<text><![CDATA[Ciudad.-]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="20" y="136" width="535" height="20" uuid="0dc35c5a-8342-4591-b4e7-5bb2c841b0bb"/>
+				<textFieldExpression><![CDATA[$F{solicitante}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MMMMM dd, yyyy" isBlankWhenNull="true">
+				<reportElement x="98" y="104" width="234" height="20" uuid="ede888e2-4134-41e4-8201-4b1374803473"/>
+				<textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MMMMM dd, yyyy" isBlankWhenNull="true">
+				<reportElement x="20" y="104" width="78" height="16" uuid="7e86c961-54bb-4d09-8217-42776ea52160"/>
+				<textFieldExpression><![CDATA[$F{canton}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="20" y="200" width="401" height="20" uuid="71b56fda-6103-47df-97ef-c12986c1ef39"/>
+				<text><![CDATA[De mis Consideraciones:]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="14"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="167">
+			<textField>
+				<reportElement x="10" y="0" width="535" height="167" isPrintWhenDetailOverflows="true" uuid="cb1b1def-0c9f-4f31-848e-3ed806c531d0"/>
+				<textElement textAlignment="Justified" markup="html">
+					<font size="10"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{detalle}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="120">
+			<textField isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="8" y="40" width="196" height="20" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" uuid="e728059d-df22-4faf-957f-2a2b4946057a"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{alicuota}?"Alicuota     ":null]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="8" y="100" width="196" height="20" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" uuid="5c29ef57-6cd1-4382-b4c3-189a7e002246"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Avalúo de la Propiedad	]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="204" y="40" width="205" height="20" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" uuid="22bbba63-2718-4256-94b3-adc3a4901a1c"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{alicuota}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="204" y="60" width="205" height="20" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" uuid="9ec5dd80-9418-4ebf-92ec-acbc5dd53c6b"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{aval_solar}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="8" y="20" width="196" height="20" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" uuid="65d59f1e-0ff1-4aab-9703-7d325500fbf2"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Código Catastral	]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="204" y="100" width="205" height="20" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" uuid="0cf48e40-b740-4838-8fbc-18de2f5d0d46"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{aval_propiedad}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="204" y="20" width="205" height="20" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" uuid="c3dd2767-c0e4-4a27-9350-a67e83e3c807"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{codigo_actual}=="0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0"?$F{codigo_anterior}:$F{codigo_actual}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="8" y="60" width="196" height="20" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" uuid="b33991df-ef47-411b-b6a0-317568de62cd"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Avalúo de Terreno	]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="204" y="80" width="205" height="20" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" uuid="d46e5498-a3ec-4874-a00e-e67543e58fb8"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{aval_construccion}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="8" y="80" width="196" height="20" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" uuid="181694f1-3f00-4623-85a4-a60c1b3ba401"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Avalúo de Construcción	]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="8" y="0" width="196" height="20" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" uuid="a04dfea7-78fe-4918-9d61-fc38cf5a59c2"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Matrícula Inmobiliaria]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="204" y="0" width="205" height="20" uuid="60e4d8b1-8e41-44f9-bd1a-5c431e73bdd0"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{num_predio}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="216">
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="10" y="22" width="312" height="20" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" uuid="56edc5be-e684-4e7e-afcb-8ca1ceaefa23"/>
+				<text><![CDATA[Sin otro particular me suscribo de usted.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="10" y="42" width="100" height="20" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" uuid="56fa0afa-6b09-48ef-82d6-7cd2d62ebbff"/>
+				<text><![CDATA[Atentamente,]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="431" y="65" width="101" height="83" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" uuid="c3f65357-2328-4d4b-9f05-97953f83209b"/>
+				<jr:DataMatrix xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" textPosition="bottom">
+					<jr:codeExpression><![CDATA[$F{id}+" - "+$F{secuencia}]]></jr:codeExpression>
+				</jr:DataMatrix>
+			</componentElement>
+			<image hAlign="Center" vAlign="Middle" onErrorType="Blank">
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="8" y="62" width="301" height="85" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" uuid="50c8617c-87ec-4ec4-bb77-89fc5c1229bd"/>
+				<imageExpression><![CDATA[$P{firma}]]></imageExpression>
+			</image>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="8" y="148" width="301" height="20" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" uuid="bd547ce6-8524-4c37-b52e-a7d90b63b643"/>
+				<box topPadding="1">
+					<topPen lineWidth="1.0"/>
+				</box>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA["Arq. "+ $F{dir_cat}+"\n Director de Catastro y Avalúos"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="8" y="196" width="379" height="20" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" uuid="16eda0fd-d18e-4fdb-88b2-fa93f248592f"/>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA["Realizado por "+$F{usuario}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="699">
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="0" y="65" width="552" height="17" forecolor="#FFFFFF" backcolor="#999999" uuid="b7036b2a-6f5b-451e-820d-e82de0bf8bce"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PLANO DEL PREDIO]]></text>
+			</staticText>
+			<image scaleImage="FillFrame" onErrorType="Blank">
+				<reportElement positionType="Float" x="418" y="542" width="134" height="108" uuid="d972a481-3320-49a5-bc38-d93eb9a178f8"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<imageExpression><![CDATA[$P{FachadaPosterior}]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame" onErrorType="Blank">
+				<reportElement positionType="Float" x="280" y="542" width="134" height="108" uuid="e717fa69-ae70-495e-a70b-f91b71f4877a"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<imageExpression><![CDATA[$P{FachadaDerecha}]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame" onErrorType="Blank">
+				<reportElement positionType="Float" x="146" y="543" width="134" height="108" uuid="410a6a24-1f79-4f3c-a639-ef6b3181f2c6"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<imageExpression><![CDATA[$P{FachadaIzquierda}]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame" onErrorType="Blank">
+				<reportElement positionType="Float" x="8" y="543" width="134" height="108" uuid="272452d4-e518-4ba5-b947-5af4694a59bf"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<imageExpression><![CDATA[$P{FachadaFrontal}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="0" y="524" width="551" height="16" forecolor="#FFFFFF" backcolor="#999999" uuid="ed589987-aea6-4b63-8d48-b10e259b966a"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ FOTOGRAFÍAS]]></text>
+			</staticText>
+			<image scaleImage="RealSize" hAlign="Center" vAlign="Middle" onErrorType="Blank">
+				<reportElement x="2" y="65" width="550" height="458" uuid="8fd3d4a1-cb2f-444f-a5fc-af2b846f9bdc"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<imageExpression><![CDATA[$P{IMAGEN_PREDIO}]]></imageExpression>
+			</image>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="26" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

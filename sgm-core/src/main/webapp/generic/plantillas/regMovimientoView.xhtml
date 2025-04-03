@@ -1,0 +1,198 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+    <p:fieldset legend="Datos de la inscripción">
+        <p:panelGrid styleClass="noBorder" style="width: 90%">
+            <p:row>
+                <p:column colspan="2">
+                    <p:outputLabel value="Libro:" style="font-weight: bolder"/>
+                    <p:outputLabel value="#{movimientoSeleccionado.libro.nombre}"/>
+                </p:column>
+                <p:column colspan="2">
+                    <p:outputLabel value="Núm. Inscrip:" style="font-weight: bolder"/>
+                    <p:outputLabel  value="#{movimientoSeleccionado.numInscripcion}"/>
+                </p:column>
+                <p:column colspan="3">
+                    <p:outputLabel value="Fecha Inscrip.:" style="font-weight: bolder"/>
+                    <p:outputLabel value="#{movimientoSeleccionado.fechaInscripcion}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </p:outputLabel>
+                </p:column>
+
+            </p:row>                            
+            <p:row>
+                <p:column colspan="2">
+                    <p:outputLabel value="Num. Rep.:" style="font-weight: bolder"/>
+                    <p:outputLabel  value="#{movimientoSeleccionado.numRepertorio}"/>
+                </p:column>
+                <p:column colspan="2">
+                    <p:outputLabel value="Fecha Rep.:" style="font-weight: bolder"/>
+                    <p:outputLabel value="#{movimientoSeleccionado.fechaRepertorio}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column colspan="1">
+                    <p:outputLabel value="Tomo:" style="font-weight: bolder"/>
+                    <p:outputLabel  value="#{movimientoSeleccionado.numTomo}"/>
+                </p:column>
+                <p:column colspan="1">
+                    <p:outputLabel value="Folio Inicio:" style="font-weight: bolder"/>
+                    <p:outputLabel  value="#{movimientoSeleccionado.folioInicio}"/>
+                </p:column>
+                <p:column colspan="1">
+                    <p:outputLabel value="Folio Fin:" style="font-weight: bolder"/>
+                    <p:outputLabel  value="#{movimientoSeleccionado.folioFin}"/>
+                </p:column>
+
+            </p:row>
+            <p:row>
+                <p:column colspan="2">
+                    <p:outputLabel value="Acto:" style="font-weight: bolder"/>
+                    <p:outputLabel  value="#{movimientoSeleccionado.acto.nombre}"/>
+                </p:column>
+                <p:column colspan="7">
+                    <p:outputLabel value="Estado/Mov:" style="font-weight: bolder"/>
+                    <p:outputLabel  value="#{movimientoSeleccionado.estado}"/>
+                </p:column>
+
+            </p:row>
+            <p:row>
+                <p:column colspan="2">
+                    <p:outputLabel value="Not./Juz.:" style="font-weight: bolder"/>
+                    <p:outputLabel  value="#{movimientoSeleccionado.enteJudicial.nombre}"/>
+                </p:column>
+                <p:column colspan="2">
+                    <p:outputLabel value="Cantón:" style="font-weight: bolder"/>
+                    <p:outputLabel  value="#{movimientoSeleccionado.codigoCan.nombre}"/>
+                </p:column>
+                <p:column colspan="5">
+                    <p:outputLabel value="Fech/Otorg.:" style="font-weight: bolder"/>
+                    <p:outputLabel value="#{movimientoSeleccionado.fechaOto}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </p:outputLabel>
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column colspan="2">
+                    <p:outputLabel value="Escri/Juicio/Resolu:" style="font-weight: bolder"/>
+                    <p:outputLabel  value="#{movimientoSeleccionado.escritJuicProvResoluc}"/>
+                </p:column>
+                <p:column colspan="2">
+                    <p:outputLabel value=" "/>
+                    <!-- <p:outputLabel value="Plazo:" style="font-weight: bolder"/>
+                    <p:outputLabel  value="XXXfalta"/>-->
+                </p:column>
+                <p:column  colspan="5">
+                    <p:outputLabel value=" "/>
+                    <!-- <p:outputLabel value="F.R.:" style="font-weight: bolder"/>
+                     <p:outputLabel  value="XXXfalta"/>-->
+                </p:column>
+            </p:row>
+            <p:row>
+                <p:column colspan="9">
+                    <p:outputLabel value="Afiliado:" style="font-weight: bolder"/>
+                    <p:outputLabel  value="#{movimientoSeleccionado.afiliadoCamara}"/>
+                </p:column>
+
+            </p:row>
+        </p:panelGrid>
+    </p:fieldset>
+    <p:tabView>
+        <p:tab title="Intervinientes">
+            <p:dataTable emptyMessage="No hay datos para mostrar..." id="dtIntervinienteC" value="#{intervinientes}" var="inter" scrollable="true"  scrollHeight="300">
+
+                <p:column headerText="C.I/R.U.C" style="text-align: center">
+                    <p:outputLabel value="#{inter.ente.ciRuc}" rendered="#{!inter.ente.isPersona}"/>
+                    <p:outputLabel value="#{inter.ente.catEntePersona.ci}" rendered="#{inter.ente.isPersona}"/>
+                </p:column>
+                <p:column headerText="Nombre del Cliente" style="text-align: center">
+                    <p:outputLabel value="#{inter.ente.nombre}" rendered="#{!inter.ente.isPersona}"/>
+                    <p:outputLabel value="#{inter.ente.catEntePersona.nombres} #{inter.ente.catEntePersona.apellidos}" rendered="#{inter.ente.isPersona}"/>
+                </p:column>
+                <p:column headerText="Papel" style="text-align: center">
+                    <p:outputLabel value="#{inter.papel.nombre}"/>
+                </p:column>
+            </p:dataTable>
+        </p:tab>
+        <p:tab title="Representantes">
+            <p:dataTable emptyMessage="No hay datos para mostrar..." id="dtRepresentanteM" value="#{representantes}" var="rep" scrollable="true"  scrollHeight="300">
+                <p:column headerText="C.I/R.U.C" style="text-align: center">
+                    <p:outputLabel value="#{rep.ente.ciRuc}" rendered="#{!rep.ente.isPersona}"/>
+                    <p:outputLabel value="#{rep.ente.catEntePersona.ci}" rendered="#{rep.ente.isPersona}"/>
+                </p:column>
+                <p:column headerText="Nombre del Cliente" style="text-align: center">
+                    <p:outputLabel value="#{rep.ente.nombre}" rendered="#{!rep.ente.isPersona}"/>
+                    <p:outputLabel value="#{rep.ente.catEntePersona.nombres} #{rep.ente.catEntePersona.apellidos}" rendered="#{rep.ente.isPersona}"/>
+                </p:column>
+                <p:column headerText="Cargo" style="text-align: center">
+                    <p:outputLabel value="#{rep.cargo.nombre}"/>
+                </p:column>
+            </p:dataTable>
+        </p:tab>
+        <p:tab title="Socios">
+            <p:dataTable emptyMessage="No hay datos para mostrar..." id="dtSocioM" value="#{socios}" var="soc" scrollable="true"  scrollHeight="300">
+                <p:column headerText="C.I/R.U.C" style="text-align: center">
+                    <p:outputLabel value="#{soc.ente.ciRuc}" rendered="#{!soc.ente.isPersona}"/>
+                    <p:outputLabel value="#{soc.ente.catEntePersona.ci}" rendered="#{soc.ente.isPersona}"/>
+                </p:column>
+                <p:column headerText="Nombre del Cliente" style="text-align: center">
+                    <p:outputLabel value="#{soc.ente.nombre}" rendered="#{!soc.ente.isPersona}"/>
+                    <p:outputLabel value="#{soc.ente.catEntePersona.nombres} #{soc.ente.catEntePersona.apellidos}" rendered="#{soc.ente.isPersona}"/>
+                </p:column>
+                <p:column headerText="Tipo Participacion" style="text-align: center">
+                    <p:outputLabel value="#{soc.tipoParticipacion.nombre}"/>
+                </p:column>
+                <p:column headerText="Cantidad" style="text-align: center">
+                    <p:outputLabel value="#{soc.cantidad}"/>
+                </p:column>
+                <p:column headerText="Valor" style="text-align: center">
+                    <p:outputLabel value="#{soc.valor}"/>
+                </p:column>
+            </p:dataTable>
+        </p:tab>
+        <p:tab title="Capital">
+            <p:dataTable emptyMessage="No hay datos para mostrar..." id="dtCapitalM" value="#{capitals}" var="cap" scrollable="true"  scrollHeight="300">
+                <p:column headerText="Capital" style="text-align: center">
+                    <p:outputLabel value="#{cap.capital.nombre}"/>
+                </p:column>
+                <p:column headerText="Valor" style="text-align: center">
+                    <p:outputLabel value="#{cap.valor}"/>
+                </p:column>
+            </p:dataTable>
+        </p:tab>
+        <p:tab title="Bienes">
+            <p:dataTable id="dtFichasXMov" value="#{fichasListado}" var="ficha" style="width: 90%" 
+                         scrollable="true" scrollHeight="250" rowIndexVar="rowIndex">
+                <p:column headerText="N°" style="width: 15px">
+                    #{rowIndex+1}
+                </p:column>
+                <p:column headerText="Num. Ficha" style="text-align: center">
+                    <p:outputLabel value="#{ficha.numFicha}"/>
+                </p:column>
+                <p:column headerText="Tipo Ficha" style="text-align: center">
+                    <p:outputLabel value="#{ficha.tipo.nombre}"/>
+                </p:column>
+                <p:column headerText="Codigo Predial" style="text-align: left">
+                    <p:outputLabel value="#{ficha.codigoPredial}"/>
+                </p:column>
+                <p:column headerText="Descripción" style="text-align: left">
+                    <p:outputLabel value="#{ficha.descripcionTemp}" />
+                </p:column>
+                <p:column headerText="Redirect" style="text-align: center">
+                    <h:outputLink value="fichaIngresoEditar.xhtml?idficha=#{ficha.id}" >
+                        ::Ir Ficha
+                    </h:outputLink>
+                </p:column>
+            </p:dataTable>
+        </p:tab>
+        <p:tab title="Observación">
+            <p:inputTextarea value="#{movimientoSeleccionado.observacion}" cols="100" rows="6" readonly="true"/>
+        </p:tab>
+    </p:tabView>
+</ui:composition>
+
+
+

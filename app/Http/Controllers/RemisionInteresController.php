@@ -176,7 +176,7 @@ class RemisionInteresController extends Controller
     public function show(Request $r, $id)
     {
         $RemisionInteres = RemisionInteres::find($id);
-
+        //return $RemisionInteres;
         return view('tesoreria.remisionInteresDetalle',compact('RemisionInteres'));
     }
 

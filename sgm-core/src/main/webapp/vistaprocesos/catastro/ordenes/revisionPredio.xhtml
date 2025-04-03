@@ -1,0 +1,146 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:dlg="http://xmlns.jcp.org/jsf/composite/dialog"
+                template="./../../../template/template.xhtml"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+    <ui:define name="head">
+        <title>Revisión Detalle Orden</title>
+        <script language="javascript">
+            window.onload = function (e) {
+                var width = $("#layout-menubar-resize").parent().width();
+                if (width > 100) {
+                    $("#layout-menubar-resize").click();
+                }
+            };
+        </script>
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="TexAlCenter FontBold Fs26">
+            Revisión de Orden # #{revisionPredioCenso.ordenDet.orden.numOrden}, con Clave Catastral #{revisionPredioCenso.predioCenso.claveCat}
+        </div>
+
+        <h:form id="frmRevisionPredio" >
+            <center>
+                <p:commandButton value="Procesar" actionListener="#{revisionPredioCenso.procesarDatos()}" process="@this" >
+                    <p:confirm header="Confitmación" message="Esta Seguro de procesar el detalle?" />
+                </p:commandButton>
+                <p:spacer width="10"/>
+                <p:commandButton value="Rechazar" actionListener="#{revisionPredioCenso.rechazar()}" process="@this" >
+                    <p:confirm header="Confitmación" message="Esta Seguro de rechazar el detalle?" />
+                </p:commandButton>
+                
+<!--                <p:spacer width="10"/>
+                <p:commandButton value="Volver"  action="#{revisionPredioCenso.rechazar()}" process="@this" />-->
+            </center>
+            <div class="Container100">
+                <!--Censo-->
+                <div class="Container50 Fleft">
+                    <div class="TexAlCenter FontBold Fs19">
+                        Datos del Levantamiento
+                    </div>
+                    <p:accordionPanel id="view1" activeIndex="#{revisionPredioCenso.index}" >
+                        <p:ajax event="tabChange" listener="#{revisionPredioCenso.tabChange}" update="frmRevisionPredio"/>
+                        <p:tab title="1. Identificacion y ubicacion predial">
+                            <dlg:fichaSeccion1 predio="#{revisionPredioCenso.predioCenso}"
+                                               predioant="#{revisionPredioCenso.predioAct}" 
+                                               escritura="#{revisionPredioCenso.escritura}"
+                                               escriturant="#{revisionPredioCenso.escritura}"/>
+                        </p:tab>
+                        <p:tab title="2. Identificacion legal">
+                            <dlg:fichaSeccion2 predio="#{revisionPredioCenso.predioCenso}"
+                                               predioant="#{revisionPredioCenso.predioAct}"/>
+                        </p:tab>
+                        <p:tab title="3. Caracterizacion del lote">
+                            <dlg:fichaSeccion3 predio="#{revisionPredioCenso.predioCenso}"
+                                               predioant="#{revisionPredioCenso.predioAct}" />
+                        </p:tab>
+                        <p:tab title="4. Caracterizacion y elementos constructivos de la edificacion" >
+                            <dlg:fichaSeccion4 predio="#{revisionPredioCenso.predioCenso}"
+                                               predioant="#{revisionPredioCenso.predioAct}" ver="true" />
+                        </p:tab>
+                        <p:tab title="5. Grafico y linderos del predio">
+                            <p:dataGrid var="f1" value="#{revisionPredioCenso.fotos(revisionPredioCenso.predioCenso.fotos)}" columns="3" layout="grid"
+                                        rows="3" paginator="true" paginatorAlwaysVisible="false"
+                                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                        rowsPerPageTemplate="3,6,9">
+                                <p:panel header="#{f1.id}" style="text-align:center; ">
+                                    <!--<p:graphicImage value="data:image/jpg;base64,# {f1.image}" style="width: 250px; height: 250px" />-->
+                                    <img src="data:image/jpg;base64,#{f1.image}" style="width: 250px; height: 250px"/>
+                                    <f:facet name="footer" >
+                                        <p:commandLink actionListener="#{revisionPredioCenso.setFotoModel(f1)}" process="@this" update="frmFotos:pFotos, frmFotos" oncomplete="PF('dlgFoto').show()"  title="Ver">
+                                            <h:outputText class="ui-icon ui-icon-search" style="margin:0 auto;" />
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:panel>
+                            </p:dataGrid> 
+                            <dlg:fichaSeccion5 predio="#{revisionPredioCenso.predioCenso}"
+                                               predioant="#{revisionPredioCenso.predioAct}"  />
+                        </p:tab>
+                        <p:tab title="6. Vivienda Censal">
+                            <dlg:fichaSeccion6 predio="#{revisionPredioCenso.predioCenso}"
+                                               predioant="#{revisionPredioCenso.predioAct}"  />
+                        </p:tab>
+                    </p:accordionPanel>
+                </div>
+                <!--Actual-->
+                <div class="Container50 Fright">
+                    <div class="TexAlCenter FontBold Fs19">
+                        Datos del Sistema.
+                    </div>
+                    <p:accordionPanel id="view2" activeIndex="#{revisionPredioCenso.index}">
+                        <p:ajax event="tabChange" listener="#{revisionPredioCenso.tabChange}" update="frmRevisionPredio"/>
+                        <p:tab title="1. Identificacion y ubicacion predial">
+                            <dlg:fichaSeccion1 predio="#{revisionPredioCenso.predioAct}"
+                                               predioant="#{revisionPredioCenso.predioCenso}"
+                                               escritura="#{revisionPredioCenso.escritura}"
+                                               escriturant="#{revisionPredioCenso.escritura}" />
+                        </p:tab>
+                        <p:tab title="2. Identificacion legal">    
+                            <dlg:fichaSeccion2 predio="#{revisionPredioCenso.predioAct}"
+                                               predioant="#{revisionPredioCenso.predioCenso}"  />
+                        </p:tab>
+                        <p:tab title="3. Caracterizacion del lote">
+                            <dlg:fichaSeccion3 predio="#{revisionPredioCenso.predioAct}"
+                                               predioant="#{revisionPredioCenso.predioCenso}" />
+                        </p:tab>
+                        <p:tab title="4. Caracterizacion y elementos constructivos de la edificacion" >
+                            <dlg:fichaSeccion4 predio="#{revisionPredioCenso.predioAct}"
+                                               predioant="#{revisionPredioCenso.predioCenso}" />
+                        </p:tab>
+                        <p:tab title="5. Grafico y linderos del predio">
+                            <dlg:fichaSeccion5 predio="#{revisionPredioCenso.predioAct}"
+                                               predioant="#{revisionPredioCenso.predioCenso}" />
+                        </p:tab>
+                        <p:tab title="6. Vivienda Censal">
+                            <dlg:fichaSeccion6 predio="#{revisionPredioCenso.predioAct}"
+                                               predioant="#{revisionPredioCenso.predioCenso}" />
+                        </p:tab>
+                    </p:accordionPanel>
+                </div>
+            </div>
+        </h:form>
+
+        <p:dialog id="dlgFoto" widgetVar="dlgFoto" appendTo="@(body)" modal="true" header="Foto: #{revisionPredioCenso.fotoModel.id}" width="45%" height="80%" closable="true" closeOnEscape="true">
+            <h:form id="frmFotos">
+                <div align="center">
+                    <p:panel id="pFotos" style="width: 99%">
+                        <!--<p:graphicImage id="myImage" value="data:image/jpg;base64,# {revisionPredioCenso.fotoModel.image}" alt="Descripcion: # {revisionPredioCenso.fotoModel.id}" style="width: 100%; height: 400px"/>-->
+                        <img id="myImage" src="data:image/jpg;base64,#{revisionPredioCenso.fotoModel.image}" alt="Descripcion: #{revisionPredioCenso.fotoModel.id}" style="width: 100%; height: 400px"/>
+                        <f:facet name="footer">
+                            <div align="center">
+                                <p:commandButton id="btnSalir" value="Cerrar" title="Salir" oncomplete="PF('dlgFoto').hide()"/>
+                            </div>
+                        </f:facet>
+                    </p:panel>
+                </div>
+            </h:form>
+        </p:dialog>
+        
+    </ui:define>
+</ui:composition>

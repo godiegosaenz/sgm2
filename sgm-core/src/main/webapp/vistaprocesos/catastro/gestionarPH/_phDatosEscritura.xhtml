@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:panelGroup layout="block" class="Wid100 MarTop10 Container" id="escriturasContainer" style="margin-bottom: 20px;">
+        <h:panelGroup layout="block" class="Container Wid100">
+            <h1 class="BigTopic Fs16">Título de dominio del bien inmueble #{cuadroAlicuotasView.predioSeleccionado.claveCat} </h1>
+            <hr></hr>
+            <h:panelGroup layout="block" class="Responsive Container100">
+                <div class="ContainerIndent Wid100 MarRight20">
+                    <h:panelGrid columns="3" style="width: 100%">
+                        <h:panelGroup layout="block">
+                            <p:outputLabel for="predio_cantAlicuotas" value="#{cuadroAlicuotasView.esModificatoria? 'Cantidad Alicuotas a agregar' : 'Cantidad Alicuotas'}:" styleClass="DispBlock Wid100"/>
+                            <p:inputText id="predio_cantAlicuotas" value="#{cuadroAlicuotasView.escritura.cantAlicuotas}" required="true"
+                                         onkeypress="validateIntegerValueAndFocusNext(event, 'wizardFlow_next')"/>
+                        </h:panelGroup>
+                        <h:panelGroup layout="block">
+                            <p:outputLabel value="Tipos de PH:" styleClass="DispBlock Wid100"/>
+                            <p:selectOneMenu id="tipos_ph_1" value="#{cuadroAlicuotasView.escritura.tipoPh}" style="width:125px">
+                                <f:selectItem itemLabel="PHV" itemValue="0" />
+                                <f:selectItem itemLabel="PHH" itemValue="1" />
+                                <f:selectItem itemLabel="PHV y PHH" itemValue="2" />
+                            </p:selectOneMenu>
+                        </h:panelGroup>
+                        <h:panelGroup layout="block">
+                            <p:outputLabel value="Tiene escritura?:" styleClass="Wid100 TexAlLeftMiddle" />
+                            <p:selectBooleanCheckbox value="#{cuadroAlicuotasView.tieneEscritura}">
+                                <p:ajax update="protocolizacion_info"  listener="#{cuadroAlicuotasView.checkTieneEscritura()}"/>
+                            </p:selectBooleanCheckbox>
+                        </h:panelGroup>
+<!--                        <h:panelGroup layout="block">
+                            <p:outputLabel value="Generar Automaticamente:" styleClass="Wid100 TexAlLeftMiddle" />
+                            <p:selectBooleanCheckbox value="# {cuadroAlicuotasView.skipGenerarPh}">
+                            </p:selectBooleanCheckbox>
+                        </h:panelGroup>-->
+                    </h:panelGrid>
+                </div>
+            </h:panelGroup>
+            <h:panelGroup layout="block" class="Responsive Container100" id="protocolizacion_info">
+                <h:panelGroup layout="block" class="Responsive Container100" rendered="#{cuadroAlicuotasView.tieneEscritura and !appConfig.mainConfig.fichaPredial.redenerFichaIb}">
+                    <div class="ContainerIndent Wid100 MarRight20">
+                        <p:fieldset legend="Datos legales de la declaratoria de propiedad horizontal" toggleable="true" toggleSpeed="500" styleClass="MarRight20">
+                            <h:panelGrid columns="4" style="width: 100%" >
+                                <h:panelGroup layout="block">
+                                    <p:outputLabel for="canton" value="Cantón:"  styleClass="DispBlock Wid100"/>
+                                    <p:selectOneMenu id="canton" value="#{cuadroAlicuotasView.escritura.canton}" required="true" effect="fade" converter="entityConverter" filter="true" filterMatchMode="contains">
+                                        <f:selectItem itemLabel="Seleccione..." itemValue="#{null}" noSelectionOption="true"/>
+                                        <f:selectItems value="#{cuadroAlicuotasView.cantones}" var="cx" itemLabel="#{cx.nombre}" itemValue="#{cx}"/>
+                                    </p:selectOneMenu>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block">
+                                    <p:outputLabel for="tipoProtclz" value="Protocolización ante:"  styleClass="DispBlock Wid100"/>
+                                    <p:selectOneMenu id="tipoProtclz" value="#{cuadroAlicuotasView.escritura.tipoProtocolizacion}" required="true"  converter="entityConverter" label="Tipo de Protocolización Celebrado Ante">
+                                        <f:selectItem itemLabel="Seleccione..." itemValue="#{null}" noSelectionOption="true"/>
+                                        <f:selectItems value="#{cuadroAlicuotasView.getListado('predio.tipo_protocolizacion')}" var="tipt1" itemLabel="#{tipt1.valor}" itemValue="#{tipt1}"/>
+                                    </p:selectOneMenu>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block">
+                                    <p:outputLabel for="notaria" value="Notaría:" styleClass="DispBlock Wid100"/>
+                                    <p:inputText id="notaria" value="#{cuadroAlicuotasView.escritura.notaria}"
+                                                 onkeypress="focusNextOnEnter(event, 'fecha_escritura_input')"/>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block">
+                                    <p:outputLabel for="fecha_escritura" value="Fecha escritura:"  styleClass="DispBlock Wid100"/>
+                                    <p:calendar id="fecha_escritura" value="#{cuadroAlicuotasView.escritura.fecEscritura}" style="width: 180px;" required="true"
+                                                mask="true" pattern="dd/MM/yyyy" onkeypress="focusNextOnEnter(event, 'fojas_desde')"/>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block">
+                                    <p:outputLabel for="fojas_desde" value="Fojas desde:"  styleClass="DispBlock Wid100"/>
+                                    <p:inputText id="fojas_desde" value="#{cuadroAlicuotasView.escritura.folioDesde}"
+                                                 onkeypress="focusNextOnEnter(event, 'fojas_hasta')"/>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block">
+                                    <p:outputLabel for="fojas_hasta" value="Fojas hasta:"  styleClass="DispBlock Wid100"/>
+                                    <p:inputText id="fojas_hasta" value="#{cuadroAlicuotasView.escritura.folioDesde}"
+                                                 onkeypress="focusNextOnEnter(event, 'nro_inscripcion')"/>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block">
+                                    <p:outputLabel for="nro_inscripcion" value="Nro. Inscripción:" styleClass="DispBlock Wid100"/>
+                                    <p:inputText id="nro_inscripcion" value="#{cuadroAlicuotasView.escritura.numRegistro}"
+                                                 onkeypress="validateIntegerValueAndFocusNext(event, 'repertorio')"/>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block">
+                                    <p:outputLabel for="repertorio" value="Repertorio:"  styleClass="DispBlock Wid100"/>
+                                    <p:inputText id="repertorio" value="#{cuadroAlicuotasView.escritura.numRepertorio}"
+                                                 onkeypress="validateIntegerValueAndFocusNext(event, 'fecha_inscripcion_input')"/>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block">
+                                    <p:outputLabel for="fecha_inscripcion" value="Fecha inscripción:"  styleClass="DispBlock Wid100"/>
+                                    <p:calendar id="fecha_inscripcion" value="#{cuadroAlicuotasView.escritura.fecInscripcion}" required="true"
+                                                mask="true" pattern="dd/MM/yyyy" onkeypress="focusNextOnEnter(event, 'dominio')"/>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block">
+                                    <p:outputLabel for="dominio" value="Tipo Dominio:"  styleClass="DispBlock Wid100"/>
+                                    <p:selectOneMenu id="dominio" value="#{cuadroAlicuotasView.escritura.traslDom}" effect="fade" converter="entityConverter" >
+                                        <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                                        <f:selectItems value="#{cuadroAlicuotasView.dominios}" var="td" itemLabel="#{td.nombre}" itemValue="#{td}"/>
+                                    </p:selectOneMenu>
+                                </h:panelGroup>
+                                <p:outputLabel/>
+                                <p:outputLabel/>
+                            </h:panelGrid>
+                        </p:fieldset>
+                    </div>
+                </h:panelGroup>
+                <h:panelGroup layout="block" class="Responsive Container100" rendered="#{cuadroAlicuotasView.tieneEscritura}">
+                    <div class="ContainerIndent Wid100 MarRight10">
+                        <p:fieldset legend="Datos de aprobación" toggleable="true" toggleSpeed="500" styleClass="MarRight20">
+                            <h:panelGrid columns="4" style="width: 100%">
+                                <h:panelGroup layout="block">
+                                    <p:outputLabel for="tipos_ph" value="Tipos de PH:" styleClass="DispBlock Wid100"/>
+                                    <p:selectOneMenu id="tipos_ph" value="#{cuadroAlicuotasView.escritura.tipoPh}" style="width:125px">
+                                        <f:selectItem itemLabel="PHV" itemValue="0" />
+                                        <f:selectItem itemLabel="PHH" itemValue="1" />
+                                        <f:selectItem itemLabel="PHV y PHH" itemValue="2" />
+                                    </p:selectOneMenu>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block">
+                                    <p:outputLabel for="resolucion_municipal" value="Resolución:" styleClass="DispBlock Wid100"/>
+                                    <p:inputText id="resolucion_municipal" value="#{cuadroAlicuotasView.escritura.resolucion}"
+                                                 onkeypress="focusNextOnEnter(event, 'fecha_resolucion_input')"/>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block">
+                                    <p:outputLabel for="fecha_resolucion" value="Fecha resolución:"  styleClass="DispBlock Wid100"/>
+                                    <p:calendar id="fecha_resolucion" value="#{cuadroAlicuotasView.escritura.fechaResolucion}" style="width: 180px;"
+                                                mask="true" pattern="dd/MM/yyyy" onkeypress="focusNextOnEnter(event, 'area_solar')"/>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block">
+                                    <p:outputLabel for="area_solar" value="Área del solar:"  styleClass="DispBlock Wid100"/>
+                                    <p:inputText id="area_solar" value="#{cuadroAlicuotasView.escritura.areaSolar}"
+                                                 onkeypress="focusNextOnEnter(event, 'area_construccion')"/>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block">
+                                    <p:outputLabel for="area_construccion" value="Área de construcción:" styleClass="DispBlock Wid100"/>
+                                    <p:inputText id="area_construccion" value="#{cuadroAlicuotasView.escritura.areaConstruccion}"
+                                                 onkeypress="focusNextOnEnter(event, 'cant_bloques')"/>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block">
+                                    <p:outputLabel for="cant_bloques" value="Nro. Bloques :" styleClass="DispBlock Wid100"/>
+                                    <p:inputText id="cant_bloques" value="#{cuadroAlicuotasView.escritura.cantBloques}"
+                                                 onkeypress="focusNextOnEnter(event, 'admin_nombre')"/>
+                                </h:panelGroup>
+                                <!--                                <h:panelGroup layout="block">
+                                                                    <p:outputLabel for="cant_alicuotas" value="Nro. Alícuotas:"  styleClass="DispBlock Wid100"/>
+                                                                    <p:inputText id="cant_alicuotas" value="#{cuadroAlicuotasView.predioMatriz.cantAlicuotas}" required="true"
+                                                                                 onkeypress="focusNextOnEnter(event, 'admin_nombre')"/>
+                                                                </h:panelGroup>-->
+                                <p:outputLabel/>
+                                <p:outputLabel/>
+                            </h:panelGrid>
+                        </p:fieldset>
+                    </div>
+                </h:panelGroup>
+                <h:panelGroup layout="block" class="Responsive Container100" style="margin-bottom: 20px;" rendered="#{cuadroAlicuotasView.tieneEscritura}">
+                    <div class="ContainerIndent Wid100 MarRight10">
+                        <p:fieldset legend="Datos del Administrador/Promotor" toggleable="true" toggleSpeed="500" styleClass="MarRight20">
+                            <h:panelGrid columns="4" style="width: 100%">
+                                <h:panelGroup layout="block">
+                                    <p:outputLabel for="admin_nombre" value="Nombre y apellidos:" styleClass="DispBlock Wid100"/>
+                                    <p:inputText id="admin_nombre" value="#{cuadroAlicuotasView.predioSeleccionado.adminFullName}"
+                                                 onkeypress="focusNextOnEnter(event, 'admin_cedula')"/>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block">
+                                    <p:outputLabel for="admin_cedula" value="Cédula:"  styleClass="DispBlock Wid100"/>
+                                    <p:inputText id="admin_cedula" value="#{cuadroAlicuotasView.predioSeleccionado.adminCedula}"
+                                                 onkeypress="focusNextOnEnter(event, 'admin_celular')"/>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block">
+                                    <p:outputLabel for="admin_celular" value="Teléfono celular:"  styleClass="DispBlock Wid100"/>
+                                    <p:inputText id="admin_celular" value="#{cuadroAlicuotasView.predioSeleccionado.adminCelular}"
+                                                 onkeypress="focusNextOnEnter(event, 'admin_telefono')"/>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block">
+                                    <p:outputLabel for="admin_telefono" value="Teléfono convencional:"  styleClass="DispBlock Wid100"/>
+                                    <p:inputText id="admin_telefono" value="#{cuadroAlicuotasView.predioSeleccionado.adminTelefono}"
+                                                 onkeypress="validateIntegerValueAndFocusNext(event, 'wizard_flow_next')"/>
+                                </h:panelGroup>
+                            </h:panelGrid>
+                        </p:fieldset>
+                    </div>
+                </h:panelGroup>
+                <h:panelGroup layout="block" class="Container Wid100 MarTop20" rendered="#{cuadroAlicuotasView.tieneEscritura}">
+                    <h:panelGroup layout="block" class="Responsive Container100 MarRight20">
+                        <div class="ContainerIndent Wid100 MarRight10">
+                            <p:fieldset legend="Documento PDF de la declaratoria de propiedad horizontal" toggleable="true" toggleSpeed="500" styleClass="MarRight20">
+                                <p:fileUpload fileUploadListener="#{cuadroAlicuotasView.handleFileDocumentBySave}" styleClass="btnStyle"
+                                              mode="advanced"
+                                              dragDropSupport="false"
+                                              multiple="false"
+                                              sizeLimit="350000000"
+                                              fileLimit="10"
+                                              allowTypes="/(\.|\/)(pdf)$/"
+                                              invalidFileMessage="Solo formato PDF"
+                                              cancelLabel="Cancelar"
+                                              uploadLabel="Subir"
+                                              label="Seleccionar"
+                                              sequential="true"
+                                              fileLimitMessage="Solo se admiten 10 documentos" />
+                            </p:fieldset>
+                        </div>
+                    </h:panelGroup>
+                </h:panelGroup>
+            </h:panelGroup>
+        </h:panelGroup>
+    </h:panelGroup>
+</html>

@@ -20,6 +20,7 @@ use App\Http\Controllers\rentas\CatastroContribuyente;
 use App\Http\Controllers\rentas\PatenteController;
 use App\Http\Controllers\psql\ente\EnteController;
 use App\Http\Controllers\psql\actividad\ActividadComercialController;
+use App\Http\Controllers\analitica\AnaliticaContribuyenteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,10 +33,10 @@ use App\Http\Controllers\psql\actividad\ActividadComercialController;
 |
 */
 
-Route::get('/login', function () {
+Route::get('sgm/login', function () {
     return view('auth.login');
-})->name('login')->middleware('guest');
-Route::redirect('/', '/login');
+})->name('sgm/login')->middleware('guest');
+Route::redirect('/', '/sgm/login');
 //Route::get('/', [ConsultaPredioController::class, 'index'])->name('welcome');
 Route::get('/consulta', [ConsultaPredioController::class, 'index'])->name('welcome');
 Route::get('/consultapruebaame', function (){
@@ -127,6 +128,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('catastrocontribuyente/canton', [CatastroContribuyente::class, 'getCanton'])->name('getcanton.catastro');
     Route::post('catastrocontribuyente/parroquia', [CatastroContribuyente::class, 'getParroquia'])->name('getparroquia.catastro');
 
+    Route::post('catastrocontribuyente/agregar-local', [CatastroContribuyente::class, 'guardaLocal'])->name('guardaLocal.catastro');
+    Route::get('catastrocontribuyente/listado-locales/{id}', [CatastroContribuyente::class, 'listarLocales'])->name('listarLocales.catastro');
+
+
     Route::get('patente', [PatenteController::class, 'create'])->name('create.patente');
     Route::post('patente', [PatenteController::class, 'store'])->name('store.patente');
     Route::get('patente/editar/{id}', [PatenteController::class, 'edit'])->name('edit.patente');
@@ -134,6 +139,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('patente/editar/{id}', [PatenteController::class, 'update'])->name('update.patente');
     Route::get('patente/lista', [PatenteController::class, 'index'])->name('index.patente');
     Route::post('patente/datatables', [PatenteController::class, 'datatable'])->name('datatables.patente');
+    Route::get('patente/calcular-impuesto/{valor}/{tipo}/{anio}/{tEdad}', [PatenteController::class, 'calcular'])->name('calcular.patente');
+    Route::get('patente/reporte/{id}', [PatenteController::class, 'crearTitulo'])->name('crearTitulo.patente');
+    Route::get('patente/documento/{ruta}', [PatenteController::class, 'verDocumento'])->name('verDocumento.patente');
+    Route::get('patente/descargar-documento/{ruta}', [PatenteController::class, 'descargarArchivo'])->name('descargarArchivo.patente');
+    Route::get('patente/guarda-liquidacion', [PatenteController::class, 'guardaLiquidacion'])->name('guardaLiquidacion.patente');
+    Route::get('patente/declaracion-cobro', [PatenteController::class, 'pdfDeclaracionCobro'])->name('pdfDeclaracionCobro.patente');
 
     Route::post('ente/datatables', [EnteController::class, 'datatables'])->name('datatables.ente');
     Route::post('ente/datatables/listar', [EnteController::class, 'datatablesente'])->name('listar.ente');
@@ -145,5 +156,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('ente/editar/{id}', [EnteController::class, 'edit'])->name('edit.ente');
     Route::patch('ente/editar/{id}', [EnteController::class, 'update'])->name('update.ente');
     Route::get('ente/mostrar/{id}', [EnteController::class, 'show'])->name('show.ente');
+
+
+    Route::get('analitica/contribuyente', [AnaliticaContribuyenteController::class, 'index'])->name('analitica.contribuyente');
 });
 
+Route::get('/clear', function() {
+
+    Artisan::call('cache:clear');
+    Artisan::call('config:clear');
+    Artisan::call('config:cache');
+    Artisan::call('view:clear');
+ 
+    return "Cleared!";
+ 
+ });

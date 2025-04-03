@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cobradosImpuestosParroquiasUrbanas_subreport1" language="groovy" pageWidth="1002" pageHeight="555" orientation="Landscape" columnWidth="1002" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="29e88bb1-ed62-416f-b575-5d3335816356">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="666"/>
+	<property name="ireport.y" value="0"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT RUC, DIRECCION, TELEFONO, CORREO
+      FROM SGM_APPLICATION.EMPRESA;]]>
+	</queryString>
+	<field name="ruc" class="java.lang.String"/>
+	<field name="direccion" class="java.lang.String"/>
+	<field name="telefono" class="java.lang.String"/>
+	<field name="correo" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="35" splitType="Stretch">
+			<staticText>
+				<reportElement x="220" y="15" width="241" height="20" uuid="f81cea48-2102-4bf4-b869-a53b21098f93"/>
+				<textElement>
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dirección:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="758" y="15" width="244" height="20" uuid="8976f85c-f718-461e-89c1-ff6771186f86"/>
+				<textElement textAlignment="Right">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Correo Electrónico:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="511" y="15" width="247" height="20" uuid="929c52ec-afe0-4f05-b932-1fcae396a29a"/>
+				<textElement>
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Teléfono:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="15" width="220" height="20" uuid="7b6f6b90-032a-4cc8-83de-ec4afe233d3f"/>
+				<textElement>
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ruc:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="8" width="1002" height="1" uuid="e303957b-37bb-4758-8c12-41406e3dfb6c"/>
+				<graphicElement>
+					<pen lineWidth="1.5"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="39" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="220" height="20" uuid="9f963c99-e877-4257-9e11-2e0b4decf6ea"/>
+				<textFieldExpression><![CDATA[$F{ruc}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="220" y="0" width="241" height="20" uuid="3e3661c5-b5b5-43c3-8f2e-f480f4e55a3f"/>
+				<textFieldExpression><![CDATA[$F{direccion}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="511" y="0" width="247" height="20" uuid="359ec6c3-e20e-475e-b586-241a1a789659"/>
+				<textFieldExpression><![CDATA[$F{telefono}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="758" y="0" width="244" height="20" uuid="78480a80-fb93-476d-b0ff-6f29431aacb0"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{correo}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

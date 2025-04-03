@@ -1,0 +1,242 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    
+    <ui:define name="content">
+        <center>
+            <h1>
+                Permisos de Funcionamiento
+            </h1>
+        </center>
+        <h:form id="frmPerFun">
+            <p:dataTable value="#{permisosFuncionamiento.permisos}" var="per1" reflow="true" rows="10"
+                         lazy="true" emptyMessage="No se encontraron registros..."
+                         rowsPerPageTemplate="10,20,50,100" paginator="true" filterEvent="enter" >
+                <p:column headerText="Num. Tramite" filterBy="#{per1.ht.id}" 
+                          sortBy="#{per1.ht.id}" width="10%" filterStyle="width: 65%;" >
+                    <p:outputLabel value="#{per1.ht.id}" />
+                </p:column>
+
+                <p:column headerText="Tipo Trámite" 
+                          filterStyle="width: 65%;" >
+                    <p:outputLabel value="#{per1.ht.tipoTramite.descripcion}" />
+                </p:column>
+
+                <p:column headerText="Fecha Ingreso"
+                          width="10%" filterStyle="width: 65%;" >
+                    <p:outputLabel value="#{per1.fechaEmision}" />
+                </p:column>
+                <p:column headerText="Nombre del Local" filterBy="#{per1.localComercial.nombreLocal}" 
+                            filterStyle="width: 65%;" >
+                    <p:outputLabel value="#{per1.localComercial.nombreLocal} - #{per1.localComercial.numLocal}" />
+                </p:column>
+                <p:column headerText="Nombre del Propietarios" filterBy="#{per1.ht.nombrePropietario}" 
+                          filterStyle="width: 65%;" filterMatchMode="conteins" >
+                    <p:outputLabel value="#{per1.ht.nombrePropietario}" />
+                </p:column>
+                <p:column headerText="Opciones" width="10%"  >
+                    <p:commandLink actionListener="#{permisosFuncionamiento.verDetalle(per1)}" update="dlgDet"  >
+                        <p:graphicImage value="/css/homeIconsImages/abrir.png"/> 
+                    </p:commandLink>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+
+        <p:dialog widgetVar="dlgDet" height="400" width="70%" id="dlgDet"  position="center" 
+                  header="Detalle Permiso Funcionamiento - #{permisosFuncionamiento.permiso.ht.id}" modal="true">
+            <h:form id="frmDet">
+                <p:tabView id="tabDetalle" >
+                    <p:tab id="Ppermiso" title="Información del Permiso">
+                        <p:panelGrid columns="4" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-4, ui-grid-col-2, ui-grid-col-6">
+                            <p:outputLabel value="Tipo de Tramite"/>
+                            <p:inputText value="#{permisosFuncionamiento.permiso.ht.tipoTramiteNombre}" readonly="true" style="width: 100%"/>
+                            <p:outputLabel value="Contador"/>
+                            <p:inputText value="#{permisosFuncionamiento.permiso.contador.nombreCompleto}" readonly="true" style="width: 100%"/>
+
+                            <p:outputLabel value="Fecha de Emision"/>
+                            <p:inputText value="#{permisosFuncionamiento.permiso.fechaEmision}" readonly="true"/>
+                            <p:outputLabel value="Número de Trámite"/>
+                            <p:inputText value="#{permisosFuncionamiento.permiso.ht.id}" readonly="true"/>
+
+                            <p:outputLabel value="Fecha de Ingreso"/>
+                            <p:inputText value="#{permisosFuncionamiento.permiso.ht.fecha}" readonly="true"/>
+                            <p:outputLabel value="Número de Afiliación de Camara"/>
+                            <p:inputText value="#{permisosFuncionamiento.permiso.afiliacionCamara.descripcion}" readonly="true" />
+
+                            <p:outputLabel value="Número de Declaración"/>
+                            <p:inputText value="#{permisosFuncionamiento.permiso.numDeclaracion}" readonly="true" />
+                            <p:outputLabel value=""/>
+                            <p:outputLabel value=""/>
+
+                            <p:outputLabel value="Es publico"/>
+                            <p:selectBooleanCheckbox value="#{permisosFuncionamiento.permiso.esPublico}" disabled ="true"/>
+                            <p:outputLabel value="Primera Vez"/>
+                            <p:selectBooleanCheckbox value="#{permisosFuncionamiento.permiso.primeraVez}" disabled="true" style="width: 100%"/>
+
+
+                        </p:panelGrid>
+                    </p:tab>
+                    <p:tab id="Local" title="Datos del Local">
+
+                        <p:panelGrid  columns="4" layout="grid"  
+                                      columnClasses="ui-grid-col-2, ui-grid-col-4, ui-grid-col-2, ui-grid-col-4"> 
+
+                            <p:outputLabel value="Nombre de local"/>
+                            <p:inputText value="#{permisosFuncionamiento.permiso.localComercial.nombreLocal}" readonly="true" style="width: 100%;" />
+                            <p:outputLabel value="Razón Social"/>
+                            <p:inputText value="#{permisosFuncionamiento.permiso.localComercial.razonSocial.nombreCompleto}" readonly="true" style="width: 100%;"/>
+
+                            <p:outputLabel value="Propietario"/>
+                            <p:inputText value="#{permisosFuncionamiento.permiso.localComercial.propietario.nombreCompleto}" readonly="true" style="width: 100%;"/>
+                            <p:outputLabel value="Ubicación"/>
+                            <p:inputText value="#{permisosFuncionamiento.permiso.localComercial.ubicacion.descripcion}" readonly="true" style="width: 100%;"/>
+
+                            <p:outputLabel value="Número de Local"/>
+                            <p:inputText value="#{permisosFuncionamiento.permiso.localComercial.numLocal}" readonly="true" />
+                            <p:outputLabel value=" Aréa del Local"/>
+                            <p:inputText value="#{permisosFuncionamiento.permiso.localComercial.area}" readonly="true"/>
+
+                            <p:outputLabel value=" Tipo"/>
+                            <p:inputText value="#{permisosFuncionamiento.permiso.localComercial.tipoLocal.descripcion}" readonly="true" />
+                            <p:outputLabel value="Número de Predio"/>
+                            <p:inputText value="#{permisosFuncionamiento.permiso.localComercial.numPredio}" readonly="true"/>
+
+                            <p:outputLabel value="Local Principal"/>
+                            <p:selectBooleanCheckbox value="#{permisosFuncionamiento.permiso.localComercial.matriz}" disabled="true"/>
+                            <p:outputLabel value=""/>
+                            <p:outputLabel value=""/>
+
+                        </p:panelGrid>
+                    </p:tab>
+                    <p:tab id="Turismo" title="Turismo"> 
+
+                        <p:panelGrid columns="4" style="width: 100%; " >
+                            <p:outputLabel value=" Clasificación de Turismo"/>
+                            <p:inputText value="#{permisosFuncionamiento.permiso.renTurismoCollection.clasificacionServicio}" readonly="true" style="width: 100%;"/>
+                            <p:outputLabel value="Crucero de Turismo"/>
+                            <p:inputText value="#{permisosFuncionamiento.permiso.renTurismoCollection.crucerosTuristicos}" readonly="true" style="width: 100%;"/>
+
+                            <p:outputLabel value="Propietario"/>
+                            <p:inputText value="#{permisosFuncionamiento.permiso.renTurismoCollection.propietario.nombreCompleto}" title="#{permisosFuncionamiento.permiso.renTurismoCollection.propietario.nombreCompleto}" readonly="true" style="width:100%;"/>
+                            <p:outputLabel value="Representante Legal"/>
+                            <p:inputText value="#{permisosFuncionamiento.permiso.renTurismoCollection.repesentanteLegal}" readonly="true" style="width: 100%;"/>
+
+                            <p:outputLabel value="Especialidad Servicios Alimenticios "/>
+                            <p:inputText value="#{permisosFuncionamiento.permiso.renTurismoCollection.especialidadServiciosAlimenticios.descripcion}" readonly="true"/>
+                            <p:outputLabel value="Estado"/>
+                            <p:inputText value="Activo" rendered="#{permisosFuncionamiento.permiso.renTurismoCollection.estado}" readonly="true"/>
+                            <p:inputText value="Inactivo" rendered="#{!permisosFuncionamiento.permiso.renTurismoCollection.estado}" readonly="true"/>
+
+                            <p:outputLabel value="Número de Baños"/>
+                            <p:inputText value="#{permisosFuncionamiento.permiso.renTurismoCollection.numBanios}" readonly="true"/>
+                            <p:outputLabel value="Número de Mesas"/>
+                            <p:inputText value="#{permisosFuncionamiento.permiso.renTurismoCollection.numMesas}" readonly="true"/>
+
+                            <p:outputLabel value="Número de plazo"/>
+                            <p:inputText value="#{permisosFuncionamiento.permiso.renTurismoCollection.numPlazas}" readonly="true"/>
+                            <p:outputLabel value="Número de sillas"/>
+                            <p:inputText value="#{permisosFuncionamiento.permiso.renTurismoCollection.numSillas}" readonly="true"/>
+
+                            <p:outputLabel value="Número de Vehiculos"/>
+                            <p:inputText value="#{permisosFuncionamiento.permiso.renTurismoCollection.numVehiculos}" readonly="true"/>
+                            <p:outputLabel value="Servicios"/>
+                            <p:inputText value="#{permisosFuncionamiento.permiso.renTurismoCollection.servcios.descripcion}" readonly="true"/>
+
+                            <p:outputLabel value="Tiene Licencia"/>
+                            <p:inputText value="Si" rendered="#{permisosFuncionamiento.permiso.renTurismoCollection.tieneLicencia}" readonly="true"/>
+                            <p:inputText value="No" rendered="#{!permisosFuncionamiento.permiso.renTurismoCollection.tieneLicencia}" readonly="true"/>
+                            <p:outputLabel value="Transporte Aéreo"/>
+                            <p:inputText value="#{permisosFuncionamiento.permiso.renTurismoCollection.transporteAereo}" readonly="true"/>
+
+                            <p:outputLabel value="Transporte Maritimo"/>
+                            <p:inputText value="#{permisosFuncionamiento.permiso.renTurismoCollection.transporteMaritimo}" readonly="true"/>
+                            <p:outputLabel value="Transporte Terrestre"/>
+                            <p:inputText value="#{permisosFuncionamiento.permiso.renTurismoCollection.transporteTerrestre}" readonly="true"/>
+
+                            <p:outputLabel value="Es Matriz"/>
+                            <p:selectBooleanCheckbox value="#{permisosFuncionamiento.permiso.renTurismoCollection.esMatriz}" disabled="true"/>
+                            <p:outputLabel value="Es Propio"/>
+                            <p:selectBooleanCheckbox value="#{permisosFuncionamiento.permiso.renTurismoCollection.esPropio}" disabled="true"/>
+
+                        </p:panelGrid>                        
+
+                    </p:tab> 
+                    <p:tab title="Habitaciones">
+                        <p:dataTable id="dtur1" value="#{permisosFuncionamiento.permiso.renTurismoCollection.renTurismoDetalleHotelesCollection}" 
+                                     reflow="true" var="dt1" rows="10" paginator="true" 
+                                     paginatorPosition="top" emptyMessage="No hay datos para mostrar">
+                            <f:facet name="header">Detalle Habitacion de Hoteles</f:facet>
+                            <p:column headerText="Descripción" width="15%" >
+                                <center><h:outputText value="#{dt1.tipoHabitacion.descripcion}"/></center>
+                            </p:column>
+                            <p:column headerText="# Camas"><center><h:outputText value="#{dt1.camas}"/></center></p:column>
+                            <p:column headerText="# Aire"><center><h:outputText value="#{dt1.aire}"/></center></p:column>
+                            <p:column headerText="Bc"><center><h:outputText value="#{dt1.bc}"/></center></p:column>
+                            <p:column headerText="# Nev"><center><h:outputText value="#{dt1.nev}"/></center></p:column>
+                            <p:column headerText="# Palzas"><center><h:outputText value="#{dt1.plazas}"/></center></p:column>
+                            <p:column headerText="Telef."><center><h:outputText value="#{dt1.telf}"/></center></p:column>
+                            <p:column headerText="Secad."><center><h:outputText value="#{dt1.secad}"/></center></p:column>
+                            <p:column headerText="Musica"><center><h:outputText value="#{dt1.musica}"/></center></p:column>
+                            <p:column headerText="Tvc."><center><h:outputText value="#{dt1.tvc}"/></center></p:column>
+                            <p:column headerText="Total">
+                                <center><h:outputText value="#{dt1.total}"/></center>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                    <p:tab title="Tareas">
+                        <p:dataTable value="#{permisosFuncionamiento.taskInstance}" var="task" scrollable="true" paginator="true" paginatorPosition="top" scrollRows="8" scrollHeight="230" rows="10">
+                            <p:column headerText="Tarea" width="50%">
+                                <p:outputLabel value="#{task.name}"/>
+                            </p:column>
+                            <p:column headerText="Asignado a" >
+                                <p:outputLabel value="#{task.assignee}" rendered="#{task.assignee ne null}"/>
+                            </p:column>
+                            <p:column headerText="Inicio" width="15%">
+                                <p:outputLabel value="#{task.startTime}" >
+                                    <f:convertDateTime pattern="dd/MM/YYYY"/>
+                                </p:outputLabel>
+                            </p:column>
+                            <p:column headerText="Fin" width="15%">
+                                <p:outputLabel value="#{task.endTime}">
+                                    <f:convertDateTime pattern="dd/MM/YYYY"/>
+                                </p:outputLabel>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                    <p:tab id="observacion" title="Observación">
+                        <p:panel>
+                            <p:dataTable id="obs1" value="#{permisosFuncionamiento.permiso.ht.observacionesCollection}" 
+                                         reflow="true" var="obs1" rows="5" paginator="true" 
+                                         paginatorPosition="top" emptyMessage="No hay datos para mostrar">
+                                <p:column headerText="Observación">
+                                    <center><h:outputText value="#{obs1.observacion}"/></center>
+                                </p:column>
+                                <p:column headerText="Fecha de Creación">
+                                    <center><h:outputText value="#{obs1.fecCre}"/></center>
+                                </p:column>
+
+                                <p:column headerText="Responsable">
+                                    <center><h:outputText value="#{obs1.userCre}"/></center>
+                                </p:column>
+                                <p:column headerText="Taréa">
+                                    <center><h:outputText value="#{obs1.tarea}"/></center>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                    </p:tab>
+                </p:tabView>
+                <center style="margin-top: 10px;">
+                    <p:commandButton value="Salir" styleClass="btnStyle" onclick="PF('dlgDet').hide()"/>
+                </center>
+            </h:form>
+
+        </p:dialog>
+
+    </ui:define >
+
+</ui:composition>

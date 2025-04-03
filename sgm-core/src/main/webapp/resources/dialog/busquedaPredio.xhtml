@@ -1,0 +1,188 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <!-- INTERFACE -->
+    <cc:interface >
+        <cc:attribute name="predio" type="com.origami.sgm.entities.CatPredio"/>
+        <cc:attribute name="predioModel" type="com.origami.sgm.bpm.models.CatPredioModel"/>
+        <cc:attribute name="contribuyenteConsulta" type="com.origami.sgm.entities.CatEnte"/>
+        <cc:attribute name="tipoCons" />
+        <cc:attribute name="alcabalasPlusvalia" default="false" />
+        <cc:attribute name="consultar" method-signature="void listener()" />
+        <cc:attribute name="consultarModel" method-signature="void listener()" />
+        <cc:attribute name="renderConsultaDirecta" type="java.lang.Boolean" default="true"/>
+        <cc:attribute name="dlgSolicitante"/>
+        <cc:attribute name="updateFrmSolicitante"/>
+        <cc:attribute name="updateConsulta"/>
+        <cc:attribute name="update" />
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <!--<h:form>-->
+        <center>
+            <p:selectOneRadio value="#{cc.attrs.tipoCons}" layout="grid" columns="3" style="width: 60%;" rendered="#{cc.attrs.alcabalasPlusvalia}" >
+                <!--<f:selectItem itemLabel="Código Anterior" itemValue="#{1}"/>-->
+                <f:selectItem itemLabel="Código Nuevo" itemValue="#{2}"/>
+                <f:selectItem itemLabel="Matricula Inmobiliaria" itemValue="#{3}"/>
+                <f:selectItem itemLabel="Predios de Otros Cantones" itemValue="#{4}"/>
+                <p:ajax update="#{cc.attrs.update}"/>
+            </p:selectOneRadio>
+
+            <p:selectOneRadio value="#{cc.attrs.tipoCons}" layout="grid" columns="4" style="width: 60%;" rendered="#{!cc.attrs.alcabalasPlusvalia}" >
+                <f:selectItem itemLabel="Código Nuevo" itemValue="#{2}"/>
+                <f:selectItem itemLabel="Matricula Inmobiliaria" itemValue="#{3}"/>
+                <f:selectItem itemLabel="Código Anterior" itemValue="#{6}"/>
+                <f:selectItem itemLabel="Propietario" itemValue="#{5}"/>
+                <p:ajax update="#{cc.attrs.update}"/>
+            </p:selectOneRadio>
+
+            <!--codigo Anterior-->
+            <p:panelGrid columns="8" rendered="#{cc.attrs.tipoCons eq 1}"  >
+                <p:outputLabel value="Zona"/>
+                <p:outputLabel value="Sector."/>
+                <p:outputLabel value="Manz."/>
+                <p:outputLabel value="Solar"/>
+                <p:outputLabel value="Div."/>
+                <p:outputLabel value="Piso"/>
+                <p:outputLabel value="Local"/>
+                <p:outputLabel value="Consultar"/>
+
+                <p:inputText value="#{cc.attrs.predio.zona}" style="width: 45px;"/>
+                <p:inputText value="#{cc.attrs.predio.sector}" style="width: 45px;"/>
+                <p:inputText value="#{cc.attrs.predio.mz}" style="width: 45px;"/>
+                <p:inputText value="#{cc.attrs.predio.lote}" style="width: 45px;"/>
+                <p:inputText value="#{cc.attrs.predio.divisionUrb}" style="width: 45px;"/>
+                <p:inputText value="#{cc.attrs.predio.urbSolarnew}" style="width: 45px;"/>
+                <p:inputText value="#{cc.attrs.predio.urbSolarnew}" style="width: 45px;"/>
+                <p:commandLink actionListener="#{cc.attrs.consultar}" update="#{cc.attrs.update}"  >
+                    <p:graphicImage value="/css/homeIconsImages/buscar.png"/>
+                </p:commandLink>
+
+            </p:panelGrid>
+            <!--codigo Actual-->
+            <h:panelGrid columns="11" rendered="#{cc.attrs.tipoCons eq 2}" >
+                <h:panelGroup>
+                    <p:outputLabel value="PROVINCIA"/><br/>
+                    <p:inputText value="#{cc.attrs.predio.provincia}" style="width: 45px;"/>
+                </h:panelGroup><h:panelGroup>
+                    <p:outputLabel value="CANTON"/><br/>
+                    <p:inputText value="#{cc.attrs.predio.canton}" style="width: 45px;"/>
+                </h:panelGroup><h:panelGroup>
+                    <p:outputLabel value="PARROQUIA"/><br/>
+                    <p:inputText value="#{cc.attrs.predio.parroquia}" style="width: 45px;"/>
+                </h:panelGroup><h:panelGroup>
+                    <p:outputLabel value="ZONA"/><br/>
+                    <p:inputText value="#{cc.attrs.predio.zona}" style="width: 45px;"/>
+                </h:panelGroup><h:panelGroup>
+                    <p:outputLabel value="SECTOR"/><br/>
+                    <p:inputText value="#{cc.attrs.predio.sector}" style="width: 45px;"/>
+                </h:panelGroup><h:panelGroup>
+                    <p:outputLabel value="MANZANA"/><br/>
+                    <p:inputText value="#{cc.attrs.predio.mz}" style="width: 45px;"/>
+                </h:panelGroup><h:panelGroup>
+                    <p:outputLabel value="LOTE"/><br/>
+                    <p:inputText value="#{cc.attrs.predio.lote}" style="width: 45px;"/>
+                </h:panelGroup><h:panelGroup>
+                    <p:outputLabel value="BLOQUE"/><br/>
+                    <p:inputText value="#{cc.attrs.predio.bloque}" style="width: 45px;"/>
+                </h:panelGroup><h:panelGroup>
+                    <p:outputLabel value="PISO"/><br/>
+                    <p:inputText value="#{cc.attrs.predio.piso}" style="width: 45px;"/>
+                </h:panelGroup><h:panelGroup>
+                    <p:outputLabel value="UNIDAD"/><br/>
+                    <p:inputText value="#{cc.attrs.predio.unidad}" style="width: 45px;"/>
+                </h:panelGroup>
+
+                <h:panelGroup>
+                    <p:outputLabel value="Consultar"/><br/>
+                    <p:commandLink actionListener="#{cc.attrs.consultar}" update="#{cc.attrs.update}" >
+                        <p:graphicImage value="/css/homeIconsImages/buscar.png"/>
+                    </p:commandLink>
+                </h:panelGroup>
+            </h:panelGrid>
+
+
+            <!--Numero de predio-->
+            <h:panelGrid columns="2" rendered="#{cc.attrs.tipoCons eq 3}" >
+                <p:outputLabel value="Matricula Inmobiliaria"/>
+                <p:outputLabel value="Consultar"/>
+
+                <p:inputText value="#{cc.attrs.predio.numPredio}" />
+                <p:commandLink actionListener="#{cc.attrs.consultar}" update="#{cc.attrs.update}" >
+                    <p:graphicImage value="/css/homeIconsImages/buscar.png"/>
+                </p:commandLink>
+            </h:panelGrid>
+            <br></br>
+            <!--Predio de Otros Cantones-->
+            <h:panelGrid columns="11" rendered="#{cc.attrs.tipoCons eq 4}" >
+                <h:panelGroup>
+                    <p:outputLabel value="PROVINCIA"/><br/>
+                    <p:inputText value="#{cc.attrs.predioModel.provincia}" style="width: 45px;"/>
+                </h:panelGroup><h:panelGroup>
+                    <p:outputLabel value="CANTON"/><br/>
+                    <p:inputText value="#{cc.attrs.predioModel.canton}" style="width: 45px;"/>
+                </h:panelGroup><h:panelGroup>
+                    <p:outputLabel value="PARROQUIA"/><br/>
+                    <p:inputText value="#{cc.attrs.predioModel.parroquiaShort}" style="width: 45px;"/>
+                </h:panelGroup><h:panelGroup>
+                    <p:outputLabel value="ZONA"/><br/>
+                    <p:inputText value="#{cc.attrs.predioModel.zona}" style="width: 45px;"/>
+                </h:panelGroup><h:panelGroup>
+                    <p:outputLabel value="SECTOR"/><br/>
+                    <p:inputText value="#{cc.attrs.predioModel.sector}" style="width: 45px;"/>
+                </h:panelGroup><h:panelGroup>
+                    <p:outputLabel value="MANZANA"/><br/>
+                    <p:inputText value="#{cc.attrs.predioModel.mz}" style="width: 45px;"/>
+                </h:panelGroup><h:panelGroup>
+                    <p:outputLabel value="LOTE"/><br/>
+                    <p:inputText value="#{cc.attrs.predioModel.lote}" style="width: 45px;"/>
+                </h:panelGroup><h:panelGroup>
+                    <p:outputLabel value="BLOQUE"/><br/>
+                    <p:inputText value="#{cc.attrs.predioModel.bloque}" style="width: 45px;"/>
+                </h:panelGroup><h:panelGroup>
+                    <p:outputLabel value="PISO"/><br/>
+                    <p:inputText value="#{cc.attrs.predioModel.piso}" style="width: 45px;"/>
+                </h:panelGroup><h:panelGroup>
+                    <p:outputLabel value="UNIDAD"/><br/>
+                    <p:inputText value="#{cc.attrs.predioModel.unidad}" style="width: 45px;"/>
+                </h:panelGroup>
+                <h:panelGroup>
+                    <p:outputLabel value="Validar"/><br/>
+                    <p:commandLink actionListener="#{cc.attrs.consultarModel}" update="#{cc.attrs.update}" >
+                        <p:graphicImage value="/css/homeIconsImages/buscar.png"/>
+                    </p:commandLink>
+                </h:panelGroup>
+            </h:panelGrid>
+            
+            <!--Propietario-->
+            <h:panelGrid id="propietarios" columns="3" rendered="#{cc.attrs.tipoCons eq 5}" >
+                <p:outputLabel value="C.I./R.U.C.: " style="font-size: 13px; font-weight: bolder; width: 140px;"/>
+                <p:outputLabel value="CONTRIBUYENTE: " style="font-size: 13px; font-weight: bolder;"/>
+                <br/>
+                <p:inputText value="#{cc.attrs.contribuyenteConsulta.ciRuc}" style="font-size: 13px; font-weight: bolder;" size="15" readonly="true"/>                
+                <p:inputText value="#{cc.attrs.contribuyenteConsulta.apellidos} #{cc.attrs.contribuyenteConsulta.nombres} #{cc.attrs.contribuyenteConsulta.razonSocial} #{cc.attrs.contribuyenteConsulta.nombreComercial}" style="font-size: 13px; font-weight: bolder;" readonly="true" size="50"/>
+                <p:commandButton id="btnCambiarBuscar" value="Buscar/Cambiar" style="height: 30px" onclick="#{cc.attrs.dlgSolicitante}" update="#{cc.attrs.updateFrmSolicitante}"/>
+            </h:panelGrid>
+            
+            <!--Codigo Anterior-->
+            <h:panelGrid columns="2" rendered="#{cc.attrs.tipoCons eq 6}" >
+                <p:outputLabel value="Codigo Anterior"/>
+                <p:outputLabel value="Consultar"/>
+
+                <p:inputText value="#{cc.attrs.predio.predialant}" maxlength="20" style="font-size: 13px; font-weight: bolder; width: 90%;" size="40" >
+                    <pe:keyFilter preventPaste="false" regEx="[0-9]"/>
+                </p:inputText>
+                <p:commandLink actionListener="#{cc.attrs.consultar}" update="#{cc.attrs.update}" >
+                    <p:graphicImage value="/css/homeIconsImages/buscar.png"/>
+                </p:commandLink>
+            </h:panelGrid>
+            
+        </center>
+        <!--</h:form>-->
+    </cc:implementation>
+</html>

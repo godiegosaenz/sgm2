@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:dialog="http://xmlns.jcp.org/jsf/composite/dialog">
+    <!-- INTERFACE -->
+    <cc:interface  componentType="ccompRegistro">
+        <cc:attribute name="ficha" required="true"/>
+        <cc:attribute name="movimientos" type="java.util.List" required="true"/>
+        <cc:attribute name="update" />
+    </cc:interface>
+    <cc:implementation>
+        <h:form id="frmccRegFicha">
+            <p:dataTable id="ccRegFichax" value="#{cc.attrs.movimientos}" var="mf" rowIndexVar="c" reflow="true" paginator="true" paginatorPosition="top" rows="5" style="width: 100%">
+                <f:facet name="header">
+                    <h:outputText value="Movimientos registrales"/>
+                </f:facet>
+                <p:column headerText="No.">
+                    <h:outputText value="#{c+1}"/>
+                </p:column>
+                <p:column headerText="Libro">
+                    <p:outputLabel value="#{mf.movimiento.libro.nombre}" style="text-transform: uppercase" />
+                </p:column>
+                <p:column headerText="Num.Tomo" width="100">
+                    <p:outputLabel value="#{mf.movimiento.numTomo}"/>
+                </p:column>
+                <p:column headerText="Num.Repertorio" width="120">
+                    <p:outputLabel value="#{mf.movimiento.numRepertorio}"/>
+                </p:column>
+                <p:column headerText="Num.Inscripcion" width="120">
+                    <p:outputLabel value="#{mf.movimiento.numInscripcion}"/>
+                </p:column>
+                <p:column headerText="Fec.Inscripcion" width="120">
+                    <p:outputLabel value="#{mf.movimiento.fechaInscripcion}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column headerText="Ver" style="text-align: center">
+                    <p:commandLink actionListener="#{cc.datosMovFicha(mf.movimiento)}" oncomplete="PF('dlgMovRegistralSelec').show()" update="#{cc.attrs.update}">
+                        <p:graphicImage value="/css/homeIconsImages/abrir.png" height="16"/>
+                    </p:commandLink>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+        <dialog:infoFichaReg id="d" movimiento="#{cc.movimiento}" modelo="#{cc.modelo}"/>
+    </cc:implementation>
+</html>

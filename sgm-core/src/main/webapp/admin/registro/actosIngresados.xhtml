@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{actosIngresados.doPreRenderView()}"/>
+        </f:metadata>
+    </ui:define>
+    <ui:define name="top"><h3>Actos de Inscripcion</h3></ui:define>
+    <ui:define name="content">
+        <h:form id="mainForm">
+            <div style="width: 90%; text-align: end">
+                <p:commandButton icon="ui-icon-plus" value="Nuevo Acto" styleClass="btnStyle"
+                                 actionListener="#{actosIngresados.showDlgNew()}"/>
+            </div><br/>
+            <p:dataTable id="dataActos" style="width: 80%;margin: 0 auto;text-align: center" paginator="true" lazy="true"
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rows="10" rowsPerPageTemplate="10,20,50,100" emptyMessage="No se encontró ningún elemento..."
+                         value="#{actosIngresados.listActosLazy}" var="actos">
+                <p:column headerText="Nombre" sortBy="#{actos.nombre}" filterBy="#{actos.nombre}">
+                    <h:outputText value="#{actos.nombre}" />
+                </p:column>
+                <p:column headerText="Abreviatura" sortBy="#{actos.abreviatura}" filterBy="#{actos.abreviatura}"
+                          width="150">
+                    <h:outputText value="#{actos.abreviatura}" />
+                </p:column>
+                <p:column headerText="Estado" width="75">
+                    <h:outputText value="Activo" rendered="#{actos.estado}"/>
+                    <h:outputText value="Inactivo" rendered="#{!actos.estado}"/>
+                </p:column>
+                <p:column headerText="Editar" width="75">
+                    <p:commandLink actionListener="#{actosIngresados.showDlgEdit(actos)}" >
+                        <p:graphicImage value="/css/homeIconsImages/edit.png"/>   
+                    </p:commandLink>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+    </ui:define>
+</ui:composition>

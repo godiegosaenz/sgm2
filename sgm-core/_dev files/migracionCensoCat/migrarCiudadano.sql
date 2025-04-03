@@ -1,0 +1,35 @@
+﻿
+
+CREATE OR REPLACE FUNCTION censocat.migrar_ciudadano_ente_censo_sgm()
+  RETURNS void AS
+$BODY$
+
+DECLARE
+	C_CIUDADANO CURSOR FOR 
+		SELECT * FROM censocat.ciudadano  WHERE ciu_cedula NOT in (SELECT identificacion from censocat.contacto );
+
+	ACIERTOS INTEGER := 0;
+	TPERSONA BOOLEAN := FALSE;
+BEGIN
+
+	FOR C IN C_CIUDADANO LOOP
+		
+		IF((SELECT COUNT(CI_RUC) FROM SGM_APP.CAT_ENTE E WHERE CI_RUC = C.CIU_CEDULA)=0) THEN 
+			INSERT INTO SGM_APP.CAT_ENTE (ID,CI_RUC, NOMBRES, APELLIDOS, ES_PERSONA, ESTADO, FECHA_CRE)
+			VALUES (DEFAULT, C.CIU_CEDULA, C.CIU_NOMBRES,C.CIU_APELLIDOS,  TRUE, 'A', NOW());
+			ACIERTOS := ACIERTOS + 1;
+		END IF;
+	END LOOP;
+	RAISE NOTICE 'ENTES CREADOS %',ACIERTOS;
+END;
+
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION censocat.migrar_ciudadano_ente_censo_sgm()
+  OWNER TO sisapp;
+
+
+-- SELECT censocat.migrar_ciudadano_ente_censo_sgm()
+-- DELETE FROM APP1.CAT_ENTE
+-- SELECT * FROM APP1.CAT_ENTE

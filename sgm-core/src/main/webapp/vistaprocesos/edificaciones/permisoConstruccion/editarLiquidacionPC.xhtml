@@ -1,0 +1,524 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition>
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="content">
+
+        <h:form id="forGenLiq">
+            <p:panelGrid styleClass="noBorder" columns="4" style="width: 100%;font-size: 14px;">
+                <p:outputLabel value="Tarea: #{editarLiquidacionPC.taskDataByTaskID.name}" style="font-weight: bolder;color: #005f9c"/>
+                <p:outputLabel value="No Trámite: #{editarLiquidacionPC.ht.id}" style="font-weight: bolder;color: #005f9c"/>
+                <p:outputLabel value="Responsable: #{editarLiquidacionPC.taskDataByTaskID.assignee}" style="font-weight: bolder;color: #005f9c"/>
+            </p:panelGrid>
+            <p:panelGrid id="panelCons"  style="width: 100%; margin: 0px; margin-bottom: 20px">
+                <f:facet name="header" >
+                    <p:column colspan="17" styleClass="headerWhite" style="font-weight: bold; font-size: 14px; color: #005f9c">PERMISO DE CONSTRUCCIÓN</p:column>
+                </f:facet>
+                <!-- Busqueda Cod Predio -->
+                <p:row >
+                    <p:column colspan="17">
+                        <h:panelGrid columns="17" >
+                            <p:outputLabel value="Sector"/>
+                            <p:outputLabel value="Mnz."/>
+                            <p:outputLabel value="Cdla."/>
+                            <p:outputLabel value="Mz. Div "/>
+                            <p:outputLabel value="Solar"/>
+                            <p:outputLabel value="Div1"/>
+                            <p:outputLabel value="Div2"/>
+                            <p:outputLabel value="Div3"/>
+                            <p:outputLabel value="Div4"/>
+                            <p:outputLabel value="Div5"/>
+                            <p:outputLabel value="Div6"/>
+                            <p:outputLabel value="Div7"/>
+                            <p:outputLabel value="Div8"/>
+                            <p:outputLabel value="Div9"/>
+                            <p:outputLabel value="Phv"/>
+                            <p:outputLabel value="Phh"/>
+                            <p:outputLabel value=""/>
+
+                            <p:inputText value="#{editarLiquidacionPC.predio.sector}" type="number" maxlength="4" style="width: 50px;"/>
+                            <p:inputText value="#{editarLiquidacionPC.predio.mz}" type="number" maxlength="4" style="width: 80%;"/>
+                            <p:inputText value="#{editarLiquidacionPC.predio.cdla}" type="number" maxlength="4" style="width: 80%;"/>
+                            <p:inputText value="#{editarLiquidacionPC.predio.mzdiv}" type="number" maxlength="4" style="width: 70%;"/>
+                            <p:inputText value="#{editarLiquidacionPC.predio.solar}" type="number" maxlength="4" style="width: 80%;"/>
+                            <p:inputText value="#{editarLiquidacionPC.predio.div1}" type="number" maxlength="1"  style="width: 80%;"/>
+                            <p:inputText value="#{editarLiquidacionPC.predio.div2}" type="number" maxlength="1"  style="width: 80%;"/>
+                            <p:inputText value="#{editarLiquidacionPC.predio.div3}" type="number" maxlength="1"  style="width: 80%;"/>
+                            <p:inputText value="#{editarLiquidacionPC.predio.div4}" type="number" maxlength="1"  style="width: 80%;"/>
+                            <p:inputText value="#{editarLiquidacionPC.predio.div5}" type="number" maxlength="1"  style="width: 80%;"/>
+                            <p:inputText value="#{editarLiquidacionPC.predio.div6}" type="number" maxlength="1"  style="width: 80%;"/>
+                            <p:inputText value="#{editarLiquidacionPC.predio.div7}" type="number" maxlength="1"  style="width: 80%;"/>
+                            <p:inputText value="#{editarLiquidacionPC.predio.div8}" type="number" maxlength="1"  style="width: 80%;"/>
+                            <p:inputText value="#{editarLiquidacionPC.predio.div9}" type="number" maxlength="1"  style="width: 80%;"/>
+                            <p:inputText value="#{editarLiquidacionPC.predio.phv}" type="number" maxlength="2" style="width: 80%;"/>
+                            <p:inputText value="#{editarLiquidacionPC.predio.phh}" type="number" maxlength="2" style="width: 80%;"/>
+                            <p:commandLink actionListener="#{editarLiquidacionPC.consultarCodPredio()}" update="panelCons" >
+                                <p:graphicImage value="/css/homeIconsImages/buscar.png" height="20"/>
+                            </p:commandLink>
+                        </h:panelGrid>
+                    </p:column>
+                </p:row>
+                <!-- Datos de Permiso -->
+                <p:row styleClass="ui-widget-header" >
+                    <p:column colspan="17" styleClass="headerWhite" style="font-weight: bold; font-size: 16px; color: #005f9c; text-align: center" >Datos de Permiso</p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="5">
+                        Tipo Permiso<br/>
+                        <p:selectOneMenu id="tipConstruccion" value="#{editarLiquidacionPC.ht.tipoTramiteNombre}"  style="width: 160px;"  >  
+                            <f:selectItems value="#{editarLiquidacionPC.listRequisTra}" var="req1" itemValue="#{req1.descripcion}"  itemLabel="#{req1.descripcion}" itemDisabled="true"/>
+                        </p:selectOneMenu>                                     
+                    </p:column>
+                    <p:column colspan="3">Año Tramite<br/>
+                        <p:inputText value="#{editarLiquidacionPC.permisoNuevo.anioTramite}" style="width: 60px;"  /></p:column>
+                    <p:column colspan="3">Número de Tramite<br/>
+                        <p:inputText value="#{editarLiquidacionPC.permisoNuevo.tramite.id}" style="width: 90px;"  /></p:column>
+                    <p:column colspan="3">Fecha Emisión<br/>
+                        <p:calendar value="#{editarLiquidacionPC.permisoNuevo.fechaEmision}"/></p:column>
+                    <p:column colspan="3">Fecha Caducidad<br/>
+                        <p:calendar value="#{editarLiquidacionPC.permisoNuevo.fechaCaducidad}"  /></p:column>
+                </p:row>
+                <!-- Datos de Propietario-->
+                <p:row styleClass="ui-widget-header">
+                    <p:column colspan="17" styleClass="headerWhite" style="font-weight: bold; font-size: 16px; color: #005f9c; text-align: center">Datos de Propietario</p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="17">
+                        <p:dataTable id="dtProp" value="#{editarLiquidacionPC.listaPropietarios}" var="pp" style="width: 100%" reflow="true" emptyMessage="No hay asignado Propietarios al Predio">
+                            <f:facet name="header">
+                                Datos Propietario
+                                <h:commandLink id="btnAgrPro" value="Agregar Propietario"  action="#{editarLiquidacionPC.renderPersNat()}" style="color: #0033FF; font-weight: bold; float: right" disabled="true"/>
+                            </f:facet>
+                            <p:column headerText="#C.I. O R.U.C" style="text-align: center;font-weight: bold">
+                                <p:outputLabel value="#{pp.ente.ciRuc}"/>
+                            </p:column>
+                            <p:column headerText="Propietario" style="text-align: center;font-weight: bold">
+                                <p:outputLabel value="#{pp.ente.nombres} #{pp.ente.apellidos}" rendered="#{pp.ente.esPersona}"/>
+                                <p:outputLabel value="#{pp.ente.razonSocial}" rendered="#{!pp.ente.esPersona}"/>
+                            </p:column>
+                            <p:column headerText="Opción" style="text-align: center;font-weight: bold">
+                                <p:commandLink value="Eliminar" actionListener="#{editarLiquidacionPC.eliminarProp(pp)}" update="forGenLiq:dtProp"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:column>
+                </p:row>
+                <!-- Responsable Tecnico-->
+                <p:row >
+                    <p:column colspan="5">
+                        Ced. Identidad <p:inputMask id="ciIde" mask="9999999999" value="#{editarLiquidacionPC.respTec.ciRuc}" onchange="#{editarLiquidacionPC.buscarTecnico()}"/>
+                        <p:commandLink actionListener="#{editarLiquidacionPC.buscarTecnico()}" >
+                            <p:graphicImage value="/css/homeIconsImages/buscar.png" height="20"/>
+                        </p:commandLink>
+                    </p:column>
+                    <p:column colspan="7">
+                        Resp. Tecnico <p:inputText id="resT" value="#{editarLiquidacionPC.permisoNuevo.responsable}" style="width: 50%;"/> 
+                        <p:commandButton icon="ui-icon-pencil" onclick="PF('dlgEditRespTec').show()" type="button" iconPos="s" style=" height: 30px; color: #ffffff; background: #616161 !important; font-weight: bold;"/>
+                    </p:column>
+                    <p:column colspan="5">
+                        Registro Profesional <p:inputText id="regP" value="#{editarLiquidacionPC.respTec.regProf}"/>
+                    </p:column>
+                </p:row>
+                <!-- Ubicación-->
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="17" style="text-align: center">Ubicación</p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="3">
+                        Sector <p:inputText value="La Puntilla" style="width: 70%" readonly="true" />                                   
+                    </p:column>
+                    <p:column colspan="4">Urbanización <p:inputText value="#{editarLiquidacionPC.predio.ciudadela.nombre}"  style="width: 70%" readonly="true"/></p:column>
+                    <p:column colspan="3">Manzana <p:inputText value="#{editarLiquidacionPC.predio.urbMz}" style="width: 50%" readonly="true"/></p:column>
+                    <p:column colspan="3">Solar <p:inputText value="#{editarLiquidacionPC.predio.urbSolarnew}" style="width: 50%" readonly="true"/></p:column>
+                    <p:column colspan="4">Calle <p:inputText value="#{editarLiquidacionPC.permisoNuevo.calle}" style="width: 70%" readonly="true"/></p:column>
+                </p:row>
+                <!-- edificación-->
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="17" style="text-align: center">Caracteristicas del Predio</p:column>
+                </p:row>
+                <p:row >
+                    <p:column colspan="2">
+                        Edificación<br/>
+                        <p:selectOneMenu  id="lisedif" value="#{editarLiquidacionPC.numEdificacion}"  style="width:100%;">  
+                            <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}" />                                                        
+                            <f:selectItem itemLabel="EDIFICACION PRINCIPAL" itemValue="0"/>  
+                            <f:selectItem itemLabel="ANEXO 1" itemValue="1" />  
+                            <f:selectItem itemLabel="ANEXO 2" itemValue="2" />  
+                            <f:selectItem itemLabel="ANEXO 3" itemValue="3" />  
+                            <f:selectItem itemLabel="ANEXO 4" itemValue="4" />  
+                            <f:selectItem itemLabel="ANEXO 5" itemValue="5" />                                                         
+                            <f:selectItem itemLabel="ANEXO 6" itemValue="6" />
+                            <f:selectItem itemLabel="ANEXO 7" itemValue="7" />
+                            <f:selectItem itemLabel="ANEXO 8" itemValue="8" />
+                            <f:selectItem itemLabel="ANEXO 9" itemValue="9" />
+                            <f:selectItem itemLabel="ANEXO 10" itemValue="10"/>
+                        </p:selectOneMenu> 
+                    </p:column>
+
+                    <p:column colspan="2">
+                        # Pisos<br/>
+                        <p:inputText id="pis" value="#{editarLiquidacionPC.nuevDetalleEdif.numeroPisos}" style="width: 70%" />
+                    </p:column>
+
+                    <p:column colspan="2">
+                        Descripción<br/>
+                        <p:inputText id="descp" value="#{editarLiquidacionPC.nuevDetalleEdif.descEdificacion}"  style="width: 100%" />
+                    </p:column>
+
+                    <p:column colspan="2">
+                        Area Construc<br/>
+                        <p:inputText id="arCon" value="#{editarLiquidacionPC.nuevDetalleEdif.areaConstruccion}" style="width: 70%" />
+                    </p:column>
+
+                    <p:column colspan="1">
+                        Acción<br/>
+                        <p:commandButton id="bAgrPro" value="Agregar" actionListener="#{editarLiquidacionPC.agregarEdifi()}" update="lisedif, pis, descp, arCon, por" style="height: 20px; color: #ffffff; background: #616161 !important; font-weight: bold;"/>
+                    </p:column>
+
+                    <p:column colspan="8" rowspan="4"  > 
+                        <h:panelGrid columns="4" >
+                            <p:outputLabel value="Altura"/>
+                            <pe:inputNumber value="#{editarLiquidacionPC.permisoNuevo.altura}" style="width: 100%;" />
+                            
+                            <p:outputLabel value="# Edifi. "/>
+                            <p:inputText value="#{editarLiquidacionPC.permisoNuevo.cantidadEdificaciones}" style="width: 100%;" type="number"/>
+
+                            <p:outputLabel value="# Piso B.N.B "/>
+                            <p:inputText value="#{editarLiquidacionPC.permisoNuevo.pisosBnb}" style="width: 100%;" type="number"/>
+                            
+                            <p:outputLabel value="# Piso S.N.B  "/>
+                            <p:inputText value="#{editarLiquidacionPC.permisoNuevo.pisosSnb}" style="width: 100%;" type="number"/>
+
+                            <p:outputLabel value="Area. Edif. "/>
+                            <pe:inputNumber id="ad" value="#{editarLiquidacionPC.permisoNuevo.areaEdificaciones}" style="width: 100%;" readonly="true" />
+                            
+                            <p:outputLabel value="# Parqueo "/>
+                            <p:inputText value="#{editarLiquidacionPC.permisoNuevo.cantidadParqueos}" style="width: 100%;"/>
+
+                            <p:outputLabel value="Area.Parqueo "/>
+                            <pe:inputNumber value="#{editarLiquidacionPC.permisoNuevo.areaParqueos}" style="width: 100% !important" >
+                                <p:ajax event="change" listener="#{editarLiquidacionPC.calculoAreaConstruccion()}" update="ac"/>
+                            </pe:inputNumber> 
+                            
+                            <p:outputLabel value="Ret. Frontal "/>
+                            <pe:inputNumber value="#{editarLiquidacionPC.permisoNuevo.retiroFrontal}" style="width: 100%;" />
+
+                            <p:outputLabel value="Ret. Lateral1 "/>
+                            <pe:inputNumber id="retLat1" value="#{editarLiquidacionPC.permisoNuevo.retiroLateral1}"  style="width: 100%;" />
+                            
+                            <p:outputLabel value="Retiro Lateral2 "/>
+                            <pe:inputNumber id="retLat2" value="#{editarLiquidacionPC.permisoNuevo.retiroLateral2}"  style="width: 100%;" />
+
+                            <p:outputLabel value="Retiro Posterior "/>
+                            <pe:inputNumber value="#{editarLiquidacionPC.permisoNuevo.retiroPosterior}" style="width: 100%;"  />
+                        </h:panelGrid>
+                        Descripción de la Edificación.<br/>
+                        <p:inputText value="#{editarLiquidacionPC.permisoNuevo.descFamiliar}" style="width: 100%;"/>
+                    </p:column>
+                </p:row>
+                <p:row id="rowDtEdif">
+                    <p:column colspan="9">
+                        <p:dataTable id="dtEdif" var="edf" value="#{editarLiquidacionPC.detallesEdific}" selectionMode="single" selection="#{editarLiquidacionPC.permisoSelect}" rowKey="#{edf.descEdificacion}" 
+                                     emptyMessage="No ha ninguna edificación cargada" rowIndexVar="rowIndex" paginator="true" paginatorPosition="top" rows="5" rowsPerPageTemplate="5, 10">
+                            <p:ajax event="rowSelect" listener="#{editarLiquidacionPC.onRowSelect}" /> 
+                            <!--p:ajax event="rowUnselect" listener="# {editarLiquidacionPC.onRowUnselect}" /-->
+                            <p:column headerText="Edificación" style="text-align: center;font-weight: bold">
+                                <p:outputLabel value="#{edf.descEdificacion}"/>
+                            </p:column>
+                            <p:column headerText="# Pisos" style="text-align: center;font-weight: bold">
+                                <p:outputLabel value="#{edf.numeroPisos}"/>
+                            </p:column>
+                            <p:column headerText="Descripción" style="text-align: center;font-weight: bold">
+                                <p:outputLabel value="#{edf.descripcion}"/>
+                            </p:column>
+                            <p:column headerText="Area Construcc" style="text-align: center;font-weight: bold">
+                                <p:outputLabel value="#{edf.areaConstruccion}">
+                                    <f:convertNumber pattern="####,##0.00"/>
+                                </p:outputLabel>
+                            </p:column>
+                            <p:column headerText="Acción" style="text-align: center;font-weight: bold">
+                                <p:commandButton value="Borrar" actionListener="#{editarLiquidacionPC.eliminarEdif(edf)}" />
+                            </p:column>
+                        </p:dataTable>
+                    </p:column>
+                </p:row>
+
+                <p:row style="border-bottom-color:#ffffff !important;" id="rowCarat">
+                    <p:column colspan="3">
+                        Categoría<br/>
+                        <p:selectOneMenu  id="lisCartg" value="#{editarLiquidacionPC.categoria}" converter="entityConverter" style="width:100%;" >  
+                            <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>                                                        
+                            <f:selectItems value="#{editarLiquidacionPC.listCat}" var="c" itemLabel="#{c.nombre}" itemValue="#{c}" />
+                            <p:ajax listener="#{editarLiquidacionPC.actulizarLista()}" update="forGenLiq:lisCaract"/>
+                        </p:selectOneMenu> 
+                    </p:column>
+
+                    <p:column colspan="3" >
+                        Característica<br/>
+                        <p:selectOneMenu id="lisCaract" value="#{editarLiquidacionPC.carateristicas}" converter="entityConverter" style="width:100%;">  
+                            <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}" />                                                        
+                            <f:selectItems value="#{editarLiquidacionPC.lisCatEdfProp}" var="ct" itemLabel="#{ct.nombre}" itemValue="#{ct}" />
+                        </p:selectOneMenu> 
+                    </p:column>
+
+                    <p:column colspan="2" >
+                        Porcentaje<br/>
+                        <p:inputText id="por" value="#{editarLiquidacionPC.detallePermiso.porcentaje}"  style="width: 100%" />
+                    </p:column>
+
+                    <p:column colspan="1">
+                        Acción<br/>
+                        <p:commandButton value="Agregar" actionListener="#{editarLiquidacionPC.agregarDetalleEdif()}" style="height: 20px; color: #ffffff; background: #616161 !important; font-weight: bold;"/>
+                    </p:column>
+
+                </p:row>
+                <p:row id="rowEspEdfi">
+                    <p:column colspan="9">
+                        <p:dataTable id="dtCartEdif" value="#{editarLiquidacionPC.permisoSelect.peDetallePermisoCollection}" var="d" 
+                                     style="width: 100%;" emptyMessage="No ha cargado documento alguno" paginator="true" paginatorPosition="top" 
+                                     rows="5" rowsPerPageTemplate="5, 10, 15">
+                            <p:column headerText="Edificacion" style="text-align: center;width: 160px" >
+                                <h:outputText value="#{d.idPermisoEdificacion.descEdificacion}"/>  
+                            </p:column>
+
+                            <p:column headerText="Categoría" style="text-align: center;font-weight: bold">
+                                <p:outputLabel value="#{d.idCatEdfProp.categoria.nombre}"/>
+                            </p:column>
+
+                            <p:column headerText="Características" style="text-align: center;font-weight: bold">
+                                <p:outputLabel value="#{d.idCatEdfProp.nombre}"/>
+                            </p:column>
+
+                            <p:column headerText="Porcentaje" style="text-align: center;font-weight: bold;  width: 80px;">
+                                <p:outputLabel value="#{d.porcentaje}" >
+                                    <f:convertNumber pattern="####,##0.00"/>
+                                </p:outputLabel>
+                            </p:column>
+                            <p:column headerText="Opción" style="text-align: center;font-weight: bold;  width: 80px;">
+                                <p:commandButton value="Borrar" actionListener="#{editarLiquidacionPC.eliminarDetalleEdif(d)}" ajax="true" />
+                            </p:column>
+                        </p:dataTable>
+                    </p:column>
+                </p:row>
+
+                <p:row styleClass="ui-widget-header">
+                    <p:column colspan="3" style="text-align: center">Retiro Frontal</p:column> 
+                    <p:column colspan="4" style="text-align: center">Retiro Lateral 1</p:column> 
+                    <p:column colspan="4" style="text-align: center">Retiro Lateral 2 </p:column> 
+                    <p:column colspan="3" style="text-align: center">Retiro Posterior</p:column> 
+                    <p:column colspan="3" style="text-align: center">Registro Vista </p:column> 
+                </p:row>
+                <p:row >
+                    <p:column colspan="3">Carta/Ados 
+                        <h:selectOneRadio styleClass="noBorder" id="carados1" value="#{editarLiquidacionPC.permisoNuevo.caradosrf}" style="font-family: Arial;font-weight:lighter;font-size: 12px" >                                             
+                            <f:selectItem itemLabel="S" itemValue="S" />  
+                            <f:selectItem itemLabel="N" itemValue="N"  />  
+                        </h:selectOneRadio>
+                    </p:column> 
+                    <p:column colspan="4">Carta/Ados 
+                        <h:selectOneRadio styleClass="noBorder" id="carados2" value="#{editarLiquidacionPC.permisoNuevo.caradosrl1}" style="font-family: Arial;font-weight:lighter;font-size: 12px" >                                             
+                            <f:selectItem itemLabel="S" itemValue="S" />  
+                            <f:selectItem itemLabel="N" itemValue="N"  />  
+                        </h:selectOneRadio>
+                    </p:column> 
+                    <p:column colspan="4">Carta/Ados 
+                        <h:selectOneRadio styleClass="noBorder" id="carados3" value="#{editarLiquidacionPC.permisoNuevo.caradosrl2}" style="font-family: Arial;font-weight:lighter;font-size: 12px" >                                             
+                            <f:selectItem itemLabel="S" itemValue="S" />  
+                            <f:selectItem itemLabel="N" itemValue="N"  />  
+                        </h:selectOneRadio>
+                    </p:column>  
+                    <p:column colspan="3">Carta/Ados 
+                        <h:selectOneRadio styleClass="noBorder" id="carados4" value="#{editarLiquidacionPC.permisoNuevo.caradosrp}" style="font-family: Arial;font-weight:lighter;font-size: 12px" >                                             
+                            <f:selectItem itemLabel="S" itemValue="S" />  
+                            <f:selectItem itemLabel="N" itemValue="N"  />  
+                        </h:selectOneRadio>
+                    </p:column> 
+                    <p:column colspan="3">Registro Vista 
+                        <h:selectOneRadio styleClass="noBorder" id="carados5" value="#{editarLiquidacionPC.permisoNuevo.registroVista}" style="font-family: Arial;font-weight:lighter;font-size: 12px" onkeyup="siguiente(this, event);" >                                             
+                            <f:selectItem itemLabel="S" itemValue="S" />  
+                            <f:selectItem itemLabel="N" itemValue="N"  />  
+                        </h:selectOneRadio>
+                    </p:column> 
+                </p:row>
+                <p:row >
+                    <p:column colspan="3">Carta/Acer 
+                        <h:selectOneRadio styleClass="noBorder" id="carAcer1" value="#{editarLiquidacionPC.permisoNuevo.caracerrf}" style="font-family: Arial;font-weight:lighter;font-size: 12px" onkeyup="siguiente(this, event);" >                                             
+                            <f:selectItem itemLabel="S" itemValue="S" />  
+                            <f:selectItem itemLabel="N" itemValue="N"  />  
+                        </h:selectOneRadio>
+                    </p:column> 
+                    <p:column colspan="4">Carta/Acer 
+                        <h:selectOneRadio styleClass="noBorder" id="carAcer2" value="#{editarLiquidacionPC.permisoNuevo.caracerrl1}" style="font-family: Arial;font-weight:lighter;font-size: 12px" onkeyup="siguiente(this, event);" >                                             
+                            <f:selectItem itemLabel="S" itemValue="S" />  
+                            <f:selectItem itemLabel="N" itemValue="N"  />  
+                        </h:selectOneRadio>
+                    </p:column> 
+                    <p:column colspan="4">Carta/Acer 
+                        <h:selectOneRadio styleClass="noBorder" id="carAcer3" value="#{editarLiquidacionPC.permisoNuevo.caracerrl2}" style="font-family: Arial;font-weight:lighter;font-size: 12px" onkeyup="siguiente(this, event);" >                                             
+                            <f:selectItem itemLabel="S" itemValue="S" />  
+                            <f:selectItem itemLabel="N" itemValue="N"  />  
+                        </h:selectOneRadio>
+                    </p:column>  
+                    <p:column colspan="3">Carta/Acer 
+                        <h:selectOneRadio styleClass="noBorder" id="carAcer4" value="#{editarLiquidacionPC.permisoNuevo.caracerrp}" style="font-family: Arial;font-weight:lighter;font-size: 12px" onkeyup="siguiente(this, event);" >                                             
+                            <f:selectItem itemLabel="S" itemValue="S" />  
+                            <f:selectItem itemLabel="N" itemValue="N"  />  
+                        </h:selectOneRadio>
+                    </p:column> 
+                    <p:column colspan="3">Predio es Macro Lote
+                        <h:selectOneRadio styleClass="noBorder" id="esMacroLt" value="#{editarLiquidacionPC.permisoNuevo.esMacroLote}" style="font-family: Arial;font-weight:lighter;font-size: 12px; width: 150px" onkeyup="siguiente(this, event);" >                                             
+                            <f:selectItem itemLabel="S" itemValue="#{true}" />  
+                            <f:selectItem itemLabel="N" itemValue="#{false}"  />  
+                        </h:selectOneRadio>
+                    </p:column>
+                </p:row>
+
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="17" style="text-align: center">Materiales de Construcción </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="3">Area/Construcción<br/>
+                        <pe:inputNumber id="ac" value="#{editarLiquidacionPC.permisoNuevo.areaConstruccion}" readonly="true"/>
+                    </p:column> 
+                    <p:column colspan="3">Area/Implantación<br/>
+                        <pe:inputNumber value="#{editarLiquidacionPC.permisoNuevo.areaImplantacion}"/>
+                    </p:column> 
+                    <p:column colspan="3">Area/Solar<br/>
+                        <pe:inputNumber value="#{editarLiquidacionPC.permisoNuevo.areaSolar}"/>
+                    </p:column>  
+                    <p:column colspan="3">Linea/Fabrica<br/>
+                        <pe:inputNumber value="#{editarLiquidacionPC.permisoNuevo.lineaFabrica}"/>
+                    </p:column> 
+                    <p:column colspan="5">Observación<br/>
+                        <p:inputTextarea value="#{editarLiquidacionPC.permisoNuevo.observacion}" style="width: 80%"/>
+                    </p:column> 
+                </p:row>
+
+            </p:panelGrid>
+            <div align="center">
+                <p:commandButton id="btnGuarCamb" actionListener="#{editarLiquidacionPC.modificarPermiso()}" rendered="#{!editarLiquidacionPC.listoImpr}" value="Guardar" style="height: 30px; color: #ffffff; background: #616161 !important; font-weight: bold;"/>
+                <p:commandButton id="btnImpLiq" value="Imprimir Liquidación" rendered="#{editarLiquidacionPC.listoImpr}" actionListener="#{editarLiquidacionPC.imprimirLiquidacion()}" style="height: 30px; color: #ffffff; background: #616161 !important; font-weight: bold;"/>
+                <p:commandButton id="btnBandTar" value="Bandeja de Tareas" rendered="#{editarLiquidacionPC.listoImpr}" actionListener="#{editarLiquidacionPC.bandejaTareas()}" style="height: 30px; color: #ffffff; background: #616161 !important; font-weight: bold;"/>
+            </div>
+
+        </h:form>
+
+        <p:dialog header="Ingreso de Información Responsable Tecnico" id="nuevoDlgResp" widgetVar="dlgNuevRespTec" modal="true"  height="300" width="500"  >
+            <h:form id="formIngRespTec">
+                <p:panelGrid id="datosResp" layout="grid" columns="2">
+                    No. Cédula 
+                    <p:inputMask mask="9999999999" value="#{editarLiquidacionPC.respTecNuevo.ciRuc}" onblur=""/>
+
+                    Nombres 
+                    <p:inputText value="#{editarLiquidacionPC.respTecNuevo.nombres}"/>
+
+                    Apellidos 
+                    <p:inputText value="#{editarLiquidacionPC.respTecNuevo.apellidos}"/>
+
+                    Titulo Profesional 
+                    <p:inputText value="#{editarLiquidacionPC.respTecNuevo.tituloProf}"/>
+
+                    Registro Profesional 
+                    <p:inputText value="#{editarLiquidacionPC.respTecNuevo.regProf}"/>
+
+                </p:panelGrid>
+                <br/>
+                <p:commandButton value="Aceptar" actionListener="#{editarLiquidacionPC.guardarResTecn()}" style="float: right"/>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Editar Información Responsable Tecnico" id="editDlgResp" widgetVar="dlgEditRespTec" modal="true" height="300" width="300" >
+            <h:form>
+                <p:panelGrid id="editRespTec" layout="grid" columns="2">
+                    No. Cédula 
+                    <p:inputMask mask="9999999999" value="#{editarLiquidacionPC.respTec.ciRuc}" readonly="true"/>
+
+                    Nombres 
+                    <p:inputText value="#{editarLiquidacionPC.respTec.nombres}"/>
+
+                    Apellidos 
+                    <p:inputText value="#{editarLiquidacionPC.respTec.apellidos}"/>
+
+                    Titulo Profesional 
+                    <p:inputText value="#{editarLiquidacionPC.respTec.tituloProf}"/>
+
+                    Registro Profesional 
+                    <p:inputText value="#{editarLiquidacionPC.respTec.regProf}"/>
+
+                </p:panelGrid>
+                <br/>
+                <p:commandButton value="Aceptar" actionListener="#{editarLiquidacionPC.guardarResTecn()}" style="float: right" update="forGenLiq:resT,forGenLiq:ciIde,forGenLiq:regP"/>
+            </h:form>    
+        </p:dialog>
+
+        <p:dialog header="Agregar Propietario" id="dlgNuevPro" widgetVar="dlgNuevPro" modal="true" height="250" 
+                  width="450" resizable="false" >
+            <h:form id="formNuProp">
+                Es Perona Natural 
+                <p:selectBooleanCheckbox value="#{editarLiquidacionPC.propietarioNuevo.esPersona}" >
+                    <p:ajax update="formNuProp" />
+                </p:selectBooleanCheckbox>
+                <br/>
+                <p:panelGrid id="pngProp" layout="grid" columns="3" >
+                    <p:outputLabel value="Cédula: " rendered="#{editarLiquidacionPC.propietarioNuevo.esPersona}"/>
+                    <p:inputMask mask="9999999999" value="#{editarLiquidacionPC.propietarioNuevo.ciRuc}" rendered="#{editarLiquidacionPC.propietarioNuevo.esPersona}" />
+                    <p:outputLabel value="RUC: " rendered="#{!editarLiquidacionPC.propietarioNuevo.esPersona}"/>
+                    <p:inputMask mask="9999999999999" value="#{editarLiquidacionPC.propietarioNuevo.ciRuc}" rendered="#{!editarLiquidacionPC.propietarioNuevo.esPersona}"/>
+                    <p:commandButton actionListener="#{editarLiquidacionPC.buscarPropietario()}" icon="ui-icon-search" iconPos="s" style="height: 30px; color: #ffffff; background: #616161 !important;"/>
+
+                    <p:outputLabel value="Nombres: " />
+                    <p:inputText value="#{editarLiquidacionPC.propietarioNuevo.nombres}" style="width: 180px" rendered="#{editarLiquidacionPC.propietarioNuevo.esPersona}"/>
+                    <p:inputText value="#{editarLiquidacionPC.propietarioNuevo.razonSocial}" style="width: 180px" rendered="#{!editarLiquidacionPC.propietarioNuevo.esPersona}"/>
+                    <p:outputLabel/>
+
+                    <p:outputLabel value="Apellidos: " rendered="#{editarLiquidacionPC.propietarioNuevo.esPersona}"/>
+                    <p:inputText value="#{editarLiquidacionPC.propietarioNuevo.apellidos}" style="width: 180px" rendered="#{editarLiquidacionPC.propietarioNuevo.esPersona}"/>
+                    <p:outputLabel value="Representante Legal: " rendered="#{!editarLiquidacionPC.propietarioNuevo.esPersona}"/>
+                    <p:inputText value="#{editarLiquidacionPC.representanteLegal}" readonly="true"  rendered="#{!editarLiquidacionPC.propietarioNuevo.esPersona}"/>
+                    <p:commandButton id="busReprestL" actionListener="#{editarLiquidacionPC.seleccionarReprest()}"  rendered="#{!editarLiquidacionPC.propietarioNuevo.esPersona}" style="height: 30px;" styleClass="btnStyle" icon="ui-icon-search" />
+                </p:panelGrid>
+                <br/>
+                <p:commandButton value="Agregar" actionListener="#{editarLiquidacionPC.agregarPropietario()}" style="float: right" styleClass="btnStyle"/>
+            </h:form>    
+        </p:dialog>
+
+        <p:dialog id="dlgSelectReprest" header="Representantes" widgetVar="dlgSelectReprest" resizable="false" modal="false" position="center" closable="true" width="800">
+            <h:form id="formSelectInterv">
+                <p:dataTable id="dtIntervLazy" paginator="true" lazy="true" rows="10" rowsPerPageTemplate="10,30,50" scrollHeight="350" scrollable="true"
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             value="#{editarLiquidacionPC.enteLazy}" var="user" emptyMessage="No se encontró ningún Item">
+                    <p:column headerText="C.I./R.U.C." style="text-align: center;" filterBy="#{user.ciRuc}" filterStyle="width: 80%;" width="120">
+                        <h:outputText value="#{user.ciRuc}" style="text-align: center; font-size: 12px"/>
+                    </p:column>
+                    <p:column headerText="Nombres" style="text-align: center" filterBy="#{user.nombres}" filterStyle="width: 80%;" >
+                        <h:outputText value="#{user.nombres}"/>
+                    </p:column>
+                    <p:column headerText="Apellidos" style="text-align: center" filterBy="#{user.apellidos}" filterStyle="width: 80%;" >
+                        <h:outputText value="#{user.apellidos}"/>
+                    </p:column>   
+                    <p:column headerText="Selecc." style="text-align: center;" width="60">
+                        <p:commandButton icon="ui-icon-plusthick" style="height: 20px;" styleClass="btnStyle" actionListener="#{editarLiquidacionPC.agregarRepresentante(user)}" />                           
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Guardar" id="dlgG" widgetVar="dlgGuardar" modal="true" height="100" width="300" resizable="false" >
+            <h:form>
+                Verifique la información antes de Realizar el Guardado
+                <br/>
+                <center>
+                    <p:commandButton value="Aceptar" icon="ui-icon-check" actionListener="#{editarLiquidacionPC.modificarPermiso()}" oncomplete="PF('dlgGuardar').hide()" style="height: 30px; color: #ffffff; background: #616161 !important;"/>
+                    <p:commandButton value="Cancelar" icon="ui-icon-closethick" oncomplete="PF('dlgGuardar').hide()" style="height: 30px; color: #ffffff; background: #616161 !important;"/>
+                </center>
+            </h:form>    
+        </p:dialog>
+
+    </ui:define>
+
+</ui:composition>
+

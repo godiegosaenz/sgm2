@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="mensaje"/>
+        <cc:attribute name="actionButton" />
+        <cc:attribute name="actionButton2" />
+        <cc:attribute name="update" />
+    </cc:interface>
+
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+
+        <p:dialog widgetVar="dlgMensaje" header="Confirmación"
+                  height="120" width="350" modal="true" closeOnEscape="true"
+                  closable="true" position="center" positionType="absolute"
+                  resizable="false" responsive="true">
+
+            <h:form id="frmMensaje">
+                <br/>
+                <center>
+                    <p:outputLabel value="#{cc.attrs.mensaje}" style="font-size: 16px;"/>
+                    <p:spacer height="10"/>
+                </center>
+
+            </h:form>
+            <f:facet name="footer" >
+                <center>
+                    <p:commandButton value="Aceptar" oncomplete="PF('dlgMensaje').hide()" styleClass="btnStyle"
+                                     actionListener="#{cc.attrs.actionButton}" update="#{cc.attrs.update}"/>
+                    <p:commandButton value="Cancelar" oncomplete="PF('dlgMensaje').hide()" styleClass="btnStyle"
+                                     actionListener="#{cc.attrs.actionButton2}" update="#{cc.attrs.update}"/>
+                </center>
+            </f:facet>
+        </p:dialog>
+    </cc:implementation>
+</html>

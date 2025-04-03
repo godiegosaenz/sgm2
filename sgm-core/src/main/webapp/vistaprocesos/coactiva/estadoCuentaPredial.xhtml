@@ -1,0 +1,166 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:define name="head">
+        <script src="../../resources/pfJs/keyPress.js" type="text/javascript"></script>
+        <style type="text/css">
+            .ui-selectoneradio label{
+                font-size: 1.2em;
+                font-weight: bold;
+            }
+            .ui-selectmanycheckbox label{
+                font-size: 1.3em;
+                font-weight: bold;
+            }
+        </style>
+    </ui:define>
+    <ui:define name="top"><h3>Estado de Cuenta</h3></ui:define>
+    <ui:define name="content">
+        <center>
+            <h1>Estado de Cuenta</h1>
+        </center>
+        <h:form id="mainForm">
+            <p:commandButton value="PROCESAR" actionListener="#{procesarLiquidaciones.generarReporte(3)}" style="float: right; font-size: 15px; font-weight: bolder;" styleClass="btnStyle" icon="ui-icon-print"/>
+            <p:selectOneRadio value="#{procesarLiquidaciones.tipoConsultaUrbano}">
+                <f:selectItem itemLabel="MATRICULA INMOBILIARIA" itemValue="1" />
+                <f:selectItem itemLabel="CONTRIBUYENTE" itemValue="2" />
+                <f:selectItem itemLabel="CODIGO PREDIAL" itemValue="3" />
+                <f:selectItem itemLabel="CODIGO ANTERIOR" itemValue="5" />
+                <p:ajax update="consulta"/>
+            </p:selectOneRadio>
+
+            <p:panel id="consulta">
+                <p:inputText value="#{procesarLiquidaciones.predioModel.numPredio}" style="font-size: 13px; font-weight: bolder;" rendered="#{procesarLiquidaciones.tipoConsultaUrbano eq 1}"/>
+
+                <p:outputLabel value="C.I./R.U.C.: " style="font-size: 13px; font-weight: bolder; width: 140px;" rendered="#{procesarLiquidaciones.tipoConsultaUrbano eq 2}"/>
+                <p:outputLabel value="CONTRIBUYENTE: " style="font-size: 13px; font-weight: bolder;" rendered="#{procesarLiquidaciones.tipoConsultaUrbano eq 2}"/>
+                <br/>
+                <p:inputText value="#{procesarLiquidaciones.contribuyenteConsulta.ciRuc}" style="font-size: 13px; font-weight: bolder;" size="15" readonly="true" rendered="#{procesarLiquidaciones.tipoConsultaUrbano eq 2}"/>
+                <p:spacer width="10"/>
+                <p:inputText value="#{procesarLiquidaciones.contribuyenteConsulta.apellidos} #{procesarLiquidaciones.contribuyenteConsulta.nombres} #{procesarLiquidaciones.contribuyenteConsulta.razonSocial}" style="font-size: 13px; font-weight: bolder;" readonly="true" size="50" rendered="#{procesarLiquidaciones.tipoConsultaUrbano eq 2}"/>
+                <p:spacer width="10"/>
+                <p:commandButton id="btnCambiarBuscar" value="Buscar/Cambiar" style="height: 30px" onclick="PF('dlgSolicitante').show()" update=":frmSolicitante" rendered="#{procesarLiquidaciones.tipoConsultaUrbano eq 2}"/>
+
+                <p:panelGrid style="width: 100%;" rendered="#{procesarLiquidaciones.tipoConsultaUrbano eq 3}">
+                    <p:row>
+                        <p:column><p:outputLabel value="SECTOR" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="MZ" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="CDLA " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="MZ-DIV " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="SOLAR " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="DIV1 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="DIV2 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="DIV3 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="DIV4 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="DIV5 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="DIV6 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="DIV7 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="DIV8 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="DIV9 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="PHV " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="PHH " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column><p:inputText value="#{procesarLiquidaciones.predioModel.sector}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{procesarLiquidaciones.predioModel.mz}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{procesarLiquidaciones.predioModel.cdla}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{procesarLiquidaciones.predioModel.mzDiv}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{procesarLiquidaciones.predioModel.solar}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{procesarLiquidaciones.predioModel.div1}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{procesarLiquidaciones.predioModel.div2}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{procesarLiquidaciones.predioModel.div3}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{procesarLiquidaciones.predioModel.div4}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{procesarLiquidaciones.predioModel.div5}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{procesarLiquidaciones.predioModel.div6}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{procesarLiquidaciones.predioModel.div7}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{procesarLiquidaciones.predioModel.div8}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{procesarLiquidaciones.predioModel.div9}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{procesarLiquidaciones.predioModel.phv}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{procesarLiquidaciones.predioModel.phh}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                    </p:row>
+                </p:panelGrid>
+
+                <p:panelGrid styleClass="noBorder" rendered="#{procesarLiquidaciones.tipoConsultaUrbano eq 4}">
+                    <p:row>
+                        <p:column><p:outputLabel value="URBANIZACION" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="MANZANA" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="SOLAR" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:selectOneMenu  value="#{procesarLiquidaciones.predioModel.ciudadela}" effect="fade" converter="entityConverter"  style="width:300px;">
+                                <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+                                <f:selectItems value="#{procesarLiquidaciones.ciudadelas}" var="c" itemLabel="#{c.nombre}" itemValue="#{c}"/>  
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column><p:inputText value="#{procesarLiquidaciones.predioModel.mzUrb}"/></p:column>
+                        <p:column><p:inputText value="#{procesarLiquidaciones.predioModel.slUrb}"/></p:column>
+                    </p:row>
+                </p:panelGrid>
+
+                <p:panelGrid styleClass="noBorder" rendered="#{procesarLiquidaciones.tipoConsultaUrbano eq 5}">
+                    <p:row>
+                        <p:column><p:outputLabel value="ZONA" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="SECTOR" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="MZ" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="SOLAR" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="DIV" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="PISO" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="LOCAL" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column><p:inputText value="#{procesarLiquidaciones.predioModel.codAnt1}" size="10" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{procesarLiquidaciones.predioModel.codAnt2}" size="10" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{procesarLiquidaciones.predioModel.codAnt3}" size="10" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{procesarLiquidaciones.predioModel.codAnt5}" size="10" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{procesarLiquidaciones.predioModel.codAnt6}" size="10" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{procesarLiquidaciones.predioModel.codAnt7}" size="10" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{procesarLiquidaciones.predioModel.codAnt8}" size="10" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <br/>
+                <center>
+                    <p:commandButton value="CONSULTAR" actionListener="#{procesarLiquidaciones.consultarPredioUrbano()}" update="prediosUrbanos" style="font-size: 15px; font-weight: bolder;" styleClass="btnStyle" icon="ui-icon-search" iconPos="right"/>
+                </center>
+            </p:panel>
+            <br/>
+            <p:dataTable id="prediosUrbanos" value="#{procesarLiquidaciones.prediosUrbanos}" var="urbano" rowKey="#{urbano.id}"  scrollHeight="350" lazy="true" reflow="true" rows="20" paginator="true" emptyMessage=""
+                         rowsPerPageTemplate="20,50,100" paginatorPosition="top" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                <p:column headerText="Matricula Inmobiliaria" width="100"><p:outputLabel value="#{urbano.numPredio}"/></p:column>
+                <p:column headerText="Cod. Catastral"><p:outputLabel value="#{urbano.codigoPredialCompleto}"/></p:column>
+                <p:column headerText="Dirección"><p:outputLabel value="#{urbano.ciudadela.nombre}-#{urbano.urbMz}/#{urbano.urbSolarnew}"/></p:column>
+                <p:column headerText="Propietario"><p:outputLabel value="#{urbano.nombrePropietarios}"/></p:column>
+                <p:column headerText="Eliminar" style="text-align: center;" width="100"><p:commandLink update="prediosUrbanos" actionListener="#{procesarLiquidaciones.eliminarPredioUrbano(urbano)}"><p:graphicImage value="/css/homeIconsImages/delete.png" height="16"/></p:commandLink></p:column>
+            </p:dataTable>
+        </h:form>
+        
+        <p:dialog id="dlgSolicitante" widgetVar="dlgSolicitante" header="Listado de contribuyentes" appendTo="@(body)" width="70%" responsive="true" closable="true" closeOnEscape="true" modal="true" position="center">
+            <h:form id="frmSolicitante">
+                <p:dataTable id="dtSolicitante" value="#{procesarLiquidaciones.contribuyentes}" var="s" selection="#{procesarLiquidaciones.contribuyenteConsulta}" rowKey="#{s.id}" style="width: 100%" lazy="true" reflow="true" paginator="true" rows="10" selectionMode="single" filterEvent="enter" paginatorPosition="top">
+                    <f:facet name="header">Seleccione Contribuyente</f:facet>
+                    <p:column headerText="No. Identificacion" sortBy="#{s.ciRuc}" filterBy="#{s.ciRuc}" filterMatchMode="contains" filterStyle="width: 95%;">
+                        <h:outputText value="#{s.ciRuc}"/>
+                    </p:column>
+                    <p:column headerText="Apellidos" filterBy="#{s.apellidos}" sortBy="#{s.apellidos}" filterMatchMode="contains" filterStyle="width: 95%;">
+                        <h:outputText value="#{s.apellidos}" style="text-transform: uppercase"/>
+                    </p:column>
+                    <p:column headerText="Nombres" filterBy="#{s.nombres}" sortBy="#{s.nombres}" filterMatchMode="contains" filterStyle="width: 95%;">
+                        <h:outputText value="#{s.nombres}" style="text-transform: uppercase"/>
+                    </p:column>
+                    <p:column headerText="Razon Social" filterBy="#{s.razonSocial}" sortBy="#{s.razonSocial}"  filterMatchMode="contains" filterStyle="width: 95%;">
+                        <h:outputText value="#{s.razonSocial}" style="text-transform: uppercase"/>
+                    </p:column>
+                    <f:facet name="footer">
+                        <p:commandButton id="btnSeleccionar" value="Seleccionar" update="mainForm:consulta" style="height: 30px" oncomplete="PF('dlgSolicitante').hide()"/>
+                    </f:facet>
+                </p:dataTable>         
+            </h:form>
+        </p:dialog>
+        
+    </ui:define>
+</ui:composition>

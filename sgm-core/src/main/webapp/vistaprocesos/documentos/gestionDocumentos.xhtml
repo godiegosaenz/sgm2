@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:define name="metadata">
+        <f:metadata>
+
+        </f:metadata>
+    </ui:define>
+    
+    <ui:define name="content">
+        <center>
+        <h1>Gestión de documentos</h1>
+    </center>
+        <h:form id="frmMain">
+            <p:panel id="pDocumentos" header="Consulta de tramites" style="width: 99%" >
+                <center>
+                    <p:messages autoUpdate="true" showDetail="true"/>
+                    <p:panelGrid id="pnlDP2" style="width: 50%; " columns="2" layout="grid">
+                        <h:outputText value="Numero de tramite :" style="font-weight: bolder"/>
+                        <p:inputText required="true" id="tramite" style="width: 200px;"  value="#{gestionDocumentos.numTramite}" placeholder="Número de tramite" type="number"/>
+                    </p:panelGrid>
+                    <br/>
+                    <p:commandButton id="btnBuscar" value="Buscar" style="height: 30px; width: 100px" styleClass="btnStyle" icon="ui-icon-search" actionListener="#{gestionDocumentos.buscar()}" update="frmMain"/>
+                    <br/>
+                    <br/>
+                    <p:panelGrid id="pgTramite" style="width: 50%;" columns="2" layout="grid" rendered="#{gestionDocumentos.existe}">
+                        <f:facet name="header">
+                            Datos del tramite
+                        </f:facet>
+                        <h:outputText value="Numero de tramite :" style="font-weight: bolder"/>
+                        <h:outputText value="#{gestionDocumentos.tramite.id}"/>
+                        <h:outputText value="Nombre :" style="font-weight: bolder"/>
+                        <h:outputText value="#{gestionDocumentos.tramite.tipoTramite.descripcion}"/>
+                        <h:outputText value="Numero de Solicitante :" style="font-weight: bolder"/>
+                        <h:outputText value="#{gestionDocumentos.tramite.solicitante.nombres} #{gestionDocumentos.tramite.solicitante.apellidos}" rendered="#{gestionDocumentos.tramite.solicitante.esPersona}" style="text-transform: uppercase"/>
+                        <h:outputText value="#{gestionDocumentos.tramite.solicitante.razonSocial}" rendered="#{!gestionDocumentos.tramite.solicitante.esPersona}" style="text-transform: uppercase"/>                        
+                    </p:panelGrid>
+                    <br/>
+                    <p:tabView id="tvTramite" scrollable="true" rendered="#{gestionDocumentos.existe}" style="width: 60%">
+                        <p:tab id="tDocs" title="Documentos y anexos">
+                            <p:fileUpload  fileUploadListener="#{gestionDocumentos.handleFileUpload}"
+                                           multiple="true"
+                                           mode="advanced"
+                                           fileLimit="6"
+                                           label="Seleccionar"
+                                           cancelLabel="Cancelar"
+                                           uploadLabel="Subir"
+                                           skinSimple="true"
+                                           update="dtDocumentos"
+                                           sizeLimit="50000000" 
+                                           allowTypes="/(\.|\/)(gif|jpe?g|png|pdf|doc?x|xls?x|dwg|odt)$/"/>
+                            <p:dataTable id="dtDocumentos" value="#{gestionDocumentos.files}"
+                                         var="req" reflow="true"  emptyMessage="No adjunto ningun documento">
+                                <p:column headerText="Documentos" style="width: 75%;">
+                                    <h:outputText value="#{req.nombre}" style="text-transform: uppercase;"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:tab>
+                        <p:tab id="tObservaciones" title="Observaciones">
+                            <p:dataTable id="dtObservaciones" value="#{gestionDocumentos.tramite.observacionesCollection}" var="ob" reflow="true" paginator="true" rows="10">
+                                <p:column headerText="Nombre de la Tarea" width="90">
+                                    <p:outputLabel value="#{ob.tarea}"/>
+                                </p:column>
+                                <p:column headerText="Observación" width="100">
+                                    <p:outputLabel value="#{ob.observacion}" />
+                                </p:column>
+                                <p:column headerText="Autor" width="80">
+                                    <p:outputLabel value="#{ob.userCre}"/>
+                                </p:column>
+                                <p:column headerText="Fecha" width="90">
+                                    <p:outputLabel value="#{ob.fecCre}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"    />
+                                    </p:outputLabel>
+                                </p:column>
+                            </p:dataTable>
+                        </p:tab>
+                    </p:tabView>
+                </center>
+                <f:facet name="footer">
+                    <div align="center">
+                        <p:commandButton id="btnGuardar" value="Guardar" style="height: 30px; width: 100px" styleClass="btnStyle" icon="ui-icon-disk" actionListener="#{gestionDocumentos.cargarDocumento()}" update="frmMain" rendered="#{gestionDocumentos.existe}"/>
+                    </div>
+                </f:facet>
+            </p:panel>
+            <br/>
+            <div align="center">
+                <p:commandButton id="btnSalir" value="Salir" style="height: 30px; width: 100px" styleClass="btnStyle" icon="ui-icon-close" actionListener="#{gestionDocumentos.continuar()}"/>
+            </div>
+            <br/>
+        </h:form>
+    </ui:define>
+</ui:composition>

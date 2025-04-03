@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:poue="http://primefaces.org/ui/extensions">
+    <f:metadata >
+        <f:event type="preRenderView" listener="#{propietarios.initView()}"/>
+    </f:metadata>
+    <h:head>
+        <title>Propietarios</title>
+        <style type="text/css">
+            .ui-widget {
+                font-size: 80%;
+            }
+            .ui-column-title{
+                font-size: 11px;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <h:form id="frmPropietarios">
+            <p:panel id="pPropietarios" header="Elija un(os) propietario(s) del listado" style="width: 100%">
+                <p:dataTable id="dtPropietarios" value="#{propietarios.propietarios}" var="p" lazy="true" reflow="true" paginator="true"
+                             selection="#{propietarios.seleccionados}" rowKey="#{p.id}"
+                             rows="10" paginatorPosition="top" rowsPerPageTemplate="10,15,20">
+                    <p:column selectionMode="multiple" style="width: 5%; text-align: center"/>
+                    <p:column headerText="No. Predio" style="width: 10%" filterBy="#{p.predio.numPredio}" filterMatchMode="equals">
+                        <h:outputText value="#{p.predio.numPredio}"/>
+                    </p:column>
+                    <p:column headerText="Identificacion" style="width: 20%" filterBy="#{p.ente.ciRuc}" filterMatchMode="contains">
+                        <h:outputText value="#{p.ente.ciRuc}"/>
+                    </p:column>
+                    <p:column headerText="Nombres" style="width: 22%" filterBy="#{p.ente.nombres}" filterMatchMode="contains">
+                        <h:outputText value="#{p.ente.nombres}"/>
+                    </p:column>
+                    <p:column headerText="Apellidos" style="width: 22%" filterBy="#{p.ente.apellidos}" filterMatchMode="contains">
+                        <h:outputText value="#{p.ente.apellidos}"/>
+                    </p:column>
+                    <p:column headerText="Razon Social" style="width: 25%" filterBy="#{p.ente.razonSocial}" filterMatchMode="contains">
+                        <h:outputText value="#{p.ente.razonSocial}"/>
+                    </p:column>
+                    <f:facet name="footer">
+                        <div align="center">
+                            <p:commandButton id="btnSeleccionar" value="Seleccionar" icon="ui-icon-check" actionListener="#{propietarios.selecPropietarios()}"/>
+                        </div>
+                    </f:facet>
+                </p:dataTable>
+            </p:panel>
+        </h:form>
+    </h:body>
+</html>

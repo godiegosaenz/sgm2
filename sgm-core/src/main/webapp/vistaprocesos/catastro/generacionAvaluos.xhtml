@@ -1,0 +1,729 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:dlg="http://xmlns.jcp.org/jsf/composite/dialog">
+
+    <ui:define name="content">
+        <center>
+            <h1>Generación de Avalúos Prediales</h1>
+        </center>
+        <h:form id="frmAvaluo">
+            <p:accordionPanel activeIndex="-1" id="accPAvaluo" >
+                <p:tab title="Coeficientes de Valorización" >
+                    <p:tabView id="tvAvaluo">
+                        <p:tab title="Valor de Metro Cuadrado" titleStyle="font-weight: bolder">
+                            <h:panelGroup >
+                                <h:panelGroup  id="pnlMzSelec" layout="block" class="Container Wid100 MarTop20">
+                                    <p:fieldset legend="Avaluó de Manzana " toggleable="false" toggleSpeed="500" style="margin-bottom: 10px;">
+                                        <br></br>
+                                        <h:outputText  value="* Recuerda escribir 0 en el Lote si todos los Solares en la Manzana seleccionada tienen el mismo valor de metro cuadrado, caso contrario escribir el numero del lote a ser Avaluado." style="font-weight: bolder"/>
+                                        <br></br><br></br>
+                                        <div align="center">
+                                            <p:panelGrid style="margin-top:5px">
+
+
+                                                <f:facet name="header">
+                                                    <p:row>
+                                                        <p:column>Parroquia :   </p:column>
+                                                        <p:column>Zona :        </p:column>
+                                                        <p:column>Sector :      </p:column>
+                                                        <p:column>Mz. :         </p:column>
+                                                        <p:column>Lote :         </p:column>
+                                                    </p:row>
+                                                </f:facet>
+                                                <p:row>
+
+                                                    <p:column><p:inputText id="parrq" placeholder="Parroquia" value="#{generacionAvaluo.categoriaValorSueloSeleccionado.parroquia}" readonly="true"  style="text-align: center; width: 89%" maxlength="2"/></p:column>
+                                                    <p:column><p:inputText id="zona" placeholder="Zona"   value="#{generacionAvaluo.categoriaValorSueloSeleccionado.zona}" readonly="true" style="text-align: center; width: 89%" maxlength="2"/></p:column>
+                                                    <p:column><p:inputText id="sect" placeholder="Sector"  value="#{generacionAvaluo.categoriaValorSueloSeleccionado.sector}" readonly="true" style="text-align: center; width: 89%" maxlength="2"/></p:column>
+                                                    <p:column><p:inputText id="mz" placeholder="Manzana"  value="#{generacionAvaluo.categoriaValorSueloSeleccionado.mz}" readonly="true" style="text-align: center; width: 89%" maxlength="3"/></p:column>
+                                                    <p:column><p:inputText id="solar" placeholder="Solar"  value="#{generacionAvaluo.categoriaValorSueloSeleccionado.solar}" style="text-align: center; width: 89%" maxlength="3"/></p:column>
+                                                </p:row>
+
+                                            </p:panelGrid>
+                                        </div>
+                                    </p:fieldset>
+                                    <p:fieldset legend="Valor de M2" toggleable="true" toggleSpeed="500" style="margin-bottom: 10px;">
+                                        <div align="center">
+                                            <p:panelGrid style="margin-top:5px">
+
+
+                                                <f:facet name="header">
+                                                    <p:row>
+                                                        <p:column>Año Inicio :         </p:column>
+                                                        <p:column>Año Fin:         </p:column>
+                                                        <p:column>Valor de M2 :         </p:column>
+                                                    </p:row>
+                                                </f:facet>
+                                                <p:row>
+                                                    <p:column>
+                                                        <p:inputText value="#{generacionAvaluo.categoriaValorSueloSeleccionado.anioFin}" 
+                                                                     onkeypress="validateIntegerValueAndFocusNext(event, '')" 
+                                                                     style="text-align: center; width: 89%" maxlength="4" rendered="#{generacionAvaluo.categoriaValorSueloSeleccionado.anioInicio ne null}"/>
+                                                        <p:inputText value="#{generacionAvaluo.anioInicioValorSuelo}" 
+                                                                     onkeypress="validateIntegerValueAndFocusNext(event, '')" 
+                                                                     style="text-align: center; width: 89%" maxlength="4" rendered="#{generacionAvaluo.categoriaValorSueloSeleccionado.anioInicio eq null}"/>
+                                                    </p:column>     
+                                                    <p:column>
+                                                        <p:inputText value="#{generacionAvaluo.categoriaValorSueloSeleccionado.anioFin}" 
+                                                                     onkeypress="validateIntegerValueAndFocusNext(event, '')" 
+                                                                     style="text-align: center; width: 89%" maxlength="4" rendered="#{generacionAvaluo.categoriaValorSueloSeleccionado.anioFin ne null}"/>
+                                                        <p:inputText value="#{generacionAvaluo.anioFinValorSuelo}" 
+                                                                     onkeypress="validateIntegerValueAndFocusNext(event, '')" 
+                                                                     style="text-align: center; width: 89%" maxlength="4" rendered="#{generacionAvaluo.categoriaValorSueloSeleccionado.anioFin eq null}"/>
+
+                                                    </p:column>                       
+                                                    <p:column>
+                                                        <!--<pe:inputNumber onkeypress="validateIntegerValueAndFocusNext(event, '')" id="valor"   value="#{generacionAvaluo.valorM2}" rendered="#{generacionAvaluo.categoriaValorSueloSeleccionado.valorM2 eq null}" style="text-align: center; width: 89%" maxlength="2"/>-->
+                                                        <pe:inputNumber onkeypress="validateIntegerValueAndFocusNext(event, '')"    value="#{generacionAvaluo.categoriaValorSueloSeleccionado.valorM2}"   style="text-align: center; width: 89%" maxlength="4"/></p:column>
+                                                </p:row>
+
+                                            </p:panelGrid>
+                                        </div>
+                                    </p:fieldset>
+                                </h:panelGroup>
+                                <div>
+                                    <center>
+                                        <p:commandButton value="Grabar" actionListener="#{generacionAvaluo.saveValorMetroCuadrado()}" update=":frmAvaluo:accPAvaluo:tvAvaluo :frmAvaluo:accPAvaluo:tvAvaluo:dtValorM2" process=":frmAvaluo:accPAvaluo:tvAvaluo:pnlMzSelec"/>
+                                    </center>
+
+                                </div>
+                                <h:panelGroup layout="block" class="Container Wid100 MarTop10">
+                                    <h:panelGroup layout="block" class="Container50">
+                                        <p:dataTable id="prediosManzanasList" var="p" value="#{generacionAvaluo.prediosXManzana}"
+                                                     rowKey="#{p.id}" selection="#{generacionAvaluo.predioSeleccionado}" selectionMode="single" 
+                                                     paginator="true"   rowSelectMode="single"
+                                                     emptyMessage="No se encontro ningun predio" rows="20" rowsPerPageTemplate="20,50,100" filterEvent="enter">
+                                            <p:ajax event="rowSelect" listener="#{generacionAvaluo.onRowSelect}" update="frmAvaluo:accPAvaluo:tvAvaluo:pnlMzSelec prediosManzanasList" rendered="frmAvaluo:accPAvaluo:tvAvaluo:pnlMzSelec prediosManzanasList"/>
+                                            <p:ajax event="rowUnselect" listener="#{generacionAvaluo.onRowUnselect}" update=":frmAvaluo:accPAvaluo:tvAvaluo:pnlMzSelec prediosManzanasList"  />
+                                            <p:ajax event="filter" update="prediosManzanasList" />
+                                            <f:facet name="header">
+                                                Listado de Parroquias, Zonas, Sector y Mz. Existentes
+                                            </f:facet>
+                                            <p:column headerText="Parroquia" filterBy="#{p.parroquia}" filterStyle="width: 45%" filterMatchMode="contains" style="text-align: center" >
+                                                <h:outputText value="#{p.parroquia}" />
+                                            </p:column>
+                                            <p:column headerText="Zona" filterBy="#{p.zona}" filterStyle="width: 45%" filterMatchMode="contains" style="text-align: center" >
+                                                <h:outputText value="#{p.zona}" />
+                                            </p:column>
+                                            <p:column headerText="Sector" filterBy="#{p.sector}" filterStyle="width: 45%" filterMatchMode="contains"  style="text-align: center" >
+                                                <h:outputText value="#{p.sector}" />
+                                            </p:column>
+                                            <p:column headerText="Manzana" filterBy="#{p.mz}" filterStyle="width: 45%" filterMatchMode="contains"  style="text-align: center" >
+                                                <h:outputText value="#{p.mz}" />
+                                            </p:column>
+                                            <p:column headerText="# de Solares"  style="text-align: center" >
+                                                <h:outputText value="#{p.cantidadsolar}" />
+                                            </p:column>
+                                        </p:dataTable>
+                                    </h:panelGroup>
+
+                                    <h:panelGroup layout="block" class="Container50"  id="caracSolarList">
+                                        <p:dataTable id="dtValorM2" var="pt" value="#{generacionAvaluo.valorM2ParroquiaList}"
+                                                     rowKey="#{pt.id}" selection="#{generacionAvaluo.categoriaValorSueloSeleccionado}" selectionMode="single" 
+                                                     paginator="true"   rowSelectMode="single"
+                                                     emptyMessage="No se encontro ningun predio" rows="20" rowsPerPageTemplate="20,50,100" filterEvent="enter">
+                                            <p:ajax event="rowSelect" listener="#{generacionAvaluo.onRowSelect}" update="frmAvaluo:accPAvaluo:tvAvaluo:pnlMzSelec dtValorM2" rendered="frmAvaluo:accPAvaluo:tvAvaluo:pnlMzSelec dtValorM2"/>
+                                            <p:ajax event="rowUnselect" listener="#{generacionAvaluo.onRowUnselect}" update=":frmAvaluo:accPAvaluo:tvAvaluo:pnlMzSelec dtValorM2"  />
+                                            <p:ajax event="filter" update="dtValorM2" />
+                                            <f:facet name="header">
+                                                Datos Ingresados
+                                            </f:facet>
+                                            <p:column headerText="Parroquia" style="text-align: center; width: 6%" filterStyle="width: 45%"  filterBy="#{pt.parroquia}"  filterMatchMode="contains" >
+                                                <h:outputText value="#{pt.parroquia}"  />
+                                            </p:column>
+                                            <p:column headerText="Zona"  filterBy="#{pt.zona}" filterStyle="width: 45%"  filterMatchMode="contains" style="text-align: center; width: 3%" >
+                                                <h:outputText value="#{pt.zona}"/>
+                                            </p:column>
+                                            <p:column headerText="Sector"  filterBy="#{pt.sector}" filterStyle="width: 45%"   filterMatchMode="contains" style="text-align: center; width:4%" >
+                                                <h:outputText value="#{pt.sector}"/>
+                                            </p:column>
+                                            <p:column headerText="Manzana" filterBy="#{pt.mz}" filterStyle="width: 45%"  filterMatchMode="contains" style="text-align: center; width: 3%" >
+                                                <h:outputText value="#{pt.mz}"/>
+                                            </p:column>
+                                            <p:column headerText="Lote" style="text-align: center; width: 3%">
+                                                <h:outputText value="#{pt.solar}"/>
+                                            </p:column>
+                                            <p:column headerText="Valor M2" style="text-align: center; width: 3%">
+                                                <h:outputText value="#{pt.valorM2}"><f:convertNumber pattern="##############.##" locale="us"/></h:outputText>
+                                            </p:column>
+                                            <p:column headerText="Año" style="text-align: center; width: 3%">
+                                                <h:outputText value="#{pt.anioInicio}"></h:outputText>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </h:panelGroup>
+                                </h:panelGroup>
+
+                            </h:panelGroup>
+                        </p:tab>
+                        <p:tab title="Depreciación" titleStyle="font-weight: bolder" id="tbDeprec">
+                            <p:fieldset legend="Zonas" toggleable="true" toggleSpeed="500" style="margin-bottom: 10px;" >
+                                <div align="center" ><center>
+                                        <p:dataTable id="edadesXZona" var="p" value="#{generacionAvaluo.edadesXZona}"
+                                                     emptyMessage="No se encontro ningun predio" rows="20" rowsPerPageTemplate="20,50,100"
+                                                     editable="true" editMode="cell">
+                                            <f:facet name="header">
+                                                Listado de Edades de las Zonas 
+                                            </f:facet>
+                                            <p:column headerText="PARROQUIA"  style="text-align: center" >
+                                                <h:outputText value="#{p.parroquia}" />
+                                            </p:column>
+                                            <p:column headerText="ZONA"  style="text-align: center" >
+                                                <h:outputText value="#{p.zona}" />
+                                            </p:column>
+                                            <p:column headerText="Edad en Años" style="text-align: center" >
+                                                <p:cellEditor>
+                                                    <f:facet name="output"><h:outputText  value="#{p.edad}" /></f:facet>
+                                                    <f:facet name="input"><p:inputText 
+                                                            onkeypress="validateIntegerValueAndFocusNext(event, '')" 
+                                                            value="#{p.edad}" style="width: 30%; text-align: center" /></f:facet>
+                                                </p:cellEditor>
+                                            </p:column>
+                                        </p:dataTable>
+                                        <br></br>
+                                        <div>
+                                            <center>
+                                                <p:commandButton value="Grabar" actionListener="#{generacionAvaluo.saveAvaluoEdadesXZonas()}" update=":frmAvaluo:accPAvaluo:tvAvaluo" process=":frmAvaluo:accPAvaluo:tvAvaluo"/>
+                                            </center>
+
+                                        </div>
+                                    </center>
+                                </div>
+
+                            </p:fieldset>
+                            <p:fieldset legend="Depreciación" toggleable="true" toggleSpeed="500" style="margin-bottom: 10px;">
+                                <div align="center" ><center>
+                                        <p:dataTable id="tbDepreciacion" var="d" value="#{generacionAvaluo.depreciacionList}"
+                                                     emptyMessage="No se encontró ningun dato" 
+                                                     paginator="true"  rows="20" rowsPerPageTemplate="20,50,100"
+                                                     editable="true" editMode="cell" >
+                                            <f:facet name="header">
+                                                Tabla de Depreciación  
+                                            </f:facet>
+                                            <p:column headerText="Factor Condicionante"  style="text-align: center" >
+                                                <h:outputText value="#{d.espec.nombre}" />
+                                            </p:column>
+                                            <p:column headerText="Año de Construcción"  style="text-align: center" >
+                                                <h:outputText value="#{d.anios}" />
+                                            </p:column>
+                                            <p:column headerText="Regular" style="text-align: center" >
+                                                <h:outputText  value="#{d.regular}" />
+
+                                            </p:column>
+                                            <p:column headerText="Bueno" style="text-align: center" >
+
+                                                <h:outputText  value="#{d.bueno}" />
+
+                                            </p:column>
+                                            <p:column headerText="Malo" style="text-align: center" >
+                                                <!--                                                <p:cellEditor>
+                                                                                                    <f:facet name="output"><h:outputText  value="# {d.malo}" /></f:facet>
+                                                                                                    <f:facet name="input"><pe:inputNumber
+                                                                                                            value="# {d.malo}" style="width: 30%; text-align: center" /></f:facet>
+                                                                                                </p:cellEditor>-->
+                                                <h:outputText  value="#{d.malo}" />
+                                            </p:column>
+
+                                        </p:dataTable>
+                                        <br></br>
+                                        <div>
+                                            <!--                                            <center>
+                                                                                            <p:commandButton value="Grabar" actionListener="#{generacionAvaluo.saveAvaluoEdadesXZonas()}" update="frmAvaluo" process=":frmAvaluo:accPAvaluo:tvAvaluo:pnlMzSelec"/>
+                                                                                        </center>-->
+
+                                        </div>
+                                    </center>
+                                </div>
+
+                            </p:fieldset>
+                        </p:tab>
+                        <p:tab title="Coeficientes del Solar"  >
+                            <h:panelGroup layout="block" id="tbcoefSolar">
+                                <h:panelGroup layout="block">
+                                    <p:panelGrid columns="6" layout="grid" style="width: 100%">
+                                        <h:outputText value="CARACTERISTICAS DEL SOLAR: " style="text-align: center; font-weight: bolder"/>
+                                        <p:outputLabel value="" style="text-align: center"/>
+                                        <p:outputLabel value="" style="text-align: center"/>
+                                        <p:outputLabel value="" style="text-align: center"/>
+                                        <p:outputLabel value="" style="text-align: center"/>
+                                        <p:outputLabel value="" style="text-align: center"/>
+                                        <p:outputLabel value="Categoria: " style="text-align: center"/>
+                                        <p:selectOneMenu  value="#{generacionAvaluo.itemSolar}" style="width: 50%" converter="entityConverter">
+                                            <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                                            <f:selectItems value="#{generacionAvaluo.getListadoAvaluo('predio.avaluo')}" var="econst" itemLabel="#{econst.valor}" itemValue="#{econst}"/>
+                                            <!--<p:ajax update="coeficientesList" />-->
+                                        </p:selectOneMenu>
+                                        <p:outputLabel value="Desde: " style="text-align: center"/> 
+                                        <p:inputText onkeypress="validateIntegerValueAndFocusNext(event, '')" value="#{generacionAvaluo.anioCoeficientesSolarInicio}" style="text-align: center; width: 89%"  maxlength="4"/>
+                                        <p:outputLabel value="Hasta: " style="text-align: center"/> 
+                                        <p:inputText onkeypress="validateIntegerValueAndFocusNext(event, '')" value="#{generacionAvaluo.anioCoeficientesSolarFin}" style="text-align: center; width: 89%"  maxlength="4"/>
+                                    </p:panelGrid>
+                                    <br></br>
+                                    <div align="center">
+                                        <p:commandButton value="Seleccionar" actionListener="#{generacionAvaluo.addDataToAvalCoeficientesSueloolar()}" update=":frmAvaluo:accPAvaluo:tvAvaluo:coeficientesList" process=":frmAvaluo:accPAvaluo:tvAvaluo:tbcoefSolar"/>
+                                        <br></br><br></br>
+
+                                    </div>
+
+                                    <div align="center">
+                                        <p:dataTable id="coeficientesList" var="a" value="#{generacionAvaluo.coeficientesFactoriales}"
+                                                     emptyMessage="No se encontro coeficiente" style="width: 90%">
+                                            <f:facet name="header">
+                                                Coeficientes
+                                            </f:facet>
+                                            <p:columnGroup type="header">
+                                                <p:row>
+                                                    <p:column rowspan="3" headerText="Factor Condicionante" />
+                                                    <p:column rowspan="3" headerText="Valor de Coeficiente" />
+                                                </p:row>
+
+<!--                                                <p:row  rendered="#{!appConfig.mainConfig.fichaPredial.libertad}">
+                                                    <p:column colspan="2" headerText="Rango Factorial" />
+                                                </p:row>
+                                                <p:row rendered="#{!appConfig.mainConfig.fichaPredial.libertad}">
+                                                    <p:column headerText="Inferior" />
+                                                    <p:column headerText="Superior" />
+                                                </p:row>-->
+                                            </p:columnGroup>
+                                            <p:column id="valor"  style="text-align: center;" >
+                                                <h:outputText value="#{a.categoriaSolar.valor}" />
+                                            </p:column>
+                                            <p:column id="coefPadre"  style="text-align: center" >
+                                                <pe:inputNumber
+                                                    value="#{a.valorCoeficiente}" style="text-align: center; width: 29%" 
+                                                    minValue="0" decimalPlaces="3" maxlength="4"/>
+                                            </p:column>
+<!--                                            <p:column id="coefInferior"  style="text-align: center" rendered="#{!appConfig.mainConfig.fichaPredial.libertad}">
+                                                <pe:inputNumber
+                                                    value="#{a.valorCoefInferior}" style="text-align: center; width: 29%" 
+                                                    minValue="0" decimalPlaces="3" maxlength="4"/>
+                                            </p:column>
+                                            <p:column id="coefSuperior"  style="text-align: center" rendered="#{!appConfig.mainConfig.fichaPredial.libertad}">
+                                                <pe:inputNumber value="#{a.valorCoefSuperior}" style="text-align: center; width: 29%"
+                                                                minValue="0" decimalPlaces="3" maxlength="4"/>
+                                            </p:column>-->
+                                        </p:dataTable>
+
+                                    </div>
+                                    <br></br>
+                                    <div align="center">
+                                        <p:commandButton 
+                                            icon="fa fa-save" action="#{generacionAvaluo.saveAvalCoeficientesSuelo(false)}" update=":frmAvaluo:accPAvaluo:tvAvaluo:tbcoefSolar"
+                                            value="Aceptar" process=":frmAvaluo:accPAvaluo:tvAvaluo:tbcoefSolar">
+                                            <p:confirm header="Confirmación " message="Esta Seguro de Continuar? "/>
+                                        </p:commandButton>   
+                                    </div>
+
+
+                                </h:panelGroup>
+                            </h:panelGroup>
+                        </p:tab>
+                        <p:tab title="Coeficientes de la Construcción" >
+                            <h:panelGroup layout="block" id="pnlConstruccion">
+                                <p:panelGrid columns="6" layout="grid" style="width: 100%" >
+                                    <h:outputText value="ELEMENTOS CONSTRUCTIVOS: " style="text-align: center; font-weight: bolder"/>
+                                    <p:outputLabel value="" style="text-align: center"/>
+                                    <p:outputLabel value="" style="text-align: center"/>
+                                    <p:outputLabel value="" style="text-align: center"/>
+                                    <p:outputLabel value="" style="text-align: center"/>
+                                    <p:outputLabel value="" style="text-align: center"/>
+                                    <p:outputLabel value="Categoria: " style="text-align: center"/>
+                                    <p:selectOneMenu  value="#{generacionAvaluo.cecp}" style="width: 50%" converter="entityConverter">
+                                        <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                                        <f:selectItems value="#{generacionAvaluo.catEdfCategProp}" var="econst" itemLabel="#{econst.nombre}" itemValue="#{econst}"/>
+                                        <!--                                <p:ajax listener="" update="" />-->
+                                    </p:selectOneMenu>
+                                    <p:outputLabel value="Desde: " style="text-align: center"/> 
+                                    <p:inputText onkeypress="validateIntegerValueAndFocusNext(event, '')" value="#{generacionAvaluo.anioCoeficientesConstruccionInicio}" style="text-align: center; width: 89%"  maxlength="4"/>
+                                    <p:outputLabel value="Hasta: " style="text-align: center"/> 
+                                    <p:inputText onkeypress="validateIntegerValueAndFocusNext(event, '')" value="#{generacionAvaluo.anioCoeficientesConstruccionFin}" style="text-align: center; width: 89%"  maxlength="4"/>
+                                </p:panelGrid>
+                                <br></br>
+                                <div align="center">
+
+                                    <p:commandButton value="Seleccionar" actionListener="#{generacionAvaluo.addDataToAvalCoeficienteConstruccion()}" update=":frmAvaluo:accPAvaluo:tvAvaluo:coeficientesConstruccionList" process=":frmAvaluo:accPAvaluo:tvAvaluo:pnlConstruccion"/>
+
+                                </div>
+                                <br></br><br></br>
+                                <div align="center">
+                                    <p:dataTable id="coeficientesConstruccionList" var="a" value="#{generacionAvaluo.coeficientesFactoriales}"
+                                                 emptyMessage="No se encontró coeficiente" style="width: 90%">
+                                        <f:facet name="header">
+                                            Coeficientes
+                                        </f:facet>
+
+                                        <p:columnGroup type="header">
+                                            <p:row>
+                                                <p:column rowspan="3" headerText="Factor Condicionante" />
+                                                <p:column rowspan="3" headerText="Valor m2" />
+                                            </p:row>
+<!--                                            <p:row rendered="#{!appConfig.mainConfig.fichaPredial.libertad}">
+                                                <p:column colspan="2" headerText="Rango Factorial" />
+                                            </p:row>
+                                            <p:row rendered="#{!appConfig.mainConfig.fichaPredial.libertad}">
+                                                <p:column headerText="Inferior" />
+                                                <p:column headerText="Superior" />
+                                            </p:row>-->
+                                        </p:columnGroup>
+                                        <p:column id="nombreValor" style="text-align: center" >
+                                            <h:outputText value="#{a.categoriaConstruccion.nombre}" />
+                                        </p:column>
+                                        <p:column id="valorM2" style="text-align: center" >
+                                            <pe:inputNumber value="#{a.valorCoeficiente}" />
+                                        </p:column>
+<!--                                        <p:column  id="rangoInferior" style="text-align: center" rendered="#{!appConfig.mainConfig.fichaPredial.libertad}">
+                                            <pe:inputNumber minValue="0"
+                                                            value="#{a.valorCoefInferior}" style="text-align: center; width: 29%" />
+                                        </p:column>
+                                        <p:column id="rangoSuperior" style="text-align: center" rendered="#{!appConfig.mainConfig.fichaPredial.libertad}">
+                                            <pe:inputNumber minValue="0"
+                                                            value="#{a.valorCoefSuperior}" style="text-align: center; width: 29%" />
+                                        </p:column>-->
+                                    </p:dataTable>
+                                </div>
+                                <br></br>
+                                <div align="center">
+                                    <p:commandButton 
+                                        icon="fa fa-save" action="#{generacionAvaluo.saveAvalCoeficientesSuelo(true)}"
+                                        value="Aceptar" process=":frmAvaluo:accPAvaluo:tvAvaluo:pnlConstruccion" update=":frmAvaluo:accPAvaluo:tvAvaluo:pnlConstruccion">
+                                        <p:confirm header="Esta Seguro de Continuar? "  />
+                                    </p:commandButton>   
+                                </div>
+                            </h:panelGroup>      
+                        </p:tab>
+                        <p:tab title="Reporte" >
+
+                            <p:fieldset legend="Coeficientes de Valorización" toggleable="true" toggleSpeed="500" style="margin-bottom: 10px;">
+                                <h:panelGroup layout="block" id="pnlReporte">
+                                    <h:panelGrid columns="2" style="margin-top:5px">
+                                        <p:row><p:column><h:outputText  value="Año Inicio " style="font-weight: bolder"/></p:column></p:row>
+                                        <p:row><p:column><h:outputText  value="Año Fin " style="font-weight: bolder"/></p:column></p:row>
+                                        <p:row>
+                                            <p:column style="width: 50%"><p:inputText id="anioInicioReport"  value="#{generacionAvaluo.anioInicioReporte}" 
+                                                                                      onkeypress="validateIntegerValueAndFocusNext(event, '')"  
+                                                                                      style="text-align: center; width: 89%" maxlength="4"/></p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column style="width: 50%"><p:inputText value="#{generacionAvaluo.anioFinReporte}" 
+                                                                                      onkeypress="validateIntegerValueAndFocusNext(event, '')" 
+                                                                                      style="text-align: center; width: 89%" maxlength="4"/></p:column>                       
+                                        </p:row>
+                                        <p:row >
+                                            <p:column colspan="2">
+                                                <p:commandButton id="btnReporte"
+                                                                 icon="ui-icon-refresh"
+                                                                 value="Imprimir" action="#{generacionAvaluo.imprimirValoresCoeficientes}"
+                                                                 process=":frmAvaluo:accPAvaluo:tvAvaluo:pnlReporte" update=":frmAvaluo:accPAvaluo:tvAvaluo:pnlReporte"/>
+                                            </p:column>
+                                        </p:row>
+
+
+                                    </h:panelGrid>
+                                </h:panelGroup>
+                            </p:fieldset>
+
+                        </p:tab>
+                    </p:tabView>
+                </p:tab>
+            </p:accordionPanel>
+
+            <p:tabView id="tbvValorizarProcess" >
+                <p:tab title="Valorización" titleStyle="font-weight: bolder">
+                    <h:panelGroup id="pnlValorizar" layout="block" class="Container Wid100 MarTop10">
+                        <h:panelGroup layout="block" class="Container60">
+
+                            <p:dataTable id="prediosList" var="pt" value="#{generacionAvaluo.predios}" 
+                                         selection="#{generacionAvaluo.prediosSeleccionados}"
+                                         rowKey="#{pt.id}" style="margin-bottom:0"
+                                         emptyMessage="No existen predios."
+                                         paginator="true" filterEvent="enter"
+                                         rows="20" lazy="true" 
+                                         paginatorPosition="bottom"
+                                         rowsPerPageTemplate="20,40,50"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                                <p:ajax event="rowSelect"  update="frmAvaluo:tbvValorizarProcess:prediosAValorizar" />
+                                <p:ajax event="rowUnselect"  update="frmAvaluo:tbvValorizarProcess:prediosAValorizar"  />
+                                <p:ajax event="rowSelectCheckbox"  update="frmAvaluo:tbvValorizarProcess:prediosAValorizar" />
+                                <p:ajax event="rowUnselectCheckbox"  update="frmAvaluo:tbvValorizarProcess:prediosAValorizar" />
+                                <p:ajax event="toggleSelect"  update="frmAvaluo:tbvValorizarProcess:prediosAValorizar" />
+                                <p:ajax event="filter" update="prediosList" />
+
+                                <f:facet name="header">
+                                    Listado de Predios
+                                </f:facet>
+                                <p:column selectionMode="multiple" style="width:10px;text-align:center" />
+                                <p:column headerText="#Predio"   style="text-align: center; padding-left: 5px; padding-right: 5px; width: 7%" filterStyle="width: 50%" filterBy="#{pt.numPredio}" sortBy="#{pt.numPredio}" filterMatchMode="contains">
+                                    <h:outputText value="#{pt.numPredio}"/>
+                                </p:column>
+                                <p:column headerText="Parroquia" style="text-align: center; width: 6%" filterBy="#{pt.parroquia}" sortBy="#{pt.parroquia}" filterStyle="width: 45%">
+                                    <h:outputText value="#{pt.parroquia}"  />
+                                </p:column>
+                                <p:column headerText="Zona" style="text-align: center; width: 3%" filterBy="#{pt.zona}" sortBy="#{pt.zona}" filterStyle="width: 45%">
+                                    <h:outputText value="#{pt.zona}"/>
+                                </p:column>
+                                <p:column headerText="Sector" style="text-align: center; width:4%" filterBy="#{pt.sector}" sortBy="#{pt.sector}" filterStyle="width: 45%">
+                                    <h:outputText value="#{pt.sector}"/>
+                                </p:column>
+                                <p:column headerText="Manzana" style="text-align: center; width: 3%" filterBy="#{pt.mz}" sortBy="#{pt.mz}" filterStyle="width: 45%">
+                                    <h:outputText value="#{pt.mz}"/>
+                                </p:column>
+                                <p:column headerText="Lote" style="text-align: center; width: 3%" filterBy="#{pt.solar}"  sortBy="#{pt.solar}" filterStyle="width: 45%">
+                                    <h:outputText value="#{pt.solar}"/>
+                                </p:column>
+                                <p:column headerText="Area S." width="45" style="text-align: center; width: 6%">
+                                    <h:outputText value="#{pt.areaSolar}"/>
+                                </p:column>
+                                <p:column headerText="Area Const." width="45" style="text-align: center; width: 6%">
+                                    <h:outputText value="#{pt.areaDeclaradaConst}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </h:panelGroup>
+                        <p:fieldset legend="Valorizar" toggleable="true" toggleSpeed="500" style="margin-bottom: 10px;">
+                            <div align="center">
+                                <h:panelGrid columns="2" style="margin-top:5px">
+                                    <p:row><p:column><h:outputText  value="Año Inicio " style="font-weight: bolder"/></p:column></p:row>
+                                    <p:row><p:column><h:outputText  value="Año Fin " style="font-weight: bolder"/></p:column></p:row>
+                                    <p:row>
+                                        <p:column style="width: 50%"><p:inputText id="anio"  value="#{generacionAvaluo.anioValorizarInicio}" 
+                                                                                  onkeypress="validateIntegerValueAndFocusNext(event, '')"  
+                                                                                  style="text-align: center; width: 89%" maxlength="4"/></p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column style="width: 50%"><p:inputText value="#{generacionAvaluo.anioValorizarFin}" 
+                                                                                  onkeypress="validateIntegerValueAndFocusNext(event, '')" 
+                                                                                  style="text-align: center; width: 89%" maxlength="4"/></p:column>                       
+                                    </p:row>
+                                    <p:row>
+                                        <p:commandButton 
+                                            icon="ui-icon-refresh" actionListener="#{generacionAvaluo.startValorizacion(false)}" process=":frmAvaluo:tbvValorizarProcess:pnlValorizar"
+                                            value="Valorizar Predios Seleccionados" >
+                                            <p:confirm header="Esta Seguro de Continuar? "  />
+                                        </p:commandButton>
+                                    </p:row>
+                                    <p:row>
+                                        <p:commandButton 
+                                            icon="ui-icon-refresh" action="#{generacionAvaluo.startValorizacion(true)}" process=":frmAvaluo:tbvValorizarProcess:pnlValorizar"
+                                            value="Valorizar Todo Catastro" >
+                                            <p:confirm header="Esta Seguro de Continuar? "  />
+                                        </p:commandButton>
+                                    </p:row>
+                                    <p:row>
+                                        <p:commandButton 
+                                            icon="ui-icon-refresh" action="#{generacionAvaluo.deleteAllAvaluos(true)}" process=":frmAvaluo:tbvValorizarProcess:pnlValorizar"
+                                            value="Eliminar Avalúos Seleccionados" >
+                                            <p:confirm header="Esta Seguro de Continuar? "  />
+                                        </p:commandButton>
+                                    </p:row>
+                                    <p:row>
+                                        <p:commandButton 
+                                            icon="ui-icon-refresh" action="#{generacionAvaluo.deleteAllAvaluos(false)}" process=":frmAvaluo:tbvValorizarProcess:pnlValorizar"
+                                            value="Eliminar Todos los Avalúos" >
+                                            <p:confirm header="Esta Seguro de Continuar? "  />
+                                        </p:commandButton>
+                                    </p:row>
+                                </h:panelGrid>
+                                <br></br>
+                                <p:dataTable id="prediosAValorizar" value="#{generacionAvaluo.prediosSeleccionados}" var="pt">
+                                    <f:facet name="header">
+                                        Predios Seleccionados
+                                    </f:facet>
+                                    <p:column headerText="Parroquia" style="text-align: center; width: 6%" >
+                                        <h:outputText value="#{pt.parroquia}"  />
+                                    </p:column>
+                                    <p:column headerText="Zona" style="text-align: center; width: 3%" >
+                                        <h:outputText value="#{pt.zona}"/>
+                                    </p:column>
+                                    <p:column headerText="Sector" style="text-align: center; width:4%" >
+                                        <h:outputText value="#{pt.sector}"/>
+                                    </p:column>
+                                    <p:column headerText="Manzana" style="text-align: center; width: 3%" >
+                                        <h:outputText value="#{pt.mz}"/>
+                                    </p:column>
+                                    <p:column headerText="Lote" style="text-align: center; width: 3%">
+                                        <h:outputText value="#{pt.solar}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                            <br></br>
+                            <h:panelGroup layout="block"   id="caracSolarList">
+                                <div>
+                                    <p:accordionPanel id="listValorizar" activeIndex="-1"  >
+                                        <p:tab title="Valor de Metro 2 por Parroquia" >
+                                            <p:dataTable id="dtValorM2" var="pt" value="#{generacionAvaluo.valorM2ParroquiaList}"
+                                                         emptyMessage="No existen predios."
+                                                         paginator="true" filterEvent="enter"
+                                                         rows="20" 
+                                                         paginatorPosition="bottom"
+                                                         rowsPerPageTemplate="20,40,50"
+                                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                                                <p:ajax event="filter" update="dtValorM2" />
+                                                <p:column headerText="Parroquia" style="text-align: center; width: 6%" filterBy="#{pt.parroquia}" filterStyle="width: 45%" filterMatchMode="contains" >
+                                                    <h:outputText value="#{pt.parroquia}"  />
+                                                </p:column>
+                                                <p:column headerText="Zona"  filterBy="#{pt.zona}"  filterMatchMode="contains" filterStyle="width: 45%" style="text-align: center; width: 3%" >
+                                                    <h:outputText value="#{pt.zona}"/>
+                                                </p:column>
+                                                <p:column headerText="Sector"  filterBy="#{pt.sector}"  filterMatchMode="contains" filterStyle="width: 45%" style="text-align: center; width:4%" >
+                                                    <h:outputText value="#{pt.sector}"/>
+                                                </p:column>
+                                                <p:column headerText="Manzana" filterBy="#{pt.mz}"  filterMatchMode="contains" filterStyle="width: 45%" style="text-align: center; width: 3%" >
+                                                    <h:outputText value="#{pt.mz}"/>
+                                                </p:column>
+                                                <p:column headerText="Lote" style="text-align: center; width: 3%">
+                                                    <h:outputText value="#{pt.solar}"/>
+                                                </p:column>
+                                                <p:column headerText="Valor M2" style="text-align: center; width: 3%">
+                                                    <h:outputText value="#{pt.valorM2}"><f:convertNumber pattern="##############.##" locale="us"/></h:outputText>
+                                                </p:column>
+                                            </p:dataTable>
+                                        </p:tab>
+                                        <p:tab title="Coeficientes" >
+                                            <p:tree value="#{generacionAvaluo.coeficientesTree}" var="coefNode" style="width: 100%">
+                                                <p:treeNode>
+                                                    <h:outputText value="#{coefNode}" />
+                                                </p:treeNode>
+                                            </p:tree>
+                                        </p:tab>
+
+                                    </p:accordionPanel>
+                                </div>
+                            </h:panelGroup>
+                        </p:fieldset>
+
+
+
+                    </h:panelGroup>
+                </p:tab>
+                <p:tab id="valorSeccion" title="Valorización por Secciones" rendered="false" >
+
+                    <p:fieldset id="sectorizacionAvaluo" legend="Sectorización" toggleable="true" toggleSpeed="500" style="margin-bottom: 10px;">
+
+                        <p:selectOneRadio  value="#{generacionAvaluo.tipoDefinicion}"  >
+                            <f:selectItem itemLabel="Por Parroquia" itemValue="P" />  
+                            <f:selectItem itemLabel="Por Zona"  itemValue="Z"  />  
+                            <f:selectItem itemLabel="Por Sector" itemValue="S" />
+                            <f:selectItem itemLabel="Por Manzana" itemValue="M"  />
+                            <p:ajax  update=":frmAvaluo:tbvValorizarProcess:valorSeccion:sectorizacionAvaluo" partialSubmit="false"/>
+                        </p:selectOneRadio>
+                        #{generacionAvaluo.tipoDefinicion}
+                        <p:panel id="consulta" rendered="#{generacionAvaluo.tipoDefinicion eq 'M'}">
+
+
+                            <p:dataTable id="dtManzanasValorizar" var="p" value="#{generacionAvaluo.prediosXManzana}" 
+                                         rowKey="#{p.id}" selection="#{generacionAvaluo.predioSeleccionado}" selectionMode="single" 
+                                         paginator="true"   rowSelectMode="single"
+                                         emptyMessage="No se encontro ningun predio" rows="20" rowsPerPageTemplate="20,50,100" filterEvent="enter">
+                                <p:ajax event="rowSelect" listener="#{generacionAvaluo.onRowSelect}" update="dtManzanasValorizar" rendered="dtManzanasValorizar"/>
+                                <p:ajax event="rowUnselect" listener="#{generacionAvaluo.onRowUnselect}" update="dtManzanasValorizar"  />
+                                <p:ajax event="filter" update="dtManzanasValorizar" />
+                                <f:facet name="header">
+                                    Listado de Parroquias, Zonas, Sector y Mz. Existentes
+                                </f:facet>
+                                <p:column headerText="Parroquia" filterBy="#{p.parroquia}" filterStyle="width: 45%" filterMatchMode="contains" style="text-align: center" >
+                                    <h:outputText value="#{p.parroquia}" />
+                                </p:column>
+                                <p:column headerText="Zona" filterBy="#{p.zona}" filterStyle="width: 45%" filterMatchMode="contains" style="text-align: center" >
+                                    <h:outputText value="#{p.zona}" />
+                                </p:column>
+                                <p:column headerText="Sector" filterBy="#{p.sector}" filterStyle="width: 45%" filterMatchMode="contains"  style="text-align: center" >
+                                    <h:outputText value="#{p.sector}" />
+                                </p:column>
+                                <p:column headerText="Manzana" filterBy="#{p.mz}" filterStyle="width: 45%" filterMatchMode="contains"  style="text-align: center" >
+                                    <h:outputText value="#{p.mz}" />
+                                </p:column>
+                                <p:column headerText="# de Solares"  style="text-align: center" >
+                                    <h:outputText value="#{p.cantidadsolar}" />
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+
+                    </p:fieldset>
+
+                </p:tab>
+            </p:tabView>
+
+        </h:form>
+
+        <p:dialog id="dlgResult" widgetVar="dlgResultAvaluos" header="Predios con Avaluados"
+                  height="400" width="900" responsive="true" closable="false" closeOnEscape="true" modal="true">
+            <h:form id="frmAaluosDialog">
+                <p:tabView>    
+                    <p:tab title="Predios Actualizados">
+                        <p:dataTable id="dtCatPredioAvlHisorico" reflow="true" lazy="true" paginator="true" rows="20" rowsPerPageTemplate="20,50,100" 
+                                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     value="#{generacionAvaluo.avalHistoricoList}" var="av" emptyMessage="No se encontró ningún Item">
+                            <p:ajax event="filter" update="dtCatPredioAvlHisorico" />
+                            <p:column headerText="# Predio" style="text-align: center; width: 10%;" filterBy="#{av.predio.numPredio}" filterStyle="width: 20%;">
+                                <h:outputText value="#{av.predio.numPredio}" style="text-align: center; font-size: 12px"/>
+                            </p:column>
+                            <p:column headerText="Parroquia" style="text-align: center; width: 10%;" filterBy="#{av.predio.parroquia}" filterStyle="width: 20%;">
+                                <h:outputText value="#{av.predio.parroquia}"/>
+                            </p:column>
+                            <p:column headerText="Zona" style="text-align: center; width: 10%;" filterBy="#{av.predio.zona}" filterStyle="width: 20%;" >
+                                <h:outputText value="#{av.predio.zona}"/>
+                            </p:column>
+                            <p:column headerText="Sector" style="text-align: center; width: 10%;"  filterBy="#{av.predio.sector}" filterStyle="width: 20%;">
+                                <h:outputText value="#{av.predio.sector}"/>
+                            </p:column>
+                            <p:column headerText="Manzana" style="text-align: center; width: 10%;"  filterBy="#{av.predio.mz}" filterStyle="width: 20%;">
+                                <h:outputText value="#{av.predio.mz}"/>
+                            </p:column>
+                            <p:column headerText="Lote" style="text-align: center;width: 10%">
+                                <h:outputText value="#{av.predio.solar}"/>
+                            </p:column>
+                            <p:column headerText="Valor Base M2" style="text-align: center;width: 10%">
+                                <h:outputText value="#{av.valorBaseM2}"/>
+                            </p:column>
+                            <p:column headerText="Avalúo Solar" style="text-align: center;width: 10%">
+                                <h:outputText value="#{av.avaluoSolar}"/>
+                            </p:column>
+                            <p:column headerText="Avalúo de la Construcción" style="text-align: center;width: 10%">
+                                <h:outputText value="#{av.avaluoConstruccion}"/>
+                            </p:column>
+                            <p:column headerText="Avalúo Municipal" style="text-align: center;width: 10%">
+                                <h:outputText value="#{av.avaluoMunicipal}"/>
+                            </p:column>
+                        </p:dataTable>
+
+                    </p:tab>
+                    <p:tab title="Predios no Actualizados ">
+                        <p:dataTable id="dtCatPredioAvlHisoricoNoinList" reflow="true" lazy="true" paginator="true" rows="20" rowsPerPageTemplate="20,50,100" 
+                                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     value="#{generacionAvaluo.avalHistoricoNotInList}" var="av" emptyMessage="No se encontró ningún Item">
+                            <p:ajax event="filter" update="dtCatPredioAvlHisoricoNoinList" />
+                            <p:column headerText="# Predio" style="text-align: center; width: 10%;" filterBy="#{av.predio.numPredio}" filterStyle="width: 20%;">
+                                <h:outputText value="#{av.predio.numPredio}" style="text-align: center; font-size: 12px"/>
+                            </p:column>
+                            <p:column headerText="Parroquia" style="text-align: center; width: 10%;" filterBy="#{av.predio.parroquia}" filterStyle="width: 20%;">
+                                <h:outputText value="#{av.predio.parroquia}"/>
+                            </p:column>
+                            <p:column headerText="Zona" style="text-align: center; width: 10%;" filterBy="#{av.predio.zona}" filterStyle="width: 20%;" >
+                                <h:outputText value="#{av.predio.zona}"/>
+                            </p:column>
+                            <p:column headerText="Sector" style="text-align: center; width: 10%;"  filterBy="#{av.predio.sector}" filterStyle="width: 20%;">
+                                <h:outputText value="#{av.predio.sector}"/>
+                            </p:column>
+                            <p:column headerText="Manzana" style="text-align: center; width: 10%;"  filterBy="#{av.predio.mz}" filterStyle="width: 20%;">
+                                <h:outputText value="#{av.predio.mz}"/>
+                            </p:column>
+                            <p:column headerText="Lote" style="text-align: center;width: 10%">
+                                <h:outputText value="#{av.predio.solar}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                </p:tabView>    
+                <br></br>>
+                <div align="center">
+                    <p:commandButton value="Aceptar" actionListener="#{generacionAvaluo.cleanVar()}" />
+                </div>
+
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+</ui:composition>

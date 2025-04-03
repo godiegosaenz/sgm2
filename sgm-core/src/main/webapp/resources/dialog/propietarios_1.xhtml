@@ -1,0 +1,220 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:poue="http://primefaces.org/ui/extensions">
+    <f:metadata >
+        <f:event type="preRenderView" listener="#{propietarios.initView()}"/>
+        <f:viewParam name="idPredio" value="#{propietarios.idPredio}"/>
+        <f:viewParam name="idCatPredioPro" value="#{propietarios.idCatPredioPro}"/>
+        <f:viewParam name="nuevo" value="#{propietarios.esNuevo}"/>
+        <f:viewParam name="editar" value="#{propietarios.editar}"/>
+    </f:metadata>
+    <h:head>
+
+        <title>Propietarios</title>
+        <h:outputScript name="js/layout.js" library="sentinel-layout" />
+        <style type="text/css">
+            .ui-widget {
+                font-size: 100%;
+            }
+            .ui-column-title{
+                font-size: 11px;
+            }
+            .ui-selectonemenu .ui-selectonemenu-label {
+                height: 14px !important;
+                font-size: 11px;
+            }
+        </style>
+    </h:head>
+
+    <h:body>
+        <h:outputStylesheet name="css/font-icon-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/sentinel-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/core-layout.css" library="sentinel-layout" />
+        <h:form id="formProp" onkeypress="if (event.keyCode == 13) {
+                    event.keyCode = 0;
+                }">
+            <p:growl autoUpdate="true" globalOnly="true" showDetail="true"/>
+            <h:panelGrid columns="4" cellspacing="2" cellpadding="2">
+
+                <p:outputLabel value="Es Residente:"/>
+                <p:selectBooleanCheckbox value="#{propietarios.pro.esResidente}" />
+                
+                <p:outputLabel value="Copropietario:" />
+                <p:selectBooleanCheckbox value="#{propietarios.pro.copropietario}" style="width: 250px;">
+                    <p:ajax update="formProp" rendered="#{propietarios.config.fichaPredial.renderDialogUploadDocument}" listener="#{propietarios.setTipo(3)}"/>
+                </p:selectBooleanCheckbox>
+           
+                <p:outputLabel value="Porcentaje Posesion:" rendered="#{propietarios.pro.copropietario}" />
+                <p:spinner value="#{propietarios.pro.porcentajePosecion}" min="0" max="100"
+                           rendered="#{propietarios.pro.copropietario}" >
+                    <p:ajax update="formProp" listener="#{propietarios.verificarPorcentajeParticipacion()}" />
+                </p:spinner>
+                <p:outputLabel value="Observación coopropietario:" rendered="#{propietarios.pro.copropietario}" />
+                <p:inputText value="#{propietarios.pro.observacionCoop}" rendered="#{propietarios.pro.copropietario}" style="width: 250px;"/>
+            </h:panelGrid>
+
+            
+            <br/>
+            <p:tabView id="tdatos" style="width: 100%">
+                <p:tab title="Datos Personales">
+                    <h:panelGrid columns="4" cellspacing="2" cellpadding="2">
+                        <p:outputLabel value="(*) Numero de Documento:" />
+                        <h:panelGroup>
+                            <p:inputText value="#{propietarios.ciuCedRuc}"  maxlength="15" onkeypress="if (event.which &lt; 48 || event.which &gt; 57) return false;"/>
+
+                            <p:spacer width="10"/>
+                            <p:commandLink actionListener="#{propietarios.buscarCiudadano()}" update="formProp" >
+                                <p:graphicImage value="/css/homeIconsImages/buscar.png" height="25" width="25"/>
+                            </p:commandLink>
+                        </h:panelGroup>
+<!--                        <h:outputText value="(*) Tipo de Documento " style="font-weight: bold"/> 
+                        <p:selectOneMenu value="#{propietarios.pro.ente.tipoDocumento}" converter="entityConverter" >  
+                            <f:selectItems value="#{serviceList.getListado('ente.tipo_documento')}" var="td1" itemLabel="#{td1.valor}" itemValue="#{td1}"/>  
+                        </p:selectOneMenu> -->
+
+                        <h:outputText value="(*) Nombres:" />
+                        <p:inputText value="#{propietarios.pro.extras.ciudadano.ciuPrimerNombre} #{propietarios.pro.extras.ciudadano.ciuSegundoNombre}" readonly="true"/>
+                       
+                        <h:outputText value="(*) Apellidos:" />
+                        <p:inputText value="#{propietarios.pro.extras.ciudadano.ciuApellidoPat} #{propietarios.pro.extras.ciudadano.ciuApellidoMat}" readonly="true"/>
+<!--                        <h:outputText value="(*) Estado civil"/>
+                        <p:selectOneMenu value="#{propietarios.pro.ente.estadoCivil}" converter="entityConverter" rendered="#{propietarios.pro.ente.esPersona}" >  
+                            <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                            <f:selectItems value="#{serviceList.getListado('cliente.estado_civil')}" var="sc1" itemLabel="#{sc1.valor}" itemValue="#{sc1}"/>  
+                        </p:selectOneMenu>-->
+
+                        <p:outputLabel value="Fec. Nacimiento:"/>
+                        <p:calendar value="#{propietarios.pro.extras.ciudadano.ciuFechaNacimiento}" />
+
+                    </h:panelGrid>
+                </p:tab>
+<!--            <p:tab title="Conyuge" rendered="#{propietarios.pro.ente.esPersona}">-->
+                <p:tab title="Conyuge" rendered="false">
+                    <h:panelGrid columns="4" style="width: 100%;" cellpadding="0"  cellspacing="5">
+                        <p:outputLabel value="Numero de Documento:" rendered="#{propietarios.pro.ente.esPersona}"/>
+                        <h:panelGroup >
+                            <p:inputText value="#{propietarios.conyuge.ciRuc}" style="width: 250px;" readonly="true"/>
+                            <p:commandButton value="Buscar" actionListener="#{propietarios.buscarRes(true)}" update="dlgEntes"/>
+                        </h:panelGroup>
+                        <h:outputText value="Tipo de Documento " style="font-weight: bold"/> 
+                        <p:selectOneMenu value="#{propietarios.conyuge.tipoDocumento}" converter="entityConverter" >  
+                            <f:selectItems value="#{serviceList.getListado('ente.tipo_documento')}" var="td1" itemLabel="#{td1.valor}" itemValue="#{td1}"/>  
+                        </p:selectOneMenu> 
+
+                        <p:outputLabel value="Nombres:" />
+                        <p:inputText value="#{propietarios.conyuge.nombres}" style="width: 250px;" readonly="true"/>
+                        <p:outputLabel value="Apellidos:" />
+                        <p:inputText value="#{propietarios.conyuge.apellidos}" style="width: 250px;" readonly="true"/>
+                    </h:panelGrid>
+                </p:tab>
+<!--                <p:tab title="Representante Legal" rendered="# {!propietarios.pro.ente.esPersona}" >-->
+                <p:tab title="Representante Legal" rendered="false" >
+                    <h:panelGrid columns="4" style="width: 100%;" cellpadding="0"  cellspacing="5">
+                        <p:outputLabel value="Numero de Documento:" />
+                        <h:panelGroup >
+                            <p:inputText value="#{propietarios.representanteLegal.ciRuc}" style="width: 250px;" readonly="true"/>
+                            <p:commandButton value="Buscar" actionListener="#{propietarios.buscarRes(false)}" update="dlgEntes"/>
+                        </h:panelGroup>
+                        <h:outputText value="Tipo de Documento " style="font-weight: bold"/> 
+                        <p:selectOneMenu value="#{propietarios.representanteLegal.tipoDocumento}" converter="entityConverter" >  
+                            <f:selectItems value="#{propietarios.getListado('ente.tipo_documento')}" var="td1" itemLabel="#{td1.valor}" itemValue="#{td1}"/>  
+                        </p:selectOneMenu> 
+                        <p:outputLabel value="Nombres:" />
+                        <p:inputText value="#{propietarios.representanteLegal.nombres}" readonly="true" style="width: 250px;"/>
+                        <p:outputLabel value="Apellidos:" />
+                        <p:inputText value="#{propietarios.representanteLegal.apellidos}" readonly="true" style="width: 250px;"/>
+                    </h:panelGrid>
+                </p:tab>
+                <!--<p:tab id="emails" title="Emails" rendered="false">-->
+                    <p:tab id="emails" title="Emails" rendered="false">
+                    <p:dataTable id="dtCorr" value="#{propietarios.pro.ente.enteCorreoCollection}" scrollHeight="65" scrollable="true" var="c" emptyMessage="No se encontro ningún correo" style="width: 100%;" >
+                        <f:facet name="header">
+                            <p:inputText value="#{propietarios.correo}" style="width: 80%; "  />
+                            <p:commandButton value="Agregar" icon="ui-icon-plus" styleClass="btnStyle" actionListener="#{propietarios.agregarCorreo()}" style=" height: 28px;" update="formProp:tdatos"/>
+                        </f:facet>
+                        <p:column headerText="Correo" >
+                            <h:outputLabel value="#{c.email}"/>
+                        </p:column>
+                        <p:column headerText="Eliminar" width="60" >
+                            <p:commandLink value="eliminar" actionListener="#{propietarios.eliminarCorreo(c)}" update="formProp:tdatos"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:tab>
+                <p:tab id="telefonos" title="Telefonos" rendered="false">
+                    <!--<p:tab id="telefonos" title="Telefonos">-->
+                    <p:dataTable id="dtTel" value="#{propietarios.pro.ente.enteTelefonoCollection}" scrollHeight="65" scrollable="true" var="t" emptyMessage="No se encontro ningún Teléfono" style="width: 100%;">
+                        <f:facet name="header">
+                            <p:inputText value="#{propietarios.telefono}" />
+                            <p:commandButton value="Agregar" icon="ui-icon-plus" actionListener="#{propietarios.agregarTelefono()}" styleClass="btnStyle" style=" height: 28px;" update="formProp:tdatos"/>
+                        </f:facet>
+                        <p:column headerText="Teléfono" >
+                            <h:outputLabel value="#{t.telefono}"/>
+                        </p:column>
+                        <p:column headerText="Eliminar"  width="60" >
+                            <p:commandLink value="eliminar" actionListener="#{propietarios.eliminarTelefono(t)}" update="formProp:tdatos"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:tab>
+            </p:tabView>
+            <br/><br/>
+            <center style="float: bottom; ">
+                <p:commandButton actionListener="#{propietarios.agregarPropietario}" value="Agregar" rendered="#{propietarios.nuevo}" icon="ui-icon-plus" style="height: 30px;" styleClass="btnStyle"/>
+                <p:commandButton actionListener="#{propietarios.modificarPropietario()}" value="Modificar" rendered="#{!propietarios.nuevo and propietarios.edicion}" icon="ui-icon-pencil" style="height: 30px;" styleClass="btnStyle"/>
+                <p:commandButton actionListener="#{propietarios.cerrar}" value="Cerrar" style="height: 30px;" styleClass="btnStyle"/>
+
+            </center>
+        </h:form>
+
+        <p:dialog id="dlgEntes" widgetVar="dlgEntes" header="Listado de Personas" appendTo="@(body)" width="700" responsive="true" closable="true" closeOnEscape="true" modal="true">
+            <h:form id="frmEntes">
+                <p:dataTable id="dtEntes" value="#{propietarios.entes}" var="s" style="width: 100%" lazy="true" reflow="true" 
+                             paginator="true" rows="10" filterEvent="enter" paginatorPosition="top"
+                             >
+                    <f:facet name="header">Seleccione una Persona.</f:facet>
+                    <p:column headerText="No. Identificacion" sortBy="#{s.ciRuc}" filterBy="#{s.ciRuc}" filterMatchMode="contains" filterStyle="width: 95%;">
+                        <h:outputText value="#{s.ciRuc}"/>
+                    </p:column>
+                    <p:column headerText="Apellidos" filterBy="#{s.apellidos}" sortBy="#{s.apellidos}" filterMatchMode="contains" filterStyle="width: 95%;">
+                        <h:outputText value="#{s.apellidos}" style="text-transform: uppercase"/>
+                    </p:column>
+                    <p:column headerText="Nombres" filterBy="#{s.nombres}" sortBy="#{s.nombres}" filterMatchMode="contains" filterStyle="width: 95%;">
+                        <h:outputText value="#{s.nombres}" style="text-transform: uppercase"/>
+                    </p:column>
+                    <p:column headerText="Seleccionar">
+                        <p:commandLink id="btnSeleccionar" value=">>>" actionListener="#{propietarios.seleccionarComprador(s)}" update="formProp" style="height: 30px" oncomplete="PF('dlgEntes').hide()"/>
+                    </p:column>
+                </p:dataTable>         
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog widgetVar="dlgSubirDocumento" header="Antes de Continuar debe de Subir Documentos" appendTo="@(body)" 
+                  height="250" width="500" responsive="true" closable="true" closeOnEscape="true" modal="true">
+            
+            <h:form id="frmSubirDocumentos">
+                <h:outputLabel value="#{propietarios.mensajeDoc}"/>
+                <br/>
+                <p:panelGrid columns="8">
+                    <p:fileUpload fileUploadListener="#{propietarios.handleFileDocumentBySave}" dragDropSupport="false"
+                                  multiple="false"
+                                  mode="advanced" update="formProp"
+                                  uploadLabel="Subir"
+                                  cancelLabel="Cancelar"
+                                  label="Seleccionar"  
+                                  skinSimple="true"
+                                  sizeLimit="350000000"
+                                  sequential="true" 
+                                  fileLimit="10" allowTypes="/(\.|\/)(pdf)$/" />
+                    
+                </p:panelGrid>
+                <p:commandButton value="Aceptar" oncomplete="PF('dlgSubirDocumento').hide()"  process="@form">
+                    
+                </p:commandButton>
+            </h:form>
+        </p:dialog>
+        
+    </h:body>
+</html>

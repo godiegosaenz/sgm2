@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="formulario_exoneracion" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="0" uuid="0c206171-832e-4acb-bf57-18e09a19ca53">
+	<property name="ireport.zoom" value="1.3310000000000013"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\Joao Sanga\\Documents\\NetBeansProjects\\SGM\\src\\main\\webapp\\reportes\\recaudaciones"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO" class="java.lang.String"/>
+	<parameter name="IMP_ORIG" class="java.lang.String"/>
+	<parameter name="DIFERENCIA" class="java.lang.String"/>
+	<parameter name="IMP_NEW" class="java.lang.String"/>
+	<parameter name="ID_SOLICITUD" class="java.lang.Long"/>
+	<parameter name="FECHA" class="java.util.Date"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="839" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="0" width="555" height="260" uuid="83565804-1789-4444-a5de-77c2ceccc8f4"/>
+				<subreportParameter name="DIFERENCIA">
+					<subreportParameterExpression><![CDATA[$P{DIFERENCIA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="FECHA">
+					<subreportParameterExpression><![CDATA[$P{FECHA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_SOLICITUD">
+					<subreportParameterExpression><![CDATA[$P{ID_SOLICITUD}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="LOGO">
+					<subreportParameterExpression><![CDATA[$P{LOGO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="IMP_ORIG">
+					<subreportParameterExpression><![CDATA[$P{IMP_ORIG}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="IMP_NEW">
+					<subreportParameterExpression><![CDATA[$P{IMP_NEW}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "formulario_exoneracion_master_subreport1.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="0" y="295" width="555" height="260" uuid="7c640573-d23b-4595-88c7-9cd59e8a167d"/>
+				<subreportParameter name="DIFERENCIA">
+					<subreportParameterExpression><![CDATA[$P{DIFERENCIA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="FECHA">
+					<subreportParameterExpression><![CDATA[$P{FECHA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_SOLICITUD">
+					<subreportParameterExpression><![CDATA[$P{ID_SOLICITUD}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="LOGO">
+					<subreportParameterExpression><![CDATA[$P{LOGO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="IMP_ORIG">
+					<subreportParameterExpression><![CDATA[$P{IMP_ORIG}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="IMP_NEW">
+					<subreportParameterExpression><![CDATA[$P{IMP_NEW}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "formulario_exoneracion_master_subreport1.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="0" y="577" width="555" height="260" uuid="69da1c2c-1f89-479a-bf77-962c4404756e"/>
+				<subreportParameter name="DIFERENCIA">
+					<subreportParameterExpression><![CDATA[$P{DIFERENCIA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="FECHA">
+					<subreportParameterExpression><![CDATA[$P{FECHA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_SOLICITUD">
+					<subreportParameterExpression><![CDATA[$P{ID_SOLICITUD}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="LOGO">
+					<subreportParameterExpression><![CDATA[$P{LOGO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="IMP_ORIG">
+					<subreportParameterExpression><![CDATA[$P{IMP_ORIG}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="IMP_NEW">
+					<subreportParameterExpression><![CDATA[$P{IMP_NEW}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "formulario_exoneracion_master_subreport1.jasper"]]></subreportExpression>
+			</subreport>
+			<line>
+				<reportElement x="0" y="283" width="555" height="1" uuid="a484ab9c-119d-438d-995d-6c40638c8ecd"/>
+				<graphicElement>
+					<pen lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="0" y="566" width="555" height="1" uuid="10f1d157-0754-4f05-aaa8-e68d488af729"/>
+				<graphicElement>
+					<pen lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

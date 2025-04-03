@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="resumenSolServ" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d0fb8e9f-095a-4733-9f4b-15b792f6e060">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="367"/>
+	<property name="ireport.y" value="1"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\supergold\\Documents\\sgm\\src\\main\\webapp\\reportes\\solicitudServicio\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="inicio" class="java.util.Date"/>
+	<parameter name="fin" class="java.util.Date"/>
+	<queryString>
+		<![CDATA[select *
+from sgm_flow.sv_solicitud_servicios s inner join sgm_flow.historico_tramites h on(s.tramite=h.id_tramite)
+WHERE s.fecha_creacion>=$P{inicio} AND s.fecha_creacion<$P{fin}
+order by s.asignado ASC]]>
+	</queryString>
+	<field name="id" class="java.lang.Long"/>
+	<field name="tipo_servicio" class="java.lang.Long"/>
+	<field name="fecha_inconveniente" class="java.sql.Timestamp"/>
+	<field name="descripcion_inconveniente" class="java.lang.String"/>
+	<field name="tramite" class="java.lang.Long"/>
+	<field name="solicitante" class="java.lang.Long"/>
+	<field name="notificacion_dep" class="java.lang.String"/>
+	<field name="parroquia" class="java.lang.Long"/>
+	<field name="cdla" class="java.lang.Long"/>
+	<field name="solicitud_interna" class="java.lang.Boolean"/>
+	<field name="ente_solicitante" class="java.lang.Long"/>
+	<field name="informe" class="java.lang.String"/>
+	<field name="fecha_creacion" class="java.sql.Timestamp"/>
+	<field name="lugar_audiencia" class="java.lang.Long"/>
+	<field name="asignado" class="java.lang.Boolean"/>
+	<field name="asignados" class="java.lang.String"/>
+	<field name="status" class="java.lang.String"/>
+	<field name="representante" class="java.lang.String"/>
+	<field name="archivar" class="java.lang.Boolean"/>
+	<field name="notificar" class="java.lang.Boolean"/>
+	<field name="notificacion" class="java.lang.String"/>
+	<field name="id_tramite" class="java.lang.Long"/>
+	<field name="id_proceso" class="java.lang.String"/>
+	<field name="num_predio" class="java.lang.Long"/>
+	<field name="estado" class="java.lang.String"/>
+	<field name="tipo_tramite" class="java.lang.Long"/>
+	<field name="fecha" class="java.sql.Timestamp"/>
+	<field name="urbanizacion" class="java.lang.String"/>
+	<field name="nombre_propietario" class="java.lang.String"/>
+	<field name="urbmz" class="java.lang.String"/>
+	<field name="urbsolar" class="java.lang.String"/>
+	<field name="sub_tipo_tramite" class="java.lang.Long"/>
+	<field name="tipo_tramite_nombre" class="java.lang.String"/>
+	<field name="correos" class="java.lang.String"/>
+	<field name="telefonos" class="java.lang.String"/>
+	<field name="num_liquidacion" class="java.lang.Long"/>
+	<field name="valor_liquidacion" class="java.math.BigDecimal"/>
+	<field name="observacion" class="java.lang.String"/>
+	<field name="user_creador" class="java.lang.Long"/>
+	<field name="num_tramite_x_departamento" class="java.lang.Long"/>
+	<field name="carpeta_rep" class="java.lang.String"/>
+	<field name="id_proceso_temp" class="java.lang.String"/>
+	<group name="asignacion">
+		<groupExpression><![CDATA[$F{asignado}]]></groupExpression>
+		<groupHeader>
+			<band height="80">
+				<textField>
+					<reportElement x="14" y="0" width="382" height="20" uuid="7599a154-8387-40d9-9353-97b40432b79c"/>
+					<textElement>
+						<font isUnderline="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{asignado}?"SOLICITUDES ASIGANDAS":"SOLICITUDES NO ASIGANDAS"]]></textFieldExpression>
+				</textField>
+				<subreport>
+					<reportElement x="14" y="20" width="182" height="30" uuid="ca4696a3-c03f-4ca0-ae7c-9bd884808c4f"/>
+					<subreportParameter name="estadotram">
+						<subreportParameterExpression><![CDATA[$F{asignado}?"finalizado":null]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="inicio">
+						<subreportParameterExpression><![CDATA[$P{inicio}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="fin">
+						<subreportParameterExpression><![CDATA[$P{fin}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "resumenSolServ_subreport1.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport>
+					<reportElement x="14" y="50" width="182" height="30" uuid="7c8c241d-754e-4792-b726-862c1d54fc75"/>
+					<subreportParameter name="estadotram">
+						<subreportParameterExpression><![CDATA[$F{asignado}?"pendiente":null]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="inicio">
+						<subreportParameterExpression><![CDATA[$P{inicio}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="fin">
+						<subreportParameterExpression><![CDATA[$P{fin}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "resumenSolServ_subreport2.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="40">
+				<textField>
+					<reportElement x="41" y="0" width="410" height="20" uuid="334b943f-f0a4-4e9d-8195-a26668b0131a"/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{asignado}?"TOTAL SOL. ASIGANDAS:":"TOTAL SOL. NO ASIGANDAS:"]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="455" y="0" width="100" height="20" uuid="be3cb85d-366c-4cde-9b55-f6ed5576a3d0"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{asignacion_COUNT}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="44" splitType="Stretch">
+			<staticText>
+				<reportElement x="81" y="3" width="370" height="27" uuid="985402be-718f-48dd-8ca2-2b2f0d3136ca"/>
+				<textElement textAlignment="Center">
+					<font size="20"/>
+				</textElement>
+				<text><![CDATA[Resumen Solicitud de Servicios]]></text>
+			</staticText>
+			<line>
+				<reportElement x="81" y="30" width="370" height="1" uuid="8b2e424a-3099-4ce9-8cf3-a917f613d180"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineStyle="Solid" lineColor="#99FF99"/>
+				</graphicElement>
+			</line>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="45">
+			<staticText>
+				<reportElement x="14" y="0" width="52" height="20" uuid="a1d90473-d8ce-4d7e-b235-5bb1fecd78e1"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Desde:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="14" y="20" width="52" height="20" uuid="5f462189-4fe7-4e4c-92e8-99e15746e83f"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hasta:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="66" y="0" width="100" height="20" uuid="3f47e622-2d4f-482d-88cf-6a04244d26f9"/>
+				<textFieldExpression><![CDATA[$P{inicio}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="66" y="20" width="100" height="20" uuid="6ac9482a-5085-4c16-a6b7-e0d310ff481a"/>
+				<textFieldExpression><![CDATA[$P{fin}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="29" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="10" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="10" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="455" y="0" width="100" height="20" uuid="3b87c4c7-a37f-41a1-99bd-d37b4ac1cae2"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="295" y="0" width="156" height="20" uuid="a36ba25a-a275-4a4e-9c00-973c6452b58c"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL SOLICITUDES]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

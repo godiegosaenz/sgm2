@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+
+
+    <ui:define name="content">
+        <div align="center">
+            <h1>CALCULOS ANUALES - PREDIOS URBANOS</h1>        
+        </div>
+        <h:form id="formCalculos">
+            <div align="rigth">
+                <p:commandButton value="Reporte" actionListener="#{calculosAnualesPredios.generarReporte()}" styleClass="btnStyle" icon="ui-icon-home" style="float: right;"/>
+                <p:commandButton value="Ingreso Valores" actionListener="#{calculosAnualesPredios.realizarCalculos()}" styleClass="btnStyle" icon="ui-icon-home" style="float: right;" oncomplete="PF('nuevoIngresoAnual').show();" update="formNuevo"/>
+            </div>
+            <p:dataTable id="dtCalculos" reflow="true" paginator="true" lazy="true" rows="20" rowsPerPageTemplate="20,50,100" 
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         value="#{calculosAnualesPredios.calculosAnuales}" var="calculo" emptyMessage="No se encontró ningún Item.">
+
+                <p:column headerText="Año" style="text-align: center;" filterBy="#{calculo.anio}" sortBy="#{calculo.anio}">
+                    <p:outputLabel value="#{calculo.anio}"/>
+                </p:column>
+                <p:column headerText="Ubicaciones"   style="height: 100%" filterMatchMode="exact">
+                    <p:outputLabel value="#{calculo.ubicacion.nombre}"/>
+                </p:column>
+                <p:column headerText="Total Avaluos" style="text-align: center;">
+
+                    <h:outputText  value="#{calculo.avaluosTotales}" class="DispBlock Wid100 FontBold">
+                        <f:convertNumber type="currency" currencySymbol="$" locale="en_US" />
+                    </h:outputText>    
+                </p:column>
+                <p:column headerText="Total Area Solar" style="text-align: center;">
+                    <p:outputLabel value="#{calculo.areaSolarTotal}"/>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+
+        <p:dialog header="Ingreso Valores Anuales" widgetVar="nuevoIngresoAnual" appendTo="@(body)" closeOnEscape="true" fitViewport="true" modal="true" responsive="true" width="75%" resizable="false" position="center">
+            <h:form id="formNuevo">
+                <p:fieldset legend="DATOS POR PREDIOS">
+                    <p:outputLabel value="Cantidad de Predios:" style="font-weight: bold;"/> <p:inputText value="#{calculosAnualesPredios.numPredios}" readonly="true" size="10"/>
+                    <p:spacer width="25"/>
+                    <p:outputLabel value="Total Avaluos:" style="font-weight: bold;"/> 
+                    <p:inputText value="#{calculosAnualesPredios.totalAvaluos}" readonly="true" size="15">
+                        <f:convertNumber type="currency" currencySymbol="$" locale="en_US" />
+                    </p:inputText>
+                    <p:spacer width="25"/>
+                    <p:outputLabel value="Total Areas Solar:" style="font-weight: bold;"/> <p:inputText value="#{calculosAnualesPredios.totalAreas}" readonly="true" size="15"/>
+                </p:fieldset>
+                <br/><br/>
+                <p:fieldset legend="DATOS POR UBICACIONES">
+                    <p:outputLabel value="Año a Registrar :" style="font-weight: bold;"/> <p:inputText type="number" value="#{calculosAnualesPredios.anioEmision}" size="10"/>
+                    <br/>
+                    <p:dataTable value="#{calculosAnualesPredios.calculosAnualesIngreso}" var="c"
+                                 rows="5" rowsPerPageTemplate="5,10,15" paginator="true"
+                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                        <p:column headerText="Ubicacion" style="text-align: center;">
+                            <p:outputLabel value="#{c.ubicacion.nombre}"/>
+                        </p:column>
+                        <p:column headerText="Total Avaluos Predios" style="text-align: right;">
+                            <h:outputText value="#{c.avaluosTotales}">
+                                <f:convertNumber type="currency" currencySymbol="$" locale="en_US" />
+                            </h:outputText>    
+                        </p:column>
+                        <p:column headerText="Total Area Solares" style="text-align: right;">
+                            <p:outputLabel value="#{c.areaSolarTotal}"/>
+                        </p:column>
+                        <p:columnGroup type="footer">
+                            <p:row>
+                                <p:column footerText="Total: " style="text-align:right"/>
+                                <p:column footerText="#{calculosAnualesPredios.totalAvaluosParroquias}" style="text-align:right"/>
+                                <p:column footerText="#{calculosAnualesPredios.totalAreasParroquias}" style="text-align:right"/>
+                            </p:row>
+                        </p:columnGroup>
+                    </p:dataTable>
+                </p:fieldset>
+                <br/>
+                <center>
+                    <p:commandButton value="Grabar" actionListener="#{calculosAnualesPredios.registrarCalculos()}" styleClass="btnStyle" icon="ui-icon-disk"  oncomplete="PF('nuevoIngresoAnual').hide();" update="formCalculos"/>
+                    <p:spacer width="40"/>
+                    <p:commandButton value="Cancelar" styleClass="btnStyle" icon="ui-icon-close" oncomplete="PF('nuevoIngresoAnual').hide();"/>
+                </center>
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+
+</ui:composition>

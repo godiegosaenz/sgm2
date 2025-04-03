@@ -1,0 +1,141 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:dialog="http://xmlns.jcp.org/jsf/composite/dialog"
+                xmlns:poue="http://primefaces.org/ui/extensions">
+
+    <ui:define name="head">
+
+    </ui:define>
+
+    <ui:define name="page_title">
+        
+    </ui:define>
+
+    <ui:define name="top">
+        <p:panelGrid styleClass="noBorder" columns="4" style="width: 100%;font-size: 14px;">
+            <p:outputLabel value="Tarea: #{generarResolucion.taskDataByTaskID.name}" style="font-weight: bolder;color: #005f9c"/>
+            <p:outputLabel value="Trámite: #{generarResolucion.ht.id}" style="font-weight: bolder;color: #005f9c"/>
+            <p:outputLabel value="Responsable: #{generarResolucion.taskDataByTaskID.assignee}" style="font-weight: bolder;color: #005f9c"/>
+        </p:panelGrid>  
+    </ui:define>
+
+    <ui:define name="content">
+        <div align="center">
+            <h1>Generar Resolución</h1>
+        </div>
+        <h:form id="frmGenRes">            
+            <p:tabView id="tvSolicitud">
+                <p:tab title="SOLICITUD">
+                    <p:panelGrid style="width: 100%;">
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:outputLabel value="SOLICITANTE: #{generarResolucion.entradas['solicitud'].solicitante.ciRuc} - #{generarResolucion.entradas['solicitud'].solicitante.apellidos} #{generarResolucion.entradas['solicitud'].solicitante.nombres} #{generarResolucion.entradas['solicitud'].solicitante.razonSocial}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="SOLICITUD: "/><p:inputText value="#{generarResolucion.entradas['solicitud'].id}" readonly="true"/>
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="FECHA INGRESO: "/><p:outputLabel value="#{generarResolucion.entradas['solicitud'].fechaIngreso}"><f:convertDateTime pattern="dd/MM/yyyy"/></p:outputLabel>
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="DESDE:#{generarResolucion.entradas['solicitud'].anioInicio} - HASTA:#{generarResolucion.entradas['solicitud'].anioFin}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="CLASE: #{generarResolucion.entradas['solicitud'].exoneracionTipo.exoneracionClase.descripcion}"/>
+                            </p:column>
+                            <p:column colspan="2">
+                                <p:outputLabel value="TIPO: #{generarResolucion.entradas['solicitud'].exoneracionTipo.descripcion}"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <center>
+                        <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-8" style="text-align: left">
+                            <p:selectOneMenu value="#{generarResolucion.tipoValor}"  style="font-size: 12px; width: 220px;" converter="entityConverter">  
+                                <f:selectItems value="#{serviceLists.getTipoValores('exo')}" var="rpc" itemLabel="#{rpc.descripcion}" itemValue="#{rpc}" />
+                            </p:selectOneMenu>                      
+                            <poue:inputNumber id="v12" value="#{generarResolucion.entradas['solicitud'].valor}" minValue="0.00" maxValue="100.00" rendered="#{generarResolucion.entradas['valorPorcentaje']}"/>
+                            <poue:inputNumber id="v22" value="#{generarResolucion.entradas['solicitud'].valor}" minValue="0.00" maxValue="999999999999999.00" rendered="#{!generarResolucion.entradas['valorPorcentaje']}"/>                            
+                            
+                            <p:outputLabel value="Número de Resolución"/>
+                            <p:inputText value="#{generarResolucion.entradas['resolucion'].numeroResolucion}"/>
+
+                            <p:outputLabel value="Número de Oficio"/>
+                            <p:inputText value="#{generarResolucion.entradas['resolucion'].numeroOficio}"/>
+
+                            <p:outputLabel value="Fecha de Resolución"/>
+                            <p:calendar value="#{generarResolucion.entradas['resolucion'].fechaResolucion}" pattern="dd/MM/yyyy" maxdate="#{generarResolucion.entradas['fechaLimit']}"/>
+                            
+                        </p:panelGrid>
+                        <p:dataTable id="tdPred" value="#{generarResolucion.ht.historicoTramiteDetCollection}" var="detalle" reflow="true" style="width: 100%" paginator="true" paginatorPosition="top" paginatorAlwaysVisible="false" rows="5">
+                            <p:column headerText="Número Predio" style="width: 15%">
+                                <p:outputLabel value="#{detalle.predio.numPredio}" style="text-transform: uppercase"/>
+                            </p:column>
+                            <p:column headerText="Código Predial" style="width: 28%">
+                                <p:outputLabel value="#{detalle.predio.codigoPredial}" style="text-transform: uppercase"/>
+                            </p:column>
+                            <p:column headerText="Ciudadela" style="width: 50%">
+                                <p:outputLabel value="#{detalle.predio.nombreUrb}" style="text-transform: uppercase"/>
+                            </p:column>
+                            <p:column headerText="Manzana" style="width: 20%">
+                                <p:outputLabel value="#{detalle.predio.urbMz}" style="text-transform: uppercase"/>
+                            </p:column>
+                            <p:column headerText="Solar" style="width: 20%">
+                                <p:outputLabel value="#{detalle.predio.urbSolarnew}" style="text-transform: uppercase"/>
+                            </p:column>
+                        </p:dataTable>
+                        <br/>
+                        <p:dataTable id="dtResol" value="#{generarResolucion.files}" 
+                                     var="c1" style="width: 50%" reflow="true"
+                                     emptyMessage="No ha cargado documento alguno" >
+                            <f:facet name="header">
+                                Resoluciones
+                                <p:commandLink value="Adjuntar Resoluci&#243;n" onclick="PF('dlgDocPl').show();" style="float: right" />
+                            </f:facet>
+                            <p:column headerText="Archivo" style="width: 55%">
+                                #{c1.nombre}
+                            </p:column>
+                            <p:column headerText="Tipo" style="width: 35%">
+                                #{c1.tipo}
+                            </p:column>
+                            <p:column headerText="Opci&#243;n" style="width: 10%">
+                                <p:commandLink value="Eliminar" actionListener="#{generarResolucion.eliminarFile(c1)}" update="frmGenRes" />
+                            </p:column>
+                        </p:dataTable>
+                        <br/>
+                        <p:commandButton actionListener="#{generarResolucion.mostrarObs()}" value="Validar" styleClass="btnStyle"/>
+                    </center>
+                </p:tab>
+                <p:tab title="DETALLE TRAMITE">
+                    <dialog:detalleTareas archivos="#{generarResolucion.listAttAttachmentByProcessInstance}"
+                                  observaciones="#{generarResolucion.ht.observacionesCollection}" />
+                </p:tab>
+            </p:tabView>
+        </h:form>
+        <p:dialog widgetVar="dlgDocPl" modal="true">
+            <h:form>
+                <p:fileUpload id="docsPlano"  fileUploadListener="#{generarResolucion.handleFileUpload}" multiple="true" 
+                              mode="advanced" label="Seleccionar" uploadLabel="Subir" cancelLabel="Cancelar" 
+                              skinSimple="true" sizeLimit="35000000" update="frmGenRes:tvSolicitud:dtResol"
+                              allowTypes="/(\.|\/)(doc|docx|pdf)$/" oncomplete="PF('dlgDocPl').hide()" />
+
+                <div align="center">
+                    <p:commandButton id="AgrPla" value="Aceptar" onclick="PF('dlgDocPl').hide()" styleClass="btnStyle" style="height: 30px;"/>
+                </div>
+            </h:form>
+        </p:dialog>
+
+        <dialog:observaciones observaciones="#{generarResolucion.entradas['obs']}"
+                              actionButton="#{generarResolucion.procesar()}"/>
+
+    </ui:define>
+
+</ui:composition>

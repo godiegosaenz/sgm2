@@ -1,0 +1,142 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:dialog="http://xmlns.jcp.org/jsf/composite/dialog">
+
+    <ui:define name="top">
+        <h1>REVISION DE ACTIVIDAD</h1>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="frmMain">
+            <p:messages autoUpdate="true" showDetail="true"/>
+            <p:panelGrid styleClass="noBorder" columns="4" style="width: 100%;font-size: 14px;">
+                <p:outputLabel value="Tarea: #{catRevisionTrabTec.taskDataByTaskID.name}" style="font-weight: bolder;color: #005f9c"/>
+                <p:outputLabel value="No. Tramite: #{catRevisionTrabTec.tramite.id}" style="font-weight: bolder;color: #005f9c"/>
+                <p:outputLabel value="Tipo: #{catRevisionTrabTec.tramite.tipoTramiteNombre}" style="font-weight: bolder;color: #005f9c"/>
+                <p:outputLabel value="Responsable: #{catRevisionTrabTec.taskDataByTaskID.assignee}" style="font-weight: bolder;color: #005f9c"/>
+            </p:panelGrid>
+            <p:panel id="pDatos" header="Datos Generales : #{catRevisionTrabTec.tramite.tipoTramite.descripcion}" style="width: 100%">
+                <br/>
+                <p:panelGrid id="pgSolicitante" columns="2" styleClass="noBorder">
+                    <h:outputText value="Solicitante " style="font-weight: bold; text-transform: uppercase"/>
+                    <h:outputText value="#{catRevisionTrabTec.tramite.solicitante.apellidos} #{catRevisionTrabTec.tramite.solicitante.nombres}" rendered="#{catRevisionTrabTec.tramite.solicitante.esPersona}" style="text-transform: uppercase"/>
+                    <h:outputText value="#{catRevisionTrabTec.tramite.solicitante.razonSocial}" rendered="#{!catRevisionTrabTec.tramite.solicitante.esPersona}" style="text-transform: uppercase"/>
+                    <h:outputText value="No. Identificacion " style="font-weight: bold; text-transform: uppercase"/>
+                    <h:outputText value="#{catRevisionTrabTec.tramite.solicitante.ciRuc}" style="text-transform: uppercase"/>
+                </p:panelGrid>
+                <br/>
+                <p:inputTextarea id="observacion" value="#{catRevisionTrabTec.obs.observacion}" required="true" style="width: 60%" rows="2" requiredMessage="Las observaciones son obligatorias" placeholder="Ingrese las observaciones" label="Observaciones"/>
+                <p:tabView id="tdatos" style="width: 100%">
+                    <p:tab id="ttram" title="Detalle">
+                        <p:tabView id="tdetTram">
+                            <p:tab id="tDatosEdifGen" title="Trabajos edificaciones">
+                                <p:dataTable id="detDetalle" value="#{fusionFP.tramite.historicoTramiteDetCollection}" var="p" reflow="true" style="width: 100%">
+                                    <p:column headerText="Predio" style="width: 10%; text-align: center">
+                                        <p:outputLabel value="#{p.predio.numPredio}"/>
+                                    </p:column>
+                                    <p:column headerText="Codigo Catastral" style="width: 20%; text-align: center">
+                                        <h:outputText value="#{p.predio.sector} - #{p.predio.mz} - #{p.predio.cdla} - #{p.predio.mzdiv} - #{p.predio.solar} - #{p.predio.div1} - #{p.predio.div2} - #{p.predio.div3} - 
+                                                      #{p.predio.div4} - #{p.predio.div5} - #{p.predio.div6} - #{p.predio.div7} - #{p.predio.div8} - 
+                                                      #{p.predio.div9} - #{p.predio.phv} - #{p.predio.phh} " style="text-transform: uppercase"/>
+                                    </p:column>
+                                    <p:column headerText="Aval. Solar" style="width: 10%">
+                                        <p:outputLabel value="#{p.avaluoSolar}"/>
+                                    </p:column>
+                                    <p:column headerText="Aval. Construccion" style="width: 10%">
+                                        <p:outputLabel value="#{p.avaluoConstruccion}"/>
+                                    </p:column>
+                                    <p:column headerText="Aval. Edif." style="width: 10%">
+                                        <p:outputLabel value="#{p.avaluoEdificacion}"/>
+                                    </p:column>
+                                    <p:column headerText="Área m2" style="width: 10%; text-align: center;">
+                                        <p:outputLabel value="#{lpredios.catPredioS4.areaCalculada}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:tab>
+                            <p:tab id="tDatosPermiso" title="Permiso de construccion">
+                                <p:dataTable id="detPc" value="#{fusionFP.tramite.pePermisoCollection}" var="pc" reflow="true" style="width: 100%">
+                                    <p:column headerText="Predio" style="width: 10%; text-align: center">
+                                        <p:outputLabel value="#{pc.idPredio.numPredio}"/>
+                                    </p:column>
+                                    <p:column headerText="Codigo Catastral" style="width: 20%; text-align: center">
+                                        <h:outputText value="#{pc.idPredio.sector} - #{pc.idPredio.mz} - #{pc.idPredio.cdla} - #{pc.idPredio.mzdiv} - #{pc.idPredio.solar} - #{pc.idPredio.div1} - #{pc.idPredio.div2} - #{pc.idPredio.div3} - 
+                                                      #{pc.idPredio.div4} - #{pc.idPredio.div5} - #{pc.idPredio.div6} - #{pc.idPredio.div7} - #{pc.idPredio.div8} - 
+                                                      #{pc.idPredio.div9} - #{pc.idPredio.phv} - #{pc.idPredio.phh} " style="text-transform: uppercase"/>
+                                    </p:column>
+                                    <p:column headerText="Propietario">
+                                        <p:outputLabel value="#{pc.propietario}"/>
+                                    </p:column>
+                                    <p:column headerText="Responsable">
+                                        <p:outputLabel value="#{pc.responsable}"/>
+                                    </p:column>
+                                    <p:column headerText="Area de const.">
+                                        <p:outputLabel value="#{pc.areaConstruccion}"/>
+                                    </p:column>
+                                    <p:column headerText="Área Imp.">
+                                        <p:outputLabel value="#{pc.areaImplantacion}"/>
+                                    </p:column>
+                                    <p:column headerText="Área Imp.">
+                                        <p:outputLabel value="#{pc.areaImplantacion}"/>
+                                    </p:column>
+                                    <p:column headerText="Área Sol.">
+                                        <p:outputLabel value="#{pc.areaSolar}"/>
+                                    </p:column>
+                                    <p:column headerText="linea fabrica">
+                                        <p:outputLabel value="#{pc.lineaFabrica}"/>
+                                    </p:column>
+                                    <p:column headerText="Avaluo Liquidacion.">
+                                        <p:outputLabel value="#{pc.avaluoLiquidacion}"/>
+                                    </p:column>
+                                    <p:column headerText="Observacion">
+                                        <p:outputLabel value="#{pc.observacion}"/>
+                                    </p:column>
+                                    <p:column headerText="Emision">
+                                        <p:outputLabel value="#{pc.fechaEmision}"/>
+                                    </p:column>
+                                    <p:column headerText="Caducidad">
+                                        <p:outputLabel value="#{pc.fechaCaducidad}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:tab>
+                        </p:tabView>
+                    </p:tab>
+                    <p:tab id="tobs" title="Observaciones">
+                        <p:dataTable id="dtobs" value="#{catRevisionTrabTec.tramite.observacionesCollection}" var="obs" reflow="true" style="width: 100%" paginator="true" rows="10">
+                            <f:facet name="header">Observaciones</f:facet>
+                            <p:column headerText="Descripcion" style="width: 40%">
+                                #{obs.observacion}
+                            </p:column>
+                            <p:column headerText="tarea" style="width: 25%">
+                                #{obs.tarea}
+                            </p:column>
+                            <p:column headerText="Responsable" style="width: 20%">
+                                #{obs.userCre}
+                            </p:column>
+                            <p:column headerText="Fecha" style="width: 15%">
+                                #{obs.fecCre}
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                    <p:tab id="tdocs" title="Documentos y anexos">
+                        <dialog:detalleArchivosAct archivos="#{catRevisionTrabTec.processInstanceAllAttachmentsFiles}" />
+                    </p:tab>
+                </p:tabView>
+                <f:facet name="footer">
+                    <div align="center">
+                        <p:panelGrid id="pgOpciones" columns="2" layout="grid" style="width: 50%">
+                            <p:commandButton id="btnCorrecciones" value="Correccion Tecnica" style="height: 30px" actionListener="#{catRevisionTrabTec.completar(2)}"/>
+                            <p:commandButton id="btnAprobar" value="Aprobar/Continuar" style="height: 30px" actionListener="#{catRevisionTrabTec.completar(1)}"/>
+                            <!--<p:commandButton id="btnRechazo" value="Rechazar" style="height: 30px" actionListener="#{catRevisionTrabTec.completar(3)}"/>-->
+                        </p:panelGrid>
+                    </div>
+                </f:facet>
+            </p:panel>
+
+        </h:form>
+    </ui:define>
+</ui:composition>

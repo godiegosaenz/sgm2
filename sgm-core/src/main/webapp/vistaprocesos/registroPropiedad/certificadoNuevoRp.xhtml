@@ -1,0 +1,76 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    template="/template/template.xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{certificadoNuevoRp.doPreRenderView()}"/>
+            <f:viewParam name="code" value="#{certificadoNuevoRp.idTarea}"/>
+        </f:metadata>
+    </ui:define>
+    <ui:define name="top"><h3>Certificado Nuevo</h3></ui:define>
+    <ui:define name="content">
+        <h:form id="mainForm">
+            <p:panelGrid styleClass="noBorder" columns="4" style="width: 800px;font-size: 14px;margin: 0 auto"
+                         rendered="#{certificadoNuevoRp.ht != null}">
+                <p:outputLabel value="No Seguimiento: #{certificadoNuevoRp.ht.id}" style="font-weight: bolder;color: #005f9c"/>
+                <p:outputLabel value="No Tramite: #{certificadoNuevoRp.ht.numTramiteXDepartamento}" style="font-weight: bolder;color: #005f9c"/>
+                <p:outputLabel value="Responsable: #{certificadoNuevoRp.taskDataByTaskID.assignee}" style="font-weight: bolder;color: #005f9c"/>
+            </p:panelGrid>
+            <p:panelGrid styleClass="noBorder" columns="4" style="width: 800px;font-size: 14px;margin: 0 auto"
+                         rendered="#{certificadoNuevoRp.ht == null}">
+                <p:outputLabel value="Solicitud Dinardap: #{certificadoNuevoRp.cert.tareaDinardap.numeroSolicitud}" style="font-weight: bolder;color: #005f9c"/>
+            </p:panelGrid>
+            <p:panelGrid id="pnlCertificado" styleClass="noBorder" style="width: 800px;margin: 0 auto">
+                <p:row>
+                    <p:column style="width: 120px">
+                        Tipo Certificado:
+                    </p:column>
+                    <p:column>
+                        <p:selectOneMenu value="#{certificadoNuevoRp.tipo}" converter="entityConverter">
+                            <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}" />
+                            <f:selectItems value="#{certificadoNuevoRp.listCertf}" var="item" itemLabel="#{item.nombreCertificado}" itemValue="#{item}"/>
+                            <p:ajax listener="#{certificadoNuevoRp.cargarTexto()}" event="change"/>
+                        </p:selectOneMenu>
+                    </p:column>
+                    <p:column style="text-align: right;font-weight: bolder;">
+                        Fecha Emision:
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="#{certificadoNuevoRp.fecha}">
+                            <f:convertDateTime pattern="dd-MM-yyyy"/>
+                        </p:outputLabel>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        Beneficiario:
+                    </p:column>
+                    <p:column colspan="4">
+                        <p:inputText value="#{certificadoNuevoRp.certificado.beneficiario}" style="width: 100%"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="4">
+                        <p:editor height="400" value="#{certificadoNuevoRp.certificado.observacion}" style="width: 100%"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="4" style="text-align: center;">
+                        <p:commandButton value="Guardar" icon="ui-icon-disk" styleClass="btnStyle"
+                                         actionListener="#{certificadoNuevoRp.saveCertificado()}"/>
+                        <p:spacer width="20" height="1"/>
+                        <p:commandButton value="Imprimir Cert." icon="ui-icon-document" styleClass="btnStyle"
+                                         actionListener="#{certificadoNuevoRp.generarReporte()}"/>
+                        <p:spacer width="20" height="1"/>
+                        <p:commandButton value="Completar Tarea" icon="ui-icon-check" styleClass="btnStyle"
+                                         actionListener="#{certificadoNuevoRp.actualizarTarea()}"/>
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+        </h:form>
+    </ui:define>
+</ui:composition>

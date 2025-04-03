@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pass="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <cc:interface >
+        <cc:attribute name="catalogo" required="true" />
+        <cc:attribute name="label" required="true"/>
+        <cc:attribute name="showlabel" required="false" default="true"/>
+        <cc:attribute name="disabled" required="false" default="false"/>
+        <cc:attribute name="required" required="false" default="false"/>
+        <cc:attribute name="update" required="false" default="@this"/>
+        <cc:attribute name="accionListenerUpdate" required="false" method-signature="void metodo()" default="#{compView.update()}"/>
+        <cc:attribute name="defaultValue" required="true"/>
+        <cc:attribute name="changeOnEnter" required="false" default="true"/>
+        <cc:attribute name="next" required="false" default="true"/>
+        <cc:attribute name="bind" required="true" type="com.origami.sgm.entities.CtlgItem" />
+    </cc:interface>
+    <cc:implementation>
+
+        <h:panelGroup layout="block" class="compContainer" id="#{cc.attrs.catalogo}-container" style="width: 180px !important;">
+            <table style="border-spacing: initial !important;">
+                <tr>
+                    <td colspan="2" style="border: none !important;">
+                        <h:outputLabel for="#{cc.attrs.catalogo}-input" value="#{cc.attrs.label}" class="DispBlock Wid100 FontBold" style="margin-bottom: 3px;"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border: none !important;">
+
+                        <p:inputText id="#{cc.attrs.catalogo}-input"  class="compInput" converter="ctlgItemConverter"
+                                     disabled="#{cc.attrs.disabled}" value="#{cc.attrs.bind}" required="#{cc.attrs.required}"
+                                     style="width: 17px; display: block; margin-top: -5px;"
+                                     pass:data-field="#{cc.attrs.catalogo}"
+                                     pass:data-default-value="#{cc.attrs.defaultValue}"
+                                     pass:data-all-values="#{compView.rangoOrdenes(cc.attrs.catalogo)}"
+                                     pass:data-id="#{cc.attrs.bind}"
+                                     onkeypress="validateIntegerValueAndFocusNext(event, '#{cc.attrs.next}')">
+                            <!--                            <c:choose>
+                                                            <c:when test="#{not empty cc.attrs.next}">
+                                                                <f:attribute name="onkeypress" value="validateIntegerValueAndFocusNext(event,'#{cc.attrs.next}')" />
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <f:attribute name="onkeypress" value="validateIntegerValueAndFocusNext(event)" />
+                                                            </c:otherwise>
+                                                        </c:choose>-->
+                            <c:if test="#{cc.attrs.update != '@this'}">
+                                <p:ajax update="#{cc.attrs.update}" />
+                            </c:if>
+                        </p:inputText>
+                    </td>
+                    <td style="border: none !important;">
+                        <p:selectOneMenu id="#{cc.attrs.catalogo}-select" value="#{cc.attrs.bind}" disabled="#{cc.attrs.disabled}" required="#{cc.attrs.required}"
+                                         style="display: block; margin-top: -5px;" filter="true" filterMatchMode="contains" styleClass="selectWidth135"
+                                         pass:data-field="#{cc.attrs.catalogo}" effect="fade" converter="entityConverter"
+                                         pass:data-all-values="#{compView.rangoOrdenes(cc.attrs.catalogo)}"
+                                         >
+                            <f:selectItem itemLabel="Seleccione..." itemValue="#{null}" />
+                            <f:selectItems value="#{compView.valoresByCatalogo(cc.attrs.catalogo)}" var="item" itemLabel="#{item.valor}" itemValue="#{item}" />
+                            <c:if test="#{cc.attrs.update != '@this'}">
+                                <p:ajax update="#{cc.attrs.update}" />
+                            </c:if>
+                        </p:selectOneMenu>
+                    </td>
+                </tr>
+            </table>
+        </h:panelGroup>
+    </cc:implementation>
+</html>

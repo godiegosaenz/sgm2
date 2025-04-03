@@ -1,0 +1,570 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="emisionPredioUrbanoJama" language="groovy" printOrder="Horizontal" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="e32bcbe7-38b1-48c8-b71c-ef2bf341c014">
+	<property name="ireport.zoom" value="1.0514816984441777"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="274"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+			<topPen lineWidth="0.0"/>
+			<leftPen lineWidth="0.0"/>
+			<bottomPen lineWidth="0.0"/>
+			<rightPen lineWidth="0.0"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<pen lineWidth="0.0"/>
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#E6F3FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="RUBROS" uuid="9b9997fc-0d56-4fc9-b485-904b53183c83">
+		<parameter name="ID_LIQUIDACION" class="java.lang.Long">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="NUM_COMPROBANTE" class="java.lang.Long">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT
+   initcap(RL.DESCRIPCION) ||': '|| '$' AS DESCRIPCION,
+
+    RL.RUBRO_DEL_MUNICIPIO,
+    CASE
+     WHEN
+        (SELECT PR.VALOR  FROM
+	SGM_FINANCIERO.REN_DET_LIQUIDACION PR
+	WHERE PR.LIQUIDACION = $P{ID_LIQUIDACION}   AND PR.RUBRO = RL.ID) > 0 THEN
+	(SELECT PR.VALOR  FROM
+	SGM_FINANCIERO.REN_DET_LIQUIDACION PR
+	WHERE PR.LIQUIDACION = $P{ID_LIQUIDACION}   AND PR.RUBRO = RL.ID)
+	ELSE 0.00 END AS VALOR_RECAUDADO
+FROM
+   SGM_FINANCIERO.REN_RUBROS_LIQUIDACION RL
+   WHERE RL.TIPO_LIQUIDACION = 13 AND RL.CODIGO_RUBRO NOT IN (10, 11, 12, 13, 14, 15, 16)
+ORDER BY RL.PRIORIDAD ASC;]]>
+		</queryString>
+		<field name="descripcion" class="java.lang.String"/>
+		<field name="rubro_del_municipio" class="java.lang.Boolean"/>
+		<field name="valor_recaudado" class="java.math.BigDecimal"/>
+	</subDataset>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["\\home\\andysanchez\\NetBeansProjects\\sgm-reportes\\src\\main\\resources\\reportes\\Emision"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ID_LIQUIDACION" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+     TRIM(LQ.NOMBRE_COMPRADOR) AS NOMBRE_COMPRADOR,
+     --CAT_ENTE
+     EN.CI_RUC 		AS  CAT_ENTE_CI_RUC,
+     EN.NOMBRES		AS  CAT_ENTE_NOMBRES,
+     EN.APELLIDOS		AS  CAT_ENTE_APELLIDOS,
+     EN.ES_PERSONA	          AS  CAT_ENTE_ES_PERSONA,
+     EN.RAZON_SOCIAL		AS  CAT_ENTE_RAZON_SOCIAL,
+     EN.DIRECCION		AS  CAT_ENTE_DIRECCION,
+
+     --REN_LIQUIDACION
+     LQ.NUM_LIQUIDACION	AS  REN_LIQUIDACION_NUM_LIQUIDACION,
+     LQ.ID_LIQUIDACION	AS  REN_LIQUIDACION_ID_LIQUIDACION,
+     LQ.TOTAL_PAGO	AS  REN_LIQUIDACION_TOTAL_PAGO,
+     LQ.FECHA_INGRESO	AS  REN_LIQUIDACION_FECHA_INGRESO,
+     LQ.COMPRADOR	AS  REN_LIQUIDACION_COMPRADOR,
+     LQ.SALDO		AS  REN_LIQUIDACION_SALDO,
+     LQ.OBSERVACION	AS  REN_LIQUIDACION_OBSERVACION,
+     LQ.ANIO		AS  REN_LIQUIDACION_ANIO,
+     LQ.VALOR_COMERCIAL	AS  REN_LIQUIDACION_VALOR_COMERCIAL,
+     LQ.VALOR_CATASTRAL	AS  REN_LIQUIDACION_VALOR_CATASTRAL,
+     LQ.VALOR_HIPOTECA  AS  REN_LIQUIDACION_VALOR_HIPOTECA,
+     LQ.VALOR_NOMINAL	AS  REN_LIQUIDACION_VALOR_NOMINA,
+     LQ.VALOR_MORA	AS  REN_LIQUIDACION_VALOR_MORA,
+     LQ.TOTAL_ADICIONALES AS  REN_LIQUIDACION_TOTAL_ADICIONALES,
+     LQ.OTROS		AS  REN_LIQUIDACION_OTROS,
+     LQ.VALOR_MEJORAS	AS  REN_LIQUIDACION_VALOR_MEJORAS,
+     LQ.AREA_TOTAL	AS  REN_LIQUIDACION_AREA_TOTAL,
+     LQ.PATRIMONIO	AS  REN_LIQUIDACION_PATRIMONIO,
+     LQ.EXONERADO       AS  REN_LIQUIDACION_EXONERADO,
+     LQ.VALOR_EXONERACION AS REN_LIQUIDACION_VALOR_EXONERADO,
+     LQ.exoneracion_descripcion AS EXONERACION_DESCRIPCION,
+
+     --REN_TIPO_LIQUIDACION
+     TL.NOMBRE_TITULO	AS  REN_TIPO_LIQUIDACION_NOMBRE_TITULO,
+     TL.NOMBRE_TRANSACCION	AS  REN_TIPO_LIQUIDACION_NOMBRE_TITULO,
+     TL.CODIGO_TITULO_REPORTE	AS  REN_TIPOLIQUIDACOIN_CODIGO_TITULO_REPORTE,
+
+     --CAT_PREDIO
+
+     PR.SECTOR		AS  CAT_PREDIO_SECTOR,
+     PR.MZ	                     AS  CAT_PREDIO_MZ,
+     PR.CDLA		AS  CAT_PREDIO_CDLA,
+     PR.MZDIV		AS  CAT_PREDIO_MZDIV,
+     PR.SOLAR                  AS  CAT_PREDIO_SOLAR,
+     PR.CLAVE_CAT             AS  CLAVE_CATASTRAL,
+    PR.PREDIALANT              AS  CAT_CODIGO_PREDIAL,
+     PR.NOMBRE_URB		AS  CAT_PREDIO_NOMBRE_URB,
+     PR.URB_SOLARNEW           AS  CAT_PREDIO_URB_SOLARNEW,
+     PR.URB_SECNEW		AS  CAT_PREDIO_URB_SECNEW,
+     PR.URB_MZ		AS  CAT_PREDIO_URB_MZ,
+     PR.NUM_PREDIO		AS  CAT_PREDIO_NUM_PREDIO,
+     PR.CALLE		AS  CAT_PREDIO_CALLE,
+     PR.LOTE		AS  CAT_PREDIO_LOTE,
+
+    --REN_LIQUIDACION
+    LQ.AVALUO_MUNICIPAL	AS  REN_LIQUIDACION_AVALUO_MUNICIPAL,
+    LQ.AVALUO_SOLAR		AS  REN_LIQUIDACION_AVALUO_SOLAR,
+    LQ.AVALUO_CONSTRUCCION	AS  REN_LIQUIDACION_AVALUO_CONSTRUCCION,
+    LQ.OBSERVACION             AS OBSERVACIONES,
+    --CAT_PREDIO
+    PR.PROPIEDAD 		 AS  CAT_PREDIO_PROPIEDAD,
+    --CAT_CIUDADELA
+    CI.NOMBRE		 AS  CAT_CIUDADELA_NOMBRE,
+
+     --REN_LIQUIDACION
+     LQ.BANDA_IMPOSITIVA        AS REN_LIQUIDACION_BANDA_IMPOSITIVA,
+
+     --CAT_PREDIO
+     PR.NUM_DEPARTAMENTO	 AS CAT_PREDIO_NUM_DEPARTAMENTO,
+     PR.DIVISION_URB		 AS CAT_PREDIO_DIVISION_URB,
+     COALESCE(PR.CALLE_S, '')   AS CALLE_SEC
+
+FROM
+     SGM_FINANCIERO.REN_TIPO_LIQUIDACION       TL
+
+     INNER JOIN SGM_FINANCIERO.REN_LIQUIDACION LQ ON LQ.TIPO_LIQUIDACION = TL.ID
+     INNER JOIN SGM_APP.CAT_PREDIO             PR ON LQ.PREDIO = PR.ID
+
+     LEFT OUTER JOIN SGM_APP.CAT_ENTE          EN ON LQ.COMPRADOR = EN.ID
+     lEFT OUTER JOIN SGM_APP.CAT_CIUDADELA     CI ON PR.CIUDADELA = CI.ID
+
+     LEFT OUTER JOIN SGM_APP.REG_FICHA         RF ON PR.ID = RF.PREDIO
+
+
+WHERE
+     LQ.ID = $P{ID_LIQUIDACION}
+LIMIT 1]]>
+	</queryString>
+	<field name="nombre_comprador" class="java.lang.String"/>
+	<field name="cat_ente_ci_ruc" class="java.lang.String"/>
+	<field name="cat_ente_nombres" class="java.lang.String"/>
+	<field name="cat_ente_apellidos" class="java.lang.String"/>
+	<field name="cat_ente_es_persona" class="java.lang.Boolean"/>
+	<field name="cat_ente_razon_social" class="java.lang.String"/>
+	<field name="cat_ente_direccion" class="java.lang.String"/>
+	<field name="ren_liquidacion_num_liquidacion" class="java.lang.Long"/>
+	<field name="ren_liquidacion_id_liquidacion" class="java.lang.String"/>
+	<field name="ren_liquidacion_total_pago" class="java.math.BigDecimal"/>
+	<field name="ren_liquidacion_fecha_ingreso" class="java.sql.Timestamp"/>
+	<field name="ren_liquidacion_comprador" class="java.lang.Long"/>
+	<field name="ren_liquidacion_saldo" class="java.math.BigDecimal"/>
+	<field name="ren_liquidacion_observacion" class="java.lang.String"/>
+	<field name="ren_liquidacion_anio" class="java.lang.Integer"/>
+	<field name="ren_liquidacion_valor_comercial" class="java.math.BigDecimal"/>
+	<field name="ren_liquidacion_valor_catastral" class="java.math.BigDecimal"/>
+	<field name="ren_liquidacion_valor_hipoteca" class="java.math.BigDecimal"/>
+	<field name="ren_liquidacion_valor_nomina" class="java.math.BigDecimal"/>
+	<field name="ren_liquidacion_valor_mora" class="java.math.BigDecimal"/>
+	<field name="ren_liquidacion_total_adicionales" class="java.math.BigDecimal"/>
+	<field name="ren_liquidacion_otros" class="java.math.BigDecimal"/>
+	<field name="ren_liquidacion_valor_mejoras" class="java.math.BigDecimal"/>
+	<field name="ren_liquidacion_area_total" class="java.math.BigDecimal"/>
+	<field name="ren_liquidacion_patrimonio" class="java.math.BigDecimal"/>
+	<field name="ren_liquidacion_exonerado" class="java.lang.Boolean"/>
+	<field name="ren_liquidacion_valor_exonerado" class="java.math.BigDecimal"/>
+	<field name="exoneracion_descripcion" class="java.lang.String"/>
+	<field name="ren_tipo_liquidacion_nombre_titulo" class="java.lang.String"/>
+	<field name="ren_tipoliquidacoin_codigo_titulo_reporte" class="java.lang.Long"/>
+	<field name="cat_predio_sector" class="java.lang.Integer"/>
+	<field name="cat_predio_mz" class="java.lang.Integer"/>
+	<field name="cat_predio_cdla" class="java.lang.Integer"/>
+	<field name="cat_predio_mzdiv" class="java.lang.Integer"/>
+	<field name="cat_predio_solar" class="java.lang.Integer"/>
+	<field name="clave_catastral" class="java.lang.String"/>
+	<field name="cat_codigo_predial" class="java.lang.String"/>
+	<field name="cat_predio_nombre_urb" class="java.lang.String"/>
+	<field name="cat_predio_urb_solarnew" class="java.lang.String"/>
+	<field name="cat_predio_urb_secnew" class="java.lang.String"/>
+	<field name="cat_predio_urb_mz" class="java.lang.String"/>
+	<field name="cat_predio_num_predio" class="java.lang.Long"/>
+	<field name="cat_predio_calle" class="java.lang.String"/>
+	<field name="cat_predio_lote" class="java.lang.Integer"/>
+	<field name="ren_liquidacion_avaluo_municipal" class="java.math.BigDecimal"/>
+	<field name="ren_liquidacion_avaluo_solar" class="java.math.BigDecimal"/>
+	<field name="ren_liquidacion_avaluo_construccion" class="java.math.BigDecimal"/>
+	<field name="observaciones" class="java.lang.String"/>
+	<field name="cat_predio_propiedad" class="java.lang.Long"/>
+	<field name="cat_ciudadela_nombre" class="java.lang.String"/>
+	<field name="ren_liquidacion_banda_impositiva" class="java.math.BigDecimal"/>
+	<field name="cat_predio_num_departamento" class="java.lang.String"/>
+	<field name="cat_predio_division_urb" class="java.lang.String"/>
+	<field name="calle_sec" class="java.lang.String"/>
+	<background>
+		<band height="321">
+			<textField>
+				<reportElement mode="Transparent" x="26" y="17" width="435" height="271" forecolor="#808080" uuid="c0f8b934-7611-4e31-9c24-aaebb53129bc"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="Left">
+					<font size="30" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ANULADO"]]></textFieldExpression>
+			</textField>
+		</band>
+	</background>
+	<title>
+		<band height="10" splitType="Stretch">
+			<subreport>
+				<reportElement x="2" y="-6" width="457" height="16" uuid="63fc3935-d31b-44fb-b98f-71f2939295a4"/>
+				<subreportParameter name="SUB_TITLE">
+					<subreportParameterExpression><![CDATA["DEPARTAMENTO FINANCIERO"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="LEGENDA">
+					<subreportParameterExpression><![CDATA["IMPUESTO PREDIAL URBANO         TITULO DE CREDITO No.: " + $F{ren_liquidacion_id_liquidacion}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "titleReporte3.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<detail>
+		<band height="355" splitType="Stretch">
+			<textField>
+				<reportElement x="94" y="-4" width="400" height="14" uuid="3904ea13-7ec7-4f8d-bff8-5fac3d7f02aa"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_liquidacion_comprador}==null?$F{nombre_comprador}:($F{cat_ente_es_persona}? ($F{cat_ente_apellidos} == null? "" : $F{cat_ente_apellidos}) + " " + ($F{cat_ente_nombres} == null? "" : $F{cat_ente_nombres}): ($F{cat_ente_razon_social} == null? "" : $F{cat_ente_razon_social}))]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="-4" width="92" height="14" uuid="1c103911-3de0-439a-83ce-af485fa6e992"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[CONTRIBUYENTE:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="10" width="80" height="15" uuid="9d90d434-a541-45a0-abbc-35531e785b2d"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="9"/>
+				</textElement>
+				<text><![CDATA[RUC / CC:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="41" width="105" height="12" uuid="008b7390-bfb6-43de-af8b-d3eafcd12a61"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="9"/>
+				</textElement>
+				<text><![CDATA[DIRECCION, CALLE:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="2" y="53" width="493" height="1" uuid="6b2a95f6-480e-4b72-bc50-2fdebb54d999"/>
+			</line>
+			<line>
+				<reportElement x="232" y="252" width="263" height="1" uuid="f1aa9866-1561-424c-b8a1-f42486a8d84e"/>
+			</line>
+			<line>
+				<reportElement x="3" y="303" width="492" height="1" uuid="03173fc4-8f5a-40d0-b894-4d274d87d16d"/>
+			</line>
+			<staticText>
+				<reportElement x="3" y="319" width="111" height="12" uuid="3062e218-3981-4259-a752-8e4cabd195b3"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DIRECTOR FINANCIERO]]></text>
+			</staticText>
+			<line>
+				<reportElement x="3" y="315" width="112" height="1" uuid="935e0581-4023-4801-99b9-24cf0305c198"/>
+			</line>
+			<line>
+				<reportElement x="494" y="53" width="1" height="251" uuid="0d5284d6-4e36-45fc-a809-e0f36996a294"/>
+			</line>
+			<line>
+				<reportElement x="2" y="54" width="1" height="250" uuid="85698af6-bc87-4d58-930f-a3e693f0d098"/>
+			</line>
+			<staticText>
+				<reportElement x="14" y="168" width="97" height="13" uuid="4c854568-5de8-4346-9d7b-9ab252527e07"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[Fecha de Emisión:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="128" y="315" width="112" height="1" uuid="61ec4490-62f6-40bf-8293-8af068898ef2"/>
+			</line>
+			<staticText>
+				<reportElement x="128" y="319" width="111" height="12" uuid="93cdf504-6620-4b82-81b5-a099c4e45340"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[JEFE DE RENTAS]]></text>
+			</staticText>
+			<line>
+				<reportElement x="254" y="315" width="112" height="1" uuid="b73f9045-0322-40bd-aa06-ff87abec7f88"/>
+			</line>
+			<staticText>
+				<reportElement x="254" y="319" width="111" height="12" uuid="b9529bf9-8044-4c49-a60c-6f23dc204981"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TESORERO]]></text>
+			</staticText>
+			<line>
+				<reportElement x="382" y="315" width="108" height="1" uuid="73e94634-c2a8-41ca-a6b8-4b25dbed4799"/>
+			</line>
+			<staticText>
+				<reportElement x="382" y="319" width="107" height="12" uuid="da1aeed9-3e4b-419c-9838-f4be539d7461"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RECAUDADOR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="4" y="55" width="222" height="13" backcolor="#FEFEFE" uuid="e451273b-40eb-4010-8dc5-d1787ff5e78d"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AVALÚO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="9" y="97" width="139" height="13" uuid="618fab49-71b7-4c87-b000-e8067f04b125"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[            Construcción:     $]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="26" y="72" width="114" height="13" uuid="0eccfe41-18c5-4600-a563-dfca591e9e3c"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[	Terreno:     $]]></text>
+			</staticText>
+			<line>
+				<reportElement x="231" y="53" width="1" height="249" uuid="f58a96c2-bde5-449a-97e9-9a9920377555"/>
+			</line>
+			<line>
+				<reportElement x="3" y="119" width="228" height="1" uuid="237f0edc-48c7-495c-b11e-8d113dc50774"/>
+			</line>
+			<staticText>
+				<reportElement x="262" y="254" width="126" height="17" uuid="7a309bad-39cc-4aae-8519-6372cb6609b1"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VALOR EMITIDO:    $]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="246" y="10" width="96" height="12" uuid="8d908d13-9dc7-4d4f-9d04-8a50eb0ac2b0"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[CLAVE CAT.:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="26" width="79" height="12" uuid="a7b3088b-eb79-4121-9f57-84b872ea1a12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="9"/>
+				</textElement>
+				<text><![CDATA[BARRIO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="131" width="138" height="13" uuid="da7e9ec7-e4cc-4fef-98a4-3e7099d5d2be"/>
+				<textElement>
+					<font fontName="SansSerif" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Valor de la Propiedad:     $]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="54" y="149" width="84" height="13" uuid="d2b77b72-2f0a-4d67-b38c-75cd0d70ad0f"/>
+				<textElement>
+					<font fontName="SansSerif" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Base Imponible:]]></text>
+			</staticText>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="404" y="254" width="85" height="17" uuid="31c09a2a-d350-42f4-ad2e-de03b8da64b6"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.util.Locale.US)).format($F{ren_liquidacion_total_pago})]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH:mm:ss">
+				<reportElement x="114" y="168" width="115" height="13" uuid="1d4dbaab-85ed-4ae8-a6da-dccdcb9a0810"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_liquidacion_fecha_ingreso}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="149" y="149" width="80" height="13" uuid="2a2ec4bf-2a6e-4d13-abf2-76d6d82bb72d"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_liquidacion_banda_impositiva} == null?  "0.00": $F{ren_liquidacion_banda_impositiva}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="149" y="131" width="80" height="13" uuid="6a53d7d1-797c-479c-be67-8b99d296240b"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.util.Locale.US)).format($F{ren_liquidacion_avaluo_municipal})]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="149" y="97" width="80" height="13" uuid="936ac3b0-15c5-4138-a0f3-4bfce250c4d6"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.util.Locale.US)).format($F{ren_liquidacion_avaluo_construccion})]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="149" y="72" width="80" height="13" uuid="45b2bdfe-60a6-4566-a7e4-34915bb9cdd8"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.util.Locale.US)).format($F{ren_liquidacion_avaluo_solar})]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="83" y="10" width="135" height="15" uuid="9a60d703-74b5-4b20-a2a2-9cbd5ab0461a"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cat_ente_ci_ruc}==null?"SIN REGISTRO":$F{cat_ente_ci_ruc}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="342" y="10" width="152" height="12" uuid="e15a6f13-0f82-4ae8-9e1a-58331a0374cb"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{clave_catastral}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="83" y="26" width="152" height="12" uuid="6119b33c-fecc-4333-8801-2c985b72c9fa"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{cat_ciudadela_nombre}==null? "" : $F{cat_ciudadela_nombre})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="107" y="41" width="387" height="12" uuid="c795d7c4-2cb6-46fe-be68-7c7d25fb93d7"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{cat_predio_calle}==null?"CALLE PRINCIPAL:":$F{cat_predio_calle} )+ " - " + $F{calle_sec}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement key="table 1" mode="Transparent" x="234" y="71" width="253" height="28" backcolor="#FFFFFF" uuid="4f718466-c3df-4563-81b3-d9aef076a631"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="RUBROS" uuid="7094b021-560d-4f91-80a3-010e412c68d2">
+						<datasetParameter name="ID_LIQUIDACION">
+							<datasetParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="NUM_COMPROBANTE">
+							<datasetParameterExpression><![CDATA[]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="177" uuid="cdfee92e-75b7-43ac-a8ff-77a6803f1fbd">
+						<jr:columnHeader height="16" rowSpan="1">
+							<staticText>
+								<reportElement mode="Opaque" x="0" y="1" width="176" height="14" backcolor="#FFFFFF" uuid="2a369f2c-dd2e-41fe-8ed5-c2f5fb804fe8"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[RUBROS]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="18" rowSpan="1">
+							<textField pattern="">
+								<reportElement style="table" mode="Opaque" x="0" y="1" width="152" height="17" backcolor="#FFFFFF" uuid="bbd93453-28dc-48a9-8c3c-636070bc4868"/>
+								<box>
+									<topPen lineWidth="0.0" lineColor="#FFFFFF"/>
+									<leftPen lineWidth="0.0" lineColor="#FFFFFF"/>
+									<bottomPen lineWidth="0.0" lineColor="#FFFFFF"/>
+									<rightPen lineWidth="0.0" lineColor="#FFFFFF"/>
+								</box>
+								<textElement textAlignment="Right" verticalAlignment="Bottom">
+									<font size="10"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{descripcion}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="77" uuid="a6d067f6-e904-4e85-95d8-56f2ff23e295">
+						<jr:columnHeader height="16" rowSpan="1">
+							<staticText>
+								<reportElement mode="Opaque" x="0" y="1" width="77" height="15" uuid="7cb78f79-56b6-4d99-8aa3-3983874a86a0"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[VALORES]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="18" rowSpan="1">
+							<textField pattern="  ##.##0,00" isBlankWhenNull="true">
+								<reportElement style="table" mode="Opaque" x="1" y="1" width="76" height="17" uuid="4c60e336-fd3e-48d3-ba24-a21e6f5e36c1"/>
+								<textElement textAlignment="Right" verticalAlignment="Bottom">
+									<font size="10"/>
+								</textElement>
+								<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00", new java.text.DecimalFormatSymbols(java.util.Locale.US)).format($F{valor_recaudado})]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<staticText>
+				<reportElement mode="Opaque" x="235" y="55" width="240" height="12" backcolor="#FEFEFE" uuid="7eb5854d-fed8-40dc-91ee-777e95baef42"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DETALLE DE RUBROS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="246" y="25" width="95" height="15" uuid="872661e1-9f9c-4414-af50-2f59a80f38a4"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<text><![CDATA[MAT. INMOBILIARIA:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="342" y="26" width="153" height="12" uuid="80d1de3d-4143-4d17-a066-3c9cbff52004"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cat_predio_num_predio}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="14" y="187" width="215" height="115" uuid="0257e4e3-5842-4f6d-a77d-4f3ad02d5634"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["OBSERVACIÒN: " + $F{ren_liquidacion_observacion}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

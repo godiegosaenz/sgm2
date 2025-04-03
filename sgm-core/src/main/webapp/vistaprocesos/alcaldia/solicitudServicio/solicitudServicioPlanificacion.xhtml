@@ -1,0 +1,184 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:poue="http://primefaces.org/ui/extensions">
+
+
+    <ui:define name="content">
+        <div align="center">
+            <h1>INGRESO DE SOLICITUD DE PLANIFICACION</h1>
+        </div>
+        <h:form id="frmSolicitud">
+            <p:selectBooleanCheckbox value="#{solicitudPlanificacion.entidad}" style="font-weight: bold;font-size: 12px; border-bottom: #FF7E00 solid 3px;" itemLabel="FORMULARIO ENTIDADES">
+                <p:ajax listener="#{solicitudPlanificacion.actualizarFormulario()}" update="frmSolicitud, frmSolicitud:pngDats"/>
+            </p:selectBooleanCheckbox>
+
+            <center>
+                <h:panelGrid id="pngDats" columns="2" cellpadding="1" cellspacing="1">
+                    <p:outputLabel value="#{!solicitudPlanificacion.entidad ? 'CEDULA:':'R.U.C. :'}" style="font-weight: bolder;"/>
+                    <h:panelGroup>
+                        <p:inputMask mask="9999999999" value="#{solicitudPlanificacion.enteSolicitante.ciRuc}" rendered="#{!solicitudPlanificacion.entidad}"/>
+                        <p:inputText value="#{solicitudPlanificacion.enteSolicitante.ciRuc}" rendered="#{solicitudPlanificacion.entidad}" maxlength="18" >
+                            <poue:keyFilter mask="num" preventPaste="false"/>
+                        </p:inputText>
+                        <p:commandLink actionListener="#{solicitudPlanificacion.buscarEnte()}" style="height: 30px"  >
+                            <p:spacer width="15"/>
+                            <p:graphicImage value="/css/homeIconsImages/buscar.png" height="20" width="20"/>
+                        </p:commandLink>
+                        <p:commandButton value="Editar" icon="ui-icon-pencil" style="height: 30px;" styleClass="btnStyle" actionListener="#{solicitudPlanificacion.mostrarEdicion()}" rendered="#{solicitudPlanificacion.hayEnte}">
+                            <p:ajax event="dialogReturn" listener="#{solicitudPlanificacion.procesarEnte}" update="frmSolicitud"  />
+                        </p:commandButton>
+                        <p:commandLink value="Agregar Entidad" style="font-size: 14px; color: #000;" actionListener="#{solicitudPlanificacion.mostrar()}" rendered="#{solicitudPlanificacion.entidad and !solicitudPlanificacion.hayEnte}"/>
+                    </h:panelGroup>
+
+                    <p:outputLabel value="NONBRES: " rendered="#{!solicitudPlanificacion.entidad}" style="font-weight: bolder;"/>
+                    <p:inputText value="#{solicitudPlanificacion.enteSolicitante.nombres}" style="width: 160px;" rendered="#{!solicitudPlanificacion.entidad}"/>
+
+                    <p:outputLabel value="APELLIDOS: " rendered="#{!solicitudPlanificacion.entidad}" style="font-weight: bolder;"/>
+                    <p:inputText value="#{solicitudPlanificacion.enteSolicitante.apellidos}" rendered="#{!solicitudPlanificacion.entidad}" style="width: 160px;"/>
+
+                    <p:outputLabel value="RAZÓN SOCIAL: " rendered="#{solicitudPlanificacion.entidad}" style="font-weight: bolder;"/>
+                    <p:inputText  value="#{solicitudPlanificacion.enteSolicitante.razonSocial}" rendered="#{solicitudPlanificacion.entidad}" size="50" />
+
+                    <p:outputLabel value="REMITENTE: " rendered="#{solicitudPlanificacion.entidad}" style="font-weight: bolder;"/>
+                    <p:inputText  value="#{solicitudPlanificacion.solicitud.representante}" rendered="#{solicitudPlanificacion.entidad}"  size="50" />
+
+                    <p:outputLabel value="DIRECCIÓN: " style="font-weight: bolder;"/>
+                    <p:inputText value="#{solicitudPlanificacion.enteSolicitante.direccion}" size="50" />
+                </h:panelGrid>
+            </center>
+
+            <p:spacer height="5" width="20"/>
+            <div align="center">
+                <p:panelGrid id="pngDatsSol" columns="2" layout="grid" style="width: 60%;" >
+                    <p:dataTable id="dtCorr" value="#{solicitudPlanificacion.enteSolicitante.enteCorreoCollection}" scrollHeight="65" scrollable="true" var="c" emptyMessage="No se encontro ningún correo" style="width: 300px;" >
+                        <p:column headerText="Correo" >
+                            <h:outputLabel value="#{c.email}"/>
+                        </p:column>
+                    </p:dataTable>
+                    <p:dataTable id="dtTel" value="#{solicitudPlanificacion.enteSolicitante.enteTelefonoCollection}" scrollHeight="65" scrollable="true" var="t" emptyMessage="No se encontro ningún Teléfono" style="width: 255px;">
+                        <p:column headerText="Teléfono" >
+                            <h:outputLabel value="#{t.telefono}"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:panelGrid>
+            </div>
+
+            <br/><br/>
+            <p:panelGrid id="formulario" style="width: 100%; margin: 0 auto;" rendered="#{solicitudPlanificacion.hayEnte}">
+                <f:facet name="header">  
+                    <p:row>
+                        <p:column style="text-align: left" colspan="6">
+                            SOLICITUD
+                        </p:column>
+                    </p:row>
+                </f:facet>
+                <p:row>
+                    <p:column colspan="2">
+                        <p:outputLabel value="¿Qué tipo de servicio requiere?" style="font-weight: bold; font-size: 14px;"/>
+                    </p:column>
+                    
+                    <p:column colspan="4">
+                        <p:outputLabel value="Describa el hecho o incidente que requiere nuestra atención." style="font-weight: bold; font-size: 12px;"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="2">
+                        <p:selectOneMenu value="#{solicitudPlanificacion.solicitud.tipoServicio}" effect="fade" converter="entityConverter">
+                            <f:attribute name="name" value="VuItems"/>
+                            <f:selectItems value="#{solicitudPlanificacion.tipoServicio.vuItemsCollection}" var="servicio" itemLabel="#{servicio.nombre}" itemValue="#{servicio}"/>
+                        </p:selectOneMenu>
+                    </p:column>
+                    <p:column colspan="4">
+                        <p:inputTextarea value="#{solicitudPlanificacion.solicitud.descripcionInconveniente}" style="width: 90%;"/>
+                    </p:column>
+                </p:row>
+
+                <p:row>
+                    <p:column colspan="4">
+                        <p:dataTable id="prediosUrbanos" value="#{solicitudPlanificacion.prediosUrbanos}" var="urbano" scrollHeight="350" 
+                                     rows="20" paginator="true" emptyMessage="No se ha seleccionado ningun elemento" rowIndexVar="index"
+                                     rowsPerPageTemplate="20,50,100" paginatorPosition="top" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                            <p:column headerText="Matricula Inmobiliaria" width="100"><p:outputLabel value="#{urbano.numPredio}"/></p:column>
+                            <p:column headerText="Cod. Catastral"><p:outputLabel value="#{urbano.claveCat}"/></p:column>
+                            <p:column headerText="Dirección"><p:outputLabel value="#{urbano.ciudadela.nombre} -  Mz. #{urbano.mz} Sl.#{urbano.solar}"/></p:column>
+                            <p:column headerText="Propietario"><p:outputLabel value="#{urbano.nombrePropietarios}"/></p:column>
+                            <p:column headerText="Eliminar" style="text-align: center;" width="100">
+                                <p:commandLink update="prediosUrbanos" action="#{solicitudPlanificacion.eliminarPredioUrbano(index)}">
+                                    <p:graphicImage value="/css/homeIconsImages/delete.png" height="16"/></p:commandLink></p:column>
+                        </p:dataTable>
+                    </p:column>
+
+                </p:row>
+                <p:row >
+                    <p:column colspan="6">
+                        <center>
+                            <p:outputLabel value="Nº. Trámite: #{solicitudPlanificacion.solicitud.tramite.id}" style="font-size: 20px;font-weight: bold;"/>
+                        </center>
+                    </p:column>
+
+                </p:row>
+            </p:panelGrid>
+            <br/>
+
+            <center>
+                <p:commandButton id="enviarSol" value="Registrar Solicitud" style="font-weight: bold" actionListener="#{solicitudPlanificacion.validar()}" rendered="#{!solicitudPlanificacion.registrada}" styleClass="btnStyle" icon="ui-icon-circle-arrow-w"/>
+                <p:commandButton id="ImpSol" value="Imprimir Ticket" ajax="false" style="font-weight: bold" actionListener="#{solicitudPlanificacion.imprimirT()}" styleClass="btnStyle" icon="ui-icon-print" rendered="#{solicitudPlanificacion.registrada}"/>
+                <p:spacer width="10"/>
+                <p:commandButton id="refresh" value="Nuevo" style="font-weight: bold" actionListener="#{solicitudPlanificacion.refrect()}" styleClass="btnStyle" icon="ui-icon-refresh" rendered="#{solicitudPlanificacion.registrada}"/>
+                <p:spacer width="10"/>
+                <p:commandButton id="BanTar" value="Bandeja de Tareas" style="font-weight: bold" actionListener="#{solicitudPlanificacion.continuar()}" styleClass="btnStyle" icon="ui-icon-circle-arrow-e"/>
+<!--                <p:spacer width="10"/>
+                <p:commandButton value="Adjuntar Documento" icon="ui-icon-document" styleClass="btnStyle" actionListener="#{inicioCoactiva.showDlgDocumento()}" disabled="#{inicioCoactiva.guardado}"/>-->
+            </center>
+
+        </h:form>
+
+        <p:dialog id="dlgObs" widgetVar="obs" header="Ingreso de Solicitud." appendTo="@(body)" modal="true" width="750" height="100%" resizable="false" closable="true" closeOnEscape="true">
+            <h:form id="frmObsCor">
+                <h1>Observaciones.</h1>
+                <div align="center">
+                    <p:inputTextarea id="obsservacion" value="#{solicitudPlanificacion.observ}" rows="4" style="width: 80%; text-transform: uppercase" placeholder="Ingrese las observaciones. Campo Obligatorio"/>
+
+                    <br/>
+                    <p:commandButton id="btnCompletar" value="Completar Tarea" actionListener="#{solicitudPlanificacion.registrarSolicitud()}" style="height: 30px;" styleClass="btnStyle" icon="ui-icon-check" iconPos="right" />
+                    <p:commandButton id="btnSubir" value="Cancelar" onclick="PF('obs').hide()" style="height: 30px;" styleClass="btnStyle" icon="ui-icon-close" iconPos="right" />
+                    <br/>
+                </div>
+            </h:form>
+            <br/>
+            <br/>
+        </p:dialog>
+
+
+        <p:dialog header="Adjuntar Documento" widgetVar="dlgDocumento" width="500" height="400" modal="true" resizable="false" position="center">
+            <h:form id="formDoc">
+                <h:panelGrid columns="1" styleClass="noBorder" style="width: 100%;">
+                    OBSERVACION:
+                    <p:inputTextarea value="#{solicitudPlanificacion.observacion}" style="width: 100%" rows="4" autoResize="false"/>
+                    DOCUMENTOS:
+                </h:panelGrid>
+                <h:panelGrid columns="1" styleClass="noBorder" style="width: 100%;text-align: center">
+                    <p:fileUpload fileUploadListener="#{solicitudPlanificacion.handleFileUpload}" update="dtDocumentos"
+                                  label="Seleccionar" uploadLabel="Subir" cancelLabel="Cancelar" multiple="false"
+                                  mode="advanced" dragDropSupport="false"  sizeLimit="1000000000"
+                                  allowTypes="#{solicitudPlanificacion.formatoArchivos}" /> 
+                    <p:dataList id="dtDocumentos" value="#{solicitudPlanificacion.files}" var="docs"
+                                emptyMessage="Sin documentos..." style="text-align: center">
+                        <f:facet name="header">Nombre</f:facet>
+                        <p:outputLabel value="#{docs.nombre}"/>
+                    </p:dataList>
+                    <br/>
+                    <p:commandButton value="Aceptar" icon="ui-icon-check" styleClass="btnStyle" oncomplete="PF('dlgDocumento').hide()" actionListener="#{inicioCoactiva.closeDialog}" />
+                </h:panelGrid>
+            </h:form>
+        </p:dialog>
+
+
+    </ui:define>
+
+</ui:composition>

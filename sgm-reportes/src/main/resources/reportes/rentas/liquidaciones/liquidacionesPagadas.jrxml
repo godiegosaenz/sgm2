@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="liquidacionesPagadas" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="05202605-0a29-4f8c-b4e8-bff92ec7a46c">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="DESDE" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="HASTA" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TIPO_LIQUIDACION" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\Users\\supergold\\Documents\\sgm\\src\\main\\webapp\\css\\homeIconsImages\\logo.jpg"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\Juan Carlos\\Documents\\NetBeansProjects\\SGM-SV\\Reportes\\trunk\\src\\main\\resources\\reportes\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+     CP.SECTOR||'-'||CP.MZ||'-'||CP.MZDIV||'-'||CP.SOLAR||'-'||CP.CDLA||'-'||CP.DIV1||'-'||CP.DIV2||'-'||CP.DIV3||'-'||CP.DIV4||'-'||CP.DIV5||'-'||CP.DIV6||'-'||CP.DIV7||'-'||CP.DIV8||'-'||CP.DIV9||'-'||CP.PHV||'-'||CP.PHH AS CDO_PREDIO,
+     (CASE WHEN CE.ES_PERSONA THEN COALESCE(CE.APELLIDOS)||' '||COALESCE(CE.NOMBRES)ELSE COALESCE(CE.RAZON_SOCIAL)END) AS CONTRIBUYENTE,
+     TO_CHAR(RP.FECHA_PAGO,'DD/MM/YYYY') AS FECHA_PAGO,
+     TL.NOMBRE_TITULO AS TL_NOMBRE_TITULO,
+     L.NUM_COMPROBANTE AS L_NUM_COMPROBANTE,
+     L.TOTAL_PAGO AS L_TOTAL_PAGO,
+     RP.VALOR AS REN_PAGO_VALOR
+FROM
+     SGM_FINANCIERO.REN_TIPO_LIQUIDACION TL
+     RIGHT OUTER JOIN SGM_FINANCIERO.REN_LIQUIDACION L ON TL.ID = L.TIPO_LIQUIDACION
+     LEFT OUTER JOIN SGM_APP.CAT_PREDIO CP ON L.PREDIO = CP.ID
+     LEFT OUTER JOIN SGM_APP.CAT_ENTE CE ON L.COMPRADOR = CE.ID
+     INNER JOIN SGM_FINANCIERO.REN_PAGO RP ON L.ID = RP.LIQUIDACION
+
+     WHERE
+     TL.ID IN ($P!{TIPO_LIQUIDACION})
+     AND L.ESTADO_LIQUIDACION = 1
+     AND L.NUM_COMPROBANTE IS NOT NULL
+     AND RP.FECHA_PAGO::DATE BETWEEN $P{DESDE} AND $P{HASTA}
+
+ORDER BY
+     TL.NOMBRE_TITULO ASC,
+     L.NUM_COMPROBANTE ASC
+]]>
+	</queryString>
+	<field name="cdo_predio" class="java.lang.String"/>
+	<field name="contribuyente" class="java.lang.String"/>
+	<field name="fecha_pago" class="java.lang.String"/>
+	<field name="tl_nombre_titulo" class="java.lang.String"/>
+	<field name="l_num_comprobante" class="java.lang.Long"/>
+	<field name="l_total_pago" class="java.math.BigDecimal"/>
+	<field name="ren_pago_valor" class="java.math.BigDecimal"/>
+	<variable name="l_total_pago_1" class="java.math.BigDecimal" resetType="Group" resetGroup="TITULO" calculation="Sum">
+		<variableExpression><![CDATA[$F{l_total_pago}]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<variable name="l_total_pago_2" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{l_total_pago}]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<variable name="REGISTROS" class="java.lang.Integer" calculation="Count">
+		<variableExpression><![CDATA[$F{l_num_comprobante}]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<group name="TITULO">
+		<groupExpression><![CDATA[$F{tl_nombre_titulo}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="0" y="0" width="406" height="20" uuid="72c5e58a-e9b0-46e5-a8c0-6b89970c2d6e"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="SansSerif" size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{tl_nombre_titulo}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="21">
+				<textField isBlankWhenNull="true">
+					<reportElement x="455" y="0" width="100" height="20" uuid="1be0958d-4d9c-4ba1-bed9-07b777cefda9"/>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="SansSerif" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{l_total_pago_1}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="406" y="0" width="49" height="20" uuid="24b9a840-6b7e-485f-b234-1a5f70fa92de"/>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="SansSerif" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Subtotal: ]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="88" splitType="Stretch">
+			<staticText>
+				<reportElement x="91" y="43" width="464" height="16" uuid="99962984-7864-4b15-8d0c-78158b2d71fd"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LIQUIDACIONES PAGADAS]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="195" y="65" width="100" height="20" uuid="c1277471-32c7-4c61-bd6a-988f7819fea6"/>
+				<textElement>
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{DESDE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="406" y="65" width="100" height="20" uuid="71381530-5ec0-4404-a0b7-4d732e6b244f"/>
+				<textElement>
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{HASTA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="150" y="65" width="45" height="20" uuid="54285630-02bf-4980-b385-39e5cfbd3513"/>
+				<textElement>
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DESDE: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="361" y="65" width="45" height="20" uuid="b4f5124c-80b5-40f8-9581-9a3d93cf8ec7"/>
+				<textElement>
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[HASTA:]]></text>
+			</staticText>
+			<subreport>
+				<reportElement x="1" y="1" width="554" height="39" uuid="9bf20737-c39c-4b23-beed-2a48e4a41b7c"/>
+				<subreportParameter name="LOGO">
+					<subreportParameterExpression><![CDATA[$P{LOGO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "titleReporte5.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="1" y="0" width="68" height="20" uuid="95a37f89-c07e-4484-a18c-c7409d463038"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[COMP.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="71" y="0" width="43" height="20" uuid="71b44100-e266-4da4-a6b8-107a29633b7e"/>
+				<textElement>
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="116" y="0" width="188" height="20" uuid="bc82e44d-8aa8-4deb-addf-072531c5d9f0"/>
+				<textElement>
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CONTRIBUYENTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="306" y="0" width="170" height="20" uuid="4e713e25-770d-4849-a579-fdc71776bbb7"/>
+				<textElement>
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DESCRIPCIÓN DEL PREDIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="478" y="0" width="77" height="20" uuid="3d845d43-be59-4649-95ec-309a7cc9004e"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VALOR TOTAL]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="13" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="1" y="0" width="68" height="13" uuid="cc0d4e72-68a8-4fd5-918f-32c1e0d3c57d"/>
+				<box rightPadding="2"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{l_num_comprobante}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement x="71" y="0" width="43" height="13" uuid="addede91-3579-4954-8b10-3d8f04033467"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="7"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha_pago}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="116" y="0" width="188" height="13" uuid="ba177a34-092a-41f4-8863-c85de2a39161"/>
+				<textElement>
+					<font fontName="SansSerif" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{contribuyente}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="306" y="0" width="170" height="13" uuid="48788514-30b7-4385-b6cf-d2c8556888fa"/>
+				<textElement>
+					<font fontName="SansSerif" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cdo_predio}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="478" y="0" width="77" height="13" uuid="9cba01b9-bb19-475e-820a-40f90344cb5d"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="7"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{l_total_pago}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="3" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="29" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="435" y="0" width="80" height="20" uuid="fc03afe7-9fd7-4ed3-b1b5-d4c59881f256"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pagina "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" isBlankWhenNull="true">
+				<reportElement x="515" y="0" width="40" height="20" uuid="f77488af-928f-4716-8a01-530447dc8ca5"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="204" y="0" width="50" height="20" uuid="f423171c-12c6-470d-a482-826b6a855974"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Registros: ]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="254" y="0" width="68" height="20" uuid="d8c81d8c-037d-4712-90ea-da375cf62beb"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{REGISTROS}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="25" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="439" y="1" width="116" height="20" uuid="f0e35a24-15da-4bdd-b0ee-1bbf702b31c5"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="SansSerif" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{l_total_pago_2}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="1" y="0" width="554" height="1" uuid="0212c6ad-fca4-4c94-bffc-fe0dcbf1fce7"/>
+			</line>
+			<staticText>
+				<reportElement x="390" y="1" width="49" height="20" uuid="b9cab5d7-362b-45c3-8af2-524e21a69901"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL:]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{roles.doPreRenderView()}"/>
+        </f:metadata>
+    </ui:define>
+    
+    <ui:define name="content">
+        <center><h1>Roles de Usuario</h1></center>
+        <h:form id="formRoles">
+            <div align="right">
+                <p:commandButton value="Nuevo" icon="ui-icon-plus" actionListener="#{roles.showDlgNewRol()}" styleClass="btnStyle"/>
+            </div>
+            <br/>
+            <p:dataTable id="dtuser" paginator="true" lazy="true" rows="20" rowsPerPageTemplate="20,50,100"
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         value="#{roles.rolesLazy}" var="rol" emptyMessage="No se encontró ningun Item">
+                <p:column headerText="Departamento" style="text-align: center;">
+                    <p:outputLabel value="#{rol.departamento.nombre}"/>
+                </p:column>
+                <p:column  headerText="Nombre" style="text-align: center;" filterBy="#{rol.nombre}" sortBy="#{rol.nombre}" filterStyle="width: 75%;">
+                    <p:outputLabel value="#{rol.nombre}"/>
+                </p:column>
+                <p:column  headerText="¿Es Director?" style="text-align: center;" width="100">
+                    <p:outputLabel value="SI" rendered="#{rol.isDirector}"/>
+                    <p:outputLabel value="NO" rendered="#{!rol.isDirector}"/>
+                </p:column>
+                <p:column  headerText="Estado" style="text-align: center;" width="60">
+                    <p:outputLabel value="Activo" rendered="#{rol.estado}"/>
+                    <p:outputLabel value="Inactivo" rendered="#{!rol.estado}"/>
+                </p:column>
+                <p:column headerText="Editar" style="text-align: center; width:10%; ">           
+                    <p:commandLink value="Editar" style="font-weight: bolder; color: #0033FF;"
+                                   actionListener="#{roles.showDlgEditRol(rol)}"/>                         
+                </p:column>
+            </p:dataTable>    
+        </h:form>
+
+        <p:dialog id="dlgEditarRol" widgetVar="dlgEditRol" header="Información de Rol" modal="true" resizable="false" 
+                  closeOnEscape="false" position="center">
+            <h:form id="formEditarRol">
+                <p:panelGrid styleClass="noBorder" columns="2">
+                    <p:outputLabel value="Estado:" style="font-weight: bolder" rendered="#{!roles.nuevo}"/>
+                    <p:selectOneMenu value="#{roles.aclRol.estado}" rendered="#{!roles.nuevo}">
+                        <f:selectItem itemLabel="Activo" itemValue="#{true}"/>
+                        <f:selectItem itemLabel="Inactivo" itemValue="#{false}"/>
+                    </p:selectOneMenu>
+                    <p:outputLabel value="Nombre:" style="font-weight: bolder"/>
+                    <p:inputText value="#{roles.aclRol.nombre}" style="width: 100%"/>
+                    <p:outputLabel value="¿Es Rol Director?" style="font-weight: bolder;"/>
+                    <p:selectOneRadio value="#{roles.aclRol.isDirector}" style="width: 150px">
+                        <f:selectItem itemLabel="SI" itemValue="#{true}" />
+                        <f:selectItem itemLabel="NO" itemValue="#{false}" />
+                    </p:selectOneRadio>
+                    <p:outputLabel value="¿Es Rol SubDirector?" style="font-weight: bolder;"/>
+                    <p:selectOneRadio value="#{roles.aclRol.esSubDirector}" style="width: 150px">
+                        <f:selectItem itemLabel="SI" itemValue="#{true}" />
+                        <f:selectItem itemLabel="NO" itemValue="#{false}" />
+                    </p:selectOneRadio>
+                    <p:outputLabel value="Departamento:" style="font-weight: bolder"/>
+                    <p:selectOneMenu value="#{roles.departamento}" converter="entityConverter">
+                        <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+                        <f:selectItems value="#{roles.listDep}" var="depart" itemLabel="#{depart.nombre}" itemValue="#{depart}"/>
+                    </p:selectOneMenu>
+                </p:panelGrid>
+                <br/>
+                <div align="center">
+                    <p:commandButton value="Guardar" icon="ui-icon-disk" actionListener="#{roles.guardarRol()}"/>
+                </div>
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+</ui:composition>

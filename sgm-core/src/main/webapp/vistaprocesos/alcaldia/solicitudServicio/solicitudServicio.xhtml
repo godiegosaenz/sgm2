@@ -1,0 +1,188 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../../template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:poue="http://primefaces.org/ui/extensions">
+
+    <ui:define name="events">
+
+    </ui:define>
+
+
+    <ui:define name="content">
+        <div align="center">
+            <h1>INGRESO DE SOLICITUD</h1>
+        </div>
+        <h:form id="frmSolicitud">
+            <p:selectBooleanCheckbox value="#{solicitudServicio.entidad}" style="font-weight: bold;font-size: 12px; border-bottom: #FF7E00 solid 3px;" itemLabel="FORMULARIO ENTIDADES">
+                <p:ajax listener="#{solicitudServicio.actualizarFormulario()}" update="frmSolicitud, frmSolicitud:pngDats"/>
+            </p:selectBooleanCheckbox>
+
+            <center>
+                <h:panelGrid id="pngDats" columns="2" cellpadding="1" cellspacing="1">
+                    <p:outputLabel value="#{!solicitudServicio.entidad ? 'CEDULA:':'R.U.C. :'}" style="font-weight: bolder;"/>
+                    <h:panelGroup>
+                        <p:inputMask mask="9999999999" value="#{solicitudServicio.enteSolicitante.ciRuc}" rendered="#{!solicitudServicio.entidad}"/>
+                        <p:inputText value="#{solicitudServicio.enteSolicitante.ciRuc}" rendered="#{solicitudServicio.entidad}" maxlength="18" >
+                            <poue:keyFilter mask="num" preventPaste="false"/>
+                        </p:inputText>
+                        <p:commandLink actionListener="#{solicitudServicio.buscarEnte()}" style="height: 30px"  >
+                            <p:spacer width="15"/>
+                            <p:graphicImage value="/css/homeIconsImages/buscar.png" height="20" width="20"/>
+                        </p:commandLink>
+                        <p:commandButton value="Editar" icon="ui-icon-pencil" style="height: 30px;" styleClass="btnStyle" actionListener="#{solicitudServicio.mostrarEdicion()}" rendered="#{solicitudServicio.hayEnte}">
+                            <p:ajax event="dialogReturn" listener="#{solicitudServicio.procesarEnte}" update="frmSolicitud"  />
+                        </p:commandButton>
+                        <p:commandLink value="Agregar Entidad" style="font-size: 14px; color: #000;" actionListener="#{solicitudServicio.mostrar()}" rendered="#{solicitudServicio.entidad and !solicitudServicio.hayEnte}"/>
+                    </h:panelGroup>
+
+                    <p:outputLabel value="NONBRES: " rendered="#{!solicitudServicio.entidad}" style="font-weight: bolder;"/>
+                    <p:inputText value="#{solicitudServicio.enteSolicitante.nombres}" style="width: 160px;" rendered="#{!solicitudServicio.entidad}"/>
+
+                    <p:outputLabel value="APELLIDOS: " rendered="#{!solicitudServicio.entidad}" style="font-weight: bolder;"/>
+                    <p:inputText value="#{solicitudServicio.enteSolicitante.apellidos}" rendered="#{!solicitudServicio.entidad}" style="width: 160px;"/>
+
+                    <p:outputLabel value="RAZÓN SOCIAL: " rendered="#{solicitudServicio.entidad}" style="font-weight: bolder;"/>
+                    <p:inputText  value="#{solicitudServicio.enteSolicitante.razonSocial}" rendered="#{solicitudServicio.entidad}" size="50" />
+
+                    <p:outputLabel value="REMITENTE: " rendered="#{solicitudServicio.entidad}" style="font-weight: bolder;"/>
+                    <p:inputText  value="#{solicitudServicio.solicitud.representante}" rendered="#{solicitudServicio.entidad}"  size="50" />
+
+                    <p:outputLabel value="DIRECCIÓN: " style="font-weight: bolder;"/>
+                    <p:inputText value="#{solicitudServicio.enteSolicitante.direccion}" size="50" />
+                </h:panelGrid>
+            </center>
+
+            <p:spacer height="5" width="20"/>
+            <div align="center">
+                <p:panelGrid id="pngDatsSol" columns="2" layout="grid" style="width: 60%;" >
+                    <p:dataTable id="dtCorr" value="#{solicitudServicio.enteSolicitante.enteCorreoCollection}" scrollHeight="65" scrollable="true" var="c" emptyMessage="No se encontro ningún correo" style="width: 300px;" >
+                        <p:column headerText="Correo" >
+                            <h:outputLabel value="#{c.email}"/>
+                        </p:column>
+                    </p:dataTable>
+                    <p:dataTable id="dtTel" value="#{solicitudServicio.enteSolicitante.enteTelefonoCollection}" scrollHeight="65" scrollable="true" var="t" emptyMessage="No se encontro ningún Teléfono" style="width: 255px;">
+                        <p:column headerText="Teléfono" >
+                            <h:outputLabel value="#{t.telefono}"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:panelGrid>
+            </div>
+
+            <br/><br/>
+            <p:panelGrid id="formulario" style="width: 100%; margin: 0 auto;" rendered="#{solicitudServicio.hayEnte}">
+                <f:facet name="header">  
+                    <p:row>
+                        <p:column style="text-align: left" colspan="6">
+                            SOLICITUD
+                        </p:column>
+                    </p:row>
+                </f:facet>
+                <p:row>
+                    <p:column colspan="2">
+                        <p:outputLabel value="¿Qué tipo de servicio requiere?" style="font-weight: bold; font-size: 14px;"/>
+                    </p:column>
+                    <p:column colspan="4">
+                        <p:outputLabel value="¿Dónde se necesita el servicio?" style="font-weight: bold; font-size: 14px;"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="2">
+                        <p:selectOneMenu value="#{solicitudServicio.solicitud.tipoServicio}" effect="fade" converter="entityConverter">
+                            <f:attribute name="name" value="VuItems"/>
+                            <f:selectItems value="#{solicitudServicio.tipoServicio.vuItemsCollection}" var="servicio" itemLabel="#{servicio.nombre}" itemValue="#{servicio}"/>
+                            <p:ajax  listener="#{solicitudServicio.actualizarPanel()}" update="formulario"/>
+                        </p:selectOneMenu>
+                    </p:column>
+
+                    <p:column colspan="2" rendered="#{!solicitudServicio.audiencia}">
+                        <p:outputLabel value="PARROQUIA"/><br/>
+                        <p:selectOneMenu value="#{solicitudServicio.parroquia}" effect="fade" converter="entityConverter">
+                            <f:attribute name="name" value="CatParroquia"/>
+                            <f:selectItems value="#{solicitudServicio.parroquias}" var="parroquia" itemLabel="#{parroquia.descripcion}" itemValue="#{parroquia}"/>
+                            <f:selectItem itemLabel="Otro Lugar" itemValue="#{null}"/>
+                            <p:ajax  listener="#{solicitudServicio.actualizarCiudadelas()}" update="cdla"/>
+                        </p:selectOneMenu>
+                    </p:column>
+
+                    <p:column colspan="2" rendered="#{!solicitudServicio.audiencia}">
+                        <p:outputLabel value="URBANIZACIÓN O SECTOR"/><br/>
+                        <p:selectOneMenu id="cdla" value="#{solicitudServicio.cdla}" effect="fade" converter="entityConverter">
+                            <f:attribute name="name" value="CatCiudadela"/> 
+                            <f:selectItems value="#{solicitudServicio.ciudadelas}" var="ciudadela" itemLabel="#{ciudadela.nombre}" itemValue="#{ciudadela}"/>
+                            <f:selectItem itemLabel="Otro Lugar" itemValue="#{null}"/>
+                        </p:selectOneMenu>
+                    </p:column>
+                    <p:column rendered="#{solicitudServicio.audiencia}" colspan="4">
+
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="4">
+                        <p:outputLabel value="Describa el hecho o incidente que requiere nuestra atención." style="font-weight: bold; font-size: 12px;"/>
+                    </p:column>
+                    <p:column colspan="2" >
+                        <p:outputLabel value="Fecha de cuándo sucedió el incidente?" style="font-weight: bold; font-size: 12px;"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="4">
+                        <p:inputTextarea value="#{solicitudServicio.solicitud.descripcionInconveniente}" style="width: 90%;"/>
+                    </p:column>
+                    <p:column colspan="2">
+                        <p:calendar value="#{solicitudServicio.solicitud.fechaInconveniente}" pattern="dd/MM/yyyy"/>
+                    </p:column>
+                </p:row>
+                <p:row rendered="#{solicitudServicio.audiencia}">
+                    <p:column colspan="6">
+                        <p:outputLabel value="Lugar de la Audiencia." style="font-weight: bold; font-size: 12px;"/>
+                    </p:column>
+                </p:row>
+                <p:row >
+                    <p:column colspan="6" rendered="#{solicitudServicio.audiencia}">
+                        <p:selectOneMenu value="#{solicitudServicio.solicitud.lugarAudiencia}" effect="fade" converter="entityConverter">
+                            <f:selectItems value="#{solicitudServicio.lugarAudiencia.vuItemsCollection}" var="lugar" itemLabel="#{lugar.nombre}" itemValue="#{lugar}"/>
+                        </p:selectOneMenu>
+                    </p:column>
+                </p:row>
+                <p:row >
+                    <p:column colspan="6">
+                        <center>
+                            <p:outputLabel value="Nº. Trámite: #{solicitudServicio.solicitud.tramite.id}" style="font-size: 20px;font-weight: bold;"/>
+                        </center>
+                    </p:column>
+
+                </p:row>
+            </p:panelGrid>
+            <br/>
+
+            <center>
+                <p:commandButton id="enviarSol" value="Registrar Solicitud" style="font-weight: bold" actionListener="#{solicitudServicio.validar()}" rendered="#{!solicitudServicio.registrada}" styleClass="btnStyle" icon="ui-icon-circle-arrow-w"/>
+                <p:commandButton id="ImpSol" value="Imprimir Ticket" ajax="false" style="font-weight: bold" actionListener="#{solicitudServicio.imprimirT()}" styleClass="btnStyle" icon="ui-icon-print" rendered="#{solicitudServicio.registrada}"/>
+                <p:spacer width="10"/>
+                <p:commandButton id="refresh" value="Nuevo" style="font-weight: bold" actionListener="#{solicitudServicio.refrect()}" styleClass="btnStyle" icon="ui-icon-refresh" rendered="#{solicitudServicio.registrada}"/>
+                <p:spacer width="10"/>
+                <p:commandButton id="BanTar" value="Bandeja de Tareas" style="font-weight: bold" actionListener="#{solicitudServicio.continuar()}" styleClass="btnStyle" icon="ui-icon-circle-arrow-e"/>
+            </center>
+
+        </h:form>
+
+        <p:dialog id="dlgObs" widgetVar="obs" header="Ingreso de Solicitud." appendTo="@(body)" modal="true" width="650" height="75%" resizable="false" closable="true" closeOnEscape="true">
+            <h:form id="frmObsCor">
+                <h1>Observaciones.</h1>
+                <div align="center">
+                    <p:inputTextarea id="obsservacion" value="#{solicitudServicio.observ}" rows="4" style="width: 100%; text-transform: uppercase" placeholder="Ingrese las observaciones. Campo Obligatorio"/>
+
+                    <br/>
+                    <p:commandButton id="btnCompletar" value="Completar Tarea" actionListener="#{solicitudServicio.registrarSolicitud()}" style="height: 30px;" styleClass="btnStyle" icon="ui-icon-check" iconPos="right" />
+                    <p:commandButton id="btnSubir" value="Cancelar" onclick="PF('obs').hide()" style="height: 30px;" styleClass="btnStyle" icon="ui-icon-close" iconPos="right" />
+                </div>
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+
+</ui:composition>

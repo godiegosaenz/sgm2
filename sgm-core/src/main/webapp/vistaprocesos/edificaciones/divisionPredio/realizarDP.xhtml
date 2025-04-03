@@ -1,0 +1,290 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:dialog="http://xmlns.jcp.org/jsf/composite/dialog">
+    <ui:define name="top">
+        <p:panelGrid styleClass="noBorder" columns="4" style="width: 100%;font-size: 14px;">
+            <p:outputLabel value="Trámite: #{divisionPredio.ht.id}" style="font-weight: bolder;color: #005f9c"/>
+            <p:outputLabel value="Tarea: #{divisionPredio.taskDataByTaskID.name}" style="font-weight: bolder;color: #005f9c"/>
+            <p:outputLabel value="Responsable: #{divisionPredio.taskDataByTaskID.assignee}" style="font-weight: bolder;color: #005f9c"/>
+        </p:panelGrid>
+    </ui:define>
+    <ui:define name="content">
+        <h:form id="frmMain">
+
+            <p:panel id="pnlDP" style="width: 100%;">
+                <p:tabView id="tdatos">
+                    <p:tab id="tgen" title="División de Predio">
+                        <p:panel header="Código Predial">
+                            <p:panelGrid  style="width: 100%;" styleClass="noBorder" >
+
+                                <f:facet name="header">  
+                                    <p:row>  
+                                        <p:column >Sector</p:column>  
+                                        <p:column >Mnz.</p:column>  
+                                        <p:column >Cdla.</p:column>  
+                                        <p:column >Mnz. Div</p:column>  
+                                        <p:column>Solar</p:column>  
+                                        <p:column>Div1</p:column>  
+                                        <p:column>Div2</p:column>  
+                                        <p:column>Div3</p:column>  
+                                        <p:column>Div4</p:column>  
+                                        <p:column>Div5</p:column>  
+                                        <p:column>Div6</p:column>  
+                                        <p:column>Div7</p:column>  
+                                        <p:column>Div8</p:column>  
+                                        <p:column>Div9</p:column>  
+                                        <p:column>Buscar</p:column>
+                                    </p:row>  
+                                </f:facet>
+                                <p:row style="width: 100%;">
+                                    <p:column><p:inputText readonly="true" style="width: 100%" value="#{divisionPredio.datosPredio.sector}"/></p:column>
+                                    <p:column><p:inputText readonly="true" style="width: 100%" value="#{divisionPredio.datosPredio.mz}"/></p:column>
+                                    <p:column><p:inputText readonly="true" style="width: 100%" value="#{divisionPredio.datosPredio.cdla}"/></p:column>
+                                    <p:column><p:inputText readonly="true" style="width: 100%" value="#{divisionPredio.datosPredio.mzdiv}"/></p:column>
+                                    <p:column><p:inputText readonly="true" style="width: 100%" value="#{divisionPredio.datosPredio.solar}"/></p:column>
+                                    <p:column><p:inputText readonly="true" style="width: 100%" value="#{divisionPredio.datosPredio.div1}"/></p:column>
+                                    <p:column><p:inputText readonly="true" style="width: 100%" value="#{divisionPredio.datosPredio.div2}"/></p:column>
+                                    <p:column><p:inputText readonly="true" style="width: 100%" value="#{divisionPredio.datosPredio.div3}"/></p:column>
+                                    <p:column><p:inputText readonly="true" style="width: 100%" value="#{divisionPredio.datosPredio.div4}"/></p:column>
+                                    <p:column><p:inputText readonly="true" style="width: 100%" value="#{divisionPredio.datosPredio.div5}"/></p:column>
+                                    <p:column><p:inputText readonly="true" style="width: 100%" value="#{divisionPredio.datosPredio.div6}"/></p:column>
+                                    <p:column><p:inputText readonly="true" style="width: 100%" value="#{divisionPredio.datosPredio.div7}"/></p:column>
+                                    <p:column><p:inputText readonly="true" style="width: 100%" value="#{divisionPredio.datosPredio.div8}"/></p:column>
+                                    <p:column><p:inputText readonly="true" style="width: 100%" value="#{divisionPredio.datosPredio.div9}"/></p:column>
+                                    <p:column><p:commandButton update="frmMain" style="color: #ffffff; background: #616161 !important; font-weight: bold; height: 30px; float: right" value="Buscar" disabled="true" /></p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:panel>
+                        <p:panel id="panelsecundario" header="Número de Divisiones">
+                        
+                            <p:row>
+                                <center>
+                                    <p:column>
+                                        <b>Número de Divisiones Aprovadas: </b>
+                                    </p:column>
+                                    <p:column>
+                                        <pe:inputNumber value="#{divisionPredio.numDivision}" decimalPlaces="0" required="true" style="width: 50px; margin-left: 25px;"/>
+                                    </p:column>
+                                </center>
+                            </p:row>
+                            <center>
+                                <p:commandButton id="generarid1" update="frmMain" style="color: #ffffff; background: #616161 !important; font-weight: bold; height: 30px; margin-top: 10px;" value="Generar Divisiones" actionListener="#{divisionPredio.generarDivisionPredio()}"/>
+                            </center>
+                        </p:panel>
+                        <!-- 
+                        <p:panel id="panelDivisiones" header="Divisiones de Predio Creadas" rendered="#{divisionPredio.validarPrediosList}">
+                            <p:dataTable value="#{divisionPredio.prediosLists}" var="dp" id="dtpredios">
+                        -->
+                        <p:panel id="panelDivisiones" header="Divisiones de Predio Creadas" rendered="#{divisionPredio.validarPrediosList}">
+                            <p:dataTable value="#{divisionPredio.prediosList}" var="dp" id="dtpredios">
+                                <p:column headerText="Sector">
+                                    <p:outputLabel value="#{dp.sector}" style="text-align: center"/>
+                                </p:column>
+                                <p:column headerText="Mz">
+                                    <p:outputLabel value="#{dp.mz}" style="text-align: center"/>
+                                </p:column>
+                                <p:column headerText="Cdla">
+                                    <p:outputLabel value="#{dp.cdla}" style="text-align: center" />
+                                </p:column>
+                                <p:column headerText="Mz. Div">
+                                    <p:outputLabel value="#{dp.mzdiv}" style="text-align: center"/>
+                                </p:column>
+                                <p:column headerText="Solar" >
+                                    <p:outputLabel value="#{dp.solar}" style="text-align: center" />
+                                </p:column>
+                                <p:column headerText="Div1">
+                                    <p:outputLabel value="#{dp.div1}" style="text-align: center"/>
+                                </p:column>
+                                <p:column headerText="Div2">
+                                    <p:outputLabel value="#{dp.div2}" style="text-align: center"/>
+                                </p:column>
+                                <p:column headerText="Div3">
+                                    <p:outputLabel value="#{dp.div3}" style="text-align: center"/>
+                                </p:column>
+                                <p:column headerText="Div4">
+                                    <p:outputLabel value="#{dp.div4}" style="text-align: center"/>
+                                </p:column>
+                                <p:column headerText="Div5" >
+                                    <p:outputLabel value="#{dp.div5}" style="text-align: center" />
+                                </p:column>
+                                <p:column headerText="Div6">
+                                    <p:outputLabel value="#{dp.div6}" style="text-align: center"/>
+                                </p:column>
+                                <p:column headerText="Div7">
+                                    <p:outputLabel value="#{dp.div7}" style="text-align: center" />
+                                </p:column>
+                                <p:column headerText="Div8">
+                                    <p:outputLabel value="#{dp.div8}" style="text-align: center"/>
+                                </p:column>
+                                <p:column headerText="Div9" >
+                                    <p:outputLabel value="#{dp.div9}" style="text-align: center" />
+                                </p:column>
+                                <p:column headerText="Acción">
+                                    <p:commandButton value="Agregar Propietario" update=":nuevoDlgForm" oncomplete="PF('dlgBuscar').show()" style="color: #ffffff; background: #616161 !important; font-weight: bold; height: 35px;" actionListener="#{divisionPredio.ingresoPropietarios(dp)}" disabled="true"/>
+                                </p:column>
+                            </p:dataTable>
+                            <center style="margin-top: 10px;">
+                                <p:panelGrid columns="2">
+                                    <p:commandButton value="Guardar" style=" color: #ffffff; background: #616161 !important; font-weight: bold; width: 100px; height: 35px;" actionListener="#{divisionPredio.guardarDivision()}"/>
+                                    <p:commandButton value="Rechazar Predio" style=" color: #ffffff; background: #616161 !important; font-weight: bold; width: 100px; height: 35px;" />
+                                </p:panelGrid>
+                            </center>
+                        </p:panel>
+                    </p:tab>
+                    
+                    <p:tab id="tadicionales" title="Adicionales">
+                        <p:tabView id="tadic">
+                            <p:tab id="tdocs" title="Observaciones">
+                                <p:dataTable id="dtobs" value="#{divisionPredio.ht.observacionesCollection}" var="obs" reflow="true" style="width: 100%">
+                                    <f:facet name="header">Observaciones</f:facet>
+                                    <p:column headerText="Descripcion" style="width: 40%">
+                                        #{obs.observacion}
+                                    </p:column>
+                                    <p:column headerText="tarea" style="width: 25%">
+                                        #{obs.tarea}
+                                    </p:column>
+                                    <p:column headerText="Responsable" style="width: 20%">
+                                        #{obs.userCre}
+                                    </p:column>
+                                    <p:column headerText="Fecha" style="width: 15%">
+                                        #{obs.fecCre}
+                                    </p:column>
+                                </p:dataTable>
+                            </p:tab>
+                            <p:tab id="tobs" title="Documentos">
+                                <dialog:detalleArchivosAct archivos="#{divisionPredio.processInstanceAttachmentsFiles}"/>
+                            </p:tab>
+                        </p:tabView>
+                    </p:tab>
+                </p:tabView>
+            </p:panel>
+        </h:form>
+        
+        <p:dialog header="Buscar Usuario" id="dlgBuscar" widgetVar="dlgBuscar" appendTo="@(body)" closable="false" resizable="false" modal="true" height="auto" width="auto" position="center">  
+            <h:form id="nuevoDlgForm" >
+                <h:panelGroup id="nuevoPGroup" >
+                    <p:panelGrid columns="2" >
+                        <h:outputText value="No. de Predio: " style="display: block; width: 91px;"/>
+                        <h:outputText value="#{divisionPredio.dpTemp.getCodigoPredial()}" style="display: block; width: 222px; text-align: center;"/>
+                        
+                    </p:panelGrid>
+                    <p:panelGrid columns="2" >
+                        <h:outputText value="Nombre en Comprobante de Pago:" style="display: block; width: 91px;"/>
+                        <p:inputText value="#{divisionPredio.dpTemp.nomCompPago}" style="display: block; width: 222px;"/>
+                    </p:panelGrid>
+                    <p:panelGrid columns="3" >
+                        <h:outputText value="Número de Cédula" style="display: block;"/>
+                        <p:inputText value="#{divisionPredio.cedulaRuc}" style="display: block; margin: 0 auto;"/>
+                        <p:commandButton update="nuevoDlgForm" actionListener="#{divisionPredio.buscarEnte()}" style="color: #ffffff; background: #616161 !important; font-weight: bold; height: 30px;" value="Buscar" />
+                    </p:panelGrid>
+                    <p:panelGrid columns="1" style="width: 100%; height: auto;" id="panelList">
+                        <p:panel header = "Lista de entes encontrados">
+                            <p:dataTable  id="dataListEnteTemp"  value="#{divisionPredio.enteListTemp}" var="itemP"
+                                          emptyMessage="No tiene datos" style="width: 330px;">
+                                <p:column headerText="#C.I. o R.U.C.">
+                                    <h:outputText value="#{itemP.ciRuc}" style="text-transform: uppercase;"/>
+                                </p:column>
+                                <p:column headerText="Nombres">
+                                    <h:outputText value="#{itemP.nombreComercial}" rendered="#{!itemP.esPersona}" style="text-transform: uppercase;"/>
+                                    <h:outputText value="#{itemP.nombres} #{itemP.apellidos}" rendered="#{itemP.esPersona}" style="text-transform: uppercase;"/>
+                                </p:column>
+                                <p:column headerText="Acción">
+                                    <p:commandButton update="nuevoDlgForm" value="Agregar Propietario"  actionListener="#{divisionPredio.agregarPropietario(itemP)}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                        <p:panel header = "Lista de propietarios">
+                            <p:dataTable  id="dataListEnte"  value="#{divisionPredio.enteList}" var="itemP"
+                                          emptyMessage="No tiene datos" style="width: 330px;">
+                                <p:column headerText="#C.I. o R.U.C.">
+                                    <h:outputText value="#{itemP.ciRuc}" style="text-transform: uppercase;"/>
+                                </p:column>
+                                <p:column headerText="Nombres">
+                                    <h:outputText value="#{itemP.nombreComercial}" rendered="#{!itemP.esPersona}" style="text-transform: uppercase;"/>
+                                    <h:outputText value="#{itemP.nombres} #{itemP.apellidos}" rendered="#{itemP.esPersona}" style="text-transform: uppercase;"/>
+                                </p:column>
+                                <p:column headerText="Estado">
+                                    <h:outputText value="#{itemP.estado}" style="text-transform: uppercase;"/>
+                                </p:column>
+                                <p:column headerText="Acción">
+                                    <p:commandButton update="nuevoDlgForm" value="Eliminar Propietario" disabled="true" actionListener="#{divisionPredio.eliminarPropietario(itemP)}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                    </p:panelGrid>
+                    <br/>
+                    <center><p:commandButton onclick="PF('dlgBuscar').hide()" actionListener="#{divisionPredio.guardarDatosPropietario}" style="color: #ffffff; width: 150px; background: #616161 !important; font-weight: bold; height: 30px;" value="Cerrar"  /></center>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog header="Editar Propietario" resizable="false" id="dlgEditar" appendTo="@(body)" widgetVar="dlgEditarPropietario" height="auto" width="auto" position="center">  
+            <h:form id="editarDlgForm" >
+                <h:panelGroup id="editPGroup" rendered="#{divisionPredio.catpp!=null}">
+                    <p:panelGrid columns="2">
+                        <h:outputText value="Tipo Propietario: " style="font-weight: bold"/>
+                        <p:selectOneMenu value="#{divisionPredio.catpp.tipo}" effect="fade" style="width: 220px;"
+                                        converter="entityConverter"   >
+                            <f:selectItems value="#{divisionPredio.propietarioTiposList}" var="item" itemLabel="#{item.valor}" itemValue="#{item}"/>  
+                        </p:selectOneMenu> 
+                        <h:outputText value="Es Residente: " style="font-weight: bold"/>
+                        <p:selectBooleanCheckbox value="#{divisionPredio.catpp.esResidente}" />
+                        <h:outputText value="Es Persona Natural: " style="font-weight: bold"/> 
+                        <p:selectBooleanCheckbox value="#{divisionPredio.catpp.ente.esPersona}" >
+                            <p:ajax update="editarDlgForm"/>
+                        </p:selectBooleanCheckbox>
+                        
+                        <h:outputText value="RUC C.I.: " style="font-weight: bold" rendered="#{!divisionPredio.catpp.ente.esPersona}"/> 
+                        <p:inputText value="#{divisionPredio.catpp.ente.ciRuc}" rendered="#{!divisionPredio.catpp.ente.esPersona}"/>
+                        <h:outputText value="Nombres: " style="font-weight: bold" rendered="#{!divisionPredio.catpp.ente.esPersona}"/> 
+                        <p:inputText value="#{divisionPredio.catpp.ente.nombreComercial}" rendered="#{!divisionPredio.catpp.ente.esPersona}"/>
+                        <h:outputText value="Representante Legal: " style="font-weight: bold" rendered="#{!divisionPredio.catpp.ente.esPersona}"/> 
+                        <p:inputText value="#{divisionPredio.catpp.ente.representanteLegal}" rendered="#{!divisionPredio.catpp.ente.esPersona}"/>
+                        <h:outputText value="Domicilio: " style="font-weight: bold" rendered="#{!divisionPredio.catpp.ente.esPersona}"/> 
+                        <p:inputText value="#{divisionPredio.catpp.ente.direccion}" rendered="#{!divisionPredio.catpp.ente.esPersona}"/>
+                        
+                        <h:outputText value="RUC C.I.: " style="font-weight: bold" rendered="#{divisionPredio.catpp.ente.esPersona}"/> 
+                        <p:inputText value="#{divisionPredio.catpp.ente.ciRuc}" rendered="#{divisionPredio.catpp.ente.esPersona}"/>
+                        <h:outputText value="Nombres: " style="font-weight: bold" rendered="#{divisionPredio.catpp.ente.esPersona}"/> 
+                        <p:inputText value="#{divisionPredio.catpp.ente.nombres}" rendered="#{divisionPredio.catpp.ente.esPersona}"/>
+                        <h:outputText value="Apellidos: " style="font-weight: bold" rendered="#{divisionPredio.catpp.ente.esPersona}"/> 
+                        <p:inputText value="#{divisionPredio.catpp.ente.apellidos}" rendered="#{divisionPredio.catpp.ente.esPersona}"/>
+                        <h:outputText value="Fecha de Nac. " style="font-weight: bold" rendered="#{divisionPredio.catpp.ente.esPersona}"/> 
+                        <p:calendar value="#{divisionPredio.catpp.ente.fechaNacimiento}" rendered="#{divisionPredio.catpp.ente.esPersona}"/>
+                        <h:outputText value="Domicilio: " style="font-weight: bold" rendered="#{divisionPredio.catpp.ente.esPersona}"/> 
+                        <p:inputText value="#{divisionPredio.catpp.ente.direccion}" rendered="#{divisionPredio.catpp.ente.esPersona}"/>
+						
+                        <p:outputLabel value="Email:" style="font-weight: bolder"/>
+                        
+                        <h:panelGroup>
+                            <p:inputText id="emailInterv" value="#{divisionPredio.correo}" size="35" placeholder="Ejemplo: correo@ejemplo.com"/>
+                            <p:commandButton value="Agregar" icon="ui-icon-plus" onclick="#{divisionPredio.prueba()}" />
+                            
+                        </h:panelGroup>
+                    </p:panelGrid>
+                    
+                    <center><p:commandButton actionListener="#{divisionPredio.prueba()}" oncomplete ="PF('dlgEditarPropietario').hide()" update=":nuevoDlgForm" style="color: #ffffff; width: 150px; background: #616161 !important; font-weight: bold; height: 30px;" value="Cerrar"  /></center>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog id="dlgObs" widgetVar="obs" header="#{divisionPredio.ht.tipoTramiteNombre}" appendTo="@(body)" modal="true" width="500" resizable="false" closable="true" closeOnEscape="true">
+            <h:form id="frmObs">
+                <p:panel id="pobs" header="Ingrese sus observaciones" style="width: 100%">
+                    <div align="center">
+                        <p:inputTextarea id="obsservacion" value="#{agregarCatPredioS12.obs.observacion}" rows="4" style="width: 100%; text-transform: uppercase" required="true" placeholder="Las observaciones son obligatorias para continuar con el tramite"/>
+                        <br/>
+                        <p:commandButton id="btnValidar" value="Validar Rechazo" actionListener="#{agregarCatPredioS12.rechazarPredio()}" oncomplete="PF('obs').hide()" style="color: #ffffff; background: #616161 !important; font-weight: bold; height: 30px"/>
+                        
+                    </div>
+                </p:panel>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

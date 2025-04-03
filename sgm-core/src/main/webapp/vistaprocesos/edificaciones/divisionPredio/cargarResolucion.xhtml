@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:define name="top">
+        <p:panelGrid styleClass="noBorder" columns="4" style="width: 100%;font-size: 14px;">
+            <p:outputLabel value="Trámite: #{cargarResolucion.ht.id}" style="font-weight: bolder;color: #005f9c"/>
+            <p:outputLabel value="Tarea: #{cargarResolucion.taskDataByTaskID.name}" style="font-weight: bolder;color: #005f9c"/>
+            <p:outputLabel value="Responsable: #{cargarResolucion.taskDataByTaskID.assignee}" style="font-weight: bolder;color: #005f9c"/>
+        </p:panelGrid>
+    </ui:define>
+    <ui:define name="content">
+        <h:form id="frmMain">
+            
+            <p:panelGrid id="pnlDP" columns="1" style="width: 100%;">
+                <p:panel id="panelPrin"  header="Subir Informe de la Tasa Liquidación">
+                    <p:tabView id="tdatos">
+                        <p:tab id="tgen" title="Subir Documento">
+                            <center>
+                                <p:panel style="width: 80%;">
+                                    <p:fileUpload  fileUploadListener="#{cargarResolucion.handleFileUpload}"
+                                                   multiple="false"
+                                                   mode="advanced"
+                                                   fileLimit="1"
+                                                   label="Seleccionar"
+                                                   uploadLabel="Subir"
+                                                   cancelLabel="Cancelar"
+                                                   skinSimple="true"
+                                                   update="messages"
+                                                   sizeLimit="35000000" 
+                                                   allowTypes="/(\.|\/)(gif|jpe?g|png|pdf)$/"/>
+
+                                    <p:growl id="messages" showDetail="true"/>
+                                    <p:panelGrid columns="2">
+                                        <h:outputText value="Tiene Resolución: "/>
+                                        <p:selectOneMenu value="#{cargarResolucion.tieneRes}" style="width: 60px;">
+                                            <f:selectItem itemLabel="No" itemValue="#{false}"/>
+                                            <f:selectItem itemLabel="Sí" itemValue="#{true}"/>
+                                            <p:ajax update="frmMain"/>
+                                        </p:selectOneMenu>
+                                    </p:panelGrid>
+                                    <p:panelGrid id="resolucion" columns="2" rendered="#{cargarResolucion.tieneRes}">
+                                        <h:outputText value="Número de Resolución"/>
+                                        <p:inputText value="#{cargarResolucion.resolucion.numResolucion}" placeholder="No tiene resolución"/>
+                                        <h:outputText value="Descripción de la resolución"/>
+                                        <p:inputText value="#{cargarResolucion.resolucion.descripcion}" placeholder="No tiene descripción"/>
+                                    </p:panelGrid>
+                                    <p:commandButton value="Terminar Tarea" actionListener="#{cargarResolucion.verificarResolucion}" style="margin-top: 20px;"/>
+                                </p:panel>
+                                
+                            </center>
+                        </p:tab>
+                        <p:tab id="tobs" title="Observaciones">
+                            <p:panel id="pobs" header="Listado de Observaciones" style="width: 100%">
+                                <p:dataTable id="dtObs" value="#{cargarResolucion.ht.observacionesCollection}" var="obs" reflow="true" style="width: 100%">
+                                    <p:column headerText="Observacion" style="width: 60%">
+                                        <h:outputText value="#{obs.observacion}" style="text-transform: uppercase"/>
+                                    </p:column>
+                                    <p:column headerText="Responsable" style="width: 25%">
+                                        <h:outputText value="#{obs.userCre}" style="text-transform: uppercase"/>
+                                    </p:column>
+                                    <p:column headerText="Tarea" style="width: 25%">
+                                        <h:outputText value="#{obs.tarea}" style="text-transform: uppercase"/>
+                                    </p:column>
+                                    <p:column headerText="Fecha" style="width: 15%">
+                                        <h:outputText value="#{obs.fecCre}" style="text-transform: uppercase"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:panel>
+                        </p:tab>
+                    </p:tabView>
+                </p:panel>
+            </p:panelGrid>
+        </h:form>
+        
+        <p:dialog id="dlgObs" widgetVar="obs" header="#{cargarResolucion.ht.tipoTramiteNombre}" appendTo="@(body)" modal="true" width="500" resizable="false" closable="true" closeOnEscape="true">
+            <h:form id="frmObs" target="_blank">
+                <p:panel id="pobs" header="Ingrese sus observaciones" style="width: 100%">
+                    <div align="center">
+                        <p:inputTextarea id="obsservacion" value="#{cargarResolucion.obs.observacion}" rows="4" style="width: 100%; text-transform: uppercase" required="true" placeholder="Las observaciones son obligatorias para continuar con el tramite"/>
+                        <br/>
+                        <p:commandButton id="btnValidar" value="Validar Requisitos" actionListener="#{cargarResolucion.completarTarea()}" oncomplete="PF('obs').hide()" style="color: #ffffff; background: #616161 !important; font-weight: bold; height: 30px"/>
+                    </div>
+                </p:panel>
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog id="confirmDlg" widgetVar="confirmDlg" header="Confirmación" appendTo="@(body)" modal="true" width="500" resizable="false" closable="true" closeOnEscape="true">
+            <h:form id="frmConfirm">                
+                <div align="center">
+                    <h:outputText value="Está seguro que desea continuar sin número de resolución?"/>
+                    <br/>
+                    <br/>
+                    <p:commandButton id="btnValidar2" value="Sí" oncomplete="PF('obs').show()" onclick="PF('confirmDlg').hide()" style="color: #ffffff; background: #616161 !important; font-weight: bold; height: 30px"/>
+                    <p:commandButton id="btnValidar3" value="No" oncomplete="PF('confirmDlg').hide()" style="color: #ffffff; background: #616161 !important; font-weight: bold; height: 30px"/>
+                </div>
+            </h:form>
+        </p:dialog>
+        
+    </ui:define>
+</ui:composition>

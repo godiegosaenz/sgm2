@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="obras" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="fcef1dbe-b82c-464f-a8cf-e98c7593b7cf">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="367"/>
+	<property name="ireport.y" value="35"/>
+	<parameter name="LOGO" class="java.lang.String"/>
+	<parameter name="ANIO" class="java.lang.Long"/>
+	<queryString>
+		<![CDATA[SELECT u.nombre as descripcion, o.cuenta_contable, o.concepto, v.valor_recuperar,
+    (SELECT razon_social from sgm_application.empresa) AS nombre_empresa
+FROM sgm_mejoras.mej_valores_obra_ubicacion v
+LEFT OUTER JOIN sgm_app.cat_ubicacion u ON (v.ubicacion=u.id)
+LEFT OUTER JOIN sgm_mejoras.mej_obra o ON (v.obra=o.id)
+LEFT OUTER JOIN sgm_mejoras.mej_tipo_obra t ON (o.tipo_obra=t.id)
+WHERE o.anio = $P{ANIO}
+ORDER BY u.id,v.id]]>
+	</queryString>
+	<field name="descripcion" class="java.lang.String"/>
+	<field name="cuenta_contable" class="java.lang.String"/>
+	<field name="concepto" class="java.lang.String"/>
+	<field name="valor_recuperar" class="java.math.BigDecimal"/>
+	<field name="nombre_empresa" class="java.lang.String"/>
+	<variable name="subtotal" class="java.math.BigDecimal" resetType="Group" resetGroup="parroquia" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_recuperar}]]></variableExpression>
+	</variable>
+	<variable name="total" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_recuperar}]]></variableExpression>
+	</variable>
+	<group name="parroquia">
+		<groupExpression><![CDATA[$F{descripcion}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<textField isBlankWhenNull="true">
+					<reportElement x="14" y="4" width="523" height="16" uuid="e63028ba-2c2a-4103-8629-c0e755d6c685"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{descripcion}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="25">
+				<textField isBlankWhenNull="true">
+					<reportElement x="446" y="0" width="91" height="20" uuid="a17b0733-37e1-44a2-a129-763b0716316e"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{subtotal}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="337" y="0" width="109" height="20" uuid="c67ee82b-e9d9-4c82-88e4-a36256c60db7"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Subtotal>>>>]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<image>
+				<reportElement x="14" y="0" width="117" height="63" uuid="b18508dd-e975-409b-a169-1eb7d8e47dff"/>
+				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="193" y="45" width="334" height="16" uuid="d9ebf3e0-6b41-41dd-9915-046fb614d046"/>
+				<textElement textAlignment="Center">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[EMISION DE CONTRIBUCION ESPECIAL DE MEJORAS POR OBRA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="446" y="63" width="35" height="14" uuid="b9d881ce-454e-4f04-8640-ad4e4ebf3dd3"/>
+				<textElement textAlignment="Right">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AÑO :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="481" y="63" width="56" height="14" uuid="b3eb55d5-e8f1-4f2e-b2ae-a33afc6c079b"/>
+				<textElement>
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ANIO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="143" y="0" width="410" height="46" uuid="ea9eb3c8-4d34-4b86-ad3b-6765a9648c61"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_empresa}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="27" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="13" splitType="Stretch">
+			<staticText>
+				<reportElement x="14" y="0" width="124" height="13" uuid="78aac4bb-6fb4-47f6-bdfd-3854ef9614a6"/>
+				<textElement>
+					<font size="9" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Cta. Contable]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="145" y="0" width="280" height="13" uuid="e3973021-cc08-4bb7-85d2-7e94cd22b763"/>
+				<textElement>
+					<font size="9" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[CONCEPTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="446" y="0" width="91" height="13" uuid="4350c3e7-1f97-4b51-8c8e-5b70219e1b88"/>
+				<textElement textAlignment="Right">
+					<font size="9" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[VALOR]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="14" y="0" width="124" height="15" uuid="f052c0b4-f3e1-4422-aa43-35e9ad580746"/>
+				<textFieldExpression><![CDATA[$F{cuenta_contable}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="145" y="0" width="280" height="15" isPrintWhenDetailOverflows="true" uuid="46da6066-b718-4786-97d9-cec61bf63090"/>
+				<textFieldExpression><![CDATA[$F{concepto}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="446" y="0" width="91" height="15" uuid="2fb4a74c-8781-457b-afff-484e16a23038"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{valor_recuperar}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="14" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="12" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="22" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="446" y="0" width="91" height="17" uuid="98437ced-ef9e-4710-aab4-ae6222f43f9a"/>
+				<textElement textAlignment="Right">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{total}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="337" y="0" width="109" height="17" uuid="611feb4f-40d7-4b97-a54e-18a7bb64ea14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL EMISION>>>]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

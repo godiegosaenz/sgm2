@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:comp="http://java.sun.com/jsf/composite/dialog">
+
+    <h:panelGrid columns="4" cellspacing="2" cellpadding="2" style="width: 100%">
+        <h:outputText value="(*) Tipo Propietario: " style="font-weight: bold"/>
+        <p:selectOneMenu value="#{propietarios.pro.tipo}" converter="entityConverter" >
+            <f:selectItems value="#{propietarios.tipoPro}" var="tp" itemLabel="#{tp.valor}" itemValue="#{tp}"/>
+        </p:selectOneMenu>
+        <h:outputText value="Personeria Juridica: " style="font-weight: bold"/>
+        <p:selectOneMenu value="#{propietarios.pro.ente.personeriaJuridica}" >
+            <f:selectItem itemLabel="PUBLICO" itemValue="#{true}"/>
+            <f:selectItem itemLabel="PRIVADO" itemValue="#{false}"/>
+        </p:selectOneMenu>
+        <h:outputText value="(*) Tipo de Documento " style="font-weight: bold"/>
+        <p:selectOneMenu value="#{propietarios.pro.ente.tipoDocumento}" converter="entityConverter" >
+            <f:selectItems value="#{propietarios.getListado('ente.tipo_documento')}" var="td1" itemLabel="#{td1.valor}" itemValue="#{td1}"/>
+        </p:selectOneMenu>
+        <p:outputLabel value="(*) RUC:" rendered="#{!propietarios.pro.ente.esPersona}"/>
+        <p:outputLabel value="(*) Cédula/Pasaporte:" rendered="#{propietarios.pro.ente.esPersona}"/>
+
+        <h:panelGroup>
+            <p:inputText value="#{propietarios.pro.ente.ciRuc}"  maxlength="15" onkeypress="validateIntegerValueAndFocusNext(event, '')"/>
+
+            <p:spacer width="10"/>
+            <p:commandLink actionListener="#{propietarios.buscarEnte()}" update="formProp" >
+                <p:graphicImage value="/css/homeIconsImages/buscar.png" height="25" width="25"/>
+            </p:commandLink>
+        </h:panelGroup>
+
+        <h:outputText value="(*) Nombres:" rendered="#{propietarios.pro.ente.esPersona}"/>
+        <p:inputText value="#{propietarios.pro.ente.nombres}" rendered="#{propietarios.pro.ente.esPersona}" style="width: 250px;"/>
+        <h:outputText value="(*) Razón Social:" rendered="#{!propietarios.pro.ente.esPersona}"/>
+        <p:inputText value="#{propietarios.pro.ente.razonSocial}" rendered="#{!propietarios.pro.ente.esPersona}" style="width: 250px;"/>
+        <h:outputText value="Nombre Comercial:" rendered="#{!propietarios.pro.ente.esPersona}"/>
+        <p:inputText value="#{propietarios.pro.ente.nombreComercial}" rendered="#{!propietarios.pro.ente.esPersona}" style="width: 250px;"/>
+        <h:outputText value="(*) Apellidos:" rendered="#{propietarios.pro.ente.esPersona}"/>
+        <p:inputText value="#{propietarios.pro.ente.apellidos}" rendered="#{propietarios.pro.ente.esPersona}" style="width: 250px;"/>
+        <h:outputText value="(*) Estado civil" rendered="#{propietarios.pro.ente.esPersona}"/>
+        <p:selectOneMenu value="#{propietarios.pro.ente.estadoCivil}" converter="entityConverter" rendered="#{propietarios.pro.ente.esPersona}" >
+            <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+            <f:selectItems value="#{propietarios.getListado('cliente.estado_civil')}" var="sc1" itemLabel="#{sc1.valor}" itemValue="#{sc1}"/>
+        </p:selectOneMenu>
+
+
+        <p:outputLabel value="Fec. Nacimiento:" rendered="#{propietarios.pro.ente.esPersona}"/>
+        <p:calendar value="#{propietarios.pro.ente.fechaNacimiento}" rendered="#{propietarios.pro.ente.esPersona}"/>
+
+        <p:outputLabel value="Dirección Propietario:"/>
+        <p:inputText value="#{propietarios.pro.ente.direccion}" style="width: 350px;"/>
+
+        <h:outputText value="Tiene Contrato:" style="font-weight: bolder" rendered="#{infoExtrasView.renderviewCatPredioPropitarioExtra}"/>
+        <p:selectBooleanCheckbox value="#{propietarios.pro.extras.tieneContrato}" rendered="#{infoExtrasView.renderviewCatPredioPropitarioExtra}"/>
+        <h:outputLabel value="Fecha Contrato:" rendered="#{infoExtrasView.renderviewCatPredioPropitarioExtra}" class="FontBold"/>
+        <p:calendar value="#{propietarios.pro.extras.fechaContrato}" rendered="#{infoExtrasView.renderviewCatPredioPropitarioExtra}"/>
+
+    </h:panelGrid>
+</html>

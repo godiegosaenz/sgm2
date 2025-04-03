@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <h:panelGroup layout="block" class="Wid100 MarTop10 Container" style="margin-bottom: 20px;">
+        <h:panelGroup layout="block" class="Container Wid100">
+            <h1 class="BigTopic Fs16">Datos de configuracíon para generar las alicuotas por niveles  </h1>
+            <hr></hr>
+            
+            <h:panelGroup layout="block" rendered="#{cuadroAlicuotasView.esModificatoria and cuadroAlicuotasView.escritura.getTipoPh() == 1}">
+                <p:outputLabel value="Ingrese en numero de alicuota que se va agregar por cada edificacion" rendered="#{cuadroAlicuotasView.esModificatoria}" class="BigTopic Fs16 FontBold"/>
+                <br/>
+                <p:outputLabel for="predio_cantAlicuotas_mod" value="Cantidad Alicuotas a agregar" styleClass="DispBlock Wid100"/>
+                <p:inputText id="predio_cantAlicuotas_mod" value="#{cuadroAlicuotasView.escritura.cantAlicuotas}" required="true"
+                             onkeypress="validateIntegerValueAndFocusNext(event, 'wizardFlow_next')"/>
+            </h:panelGroup>
+
+            <h:panelGroup layout="block" class="Responsive Container100" id="configData" rendered="#{cuadroAlicuotasView.escritura.getTipoPh() != 1}">
+                <div class="ContainerIndent Wid100 MarRight20">
+                    <p:outputLabel value="Ingrese en numero de alicuota que se va agregar por cada edificacion" rendered="#{cuadroAlicuotasView.esModificatoria}" class="BigTopic Fs16 FontBold"/>
+                    <br/>
+                    <p:fieldset legend="Nro de alicuotas por edificaciones" toggleable="true" toggleSpeed="500" styleClass="MarRight20">
+                        <h:panelGrid columns="3" style="width: 100%">
+                            <c:forEach items="#{cuadroAlicuotasView.edificaciones}" var="e" varStatus="varStatus" >
+                                <h:panelGroup layout="block">
+                                    <p:outputLabel for="edificaciones#{varStatus.index}" value="Edificación Nro #{e.noEdificacion}:"  styleClass="DispBlock Wid100"/>
+                                    <p:inputText id="edificaciones#{varStatus.index}" value="#{e.cantAlicuotas}" onkeypress="validateIntegerValueAndFocusNext(event, 'edificaciones#{varStatus.index + 1}')" />
+                                </h:panelGroup>
+                            </c:forEach>
+                            <h:panelGroup layout="block" class="Fleft Wid100">
+                                <p:commandButton icon="fa fa-save" action="#{cuadroAlicuotasView.procesarCuadroAlicuotas()}" disabled="#{cuadroAlicuotasView.niveles.size() != 0}"
+                                                 value="Procesar Edificaciones" styleClass="white Fright" update="niveles_block, niveles,configData"/>
+                            </h:panelGroup>
+                            <h:panelGroup layout="block" class="Fleft Wid100">
+                                <p:commandButton icon="fa fa-save" action="#{cuadroAlicuotasView.procesarCuadroAlicuotasCancelar()}"
+                                                 value="Cancelar" styleClass="white Fright" update="niveles_block, niveles,configData"/>
+                            </h:panelGroup>
+                        </h:panelGrid>
+
+                    </p:fieldset>
+                </div>
+            </h:panelGroup>
+            <h:panelGroup layout="block" class="Responsive Container100" rendered="#{cuadroAlicuotasView.escritura.getTipoPh() != 1}">
+                <div class="ContainerIndent Wid100 MarRight10">
+                    <p:fieldset legend="Información generada por niveles" toggleable="true" toggleSpeed="500" styleClass="MarRight20">
+                        <h:panelGroup layout="block" class="Responsive Container100" id="niveles_block">
+                            <div class="ContainerIndent Wid100 MarRight20">
+                                <p:dataTable id="niveles" var="nivel" value="#{cuadroAlicuotasView.niveles}" editable="true" editMode="cell" widgetVar="cellNiveles" rowIndexVar="index">
+                                    <f:facet name="header">
+                                        Información detallada por niveles de las Edificaciones
+                                    </f:facet>
+                                    <p:ajax event="cellEdit" listener="#{cuadroAlicuotasView.onCellEditNiveles}" />
+
+                                    <p:column headerText="Edificacion ">
+                                        <h:outputText value="Edificacion Nro #{nivel.noEdificacion}"/>
+                                    </p:column>
+                                    <p:column headerText="Nro. Nivel">
+                                        <h:outputText value="#{nivel.nroNivel}"/>
+                                    </p:column>
+                                    <p:column headerText="Nro. alicuotas">
+                                        <p:cellEditor>
+                                            <f:facet name="output"><h:outputText value="#{nivel.cantDpto}" /></f:facet>
+                                            <f:facet name="input"><p:inputText id="nivel_dpto" value="#{nivel.cantDpto}" style="width:96%" label="Dpto" onkeypress="validateIntegerValueAndFocusNext(event, 'niveles:#{index}:nivel_bodegas')"/></f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </h:panelGroup>
+                    </p:fieldset>
+                </div>
+            </h:panelGroup>
+
+
+        </h:panelGroup>
+    </h:panelGroup>
+</html>

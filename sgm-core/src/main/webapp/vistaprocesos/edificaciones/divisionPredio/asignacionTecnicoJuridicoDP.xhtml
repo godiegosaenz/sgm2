@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:define name="top">
+        <p:panelGrid styleClass="noBorder" columns="4" style="width: 100%;font-size: 14px;">
+            <p:outputLabel value="Trámite: #{asignacionTecnicoJuridicoDP.ht.id}" style="font-weight: bolder;color: #005f9c"/>
+            <p:outputLabel value="Tarea: #{asignacionTecnicoJuridicoDP.taskDataByTaskID.name}" style="font-weight: bolder;color: #005f9c"/>
+            <p:outputLabel value="Responsable: #{asignacionTecnicoJuridicoDP.taskDataByTaskID.assignee}" style="font-weight: bolder;color: #005f9c"/>
+        </p:panelGrid>
+    </ui:define>
+    <ui:define name="content">
+        <h:form id="frmMain">
+
+            <p:panel id="pnlDP" style="width: 100%;">
+                <p:dataTable id="dttecnicos" var="tec" value="#{asignacionTecnicoJuridicoDP.resTecnicos}" reflow="true" paginator="true" rows="10" 
+                            selection="#{asignacionTecnicoJuridicoDP.resumenTecnico}" rowKey="#{tec.user}" style="width: 100%">
+                   <f:facet name="header">Elija un tecnico del listado, para continuar</f:facet>
+                   <p:column selectionMode="single" style="width: 5%"/>
+                   <p:column headerText="Tecnico" filterBy="#{tec.user}" sortBy="#{tec.user}">
+                       #{tec.user}
+                   </p:column>
+                   <p:column headerText="Email" filterBy="#{tec.mailUser}" sortBy="#{tec.mailUser}">
+                       #{tec.mailUser}
+                   </p:column>
+                   <p:column headerText="# Tareas pendientes" style="text-align: center" sortBy="#{tec.currentTasks}">
+                       #{tec.currentTasks}
+                   </p:column>
+                   <p:column headerText="# Tareas finalizadas" style="text-align: center" sortBy="#{tec.completedTasks}">
+                       #{tec.completedTasks}
+                   </p:column>
+                   <p:column headerText="Detalle de tareas"  style="text-align: center">
+                       <p:commandButton id="btnDetalle" value="Ver" disabled="#{asignarTecnicoRolDir.resumenTecnico!=null}" onclick="PF('dlgDetalle').show()" update=":frmDetalle"/>
+                   </p:column>
+               </p:dataTable>
+            </p:panel>
+        </h:form>
+    </ui:define>
+</ui:composition>

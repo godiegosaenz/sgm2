@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subReportTotalMovimientos" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="d25456b5-c2cd-46e0-90a0-4b581215dac2">
+	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="id_ficha" class="java.lang.Long"/>
+	<queryString>
+		<![CDATA[select
+
+libro.nombre,
+count (libro.nombre)
+
+from sgm_app.reg_movimiento_ficha as mov_ficha
+
+left join sgm_app.reg_movimiento as mov on (mov.id = mov_ficha.movimiento)
+left join sgm_app.reg_acto as acto on (acto.id = mov.acto)
+left join sgm_app.reg_libro as libro on (libro.id = mov.libro)
+
+where mov_ficha.ficha = $P{id_ficha}
+
+group by libro.nombre
+order by libro.nombre]]>
+	</queryString>
+	<field name="nombre" class="java.lang.String"/>
+	<field name="count" class="java.lang.Long"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="2683a71f-6f62-49a1-b78c-084bb4413be3" mode="Opaque" x="0" y="0" width="555" height="20"/>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true" isUnderline="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<text><![CDATA[TOTAL DE MOVIMIENTOS CERTIFICADOS:]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="538803c5-a415-4c6f-9ae3-7b994054db74" x="443" y="0" width="112" height="19" forecolor="#FFFFFF"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="f5565f66-f4d1-4ad8-a247-9144f9d9e60e" x="0" y="0" width="113" height="20" forecolor="#FFFFFF"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="d1529ce7-389a-4929-b11c-dfdf1f36c838" mode="Opaque" x="113" y="0" width="150" height="19"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Libro]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f462bc52-0306-4a6d-bd5d-2e79e6a3d3ba" mode="Opaque" x="264" y="0" width="179" height="19"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Número de Inscripciones]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="2182d333-247a-4854-8cfc-2d234db1d2fd" x="443" y="0" width="112" height="19" forecolor="#FFFFFF"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="6bfefe76-bd2e-4fff-a2b3-0433043378e4" x="0" y="0" width="113" height="19" forecolor="#FFFFFF"/>
+			</rectangle>
+			<textField>
+				<reportElement uuid="ae1db228-741c-4670-aec8-f2da8deac2bf" mode="Opaque" x="113" y="0" width="150" height="19"/>
+				<box leftPadding="3">
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="00f3a204-9fc1-48d4-abf9-12bbf1b79223" mode="Opaque" x="264" y="0" width="179" height="19"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{count}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

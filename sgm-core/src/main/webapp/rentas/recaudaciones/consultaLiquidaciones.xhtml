@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:dialog="http://xmlns.jcp.org/jsf/composite/dialog">
+    <ui:define name="top"><h3>Consulta de Títulos de Crédito</h3></ui:define>
+    <ui:define name="content">
+        <script src="../../resources/pfJs/keyPress.js" type="text/javascript"></script>
+        <h:form id="mainForm">
+            <p:dataTable id="dtLiquidaciones" reflow="true" paginator="true" lazy="true" rows="10" rowsPerPageTemplate="10,50,100" paginatorPosition="top"
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         value="#{liquidacionesConsultaView.titulosCredito}" var="titulo" emptyMessage="No se encontraron elementos..." style="text-align: center;"
+                         selectionMode="single" rowKey="#{titulo.id}" selection="#{liquidacionesConsultaView.liquidacion}" filterEvent="enter">
+                <p:column id="tipoLiquidacion" headerText="Prefijo" width="80" filterBy="#{titulo.tipoLiquidacion.prefijo}" filterStyle="width: 95%;">
+                    <p:outputLabel value="#{titulo.tipoLiquidacion.prefijo}" style="font-weight: bold;"/>
+                </p:column>
+                <p:column headerText="No. Liq." width="90" filterBy="#{titulo.numLiquidacion}" sortBy="#{titulo.numLiquidacion}" filterStyle="width: 95%;">
+                    <p:outputLabel value="#{titulo.numLiquidacion}" style="font-weight: bold;"/>
+                </p:column>
+                <p:column headerText="Anio" width="80" filterBy="#{titulo.anio}" sortBy="#{titulo.anio}" filterStyle="width: 95%;">
+                    <p:outputLabel value="#{titulo.anio}" style="font-weight: bold;"/>
+                </p:column>
+                <p:column id="tramite" headerText="Tramite" width="120" filterBy="#{titulo.tramite.id}" filterStyle="width: 95%;">
+                    <p:outputLabel value="#{titulo.tramite.id}" style="font-weight: bold;"/>
+                </p:column>
+                <p:column id="predio" headerText="Predio" width="120" filterBy="#{titulo.predio.numPredio}" filterStyle="width: 95%;">
+                    <p:outputLabel value="#{titulo.predio.numPredio}" style="font-weight: bold;"/>
+                </p:column>
+                <p:column id="identificacion" headerText="Identificacion" width="120" filterBy="#{titulo.comprador.ciRuc}" filterStyle="width: 95%;">
+                    <p:outputLabel style="font-weight: bold; font-size: 13px;" value="#{titulo.comprador.ciRuc}"/>
+                </p:column>
+                <p:column headerText="Solicitante">
+                    <p:outputLabel style="font-weight: bold; font-size: 13px;" value="#{titulo.comprador ne null?titulo.comprador.nombreCompleto: (titulo.observacion.contains('|')?titulo.observacion.substring(0,titulo.observacion.indexOf('|')):titulo.observacion)}"/>
+                </p:column>
+                <p:column headerText="Valor" width="75"><p:outputLabel value="#{titulo.totalPago}" style="font-weight: bold;"/></p:column>
+                <p:column headerText="Saldo" width="75"><p:outputLabel value="#{titulo.saldo}" style="font-weight: bold;"/></p:column>
+                <p:column headerText="Estado" width="75"><p:outputLabel value="#{titulo.estadoLiquidacion.descripcion}" style="font-weight: bold;"/></p:column>
+            </p:dataTable>
+        </h:form>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:define name="top" >
+        <p:panelGrid styleClass="noBorder" columns="4" style="width: 100%;font-size: 14px;">
+            <p:outputLabel value="Trámite: #{revisionPermisoAntiguoIF.ht.id}" style="font-weight: bolder;color: #005f9c"/>
+            <p:outputLabel value="Tarea: #{revisionPermisoAntiguoIF.taskDataByTaskID.name}" style="font-weight: bolder;color: #005f9c"/>
+            <p:outputLabel value="Responsable: #{revisionPermisoAntiguoIF.taskDataByTaskID.assignee}" style="font-weight: bolder;color: #005f9c"/>
+        </p:panelGrid>
+    </ui:define>
+    <ui:define name="content">
+        <h:form id="frmMain">
+            <center>
+                <p:dataTable id="dtPermiso" value="#{revisionPermisoAntiguoIF.permisosList}" var="permiso" style="width: 60%; margin-top: 15px; margin-bottom: 15px;" 
+                             reflow="true" emptyMessage="No se ha generado el permiso">
+                    <p:column headerText="Número de reporte" width="15%">
+                        <center><h:outputText value="#{permiso.numReporte}"/></center>
+                    </p:column>
+                    <p:column headerText="Año de permiso" width="15%">
+                        <center><h:outputText value="#{permiso.anioPermiso}"/></center>
+                    </p:column>
+                    <p:column headerText="Solicitante" width="50%">
+                        <center><h:outputText value="#{permiso.tramite.nombrePropietario}"/></center>
+                    </p:column>
+                    <p:column headerText="Acción" width="20%">
+                        <center><p:commandLink value="Mostrar el permiso" actionListener="#{revisionPermisoAntiguoIF.imprimirPermiso(permiso)}"/></center>
+                    </p:column>
+                </p:dataTable>
+                <p:commandButton value="Aceptar Permiso" actionListener="#{revisionPermisoAntiguoIF.mostrarObs(true)}" styleClass="btnStyle"/>
+                <p:commandButton value="Rechazar Permiso" actionListener="#{revisionPermisoAntiguoIF.mostrarObs(false)}" styleClass="btnStyle"/>
+            </center>
+        </h:form>
+        
+        <!-- -->
+        
+        <p:dialog id="dlgObs" widgetVar="dlgObs"  header="Observaciones" appendTo="@(body)" modal="true" width="500" resizable="false" closable="true" closeOnEscape="true">
+            <h:form id="frmObs">
+                <p:panel id="pobs" header="Ingrese sus observaciones" style="width: 100%" >
+                    <div align="center">
+                        <p:inputTextarea id="obsservacion" value="#{revisionPermisoAntiguoIF.obs.observacion}" rows="4" style="width: 100%; text-transform: uppercase" required="true" placeholder="Las observaciones son obligatorias para continuar con el tramite"/>
+                        <br/>
+                        <p:commandButton id="btnValidar" actionListener="#{revisionPermisoAntiguoIF.completarTarea()}" value="Terminar Tarea"  style="color: #ffffff; background: #616161 !important; font-weight: bold; height: 30px"/>
+                    </div>
+                </p:panel>
+            </h:form>
+        </p:dialog>
+        
+    </ui:define>
+</ui:composition>

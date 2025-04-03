@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:comp="http://java.sun.com/jsf/composite/dialog">
+
+    <p:fieldset legend="Áreas del predio" toggleable="true" style="margin-top: 15px;">
+        <h:panelGrid columns="3" style="width: 100%">
+            <comp:decorateForm id="area_terreno" label="Terreno:" bind="#{fichaPredial.predio.areaSolar}"
+                               floatValidate="true" pattern="##############.##"  />
+
+            <comp:decorateForm id="area_cultivos" label="Cultivos:" bind="#{fichaPredial.predio.areaCultivos}"
+                               floatValidate="true" pattern="##############.##" />
+
+            <comp:decorateForm id="area_construccion" label="Construcción:" bind="#{fichaPredial.predio.areaDeclaradaConst}"
+                               floatValidate="true" pattern="##############.##" />
+
+        </h:panelGrid>
+    </p:fieldset>
+    <center>
+        <h:panelGroup layout="block">
+            <h1 class="BigTopic Fs16">Predio / Avalúos Verificados </h1>    
+            <p:inputSwitch id="es_avaluo_verificado" value="#{fichaPredial.predio.esAvaluoVerificado}" offLabel="No" onLabel="Si" 
+                           label="Esta Verificado" style="width: 170px !important;" />
+        </h:panelGroup>
+    </center>
+
+    <p:fieldset legend="Avalúos del predio" toggleable="true" class="MarBot10">
+        <h:panelGrid id="pgAvaluos" columns="2" style="width: 100%">
+
+            <comp:decorateForm id="ava_terreno" label="Terreno: $" bind="#{fichaPredial.predio.avaluoSolar}"
+                               floatValidate="true" pattern="$" readonly="true" >
+            </comp:decorateForm>    
+
+            <comp:decorateForm id="ava_construccion" label="Construcción: $" bind="#{fichaPredial.predio.avaluoConstruccion}"
+                               floatValidate="true" pattern="$" readonly="true"  />
+
+            <comp:decorateForm id="ava_propiedad" label="Propiedad: $" bind="#{fichaPredial.predio.avaluoMunicipal}"
+                               floatValidate="true" pattern="$" readonly="true"/>
+
+            <comp:decorateForm id="ava_cultivos" label="Cultivos: $" bind="#{fichaPredial.predio.avaluoCultivos}"
+                               floatValidate="true" pattern="$" readonly="true"/>
+
+            <comp:decorateForm id="valorbasem2" label="Valor Base M2 terreno:" bind="#{fichaPredial.predio.valorM2}"
+                               readonly="true" floatValidate="true" pattern="$" />            
+            <comp:decorateForm id="valorm2" label="Valor Afectacion Coeficiente terreno:" bind="#{fichaPredial.predio.valorAfectacionCoeficenteTerreno}"
+                               readonly="true" floatValidate="true" pattern="$"/>
+
+
+
+        </h:panelGrid>
+    </p:fieldset>
+
+    <p:fieldset legend="Impuesto Predial" toggleable="true" class="MarBot10">
+        <comp:decorateForm id="areaTotalCons" label="Tarifa Básica:" bind="#{fichaPredial.predio.areaTotalCons}"
+                           readonly="true" floatValidate="true" pattern="$"/>
+        <comp:decorateForm id="areaAumentoCons" label="Excedente:" bind="#{fichaPredial.predio.areaAumentoCons}"
+                           readonly="true" floatValidate="true" pattern="$"/>
+    </p:fieldset>
+    <p:fieldset legend="Avalúos Especiales del predio" toggleable="true" class="MarBot10">
+        <h:panelGrid id="pgAvaluosEspeciales" columns="2" style="width: 100%">
+
+            <h:panelGroup layout="block">
+                <h:outputLabel for="es_avaluo_especial" value="Es Avalùo Especial:" class="DispBlock Wid100 FontBold"/>
+                <p:inputSwitch id="es_avaluo_especial" value="#{fichaPredial.predio.isAvalauoEspecial}" offLabel="No" onLabel="Si" 
+                               label="Es Avalùo Especial" style="width: 170px !important;" />
+            </h:panelGroup>
+            <comp:decorateForm id="ava_cespecial_solar" label="Avalùo Especial Solar $" bind="#{fichaPredial.predio.avaluoPlussolar}"
+                               floatValidate="true" pattern="$"/>
+
+            <comp:decorateForm id="ava_construccion_especial" label="Avalùo Especial Construcciòn $" bind="#{fichaPredial.predio.avaluoPlusconstruccion}"
+                               floatValidate="true" pattern="$"/>
+
+            <comp:decorateForm id="ava_propiedad_especial" label="Avalùo Especial Municipal $" bind="#{fichaPredial.predio.avaluoPlusmunicipal}"
+                               floatValidate="true" pattern="$"/>
+        </h:panelGrid>
+    </p:fieldset>
+
+    <p:fieldset legend="Historial de Avalúos" toggleable="true" style="margin-top: 15px;" >
+        <h:panelGroup layout="block" class="Responsive Wid100 Container100" >
+            <p:dataTable id="avalHistoricoList" 
+                         value="#{fichaPredial.avaluosHistoricosPredio}" 
+                         var="p" emptyMessage="No existen registros historicos" paginator="true" rows="10" >
+                <p:column headerText="Fecha de Actualización">
+                    <h:outputText value="#{p.fechaActualizacion}"  style="text-align: center"/>
+                </p:column>
+                <p:column headerText="Usuario">
+                    <h:outputText value="#{p.usuarioIngreso}"  style="text-align: center"/>
+                </p:column>
+                <p:column headerText="Año">
+                    <h:outputText value="#{p.anioInicio}"  style="text-align: center"/>
+                </p:column>
+                <p:column headerText="Avalúo Solar" style="text-align: right">
+                    $<h:outputText value="#{p.avaluoSolar}" >
+                        <f:convertNumber type="currency" currencySymbol="" locale="en_US" />
+                    </h:outputText>
+                </p:column>
+                <p:column headerText="Avalúo de la Construcción" style="text-align: right">
+                    $<h:outputText value="#{p.avaluoConstruccion}" >
+                        <f:convertNumber type="currency" currencySymbol="" locale="en_US" />
+                    </h:outputText>
+                </p:column>
+                <!--                <p:column headerText="Suma de Coeficientes de la Construcción">
+                                    <h:outputText value="# {p.sumaCoefEdif}" style="text-align: center"/>
+                                </p:column>--> 
+                <p:column headerText="Avalúo de la Propiedad" style="text-align: right">
+                    $<h:outputText value="#{p.avaluoMunicipal}" >
+                        <f:convertNumber type="currency" currencySymbol="" locale="en_US" />
+                    </h:outputText>
+                </p:column>
+                <p:column headerText="Detalles de Cálculos">
+                    <p:commandLink actionListener="#{fichaPredial.reporteDetalleCalculos(p)}" rendered="#{!p.migrada}" >
+                        <p:graphicImage value="/css/homeIconsImages/reporte.png" height="35"/>
+                    </p:commandLink>
+                </p:column>
+            </p:dataTable>
+        </h:panelGroup>
+    </p:fieldset> 
+
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Listado de Tipo de Conjuntos</title>
+        <style type="text/css">
+            .ui-widget {
+                text-align: center;
+                font-size: 100%;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <h:outputStylesheet name="css/font-icon-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/sentinel-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/core-layout.css" library="sentinel-layout" />
+        <h:form id="FormgestionConjuntoTipos">
+            <p:growl id="growl" showDetail="true" sticky="true" />
+            <div align="right">
+                <p:commandButton value="Nuevo" icon="ui-icon-plus" actionListener="#{gestionConjuntoTipos.showDlgNew()}" styleClass="btnStyle"></p:commandButton>
+                <br/><br/>
+            </div>
+            <p:dataTable id="dtuser" reflow="true"
+                         paginator="true" lazy="true" rows="20" rowsPerPageTemplate="20,50,100"
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         value="#{gestionConjuntoTipos.listConjuntoTiposLazy}" var="conjunto" emptyMessage="No se encontró ningun Item">
+                <p:column headerText="Nombre" style="text-align: center;padding-left: 1px; padding-right: 1px" filterBy="#{conjunto.nombre}" sortBy="#{conjunto.nombre}" filterStyle="width: 60%;">
+                    <h:outputText value="#{conjunto.nombre}" style="text-align: center; font-size: 12px"/>
+                </p:column>
+
+                <p:column headerText="Estado" style="text-align: center; width:10%;"  filterStyle="width: 40%;" rendered="#{conjunto.estado!=null}">
+                    <h:outputText value="A" rendered="#{conjunto.estado}" style="text-align: center; font-size: 12px"/>
+                    <h:outputText value="I" rendered="#{!conjunto.estado}" style="text-align: center; font-size: 12px"/>
+                </p:column>
+                <p:column headerText="Estado" style="text-align: center; width:10%;"  filterStyle="width: 40%;" rendered="#{conjunto.estado==null}"></p:column>
+
+                <p:column headerText="Editar" style="text-align: center; width:20%; ">
+                    <p:commandLink value="Editar" style="color: #0033FF" onclick="PF('dlgEditTipoConjunto').show();" actionListener="#{gestionConjuntoTipos.setEditTipoConjunto(conjunto)}" update=":frmEditarTipoConjunto" />
+                    <p:spacer width="5"/>
+                    <p:commandLink value="Eliminar" style="color: #0033FF" actionListener="#{gestionConjuntoTipos.eliminarTipoCon(conjunto)}" update="FormgestionConjuntoTipos"/>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+
+        <p:dialog id="dlgNTipoConjunto" header="Agregar Tipo Conjunto" widgetVar="dlgAgrgTipoConjunto" resizable="false" modal="true"
+                  position="center" closeOnEscape="true">
+            <h:form  id="formNewTipoConjunto">
+                <p:panelGrid columns="2" styleClass="noBorder">
+                    <h:outputText value="Ingrese Nombre: " style="font-weight: bolder"/>
+                    <p:inputText value="#{gestionConjuntoTipos.nuevoTipoConjunto.nombre}" style="width: 260px;"/>
+                </p:panelGrid>
+                <br/><center><p:commandButton value="Guardar Ciudadela" actionListener="#{gestionConjuntoTipos.guardarTipoConjuntoNuevo()}"/></center>
+                <br/>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="dlgEditTipoConjunto" header="Editar Tipo Conjunto" widgetVar="dlgEditTipoConjunto" resizable="false" modal="true"
+                  position="center" closeOnEscape="true">
+            <h:form id="frmEditarTipoConjunto">
+                <h:panelGrid columns="2" styleClass="noBorder">
+                    <h:outputText value="Ingrese Nombre: " style="font-weight: bolder"/>
+                    <p:inputText value="#{gestionConjuntoTipos.editTipoConjunto.nombre}" style="width: 260px;"/>
+                </h:panelGrid>
+
+                <br/><center><p:selectBooleanCheckbox itemLabel="  Activo" value="#{gestionConjuntoTipos.editTipoConjunto.estado}" /></center>
+                <br/><center><p:commandButton value="Guardar" actionListener="#{gestionConjuntoTipos.guardarTipoConjuntoEditado()}" update="FormgestionConjuntoTipos" /></center>
+                <br/>
+            </h:form>
+        </p:dialog>
+
+    </h:body>
+
+</html>

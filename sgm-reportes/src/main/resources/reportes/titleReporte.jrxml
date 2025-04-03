@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="titleReporte" pageWidth="555" pageHeight="802" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="7346543a-993d-4368-b118-7fa8e4239c85">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="LOGO" class="java.lang.String"/>
+	<parameter name="SUB_TITLE" class="java.lang.String"/>
+	<parameter name="LEGENDA" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+     empresa."nombre_comercial" AS empresa_nombre_comercial
+FROM
+     "sgm_application"."empresa" empresa]]>
+	</queryString>
+	<field name="empresa_nombre_comercial" class="java.lang.String"/>
+	<title>
+		<band height="66" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="120" y="34" width="435" height="15" uuid="96da94f4-b738-44b3-9e86-4881efc9458a"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{SUB_TITLE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="120" y="49" width="435" height="15" uuid="657edc84-11e7-43be-918b-bdde03337dfe"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$P{LEGENDA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy       HH.mm.ss">
+				<reportElement x="2" y="0" width="118" height="18" uuid="04d8cb3e-8d3a-4941-8183-2c236989defa"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="120" y="1" width="435" height="33" uuid="6aabb38a-360f-4658-bb9c-b3e774b28740"/>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{empresa_nombre_comercial}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="RetainShape">
+				<reportElement x="2" y="19" width="118" height="45" uuid="7b3503ab-f143-4602-ab38-388983463d2b"/>
+				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
+			</image>
+		</band>
+	</title>
+</jasperReport>

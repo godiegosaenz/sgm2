@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CertificadoAvaluoPropiedad" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6796b79a-9949-4773-b3f5-3c9baff272d6">
+	<property name="ireport.zoom" value="1.0245201830476058"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<topPen lineWidth="1.0" lineColor="#666600"/>
+			<bottomPen lineWidth="1.0" lineColor="#666600"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#666600"/>
+			<bottomPen lineWidth="0.5" lineColor="#666600"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#666600"/>
+			<bottomPen lineWidth="0.5" lineColor="#666600"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#666600"/>
+			<bottomPen lineWidth="0.5" lineColor="#666600"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==0)]]></conditionExpression>
+			<style backcolor="#EFF7FF"/>
+		</conditionalStyle>
+	</style>
+	<subDataset name="VALORES" uuid="b5710d3f-f45e-41f4-ba8b-20969c76d507">
+		<queryString language="SQL">
+			<![CDATA[select bl.descripcion, sum(dl.valor) as total_pagar from sgm_financiero.ren_liquidacion rl
+inner join sgm_app.cat_predio cp on cp.id=rl.predio
+inner join sgm_financiero.ren_det_liquidacion dl on dl.liquidacion=rl.id
+inner join sgm_financiero.ren_rubros_liquidacion bl on bl.id=dl.rubro
+where cp.estado='A' and rl.tipo_liquidacion=13 and rl.estado_liquidacion=2 and bl.id<>8
+group by bl.descripcion]]>
+		</queryString>
+		<field name="descripcion" class="java.lang.String"/>
+		<field name="total_pagar" class="java.math.BigDecimal"/>
+	</subDataset>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\JOSE LUIS\\Desktop\\PROYECTO_SAN-MIGUEL\\SGM-SSM\\src\\main\\webapp\\reportes\\rentas\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ANIO" class="java.lang.Integer"/>
+	<parameter name="LOGO" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\Users\\JOSE LUIS\\Desktop\\PROYECTO_SAN-MIGUEL\\SGM-SSM\\src\\main\\webapp\\css\\homeIconsImages\\logo.jpg"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR_TITLE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\JOSE LUIS\\Desktop\\PROYECTO_SAN-MIGUEL\\SGM-SSM\\src\\main\\webapp\\reportes\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO2" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\Users\\JOSE LUIS\\Desktop\\PROYECTO_SAN-MIGUEL\\SGM-SSM\\src\\main\\webapp\\css\\smb\\logomunicipal.png"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT COUNT(RL.ID) AS TOTAL_PREDIO_PROCESADOS ,
+(SELECT RAZON_SOCIAL FROM SGM_APPLICATION.EMPRESA where id=1)AS RAZON_SOCIAL,
+(SELECT COUNT(CP.ID) FROM SGM_APP.CAT_PREDIO CP
+INNER JOIN SGM_FINANCIERO.REN_LIQUIDACION RL ON CP.ID=RL.PREDIO
+INNER JOIN SGM_FINANCIERO.FN_EXONERACION_LIQUIDACION EL ON RL.ID=EL.LIQUIDACION_POSTERIOR
+WHERE RL.TIPO_LIQUIDACION IN (7,13) AND CP.ESTADO='A' AND RL.ANIO=$P{ANIO}) AS TOTAL_EXONERADO,
+(SELECT COUNT(CP.ID) FROM SGM_APP.CAT_PREDIO CP
+INNER JOIN SGM_FINANCIERO.REN_LIQUIDACION RL ON CP.ID=RL.PREDIO
+INNER JOIN SGM_FINANCIERO.FN_EXONERACION_LIQUIDACION EL ON RL.ID=EL.LIQUIDACION_POSTERIOR
+INNER JOIN SGM_FINANCIERO.FN_SOLICITUD_EXONERACION SE ON SE.ID=EL.EXONERACION
+WHERE RL.TIPO_LIQUIDACION IN (7,13) AND CP.ESTADO='A'AND SE.EXONERACION_TIPO=17 AND rl.exonerado='t'  AND RL.ANIO=$P{ANIO} ) AS TOTAL_LEY_DEL_ANCIANO,
+(SELECT COUNT(CP.ID) FROM SGM_APP.CAT_PREDIO CP
+INNER JOIN SGM_FINANCIERO.REN_LIQUIDACION RL ON CP.ID=RL.PREDIO
+INNER JOIN SGM_FINANCIERO.FN_EXONERACION_LIQUIDACION EL ON RL.ID=EL.LIQUIDACION_POSTERIOR
+INNER JOIN SGM_FINANCIERO.FN_SOLICITUD_EXONERACION SE ON SE.ID=EL.EXONERACION
+WHERE RL.TIPO_LIQUIDACION IN (7,13) AND CP.ESTADO='A'AND SE.EXONERACION_TIPO=34 AND CP.TENENCIA IN (1,2,4,5 )AND rl.exonerado='t'  AND RL.ANIO=$P{ANIO}) AS TOTAL_PUBLICO
+FROM  SGM_APP.CAT_PREDIO CP
+INNER JOIN SGM_FINANCIERO.REN_LIQUIDACION RL ON CP.ID=RL.PREDIO
+WHERE RL.TIPO_LIQUIDACION IN (7,13) AND CP.ESTADO='A' AND RL.ANIO=$P{ANIO}]]>
+	</queryString>
+	<field name="total_predio_procesados" class="java.lang.Long"/>
+	<field name="razon_social" class="java.lang.String"/>
+	<field name="total_exonerado" class="java.lang.Long"/>
+	<field name="total_ley_del_anciano" class="java.lang.Long"/>
+	<field name="total_publico" class="java.lang.Long"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="101">
+			<staticText>
+				<reportElement x="58" y="70" width="401" height="21" uuid="b6e299f3-353f-4c28-a223-2231af0d41c9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+				</textElement>
+				<text><![CDATA[Cuadro de Resumen de Resultados   -  Año :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="418" y="71" width="67" height="20" uuid="9924ed53-c3d7-4ec5-8a38-1d72775fd858"/>
+				<textElement verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ANIO}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="555" height="56" uuid="f0051ba1-ad0c-4900-b5ae-81cc4dc38ef8"/>
+				<subreportParameter name="LOGO">
+					<subreportParameterExpression><![CDATA[$P{LOGO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SUB_TITLE"/>
+				<subreportParameter name="LOGO2">
+					<subreportParameterExpression><![CDATA[$P{LOGO2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR_TITLE} + "titleReporte2.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="227">
+			<rectangle radius="10">
+				<reportElement x="307" y="16" width="228" height="195" forecolor="#333333" uuid="5b5c9995-a88a-41e8-8030-e2aca0448b56"/>
+				<graphicElement>
+					<pen lineWidth="3.0" lineStyle="Solid"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle radius="10">
+				<reportElement x="29" y="16" width="228" height="195" forecolor="#333333" uuid="56e46af3-311a-48bd-8ca7-6967a8900f8e"/>
+				<graphicElement>
+					<pen lineWidth="3.0" lineStyle="Solid"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="77" y="43" width="131" height="20" uuid="b64cd1e5-93f7-4290-9d0f-33672417bc51"/>
+				<text><![CDATA[No Predios Procesado]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="121" y="83" width="33" height="20" uuid="81c55eea-8a75-4024-9dac-ba76c6c75d68"/>
+				<textFieldExpression><![CDATA[$F{total_predio_procesados}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="318" y="63" width="100" height="20" uuid="f62a6fa3-f88b-4937-8a97-0892cd920069"/>
+				<text><![CDATA[Ley el Anciano]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="448" y="63" width="60" height="20" uuid="d424012a-3422-416e-9c6d-ed5da5c92e0d"/>
+				<textFieldExpression><![CDATA[$F{total_ley_del_anciano}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="318" y="103" width="100" height="20" uuid="fcf431dc-66d9-442a-a7b6-1fd76779572b"/>
+				<text><![CDATA[Predios Publicos]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="448" y="103" width="60" height="20" uuid="3e5b3fc6-577d-41eb-a3a2-189d134226b3"/>
+				<textFieldExpression><![CDATA[$F{total_publico}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="318" y="179" width="117" height="20" uuid="e9d433c7-be50-492f-bf3e-96b6e702aaac"/>
+				<text><![CDATA[TOTAL EXENCIONES]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="448" y="179" width="60" height="20" uuid="d3e7846b-ea81-40f1-a71f-8d95e24531bb"/>
+				<textFieldExpression><![CDATA[$F{total_exonerado}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="448" y="142" width="60" height="20" uuid="c36a0809-1eae-49fc-a75b-ceeb427ad5fd"/>
+				<textFieldExpression><![CDATA[$F{total_exonerado}-$F{total_ley_del_anciano}-$F{total_publico}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="318" y="142" width="100" height="20" uuid="4cdff42b-0589-42da-81fb-6c3982e5b94d"/>
+				<text><![CDATA[Otras exenciones]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="343" y="23" width="142" height="20" uuid="62c89d5e-bc38-467c-9f52-91e843e4522e"/>
+				<text><![CDATA[DETALLES DE EXENCIONES]]></text>
+			</staticText>
+		</band>
+		<band height="179">
+			<rectangle radius="10">
+				<reportElement x="29" y="29" width="228" height="150" uuid="587ce299-a4b8-4c92-abaa-5ad559989d90"/>
+				<graphicElement>
+					<pen lineWidth="3.0"/>
+				</graphicElement>
+			</rectangle>
+			<subreport>
+				<reportElement x="32" y="29" width="75" height="58" uuid="4b21a3c7-9dc2-4d6f-87ac-a1593f94dc29"/>
+				<subreportParameter name="ANI">
+					<subreportParameterExpression><![CDATA[$P{ANIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "reporteValoresemitidos_subreport.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="37" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

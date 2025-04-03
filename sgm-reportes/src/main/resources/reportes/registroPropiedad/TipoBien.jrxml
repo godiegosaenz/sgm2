@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="TipoBien" pageWidth="555" pageHeight="802" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="9ba5ab41-88f3-4029-8ac7-b3935b034680">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_REPERTORIO" class="java.lang.Long"/>
+	<parameter name="P_ANIO" class="java.lang.String"/>
+	<parameter name="ID_MOVIMIENTO" class="java.lang.Long"/>
+	<queryString>
+		<![CDATA[select rf.codigo_predial,
+rf.num_ficha,a.abreviatura from sgm_app.reg_movimiento_ficha rm
+left join sgm_app.reg_ficha rf on (rm.ficha=rf.id)
+left join sgm_app.reg_movimiento m on (m.id=rm.movimiento)
+left join sgm_app.reg_acto a on  (m.acto=a.id)
+where m.id=$P{ID_MOVIMIENTO}
+order by rf.num_ficha desc;]]>
+	</queryString>
+	<field name="codigo_predial" class="java.lang.String"/>
+	<field name="num_ficha" class="java.lang.Long"/>
+	<field name="abreviatura" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="45" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="02aaa218-51af-4144-aabb-d3788c82d82a" x="0" y="17" width="100" height="14"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tipo Bien]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a9c250aa-c224-448e-a0b2-224867c6238a" x="289" y="17" width="78" height="14"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Número ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="52d3b86b-e646-4e3d-bd9b-5e1062eac78a" x="367" y="30" width="103" height="14"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Actos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f05357fa-8abc-4a94-b19a-763d66b4a858" x="0" y="30" width="289" height="14"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cód.Catastral/Rol/Ident.Predial/Chasis]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1c061702-04b8-4db6-8478-3b652ac8237b" x="289" y="30" width="78" height="14"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ficha]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b06e31c6-3d7c-49df-a2c9-6eed4779393d" x="0" y="0" width="470" height="14"/>
+				<textElement/>
+				<text><![CDATA[Que se refiere al(los) siguiente(s) bien(es) :]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="5031e72b-8cbf-4094-b644-1dfd59d2e4a9" x="0" y="0" width="289" height="14"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{codigo_predial}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="41615814-4a63-4197-b3fa-4644fe2846d2" x="289" y="0" width="78" height="14"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{num_ficha}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="ed26d041-13de-48fb-9fc6-4efeca0390bd" x="367" y="0" width="103" height="14"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{abreviatura}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

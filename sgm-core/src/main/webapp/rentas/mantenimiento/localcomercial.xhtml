@@ -1,0 +1,656 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:poue="http://primefaces.org/ui/extensions">
+    <ui:define name="content">
+        <center>
+            <h1>Actividades Comerciales</h1>
+        </center>
+        <h:form id="frmMain">
+
+            <center>
+                <p:tabView id="tbVLocalComercial">
+
+                    <p:tab title="Locales comerciales">
+
+                        <div align="rigth">
+                            <p:commandButton value="Nuevo local comercial" onclick="PF('dlgNew').show()" style="float: right" styleClass="btnStyle" update="frmNew" actionListener="#{localComercialView.nuevoLocalComercial}"/>
+                            <p:spacer width="20" />
+                            <p:commandButton value="Emisión Mensual " 
+                                             onclick="PF('dlgEmisionMensualLocales').show()" 
+                                             style="float: right" styleClass="btnStyle" update="formEmisionMensual"/>
+                            <p:spacer width="10" />
+                            <p:commandButton value="GENERAR PDF" 
+                                             actionListener="#{localComercialView.nuevoReporteGeneral}"
+                                             style="float: right" styleClass="btnStyle"/>
+
+                        </div>
+                        <br></br><br></br>
+                        <p:dataTable id="dtLocales" lazy="true" value="#{localComercialView.localesComercialesLazy}"
+                                     var="local" rows="10" paginator="true" paginatorPosition="top"
+                                     rowsPerPageTemplate="10, 20, 50, 100" filterEvent="enter" widgetVar="dtLocales" >
+
+                            <p:column headerText="Nombre del local" filterBy="#{local.nombreLocal}" width="27%;" filterStyle="width:95%;">
+                                <center><h:outputText value="#{local.nombreLocal}"/></center>
+                            </p:column>
+                            <p:column headerText="Número del local" filterBy="#{local.numLocal}" width="8%;"  filterStyle="width:80%;">
+                                <center><h:outputText value="#{local.numLocal}"/></center>
+                            </p:column>
+                            <p:column headerText="Área del local" filterBy="#{local.area}" width="10%;" filterStyle="width:80%;">
+                                <center><h:outputText value="#{local.area}"/></center>
+                            </p:column>
+                            <p:column headerText="C.I / R.U.C" filterBy="#{local.propietario.ciRuc}" width="10%;" filterStyle="width:80%;">
+                                <center><h:outputText value="#{local.propietario.ciRuc}"/></center>
+                            </p:column>
+                            <p:column headerText="Propietario del local" width="27%;"  filterStyle="width:85%;">
+                                <center><h:outputText value="#{local.propietario.nombres} #{local.propietario.apellidos}" rendered="#{local.propietario.esPersona}"/>
+                                    <h:outputText value="#{local.propietario.razonSocial}" rendered="#{!local.propietario.esPersona}"/></center>
+                            </p:column>
+                            <p:column headerText="Estado" width="11%;" filterBy="#{local.estadoLocalComercial}"
+                                      filterMatchMode="contains" filterStyle="width: 95%">
+                                <f:facet name="filter"  >
+                                    <p:selectOneMenu id="cat" onchange="PF('dtLocales').filter()" 
+                                                     style="width: 75%; font-size: 10px;" >
+                                        <f:selectItem itemLabel="Estado Local" itemValue="#{null}" noSelectionOption="true"/>
+                                        <f:selectItem itemLabel="Habilitado" itemValue="#{1}" />
+                                        <f:selectItem itemLabel="Inhabilitado" itemValue="#{2}" />
+                                        <f:selectItem itemLabel="Clausurado" itemValue="#{3}" />
+                                    </p:selectOneMenu>
+                                </f:facet>
+                                <center>
+                                    <h:outputText value="Habilitado" rendered="#{local.estadoLocalComercial eq 1}"   />
+                                    <h:outputText value="Inhabilitado" rendered="#{local.estadoLocalComercial eq 2}"   />
+                                    <h:outputText value="Clausurado" rendered="#{local.estadoLocalComercial eq 3}" />
+                                </center>
+                            </p:column>
+                            <p:column headerText="Acción" width="14%;">
+                                <center>
+                                    <p:commandLink title="Editar" actionListener="#{localComercialView.editarLocal(local)}" styleClass="btnStyle"
+                                                   update=":frmEdit" onclick="PF('dlgEdit').show()" >
+                                        <p:tooltip value="Editar "/>
+                                        <p:graphicImage value="/css/homeIconsImages/edicion.png"  height="20" width="20"/>
+                                    </p:commandLink>
+                                    <p:spacer width="2"/>
+                                    <p:commandLink actionListener="#{localComercialView.accionLocal(local, 2)}" update="frmMain" 
+                                                   rendered="#{local.estadoLocalComercial eq 1}" styleClass="btnStyle">
+                                        <p:tooltip value="Eliminar"/>
+                                        <p:graphicImage value="/css/homeIconsImages/delete.png"  height="20" width="20"/>
+                                    </p:commandLink>
+                                    <p:commandLink title="Habilitar" actionListener="#{localComercialView.accionLocal(local, 1)}" update="frmMain" styleClass="btnStyle" 
+                                                   rendered="#{local.estadoLocalComercial eq 2 or (local.estadoLocalComercial eq 3)}" >
+                                        <p:tooltip value="Habilitar"/>
+                                        <p:graphicImage value="/css/homeIconsImages/ok.png"  height="20" width="20"/>
+                                    </p:commandLink>
+                                    <p:spacer width="2"/>
+                                    <p:commandLink  actionListener="#{localComercialView.imprimirCertificado(local)}" styleClass="btnStyle" 
+                                                    title="Imprimir"  >
+                                        <p:graphicImage value="/css/homeIconsImages/reporte.png" height="16"/>
+                                    </p:commandLink>
+                                    <p:spacer width="2"/>
+                                    <p:commandLink title="Ver liquidaciones" actionListener="#{localComercialView.verLiquidaciones(local)}" update="frmMain" styleClass="btnStyle" >
+                                        <p:graphicImage value="/css/homeIconsImages/abrir.png"/>
+                                    </p:commandLink>
+                                </center>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                    <p:tab title="Actividades Económicas de los Contribuyentes">
+                        <div align="rigth">
+                            <p:commandButton value="Nuevo Actividad Económica de Contribuyentes" style="float: right" styleClass="btnStyle" actionListener="#{localComercialView.newActivityByTaxPayer}"/>
+                        </div>
+                        <br></br><br></br>
+                        <p:dataTable id="dtActividadesContribuyentes" lazy="true" value="#{localComercialView.declaracionContribuyente}"
+                                     var="contribu" rows="10" paginator="true" paginatorPosition="top"
+                                     rowsPerPageTemplate="10, 20, 50, 100" filterEvent="enter"   >
+
+                            <p:column headerText="Contribuyentes" >
+                                <center><h:outputText value="#{contribu.contribuyente.apellidos} #{contribu.contribuyente.nombres}"  
+                                                      rendered="#{contribu.contribuyente.esPersona}"/></center>
+                                <center><h:outputText value="#{contribu.contribuyente.razonSocial} #{contribu.contribuyente.nombreComercial}"  
+                                                      rendered="#{!contribu.contribuyente.esPersona}"/></center>
+                            </p:column>
+                            <p:column headerText="Calificacion Artesanal" >
+                                <center><h:selectBooleanCheckbox  value="#{contribu.llevaContabilidad}" disabled="true"/></center>
+                            </p:column>
+                            <p:column headerText="Lleva Contabilidad" >
+                                <center><h:selectBooleanCheckbox value="#{contribu.calificacionArtesanal}"  disabled="true"/></center>
+                            </p:column>
+                            <p:column headerText="Dirección Actividad" >
+                                <center><h:outputText value="#{contribu.direccionActividades}"/></center>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                    <!-- -->
+
+                    <p:tab title="Actividades">                        
+                        <div aling ="rigth">
+                            <p:commandButton value="Nueva actividad" onclick="PF('dlgAct').show()" style="float: right" actionListener="#{localComercialView.nuevaActividad()}" styleClass="btnStyle" update="frmAct"/>
+                        </div>
+                        <br></br><br></br>
+                        <p:dataTable id="datActividades" value="#{localComercialView.actividadesLocal}" var="cat1" rows="10" 
+                                     paginator="true"  filterEvent="enter" paginatorPosition="top" lazy="true">
+
+                            <p:column headerText="Descripción" width="40%" filterBy="#{cat1.descripcion}">
+                                <center>
+                                    <h:outputText value="#{cat1.descripcion}"/>
+                                </center>
+                            </p:column>
+
+                            <p:column headerText="CIU" width="40%">
+                                <center>
+                                    <h:outputText value="#{cat1.ciu}"/>
+                                </center>
+                            </p:column>
+
+                            <p:column headerText="Acción" width="20%">
+                                <center>
+
+                                    <p:commandLink title="Editar" actionListener="#{localComercialView.setActividad(cat1)}" styleClass="btnStyle"
+                                                   update=":frmEditAct" onclick="PF('dlgEditAct').show()" > 
+                                        <p:tooltip value="Editar "/>
+                                        <p:graphicImage value="/css/homeIconsImages/edicion.png"  height="20" width="20"/>
+                                    </p:commandLink>
+                                    <p:spacer width="6S"/>
+                                    <p:commandLink title="Eliminar" actionListener="#{localComercialView.eliminarActividad(cat1)}" styleClass="btnStyle"
+                                                   update="frmMain:tbVLocalComercial:datActividades" >
+                                        <p:tooltip value="Eliminar"/>
+                                        <p:graphicImage value="/css/homeIconsImages/delete.png"  height="20" width="20"/>
+                                    </p:commandLink>
+
+                                </center>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                </p:tabView>
+
+            </center>
+        </h:form>
+
+        <p:dialog id="dlgEditAct" widgetVar="dlgEditAct" header="Edición de actividad" appendTo="@(body)"
+                  modal="true" width="650" height="75%" resizable="false" closable="true" closeOnEscape="true">
+            <h:form id="frmEditAct">
+
+                <div align="center">
+                    <p:panelGrid columns="2">
+                        <h:outputText value="Nombre de la actividad"/>
+                        <p:inputText value="#{localComercialView.actividad.descripcion}" style="width: 120px;" />
+                        <h:outputText value="CIU de la actividad"/>
+                        <p:inputText value="#{localComercialView.actividad.ciu}" style="width: 120px; " />
+                    </p:panelGrid>
+                    <br/>
+                    <p:commandButton value="Editar" update="frmMain" actionListener="#{localComercialView.editarActividad()}" onclick="PF('editAct').hide()"/>
+                    <p:commandButton value="Cancelar" onclick="PF('editAct').hide()"/>
+                </div>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="dlgObs" widgetVar="obs" header="Ingreso de Observaciones." appendTo="@(body)" modal="true" width="650" height="100%" resizable="false" closable="true" closeOnEscape="true">
+            <h:form id="frmObsCor">
+                <h1>#{localComercialView.mensaje}</h1>
+
+                <div align="center">
+                    <p:inputTextarea id="obsservacion21" value="#{localComercialView.observaciones}" rows="4" style="width: 95%; text-transform: uppercase" placeholder="Ingrese las observaciones. Campo Obligatorio"/>
+                    <br/>
+                    <p:commandButton id="btnCompletar21" value="Aplicar" 
+                                     actionListener="#{localComercialView.actualizarLocal()}" 
+                                     style="height: 30px;" styleClass="btnStyle" icon="ui-icon-check" 
+                                     iconPos="right" oncomplete="PF('obs').hide()" update="frmMain"/>
+                    <p:commandButton id="btnSubir21" value="Cancelar" onclick="PF('obs').hide()" style="height: 30px;" styleClass="btnStyle" icon="ui-icon-close" iconPos="right" />
+                    <br/><br/>
+                </div>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="dlgNew" widgetVar="dlgNew" position="center" width="60%" header="Nuevo local comercial" 
+                  appendTo="@(body)" modal="true" resizable="false" closable="true" closeOnEscape="true">
+            <h:form id="frmNew">
+                <center>
+                    <p:tabView id="tdatos">
+                        <p:tab id="tlocal" title="Datos del local">
+                            <h:panelGrid columns="4">
+                                <h:outputText value="Nombre del local"/>
+                                <p:inputText value="#{localComercialView.localComercial.nombreLocal}"/>
+                                <h:outputText value="Número del local"/>
+                                <p:inputText value="#{localComercialView.localComercial.numLocal}"/>
+
+                                <h:outputText value="Área del local"/>
+                                <p:inputText value="#{localComercialView.localComercial.area}"/>
+                                <h:outputText value="Tipo Local"/>
+                                <p:selectOneMenu value="#{localComercialView.localComercial.tipoLocal}" converter="entityConverter">
+                                    <f:selectItem itemLabel="Seleccion..." itemValue="#{null}"/>
+                                    <f:selectItems value="#{localComercialView.tipoLocal}" var="tl1" itemLabel="#{tl1.descripcion}" itemValue="#{tl1}"/>
+                                </p:selectOneMenu>
+
+                                <h:outputText value="Categoria"/>
+                                <p:selectOneMenu value="#{localComercialView.localComercial.categoria}" converter="entityConverter">
+                                    <f:selectItem itemLabel="Seleccion..." itemValue="#{null}"/>
+                                    <f:selectItems value="#{localComercialView.categorias}" var="cat1" itemLabel="#{cat1.descripcion}" itemValue="#{cat1}"/>
+                                </p:selectOneMenu>
+                                <h:outputText value="Es Matriz"/>
+                                <p:selectBooleanCheckbox  value="#{localComercialView.localComercial.matriz}"/>
+
+                                <h:outputText value="Lleva Contabilidad"/>
+                                <p:selectBooleanCheckbox  value="#{localComercialView.localComercial.contabilidad}"/>
+                                <h:outputText value="Es local Turistico"/>
+                                <p:selectBooleanCheckbox value="#{localComercialView.localComercial.turismo}"/>
+
+                            </h:panelGrid>
+                        </p:tab>
+
+                        <p:tab id="tubicacion" title="Ubicación">
+                            <p:dataTable id="dtUbicacion" value="#{localComercialView.ubicaciones}" 
+                                         reflow="true" var="ub1" rows="5" paginator="true" 
+                                         paginatorPosition="top" filterEvent="enter"
+                                         emptyMessage="No tiene datos" lazy="true">
+                                <f:facet name="header">
+                                    Ubicaciones del Local
+                                </f:facet>
+                                <p:column headerText="Descripcion" filterBy="#{ub1.descripcion}" >
+                                    <center><h:outputText value="#{ub1.descripcion}"/></center>
+                                </p:column>
+                                <p:column headerText="Acción" >
+                                    <center><p:commandButton value="Seleccionar" actionListener="#{localComercialView.seleccionarUbicacion(ub1)}"/></center>
+                                </p:column>
+                            </p:dataTable>
+                        </p:tab>
+
+                        <p:tab id="tactividad" title="Actividades">
+                            <div align="right">
+                                <p:commandButton value="Agregar Actividad" onclick="PF('dlgAct').show()" 
+                                                 styleClass="btnStyle" update=":frmAct" actionListener="#{localComercialView.nuevaActividad()}"/>
+                            </div>
+                            <p:dataTable id="dtActvs" value="#{localComercialView.actividadesLocal}" reflow="true" rowKey="#{actv.id}" filterEvent="enter"
+                                         var="actv" rows="5" paginator="true" paginatorPosition="top" selection="#{localComercialView.actividadesSeleccionadas}"
+                                         emptyMessage="No tiene datos" lazy="true">
+                                <f:facet name="header">
+                                    Lista de Actividades
+                                </f:facet>
+                                <p:column selectionMode="multiple" style="width:35px;text-align:center"/>
+                                <p:column headerText="Descripción" filterBy="#{actv.descripcion}" filterMatchMode="contains">
+                                    <center><h:outputText value="#{actv.descripcion}"/></center>
+                                </p:column>
+                            </p:dataTable>
+                        </p:tab>
+
+                        <p:tab id="tpredio" title="Predio">
+                            <h1><h:outputText value="Numero de predio: #{localComercialView.localComercial.numPredio}"/></h1>
+                            <p:dataTable id="dtPredios" lazy="true" value="#{localComercialView.predioListLazy}" reflow="true"
+                                         var="predio" rows="5" paginator="true" paginatorPosition="top" filterEvent="enter"
+                                         emptyMessage="No tiene datos">
+                                <f:facet name="header">
+                                    Lista de predios
+                                </f:facet>
+                                <p:column headerText="Número de predio" filterBy="#{predio.numPredio}">
+                                    <center><h:outputText value="#{predio.numPredio}"/></center>
+                                </p:column>
+                                <p:column headerText="Ciudadela" filterBy="#{predio.ciudadela.nombre}" >
+                                    <center><h:outputText value="#{predio.ciudadela.nombre}"/></center>
+                                </p:column>
+                                <p:column headerText="Acción" >
+                                    <center><p:commandButton value="Seleccionar" actionListener="#{localComercialView.predioSeleccionado(predio)}"/></center>
+                                </p:column>
+                            </p:dataTable>
+                        </p:tab>
+
+                        <p:tab id="tprop" title="Propietario">
+                            <p:dataTable id="dtProps" lazy="true" value="#{localComercialView.enteListLazy}" reflow="true"
+                                         var="ente" rows="5" paginator="true" paginatorPosition="top" filterEvent="enter"
+                                         emptyMessage="No tiene datos">
+                                <f:facet name="header">
+                                    Lista de entidades
+                                </f:facet>
+                                <p:column headerText="No. de cédula" filterBy="#{ente.ciRuc}">
+                                    <center><h:outputText value="#{ente.ciRuc}"/></center>
+                                </p:column>
+                                <p:column headerText="Nombres" >
+                                    <center><h:outputText value="#{ente.nombres} #{ente.apellidos}" rendered="#{ente.esPersona}"/>
+                                        <h:outputText value="#{ente.razonSocial}" rendered="#{!ente.esPersona}"/></center>
+                                </p:column>
+                                <p:column headerText="Acción">
+                                    <center><p:commandButton value="Seleccionar" actionListener="#{localComercialView.enteSeleccionado(ente)}"/></center>
+                                </p:column>
+                            </p:dataTable>
+                        </p:tab>
+                        <p:tab id="tRazSoc" title="Razón Social">
+                            <p:dataTable id="dtRazSoc" lazy="true" value="#{localComercialView.enteListLazy}" reflow="true"
+                                         var="rz1" rows="5" paginator="true" paginatorPosition="top" filterEvent="enter"
+                                         emptyMessage="No tiene datos">
+                                <f:facet name="header">
+                                    Lista de entidades
+                                </f:facet>
+                                <p:column headerText="No. de cédula" filterBy="#{rz1.ciRuc}">
+                                    <center><h:outputText value="#{rz1.ciRuc}"/></center>
+                                </p:column>
+                                <p:column headerText="Nombres" >
+                                    <center><h:outputText value="#{rz1.nombres} #{rz1.apellidos}" rendered="#{rz1.esPersona}"/>
+                                        <h:outputText value="#{rz1.razonSocial}" rendered="#{!rz1.esPersona}"/></center>
+                                </p:column>
+                                <p:column headerText="Acción">
+                                    <center><p:commandButton value="Seleccionar" update="frmNew" actionListener="#{localComercialView.razonSocialSeleccionado(rz1)}"/></center>
+                                </p:column>
+                            </p:dataTable>
+                        </p:tab>
+
+                        <p:tab id="tcantidad" title="Accesorios">
+                            <h:panelGrid columns="2">
+                                <h:outputText value="Cantidad: "/>
+                                <p:inputText value="#{localComercialView.cantidad.cantidad}"/>
+                                <h:outputText value="Tipo de accesorio: "/>
+                                <p:selectOneMenu value="#{localComercialView.cantidad.tipoAccesorio}" style="width: 150px;" converter="entityConverter">
+                                    <f:selectItem itemLabel="Seleccionar" itemValue="#{null}"/>
+                                    <f:selectItems value="#{localComercialView.tipos}" var="tipo" itemLabel="#{tipo.descripcion}" itemValue="#{tipo}"/>
+                                </p:selectOneMenu>                                
+                            </h:panelGrid>
+                            <center><p:commandButton value="Agregar" styleClass="btnStyle" style="margin-top: 10px; margin-bottom: 10px;" update="frmNew:tdatos" actionListener="#{localComercialView.agregarCantidad}" /></center>
+                            <p:dataTable id="dtAccesorios" value="#{localComercialView.localComercial.cantidadAccesoriosCollection}" reflow="true"
+                                         var="acc" rows="5" paginator="true" paginatorPosition="top"
+                                         emptyMessage="No tiene datos">
+                                <p:column headerText="Cantidad">
+                                    <center><h:outputText value="#{acc.cantidad}"/></center>
+                                </p:column>
+                                <p:column headerText="Tipo">
+                                    <center><h:outputText value="#{acc.tipoAccesorio.descripcion}"/></center>
+                                </p:column>
+                                <p:column headerText="Año">
+                                    <center><h:outputText value="#{acc.anio}"/></center>
+                                </p:column>
+                                <p:column headerText="Acción">
+                                    <center><p:commandLink value="Eliminar" actionListener="#{localComercialView.eliminarCantidadNew(acc)}" update="frmNew:tdatos:dtAccesorios"/></center>
+                                </p:column>
+                            </p:dataTable>
+                        </p:tab>
+                    </p:tabView>
+                </center>
+
+                <center style="margin-top: 10px;">
+                    <p:commandButton value="Guardar" styleClass="btnStyle" actionListener="#{localComercialView.guardarNuevoLocal()}"  update=":frmMain"/>
+                    <p:commandButton value="Cancelar" styleClass="btnStyle" onclick="PF('dlgNew').hide()"/>
+                </center>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="dlgEdit" widgetVar="dlgEdit" position="center" header="Edición de local comercial" 
+                  appendTo="@(body)" modal="true" width="80%" resizable="false" closable="true" closeOnEscape="true">
+            <h:form id="frmEdit">
+                <center>
+                    <p:tabView id="tdatos2">
+                        <p:tab id="tlocal2" title="Datos del local">
+                            <p:panelGrid columns="4">
+                                <h:outputText value="Nombre del local *"/>
+                                <p:inputText value="#{localComercialView.localComercial.nombreLocal}" style="width: 100%" title="#{localComercialView.localComercial.nombreLocal}"/>
+                                <h:outputText value="Número del local"/>
+                                <p:inputText value="#{localComercialView.localComercial.numLocal}"/>
+
+                                <h:outputText value="Área del local *"/>
+                                <p:inputText value="#{localComercialView.localComercial.area}"/>
+                                <h:outputText value="Tipo Local *"/>
+                                <p:selectOneMenu value="#{localComercialView.localComercial.tipoLocal}" converter="entityConverter">
+                                    <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                                    <f:selectItems value="#{localComercialView.tipoLocal}" var="tl1" itemLabel="#{tl1.descripcion}" itemValue="#{tl1}"/>
+                                </p:selectOneMenu>
+
+                                <h:outputText value="Categoria"/>
+                                <p:selectOneMenu value="#{localComercialView.localComercial.categoria}" converter="entityConverter">
+                                    <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                                    <f:selectItems value="#{localComercialView.categorias}" var="cat1" itemLabel="#{cat1.descripcion}" itemValue="#{cat1}"/>
+                                </p:selectOneMenu>
+                                <h:outputText value="Es Matriz"/>
+                                <p:selectBooleanCheckbox  value="#{localComercialView.localComercial.matriz}"/>
+
+                                <h:outputText value="Lleva Contabilidad"/>
+                                <p:selectBooleanCheckbox  value="#{localComercialView.localComercial.contabilidad}"/>
+                                <h:outputText value="Estado Local"/>
+                                <h:panelGroup>
+                                    <p:inputText value="Habilitado" rendered="#{localComercialView.localComercial.estadoLocalComercial eq 1}" readonly="true"  />
+                                    <p:inputText value="Inhabilitado" rendered="#{localComercialView.localComercial.estadoLocalComercial eq 2}" readonly="true"  />
+                                    <p:inputText value="Clausurado" rendered="#{localComercialView.localComercial.estadoLocalComercial eq 3}" readonly="true" />
+                                </h:panelGroup>
+                            </p:panelGrid>
+                        </p:tab>
+
+                        <p:tab id="tubicacion" title="Ubicación">
+                            <h1>
+                                <h:outputText value="#{localComercialView.localComercial.ubicacion.descripcion}"/>
+                            </h1>
+                            <p:dataTable id="dtUbicacion" lazy="true" value="#{localComercialView.ubicaciones}" reflow="true"
+                                         var="ub1" rows="5" paginator="true" 
+                                         paginatorPosition="top" filterEvent="enter"
+                                         emptyMessage="No tiene datos" >
+                                <f:facet name="header">
+                                    Ubicaciones del Local
+                                </f:facet>
+                                <p:column headerText="Descripcion" filterBy="#{ub1.descripcion}" >
+                                    <center><h:outputText value="#{ub1.descripcion}"/></center>
+                                </p:column>
+                                <p:column headerText="Acción" >
+                                    <center><p:commandButton value="Seleccionar" actionListener="#{localComercialView.seleccionarUbicacion(ub1)}"
+                                                             update="frmEdit:tdatos2:dtUbicacion"/></center>
+                                </p:column>
+                            </p:dataTable>
+                        </p:tab>
+
+                        <p:tab id="tactividad2" title="Actividades">
+
+                            <h:outputText value="Lista de Actividades del local" style="font-size: 16px; font-weight: bold;"/>
+                            <p:dataTable id="dtActvs1" value="#{localComercialView.localComercial.renActividadComercialCollection}" reflow="true" rowKey="#{actv.id}"
+                                         var="actv" rows="5" paginator="true" paginatorPosition="top" filterEvent="enter"
+                                         emptyMessage="No tiene datos">
+                                <p:column headerText="Descripción" filterBy="#{actv.descripcion}" filterMatchMode="contains">
+                                    <center><h:outputText value="#{actv.descripcion}"/></center>
+                                </p:column>
+                                <p:column headerText="Acción" filterBy="#{actv.descripcion}" filterMatchMode="contains">
+                                    <center><p:commandButton value="Eliminar" actionListener="#{localComercialView.eliminarActividadDelLocal(actv)}" update="frmEdit"/></center>
+                                </p:column>
+                            </p:dataTable>
+                            <p:accordionPanel>
+                                <p:tab title="Lista de Actividades">
+                                    <p:dataTable id="dtActvs2" value="#{localComercialView.actividadesLocal}" reflow="true" rowKey="#{actv3.id}"
+                                                 var="actv3" rows="5" paginator="true" paginatorPosition="top" selection="#{localComercialView.actividadesSeleccionadas}"
+                                                 emptyMessage="No tiene datos" filterEvent="enter" lazy="true">
+                                        <f:facet name="header">
+                                            <div align="right">
+                                                <p:commandButton value="Agregar Actividad" onclick="PF('dlgAct').show()" 
+                                                                 styleClass="btnStyle" update=":frmAct" actionListener="#{localComercialView.nuevaActividad()}"/>
+                                            </div>
+                                        </f:facet>
+                                        <p:column selectionMode="multiple" style="width:35px;text-align:center"/>
+                                        <p:column headerText="Descripción" filterBy="#{actv3.descripcion}" >
+                                            <center><h:outputText value="#{actv3.descripcion}"/></center>
+                                        </p:column>
+                                    </p:dataTable>
+
+                                    <p:commandButton value="Agregar actividades" actionListener="#{localComercialView.agregarActvs}" update="frmEdit"/>
+                                </p:tab>
+                            </p:accordionPanel>
+                        </p:tab>
+
+                        <p:tab id="tpredio2" title="Predio">
+                            <h3>Número de predio: #{localComercialView.predio.numPredio}</h3>
+                            <p:dataTable id="dtPredios" lazy="true" value="#{localComercialView.predioListLazy}" reflow="true"
+                                         var="predio" rows="5" paginator="true" paginatorPosition="top" filterEvent="enter"
+                                         emptyMessage="No tiene datos">
+                                <f:facet name="header">
+                                    Lista de predios
+                                </f:facet>
+                                <p:column headerText="Número de predio" filterBy="#{predio.numPredio}">
+                                    <center><h:outputText value="#{predio.numPredio}"/></center>
+                                </p:column>
+                                <p:column headerText="Ciudadela" filterBy="#{predio.ciudadela.nombre}" >
+                                    <center><h:outputText value="#{predio.ciudadela.nombre}"/></center>
+                                </p:column>
+                                <p:column headerText="Acción" >
+                                    <center><p:commandButton value="Seleccionar" actionListener="#{localComercialView.predioSeleccionado(predio)}"/></center>
+                                </p:column>
+                            </p:dataTable>
+                        </p:tab>
+
+                        <p:tab id="tprop2" title="Propietario">
+                            <h:outputText value="Propietario: " style="font-weight: bold; font-size: 14px;"/>#{localComercialView.ente.nombreCompleto}<br/>
+                            <h:outputText value="Num. Identificación: " style="font-weight: bold; font-size: 14px;"/> #{localComercialView.ente.ciRuc}<br/>
+
+                            <p:dataTable id="dtProps" lazy="true" value="#{localComercialView.enteListLazy}" reflow="true" filterEvent="enter"
+                                         var="ente" rows="5" paginator="true" paginatorPosition="top"
+                                         emptyMessage="No tiene datos">
+                                <f:facet name="header">
+                                    Lista de entidades
+                                </f:facet>
+                                <p:column headerText="No. de cédula" filterBy="#{ente.ciRuc}">
+                                    <center><h:outputText value="#{ente.ciRuc}"/></center>
+                                </p:column>
+                                <p:column headerText="Nombres">
+                                    <center><h:outputText value="#{ente.nombres} #{ente.apellidos}" rendered="#{ente.esPersona}"/>
+                                        <h:outputText value="#{ente.razonSocial}" rendered="#{!ente.esPersona}"/></center>
+                                </p:column>
+                                <p:column headerText="Acción">
+                                    <center><p:commandButton value="Seleccionar" actionListener="#{localComercialView.enteSeleccionado(ente)}"/></center>
+                                </p:column>
+                            </p:dataTable>
+                        </p:tab>
+                        <p:tab id="tERazSoc" title="Razón Social">
+                            <h:outputText value="Razon Social: " style="font-weight: bold; font-size: 14px;"/>#{localComercialView.localComercial.razonSocial.nombreCompleto}<br/>
+                            <h:outputText value="RUC: " style="font-weight: bold; font-size: 14px;"/> #{localComercialView.localComercial.razonSocial.ciRuc}
+
+                            <p:dataTable id="dtERazSoc" lazy="true" value="#{localComercialView.enteListLazy}" reflow="true"
+                                         var="rz1" rows="5" paginator="true" paginatorPosition="top" filterEvent="enter"
+                                         emptyMessage="No tiene datos">
+                                <f:facet name="header">
+                                    Lista de entidades
+                                </f:facet>
+                                <p:column headerText="No. de cédula" filterBy="#{rz1.ciRuc}">
+                                    <center><h:outputText value="#{rz1.ciRuc}"/></center>
+                                </p:column>
+                                <p:column headerText="Nombres" >
+                                    <center><h:outputText value="#{rz1.nombres} #{rz1.apellidos}" rendered="#{rz1.esPersona}"/>
+                                        <h:outputText value="#{rz1.razonSocial}" rendered="#{!rz1.esPersona}"/></center>
+                                </p:column>
+                                <p:column headerText="Acción">
+                                    <center><p:commandButton value="Seleccionar" update="frmEdit" actionListener="#{localComercialView.razonSocialSeleccionado(rz1)}"/></center>
+                                </p:column>
+                            </p:dataTable>
+                        </p:tab>
+                        <p:tab id="tcantidad" title="Accesorios">
+                            <p:panelGrid columns="2">
+                                <h:outputText value="Cantidad: "/>
+                                <p:inputText value="#{localComercialView.cantidad.cantidad}" />
+                                <h:outputText value="Tipo de accesorio: "/>
+                                <p:selectOneMenu value="#{localComercialView.cantidad.tipoAccesorio}" style="width: 150px;" converter="entityConverter">
+                                    <f:selectItem itemLabel="Seleccionar" itemValue="#{null}"/>
+                                    <f:selectItems value="#{localComercialView.tipos}" var="tipo" itemLabel="#{tipo.descripcion}" itemValue="#{tipo}"/>
+                                </p:selectOneMenu>                                
+                            </p:panelGrid>
+                            <center><p:commandButton value="Agregar" styleClass="btnStyle" style="margin-top: 10px; margin-bottom: 10px;" update="frmEdit:tdatos2" actionListener="#{localComercialView.agregarCantidad}" /></center>
+                            <p:dataTable id="dtAccesorios" value="#{localComercialView.localComercial.cantidadAccesoriosCollection}" reflow="true"
+                                         var="acc" rows="5" paginator="true" paginatorPosition="top"
+                                         emptyMessage="No tiene datos">
+                                <p:column headerText="Cantidad">
+                                    <h:outputText value="#{acc.cantidad}"/>
+                                </p:column>
+                                <p:column headerText="Tipo">
+                                    <h:outputText value="#{acc.tipoAccesorio.descripcion}"/>
+                                </p:column>
+                                <p:column headerText="Año">
+                                    <h:outputText value="#{acc.anio}"/>
+                                </p:column>
+                                <p:column headerText="Acción">
+                                    <center><p:commandLink value="Eliminar" actionListener="#{localComercialView.eliminarCantidadEdit(acc)}" update="frmEdit:tdatos2:dtAccesorios"/></center>
+                                </p:column>
+                            </p:dataTable>
+                        </p:tab>
+                        <p:tab id="tObs" title="Observaciones">
+                            <p:dataTable id="dtObs" value="#{localComercialView.localComercial.observacionesLocalsCollections}" reflow="true"
+                                         var="obs" rows="5" paginator="true" paginatorPosition="top" filterEvent="enter"
+                                         emptyMessage="No tiene datos">
+                                <p:column headerText="Fecha" width="15%">
+                                    <h:outputText value="#{obs.fecCre}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="Observacion"  >
+                                    <h:outputText value="#{obs.observacion}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:tab>
+                    </p:tabView>
+                </center>
+
+                <center style="margin-top: 10px;">
+                    <p:commandButton value="Guardar" actionListener="#{localComercialView.guardarLocalEdit()}" styleClass="btnStyle" oncomplete="PF('dlgEdit').hide()" update=":frmMain"/>
+                    <p:commandButton value="Cancelar" onclick="PF('dlgEdit').hide()" styleClass="btnStyle"/>
+                </center>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog widgetVar="dlgAct" position="center" header="Ingreso de Actividad Comercial"  
+                  appendTo="@(body)" modal="true" width="50%" resizable="false" 
+                  closable="true" closeOnEscape="true">
+            <h:form id="frmAct">
+                <center>
+                    <h:panelGrid columns="2" style="width: 100%;">
+                        <h:outputText value="Nombre de la actividad"/>
+                        <p:inputText value="#{localComercialView.actividad.descripcion}" style="width: 120px;" />
+                        <h:outputText value="CIU de la actividad"/>
+                        <p:inputText value="#{localComercialView.actividad.ciu}" style="width: 120px; " />
+                    </h:panelGrid>
+                </center>
+                <br/>
+                <center style="margin-top: 10px;">
+                    <p:commandButton value="Guardar" actionListener="#{localComercialView.guardarActividad()}" styleClass="btnStyle" update=":frmMain, frmEdit" oncomplete="PF('dlgAct').hide()"/>
+                    <p:commandButton value="Cancelar" onclick="PF('dlgAct').hide()" styleClass="btnStyle"/>
+                </center>
+            </h:form>
+        </p:dialog>   
+
+        <p:dialog widgetVar="dlgEmisionMensualLocales" header="Total a Pagar" resizable="false" modal="true">
+            <h:form id="formEmisionMensual">
+                <h:panelGrid styleClass="noBorder">
+                    <h:panelGrid columns="2"> 
+                        <h:panelGroup>
+                            <p:outputLabel value="Año" style="font-weight: bolder;" /> <br></br>
+                            <p:inputText id="anio_liq" value="#{localComercialView.anio}" 
+                                         size="15"
+                                         />    
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <p:outputLabel value="Mes:" style="font-weight: bolder;" /> <br></br>
+                            <p:selectOneMenu id="mes_desde" value="#{localComercialView.mes}" effect="fold" style="width: 100px" >
+                                <f:selectItem itemLabel="ENERO" itemValue="1"/>
+                                <f:selectItem itemLabel="FEBRERO" itemValue="2"/>
+                                <f:selectItem itemLabel="MARZO" itemValue="3"/>
+                                <f:selectItem itemLabel="ABRIL" itemValue="4"/>
+                                <f:selectItem itemLabel="MAYO" itemValue="5"/>
+                                <f:selectItem itemLabel="JUNIO" itemValue="6"/>
+                                <f:selectItem itemLabel="JULIO" itemValue="7"/>
+                                <f:selectItem itemLabel="AGOSTO" itemValue="8"/>
+                                <f:selectItem itemLabel="SEPTIEMBRE" itemValue="9"/>
+                                <f:selectItem itemLabel="OCTUBRE" itemValue="10"/>
+                                <f:selectItem itemLabel="NOVIEMBRE" itemValue="11"/>
+                                <f:selectItem itemLabel="DICIEMBRE" itemValue="12"/>
+                            </p:selectOneMenu>
+                        </h:panelGroup>
+                    </h:panelGrid>                   
+                </h:panelGrid>
+                <center>
+                    <br></br>
+                    <p:commandButton value="Aceptar" styleClass="btnStyle" icon="ui-icon-check" 
+                                     actionListener="#{localComercialView.emisionMensualLocalComercial()}"/>
+                    <p:spacer width="10" />
+                    <p:commandButton value="Cancelar" styleClass="btnStyle" icon="ui-icon-close" 
+                                     oncomplete="PF('dlgEmisionMensualLocales').hide()" />
+                    <br></br>
+                </center>
+            </h:form>
+        </p:dialog>
+
+        <p:confirmDialog global="true">
+            <center>
+                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+            </center>
+        </p:confirmDialog>
+    </ui:define>
+</ui:composition>

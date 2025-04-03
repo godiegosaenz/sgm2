@@ -1,0 +1,1481 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Recibo_Plusvalia" pageWidth="612" pageHeight="984" whenNoDataType="AllSectionsNoDetail" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="0914703f-83dd-426e-ad90-6086157b3c1c">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[java.lang.System.getProperty("user.home") + "\\Documents\\NetBeansProjects\\sgm\\src\\main\\webapp\\reportes\\Emision\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ID_LIQUIDACION" class="java.lang.Long"/>
+	<parameter name="ruta_firmas" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[java.lang.System.getProperty("user.home") + "\\Users\\origami\\Documents\\NetBeansProjects\\sgm\\src\\main\\webapp\\css\\firmas\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cobros" class="java.util.List" isForPrompting="false"/>
+	<parameter name="NUM_COMPROBANTE" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+     ren_pago.num_cajero AS ren_pago_num_cajero,
+     ren_liquidacion.valor_mora AS ren_liquidacion_valor_mora,
+     ren_liquidacion.valor_nominal AS ren_liquidacion_valor_nominal,
+     ren_valores_plusvalia."liquidacion" AS ren_valores_plusvalia_liquidacion,
+     ren_valores_plusvalia."diferencia_neta" AS ren_valores_plusvalia_diferencia_neta,
+     ren_valores_plusvalia."mejoras_cem_const" AS ren_valores_plusvalia_mejoras_cem_const,
+     ren_valores_plusvalia."mejoras_urb" AS ren_valores_plusvalia_mejoras_urb,
+     ren_valores_plusvalia."diferencia_neta2" AS ren_valores_plusvalia_diferencia_neta2,
+     ren_valores_plusvalia."rebaja_gen" AS ren_valores_plusvalia_rebaja_gen,
+     ren_valores_plusvalia."desvalorizacion" AS ren_valores_plusvalia_desvalorizacion,
+     ren_valores_plusvalia."base_desvalorizacion" AS ren_valores_plusvalia_base_desvalorizacion,
+     ren_valores_plusvalia."desvalorizacion_monet" AS ren_valores_plusvalia_desvalorizacion_monet,
+     ren_valores_plusvalia."utilidad_imponib" AS ren_valores_plusvalia_utilidad_imponib,
+     ren_valores_plusvalia."porcentaje_rebaja" AS ren_valores_plusvalia_porcentaje_rebaja,
+     ren_pago."num_comprobante" AS ren_pago_num_comprobante,
+     ren_liquidacion."id_liquidacion" AS ren_liquidacion_id_liquidacion,
+     ren_pago."valor" AS ren_pago_valor,
+     ren_tipo_liquidacion."nombre_titulo" AS ren_tipo_liquidacion_nombre_titulo,
+     ren_liquidacion.fecha_contrato_ant AS ren_liquidacion_fecha_contrato_ant,
+     comprador."es_persona" AS comprador_es_persona,
+     comprador."nombres" AS comprador_nombres,
+     comprador."apellidos" AS comprador_apellidos,
+     comprador."ci_ruc" AS comprador_ci_ruc,
+     comprador."razon_social" AS comprador_razon_social,
+     vendedor."cod_usuario" AS vendedor_cod_usuario,
+     vendedor."es_persona" AS vendedor_es_persona,
+     vendedor."ci_ruc" AS vendedor_ci_ruc,
+     vendedor."nombres" AS vendedor_nombres,
+     vendedor."apellidos" AS vendedor_apellidos,
+     vendedor."razon_social" AS vendedor_razon_social,
+     cat_predio."mz" AS cat_predio_mz,
+     cat_predio."mzdiv" AS cat_predio_mzdiv,
+     cat_predio."solar" AS cat_predio_solar,
+     cat_predio."div1" AS cat_predio_div1,
+     cat_predio."div2" AS cat_predio_div2,
+     cat_predio."div3" AS cat_predio_div3,
+     cat_predio."div4" AS cat_predio_div4,
+     cat_predio."div5" AS cat_predio_div5,
+     cat_predio."div6" AS cat_predio_div6,
+     cat_predio."div7" AS cat_predio_div7,
+     cat_predio."div8" AS cat_predio_div8,
+     cat_predio."div9" AS cat_predio_div9,
+     cat_predio."phv" AS cat_predio_phv,
+     cat_predio."phh" AS cat_predio_phh,
+     cat_predio."num_predio" AS cat_predio_num_predio,
+     cat_predio."usuario_creador" AS cat_predio_usuario_creador,
+     cat_predio."urb_solarnew" AS cat_predio_urb_solarnew,
+     cat_predio."urb_secnew" AS cat_predio_urb_secnew,
+     ren_liquidacion."num_liquidacion" AS ren_liquidacion_num_liquidacion,
+     ren_liquidacion."observacion" AS ren_liquidacion_observacion,
+     ren_liquidacion."valor_compra" AS ren_liquidacion_valor_compra,
+     ren_liquidacion.cuantia AS ren_liquidacion_cuantia,
+     ren_liquidacion."valor_mejoras" AS ren_liquidacion_valor_mejoras,
+     ren_pago.num_comprobante as ren_pago_num_comprobante,
+     vendedor.id AS cat_ente_id,
+     cat_predio."urb_sec" AS cat_predio_urb_sec,
+     ren_pago.fecha_pago AS ren_pago_fecha_pago,
+     ren_liquidacion."costo_adq" AS ren_liquidacion_costo_adq,
+     ren_liquidacion."anio" AS ren_liquidacion_anio,
+     cat_predio."nom_comp_pago" AS cat_predio_nom_comp_pago,
+     cat_predio."sector" AS cat_predio_sector,
+     cat_predio."urb_mz" AS cat_predio_urb_mz,
+     cat_predio."nombre_urb" AS cat_predio_nombre_urb,
+     cat_predio.cdla  AS cat_predio_cdla,
+     cat_ciudadela.nombre AS cat_ciudadela_nombre,
+     acl_user.usuario AS acl_user_usuario,
+     ren_desvalorizacion.valor as ren_desvalorizacion_valor
+FROM
+     "financiero"."ren_tipo_liquidacion" ren_tipo_liquidacion RIGHT OUTER JOIN "financiero"."ren_liquidacion" ren_liquidacion ON ren_tipo_liquidacion."id" = ren_liquidacion."tipo_liquidacion"
+     LEFT OUTER JOIN "financiero"."ren_valores_plusvalia" ren_valores_plusvalia ON ren_liquidacion."id" = ren_valores_plusvalia."liquidacion"
+     LEFT OUTER JOIN "app1"."cat_ente" vendedor ON ren_liquidacion."vendedor" = vendedor."id"
+     LEFT OUTER JOIN "app1"."cat_ente" comprador ON ren_liquidacion."comprador" = comprador."id"
+     LEFT OUTER JOIN "app1"."cat_predio" cat_predio ON ren_liquidacion."predio" = cat_predio."id"
+     LEFT OUTER JOIN "financiero"."ren_pago" ren_pago ON ren_pago.liquidacion = ren_liquidacion."id"
+     lEFT OUTER JOIN app1.cat_ciudadela cat_ciudadela ON cat_predio.ciudadela = cat_ciudadela.id
+     LEFT OUTER JOIN app1.acl_user acl_user ON ren_pago.cajero = acl_user.id
+     LEFT OUTER JOIN financiero.ren_desvalorizacion  ren_desvalorizacion ON ren_valores_plusvalia.desvalorizacion = ren_desvalorizacion.id
+WHERE
+     ren_liquidacion."id" = $P{ID_LIQUIDACION}
+     AND ren_liquidacion.estado_liquidacion = 1
+     AND ren_pago.num_comprobante = $P{NUM_COMPROBANTE}
+LIMIT 1]]>
+	</queryString>
+	<field name="ren_pago_num_cajero" class="java.lang.String"/>
+	<field name="ren_liquidacion_valor_mora" class="java.math.BigDecimal"/>
+	<field name="ren_liquidacion_valor_nominal" class="java.math.BigDecimal"/>
+	<field name="ren_valores_plusvalia_liquidacion" class="java.lang.Long"/>
+	<field name="ren_valores_plusvalia_diferencia_neta" class="java.math.BigDecimal"/>
+	<field name="ren_valores_plusvalia_mejoras_cem_const" class="java.math.BigDecimal"/>
+	<field name="ren_valores_plusvalia_mejoras_urb" class="java.math.BigDecimal"/>
+	<field name="ren_valores_plusvalia_diferencia_neta2" class="java.math.BigDecimal"/>
+	<field name="ren_valores_plusvalia_rebaja_gen" class="java.math.BigDecimal"/>
+	<field name="ren_valores_plusvalia_desvalorizacion" class="java.lang.Long"/>
+	<field name="ren_valores_plusvalia_base_desvalorizacion" class="java.math.BigDecimal"/>
+	<field name="ren_valores_plusvalia_desvalorizacion_monet" class="java.math.BigDecimal"/>
+	<field name="ren_valores_plusvalia_utilidad_imponib" class="java.math.BigDecimal"/>
+	<field name="ren_valores_plusvalia_porcentaje_rebaja" class="java.lang.Integer"/>
+	<field name="ren_pago_num_comprobante" class="java.lang.Long"/>
+	<field name="ren_liquidacion_id_liquidacion" class="java.lang.String"/>
+	<field name="ren_pago_valor" class="java.math.BigDecimal"/>
+	<field name="ren_tipo_liquidacion_nombre_titulo" class="java.lang.String"/>
+	<field name="ren_liquidacion_fecha_contrato_ant" class="java.sql.Date"/>
+	<field name="comprador_es_persona" class="java.lang.Boolean"/>
+	<field name="comprador_nombres" class="java.lang.String"/>
+	<field name="comprador_apellidos" class="java.lang.String"/>
+	<field name="comprador_ci_ruc" class="java.lang.String"/>
+	<field name="comprador_razon_social" class="java.lang.String"/>
+	<field name="vendedor_cod_usuario" class="java.lang.Long"/>
+	<field name="vendedor_es_persona" class="java.lang.Boolean"/>
+	<field name="vendedor_ci_ruc" class="java.lang.String"/>
+	<field name="vendedor_nombres" class="java.lang.String"/>
+	<field name="vendedor_apellidos" class="java.lang.String"/>
+	<field name="vendedor_razon_social" class="java.lang.String"/>
+	<field name="cat_predio_mz" class="java.lang.Integer"/>
+	<field name="cat_predio_mzdiv" class="java.lang.Integer"/>
+	<field name="cat_predio_solar" class="java.lang.Integer"/>
+	<field name="cat_predio_div1" class="java.lang.Integer"/>
+	<field name="cat_predio_div2" class="java.lang.Integer"/>
+	<field name="cat_predio_div3" class="java.lang.Integer"/>
+	<field name="cat_predio_div4" class="java.lang.Integer"/>
+	<field name="cat_predio_div5" class="java.lang.Integer"/>
+	<field name="cat_predio_div6" class="java.lang.Integer"/>
+	<field name="cat_predio_div7" class="java.lang.Integer"/>
+	<field name="cat_predio_div8" class="java.lang.Integer"/>
+	<field name="cat_predio_div9" class="java.lang.Integer"/>
+	<field name="cat_predio_phv" class="java.lang.Integer"/>
+	<field name="cat_predio_phh" class="java.lang.Integer"/>
+	<field name="cat_predio_num_predio" class="java.lang.Long"/>
+	<field name="cat_predio_usuario_creador" class="java.lang.Long"/>
+	<field name="cat_predio_urb_solarnew" class="java.lang.String"/>
+	<field name="cat_predio_urb_secnew" class="java.lang.String"/>
+	<field name="ren_liquidacion_num_liquidacion" class="java.lang.Long"/>
+	<field name="ren_liquidacion_observacion" class="java.lang.String"/>
+	<field name="ren_liquidacion_valor_compra" class="java.math.BigDecimal"/>
+	<field name="ren_liquidacion_cuantia" class="java.math.BigDecimal"/>
+	<field name="ren_liquidacion_valor_mejoras" class="java.math.BigDecimal"/>
+	<field name="cat_ente_id" class="java.lang.Long"/>
+	<field name="cat_predio_urb_sec" class="java.lang.Integer"/>
+	<field name="ren_pago_fecha_pago" class="java.sql.Timestamp"/>
+	<field name="ren_liquidacion_costo_adq" class="java.math.BigDecimal"/>
+	<field name="ren_liquidacion_anio" class="java.lang.Integer"/>
+	<field name="cat_predio_nom_comp_pago" class="java.lang.String"/>
+	<field name="cat_predio_sector" class="java.lang.Integer"/>
+	<field name="cat_predio_urb_mz" class="java.lang.String"/>
+	<field name="cat_predio_nombre_urb" class="java.lang.String"/>
+	<field name="cat_predio_cdla" class="java.lang.Integer"/>
+	<field name="cat_ciudadela_nombre" class="java.lang.String"/>
+	<field name="acl_user_usuario" class="java.lang.String"/>
+	<field name="ren_desvalorizacion_valor" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="251">
+			<textField>
+				<reportElement x="385" y="0" width="72" height="15" uuid="d286d9f7-a90f-4016-a179-2d2ccb9cbc0c"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CAJA-"+($F{ren_pago_num_cajero}==null?" 01":$F{ren_pago_num_cajero})]]></textFieldExpression>
+			</textField>
+			<textField pattern="MMMM">
+				<reportElement x="228" y="0" width="45" height="15" uuid="556edd87-16ea-4f91-a308-c61390db06c2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_fecha_pago}== null?"":$F{ren_pago_fecha_pago}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd">
+				<reportElement x="276" y="0" width="50" height="15" uuid="825f4726-cdc7-407a-aa31-6ea332e11404"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_fecha_pago}==null?"":$F{ren_pago_fecha_pago}]]></textFieldExpression>
+			</textField>
+			<textField pattern="yyyy">
+				<reportElement x="329" y="0" width="56" height="15" uuid="08bf959c-a390-4b1c-b7b3-81e4c6263836"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_fecha_pago}==null?"":$F{ren_pago_fecha_pago}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$#,##0.00">
+				<reportElement x="455" y="142" width="100" height="20" uuid="78ac1a6b-c83f-462b-9fb4-2c34294ee8c0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_valor}== null?"$0.00":$F{ren_pago_valor}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="455" y="109" width="58" height="13" uuid="43b7a3bc-0900-498c-8a13-ec292b693835"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$F{ren_pago_num_comprobante}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PAGO">
+					<subreportParameterExpression><![CDATA[2]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalle_cobro.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="455" y="63" width="58" height="13" uuid="7392630b-41d9-49eb-bb72-abf4e0b3c46d"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$F{ren_pago_num_comprobante}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PAGO">
+					<subreportParameterExpression><![CDATA[1]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalle_cobro.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="455" y="79" width="58" height="13" uuid="e2514cbe-4706-4455-bdef-64e5fd7a00a6"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$F{ren_pago_num_comprobante}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PAGO">
+					<subreportParameterExpression><![CDATA[4]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalle_cobro.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="455" y="94" width="58" height="13" uuid="9e14565e-2da8-475d-9aeb-7c97c73742ce"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$F{ren_pago_num_comprobante}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PAGO">
+					<subreportParameterExpression><![CDATA[3]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalle_cobro.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="455" y="124" width="58" height="13" uuid="e277c0ee-71bf-4df1-a9f7-1ece8c9aad98"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$F{ren_pago_num_comprobante}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PAGO">
+					<subreportParameterExpression><![CDATA[5]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalle_cobro.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="0" y="79" width="262" height="10" uuid="71e81cc8-15ab-4213-adc7-e9ec71ebc48d"/>
+				<subreportParameter name="titulo_reporte">
+					<subreportParameterExpression><![CDATA[$F{ren_tipo_liquidacion_nombre_titulo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="rubro_municipio">
+					<subreportParameterExpression><![CDATA[true]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="liquidacion">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "rubrosEdificaciones.jasper"]]></subreportExpression>
+			</subreport>
+			<textField isBlankWhenNull="true">
+				<reportElement x="454" y="170" width="103" height="40" isRemoveLineWhenBlank="true" uuid="756b8ec7-565a-4a45-b8ee-5dc0235d7da5"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_liquidacion_observacion}==null?"":$F{ren_liquidacion_observacion}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="114" y="229" width="127" height="10" uuid="6b10df33-5696-4b05-b181-a4892c0ea8b6"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$F{ren_pago_num_comprobante}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{cobros})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "CobroDs.jasper"]]></subreportExpression>
+			</subreport>
+			<image scaleImage="FillFrame" hAlign="Center" onErrorType="Blank">
+				<reportElement x="348" y="206" width="80" height="41" uuid="92aff46f-8abf-442b-9748-f2202aa10e70"/>
+				<imageExpression><![CDATA[$P{ruta_firmas}+"JefeRentas.png"]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame" hAlign="Center" onErrorType="Blank">
+				<reportElement x="348" y="69" width="80" height="41" uuid="8fd897c9-56b6-433d-857b-9eef6fdd1f1e"/>
+				<imageExpression><![CDATA[$P{ruta_firmas}+"DirectorFinanciero.png"]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame" hAlign="Center" onErrorType="Blank">
+				<reportElement x="348" y="147" width="80" height="41" uuid="8473a4c3-45bf-4855-b32f-d0cd3fb09d14"/>
+				<imageExpression><![CDATA[$P{ruta_firmas}+ "TesoreroMunicipal.png"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="0" y="37" width="328" height="13" uuid="84606f29-9a6b-432e-806d-86251cb218bc"/>
+				<textElement>
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{comprador_es_persona}?
+($F{comprador_apellidos}==null?"": $F{comprador_apellidos})+ " " + ($F{comprador_nombres} == null? "" : $F{comprador_nombres})
+: ($F{comprador_razon_social} == null? "" : $F{comprador_razon_social})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="56" width="38" height="9" uuid="110df511-f61a-4dea-8ec9-0764a40b3db1"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PREDIO:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="39" y="56" width="268" height="9" uuid="32da74f6-28ca-46b3-96a1-343a0d7eba49"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(($F{cat_predio_sector} == null? "" : $F{cat_predio_sector}+".")+
+	 ($F{cat_predio_mz}== null? "" :$F{cat_predio_mz}+".")+
+	 ($F{cat_predio_cdla} == null? "" :$F{cat_predio_cdla}+".")+
+	 ($F{cat_predio_mzdiv} == null? "" :$F{cat_predio_mzdiv}+".")+
+	 ($F{cat_predio_solar}== null? "" :$F{cat_predio_solar} +".")+
+	 ($F{cat_predio_div1}== null? "" :$F{cat_predio_div1}+".")+
+	 ($F{cat_predio_div2}== null? "" :$F{cat_predio_div2} +".")+
+	 ($F{cat_predio_div3}== null? "" :$F{cat_predio_div3} +".")+
+	 ($F{cat_predio_div4}== null? "" :$F{cat_predio_div4} +".")+
+     ($F{cat_predio_div5}== null? "" :$F{cat_predio_div5} +".")+
+     ($F{cat_predio_div6}== null? "" :$F{cat_predio_div6} +".")+
+     ($F{cat_predio_div7}== null? "" :$F{cat_predio_div7} +".")+
+     ($F{cat_predio_div8}== null? "" :$F{cat_predio_div8} +".")+
+     ($F{cat_predio_div9}== null? "" :$F{cat_predio_div9} +".")+
+       ($F{cat_predio_phv}== null? "" :$F{cat_predio_phv} +".")+
+     ($F{cat_predio_phh}== null? "" :$F{cat_predio_phh}))]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="467" y="0" width="88" height="15" uuid="306b3714-d178-45db-9a12-37367601ad67"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_num_comprobante} == null? "" : $F{ren_pago_num_comprobante}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="64" width="90" height="9" uuid="2cd7b49a-7cb8-4531-a675-518e69c99467"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[URBANIZACION /SECTOR:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="91" y="64" width="216" height="9" uuid="d2f60884-5fbf-4065-9063-a49c2c1339a0"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cat_predio_nombre_urb}==null?"":$F{cat_predio_nombre_urb}+" Mz: "+ ($F{cat_predio_urb_mz}== null? "":$F{cat_predio_urb_mz})+" Sl: "+ ($F{cat_predio_urb_solarnew}== null? "":$F{cat_predio_urb_solarnew})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="145" width="55" height="9" uuid="954e9250-7be7-4135-a66d-2c6edcd3e5b6"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[COMPRADOR:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+<<<<<<< .mine
+				<reportElement x="55" y="145" width="252" height="9" uuid="01f2f2a6-7b0c-4ad8-850d-1ab8559ee3f5"/>
+||||||| .r127
+				<reportElement uuid="01f2f2a6-7b0c-4ad8-850d-1ab8559ee3f5" x="55" y="145" width="252" height="9"/>
+=======
+				<reportElement uuid="01f2f2a6-7b0c-4ad8-850d-1ab8559ee3f5" x="55" y="137" width="252" height="9"/>
+>>>>>>> .r190
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{comprador_es_persona}?
+($F{comprador_apellidos}==null?"": $F{comprador_apellidos})+ " " + ($F{comprador_nombres} == null? "" : $F{comprador_nombres})
+: ($F{comprador_razon_social} == null? "" : $F{comprador_razon_social})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="454" y="233" width="91" height="12" uuid="97d47cbf-97f5-45a9-94b7-ac8355c0ed38"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{acl_user_usuario}==null?"":$F{acl_user_usuario}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="445" y="37" width="110" height="13" uuid="a33815f8-2cd5-4a4f-ad37-db6f9d8e776f"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_liquidacion_id_liquidacion}== null?"":$F{ren_liquidacion_id_liquidacion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="328" y="37" width="117" height="13" uuid="e7c35989-b992-4b8c-a70f-c7d59433fc5d"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cat_ente_id}==null?"":$F{cat_ente_id}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH.mm.ss" isBlankWhenNull="true">
+				<reportElement x="6" y="229" width="108" height="10" uuid="ef985dd2-a066-450f-9858-875a38a201a7"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="137" width="55" height="9" uuid="e37f7e13-f167-4a25-91bc-c0f9d80a1273"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VENDEDOR:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+<<<<<<< .mine
+				<reportElement x="56" y="137" width="251" height="9" uuid="51a6f9c2-268d-42cf-b499-b5c453f24353"/>
+||||||| .r127
+				<reportElement uuid="51a6f9c2-268d-42cf-b499-b5c453f24353" x="56" y="137" width="251" height="9"/>
+=======
+				<reportElement uuid="51a6f9c2-268d-42cf-b499-b5c453f24353" x="55" y="145" width="253" height="9"/>
+>>>>>>> .r190
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vendedor_es_persona}?
+($F{vendedor_apellidos}==null?"": $F{vendedor_apellidos})+ " " + ($F{vendedor_nombres} == null? "" : $F{vendedor_nombres})
+: ($F{vendedor_razon_social} == null? "" : $F{vendedor_razon_social})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="168" width="114" height="7" uuid="6e71dcff-a186-4dfd-a73c-1c146abe0e72"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[PRECIO VENTA:]]></text>
+			</staticText>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="174" y="169" width="67" height="7" uuid="dd2bbf7f-a564-48f4-9ee4-c3ab21666ced"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_liquidacion_cuantia}==null?"0.00":$F{ren_liquidacion_cuantia}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="174" width="114" height="7" uuid="d4d366ca-62b8-4eca-a602-257696a22dce"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[(-) Costo Adquisicion:]]></text>
+			</staticText>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="174" y="175" width="67" height="7" uuid="a9f1e29a-8732-4e86-bfcd-a49e49d2d352"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_liquidacion_costo_adq}== null?"0.00":$F{ren_liquidacion_costo_adq}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="181" width="114" height="7" uuid="8bc9adf5-f30f-4f1c-a339-6a0c2add3ef9"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[(-) Mejoras por Cem o por Construccion:]]></text>
+			</staticText>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="174" y="181" width="67" height="7" uuid="ce6bbe76-8a23-4218-846a-d217fc04ccc9"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_valores_plusvalia_mejoras_cem_const}==null?"0.00":$F{ren_valores_plusvalia_mejoras_cem_const}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="187" width="114" height="7" uuid="f0648c80-7875-4fd9-a150-62f64b9f3d6a"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[(-) Mejoras por Urbanizacion:]]></text>
+			</staticText>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="174" y="187" width="67" height="7" uuid="2b5dd422-dc01-4cea-a75c-dbf9df301586"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_valores_plusvalia_mejoras_urb}==null?"0.00":$F{ren_valores_plusvalia_mejoras_urb}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="199" width="115" height="7" uuid="914ca7a6-ee5d-48db-9d91-8825d624b802"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[(=) Base desvalorización:]]></text>
+			</staticText>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="174" y="199" width="67" height="7" uuid="fb159c5a-a05d-4fc2-8da8-fc6de04d97ba"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_valores_plusvalia_base_desvalorizacion}== null?"0.00":$F{ren_valores_plusvalia_base_desvalorizacion}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="205" width="114" height="7" uuid="ebc548e7-9be3-4886-80eb-f1d1b60cd9b4"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[(-) Desvalorizacion monetaria:]]></text>
+			</staticText>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="174" y="205" width="67" height="7" uuid="4a1d64a0-4e5b-44b3-bb97-d0548eb1ce00"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_valores_plusvalia_desvalorizacion_monet}==null?"0.00":$F{ren_valores_plusvalia_desvalorizacion_monet}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="211" width="114" height="7" uuid="6fe672e9-e842-4a50-80f2-572fb2f2eee4"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[(=) Utilidad imponible:]]></text>
+			</staticText>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="174" y="211" width="67" height="7" uuid="8b5e183d-d9fb-4129-93e4-b0af279228f0"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_valores_plusvalia_utilidad_imponib}==null?"":$F{ren_valores_plusvalia_utilidad_imponib}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="124" y="205" width="40" height="7" uuid="35d1135c-e633-47c7-b68a-74e41685ca24"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{ren_desvalorizacion_valor}==null?"0.00":$F{ren_desvalorizacion_valor})+" %"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="124" y="194" width="40" height="7" uuid="c3e30ff7-4ef0-4256-9270-f4276869e711"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{ren_valores_plusvalia_porcentaje_rebaja}==null?"0.00":$F{ren_valores_plusvalia_porcentaje_rebaja})+" %"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="193" width="114" height="7" uuid="ad75d197-39c4-4e59-bb1f-2a0a39e4dd83"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[(-) Rebaja General(5% por cada año)]]></text>
+			</staticText>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="174" y="193" width="67" height="7" uuid="60a9291e-a744-43e9-90a1-acc0d768314f"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_valores_plusvalia_rebaja_gen}==null?"0.00":$F{ren_valores_plusvalia_rebaja_gen}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="217" width="114" height="7" uuid="46640a5e-7323-4730-a616-30277340eeb8"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[IMPUESTO A LA UTILIDAD:]]></text>
+			</staticText>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="174" y="217" width="67" height="7" uuid="0fcdb4ec-a651-4091-905a-483a865876fa"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_valor}== null?"0.00":$F{ren_pago_valor}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="153" width="86" height="9" uuid="933be1ae-1ba0-471b-b366-ed7ea0ed9378"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA DE INSCRIPCIÓN:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="87" y="153" width="220" height="9" uuid="503aabf7-5f11-4099-9232-41f1a78ee864"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_liquidacion_fecha_contrato_ant} == null?"":$F{ren_liquidacion_fecha_contrato_ant}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="251">
+			<textField pattern="$ #,##0.00">
+				<reportElement x="175" y="211" width="67" height="7" uuid="ebd0e613-74b1-4bf8-900c-c32b80e416ca"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_valores_plusvalia_utilidad_imponib}==null?"":$F{ren_valores_plusvalia_utilidad_imponib}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="205" width="114" height="7" uuid="24112a4c-6bce-4081-812f-b0e874dae518"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[(-) Desvalorizacion monetaria:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="153" width="86" height="9" uuid="925a0c50-6104-4962-b7b5-758d963d493f"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA DE INSCRIPCIÓN:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="56" width="38" height="9" uuid="1dca25f4-3d29-4060-82a5-99d89d3ab524"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PREDIO:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="125" y="194" width="40" height="7" uuid="fad11ce0-435d-4650-9187-60973f8fb82f"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{ren_valores_plusvalia_porcentaje_rebaja}==null?"0.00":$F{ren_valores_plusvalia_porcentaje_rebaja})+" %"]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="456" y="124" width="58" height="13" uuid="4aed54ee-e189-450e-8048-2a91869a0ee9"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$F{ren_pago_num_comprobante}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PAGO">
+					<subreportParameterExpression><![CDATA[5]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalle_cobro.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement x="2" y="217" width="114" height="7" uuid="a836e958-622e-46b8-8cf6-51139b17a9de"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[IMPUESTO A LA UTILIDAD:]]></text>
+			</staticText>
+			<textField pattern="dd">
+				<reportElement x="277" y="0" width="50" height="15" uuid="22a42e43-8377-401b-8d2b-760179cf6c65"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_fecha_pago}==null?"":$F{ren_pago_fecha_pago}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="199" width="115" height="7" uuid="cf64ded9-84f5-4c28-8f89-d0878abb9a99"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[(=) Base desvalorización:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="40" y="56" width="268" height="9" uuid="2a51641f-e7d3-49c1-9f9b-b9185ecd1566"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(($F{cat_predio_sector} == null? "" : $F{cat_predio_sector}+".")+
+	 ($F{cat_predio_mz}== null? "" :$F{cat_predio_mz}+".")+
+	 ($F{cat_predio_cdla} == null? "" :$F{cat_predio_cdla}+".")+
+	 ($F{cat_predio_mzdiv} == null? "" :$F{cat_predio_mzdiv}+".")+
+	 ($F{cat_predio_solar}== null? "" :$F{cat_predio_solar} +".")+
+	 ($F{cat_predio_div1}== null? "" :$F{cat_predio_div1}+".")+
+	 ($F{cat_predio_div2}== null? "" :$F{cat_predio_div2} +".")+
+	 ($F{cat_predio_div3}== null? "" :$F{cat_predio_div3} +".")+
+	 ($F{cat_predio_div4}== null? "" :$F{cat_predio_div4} +".")+
+     ($F{cat_predio_div5}== null? "" :$F{cat_predio_div5} +".")+
+     ($F{cat_predio_div6}== null? "" :$F{cat_predio_div6} +".")+
+     ($F{cat_predio_div7}== null? "" :$F{cat_predio_div7} +".")+
+     ($F{cat_predio_div8}== null? "" :$F{cat_predio_div8} +".")+
+     ($F{cat_predio_div9}== null? "" :$F{cat_predio_div9} +".")+
+       ($F{cat_predio_phv}== null? "" :$F{cat_predio_phv} +".")+
+     ($F{cat_predio_phh}== null? "" :$F{cat_predio_phh}))]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH.mm.ss" isBlankWhenNull="true">
+				<reportElement x="7" y="229" width="108" height="10" uuid="9abc6062-89f8-4f39-ba4e-9331e9f767ee"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" hAlign="Center" onErrorType="Blank">
+				<reportElement x="349" y="69" width="80" height="41" uuid="1005a0e7-f19d-411f-923a-b0239da2d1d4"/>
+				<imageExpression><![CDATA[$P{ruta_firmas}+"DirectorFinanciero.png"]]></imageExpression>
+			</image>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="175" y="175" width="67" height="7" uuid="4582edf5-2274-450e-8c0f-af2fc8281e41"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_liquidacion_costo_adq}== null?"0.00":$F{ren_liquidacion_costo_adq}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="329" y="37" width="117" height="13" uuid="c67cb437-4738-44eb-94d6-d96f551211fc"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cat_ente_id}==null?"":$F{cat_ente_id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="92" y="64" width="216" height="9" uuid="e7721727-f891-4f45-bbb9-a9ca37380896"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cat_predio_nombre_urb}==null?"":$F{cat_predio_nombre_urb}+" Mz: "+ ($F{cat_predio_urb_mz}== null? "":$F{cat_predio_urb_mz})+" Sl: "+ ($F{cat_predio_urb_solarnew}== null? "":$F{cat_predio_urb_solarnew})]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" hAlign="Center" onErrorType="Blank">
+				<reportElement x="349" y="206" width="80" height="41" uuid="caafec06-eacc-4c2d-9d19-81d0d69813c5"/>
+				<imageExpression><![CDATA[$P{ruta_firmas}+"JefeRentas.png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="2" y="145" width="55" height="9" uuid="e65416c6-8966-414e-8c4c-057f9ca5ded5"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[COMPRADOR:]]></text>
+			</staticText>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="175" y="181" width="67" height="7" uuid="4d2660ec-59e0-4f58-8e4b-34d6ae53d713"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_valores_plusvalia_mejoras_cem_const}==null?"0.00":$F{ren_valores_plusvalia_mejoras_cem_const}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="64" width="90" height="9" uuid="25aa17ea-29cf-4a08-b185-999349a2c632"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[URBANIZACION /SECTOR:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="446" y="37" width="110" height="13" uuid="5be93e0c-18aa-49a4-bd54-4eaf7b506d06"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_liquidacion_id_liquidacion}== null?"":$F{ren_liquidacion_id_liquidacion}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="168" width="114" height="7" uuid="41992956-a38a-413a-bbe4-d208d66f2150"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[PRECIO VENTA:]]></text>
+			</staticText>
+			<subreport>
+				<reportElement x="456" y="94" width="58" height="13" uuid="1de272be-e031-4eec-b0f1-dabe86290f2f"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$F{ren_pago_num_comprobante}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PAGO">
+					<subreportParameterExpression><![CDATA[3]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalle_cobro.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement x="2" y="187" width="114" height="7" uuid="168d0511-e856-4c78-9fb4-1d4228370355"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[(-) Mejoras por Urbanizacion:]]></text>
+			</staticText>
+			<textField pattern="$#,##0.00">
+				<reportElement x="456" y="142" width="100" height="20" uuid="90859414-4778-4d1e-aab1-6fd66626fd00"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_valor}== null?"$0.00":$F{ren_pago_valor}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="88" y="153" width="220" height="9" uuid="7bc851ef-30b4-41a8-884c-c595e7e23dda"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_liquidacion_fecha_contrato_ant} == null?"":$F{ren_liquidacion_fecha_contrato_ant}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="37" width="328" height="13" uuid="165a9963-c76c-470b-84e7-d7735242e12e"/>
+				<textElement>
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{comprador_es_persona}?
+($F{comprador_apellidos}==null?"": $F{comprador_apellidos})+ " " + ($F{comprador_nombres} == null? "" : $F{comprador_nombres})
+: ($F{comprador_razon_social} == null? "" : $F{comprador_razon_social})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+<<<<<<< .mine
+				<reportElement x="56" y="145" width="252" height="9" uuid="5d9415f0-9a04-48de-8bcd-c840f3749d9e"/>
+||||||| .r127
+				<reportElement uuid="5d9415f0-9a04-48de-8bcd-c840f3749d9e" x="56" y="145" width="252" height="9"/>
+=======
+				<reportElement uuid="5d9415f0-9a04-48de-8bcd-c840f3749d9e" x="56" y="137" width="252" height="9"/>
+>>>>>>> .r190
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{comprador_es_persona}?
+($F{comprador_apellidos}==null?"": $F{comprador_apellidos})+ " " + ($F{comprador_nombres} == null? "" : $F{comprador_nombres})
+: ($F{comprador_razon_social} == null? "" : $F{comprador_razon_social})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="193" width="114" height="7" uuid="c4eb3563-d3a0-451a-9f97-6edd1c372759"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[(-) Rebaja General(5% por cada año)]]></text>
+			</staticText>
+			<subreport>
+				<reportElement x="115" y="229" width="127" height="10" uuid="2f27ec04-471c-4cad-bf35-a4f6f225704f"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$F{ren_pago_num_comprobante}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{cobros})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "CobroDs.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement x="2" y="211" width="114" height="7" uuid="a4cf7ce3-61eb-4593-addc-6a24b6e86750"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[(=) Utilidad imponible:]]></text>
+			</staticText>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="175" y="169" width="67" height="7" uuid="7762a0c6-dd5b-4d4e-8473-36e8b69be15f"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_liquidacion_cuantia}==null?"0.00":$F{ren_liquidacion_cuantia}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="174" width="114" height="7" uuid="721d0f99-5d3c-4482-b2d5-70e0ad006b4e"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[(-) Costo Adquisicion:]]></text>
+			</staticText>
+			<subreport>
+				<reportElement x="1" y="79" width="262" height="10" uuid="d237443d-adad-4e50-9788-d50f2bdf0fda"/>
+				<subreportParameter name="titulo_reporte">
+					<subreportParameterExpression><![CDATA[$F{ren_tipo_liquidacion_nombre_titulo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="rubro_municipio">
+					<subreportParameterExpression><![CDATA[true]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="liquidacion">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "rubrosEdificaciones.jasper"]]></subreportExpression>
+			</subreport>
+			<textField pattern="yyyy">
+				<reportElement x="330" y="0" width="56" height="15" uuid="0bb1a1f6-682f-406f-9d18-5d7b269edf22"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_fecha_pago}==null?"":$F{ren_pago_fecha_pago}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="456" y="109" width="58" height="13" uuid="4cc82384-7245-409f-87cd-b1d909beb69f"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$F{ren_pago_num_comprobante}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PAGO">
+					<subreportParameterExpression><![CDATA[2]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalle_cobro.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="456" y="63" width="58" height="13" uuid="ce34e7f3-46b8-4c82-a6cd-26faca7e2713"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$F{ren_pago_num_comprobante}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PAGO">
+					<subreportParameterExpression><![CDATA[1]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalle_cobro.jasper"]]></subreportExpression>
+			</subreport>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="175" y="205" width="67" height="7" uuid="9530958d-b2c2-4af1-9fc6-82cdb98d8010"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_valores_plusvalia_desvalorizacion_monet}==null?"0.00":$F{ren_valores_plusvalia_desvalorizacion_monet}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="456" y="79" width="58" height="13" uuid="88823723-59df-4394-9b91-d53c80b9b31e"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$F{ren_pago_num_comprobante}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PAGO">
+					<subreportParameterExpression><![CDATA[4]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalle_cobro.jasper"]]></subreportExpression>
+			</subreport>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="175" y="199" width="67" height="7" uuid="8d081b84-0377-4aa4-95ba-cccecdcda747"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_valores_plusvalia_base_desvalorizacion}== null?"0.00":$F{ren_valores_plusvalia_base_desvalorizacion}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="455" y="170" width="103" height="40" isRemoveLineWhenBlank="true" uuid="899f2632-e1b4-4ccd-94bd-215ccbcdee1f"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_liquidacion_observacion}==null?"":$F{ren_liquidacion_observacion}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" hAlign="Center" onErrorType="Blank">
+				<reportElement x="349" y="147" width="80" height="41" uuid="2a51e503-ec34-4c51-a6ae-942827fee219"/>
+				<imageExpression><![CDATA[$P{ruta_firmas}+ "TesoreroMunicipal.png"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="455" y="233" width="91" height="12" uuid="66cf0ecc-6443-4d7a-8bc4-7fe322d87efc"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{acl_user_usuario}==null?"":$F{acl_user_usuario}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="175" y="193" width="67" height="7" uuid="490e780c-251f-4b44-ac63-770fa11dd4ee"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_valores_plusvalia_rebaja_gen}==null?"0.00":$F{ren_valores_plusvalia_rebaja_gen}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="175" y="217" width="67" height="7" uuid="8a21a596-4f23-47bf-9001-a30f2af67c94"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_valor}== null?"0.00":$F{ren_pago_valor}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="175" y="187" width="67" height="7" uuid="ae8ee743-683a-42ce-b1af-13820a6beca4"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_valores_plusvalia_mejoras_urb}==null?"0.00":$F{ren_valores_plusvalia_mejoras_urb}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="125" y="205" width="40" height="7" uuid="2959336c-42c4-49de-9169-808e34f9fd66"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{ren_desvalorizacion_valor}==null?"0.00":$F{ren_desvalorizacion_valor})+" %"]]></textFieldExpression>
+			</textField>
+			<textField pattern="MMMM">
+				<reportElement x="229" y="0" width="45" height="15" uuid="46ed7312-fec9-4a86-849d-d9df6f23ddf9"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_fecha_pago}== null?"":$F{ren_pago_fecha_pago}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="468" y="0" width="88" height="15" uuid="58ab2533-1a8d-4f22-ac3c-0469a21961f2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_num_comprobante} == null? "" : $F{ren_pago_num_comprobante}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="181" width="114" height="7" uuid="ffc5794b-5ec5-48ee-9114-1c23cbd7a86f"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[(-) Mejoras por Cem o por Construccion:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+<<<<<<< .mine
+				<reportElement x="57" y="137" width="251" height="9" uuid="ca2769b3-af7e-4b58-adee-39691a154f0d"/>
+||||||| .r127
+				<reportElement uuid="ca2769b3-af7e-4b58-adee-39691a154f0d" x="57" y="137" width="251" height="9"/>
+=======
+				<reportElement uuid="ca2769b3-af7e-4b58-adee-39691a154f0d" x="57" y="145" width="251" height="9"/>
+>>>>>>> .r190
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vendedor_es_persona}?
+($F{vendedor_apellidos}==null?"": $F{vendedor_apellidos})+ " " + ($F{vendedor_nombres} == null? "" : $F{vendedor_nombres})
+: ($F{vendedor_razon_social} == null? "" : $F{vendedor_razon_social})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="386" y="0" width="72" height="15" uuid="27cdb5ec-c712-4f0f-ab5b-85f76ac1b792"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CAJA-"+($F{ren_pago_num_cajero}==null?" 01":$F{ren_pago_num_cajero})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="137" width="55" height="9" uuid="8008529a-ba24-4cfa-9860-4c99d6e99ac8"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VENDEDOR:]]></text>
+			</staticText>
+		</band>
+		<band height="251">
+			<textField pattern="$ #,##0.00">
+				<reportElement x="175" y="211" width="67" height="7" uuid="3a299b80-06a3-4716-950d-a626785cb50c"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_valores_plusvalia_utilidad_imponib}==null?"":$F{ren_valores_plusvalia_utilidad_imponib}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="205" width="114" height="7" uuid="242c6782-5682-4669-b598-0024f4c668d0"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[(-) Desvalorizacion monetaria:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="153" width="86" height="9" uuid="3b2522ce-398e-43cb-944e-076cb73d42f5"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA DE INSCRIPCIÓN:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="56" width="38" height="9" uuid="1ab7de60-1ea8-4c5e-94ce-5626150514c6"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PREDIO:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="125" y="194" width="40" height="7" uuid="639b8e6c-099c-4a36-a6c5-8271dd82179f"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{ren_valores_plusvalia_porcentaje_rebaja}==null?"0.00":$F{ren_valores_plusvalia_porcentaje_rebaja})+" %"]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="456" y="124" width="58" height="13" uuid="55928d49-6036-45e0-8d11-f4cde8810156"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$F{ren_pago_num_comprobante}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PAGO">
+					<subreportParameterExpression><![CDATA[5]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalle_cobro.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement x="2" y="217" width="114" height="7" uuid="b0469918-7769-4a94-bf1f-6109ff9e4433"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[IMPUESTO A LA UTILIDAD:]]></text>
+			</staticText>
+			<textField pattern="dd">
+				<reportElement x="277" y="0" width="50" height="15" uuid="dd79ead3-48ca-4235-b0f4-0ce9785d41c0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_fecha_pago}==null?"":$F{ren_pago_fecha_pago}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="199" width="115" height="7" uuid="ea24d0c3-7635-4514-8e04-a4cad57d5a52"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[(=) Base desvalorización:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="40" y="56" width="268" height="9" uuid="a29c27c9-3626-403a-bc0e-d7e6bf9cc1a5"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(($F{cat_predio_sector} == null? "" : $F{cat_predio_sector}+".")+
+	 ($F{cat_predio_mz}== null? "" :$F{cat_predio_mz}+".")+
+	 ($F{cat_predio_cdla} == null? "" :$F{cat_predio_cdla}+".")+
+	 ($F{cat_predio_mzdiv} == null? "" :$F{cat_predio_mzdiv}+".")+
+	 ($F{cat_predio_solar}== null? "" :$F{cat_predio_solar} +".")+
+	 ($F{cat_predio_div1}== null? "" :$F{cat_predio_div1}+".")+
+	 ($F{cat_predio_div2}== null? "" :$F{cat_predio_div2} +".")+
+	 ($F{cat_predio_div3}== null? "" :$F{cat_predio_div3} +".")+
+	 ($F{cat_predio_div4}== null? "" :$F{cat_predio_div4} +".")+
+     ($F{cat_predio_div5}== null? "" :$F{cat_predio_div5} +".")+
+     ($F{cat_predio_div6}== null? "" :$F{cat_predio_div6} +".")+
+     ($F{cat_predio_div7}== null? "" :$F{cat_predio_div7} +".")+
+     ($F{cat_predio_div8}== null? "" :$F{cat_predio_div8} +".")+
+     ($F{cat_predio_div9}== null? "" :$F{cat_predio_div9} +".")+
+       ($F{cat_predio_phv}== null? "" :$F{cat_predio_phv} +".")+
+     ($F{cat_predio_phh}== null? "" :$F{cat_predio_phh}))]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH.mm.ss" isBlankWhenNull="true">
+				<reportElement x="7" y="229" width="108" height="10" uuid="ad0b2ba2-532a-4270-a108-0b818a37e9fa"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" hAlign="Center" onErrorType="Blank">
+				<reportElement x="349" y="69" width="80" height="41" uuid="230943ce-d119-4c51-aec3-66d87633ab09"/>
+				<imageExpression><![CDATA[$P{ruta_firmas}+"DirectorFinanciero.png"]]></imageExpression>
+			</image>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="175" y="175" width="67" height="7" uuid="e1ed7207-41f0-41a9-b022-6a4ddfd4d238"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_liquidacion_costo_adq}== null?"0.00":$F{ren_liquidacion_costo_adq}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="329" y="37" width="117" height="13" uuid="b727cb82-88aa-4a8f-9fc7-fde6466783ce"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cat_ente_id}==null?"":$F{cat_ente_id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="92" y="64" width="216" height="9" uuid="aaf7ecef-0e29-4c7e-83c2-118fe6c98732"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cat_predio_nombre_urb}==null?"":$F{cat_predio_nombre_urb}+" Mz: "+ ($F{cat_predio_urb_mz}== null? "":$F{cat_predio_urb_mz})+" Sl: "+ ($F{cat_predio_urb_solarnew}== null? "":$F{cat_predio_urb_solarnew})]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" hAlign="Center" onErrorType="Blank">
+				<reportElement x="349" y="206" width="80" height="41" uuid="daa8bbfe-4808-49cd-9b2d-3412078b5099"/>
+				<imageExpression><![CDATA[$P{ruta_firmas}+"JefeRentas.png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="2" y="145" width="55" height="9" uuid="3c09bcfe-a4aa-4904-b8b6-238a0017a63b"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[COMPRADOR:]]></text>
+			</staticText>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="175" y="181" width="67" height="7" uuid="53a5ab03-8f47-431e-a0ce-4f3f481d659c"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_valores_plusvalia_mejoras_cem_const}==null?"0.00":$F{ren_valores_plusvalia_mejoras_cem_const}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="64" width="90" height="9" uuid="2ab3f6f5-6ace-4f91-8b70-b88398a57f28"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[URBANIZACION /SECTOR:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="446" y="37" width="110" height="13" uuid="99a3a1cc-55b5-4456-a838-b4b2a6d7dfc5"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_liquidacion_id_liquidacion}== null?"":$F{ren_liquidacion_id_liquidacion}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="168" width="114" height="7" uuid="31b9add4-4912-4e73-a041-8879bc9eebf3"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[PRECIO VENTA:]]></text>
+			</staticText>
+			<subreport>
+				<reportElement x="456" y="94" width="58" height="13" uuid="9f1112fb-c381-4ffb-bf88-fc49115010d8"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$F{ren_pago_num_comprobante}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PAGO">
+					<subreportParameterExpression><![CDATA[3]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalle_cobro.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement x="2" y="187" width="114" height="7" uuid="82f63c15-68ea-46fe-b07b-207c0fc57a55"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[(-) Mejoras por Urbanizacion:]]></text>
+			</staticText>
+			<textField pattern="$#,##0.00">
+				<reportElement x="456" y="142" width="100" height="20" uuid="75f97845-abdc-4150-a408-297bd69810d7"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_valor}== null?"$0.00":$F{ren_pago_valor}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="88" y="153" width="220" height="9" uuid="60638119-b959-4242-905e-72d5cfbc06e7"/>
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_liquidacion_fecha_contrato_ant} == null?"":$F{ren_liquidacion_fecha_contrato_ant}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="37" width="328" height="13" uuid="a68109f9-f481-4efd-94cd-b7066c5b8b86"/>
+				<textElement>
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{comprador_es_persona}?
+($F{comprador_apellidos}==null?"": $F{comprador_apellidos})+ " " + ($F{comprador_nombres} == null? "" : $F{comprador_nombres})
+: ($F{comprador_razon_social} == null? "" : $F{comprador_razon_social})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+<<<<<<< .mine
+				<reportElement x="56" y="145" width="252" height="9" uuid="a6b51050-64fe-477a-9135-6676effbcaab"/>
+||||||| .r127
+				<reportElement uuid="a6b51050-64fe-477a-9135-6676effbcaab" x="56" y="145" width="252" height="9"/>
+=======
+				<reportElement uuid="a6b51050-64fe-477a-9135-6676effbcaab" x="56" y="137" width="252" height="9"/>
+>>>>>>> .r190
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{comprador_es_persona}?
+($F{comprador_apellidos}==null?"": $F{comprador_apellidos})+ " " + ($F{comprador_nombres} == null? "" : $F{comprador_nombres})
+: ($F{comprador_razon_social} == null? "" : $F{comprador_razon_social})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="193" width="114" height="7" uuid="e3ea4e61-27f5-472d-8205-a5c8b563364d"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[(-) Rebaja General(5% por cada año)]]></text>
+			</staticText>
+			<subreport>
+				<reportElement x="115" y="229" width="127" height="10" uuid="6f06bfca-71f8-4108-9bb5-c95f845e57d5"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$F{ren_pago_num_comprobante}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{cobros})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "CobroDs.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement x="2" y="211" width="114" height="7" uuid="287b382e-abdb-4f7c-9162-5178ba1f13bb"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[(=) Utilidad imponible:]]></text>
+			</staticText>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="175" y="169" width="67" height="7" uuid="bf1c2364-0df0-4cf8-8a8e-c9a619b8456f"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_liquidacion_cuantia}==null?"0.00":$F{ren_liquidacion_cuantia}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="174" width="114" height="7" uuid="ac12d3be-789a-449d-90fa-b4fd38fb8119"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[(-) Costo Adquisicion:]]></text>
+			</staticText>
+			<subreport>
+				<reportElement x="1" y="79" width="262" height="10" uuid="ddc21fa6-fd72-497f-a3d4-61be07cc8a55"/>
+				<subreportParameter name="titulo_reporte">
+					<subreportParameterExpression><![CDATA[$F{ren_tipo_liquidacion_nombre_titulo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="rubro_municipio">
+					<subreportParameterExpression><![CDATA[true]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="liquidacion">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "rubrosEdificaciones.jasper"]]></subreportExpression>
+			</subreport>
+			<textField pattern="yyyy">
+				<reportElement x="330" y="0" width="56" height="15" uuid="cf361c8a-4aad-4099-bdc1-d8f3b24f3ff8"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_fecha_pago}==null?"":$F{ren_pago_fecha_pago}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="456" y="109" width="58" height="13" uuid="5818fd0f-fa2d-49ad-b57b-0e346ef2408b"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$F{ren_pago_num_comprobante}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PAGO">
+					<subreportParameterExpression><![CDATA[2]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalle_cobro.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="456" y="63" width="58" height="13" uuid="fcfe9b70-e745-400d-8908-bc272a2e4e6f"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$F{ren_pago_num_comprobante}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PAGO">
+					<subreportParameterExpression><![CDATA[1]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalle_cobro.jasper"]]></subreportExpression>
+			</subreport>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="175" y="205" width="67" height="7" uuid="4a085eb5-63d9-44e9-a33b-906303d5a085"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_valores_plusvalia_desvalorizacion_monet}==null?"0.00":$F{ren_valores_plusvalia_desvalorizacion_monet}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="456" y="79" width="58" height="13" uuid="00f8bfef-7f2d-450d-9bef-18a8b3174cc9"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$F{ren_pago_num_comprobante}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PAGO">
+					<subreportParameterExpression><![CDATA[4]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalle_cobro.jasper"]]></subreportExpression>
+			</subreport>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="175" y="199" width="67" height="7" uuid="eab81870-2504-465b-a644-fe977f3fb55e"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_valores_plusvalia_base_desvalorizacion}== null?"0.00":$F{ren_valores_plusvalia_base_desvalorizacion}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="455" y="170" width="103" height="40" isRemoveLineWhenBlank="true" uuid="90358bd1-d56b-43c6-ad75-a9ee60e24e74"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_liquidacion_observacion}==null?"":$F{ren_liquidacion_observacion}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" hAlign="Center" onErrorType="Blank">
+				<reportElement x="349" y="147" width="80" height="41" uuid="8bdbfd89-7891-4f34-bfdd-6e5130f7807f"/>
+				<imageExpression><![CDATA[$P{ruta_firmas}+ "TesoreroMunicipal.png"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="455" y="233" width="91" height="12" uuid="4eca9043-6939-4a47-acb7-5c7efba23ea5"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{acl_user_usuario}==null?"":$F{acl_user_usuario}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="175" y="193" width="67" height="7" uuid="942752f1-f502-464e-8550-1c104eca8676"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_valores_plusvalia_rebaja_gen}==null?"0.00":$F{ren_valores_plusvalia_rebaja_gen}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="175" y="217" width="67" height="7" uuid="2edf8a58-023a-467e-9f27-169b5c948e45"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_valor}== null?"0.00":$F{ren_pago_valor}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="175" y="187" width="67" height="7" uuid="4056681e-6971-4443-bbe3-376107df4713"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_valores_plusvalia_mejoras_urb}==null?"0.00":$F{ren_valores_plusvalia_mejoras_urb}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="125" y="205" width="40" height="7" uuid="b9f4fb9e-671a-4201-a3a8-56a07f8106e8"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{ren_desvalorizacion_valor}==null?"0.00":$F{ren_desvalorizacion_valor})+" %"]]></textFieldExpression>
+			</textField>
+			<textField pattern="MMMM">
+				<reportElement x="229" y="0" width="45" height="15" uuid="57647049-fda4-4219-8699-c52a97368807"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_fecha_pago}== null?"":$F{ren_pago_fecha_pago}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="468" y="0" width="88" height="15" uuid="f5a52ce8-ea03-471c-bf16-75b5ddab6df8"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_num_comprobante} == null? "" : $F{ren_pago_num_comprobante}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="181" width="114" height="7" uuid="5f305b81-9fde-454a-aa64-c9d48bd547a2"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<text><![CDATA[(-) Mejoras por Cem o por Construccion:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+<<<<<<< .mine
+				<reportElement x="57" y="137" width="251" height="9" uuid="fb8cd280-4410-4974-bb5c-a1e339f1b591"/>
+||||||| .r127
+				<reportElement uuid="fb8cd280-4410-4974-bb5c-a1e339f1b591" x="57" y="137" width="251" height="9"/>
+=======
+				<reportElement uuid="fb8cd280-4410-4974-bb5c-a1e339f1b591" x="57" y="145" width="251" height="9"/>
+>>>>>>> .r190
+				<textElement>
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vendedor_es_persona}?
+($F{vendedor_apellidos}==null?"": $F{vendedor_apellidos})+ " " + ($F{vendedor_nombres} == null? "" : $F{vendedor_nombres})
+: ($F{vendedor_razon_social} == null? "" : $F{vendedor_razon_social})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="386" y="0" width="72" height="15" uuid="c9b93ce0-6ea9-4239-b25d-789c076148c0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CAJA-"+($F{ren_pago_num_cajero}==null?" 01":$F{ren_pago_num_cajero})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="137" width="55" height="9" uuid="8c103f94-3217-46c5-83a8-ece0133e79ca"/>
+				<textElement>
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VENDEDOR:]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

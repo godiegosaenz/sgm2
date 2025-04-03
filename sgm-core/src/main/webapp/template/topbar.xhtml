@@ -1,0 +1,90 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html" 
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+    <h:form id="frmTopbar">
+        <div id="layout-header" class="Unselectable fontRegular">
+
+            <a href="#{userSession.sitioWebMunicipio}" id="layout-logo" target="_blank">
+                <h:graphicImage alt="Logo" value="images/LOGO.svg" name="images/LOGO.svg" styleClass="Fleft" library="sentinel-layout" />
+                <span class="Fs19 FontTitilliumSemiBoldItalic Fleft"><span class="softblue">SAN </span><span class="hardblue">VICENTE</span></span>
+                <!--<span class="Fs19 FontTitilliumSemiBoldItalic Fleft"><span class="softblue">CATASTRO-</span><span class="hardblue">DIGITAL</span></span>-->
+            </a>
+            <ul id="sm-topmenu" class="layout-header-widgets white Fs14">
+                <li class="Fleft BordRadHalf TexAlCenter"><i class="icon-user-male"></i>
+                    <ul class="layout-header-widgets-submenu BordRad5 shadows white Animated05">
+                        <li class="Animated05">
+                            <a class="white Unselectable">
+                                <i class="icon-user-male Fs26 OvHidden"></i>
+                                <span class="Fs18">
+                                    <h:outputText value="#{userSession.name_user}"/>
+                                    <br/>
+                                    <span class="Fs10">
+                                        <!--<h:outputText value="Última vez - #{userSession.session.ultAcceso}"/>-->
+                                    </span>
+                                </span>
+                            </a>
+                        </li>
+                        <!--<li class="Animated05"><a href="#" class="white Unselectable"><i class="icon-stopwatch-1"></i>User Tasks</a></li>
+                        <li class="Animated05"><a href="#" class="white Unselectable"><i class="icon-users-2"></i>Create New User</a></li>-->
+                        <li class="Animated05">
+                            <!--<a href="#" class="white Unselectable">
+                                <i class="icon-sliders"></i>Preferencias
+                            </a>-->
+                            <p:commandLink id="btnPreferencias" styleClass="white Unselectable">
+                                <i class="icon-sliders"></i>
+                                <h:outputText value="Preferencias" style="color: #ffffff"/>
+                            </p:commandLink>
+                        </li>
+
+
+
+
+                    </ul>
+                </li>
+                <!--<li class="Fleft BordRadHalf TexAlCenter"><i class="icon-tasks"></i><span class="alertBubble BordRad10 Fs9"><h:outputText value="#{userSession.user.tasks}"/></span>
+                    <ul class="layout-header-widgets-submenu BordRad5 shadows white Animated05">
+                        <li class="Animated05"><a href="#" class="white Unselectable TexAlRight"><i class="icon-chat-empty yellow"></i>Gustavo Fring<br/><span class="Fs10">What does a man do Walter?</span></a></li>
+                        <li class="Animated05"><a href="#" class="white Unselectable TexAlRight"><i class="icon-chat-empty"></i>Skyler White<br/><span class="Fs10">Where are you?.</span></a></li>
+                        <li class="Animated05"><a href="#" class="white Unselectable TexAlRight"><i class="icon-chat-empty red"></i>Hank Schrader<br/><span class="Fs10">Barbecue photos from last weekend.</span></a></li>
+                        <li class="Animated05"><a href="#" class="white Unselectable TexAlRight"><i class="icon-chat-empty red"></i>Jesse Pinkman<br/><span class="Fs10">Mr. White.</span></a></li>
+                        <li class="Animated05"><a href="#" class="white Unselectable TexAlRight"><i class="icon-chat-empty"></i>Heisenberg<br/><span class="Fs10">I am the one who knocks.</span></a></li>
+                    </ul>
+                </li>-->
+                <!--<li class="Fleft BordRadHalf TexAlCenter"><i class="icon-bell"></i><span class="alertBubble BordRad10 Fs9">24</span>
+                    <ul class="layout-header-widgets-submenu BordRad5 shadows white Animated05">
+                        <li class="Animated05"><a href="#" class="white Unselectable TexAlRight"><i class="icon-flag red"></i>New Products</a></li>
+                        <li class="Animated05"><a href="#" class="white Unselectable TexAlRight"><i class="icon-flag yellow"></i>Today Sales Reports</a></li>
+                        <li class="Animated05"><a href="#" class="white Unselectable TexAlRight"><i class="icon-flag red"></i>Visit Reports</a></li>
+                        <li class="Animated05"><a href="#" class="white Unselectable TexAlRight"><i class="icon-flag red"></i>Sales Reports</a></li>
+                        <li class="Animated05"><a href="#" class="white Unselectable TexAlRight"><i class="icon-flag"></i>Task Alerts</a></li>
+                    </ul>
+                </li>-->
+                <!--<li class="Fleft BordRadHalf TexAlCenter"><i class="icon-wrench-1"></i>
+                    <ul class="layout-header-widgets-submenu BordRad5 shadows white Animated05">
+                        <li class="Animated05"><a href="#" class="white Unselectable"><i class="icon-sun"></i>System Settings</a></li>
+                        <li class="Animated05"><a href="#" class="white Unselectable"><i class="icon-lifebuoy"></i>Help Desk</a></li>
+                    </ul>
+                </li>-->
+                <li class="Fleft BordRadHalf TexAlCenter"><i class="icon-power"></i>
+                    <ul class="layout-header-widgets-submenu BordRad5 shadows white Animated05">
+                        <!--<li class="Animated05"><a href="login.xhtml" class="white Unselectable"><i class="icon-ccw-1"></i>Restart</a></li>-->
+                        <!--<li class="Animated05"><a href="#" class="white Unselectable"><i class="icon-logout"></i>Cerrar session</a></li>-->
+                        <li class="Animated05">
+                            <p:commandLink id="btnLogOut" actionListener="#{userSession.logout()}" styleClass="white Unselectable" update="@all">
+                                <i class="icon-logout"></i>
+                                <h:outputText value="Cerrar sesion" style="color: #ffffff"/>
+                            </p:commandLink>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <!-- NEVER REMOVE FOLLOWING 'UL' TAG ! BECAUSE THIS CONTAINS RESPONSIVE MODE HEADER MENU OPEN-CLOSE BUTTON -->
+            <ul id="sm-mobiletopmenu" class="layout-header-widgets white Fs14">
+                <li class="Fleft BordRadHalf TexAlCenter Animated05 DisplayOnResponsive"><i class="icon-th-1"></i></li>
+            </ul>
+        </div>
+    </h:form>
+</ui:composition>

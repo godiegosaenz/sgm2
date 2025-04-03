@@ -1,0 +1,125 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:dialog="http://xmlns.jcp.org/jsf/composite/dialog"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:poue="http://primefaces.org/ui/extensions">
+
+    <ui:define name="events">
+
+    </ui:define>
+
+    <ui:define name="page_title">
+        Permisos de Funcionamiento
+    </ui:define>
+
+    <ui:define name="top">
+        <h:panelGroup >
+            <p:panelGrid styleClass="noBorder" columns="4" style="width: 100%;font-size: 14px;">
+                <p:outputLabel value="Trámite: #{subirDocumentosTView.ht.id}" style="font-weight: bolder;color: #005f9c"/>
+                <p:outputLabel value="Tarea: #{subirDocumentosTView.taskDataByTaskID.name}" style="font-weight: bolder;color: #005f9c"/>
+                <p:outputLabel value="Responsable: #{subirDocumentosTView.taskDataByTaskID.assignee}" style="font-weight: bolder;color: #005f9c"/>
+            </p:panelGrid>
+        </h:panelGroup>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="frmMain">
+            <p:tabView id="tdatos">
+                <p:tab id="tgen" title="Subir documentos">
+                    <p:panelGrid style="width: 100%; margin-bottom: 15px;">
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:outputLabel value="SOLICITANTE: #{subirDocumentosTView.ht.solicitante.ciRuc} - #{subirDocumentosTView.ht.solicitante.apellidos} #{subirDocumentosTView.ht.solicitante.nombres} #{subirDocumentosTView.ht.solicitante.razonSocial}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="SOLICITUD: #{subirDocumentosTView.permiso.id}"/>
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="FECHA INGRESO: "/><p:outputLabel value="#{subirDocumentosTView.permiso.fechaEmision}"><f:convertDateTime pattern="dd/MM/yyyy"/></p:outputLabel>
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="PRIMERA VEZ: "/>
+                                <p:selectBooleanCheckbox value="#{subirDocumentosTView.permiso.primeraVez}" disabled="true" style="margin-left: 15px; margin-top: 5px;"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:outputLabel value="CONTADOR: #{subirDocumentosTView.permiso.contador.nombreCompleto}"/>
+                            </p:column>
+                            
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="AFILIACIÓN: #{subirDocumentosTView.permiso.afiliacionCamara.descripcion}"/>
+                            </p:column>
+                            <p:column >
+                                <p:outputLabel value="NO. DE TRABAJADORES: #{subirDocumentosTView.permiso.numTrabajadores}"/>
+                            </p:column>
+                            <p:column >
+                                <p:outputLabel value="NO. DE DECLARACIÓN: #{subirDocumentosTView.permiso.numDeclaracion}"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    
+                    <h:panelGroup style="padding-top: 15px;">
+                            <h3>Ingreso de documentos</h3>
+                            <p:fileUpload  fileUploadListener="#{subirDocumentosTView.handleFileUpload}"
+                                            multiple="true"
+                                            mode="advanced"
+                                            fileLimit="2"
+                                            label="Seleccionar"
+                                            uploadLabel="Subir"
+                                            cancelLabel="Cancelar"
+                                            skinSimple="true"
+                                            update="messages"
+                                            sizeLimit="35000000" 
+                                            style="width: 50%"
+                                            allowTypes="/(\.|\/)(gif|jpe?g|png|pdf)$/"/>
+
+                            <p:growl id="messages" showDetail="true"/>
+
+                             <!--<p:dataTable value="#{ingresoDocsSolExo.files}" var="file" rows="5" emptyMessage="Sin archivos" paginator="true" paginatorPosition="top" >
+                                 <p:column headerText="Nombre del documento">
+                                     <h:outputText value="#{file.descripcion}"/>
+                                 </p:column>
+                                 <p:column headerText="Acción">
+                                     <p:commandButton value="Eliminar" />
+                                 </p:column>
+                             </p:dataTable>-->
+
+                            <p:commandButton value="Terminar Tarea" update="frmObs" onclick="PF('obs').show()" styleClass="btnStyle" style="margin-top: 20px;"/>
+                        </h:panelGroup> 
+                </p:tab>
+                
+                <!-- -->
+                
+                <p:tab title="Detalle trámite">
+                    <dialog:detalleTareas archivos="#{subirDocumentosTView.processInstanceAllAttachments}"
+                                  observaciones="#{subirDocumentosTView.ht.observacionesCollection}" />
+                </p:tab>
+            </p:tabView>
+        </h:form>
+        
+        <!-- -->
+        
+        <p:dialog id="dlgObs" widgetVar="obs" header="Permisos de Funcionamiento" appendTo="@(body)" modal="true" width="500" resizable="false" closable="true" closeOnEscape="true">
+            <h:form id="frmObs">
+                <p:panel id="pobs" header="Ingrese sus observaciones" style="width: 100%">
+                    
+                    <div align="center">
+                        <p:inputTextarea id="obsservacion" value="#{subirDocumentosTView.entradas['obs'].observacion}" rows="4" style="width: 100%; text-transform: uppercase" required="true" placeholder="Las observaciones son obligatorias para continuar con el tramite"/>
+                        <br/>
+                        <p:commandButton id="btnValidar" value="Aprobar trámite" actionListener="#{subirDocumentosTView.completarTarea(true)}" oncomplete="PF('obs').hide()" style="color: #ffffff; background: #616161 !important; font-weight: bold; height: 30px"/>
+                        <p:commandButton id="btnValidar2" value="Rechazar trámite" actionListener="#{subirDocumentosTView.completarTarea(false)}" oncomplete="PF('obs').hide()" style="color: #ffffff; background: #616161 !important; font-weight: bold; height: 30px"/>
+                    </div>
+                </p:panel>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

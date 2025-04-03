@@ -1,0 +1,626 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:dialog="http://xmlns.jcp.org/jsf/composite/dialog">
+    <ui:define name="top"><p:outputLabel value="Emision de avaluos prediales" style="font-weight: bolder; font-size: 14px;"/></ui:define>
+    <ui:define name="head">
+        <script src="../../resources/pfJs/keyPress.js" type="text/javascript"></script>
+        <style type="text/css">
+            .ui-selectoneradio label{
+                font-size: 1.2em;
+                font-weight: bold;
+                margin-right: 30px;
+            }
+
+            .olded {
+                background-color: #ece3a5 !important;
+                background-image: none !important;
+                color: #000000 !important;
+            }
+
+        </style>
+    </ui:define>
+    <ui:define name="content">
+        <center>
+            <h1>Emisión de Predial</h1>
+        </center>
+        <h:form id="frmMain">
+            <div >
+                <p:tabView id="tbvValorizarProcess" >
+                    <p:tab title="Emisión Predial" titleStyle="font-weight: bolder">
+                        <h:panelGroup layout="block" class="Container Wid100 MarTop10" >
+
+                            <h:panelGroup  layout="block" class="Container60">
+
+                                <p:dataTable id="prediosList" var="pt" value="#{avaluosPrediales.predios}" selection="#{avaluosPrediales.prediosSeleccionados}"
+                                             rowKey="#{pt.id}" style="margin-bottom:0"
+                                             emptyMessage="No existen predios con un avaluos mayores a cero."
+                                             paginator="true" filterEvent="enter"
+                                             rows="20" lazy="true" 
+                                             paginatorPosition="bottom"
+                                             rowsPerPageTemplate="20,40,50"
+                                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                                    <p:ajax event="rowSelect"  update="frmMain:tbvValorizarProcess:prediosAValorizar" />
+                                    <p:ajax event="rowUnselect"  update="frmMain:tbvValorizarProcess:prediosAValorizar"  />
+                                    <p:ajax event="rowSelectCheckbox"  update="frmMain:tbvValorizarProcess:prediosAValorizar" />
+                                    <p:ajax event="rowUnselectCheckbox"  update="frmMain:tbvValorizarProcess:prediosAValorizar" />
+                                    <p:ajax event="toggleSelect"  update="frmMain:tbvValorizarProcess:prediosAValorizar" />
+
+                                    <p:ajax event="filter" update="prediosList" />
+
+                                    <f:facet name="header">
+                                        Listado de Predios
+                                    </f:facet>
+                                    <p:column selectionMode="multiple" style="width:2%;text-align:center" />
+                                    <p:column headerText="#Predio"   style="text-align: center; padding-left: 5px; padding-right: 5px; width: 5%" filterStyle="width: 50%" filterBy="#{pt.numPredio}" sortBy="#{pt.numPredio}" filterMatchMode="contains">
+                                        <h:outputText value="#{pt.numPredio}"/>
+                                    </p:column>
+                                    <p:column headerText="Parroquia" style="text-align: center; width: 3%" filterBy="#{pt.parroquia}" sortBy="#{pt.parroquia}" filterStyle="width: 45%">
+                                        <h:outputText value="#{pt.parroquia}"  />
+                                    </p:column>
+                                    <p:column headerText="Zona" style="text-align: center; width: 3%" filterBy="#{pt.zona}" sortBy="#{pt.zona}" filterStyle="width: 45%">
+                                        <h:outputText value="#{pt.zona}"/>
+                                    </p:column>
+                                    <p:column headerText="Sector" style="text-align: center; width:3%" filterBy="#{pt.sector}" sortBy="#{pt.sector}" filterStyle="width: 45%">
+                                        <h:outputText value="#{pt.sector}"/>
+                                    </p:column>
+                                    <p:column headerText="Mz." style="text-align: center; width: 3%" filterBy="#{pt.mz}" sortBy="#{pt.mz}" filterStyle="width: 45%">
+                                        <h:outputText value="#{pt.mz}"/>
+                                    </p:column>
+                                    <p:column headerText="Lote" style="text-align: center; width: 3%" filterBy="#{pt.solar}"  sortBy="#{pt.solar}" filterStyle="width: 45%">
+                                        <h:outputText value="#{pt.solar}"/>
+                                    </p:column>
+                                    <p:column headerText="Avalúo Solar" style="text-align: center;width: 4%">
+                                        <h:outputText value="#{pt.avaluoSolar}">
+                                            <f:convertNumber pattern="$ #,##0.00" />
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Avalúo de la Construcción" style="text-align: center;width: 4%">
+                                        <h:outputText value="#{pt.avaluoConstruccion}">
+                                            <f:convertNumber pattern="$ #,##0.00" />
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Avalúo de la Propiedad" style="text-align: center;width: 4%">
+                                        <h:outputText value="#{pt.avaluoMunicipal}">
+                                            <f:convertNumber pattern="$ #,##0.00" />
+                                        </h:outputText>
+                                    </p:column>
+                                </p:dataTable>
+                            </h:panelGroup>
+                            <p:fieldset legend="Emitir" toggleable="true" toggleSpeed="500" style="margin-bottom: 10px;">
+                                <div align="center">
+                                    <h:panelGrid columns="2" style="margin-top:5px">
+                                        <p:row><p:column><h:outputText  value="Año: " style="font-weight: bolder"/></p:column></p:row>
+                                        <p:row rendered="false"><p:column><h:outputText  value="Año Fin " style="font-weight: bolder"/></p:column></p:row>
+                                        <p:row>
+                                            <p:column style="width: 50%"><p:inputText id="anio"  value="#{avaluosPrediales.anioEmisionSeleccionadaPredio}" 
+                                                                                      onkeypress="validateIntegerValueAndFocusNext(event, '')"  
+                                                                                      style="text-align: center; width: 89%" maxlength="4"/></p:column>
+                                        </p:row>
+                                        <p:row rendered="false">
+                                            <p:column style="width: 50%"><p:inputText value="#{avaluosPrediales.anioEmisionFin}" 
+                                                                                      onkeypress="validateIntegerValueAndFocusNext(event, '')" 
+                                                                                      style="text-align: center; width: 89%" maxlength="4"/></p:column>                       
+                                        </p:row>
+                                        <p:row>
+                                            <p:commandButton 
+                                                icon="ui-icon-refresh" actionListener="#{avaluosPrediales.startEmisionPredial(false)}"
+                                                value="Emitir Predios Seleccionados" >
+                                                <p:confirm header="Esta Seguro de Continuar? "  />
+                                            </p:commandButton>
+                                        </p:row>
+                                        <p:row>
+
+                                            <p:commandButton 
+                                                icon="ui-icon-refresh" actionListener="#{avaluosPrediales.bajaPredios}"
+                                                value="Baja de Titulos del Año Actual"  rendered="false">
+                                                <p:confirm header="Esta Seguro de Continuar? "  />
+                                            </p:commandButton>
+                                            <!-- HABILITAR PARA EL PROXIMO AANIO XD-->
+                                            <p:commandButton rendered="#{avaluosPrediales.habilitarBotonEmision}"
+                                                             icon="ui-icon-refresh" actionListener="#{avaluosPrediales.startEmisionPredial(true)}"
+                                                             value="Emitir Todo Catastro"  >
+                                                <p:confirm header="Esta Seguro de Continuar? "  />
+                                            </p:commandButton>
+                                        </p:row>
+                                    </h:panelGrid>
+                                    <br></br>
+
+
+                                    <p:dataTable id="prediosAValorizar" value="#{avaluosPrediales.prediosSeleccionados}" var="pt">
+                                        <f:facet name="header">
+                                            Predios Seleccionados
+                                        </f:facet>
+                                        <p:column headerText="Parroquia" style="text-align: center; width: 6%" >
+                                            <h:outputText value="#{pt.parroquia}"  />
+                                        </p:column>
+                                        <p:column headerText="Zona" style="text-align: center; width: 3%" >
+                                            <h:outputText value="#{pt.zona}"/>
+                                        </p:column>
+                                        <p:column headerText="Sector" style="text-align: center; width:4%" >
+                                            <h:outputText value="#{pt.sector}"/>
+                                        </p:column>
+                                        <p:column headerText="Manzana" style="text-align: center; width: 3%" >
+                                            <h:outputText value="#{pt.mz}"/>
+                                        </p:column>
+                                        <p:column headerText="Lote" style="text-align: center; width: 3%">
+                                            <h:outputText value="#{pt.solar}"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                                <br></br>
+                                <h:panelGroup layout="block"  id="caracSolarList">
+                                    <div>
+                                        <p:accordionPanel id="listValorizar" activeIndex="-1"  >
+                                            <p:tab title="Banda Impositiva" >
+                                                <p:dataTable id="bandaimpoSitivaList" var="pt" value="#{avaluosPrediales.avalBandaImpositivaList}" 
+                                                             rowStyleClass="#{pt.predeterminada eq true ? 'olded' : ''}"
+                                                             emptyMessage="No existen datos."
+                                                             rows="20" lazy="true" 
+                                                             paginatorPosition="bottom"
+                                                             rowsPerPageTemplate="20,40,50"
+                                                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                                                    <f:facet name="header">
+                                                        Tabla Base Imponible
+                                                    </f:facet>
+                                                    <p:columnGroup type="header">
+                                                        <p:row>
+                                                            <p:column rowspan="2" headerText="Base Imponible" />
+                                                            <p:column colspan="2" headerText="Años" />
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column  headerText="Desde" />
+                                                            <p:column  headerText="Hasta" />
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column  style="text-align: center; width: 3%" >
+                                                        <h:outputText value="#{pt.multiploImpuestoPredial}"><f:convertNumber pattern="##############.####" locale="us"/></h:outputText>
+                                                    </p:column>
+                                                    <p:column  style="text-align: center; width: 3%" >
+                                                        <h:outputText value="#{pt.anioInicio}"/>
+                                                    </p:column>
+                                                    <p:column  style="text-align: center; width: 3%" >
+                                                        <h:outputText value="#{pt.anioFin}"/>
+                                                    </p:column>
+                                                </p:dataTable>
+                                            </p:tab>
+
+                                        </p:accordionPanel>
+                                    </div>
+                                </h:panelGroup>
+                            </p:fieldset>
+
+
+
+                        </h:panelGroup>
+                    </p:tab>
+                    <p:tab title="Impuesto Predial Urbano" titleStyle="font-weight: bolder" >
+                        <p:fieldset legend="Banda Impositiva - Valores" toggleable="true" toggleSpeed="500" style="margin-bottom: 10px;">
+                            <div align="center" ><center>
+                                    <h:panelGrid columns="9" style="align-self:  center; margin-top:5px;">
+                                        <h:outputText  value="Banda Impositiva:" style="font-weight: bolder"/>
+                                        <pe:inputNumber value="#{avaluosPrediales.avalBandaImpositiva.multiploImpuestoPredial}"  minValue="0" decimalPlaces="2" maxlength="4"/>
+                                        <p:spacer height="5px"/>
+                                        <h:outputText  value="Año Inicial:" style="font-weight: bolder"/>
+                                        <p:column><p:inputText   value="#{avaluosPrediales.avalBandaImpositiva.anioInicio}" 
+                                                                 onkeypress="validateIntegerValueAndFocusNext(event, '')" 
+                                                                 style="text-align: center; width: 89%" maxlength="4"/></p:column>
+                                        <p:spacer height="5px"/>
+                                        <h:outputText  value="Año Fin:" style="font-weight: bolder"/>
+                                        <p:column><p:inputText  value="#{avaluosPrediales.avalBandaImpositiva.anioFin}" 
+                                                                onkeypress="validateIntegerValueAndFocusNext(event, '')" 
+                                                                style="text-align: center; width: 89%" maxlength="4"/></p:column>         
+                                    </h:panelGrid>
+                                    <br></br>
+                                    <div>
+                                        <center>
+                                            <p:commandButton id="btnGrabarBanda" value="Grabar" actionListener="#{avaluosPrediales.saveAvalBandaImpositiva(false)}" update="frmMain frmDefinirBase" disabled="#{!avaluosPrediales.controlPredeterminada}"/>
+                                            <p:spacer height="5px"/>
+                                            <p:commandButton id="btnDefinirPredeterminada" value="Definir como Predeterminada" actionListener="#{avaluosPrediales.saveAvalBandaImpositiva(true)}" update="frmMain" disabled="#{!avaluosPrediales.controlPredeterminada}"/>
+                                        </center>
+
+                                    </div>
+                                    <br></br>
+                                    <p:dataTable id="dtavalBandaImpositivaList" var="pt" value="#{avaluosPrediales.avalBandaImpositivaList}" 
+                                                 rowStyleClass="#{pt.predeterminada eq true ? 'olded' : ''}"
+                                                 emptyMessage="No existen datos."
+                                                 rows="20" lazy="true" 
+                                                 paginatorPosition="bottom"
+                                                 rowsPerPageTemplate="20,40,50"
+                                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+
+                                        <f:facet name="header">
+                                            Tabla Base Imponible
+                                        </f:facet>
+                                        <p:columnGroup type="header">
+
+                                            <p:row>
+                                                <p:column rowspan="3" headerText="Base Imponible" />
+                                                <p:column colspan="2" headerText="Años" />
+                                                <p:column rowspan="3" headerText="Acciones" />
+                                            </p:row>
+                                            <p:row>
+
+                                            </p:row>
+                                            <p:row>
+                                                <p:column  headerText="Desde" />
+                                                <p:column  headerText="Hasta" />
+                                            </p:row>
+
+
+                                        </p:columnGroup>
+                                        <p:column  style="text-align: center; width: 3%" >
+                                            <h:outputText value="#{pt.multiploImpuestoPredial}"><f:convertNumber pattern="##############.####" locale="us"/></h:outputText>
+                                        </p:column>
+                                        <p:column  style="text-align: center; width: 3%" >
+                                            <h:outputText value="#{pt.anioInicio}"/>
+                                        </p:column>
+                                        <p:column  style="text-align: center; width: 3%" >
+                                            <h:outputText value="#{pt.anioFin}"/>
+                                        </p:column>
+                                        <p:column  style="text-align: center; width: 3%" >
+                                            <p:commandLink title="Definir como Predeterminada"  actionListener="#{avaluosPrediales.definirPredeterminadaBandaImpositiva(pt, true)}" update="frmMain:tbvValorizarProcess:btnDefinirPredeterminada frmMain:tbvValorizarProcess:btnGrabarBanda frmMain:tbvValorizarProcess:dtavalBandaImpositivaList frmDefinirBase:dtavalBandaImpositivaList frmMain:tbvValorizarProcess:listValorizar:bandaimpoSitivaList">
+                                                <p:graphicImage value="/css/homeIconsImages/ok.png"  height="20" width="20"/>
+                                            </p:commandLink>
+                                            <p:spacer width="10" height="0"/>
+                                            <p:commandLink title="Quitar Predeterminada" actionListener="#{avaluosPrediales.definirPredeterminadaBandaImpositiva(pt, false)}" update="frmMain:tbvValorizarProcess:btnDefinirPredeterminada frmMain:tbvValorizarProcess:btnGrabarBanda frmMain:tbvValorizarProcess:dtavalBandaImpositivaList frmDefinirBase:dtavalBandaImpositivaList frmMain:tbvValorizarProcess:listValorizar:bandaimpoSitivaList">
+                                                <p:graphicImage value="/css/homeIconsImages/delete.png"  height="20" width="20"/>
+                                            </p:commandLink>
+                                            <p:commandLink title="Eliminar" actionListener="#{avaluosPrediales.inactivaBandaImpositviva(pt)}" update="  frmMain:tbvValorizarProcess:dtavalBandaImpositivaList frmDefinirBase:dtavalBandaImpositivaList frmMain:tbvValorizarProcess:listValorizar:bandaimpoSitivaList">
+                                                <p:graphicImage value="/css/homeIconsImages/trash.png"  height="20" width="20"/>
+                                            </p:commandLink>
+                                        </p:column>
+
+                                    </p:dataTable>
+                                </center>
+                            </div>
+
+                        </p:fieldset>
+                        <p:fieldset legend="Cobro de Rubros por Parroquias - Zonas - Sector - Manzanas - Lotes" toggleable="true" toggleSpeed="500" style="margin-bottom: 10px;">
+                            <div align="center" >
+                                <center>
+                                    <br></br>
+
+                                    <p:panelGrid id="sectoresValores" styleClass="noBorder">
+                                        <p:row>
+                                            <p:column><h:outputText value="Parroquias" style="font-size: 16px; font-weight: bolder;"/></p:column>
+                                            <p:column><h:outputText value="Zonas" style="font-size: 16px; font-weight: bolder;"/></p:column>
+                                            <p:column><h:outputText value="Sectores" style="font-size: 16px; font-weight: bolder;"/></p:column>
+                                            <p:column><h:outputText value="Manzanas" style="font-size: 16px; font-weight: bolder;"/></p:column>
+                                            <p:column><h:outputText value="Solares / Lotes" style="font-size: 16px; font-weight: bolder;"/></p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column>
+                                                <p:selectOneMenu  value="#{avaluosPrediales.parroquia}"  style="width:150px" effect="fade" converter="entityConverter"  filter="true" filterMatchMode="contains">
+                                                    <f:selectItem itemLabel="TODAS" itemValue="#{null}"/>
+                                                    <f:selectItems value="#{avaluosPrediales.parroquias}" var="t" itemLabel="#{t.codigoParroquia} - #{t.descripcion}" itemValue="#{t}"/>
+                                                    <p:ajax update="frmMain:tbvValorizarProcess:sectoresValores" listener="#{avaluosPrediales.loadZonas()}"/>
+                                                </p:selectOneMenu>
+                                            </p:column>
+                                            <p:column>
+                                                <p:selectOneMenu  value="#{avaluosPrediales.zona}" effect="fade"   style="width:150px;" disabled="#{empty avaluosPrediales.zonaList}">
+                                                    <f:selectItem itemLabel="TODAS" itemValue="#{null}"/>
+                                                    <f:selectItems value="#{avaluosPrediales.zonaList}" var="c" itemLabel="#{c}" itemValue="#{c}"/>  
+                                                    <p:ajax update="frmMain:tbvValorizarProcess:sectoresValores" listener="#{avaluosPrediales.loadSectorByZonas()}"/>
+                                                </p:selectOneMenu>
+                                            </p:column>
+                                            <p:column>
+                                                <p:selectOneMenu  value="#{avaluosPrediales.sector}" effect="fade"  style="width:150px;" disabled="#{empty avaluosPrediales.sectorList}">
+                                                    <f:selectItem itemLabel="TODOS" itemValue="#{null}"/>
+                                                    <f:selectItems value="#{avaluosPrediales.sectorList}" var="c" itemLabel="#{c}" itemValue="#{c}"/>  
+                                                    <p:ajax update="frmMain:tbvValorizarProcess:sectoresValores" listener="#{avaluosPrediales.loadMzBySector()}"/>
+                                                </p:selectOneMenu>
+                                            </p:column>
+                                            <p:column>
+                                                <p:selectOneMenu  value="#{avaluosPrediales.mz}" effect="fade"  style="width:150px;" disabled="#{empty avaluosPrediales.mzList}">
+                                                    <f:selectItem itemLabel="TODAS" itemValue="#{null}"/>
+                                                    <f:selectItems value="#{avaluosPrediales.mzList}" var="c" itemLabel="#{c}" itemValue="#{c}"/>  
+                                                    <p:ajax update="frmMain:tbvValorizarProcess:sectoresValores" listener="#{avaluosPrediales.loadLotesByMz()}"/>
+                                                </p:selectOneMenu>
+                                            </p:column>
+                                            <p:column>
+                                                <p:selectOneMenu  value="#{avaluosPrediales.lotes}"  style="width:150px;" disabled="#{empty avaluosPrediales.lotesList}">
+                                                    <f:selectItem itemLabel="TODOS" itemValue="#{null}"/>
+                                                    <f:selectItems value="#{avaluosPrediales.lotesList}" var="c" itemLabel="#{c}" itemValue="#{c}"/>
+                                                    <p:ajax update="frmMain:tbvValorizarProcess:sectoresValores" />
+                                                </p:selectOneMenu>
+
+                                            </p:column>
+                                        </p:row>
+                                    </p:panelGrid>
+
+                                    <br></br><br></br>
+                                    <h:panelGroup id="pnlGroupValores" layout="block" class="Container Wid100 MarTop10" >
+
+                                        <h:panelGroup layout="block" class="Container50" >
+                                            <p:dataTable id="dtRubrosSel" rows="10" paginator="true"  var="rubro" value="#{avaluosPrediales.rubrosList}" 
+                                                         rowKey="#{rubro.id}" selection="#{avaluosPrediales.rubrosSeleccionados}"
+                                                         emptyMessage="No tiene datos" style="width: 99%; margin-top: 10px;">
+                                                <p:ajax event="rowSelect"  update="frmMain:tbvValorizarProcess:dtRubrosSel" />
+                                                <p:ajax event="rowUnselect"  update="frmMain:tbvValorizarProcess:dtRubrosSel"  />
+                                                <p:ajax event="rowSelectCheckbox"  update="frmMain:tbvValorizarProcess:dtRubrosSel" />
+                                                <p:ajax event="rowUnselectCheckbox"  update="frmMain:tbvValorizarProcess:dtRubrosSel" />
+                                                <p:ajax event="toggleSelect"  update="frmMain:tbvValorizarProcess:dtRubrosSel" />
+                                                <p:ajax event="filter" update="dtRubrosSel" />
+                                                <f:facet name="header">
+                                                    Lista de Rubros Disponibles
+                                                </f:facet>
+                                                <p:column selectionMode="multiple" style="width:10px;text-align:center" />
+                                                <p:column headerText="Código rubro" width="3%">
+                                                    <center><h:outputText value="#{rubro.codigoRubro}" /></center>
+                                                </p:column>
+                                                <p:column headerText="Descripción" width="12%">
+                                                    <center><h:outputText value="#{rubro.descripcion}"/></center>
+                                                </p:column>
+                                            </p:dataTable>
+
+
+                                        </h:panelGroup>
+                                        <h:panelGroup layout="block" class="Container50" >
+                                            <h:panelGrid columns="2" width="99%" style="text-align: justify">
+                                                <h:outputText  value="Año:" style="font-weight: bolder"/>
+                                                <p:column><p:inputText   value="#{avaluosPrediales.avalImpuestoPredios.anioInicio}" 
+                                                                         onkeypress="validateIntegerValueAndFocusNext(event, '')" 
+                                                                         style="text-align: center; width: 89%" maxlength="4"/></p:column>
+
+                                                <h:outputText  value="Año Fin:" style="font-weight: bolder"  rendered="false"/>
+                                                <p:column><p:inputText  value="#{avaluosPrediales.avalImpuestoPredios.anioInicio}" rendered="false" 
+                                                                        onkeypress="validateIntegerValueAndFocusNext(event, '')" 
+                                                                        style="text-align: center; width: 89%" maxlength="4"/></p:column>    
+
+                                            </h:panelGrid>
+                                            <p:dataTable id="bandaimpoSitivaListSectores" var="pt" value="#{avaluosPrediales.avalBandaImpositivaList}" 
+                                                         rowStyleClass="#{pt.predeterminada eq true ? 'olded' : ''}" style="width: 89%; margin-top: 10px;"
+                                                         emptyMessage="No existen datos."
+                                                         rows="20" lazy="true"  selection="#{avaluosPrediales.avalBandaImpositivaSeleccionada}" 
+                                                         rowKey="#{pt.id}" 
+                                                         paginatorPosition="bottom"
+                                                         rowsPerPageTemplate="20,40,50"
+                                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                                                <f:facet name="header">
+                                                    Tabla Base Imponible
+                                                </f:facet>
+
+                                                <p:columnGroup type="header">
+                                                    <p:row>
+                                                        <p:column rowspan="2" headerText="Seleccione" />
+                                                        <p:column rowspan="2" headerText="Base Imponible" />
+                                                        <p:column colspan="2" headerText="Años" />
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column  headerText="Desde" />
+                                                        <p:column  headerText="Hasta" />
+                                                    </p:row>
+                                                </p:columnGroup>
+                                                <p:column selectionMode="single" style="width:10px;text-align:center" />
+                                                <p:column  style="text-align: center; width: 3%" >
+                                                    <h:outputText value="#{pt.multiploImpuestoPredial}"><f:convertNumber pattern="##############.####" locale="us"/></h:outputText>
+                                                </p:column>
+                                                <p:column  style="text-align: center; width: 3%" >
+                                                    <h:outputText value="#{pt.anioInicio}"/>
+                                                </p:column>
+                                                <p:column  style="text-align: center; width: 3%" >
+                                                    <h:outputText value="#{pt.anioFin}"/>
+                                                </p:column>
+                                            </p:dataTable>
+
+                                        </h:panelGroup>
+                                    </h:panelGroup>
+                                    <br></br><br></br>
+                                    <center>
+                                        <p:commandButton value="Aceptar" actionListener="#{avaluosPrediales.saveTaxPaymentProperty()}" styleClass="btnStyle" update="frmMain:tbvValorizarProcess:pnlGroupValores frmMain:tbvValorizarProcess:prediosUrbanosRubros" >
+                                            <p:confirm header="Confirmación " message="Esta Seguro de Continuar? "/>
+                                        </p:commandButton>
+                                    </center>
+
+
+
+                                </center>
+                            </div>
+
+                        </p:fieldset>
+
+                    </p:tab>
+                    <p:tab title="Predios Urbanos Rubros a Cobrar" >
+
+                        <h:panelGroup id="prediosUrbanosRubros" layout="block" class="Container Wid100 MarTop10" >
+                            <div align="center">
+                                <h:panelGroup   layout="block" class="Container100" >
+                                    <p:dataTable id="prediosManzanasRegistered" var="p" value="#{avaluosPrediales.impuestoPrediosList}"
+                                                 paginator="true"   rowSelectMode="single"
+                                                 emptyMessage="No se encontro ningun predio" rows="20" rowsPerPageTemplate="20,50,100" filterEvent="enter">
+    <!--                                    <p:ajax event="rowSelect" listener="#{avaluosPrediales.onRowSelect}" update="frmAvaluo:accPAvaluo:tvAvaluo:pnlMzSelec prediosManzanasList" rendered="frmAvaluo:accPAvaluo:tvAvaluo:pnlMzSelec prediosManzanasList"/>
+                                        <p:ajax event="rowUnselect" listener="#{avaluosPrediales.onRowUnselect}" update=":frmAvaluo:accPAvaluo:tvAvaluo:pnlMzSelec prediosManzanasList"  />
+                                        <p:ajax event="filter" update="prediosManzanasRegistered" />-->
+                                        <f:facet name="header">
+                                            Datos Registrados
+                                        </f:facet>
+                                        <p:column headerText="Parroquia" filterBy="#{p.parroquia}" filterStyle="width: 45%" filterMatchMode="contains" style="text-align: center" >
+                                            <h:outputText value="#{p.parroquia}" rendered="#{p.parroquia > -1}" />
+                                            <h:outputText value="TODAS" rendered="#{p.parroquia eq -1}" />
+                                        </p:column>
+                                        <p:column headerText="Zona" filterBy="#{p.zona}" filterStyle="width: 45%" filterMatchMode="contains" style="text-align: center" >
+                                            <h:outputText value="#{p.zona}" rendered="#{p.zona > -1}"/>
+                                            <h:outputText value="TODAS" rendered="#{p.zona eq -1}"/>
+                                        </p:column>
+                                        <p:column headerText="Sector" filterBy="#{p.sector}" filterStyle="width: 45%" filterMatchMode="contains"  style="text-align: center" >
+                                            <h:outputText value="#{p.sector}" rendered="#{p.sector > -1}" />
+                                            <h:outputText value="TODOS" rendered="#{p.sector eq -1}" />
+                                        </p:column>
+                                        <p:column headerText="Manzana" filterBy="#{p.mz}" filterStyle="width: 45%" filterMatchMode="contains"  style="text-align: center" >
+                                            <h:outputText value="#{p.mz}" rendered="#{p.mz > -1}" />
+                                            <h:outputText value="TODAS" rendered="#{p.mz eq -1}" />
+                                        </p:column>
+                                        <p:column headerText="Solares / Lotes" filterBy="#{p.mz}" filterStyle="width: 45%" filterMatchMode="contains"  style="text-align: center" >
+                                            <h:outputText value="#{p.solar}" rendered="#{p.solar > -1}" />
+                                            <h:outputText value="TODOS" rendered="#{p.solar eq -1}" />
+                                        </p:column>
+                                        <p:column headerText="Banda Impositiva"   style="text-align: center" >
+                                            <h:outputText value="#{p.bandaImpositiva.multiploImpuestoPredial}" />
+                                        </p:column>
+                                        <p:column headerText="Acciones"   style="text-align: center" >
+                                            <p:commandLink title="Eliminar" actionListener="#{avaluosPrediales.inactivaImpuestoPredial(p)}" update="prediosManzanasRegistered">
+                                                <p:graphicImage value="/css/homeIconsImages/trash.png"  height="20" width="20"/>
+                                            </p:commandLink>
+                                        </p:column>
+                                    </p:dataTable>
+                                </h:panelGroup>
+                            </div>
+                        </h:panelGroup> 
+                    </p:tab>
+                    <p:tab title="Totales de Emision" >
+                        <p:fieldset legend="Totales de Emision" toggleable="true" toggleSpeed="500" style="margin-bottom: 10px;">
+                            <center>
+                                <h:outputText  value="Año Inicial:" style="font-weight: bolder"/>
+                                <p:column><p:inputText   value="#{avaluosPrediales.anioTotlesEmision}" 
+                                                         onkeypress="validateIntegerValueAndFocusNext(event, '')" 
+                                                         style="text-align: center; width: 89%" maxlength="4"/></p:column>
+                                <p:commandButton  value="IMPRIMIR" style="font-size: 15px; font-weight: bolder;" 
+                                                  styleClass="btnStyle"  
+                                                  actionListener="#{avaluosPrediales.reportePredioUsuario()}" ajax="false"/>
+                            </center> 
+                        </p:fieldset>
+                        <p:fieldset legend="Titulos Prediales" toggleable="true" toggleSpeed="500" style="margin-bottom: 10px;">
+                            <center>
+                                <h:outputText  value="Año" style="font-weight: bolder"/>
+                                <p:column><p:inputText   value="#{avaluosPrediales.anioEmisionInicio}" 
+                                                         onkeypress="validateIntegerValueAndFocusNext(event, '')" 
+                                                         style="text-align: center; width: 89%" maxlength="4"/></p:column>
+                                <p:commandButton  value="IMPRIMIR" style="font-size: 15px; font-weight: bolder;" 
+                                                  styleClass="btnStyle"  
+                                                  actionListener="#{avaluosPrediales.reportePredioTitulosPrediales()}" ajax="false"/>
+                            </center> 
+                        </p:fieldset>
+
+
+                    </p:tab>
+                </p:tabView>
+            </div>
+        </h:form>
+
+
+        <p:dialog header="Base Impositiva" widgetVar="dlgDefinirBase" resizable="false" closeOnEscape="true" modal="true" width="70%" appendTo="@(body)">
+            <h:form id="frmDefinirBase">
+
+                <p:fieldset legend="Sectorización" toggleable="true" toggleSpeed="500" style="margin-bottom: 10px;">
+                    <center>
+                        <h:panelGrid columns="8" style="align-self:  center; margin-top:5px;">
+                            <p:selectOneRadio  value="#{avaluosPrediales.tipoDefinicion}"  >
+                                <f:selectItem itemLabel="Por Parroquia" itemValue="P" />  
+                                <f:selectItem itemLabel="Por Zona"  itemValue="Z"  />  
+                                <f:selectItem itemLabel="Por Sector" itemValue="S" />
+                                <f:selectItem itemLabel="Por Manzana" itemValue="M"  />
+                            </p:selectOneRadio>
+                        </h:panelGrid>
+                        <h:panelGrid columns="6" style="align-self:  center; margin-top:5px;">
+                            <h:outputText  value="Cobro de Bomberos:" style="font-weight: bolder"/>
+                            <p:selectBooleanCheckbox value="# {avaluosPrediales.avalImpuestoPredios.cobroBombrero}" />
+                            <h:outputText  value="Cobro de Mejoras:" style="font-weight: bolder"/>
+                            <p:selectBooleanCheckbox value="# {avaluosPrediales.avalImpuestoPredios.cobroMejoras}" />
+                            <h:outputText  value="Pago Solar No Edificado:" style="font-weight: bolder"/>
+                            <p:selectBooleanCheckbox value="# {avaluosPrediales.avalImpuestoPredios.pagoSolarNoEdificado}" />
+
+                        </h:panelGrid>
+                        <h:panelGrid columns="6" style="align-self:  center; margin-top:5px;">
+                            <h:outputText  value="Año Inicial:" style="font-weight: bolder"/>
+                            <p:column><p:inputText   value="#{avaluosPrediales.avalImpuestoPredios.anioInicio}" 
+                                                     onkeypress="validateIntegerValueAndFocusNext(event, '')" 
+                                                     style="text-align: center; width: 89%" maxlength="4"/></p:column>
+                            <p:spacer height="5px"/>
+                            <h:outputText  value="Año Fin:" style="font-weight: bolder"/>
+                            <p:column><p:inputText  value="#{avaluosPrediales.avalImpuestoPredios.anioFin}" 
+                                                    onkeypress="validateIntegerValueAndFocusNext(event, '')" 
+                                                    style="text-align: center; width: 89%" maxlength="4"/></p:column>    
+                        </h:panelGrid>
+                    </center>
+                </p:fieldset>
+
+                <br></br>
+                <p:dataTable id="dtavalBandaImpositivaList" var="pt" value="#{avaluosPrediales.avalBandaImpositivaList}" 
+                             emptyMessage="No existen datos." selection="#{avaluosPrediales.avalBandaImpositivaSeleccionada}" rowKey="#{pt.id}" selectionMode="single"
+                             rows="20" lazy="true" 
+                             paginatorPosition="bottom"
+                             rowsPerPageTemplate="20,40,50"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+
+                    <f:facet name="header">
+                        Tabla Base Imponible
+                    </f:facet>
+                    <p:columnGroup type="header">
+                        <p:row>
+                            <p:column colspan="2" headerText="Base Imponible" />
+                            <p:column colspan="2" headerText="Años" />
+                        </p:row>
+                        <p:row>
+                            <p:column  headerText="Desde" />
+                            <p:column  headerText="Hasta" />
+                        </p:row>
+                    </p:columnGroup>
+                    <p:column  style="text-align: center; width: 3%" >
+                        <h:outputText value="#{pt.multiploImpuestoPredial}"><f:convertNumber pattern="##############.####" locale="us"/></h:outputText>
+                    </p:column>
+                    <p:column  style="text-align: center; width: 3%" >
+                        <h:outputText value="#{pt.anioInicio}"/>
+                    </p:column>
+                    <p:column  style="text-align: center; width: 3%" >
+                        <h:outputText value="#{pt.anioFin}"/>
+                    </p:column>
+
+                </p:dataTable>
+                <br></br>
+                <center>
+                    <p:commandButton value="Aceptar" actionListener="#{avaluosPrediales.definirBaseImpositivaPorParroquiaSectorMz(null)}" oncomplete="PF('dlgDefinirBase').hide()" styleClass="btnStyle">
+                        <p:confirm header="Confirmación " message="Esta Seguro de Continuar? "/>
+                    </p:commandButton>
+                    <p:spacer height="5px"/>
+                    <p:commandButton value="Cancelar" oncomplete="PF('dlgDefinirBase').hide()" styleClass="btnStyle"/>
+                </center>
+            </h:form>
+        </p:dialog>
+
+
+        <p:dialog header="Detalle del calculo" widgetVar="dlgRecalculo" resizable="false" closeOnEscape="true" modal="true" width="60%" appendTo="@(body)">
+            <h:form id="frmRecalculo">
+                <p:panelGrid styleClass="noBorder" columns="4" layout="grid">
+                    <p:outputLabel value="Avaluo Solar :" style="font-size: 14px;font-weight: bolder;"/>
+                    <h:outputText value="# {avaluosPrediales.valoracion.avaluoSolar}" />
+                    <p:outputLabel value="Avaluo Construccion :" style="font-size: 14px;font-weight: bolder;"/>
+                    <h:outputText value="# {avaluosPrediales.valoracion.avaluoEdificacion}" />
+                    <p:outputLabel value="Avaluo Municipal:" style="font-size: 14px;font-weight: bolder;"/>
+                    <h:outputText value="# {avaluosPrediales.valoracion.avaluoMunicipal}" />
+                    <p:outputLabel value="Impuesto predial :" style="font-size: 14px;font-weight: bolder;"/>
+                    <h:outputText value="# {avaluosPrediales.valoracion.ipAct}" />
+                    <p:outputLabel value="Tasa mantenimiento :" style="font-size: 14px;font-weight: bolder;"/>
+                    <h:outputText value="# {avaluosPrediales.valoracion.tasaMant}" />
+                    <p:outputLabel value="Bomberos :" style="font-size: 14px;font-weight: bolder;"/>
+                    <h:outputText value="# {avaluosPrediales.valoracion.rbAct}" />
+                    <p:outputLabel value="Recargo solar no edificado :" style="font-size: 14px;font-weight: bolder;"/>
+                    <h:outputText value="# {avaluosPrediales.valoracion.sneAct}" />
+                    <p:outputLabel value="Banda Impositiva :" style="font-size: 14px;font-weight: bolder;"/>
+                    <h:outputText value="# {avaluosPrediales.valoracion.bandaImpositiva}" />
+                    <p:outputLabel value="Factor Correlacion :" style="font-size: 14px;font-weight: bolder;"/>
+                    <h:outputText value="# {avaluosPrediales.valoracion.factCorrelacion}" />
+                    <p:outputLabel value="Valor M2 :" style="font-size: 14px;font-weight: bolder;"/>
+                    <h:outputText value="# {avaluosPrediales.valoracion.valorM2Subsector}" />
+                    <p:outputLabel value="Factor geometrico :" style="font-size: 14px;font-weight: bolder;"/>
+                    <h:outputText value="# {avaluosPrediales.valoracion.factGeometrico}" />
+                </p:panelGrid>
+                <center>
+                    <p:commandButton value="Actualizar Predio" actionListener="# {avaluosPrediales.actualizarPredio()}" oncomplete="PF('dlgRecalculo').hide()" styleClass="btnStyle"/>
+                    <p:commandButton value="Emitir avaluo" actionListener="# {avaluosPrediales.emitirAvaluo()}" oncomplete="PF('dlgRecalculo').hide()" styleClass="btnStyle"/>
+                </center>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog >
+
+        </p:dialog>
+
+
+    </ui:define>
+</ui:composition>

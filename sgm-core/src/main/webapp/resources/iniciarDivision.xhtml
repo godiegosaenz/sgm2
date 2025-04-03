@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>Division de Predio</title>
+    </h:head>
+    <h:body>
+        <h:outputStylesheet name="css/font-icon-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/sentinel-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/core-layout.css" library="sentinel-layout" />
+        <script src="#{appConfig.urlbase}resources/js/app.js" ></script>
+        <p:growl autoUpdate="true" globalOnly="true" life="1000" />
+        <h:form id="frmDivPredio">
+            <p:panel id="pnlPredioMt">
+                <p:panelGrid layout="grid" columns="2">
+                    <h:panelGroup layout="block" >
+                        <h:outputLabel value="Clave Catastral" class="DispBlock Wid100 FontBold"/>
+                        <p:inputText value="#{iniciarDivision.predio.claveCat}" readonly="true"/>
+                    </h:panelGroup>
+                    <h:panelGroup layout="block" >
+                        <h:outputLabel value="Tipo de Predio" class="DispBlock Wid100 FontBold"/>
+                        <p:inputText value="URBANO" rendered="#{iniciarDivision.predio.tipoPredio == 'U'}" readonly="true"/>
+                        <p:inputText value="RURAL" rendered="#{iniciarDivision.predio.tipoPredio == 'R'}" readonly="true"/>
+                    </h:panelGroup>
+                    <h:panelGroup layout="block" >
+                        <h:outputLabel value="Área Solar censo" class="DispBlock Wid100 FontBold"/>
+                        <p:inputText value="#{iniciarDivision.predio.areaSolar}" readonly="true"/>
+                    </h:panelGroup>
+                    <h:panelGroup layout="block" >
+                        <h:outputLabel value="Área Grafica Lote" class="DispBlock Wid100 FontBold"/>
+                        <p:inputText value="#{iniciarDivision.predio.catPredioS4.areaGraficaLote}" readonly="true"/>
+                    </h:panelGroup>
+                </p:panelGrid>
+            </p:panel>
+            <p:dataTable id="dtPrediosResult" reflow="true" paginator="true" rows="20" rowsPerPageTemplate="20,50,100" filterEvent="enter" widgetVar="pts"
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         value="#{iniciarDivision.division.predios}" var="pdv1" emptyMessage="No se encontró ningún Item">
+                <p:column headerText="Código Único" style="text-align: center" filterStyle="width: 80%;" >
+                    <!--<h:outputText value="# {pdv1.ciuPrimerNombre}"/>-->
+                </p:column>
+                <p:column headerText="Clave catastral Generada" style="text-align: center;width: 20%" filterStyle="width: 80%;">
+                    <h:outputText value="#{pdv1.codigoNuevo}" style="text-align: center; font-size: 12px"/>
+                </p:column>
+                <p:column headerText="Área" style="text-align: center" filterStyle="width: 80%;">
+                    <h:outputText value="#{pdv1.area}"/>
+                </p:column>
+                <p:column headerText="Número de División" style="text-align: center" filterStyle="width: 80%;">
+                    <h:outputText value="#{pdv1.numeracion}"/>
+                </p:column>
+            </p:dataTable>
+            <center>
+                <p:commandButton value="Iniciar Trámite" actionListener="#{iniciarDivision.iniciarTramite()}"/>
+                <p:spacer width="15"/>
+                <p:commandButton value="Cancelar" actionListener="#{iniciarDivision.iniciarTramite()}"/>
+                
+            </center>
+        </h:form>
+    </h:body>
+</html>
+

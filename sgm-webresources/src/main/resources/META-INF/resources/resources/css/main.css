@@ -1,0 +1,308 @@
+/*
+    Document   : main
+    Created on : Feb 8, 2012, 3:55:23 PM
+    Author     : Fernando
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/*
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+/*.ui-widget, .ui-widget .ui-widget {
+    font-size: 90% !important;
+}*/
+
+.ui-widget, .ui-widget .ui-widget {
+    font-size: 0.98em;
+}
+
+/*.ui-inputtext {
+    height: 14px;
+}*/
+
+
+a.sis_link{
+    margin: 5px;
+    color:#009999;
+    text-decoration: underline;
+    font-weight: bolder;
+}
+
+h1{
+
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 14pt;
+    color: #006699;
+    font-weight: bold;
+    margin-right: 8px;
+    margin-left: 8px;
+    margin-bottom: 8px;
+    margin-top: 8px;
+    padding-right: 2px;
+    padding-left: 2px;
+    padding-bottom: 2px;
+    padding-top: 2px;
+}
+
+h2{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12pt;
+    color: #006699;
+    font-weight: bold;
+    margin-right: 4px;
+    margin-left: 8px;
+    margin-bottom: 1px;
+    margin-top: 1px;
+    padding-right: 1px;
+    padding-left: 1px;
+    padding-bottom: 1px;
+    padding-top: 1px;
+}
+
+body {
+    /*color: #616161;*/
+    font-size: 12px;
+    margin: 0;
+    padding: 0;
+}
+
+#logo {
+    height: 40px;
+    margin: 0 auto;
+    padding: 25px 10px 0;
+    width: 960px;
+}
+
+#content {
+    margin: 0 auto;
+    padding: 0;
+    width: 960px;
+
+
+}
+
+#tmpl_menu {
+    margin: 0 auto;
+    padding: 0;
+    width: 960px;
+}
+
+#tmpl_footer {
+
+    width: 100%;
+}
+
+.ui-accordion .ui-accordion-content {
+    padding: 3px;
+}
+
+.franjaDatos {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.panelGrid_TopAlign>tbody>tr>td {
+    vertical-align: top;
+}
+
+
+
+
+
+#boton_icono_doctores {
+    background-image: url(/megadental/imgs/IconoDoctores.png) ;
+    background-repeat: no-repeat;
+    width: 100px;
+    height: 100px;
+}
+#boton_icono_doctores > .ui-icon {
+    background-image:none;
+}
+
+#boton_icono_auxiliares {
+    background-image: url(/megadental/imgs/iconoAuxiliar.png) ;
+    background-repeat: no-repeat;
+    width: 100px;
+    height: 100px;
+}
+#boton_icono_auxiliares > .ui-icon {
+    background-image:none;
+}
+
+#boton_icono_administrativo {
+    background-image: url(/megadental/imgs/iconoAdministrativo.png) ;
+    background-repeat: no-repeat;
+    width: 100px;
+    height: 100px;
+}
+#boton_icono_administrativo > .ui-icon {
+    background-image:none;
+}
+
+#boton_icono_paciente {
+    background-image: url(/megadental/imgs/iconoPaciente.png) ;
+    background-repeat: no-repeat;
+    width: 100px;
+    height: 100px;
+}
+#boton_icono_paciente > .ui-icon {
+    background-image:none;
+}
+
+#boton_icono_catalogo {
+    background-image: url(/megadental/imgs/iconoCatalogo.png) ;
+    background-repeat: no-repeat;
+    width: 100px;
+    height: 100px;
+}
+#boton_icono_catalogo > .ui-icon {
+    background-image:none;
+}
+
+#boton_icono_empresas {
+    background-image: url(/megadental/imgs/iconoEmpresas.png) ;
+    background-repeat: no-repeat;
+    width: 100px;
+    height: 100px;
+}
+#boton_icono_empresas > .ui-icon {
+    background-image:none;
+}
+
+
+.home-boton{
+    width: 128px;
+
+    margin-right: 5px;
+    margin-left: 5px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+.home-boton a{
+    text-decoration-line:cancel-underline;
+}
+.home-boton-link{
+    width: 128px;
+
+}
+
+.home-boton-link .home-boton-content{
+    width: 128px;
+    padding-right: 4px;
+    padding-left: 4px;
+    padding-bottom: 4px;
+    padding-top: 4px;
+}
+
+.home-boton-link .home-boton-leyenda {
+    width: 100%;
+    text-align: center;
+
+    text-decoration-line:cancel-underline;
+}
+
+.noBorder tr,.noBorder td{
+    border: none !important;
+    border-style: none !important;
+}
+
+.DlgCSS {
+    background-image: none;
+    background-color: red;
+}
+.green{
+    background-color: #7FFF00 !important;
+    background-image: none !important;
+    color: #FFFFFF !important;
+    font-weight: bolder;
+    font-size: 12px;
+    opacity: 0.7;
+}
+.red{
+    background-color: #FF3336;
+    background-image: none !important;
+    color: #000000 !important;
+    font-weight: bolder;
+    font-size: 14px;
+    opacity: 0.7;
+}
+
+.blue-grad{
+    background-color: rgb(84, 132, 237);
+    background-image: none !important;
+    color: #FFFFFF !important;
+    font-weight: bolder;
+}
+
+.lblue-grad{
+    background-color: rgb(164, 189, 252);
+    background-image: none !important;
+    color: #000000 !important;
+    font-weight: bolder;
+}
+
+.real-bird-grad{
+    background-color: rgb(70, 214, 219);
+    background-image: none !important;
+    color: #000000 !important;
+    font-weight: bolder;
+}
+
+.purple-grad{
+    background-color: rgb(219, 173, 255);
+    background-image: none !important;
+    color: #000000 !important;
+    font-weight: bolder;
+}
+
+.red-grad{
+    background-color: rgb(220, 33, 39);
+    background-image: none !important;
+    color: #FFFFFF !important;
+    font-weight: bolder;
+}
+
+.green-grad{
+    background-color: rgb(81, 183, 73);
+    background-image: none !important;
+    color: #FFFFFF !important;
+    font-weight: bolder;
+}
+
+.btnStyle{
+    font-weight: bold !important;
+    color: #ffffff !important;
+    background: #616161 !important;
+}
+.orange{
+    background-color: #FF9966;
+    background-image: none !important;
+    color: #000000 !important;
+    font-weight: bolder;
+}
+
+.headerWhite{
+    background: #ffffff !important;
+    border-top-color: #ffffff !important;
+    border-right-color: #ffffff !important;
+    border-left-color: #ffffff !important;
+    border-bottom-color: #d7d7d7 !important;
+}
+
+btnAgrPro{
+    color: #0033FF !important;
+    font-weight: bold;
+    float: right;
+    font-size: 14px;
+}
+
+.lbStyle{
+    font-weight: bolder !important;
+    color: red !important;
+    font-size: 20px !important;
+}
+

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:comp="http://java.sun.com/jsf/composite/dialog"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:form id="frmEdificaciones">
+
+        <style>
+            datatable tbody td {
+                border-color: inherit;
+                font-size: 11px;
+            }
+            .ui-datatable-even {
+                background: #ece3a5;
+            }
+        </style>
+        <p:tabView id="tvEdificaciones">
+            <p:growl id="msgsfrmEdificaciones" showDetail="true"  />
+            <p:tab id="edif" title="5.1 - 5.2 Caracteristicas de la Edificación">
+                <div align="right">
+                    <p:commandButton id="btnAgregarBloque" value="Agregar Bloque" actionListener="#{fichaPredial.bloque(null)}"
+                                     rendered="#{fichaPredial.editable}">
+                        <p:ajax event="dialogReturn" listener="#{fichaPredial.procesarBloque}" update="tdatos:frmEdificaciones:tvEdificaciones:dtBloques"  />
+                    </p:commandButton>
+                </div>
+                <p:dataTable value="#{fichaPredial.bloques}" var="bq1" paginator="true"
+                             paginatorAlwaysVisible="false" paginatorPosition="top"  rows="10"
+                             rowsPerPageTemplate="5, 10, 20, 30" id="dtBloques" emptyMessage="No se encontraron registros">
+                    <p:column headerText="Num. bloque" >
+                        <p:outputLabel value="#{bq1.noEdificacion}"/>
+                    </p:column>
+                    <p:column headerText="Num. pisos">
+                        <p:outputLabel value="#{bq1.numPisos}"/>
+                    </p:column>
+                    <p:column headerText="Condición fisica">
+                        <p:outputLabel value="#{bq1.condicionFisica.valor}"/>
+                    </p:column>
+                    <p:column headerText="Valor Cultural">
+                        <p:outputLabel value="#{bq1.valorCultural.valor}"/>
+                    </p:column>
+                    <p:column headerText="Estado Conservación">
+                        <p:outputLabel value="#{bq1.estadoConservacion.valor}"/>
+                    </p:column>
+                    <p:column headerText="Uso Construc.">
+                        <p:outputLabel value="#{bq1.usoConstructivoPiso.valor}"/>
+                    </p:column>
+                    <p:column headerText="Área Bloque" rendered="#{!appConfig.mainConfig.fichaPredial.areaConstruccion}" >
+                        <p:outputLabel value="#{bq1.areaBloque}"/>
+                    </p:column>
+                    <p:column headerText="Área de Construción" rendered="#{appConfig.mainConfig.fichaPredial.areaConstruccion}" >
+                        <p:outputLabel value="#{bq1.areaConsCenso}">
+                            <f:convertNumber pattern="#0.000" />
+                        </p:outputLabel>
+                    </p:column>
+                    <p:column headerText="Opciones">
+                        <p:commandLink title="Editar bloque" actionListener="#{fichaPredial.bloque(bq1)}" rendered="#{fichaPredial.editable}">
+                            <p:graphicImage value="/css/homeIconsImages/edicion.png" width="20" height="20"/>
+                            <p:ajax event="dialogReturn" listener="#{fichaPredial.procesarBloque}" update="tdatos:frmEdificaciones:tvEdificaciones:dtBloques"  />
+                        </p:commandLink>
+                        <p:commandLink title="Ver bloque" action="#{fichaPredial.bloque(bq1)}" actionListener="#{fichaPredial.setVer(true)}">
+                            <p:graphicImage value="/css/homeIconsImages/abrir.png" width="20" height="20"/>
+                        </p:commandLink>
+<!--                        <p:commandLink title="Eliminar Bloque" action="#{fichaPredial.setObjectoEliminar(bq1)}" rendered="#{fichaPredial.editable and appConfig.mainConfig.fichaPredial.mostrarPorcentajeEdificacion}"
+                                       update="tdatos:frmEdificaciones:tvEdificaciones:dtBloques" actionListener="#{fichaPredial.observacionesEliminar(4)}">
+                            <p:graphicImage value="/css/homeIconsImages/delete.png" width="20" height="20"/>
+                        </p:commandLink>-->
+                        <p:commandLink title="Eliminar bloque" action="#{fichaPredial.setObjectoEliminar(bq1)}" rendered="#{fichaPredial.editable}"
+                                       update="tdatos:frmEdificaciones:tvEdificaciones:dtBloques" actionListener="#{fichaPredial.eliminarBloque(bq1)}">
+                            <p:graphicImage value="/css/homeIconsImages/delete.png" width="20" height="20"/>
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+            </p:tab>
+            <p:tab title="5.3 Cerramientos">
+                <div align="right">
+                    <p:remoteCommand name="rc3" actionListener="#{fichaPredial.guardarCaracteristicas(fichaPredial.caracteristicas)}"  rendered="#{fichaPredial.editable}" update="msgsfrmEdificaciones"/>
+                    <p:commandButton id="btnS3_2" value="Guardar"  icon="ui-icon-disk" update="frmSubirDocumentosDialog"
+                                     actionListener="#{fichaPredial.openDialog}" process="@form" action="#{fichaPredial.setRemotteCommand('rc3')}" rendered="#{fichaPredial.editable}"/>
+
+                </div>
+                <ui:include src="_seccion-cerramientos_Libertad.xhtml" />
+
+            </p:tab>
+            <p:tab title="5.4 Detalle de Piezas Sanitarias, Medidores, Conexiones Domiciliarias">
+                <div align="right">
+                    <p:remoteCommand name="rc4" actionListener="#{fichaPredial.guardarServicios(fichaPredial.servicios, fichaPredial.vias, fichaPredial.instalacionesEspeciales, null)}" rendered="#{fichaPredial.editable}" update="msgsfrmEdificaciones"/>
+                    <p:commandButton id="btnS4" value="Guardar" icon="ui-icon-disk"
+                                     actionListener="#{fichaPredial.openDialog}"  process="@form" action="#{fichaPredial.setRemotteCommand('rc4')}" update="frmSubirDocumentosDialog" rendered="#{fichaPredial.editable}"/>
+
+                </div>
+                <p:fieldset legend="Detalles de piezas sanitarias en el interior" toggleable="true" class="MarBot10">
+                    <h:panelGrid columns="3" style="width: 100%">
+                        <comp:decorateForm id="sani1" label="Economicas:" bind="#{fichaPredial.predio.extras.exSanitariaEconomica}"
+                                           integerValidate="true" />
+
+                        <comp:decorateForm id="sani2" label="Medias:" bind="#{fichaPredial.predio.extras.exSanitariaMedia}"
+                                           integerValidate="true" />
+
+                        <comp:decorateForm id="sani3" label="Lujo:" bind="#{fichaPredial.predio.extras.exSanitariaLujo}"
+                                           integerValidate="true" />
+                    </h:panelGrid>
+                </p:fieldset>
+                <p:fieldset legend="Detalles de conexiones al predio" toggleable="true" class="MarBot10">
+                    <h:panelGrid columns="4" style="width: 100%">
+                        <h:outputText value="Agua Potable :" style="font-weight: bolder"/>
+                        <p:selectBooleanCheckbox  value="#{fichaPredial.servicios.extras.aguaConexion}"/>
+                        <h:outputText value="Alcantarillado :" style="font-weight: bolder"/>
+                        <p:selectBooleanCheckbox  value="#{fichaPredial.servicios.extras.alcantarilladoDetConexion}"/>
+                        <h:outputText value="Energía eléctrica :" style="font-weight: bolder"/>
+                        <p:selectBooleanCheckbox value="#{fichaPredial.servicios.extras.energiaConexion}"/>
+                        <h:outputText value="TV Cable :" style="font-weight: bolder"/>
+                        <p:selectBooleanCheckbox id="tvpagadas" value="#{fichaPredial.servicios.tvPag}"/>
+                        <h:outputText value="Internet :" style="font-weight: bolder"/>
+                        <p:selectBooleanCheckbox id="internet" value="#{fichaPredial.servicios.tieneInternet}"/>
+                        <h:outputText value="Gas :" style="font-weight: bolder"/>
+                        <p:selectBooleanCheckbox id="telfSat" value="#{fichaPredial.servicios.extras.gasConexion}"/>
+                    </h:panelGrid>
+                </p:fieldset>
+                <p:fieldset legend="Detalles de medidores en el predio" toggleable="true" class="MarBot10">
+                    <h:panelGrid columns="4" style="width: 100%">
+                        <comp:decorateForm id="cant_med_energia" label="Nro medidores de Energía:"
+                                           bind="#{fichaPredial.servicios.extras.cantMedidorEnergia}"
+                                           integerValidate="true" />
+                        <comp:decorateForm id="cant_med_agua" label="Nro medidores de Agua"
+                                           bind="#{fichaPredial.servicios.extras.cantMedidorAgua}"
+                                           integerValidate="true" />
+
+                    </h:panelGrid>
+                </p:fieldset>
+
+
+
+            </p:tab>
+        </p:tabView>
+    </h:form>
+    <ui:include src="_formCerramientoLibertad.xhtml" />
+</html>

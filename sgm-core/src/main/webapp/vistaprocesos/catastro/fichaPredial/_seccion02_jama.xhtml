@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:comp="http://java.sun.com/jsf/composite/dialog">
+
+    <ui:composition>
+        <h:form id="frmTenencia">
+            <p:growl id="msgsfrmTenencia" showDetail="true" />
+            <div align="right">
+                <p:remoteCommand name="rc2" actionListener="#{fichaPredial.guardarDatosPredio('ACTUALIZACION DE IDENTIFICACION LEGAL', fichaPredial.informante)}" rendered="#{fichaPredial.editable}" update="msgsfrmTenencia"/>
+                <p:commandButton id="btnS2" value="Guardar"
+                                 icon="ui-icon-disk"  actionListener="#{fichaPredial.openDialog}"
+                                 process="tdatos:frmTenencia" action="#{fichaPredial.setRemotteCommand('rc2')}" update="frmSubirDocumentosDialog" rendered="#{fichaPredial.editable}"/>
+            </div>
+            <p:fieldset legend="Tenencia" class="MarBot10">
+                <h:panelGrid columns="3" style="width: 100%">
+                    <h:panelGroup layout="block">
+                        <p:outputLabel for="tenencia" value="Tenencia:" class="DispBlock Wid100 FontBold" />
+                        <p:selectOneMenu id="tenencia" value="#{fichaPredial.predio.propiedad}" effect="fade" converter="entityConverter" styleClass="selectWidth170">
+                            <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+                            <f:selectItems value="#{fichaPredial.tiposPropiedad}" var="propiedad" itemLabel="#{propiedad.nombre}" itemValue="#{propiedad}"/>
+                        </p:selectOneMenu>
+                    </h:panelGroup>
+                    <h:panelGroup>
+                        <p:outputLabel value="Forma de Adquisición:" class="DispBlock Wid100 FontBold" />
+                        <p:selectOneMenu value="#{fichaPredial.predio.formaAdquisicion}" effect="fade" converter="entityConverter" disabled="#{!userSession.isAdmin}" >
+                            <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+                            <f:selectItems value="#{fichaPredial.getListado('predio.formaadquisicion')}" var="fa" itemLabel="#{fa.valor}" itemValue="#{fa}"/>
+                        </p:selectOneMenu>
+                    </h:panelGroup>
+                </h:panelGrid>
+            </p:fieldset>
+            <p:fieldset legend="Predio Sin Título" class="MarBot10">
+                <h:panelGrid columns="3" style="width: 100%">
+                    <h:panelGroup layout="block">
+                        <h:outputText value="Requiere Perfeccionamiento :" class="DispBlock Wid100 FontBold"/>
+                        <p:selectOneMenu value="#{fichaPredial.predio.requierePerfeccionamiento}" effect="fade" styleClass="selectWidth170">
+                            <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+                            <f:selectItem itemLabel="Si" itemValue="#{true}"/>
+                            <f:selectItem itemLabel="No" itemValue="#{false}"/>
+                        </p:selectOneMenu>
+                    </h:panelGroup>
+
+                    <comp:decorateForm id="anio_perfec" label="Años sin Perfeccionamiento :"
+                                       bind="#{fichaPredial.predio.aniosSinPerfeccionamiento}" integerValidate="true" />
+
+                    <comp:decorateForm id="anio_posecion" label="Años en Posesión :"
+                                       bind="#{fichaPredial.predio.aniosPosesion}" integerValidate="true" />
+
+                    <comp:decorateForm id="nombre_pueblo" label="Nombre Pueblo/Etnia :"
+                                       bind="#{fichaPredial.predio.nombrePuebloEtnia}" />
+
+                    <comp:compInputSelect id="predio-tipo_poseedor" label="Tipo de Poseedor:"
+                                          catalogo="predio-tipo_poseedor" defaultValue="2"
+                                          bind="#{fichaPredial.predio.tipoPoseedor}"
+                                          next="tdatos:frmPropietarios:btn_2"/>
+                </h:panelGrid>
+            </p:fieldset>
+        </h:form>
+        <h:form id="frmPropietarios">
+            <p:fieldset legend="Propietario / Poseedor / Posesionario" class="MarBot10" toggleable="true">
+                <div align="right">
+                    <p:commandButton value="Agregar Propietario" iconPos="ui-icon-person" actionListener="#{fichaPredial.propietario(null, false)}" styleClass="btnStyle" id="btn_2"
+                                     rendered="#{fichaPredial.editable}" update="tdatos:frmPropietarios:dtPropietarios">
+                        <p:ajax event="dialogReturn" listener="#{fichaPredial.procesarPropietario}" update="tdatos:frmPropietarios:dtPropietarios"  />
+                    </p:commandButton>
+                </div>
+                <p:dataTable id="dtPropietarios"  value="#{fichaPredial.propietarios}" var="pp" reflow="true" paginator="true" rows="5" paginatorPosition="top" style="width: 100%">
+                    <p:column headerText="Tipo">
+                        <h:outputText value="#{pp.tipo.valor}"/>
+                    </p:column>
+                    <p:column headerText="DNI">
+                        <h:outputText value="#{pp.ente.ciRuc}"/>
+                    </p:column>
+                    <p:column headerText="Descripcion">
+                        <h:outputText value="#{pp.ente.apellidos} #{pp.ente.nombres}" rendered="#{pp.ente.esPersona}" style="text-transform: uppercase"/>
+                        <h:outputText value="#{pp.ente.razonSocial}" rendered="#{!pp.ente.esPersona}" style="text-transform: uppercase"/>
+                    </p:column>
+                    <p:column headerText="Accion" style="text-align: center" rendered="#{fichaPredial.editable}">
+                        <p:commandLink value="Editar" actionListener="#{fichaPredial.propietario(pp)}" >
+                            <p:ajax event="dialogReturn" listener="#{fichaPredial.procesarPropietario}" update="tdatos:frmPropietarios"/>
+                        </p:commandLink>
+                        <p:spacer width="10"/>
+                        <p:commandLink value="Quitar" actionListener="#{fichaPredial.eliminarPropietario(pp)}" update="dtPropietarios" partialSubmitFilter="true" >
+                            <p:ajax update="dtPropietarios"/>
+                        </p:commandLink>
+                    </p:column>
+                    <p:column headerText="Accion" style="text-align: center" rendered="#{!fichaPredial.editable}">
+                        <p:commandLink value="Ver" actionListener="#{fichaPredial.propietario(pp)}" >
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+
+            </p:fieldset>
+            <p:fieldset legend="Propietario Anterior" class="MarBot10" toggleable="true">
+                <div align="right">
+                    <p:commandButton value="Agregar Propietario Anterior" iconPos="ui-icon-person" actionListener="#{fichaPredial.propietario(null, true)}" styleClass="btnStyle" id="btn_2_1"
+                                     rendered="#{fichaPredial.editable}" update="tdatos:frmPropietarios:dtPropietariosAnterior">
+                        <p:ajax event="dialogReturn" listener="#{fichaPredial.procesarPropietarioAnterior}" update="tdatos:frmPropietarios:dtPropietariosAnterior"/>
+                    </p:commandButton>
+                </div>
+                <p:dataTable id="dtPropietariosAnterior"  value="#{fichaPredial.propietariosAnteriores}" var="pp" reflow="true" paginator="true" rows="5" paginatorPosition="top" style="width: 100%">
+                    <p:column headerText="Tipo de Persona">
+                        <h:outputText value="NATURAL" rendered="#{pp.ente.esPersona}" style="text-transform: uppercase"/>
+                        <h:outputText value="JURIDICA" rendered="#{!pp.ente.esPersona}" style="text-transform: uppercase"/>
+                    </p:column>
+                    <p:column headerText="DNI">
+                        <h:outputText value="#{pp.ente.ciRuc}"/>
+                    </p:column>
+                    <p:column headerText="Descripcion">
+                        <h:outputText value="#{pp.ente.apellidos} #{pp.ente.nombres}" rendered="#{pp.ente.esPersona}" style="text-transform: uppercase"/>
+                        <h:outputText value="#{pp.ente.razonSocial}" rendered="#{!pp.ente.esPersona}" style="text-transform: uppercase"/>
+                    </p:column>
+                    <p:column headerText="Accion" style="text-align: center" rendered="#{fichaPredial.editable}">
+                        <p:commandLink value="Editar" actionListener="#{fichaPredial.propietario(pp)}" >
+                            <p:ajax event="dialogReturn" listener="#{fichaPredial.procesarPropietarioAnterior}" update="tdatos:frmPropietarios"/>
+                        </p:commandLink>
+                        <p:spacer width="10"/>
+                        <p:commandLink value="Quitar" actionListener="#{fichaPredial.eliminarPropietarioAnterior(pp)}" update="dtPropietariosAnterior" partialSubmitFilter="true" >
+                            <p:ajax update="dtPropietariosAnterior"/>
+                        </p:commandLink>
+                    </p:column>
+                    <p:column headerText="Accion" style="text-align: center" rendered="#{!fichaPredial.editable}">
+                        <p:commandLink value="Ver" actionListener="#{fichaPredial.propietario(pp)}" >
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+
+            </p:fieldset>
+        </h:form>
+
+    </ui:composition>
+</html>

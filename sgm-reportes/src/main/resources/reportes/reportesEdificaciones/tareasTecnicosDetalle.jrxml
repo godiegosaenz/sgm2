@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="tareasTecnicosDetalle" pageWidth="595" pageHeight="842" columnWidth="565" leftMargin="15" rightMargin="15" topMargin="15" bottomMargin="15" uuid="34e719b2-62c2-417c-9006-ff301dc3791d">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="LOGO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="tarea.assignee" class="java.lang.String"/>
+	<field name="tramite.correccion" class="java.lang.Long"/>
+	<field name="tramite.id" class="java.lang.Long"/>
+	<field name="tramite.nombrePropietario" class="java.lang.String"/>
+	<field name="tramite.fecha" class="java.util.Date"/>
+	<field name="tarea.createTime" class="java.util.Date"/>
+	<field name="tramite.tipoTramiteNombre" class="java.lang.String"/>
+	<sortField name="tarea.assignee"/>
+	<sortField name="tramite.correccion"/>
+	<group name="tecnico">
+		<groupExpression><![CDATA[$F{tarea.assignee}]]></groupExpression>
+		<groupHeader>
+			<band height="28">
+				<staticText>
+					<reportElement uuid="dbf547c8-b5e7-4a88-8172-ad267865ca0f" x="0" y="0" width="59" height="16"/>
+					<textElement verticalAlignment="Bottom">
+						<font size="11" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Tecnico:]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="db5e087d-969c-49a7-9f89-56151ea30718" x="59" y="0" width="158" height="16"/>
+					<textElement verticalAlignment="Bottom">
+						<font size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{tarea.assignee}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="42c38875-2994-48ce-bf5d-5aa28b26bf36" x="52" y="16" width="148" height="12"/>
+					<textElement verticalAlignment="Bottom">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[TramiteNombre]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="1f0ea411-cc0c-4c51-ba00-ac76407a8c39" x="200" y="16" width="139" height="12"/>
+					<textElement verticalAlignment="Bottom">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Solicitante]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="14b0a56d-dfa9-4cd2-bd0c-715fb1a8a57b" x="339" y="16" width="100" height="12"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Fecha Tramite]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="93f64977-6c45-40ac-b9dc-8790f41a1b09" x="439" y="16" width="100" height="12"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Fecha Tarea]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="f576bd5f-b110-460e-834f-fb67635e611a" x="0" y="16" width="52" height="12"/>
+					<textElement verticalAlignment="Bottom">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[N. Tramite]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="25">
+				<textField>
+					<reportElement uuid="9e59e88c-4a20-43d4-8150-08b29b3595b6" x="121" y="0" width="38" height="16"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{tecnico_COUNT}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="b7ba82c2-5013-4cf9-8cfb-9b1485fde69f" x="52" y="0" width="69" height="16"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total Tareas:]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="tipoTarea">
+		<groupExpression><![CDATA[$F{tramite.correccion}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="13">
+				<textField>
+					<reportElement uuid="08b58c59-8ed7-4f09-bed2-4e3288e6e9aa" x="121" y="0" width="38" height="13"/>
+					<textElement>
+						<font isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{tipoTarea_COUNT}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="4316c936-06b7-47cb-a9d7-20d2afdb1f09" x="40" y="0" width="81" height="13"/>
+					<textElement>
+						<font isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{tramite.correccion}==0L?"Sin Corrección: ":"Con Corrección: "]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="87357877-2da0-4872-83b5-31e2f1ea2019" x="0" y="0" width="40" height="13"/>
+					<textElement>
+						<font isBold="false"/>
+					</textElement>
+					<text><![CDATA[Tareas]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="56" splitType="Stretch">
+			<image>
+				<reportElement uuid="ceb978b5-4735-4a16-a49e-afa6be01c7b6" x="0" y="0" width="100" height="50"/>
+				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement uuid="2a8f8873-db51-48b7-8571-2eec346b3c92" mode="Opaque" x="100" y="0" width="465" height="16" backcolor="#CCCCCC"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Reporte: Tareas Tecnicos (Detalle) - Edificaciones]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e24ae8c4-e840-4feb-a007-7eb479fa2655" x="360" y="35" width="39" height="15"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy h.mm a">
+				<reportElement uuid="18618a56-14a5-462e-9a45-2e4d0e22c9d3" x="399" y="35" width="166" height="15"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="9" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="5" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="4442558a-c7b3-4d19-8934-841062035712" x="0" y="0" width="52" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tramite.id}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="83894539-676d-4d21-9961-0f8e813b46f1" x="52" y="0" width="148" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tramite.tipoTramiteNombre}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="b5396da7-009a-4f18-91cf-d177f1721506" x="200" y="0" width="139" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tramite.nombrePropietario}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="09b8e657-e239-4857-9c92-f6de6661aee4" x="339" y="0" width="100" height="12"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tramite.fecha}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="d455ca0c-04d3-48d8-8af4-c7b9bbac9099" x="439" y="0" width="100" height="12"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tarea.createTime}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="23" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="28" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

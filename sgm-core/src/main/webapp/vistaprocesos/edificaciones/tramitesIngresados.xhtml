@@ -1,0 +1,381 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:dialog="http://xmlns.jcp.org/jsf/composite/dialog">
+
+    <ui:define name="top">
+        <h1>TRAMITES INGRESADOS - EDIFICACIONES</h1>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="formTramEdif">
+            <p:dataTable id="dtTramites" reflow="true" paginator="true" lazy="true" rows="20" rowsPerPageTemplate="20,50,100" 
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         value="#{tramitesIngresadosEdif.tramites}" var="t" emptyMessage="No se encontró ningún Item." filterEvent="enter">
+                <p:column headerText="Num. Trámite" style="text-align: center;" filterBy="#{t.id}" sortBy="#{t.id}" width="150">
+                    <p:outputLabel value="#{t.id}"/>
+                </p:column>
+                <p:column headerText="Solicitante" style="text-align: center;" filterBy="#{t.nombrePropietario}" sortBy="#{t.nombrePropietario}" filterMatchMode="contains" filterStyle="width: 95%;">
+                    <p:outputLabel value="#{t.nombrePropietario}" style="text-transform: uppercase"/>
+                </p:column>
+                <p:column headerText="Tipo Trámite" style="text-align: center;" filterBy="#{t.tipoTramite.descripcion}" filterStyle="width: 95%;">
+                    <p:outputLabel value="#{t.tipoTramite.descripcion}" style="text-transform: uppercase"/>
+                </p:column>
+                <p:column headerText="Urbanización" style="text-align: center;" filterBy="#{t.urbanizacion.nombre}" filterStyle="width: 95%;" >
+                    <p:outputLabel value="#{t.urbanizacion.nombre}" style="text-transform: uppercase"/>
+                </p:column>
+                <p:column headerText="Mz" width="60" style="text-align: center;" filterBy="#{t.urbmz}" filterStyle="width: 95%;">
+                    <p:outputLabel value="#{t.urbmz}"/>
+                </p:column>
+                <p:column headerText="Solar" width="60" style="text-align: center;" filterBy="#{t.urbsolar}" filterStyle="width: 95%;">
+                    <p:outputLabel value="#{t.urbsolar}"/>
+                </p:column>
+                <p:column headerText="Estado" style="text-align: center;" filterBy="#{t.estado}" filterMatchMode="contains" width="110" filterStyle="width: 95%;">
+                    <p:outputLabel value="#{t.estado}" style="text-transform: uppercase"/>
+                </p:column>
+                <p:column headerText="Fecha Ingreso" style="text-align: center;" width="85">
+                    <p:outputLabel value="#{t.fecha}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column headerText="Tickets" width="60" style="text-align: center;">
+                    <p:commandLink actionListener="#{tramitesIngresadosEdif.ticket(t)}" title="#{t.id}">
+                        <p:graphicImage value="/css/homeIconsImages/reporte.png" height="16"/>   
+                    </p:commandLink>
+                </p:column>
+                <p:column headerText="Detalle" width="60" style="text-align: center;">
+                    <p:commandLink actionListener="#{tramitesIngresadosEdif.ver(t)}" title="#{t.id}">
+                        <p:graphicImage value="/css/homeIconsImages/abrir.png" height="16"/>   
+                    </p:commandLink>
+                </p:column>
+                <p:column headerText="ReAsig." width="60" style="text-align: center;" rendered="#{userSession.roles.contains(67)}">
+                    <p:commandLink actionListener="#{tramitesIngresadosEdif.reasignacion(t)}" title="#{t.id}">
+                        <p:graphicImage value="/css/homeIconsImages/user.png" height="16"/>
+                    </p:commandLink>
+                </p:column>
+                <p:column headerText="Prioridad" width="70" style="text-align: center;" rendered="#{userSession.roles.contains(67)}">
+                    <p:commandLink actionListener="#{tramitesIngresadosEdif.seleccionarTramite(t)}" title="#{t.id}" oncomplete="PF('editPrioridadTraDlg').show();" update="formEditPrioridadTra">
+                        <p:graphicImage value="/css/homeIconsImages/edicion.png" height="16"/>
+                    </p:commandLink>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+        
+        <p:dialog appendTo="@(body)" widgetVar="info" closeOnEscape="true" fitViewport="true" header="Informaci&#243;n" modal="true" id="dlgInfo" responsive="true" height="500" width="75%" resizable="false">
+            <h:form id="frmInfo">
+                <p:tabView dynamic="true" >
+                    <p:tab title="Informaci&#243;n - #{tramitesIngresadosEdif.hist.id}">
+                        <p:panelGrid columns="2" styleClass="noBorder" style="width: 100%;">
+                            <p:outputLabel value="N. Tramite: " style="font-weight: bolder;"/>
+                            <p:outputLabel value="#{tramitesIngresadosEdif.hist.id}"/>
+                            
+                            <p:outputLabel value="Solicitante: " style="font-weight: bolder;"/>
+                            <p:outputLabel value="#{tramitesIngresadosEdif.hist.nombrePropietario}"/>
+                            
+                            <p:outputLabel value="Correo: " style="font-weight: bolder;" rendered="#{tramitesIngresadosEdif.hist.correos ne null or (tramitesIngresadosEdif.hist.correos eq null and tramitesIngresadosEdif.hist.solicitante.enteCorreoCollection ne null and tramitesIngresadosEdif.hist.solicitante.enteCorreoCollection.size()>0)}"/>
+                            <p:outputLabel value="#{tramitesIngresadosEdif.hist.correos}" rendered="#{tramitesIngresadosEdif.hist.correos ne null}"/>
+                            <p:outputLabel value="#{tramitesIngresadosEdif.hist.solicitante.enteCorreoCollection.get(0).email}" rendered="#{tramitesIngresadosEdif.hist.correos eq null and tramitesIngresadosEdif.hist.solicitante.enteCorreoCollection ne null and tramitesIngresadosEdif.hist.solicitante.enteCorreoCollection.size()>0}"/>
+                            
+                            <p:outputLabel value="Telefono: " style="font-weight: bolder;" rendered="#{tramitesIngresadosEdif.hist.telefonos ne null or (tramitesIngresadosEdif.hist.telefonos eq null and tramitesIngresadosEdif.hist.solicitante.enteTelefonoCollection ne null and tramitesIngresadosEdif.hist.solicitante.enteTelefonoCollection.size()>0)}"/>
+                            <p:outputLabel value="#{tramitesIngresadosEdif.hist.telefonos}" rendered="#{tramitesIngresadosEdif.hist.telefonos ne null}"/>         
+                            <p:outputLabel value="#{tramitesIngresadosEdif.hist.solicitante.enteTelefonoCollection.get(0).telefono}" rendered="#{tramitesIngresadosEdif.hist.telefonos eq null and tramitesIngresadosEdif.hist.solicitante.enteTelefonoCollection ne null and tramitesIngresadosEdif.hist.solicitante.enteTelefonoCollection.size()>0}"/>
+
+                            <p:outputLabel value="Tipo Tr&#225;mite: " style="font-weight: bolder"/>
+                            <p:outputLabel value="#{tramitesIngresadosEdif.hist.tipoTramite.descripcion}"/>
+                            
+                            <p:outputLabel value="Estado Tr&#225;mite: " style="font-weight: bolder"/>
+                            <p:outputLabel value="#{tramitesIngresadosEdif.hist.estado}"/>
+                            
+                            <p:outputLabel value="Fecha Ingreso: " style="font-weight: bolder"/>
+                            <p:outputLabel value="#{tramitesIngresadosEdif.hist.fecha}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                            </p:outputLabel>
+                            
+                            <p:outputLabel value="N. Liquidación: " style="font-weight: bolder"/>
+                            <p:outputLabel value="#{tramitesIngresadosEdif.hist.numLiquidacion}"/>
+                            
+                            <p:outputLabel value="Valor Liquidación: " style="font-weight: bolder"/>
+                            <p:outputLabel value="#{tramitesIngresadosEdif.hist.valorLiquidacion}"/>
+                        </p:panelGrid>
+
+                    </p:tab >
+                    <p:tab title="Observaciones">
+                        <p:dataTable value="#{tramitesIngresadosEdif.hist.observacionesCollection}" var="sInfo" scrollable="true" paginator="true" paginatorPosition="top" scrollHeight="230"  >
+                            <p:column headerText="Usuario" width="15%">
+                                <p:outputLabel value="#{sInfo.userCre}"/>
+                            </p:column>
+                            <p:column headerText="Tarea"  width="30%">
+                                <p:outputLabel value="#{sInfo.tarea}"/>
+                            </p:column>
+                            <p:column headerText="Observaciones">
+                                <p:outputLabel value="#{sInfo.observacion}" rendered="#{!sInfo.tarea.startsWith('Documento')}"/>
+                                <p:panelGrid styleClass="noBorder" columns="4" rendered="#{sInfo.tarea.startsWith('Documento') and !userSession.roles.contains(99)}">
+                                    <p:outputLabel value="VER:"/>
+                                    <p:commandLink actionListener="#{tramitesIngresadosEdif.showDocument(sInfo.observacion)}">
+                                        <p:graphicImage value="/css/homeIconsImages/buscar.png" height="20"/>
+                                    </p:commandLink>
+                                    <p:outputLabel value="DESCARGAR:"/>
+                                    <p:commandLink actionListener="#{tramitesIngresadosEdif.descargarDocumento(sInfo.observacion)}">
+                                        <p:graphicImage value="/css/homeIconsImages/down.png"/>
+                                    </p:commandLink>
+                                </p:panelGrid>
+                            </p:column>
+                            <p:column headerText="Fecha" width="18%">
+                                <p:outputLabel value="#{sInfo.fecCre}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                                </p:outputLabel>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                    <p:tab title="Tareas">
+                        <p:dataTable value="#{tramitesIngresadosEdif.task}" var="task" scrollable="true" paginator="true" paginatorPosition="top" scrollRows="8" scrollHeight="230" rows="5">
+                            <p:column headerText="Tarea" width="50%">
+                                <p:outputLabel value="#{task.name}"/>
+                            </p:column>
+                            <p:column headerText="Asignado a" >
+                                <p:outputLabel value="#{task.assignee}" rendered="#{task.assignee ne null}"/>
+                            </p:column>
+                            <p:column headerText="Inicio" width="15%">
+                                <p:outputLabel value="#{task.startTime}" >
+                                    <f:convertDateTime pattern="dd/MM/YYYY"/>
+                                </p:outputLabel>
+                            </p:column>
+                            <p:column headerText="Fin" width="15%">
+                                <p:outputLabel value="#{task.endTime}">
+                                    <f:convertDateTime pattern="dd/MM/YYYY"/>
+                                </p:outputLabel>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                    <p:tab title="Documentos">
+                        <dialog:detalleArchivosAct archivos="#{tramitesIngresadosEdif.documentos}" />
+                    </p:tab>
+                    <p:tab title="Asociar Documentos">
+                        <p:messages autoUpdate="true" showDetail="true"/>
+                        <p:outputLabel value="En esta sección se pueden adjuntar Documentos al Tramite" style="font-weight: bold;"/>
+                        <p:panelGrid columns="2" styleClass="noBorder" style="width: 100%;">
+                            <p:outputLabel value="Restricciones para adjuntar Docs.:" style="font-weight: bold;"/>
+                            <p:outputLabel value="Detalle:" style="font-weight: bold;"/>
+                            
+                            <p:outputLabel value="1) Tramites del Dep. de Edificaciones"/>
+                            <p:outputLabel value="Tramite :#{tramitesIngresadosEdif.hist.id} - #{tramitesIngresadosEdif.hist.tipoTramiteNombre} - #{tramitesIngresadosEdif.hist.estado}"/>
+                            <p:outputLabel value="2) Tramites en Estado 'Pendiente'"/>
+                            <p:outputLabel value="Solicitante :#{tramitesIngresadosEdif.hist.nombrePropietario}"/>
+                            <p:outputLabel value="3) Usuarios Involucrados en el Tramite"/>
+                            <p:outputLabel value="FECHA: #{tramitesIngresadosEdif.hist.fecha}"/>
+                        </p:panelGrid>
+                        <p:fileUpload  fileUploadListener="#{tramitesIngresadosEdif.handleFileUpload}"
+                                       multiple="true" mode="advanced" fileLimit="6"
+                                       label="Seleccionar" cancelLabel="Cancelar"
+                                       uploadLabel="Subir" skinSimple="true"
+                                       update="dtDocumentos" sizeLimit="50000000" 
+                                       allowTypes="/(\.|\/)(gif|jpe?g|png|pdf|doc?x|xls?x|dwg|odt)$/"
+                                       rendered="#{tramitesIngresadosEdif.habilitado}"/>
+                        <p:dataTable id="dtDocumentos" value="#{tramitesIngresadosEdif.files}"
+                                     var="req" reflow="true"  emptyMessage="No adjunto ningun documento"
+                                     rendered="#{tramitesIngresadosEdif.habilitado}">
+                            <p:column headerText="Documentos" style="width: 75%;">
+                                <h:outputText value="#{req.nombre}" style="text-transform: uppercase;"/>
+                            </p:column>
+                        </p:dataTable>
+                        <br/>
+                        <center>
+                            <p:commandButton value="Cargar Documentos" styleClass="btnStyle" rendered="#{tramitesIngresadosEdif.habilitado}" actionListener="#{tramitesIngresadosEdif.cargarDocumento()}" update="frmInfo">
+                                <p:confirm header="Confirmacion" message="Cargar Documentos?" icon="ui-icon-alert" />
+                            </p:commandButton>
+                        </center>
+                    </p:tab>
+                    <p:tab title="Datos del solicitante">
+                        <center>
+                            <p:panelGrid styleClass="noBorder" style="width: 60%">
+                                <p:row>
+                                    <p:column>
+                                        <p:outputLabel value="Correo:" style="font-weight: bolder"/>
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText id="textCorreo" value="#{tramitesIngresadosEdif.emailNew}" size="40" placeholder="Ejemplo: correo@ejemplo.com"/>
+                                    </p:column>
+                                    <p:column>
+                                        <p:commandButton value="Agregar" icon="ui-icon-plus" actionListener="#{tramitesIngresadosEdif.agregarEmail()}"
+                                                         update="dtCorreos,textCorreo"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="3">
+                                        <p:dataTable id="dtCorreos" value="#{tramitesIngresadosEdif.listCorreos}" rows="5" var="cor" scrollable="true"
+                                                     scrollHeight="100">
+                                            <p:column headerText="Correos" style="text-align: center">
+                                                <p:outputLabel value="#{cor.email}"/>
+                                            </p:column>
+                                            <p:column headerText="Acción" style="text-align: center" width="70">
+                                                <p:commandLink value="Eliminar" style="font-weight: bolder;color: #0033FF" actionListener="#{tramitesIngresadosEdif.eliminarEmail(cor)}"
+                                                               update="dtCorreos"/>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <p:outputLabel value="Teléfono:" style="font-weight: bolder"/>
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText id="textTelf" value="#{tramitesIngresadosEdif.tlfnNew}" size="40" placeholder="Ejemplo: 045555555 ó 0988888888"/>
+                                    </p:column>
+                                    <p:column>
+                                        <p:commandButton value="Agregar" icon="ui-icon-plus" actionListener="#{tramitesIngresadosEdif.agregarTlfn()}"
+                                                         update="dtTelefonos,textTelf"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="3">
+                                        <p:dataTable id="dtTelefonos" value="#{tramitesIngresadosEdif.listTlfs}" var="tlf"  rows="5" scrollable="true"
+                                                     scrollHeight="100">
+                                            <p:column headerText="Teléfonos" style="text-align: center">
+                                                <p:outputLabel value="#{tlf.telefono}"/>
+                                            </p:column>
+                                            <p:column headerText="Acción" style="text-align: center" width="70">
+                                                <p:commandLink value="Eliminar" style="font-weight: bolder;color: #0033FF" actionListener="#{tramitesIngresadosEdif.eliminarTlfn(tlf)}"
+                                                               update="dtTelefonos"/>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        
+                            <p:commandButton id="botonDatosEnte" value="Guardar datos del ente" actionListener="#{tramitesIngresadosEdif.guardarDatosEnte}" update="frmInfo" rendered="#{tramitesIngresadosEdif.mostrarBoton}" styleClass="btnStyle"/>
+                        </center>
+                    </p:tab>
+                    
+                    <p:tab title="Estado de la liquidación">
+                        <p:dataTable value="#{tramitesIngresadosEdif.hist.renLiquidacionCollection}" rows="10" var="liq" emptyMessage="No ha sido generada ninguna liquidación">
+                            <p:column headerText="Fecha de ingreso" style="text-align: center">
+                                <h:outputText value="#{liq.fechaIngreso}" style="text-align: center"/>
+                            </p:column>
+                            
+                            <p:column headerText="Valor" style="text-align: center">
+                                <h:outputText value="#{liq.totalPago}" />
+                            </p:column>
+                            
+                            <p:column headerText="Estado" style="text-align: center">
+                                <h:outputText value="PAGADO" rendered="#{liq.estadoLiquidacion.id == 1}" />
+                                <h:outputText value="POR PAGAR" rendered="#{liq.estadoLiquidacion.id == 2}" />
+                                <h:outputText value="INACTIVO" rendered="#{liq.estadoLiquidacion.id == 3}" />
+                                <h:outputText value="DADO DE BAJA" rendered="#{liq.estadoLiquidacion.id == 4}" />
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                </p:tabView>
+                <br/>
+                <center>
+                    <p:commandButton value="Aceptar" oncomplete="PF('info').hide();" styleClass="btnStyle"/>
+                </center>
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                </p:confirmDialog>
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog appendTo="@(body)" widgetVar="reasignacion" closeOnEscape="true" fitViewport="true" header="Reasignación" modal="true" responsive="true" height="350" width="50%" resizable="false">
+            <h:form id="frmReasignacion">
+                <p:dataTable value="#{tramitesIngresadosEdif.task}" var="task" scrollable="true" paginator="true" paginatorPosition="top" scrollRows="8" scrollHeight="230" rows="7">
+                    <p:column headerText="Tarea" width="40%">
+                        <p:outputLabel value="#{task.name}"/>
+                    </p:column>
+                    <p:column headerText="Asignado a" >
+                        <p:outputLabel value="#{task.assignee}" rendered="#{task.assignee ne null}"/>
+                    </p:column>
+                    <p:column headerText="Inicio" width="15%">
+                        <p:outputLabel value="#{task.startTime}" >
+                            <f:convertDateTime pattern="dd/MM/YYYY"/>
+                        </p:outputLabel>
+                    </p:column>
+                    <p:column headerText="Fin" width="15%">
+                        <p:outputLabel value="#{task.endTime}">
+                            <f:convertDateTime pattern="dd/MM/YYYY"/>
+                        </p:outputLabel>
+                    </p:column>
+                    <p:column headerText="Reasignar" style="text-align: center;">
+                        <p:commandButton value="Reasignar" styleClass="btnStyle" icon="ui-icon-wrench" iconPos="s" rendered="#{task.endTime eq null}"
+                                         actionListener="#{tramitesIngresadosEdif.seleccionarTareaReasignacion(task)}" />
+                    </p:column>
+                </p:dataTable>
+                <br/>
+                <center>
+                    <p:commandButton value="Aceptar" oncomplete="PF('reasignacion').hide();" styleClass="btnStyle"/>
+                </center>
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog header="Roles - Usuarios (EDIFICACIONES)" widgetVar="usersDlg" modal="true" resizable="false" width="60%" closeOnEscape="true">
+            <h:form id="formUsers">
+                <p:outputLabel value="*Tarea: " style="font-weight: bold;"/>
+                <p:outputLabel value=" #{tramitesIngresadosEdif.tareaSeleccionada.name}"/>
+                <p:spacer width="25"/>
+                <p:outputLabel value="*Asignado: " style="font-weight: bold;"/>
+                <p:outputLabel value=" #{tramitesIngresadosEdif.tareaSeleccionada.assignee}"/>
+                <p:dataTable value="#{tramitesIngresadosEdif.departamento.aclRolCollection}" var="rol" style="width: 90%; margin: 0 auto;" scrollable="true" scrollHeight="330">
+                    <f:facet name="header">
+                        ROLS DEPARTAMENTO:
+                    </f:facet>
+                    <p:column style="width:30px">
+                        <p:rowToggler />
+                    </p:column>
+                    <p:column headerText="Nombre">
+                        <h:outputText value="#{rol.nombre}" />
+                    </p:column>
+                    <p:rowExpansion>
+                        <p:dataTable var="user" value="#{rol.aclUserCollection}" style="width: 90%; margin: 0 auto;" paginator="true" paginatorPosition="top" rows="5">
+                            <f:facet name="header">
+                                USUARIOS
+                            </f:facet>
+                            <p:column headerText="Usuario">
+                                <h:outputText value="#{user.usuario}" />
+                            </p:column>
+                            <p:column headerText="Nombres">
+                                <h:outputText value="#{user.ente.nombres} #{user.ente.apellidos}" />
+                            </p:column>
+                            <p:column headerText="Seleccionar">
+                                <p:commandButton value="Asignar" styleClass="btnStyle" icon="ui-icon-person" iconPos="s" actionListener="#{tramitesIngresadosEdif.reasignarTarea(user)}" rendered="#{user.sisEnabled}"
+                                                 oncomplete="PF('usersDlg').hide();" update=":frmReasignacion">
+                                    <p:confirm header="Confirmacion" message="Reasignar tarea?" icon="ui-icon-alert" />
+                                </p:commandButton>
+                            </p:column>
+                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                            </p:confirmDialog>
+                        </p:dataTable>
+                    </p:rowExpansion>
+                </p:dataTable>
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog header="Editar Prioridad Del Trámite" widgetVar="editPrioridadTraDlg" modal="true" resizable="false" closeOnEscape="true">
+            <h:form id="formEditPrioridadTra">
+                <p:outputLabel value="# Tramite: #{tramitesIngresadosEdif.hist.id}" style="font-weight: bold;"/>
+                <p:selectOneRadio value="#{tramitesIngresadosEdif.prioridad}" layout="pageDirection">
+                    <f:selectItem itemLabel="Alta" itemValue="100"/>
+                    <f:selectItem itemLabel="Normal" itemValue="50"/>
+                    <f:selectItem itemLabel="Baja" itemValue="20"/>
+                </p:selectOneRadio>
+                <center>
+                    <p:commandButton value="Guardar" styleClass="btnStyle" actionListener="#{tramitesIngresadosEdif.actualizarPrioridad}" oncomplete="PF('editPrioridadTraDlg').hide();">
+                        <p:confirm header="Confirmacion" message="Cambiar prioridad?" icon="ui-icon-alert" />
+                    </p:commandButton>
+
+                </center>
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                </p:confirmDialog>
+            </h:form>
+        </p:dialog>
+        
+    </ui:define>
+    
+</ui:composition>

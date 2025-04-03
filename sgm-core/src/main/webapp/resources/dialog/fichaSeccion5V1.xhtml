@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <!-- INTERFACE -->
+    <cc:interface componentType="seccionesFicha" >
+        <cc:attribute name="headerDialog"/>
+        <cc:attribute name="predio" type="com.origami.sgm.entities.CatPredio" required="true"/>
+        <cc:attribute name="predioant" type="com.origami.sgm.entities.CatPredio" required="true"/>
+    </cc:interface>
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <h:form id="frmSeccion5">
+            <p:tab id="s5" title="5. Escrituras">
+                <h:form id="frmEscrituras">
+
+                    <p:dataTable value="#{cc.attrs.predio.catEscrituraCollection}" var="e" reflow="true"
+                                 paginator="true" rows="5" paginatorPosition="top" style="width: 100%" paginatorAlwaysVisible="false"
+                                 rowStyleClass="#{cc.buscarObjeto(e,cc.attrs.predioant.catEscrituraCollection)}">
+
+                        <f:facet name="header">
+                            Listado de escrituras
+                        </f:facet>
+                        <p:column headerText="No. Predio">
+                            <h:outputText value="#{e.predio.numPredio}"/>
+                        </p:column>
+                        <p:column headerText="Tipo Dominio">
+                            <h:outputText value="#{e.traslDom.nombre}"/>
+                        </p:column>
+                        <p:column headerText="No. Repertorio">
+                            <h:outputText value="#{e.numRepertorio}"/>
+                        </p:column>
+                        <p:column headerText="Notaria">
+                            <h:outputText value="#{e.notaria}"/>
+                        </p:column>
+                        <p:column headerText="Fecha Escritura">
+                            <h:outputText value="#{e.fecEscritura}"><f:convertDateTime pattern="dd-MM-yyyy " /></h:outputText>
+                        </p:column>
+                        <p:column headerText="Fecha Inscripción">
+                            <h:outputText value="#{e.fecInscripcion}"><f:convertDateTime pattern="dd-MM-yyyy " /></h:outputText>
+                        </p:column>
+                        <p:column headerText="Area">
+                            <h:outputText value="#{e.areaSolar}" ><f:convertNumber pattern="##############.####" locale="us"/></h:outputText>
+                        </p:column>
+                        <p:column headerText="Estado">
+                            <h:outputText value="#{e.estado}"/>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+            </p:tab>
+        </h:form>
+    </cc:implementation>
+</html>

@@ -1,0 +1,38 @@
+﻿
+CREATE OR REPLACE FUNCTION censocat.migrar_predios_uso_edificacion()
+  RETURNS void AS
+$BODY$
+DECLARE SOL SMALLINT;
+DECLARE OBSERVACION TEXT;
+DECLARE
+	C_USO CURSOR FOR 
+		
+		SELECT PREDIO, USO  FROM censocat.predio_uso_edificacion;
+		
+
+	ACIERTOS INTEGER := 0;
+	PORC BOOLEAN := FALSE;
+BEGIN
+	FOR C IN C_USO LOOP
+		
+	
+		IF((SELECT COUNT(CP.ID) FROM SGM_APP.CAT_PREDIO CP WHERE CP.ID = C.PREDIO) > 0)THEN
+			UPDATE SGM_APP.CAT_PREDIO SET USO_SOLAR = C.USO WHERE ID =  C.PREDIO;
+			ACIERTOS := ACIERTOS +1;	
+		END IF;
+		
+	END LOOP;
+	RAISE NOTICE 'PREDIOS USO SOLAR ACTUALIZADOS %',ACIERTOS;
+	ACIERTOS := 0;
+END;
+
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION censocat.migrar_predios_uso_edificacion()
+  OWNER TO sisapp;
+
+
+
+
+SELECT  censocat.migrar_predios_uso_edificacion()

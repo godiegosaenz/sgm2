@@ -1,0 +1,920 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    template="/template/template.xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pe="http://primefaces.org/ui/extensions">
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{consultasRp.doPreRenderView()}"/>
+            <f:viewParam name="code" value="#{consultasRp.idTarea}"/>
+        </f:metadata>
+    </ui:define>
+    <ui:define name="content">
+        <h:form id="mainForm">
+            <p:fieldset legend="Cliente Seleccionado" rendered="#{consultasRp.showInterv}" style="width: 100%">
+                <p:panelGrid id="panelInterviniente" styleClass="noBorder" style="width: 100%" columns="6">
+                    <p:outputLabel value="Nombre:" style="font-size: 14px;font-weight: bolder;color: #0033FF;" />
+                    <p:outputLabel value="#{consultasRp.interviniente.nombre}" style="font-size: 14px;font-weight: bolder;" />
+                    <p:outputLabel value="No Identificacion:" style="font-size: 14px;font-weight: bolder;color: #0033FF;" />
+                    <p:outputLabel value="#{consultasRp.interviniente.cedRuc}" style="font-size: 14px;font-weight: bolder;" />
+                    <p:commandButton value="Imprimir Movs. Cliente" icon="ui-icon-document" styleClass="btnStyle" disabled="#{consultasRp.showBtn}"
+                                     actionListener="#{consultasRp.imprimirCompletandoTarea()}"/>
+                    <p:commandButton value="Terminar Tarea" icon="ui-icon-check" styleClass="btnStyle" disabled="#{!consultasRp.showBtn}" 
+                                     actionListener="#{consultasRp.terminarTarea()}"/>
+                </p:panelGrid>
+            </p:fieldset>
+            <p:tabView id="tabConsultas">
+                <p:tab title="Personas Naturales o Juridicas ">
+                    <center>
+                        <p:panelGrid styleClass="noBorder" style="margin: 0 auto;" columns="3">
+                            Busqueda:<p:inputText size="60" value="#{consultasRp.cadena}"/>
+                            <p:commandButton value="Buscar" icon="ui-icon-search" styleClass="btnStyle" update="dtInterviniente"
+                                             actionListener="#{consultasRp.buscarInterv()}"/>
+                        </p:panelGrid>
+                        <p:dataTable id="dtInterviniente" paginator="true" lazy="true" rows="20" rowsPerPageTemplate="20,50,100" style="text-align: center;width: 90%"
+                                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     filterEvent="enter" value="#{consultasRp.intervinientesLazy}" var="cli" emptyMessage="No se encontró Clientes">
+                            <p:column headerText="R.U.C" filterBy="#{cli.cedRuc}" sortBy="#{cli.cedRuc}"
+                                      width="150">
+                                <h:outputText value="#{cli.cedRuc}"/>
+                            </p:column>
+                            <p:column headerText="Nombre" filterBy="#{cli.nombre}" sortBy="#{cli.nombre}"
+                                      filterStyle="width: 50%">
+                                <h:outputText value="#{cli.nombre}"/>
+                            </p:column>
+                            <p:column headerText="Tipo" width="50">
+                                <h:outputText value="#{cli.tipoInterv}"/>
+                            </p:column>
+                            <p:column headerText="Inform." width="75">
+                                <p:commandLink actionListener="#{consultasRp.consultaInterviniente(cli)}" >
+                                    <p:graphicImage value="/css/homeIconsImages/abrir.png" height="18"/>   
+                                </p:commandLink>
+                            </p:column>
+                            <p:column headerText="Reporte" width="70">
+                                <p:commandLink actionListener="#{consultasRp.imprimirReporte(cli)}" >
+                                    <p:graphicImage value="/css/homeIconsImages/reporte.png" height="18"/>   
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </center>
+                </p:tab>
+                <p:tab title="Otras Consultas">
+                    <p:panelGrid style="margin: 0 auto;" styleClass="noBorder">
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Tipo de Consulta : " style="font-weight: bolder"/>
+                            </p:column>
+                            <p:column>
+                                <p:selectOneMenu style="width:300px" value="#{consultasRp.tipoConsulta}" >
+                                    <f:selectItem itemValue="1" itemLabel="Linderos - Ficha Registral"/>
+                                    <f:selectItem itemValue="2" itemLabel="Matricula Inmobiliaria(No Predio) - Ficha Registral"/>
+                                    <f:selectItem itemValue="3" itemLabel="Numero de Inscripcion - Inscripciones"/>
+                                    <f:selectItem itemValue="4" itemLabel="Numero de Repertorio - Inscripciones"/>
+                                    <f:selectItem itemValue="5" itemLabel="Por Fechas - Inscripciones"/>
+                                    <f:selectItem itemValue="6" itemLabel="Numero de Ficha - Ficha Registral"/>
+                                    <f:selectItem itemValue="7" itemLabel="Especificas - Inscripciones"/>
+                                    <f:selectItem itemValue="8" itemLabel="Indices Especificos - Inscripciones"/>
+                                </p:selectOneMenu>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Valor : " style="font-weight: bolder"/>
+                            </p:column>
+                            <p:column>
+                                <p:inputText value="#{consultasRp.valorConsulta}" size="75"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2" style="text-align: center">
+                                <p:commandButton icon="ui-icon-circle-arrow-s" value="Consultar Datos" styleClass="btnStyle"
+                                                 actionListener="#{consultasRp.otrasConsultas()}"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <p:spacer height="5" width="0"/>
+                    <h:panelGroup id="pnlGrpTables">
+                        <p:dataTable paginator="true" lazy="true" rows="20" rowsPerPageTemplate="20,50,100"
+                                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     value="#{consultasRp.lazyMovs}" var="movs" emptyMessage="Sin elementos..." filterEvent="enter"
+                                     style="margin: 0 auto;text-align: center" rendered="#{consultasRp.showMovs}">
+                            <p:column headerText="Libro" filterBy="#{movs.libro.nombre}" filterStyle="width: 95%">
+                                <p:outputLabel value="#{movs.libro.nombre}"/> 
+                            </p:column>
+                            <p:column headerText="Acto" filterBy="#{movs.acto.nombre}" filterStyle="width: 95%">
+                                <p:outputLabel value="#{movs.acto.nombre}"/>
+                            </p:column>
+                            <p:column headerText="Inscripcion" width="120" filterBy="#{movs.numInscripcion}" filterStyle="width: 95%" sortBy="#{movs.numInscripcion}">
+                                <p:outputLabel value="#{movs.numInscripcion}"/> 
+                            </p:column>
+                            <p:column headerText="Repertorio" width="80" filterBy="#{movs.numRepertorio}" filterStyle="width: 95%" sortBy="#{movs.numRepertorio}">
+                                <p:outputLabel value="#{movs.numRepertorio}"/>
+                            </p:column>
+                            <p:column headerText="Folio" width="80" filterBy="#{movs.folioInicio}" filterStyle="width: 95%" sortBy="#{movs.folioInicio}">
+                                <p:outputLabel value="#{movs.folioInicio}"/>
+                            </p:column>
+                            <p:column headerText="Fec.Inscripcion" width="120" sortBy="#{movs.fechaInscripcion}">
+                                <p:outputLabel value="#{movs.fechaInscripcion}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </p:outputLabel> 
+                            </p:column>
+                            <p:column headerText="Selec." width="50">
+                                <p:commandLink actionListener="#{consultasRp.showDlgMovSelect(movs)}" >
+                                    <p:graphicImage value="/css/homeIconsImages/abrir.png" height="18"/>   
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+
+                        <p:dataTable paginator="true" lazy="true" rows="20" rowsPerPageTemplate="20,50,100" scrollWidth="100"
+                                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     value="#{consultasRp.lazyFichas}" var="fichs" emptyMessage="Sin elementos..." filterEvent="enter" resizableColumns="true"
+                                     style="margin: 0 auto;text-align: center;" rendered="#{consultasRp.showFichas}">
+                            <p:column  headerText="Num.Ficha" filterBy="#{fichs.numFicha}" sortBy="#{fichs.numFicha}"
+                                       width="150" filterStyle="width: 75%">
+                                <h:outputText  value="#{fichs.numFicha}"/>
+                            </p:column>
+                            <p:column headerText="Fec. Apertura" width="150">
+                                <h:outputText value="#{fichs.fechaApe}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Estado" width="100">
+                                <h:outputText value="#{fichs.estado.valor}"/>
+                            </p:column>
+                            <p:column headerText="Selec." width="50">
+                                <p:commandLink actionListener="#{consultasRp.showDlgFichaSelect(fichs)}" >
+                                    <p:graphicImage value="/css/homeIconsImages/abrir.png" height="18"/>   
+                                </p:commandLink>
+                            </p:column>
+                            <p:column headerText="Linderos" width="2500" style="text-align: left;">
+                                <h:outputText value="#{fichs.linderos}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGroup>
+                </p:tab>
+            </p:tabView>
+        </h:form>
+
+        <p:dialog id="dlgConsultas" header="Consultas" widgetVar="dlgConsultaInterv" position="center"
+                  resizable="true" width="95%" height="95%" modal="true" maximizable="true">
+            <h:form id="formConsulta">
+                <p:panelGrid styleClass="noBorder" columns="2">
+                    <p:outputLabel value="Nombre: #{consultasRp.select.nombre}" style="font-weight: bolder;font-size: 12px"/>
+                    <p:outputLabel value="C.I./R.U.C.: #{consultasRp.select.cedRuc}" style="font-weight: bolder;font-size: 12px"/>
+                </p:panelGrid>
+                <p:panelGrid style="width: 100%;">
+                    <p:row>
+                        <p:column>
+                            <p:dataTable paginator="true" lazy="true" rows="50" style="text-align: center;width: 100%" rowIndexVar="indexMov" filterEvent="enter"
+                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                         value="#{consultasRp.movimientosLazy}" var="mov" emptyMessage="Sin movimientos registrales." resizableColumns="true"
+                                         scrollable="true" scrollHeight="300" selection="#{consultasRp.movimientosSeleccionados}" rowKey="#{mov.id}">
+                                <f:facet name="header">
+                                    Movimientos Registrales
+                                </f:facet>
+                                <p:column selectionMode="multiple" style="text-align:center" width="35"/>
+                                <p:column headerText="No" width="35">
+                                    #{indexMov+1}
+                                </p:column>
+                                <p:column headerText="Libro" filterBy="#{mov.libro.nombre}" width="100" filterStyle="width: 95%">
+                                    <p:outputLabel value="#{mov.libro.nombre}"/>
+                                </p:column>
+                                <p:column headerText="Papel" width="80">
+                                    <!--<p:outputLabel value="# {consultasRp.getPapelByMovimientoInterviniente(mov.id, consultasRp.select.id)}"/>-->
+                                    <p:outputLabel value="#{consultasRp.getPapelByMovAndCodInterv(mov.id, consultasRp.select.cedRuc)}"/>
+                                </p:column>
+                                <p:column headerText="Acto" filterBy="#{mov.acto.nombre}" filterStyle="width: 95%" width="70">
+                                    <p:outputLabel value="#{mov.acto.nombre}"/>
+                                </p:column>
+                                <p:column headerText="Inscripcion" filterBy="#{mov.numInscripcion}" filterStyle="width: 95%" width="60">
+                                    <p:outputLabel value="#{mov.numInscripcion}"/>                                   
+                                </p:column>
+                                <p:column headerText="Repertorio" filterBy="#{mov.numRepertorio}" filterStyle="width: 95%" width="60">
+                                    <p:outputLabel value="#{mov.numRepertorio}"/>                                   
+                                </p:column>
+                                <p:column headerText="Folio" filterBy="#{mov.folioInicio}" filterStyle="width: 95%" width="60">
+                                    <p:outputLabel value="#{mov.folioInicio}"/>                                   
+                                </p:column>
+                                <p:column headerText="Fec.Inscripcion" width="80">
+                                    <p:outputLabel value="#{mov.fechaInscripcion}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </p:outputLabel>                                   
+                                </p:column>
+                                <p:column headerText="Selec." width="40">
+                                    <p:commandLink actionListener="#{consultasRp.showDlgMovSelect(mov)}">
+                                        <p:graphicImage value="/css/homeIconsImages/abrir.png" height="16"/>   
+                                    </p:commandLink>
+                                </p:column>
+                                <f:facet name="footer">
+                                    <p:commandButton icon="ui-icon-search" value="Ver Movimientos" oncomplete="PF('dlgMovsSelec').show()" update="formMovsSelec"/> 
+                                </f:facet>
+                            </p:dataTable>
+                        </p:column>
+                        <p:column>
+                            <p:dataTable paginator="true" lazy="true" rows="50" style="text-align: center;width: 100%;" rowIndexVar="indexFic" filterEvent="enter"
+                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink}" scrollable="true"
+                                         value="#{consultasRp.fichasLazy}" var="fic" emptyMessage="Sin fichas registrales." resizableColumns="true" scrollWidth="800" scrollHeight="300">
+                                <f:facet name="header">
+                                    Fichas Registrales
+                                </f:facet>
+                                <p:column headerText="No" width="35">
+                                    #{indexFic+1}
+                                </p:column>
+                                <p:column headerText="Num.Ficha" width="100" filterBy="#{fic.numFicha}" sortBy="#{fic.numFicha}" filterStyle="width: 95%">
+                                    <h:outputText value="#{fic.numFicha}"/>
+                                </p:column>
+                                <!--<p:column headerText="Fec.Apertura" width="100" sortBy="# {fic.fechaApe}">
+                                    <h:outputText value="# {fic.fechaApe}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </p:column>-->
+                                <p:column headerText="Estado" width="80">
+                                    <h:outputText value="#{fic.estado.valor}"/>
+                                </p:column>
+                                <p:column headerText="Selec." width="40">
+                                    <p:commandLink actionListener="#{consultasRp.showDlgFichaSelect(fic)}">
+                                        <p:graphicImage value="/css/homeIconsImages/abrir.png" height="16"/>   
+                                    </p:commandLink>
+                                </p:column>
+                                <p:column headerText="Linderos" style="text-align: left;" width="3000">
+                                    <h:outputText value="#{fic.linderos}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="dlgMovimientos" header="Movimientos Registrales" widgetVar="dlgMovimientoRegistral" position="left,end"
+                  resizable="false" closeOnEscape="true" width="70%" height="20%" >
+            <h:form id="formMovimientoRegistral">
+                <p:dataTable value="#{consultasRp.movimientosInterv}" var="mc" emptyMessage="No se Encontro Ningun Movimiento Relacionado Con esta Persona"
+                             scrollable="true"  scrollHeight="240" style="width: 100%;text-align: center;" rowIndexVar="rowIndex">
+                    <p:column headerText="N°" width="30">
+                        #{rowIndex+1}
+                    </p:column>
+                    <p:column headerText="Libro">
+                        <p:outputLabel value="#{mc.movimiento.libro.nombre}"/>
+                    </p:column>
+                    <p:column headerText="Num.Inscripcion" width="110">
+                        <p:outputLabel value="#{mc.movimiento.numInscripcion}"/>                                   
+                    </p:column>
+                    <p:column headerText="Fec.Inscripcion" width="100">
+                        <p:outputLabel value="#{mc.movimiento.fechaInscripcion}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </p:outputLabel>                                   
+                    </p:column>
+                    <p:column headerText="Acto">
+                        <p:outputLabel value="#{mc.movimiento.acto.nombre}"/>                                   
+                    </p:column>
+                    <p:column headerText="Folio" width="80">
+                        <p:outputLabel value="#{mc.movimiento.folioInicio}"/>                                   
+                    </p:column>
+                    <p:column headerText="Repertorio" width="100">
+                        <p:outputLabel value="#{mc.movimiento.numRepertorio}"/>                                   
+                    </p:column>
+                    <p:column headerText="Selec." width="50">
+                        <p:commandLink value=">>>>>" style="color: #0033FF;font-weight: bolder;"
+                                       actionListener="#{consultasRp.showDlgMovSelect(mc.movimiento)}"/>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="dlgFichas" header="Fichas Registrales" widgetVar="dlgFichasInterviniente" resizable="false" modal="true" 
+                  closeOnEscape="true" width="60%" height="20%" position="right,top">
+            <h:form id="formFichasInterviniente">
+                <p:dataTable value="#{consultasRp.fichasInterv}" var="f" emptyMessage="No se Encontro Ningun Ficha"
+                             scrollable="true" scrollHeight="240" style="width: 100%;text-align: center" rowIndexVar="rowIndex">
+                    <p:column headerText="N°" width="30">
+                        #{rowIndex+1}
+                    </p:column>
+                    <p:column headerText="Num. Ficha" width="100">
+                        <h:outputText  value="#{f.numFicha}"/>
+                    </p:column>
+                    <p:column headerText="Tipo" width="75">
+                        <h:outputText value="#{f.tipoPredio}"/>
+                    </p:column> 
+                    <p:column headerText="Parroquia">
+                        <h:outputText value="#{f.parroquia.descripcion}"/>
+                    </p:column> 
+                    <p:column headerText="Fec.Apertura" width="100">
+                        <h:outputText value="#{f.fechaApe}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Selec." width="50">
+                        <p:commandLink value=">>>>>" style="color: #0033FF;font-weight: bolder"
+                                       actionListener="#{consultasRp.showDlgFichaSelect(f)}"/>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="dlgMovimientoRegistral" header="Movimiento Registral Seleccionado" widgetVar="dlgMovRegSelec" 
+                  resizable="false" modal="true" closeOnEscape="true" width="800" height="550">
+            <h:form id="formMovRegSelec">
+                <p:fieldset legend="Datos de la Inscripcion">
+                    <p:panelGrid styleClass="noBorder" style="width: 100%;font-size: 12px;font-weight: bolder;">
+                        <p:row>
+                            <p:column>
+                                Num.Inscrip.:
+                                <p:outputLabel value="#{consultasRp.movimiento.numInscripcion}"/>
+                            </p:column>
+                            <p:column>
+                                Fecha Inscrip.:
+                                <p:outputLabel value="#{consultasRp.movimiento.fechaInscripcion}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </p:outputLabel>
+                            </p:column>
+                            <p:column>
+                                Num.Rep.: 
+                                <p:outputLabel  value="#{consultasRp.movimiento.numRepertorio}"/>
+                            </p:column>
+                            <!--<p:column>
+                                Fecha Rep.: 
+                                <p:outputLabel value="# {consultasRp.movimiento.fechaRepertorio}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </p:outputLabel>
+                            </p:column>-->
+                        </p:row>                  
+                        <p:row>
+                            <p:column>
+                                Libro: 
+                                <p:outputLabel value="#{consultasRp.movimiento.libro.nombre}"/>
+                            </p:column>
+                            <p:column colspan="2">
+                                Acto: 
+                                <p:outputLabel value="#{consultasRp.movimiento.acto.nombre}"/>
+                            </p:column>
+                        </p:row>                  
+                        <p:row>
+                            <p:column>
+                                Tomo: 
+                                <p:outputLabel value="#{consultasRp.movimiento.numTomo}"/>
+                            </p:column>
+                            <p:column>
+                                Folio Inicio: 
+                                <p:outputLabel value="#{consultasRp.movimiento.folioInicio}"/>
+                            </p:column>
+                            <p:column>
+                                Folio Fin: 
+                                <p:outputLabel value="#{consultasRp.movimiento.folioFin}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                Canton: 
+                                <p:outputLabel value="#{consultasRp.movimiento.codigoCan.nombre}"/>
+                            </p:column>
+                            <p:column>
+                                Fech/Otorg.:
+                                <p:outputLabel value="#{consultasRp.movimiento.fechaOto}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </p:outputLabel>
+                            </p:column>
+                            <p:column>
+                                Not./Juz.: 
+                                <p:outputLabel value="#{consultasRp.movimiento.enteJudicial.nombre}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                Escri/Juicio/Resolu: 
+                                <p:outputLabel value="#{consultasRp.movimiento.escritJuicProvResolucion}"/>
+                            </p:column>
+                            <p:column>
+                                Estado/Mov: 
+                                <p:outputLabel value="#{consultasRp.movimiento.estado}"/>
+                            </p:column>
+                            <p:column style="text-align: right">
+                                <p:commandButton value="Bitacora" icon="ui-icon-document" styleClass="btnStyle"
+                                                 actionListener="#{consultasRp.imprimirBitacoraMov()}"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:fieldset>
+                <p:tabView>
+                    <p:tab title="Intervinientes">
+                        <p:dataTable emptyMessage="No hay datos para mostrar..." var="inter" scrollable="true" 
+                                     value="#{consultasRp.clientes}" scrollHeight="240">
+                            <p:column headerText="C.I/R.U.C" style="text-align: center" width="15%">
+                                <p:outputLabel value="#{inter.enteInterv.cedRuc}"/>
+                                <!-- <p:outputLabel value="# {inter.ente.catEntePersona.ci}" rendered="# {inter.ente.isPersona}"/> -->
+                            </p:column>
+                            <p:column headerText="Nombre del Cliente" style="text-align: center">
+                                <p:outputLabel value="#{inter.enteInterv.nombre}"/>
+                                <!-- <p:outputLabel value="# {inter.ente.catEntePersona.nombres} # {inter.ente.catEntePersona.apellidos}" rendered="# {inter.ente.isPersona}"/> -->
+                            </p:column>
+                            <p:column headerText="Papel" style="text-align: center" width="20%">
+                                <p:outputLabel value="#{inter.papel.papel}"/>
+                            </p:column>
+                            <p:column headerText="Domicilio" style="text-align: center">
+                                <p:outputLabel value="#{inter.domicilio.nombre}"/>
+                            </p:column>
+                            <p:column headerText="Estado" style="text-align: center">
+                                <p:outputLabel value="#{inter.estado}"/>
+                            </p:column>
+                            <p:column headerText="Relacion" style="text-align: center">
+                                <p:outputLabel value="#{inter.nombres}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                    <!-- SE COMENTA Representantes-Socios-Capital 09-01-2016 -->
+                    <!--<p:tab title="Representantes">
+                        <p:dataTable emptyMessage="No hay datos para mostrar..." var="rep" scrollable="true" 
+                                     value="# {consultasRp.representantes}" scrollHeight="250">
+                            <p:column headerText="C.I/R.U.C" style="text-align: center" width="15%">
+                                <p:outputLabel value="# {rep.enteInterv.cedRuc}"/> -->
+                    <!-- <p:outputLabel value="# {rep.ente.catEntePersona.ci}" rendered="# {rep.ente.isPersona}"/> -->
+                    <!--    </p:column>
+                            <p:column headerText="Nombre del Cliente" style="text-align: center">
+                                <p:outputLabel value="# {rep.enteInterv.nombre}"/> -->
+                    <!-- <p:outputLabel value="# {rep.ente.catEntePersona.nombres} # {rep.ente.catEntePersona.apellidos}" rendered="# {rep.ente.isPersona}"/> -->
+                    <!--    </p:column>
+                            <p:column headerText="Cargo" style="text-align: center" width="20%">
+                                <p:outputLabel value="# {rep.enteInterv.nombre}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>-->
+                    <!--<p:tab title="Socios">
+                        <p:dataTable emptyMessage="No hay datos para mostrar..." value="# {consultasRp.socios}" 
+                                     var="soc" scrollable="true"  scrollHeight="250">
+                            <p:column headerText="C.I/R.U.C" style="text-align: center">
+                                <p:outputLabel value="# {soc.enteInterv.cedRuc}" />
+                            </p:column>
+                            <p:column headerText="Nombre del Cliente" style="text-align: center">
+                                <p:outputLabel value="# {soc.enteInterv.nombre}" />
+                            </p:column>
+                            <p:column headerText="Tipo Participacion" style="text-align: center">
+                                <p:outputLabel value="# {soc.tipoParticipacion.nombre}"/>
+                            </p:column>
+                            <p:column headerText="Cantidad" style="text-align: center">
+                                <p:outputLabel value="# {soc.cantidad}"/>
+                            </p:column>
+                            <p:column headerText="Valor" style="text-align: center">
+                                <p:outputLabel value="# {soc.valor}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>-->
+                    <!--<p:tab title="Capital">
+                        <p:dataTable emptyMessage="No hay datos para mostrar..." scrollHeight="250"
+                                     value="# {consultasRp.capitales}" var="cap" scrollable="true"  >
+                            <p:column headerText="Capital" style="text-align: center">
+                                <p:outputLabel value="# {cap.capital.nombre}"/>
+                            </p:column>
+                            <p:column headerText="Valor" style="text-align: center">
+                                <p:outputLabel value="# {cap.valor}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>-->
+                    <p:tab title="Bienes">
+                        <p:dataTable value="#{consultasRp.fichas}" var="fich" style="width: 100%;text-align: center" scrollable="true" 
+                                     scrollHeight="250" rowIndexVar="rowIndex" emptyMessage="No se encontraron elementos..."
+                                     resizableColumns="true" scrollWidth="725">
+                            <p:column headerText="No" width="60">
+                                #{rowIndex+1}
+                            </p:column>
+                            <p:column headerText="Num. Ficha" width="100">
+                                <p:outputLabel value="#{fich.numFicha}"/>
+                            </p:column>
+                            <p:column headerText="Fec.Apertura" width="100">
+                                <p:outputLabel value="#{fich.fechaApe}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </p:outputLabel>
+                            </p:column>
+                            <p:column headerText="Selec." width="50">
+                                <p:commandLink actionListener="#{consultasRp.showDlgFichaSelect(fich)}">
+                                    <p:graphicImage value="/css/homeIconsImages/abrir.png" height="16"/>   
+                                </p:commandLink>
+                            </p:column>
+                            <p:column headerText="Linderos" width="2500" style="text-align: left;">
+                                <h:outputText value="#{fich.linderos}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                    <p:tab title="Observacion">
+                        <p:inputTextarea value="#{consultasRp.movimiento.observacion}" readonly="true"
+                                         autoResize="false" scrollHeight="200" style="width: 100%; height: 250px"/>
+                    </p:tab>
+                    <p:tab title="Referencia(s)">
+                        <p:dataTable style="text-align: center;width: 100%" scrollable="true" scrollHeight="250" scrollWidth="1000" rowIndexVar="indexMovRef"
+                                     value="#{consultasRp.movimiento.regMovimientoReferenciaCollection}" var="movRef" 
+                                     emptyMessage="Movimiento sin referencia(s)." resizableColumns="true">
+                            <p:column headerText="No" width="30">
+                                #{indexMovRef+1}
+                            </p:column>
+                            <p:column headerText="Libro">
+                                <p:outputLabel value="#{movRef.movimientoReff.libro.nombre}"/>
+                            </p:column>
+                            <p:column headerText="Acto">
+                                <p:outputLabel value="#{movRef.movimientoReff.acto.nombre}"/>
+                            </p:column>
+                            <p:column headerText="Inscripcion" width="110">
+                                <p:outputLabel value="#{movRef.movimientoReff.numInscripcion}"/>                                   
+                            </p:column>
+                            <p:column headerText="Repertorio" width="100">
+                                <p:outputLabel value="#{movRef.movimientoReff.numRepertorio}"/>                                   
+                            </p:column>
+                            <p:column headerText="Folio" width="100">
+                                <p:outputLabel value="#{movRef.movimientoReff.folioInicio}"/>                                   
+                            </p:column>
+                            <p:column headerText="Fec.Inscripcion" width="110">
+                                <p:outputLabel value="#{movRef.movimientoReff.fechaInscripcion}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </p:outputLabel>                                   
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                    <p:tab title="Descarga">
+                        <iframe src="#{samdocUploadCompUtil.samdocUrl}#{consultasRp.urlDownload}"></iframe>
+                    </p:tab>
+                </p:tabView>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="dlgInformacionFicha" header="Informacion: Ficha Registral - Bien Inmueble" widgetVar="dlgFichaSelect" 
+                  resizable="false" closeOnEscape="true" width="900" height="500" >
+            <h:form id="formFichaSelect">
+                <p:panelGrid styleClass="noBorder" style="font-size: 12px;font-weight: bolder;width: 100%;">
+                    <p:row>
+                        <p:column>
+                            Num.Ficha:
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{consultasRp.ficha.numFicha}"/>
+                        </p:column>
+                        <p:column>
+                            Parroquia:
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{consultasRp.ficha.parroquia.descripcion}"/>
+                        </p:column>
+                        <p:column>
+                            Fecha Apertura:
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{consultasRp.ficha.fechaApe}" >
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column>
+                            Estado:
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{consultasRp.ficha.estado.valor}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            Tipo de Predio:
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="#{consultasRp.ficha.tipoPredioTemp}"/>
+                        </p:column>
+                        <p:column>
+                            Codigo Catastral:
+                        </p:column>
+                        <p:column colspan="4">
+                            <p:outputLabel value="#{consultasRp.ficha.codigoPredial}"/>
+                        </p:column>
+                        <p:column style="text-align: right">
+                            <p:commandButton value="Bitacora" actionListener="#{consultasRp.imprimirBitacoraFicha()}" styleClass="btnStyle" icon="ui-icon-document"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <p:tabView>
+                    <p:tab title="Linderos Registrales">
+                        <p:inputTextarea value="#{consultasRp.ficha.linderos}" readonly="true" autoResize="false" scrollHeight="300"
+                                         style="width: 100%;height: 350px;"/>
+                    </p:tab>
+                    <p:tab title="Movimientos Registrales">
+                        <p:dataTable value="#{consultasRp.movimientosFichas}" var="mf" style="width: 100%;text-align: center" 
+                                     scrollable="true" scrollHeight="300" rowIndexVar="rowIndex" resizableColumns="true">
+                            <p:column headerText="No" width="60">
+                                #{rowIndex+1}
+                            </p:column>
+                            <p:column headerText="Libro">
+                                <p:outputLabel value="#{mf.movimiento.libro.nombre}"/>
+                            </p:column>
+                            <p:column headerText="Acto" >
+                                <p:outputLabel value="#{mf.movimiento.acto.nombre}"/>
+                            </p:column>
+                            <p:column headerText="Inscripcion" width="100">
+                                <p:outputLabel value="#{mf.movimiento.numInscripcion}"/>
+                            </p:column>
+                            <p:column headerText="Repertorio" width="100">
+                                <p:outputLabel value="#{mf.movimiento.numRepertorio}"/>
+                            </p:column>
+                            <p:column headerText="Folio" width="100">
+                                <p:outputLabel value="#{mf.movimiento.folioInicio}"/>
+                            </p:column>
+                            <p:column headerText="Fec.Inscripc." width="100">
+                                <p:outputLabel value="#{mf.movimiento.fechaInscripcion}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </p:outputLabel>
+                            </p:column>
+                            <p:column headerText="Selec." width="50">
+                                <p:commandLink actionListener="#{consultasRp.showDlgMovSelect(mf.movimiento)}">
+                                    <p:graphicImage value="/css/homeIconsImages/abrir.png" height="16"/>   
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                    <p:tab title="Estado">
+                        <p:inputTextarea value="#{consultasRp.ficha.descripcionTemp}" readonly="true" autoResize="false" scrollHeight="300"
+                                         style="width: 100%;height: 350px;font-weight: bolder;color: #0033FF;font-size: 14px;"/>
+                    </p:tab>
+                </p:tabView>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="dlgFechas" header="Consulta Inscripciones por Fechas" widgetVar="consultaFechas" 
+                  resizable="false" modal="true" closeOnEscape="true" width="400">
+            <h:form id="formFechas">
+                <p:panelGrid styleClass="noBorder" style="text-align: center;font-weight: bolder;width: 100%;">
+                    <p:row>
+                        <p:column>
+                            Desde:
+                        </p:column>
+                        <p:column>
+                            Hasta:
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:calendar value="#{consultasRp.desde}" pattern="dd/MM/yyyy" placeholder="dd/MM/yyyy"/>
+                        </p:column>
+                        <p:column>
+                            <p:calendar value="#{consultasRp.hasta}" pattern="dd/MM/yyyy" placeholder="dd/MM/yyyy"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:commandButton value="Reporte" icon="ui-icon-document" styleClass="btnStyle"
+                                             actionListener="#{consultasRp.imprimirInscripcionesPorFecha()}"/>
+                        </p:column>
+                        <p:column>
+                            <p:commandButton value="Buscar" icon="ui-icon-search" styleClass="btnStyle"
+                                             actionListener="#{consultasRp.buscarInscripFechas()}"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="dlgInsEspecificas" header="Consulta Especificas - Inscripciones" widgetVar="consultaEspecifica" 
+                  resizable="false" modal="true" closeOnEscape="true" width="75%">
+            <h:form id="formInsEspecificas">
+                <p:spacer height="10"/>
+                <p:panelGrid style="text-align: center;font-weight: bolder;width: 100%;">
+                    <p:row>
+                        <p:column>
+                            Libro:
+                        </p:column>
+                        <p:column>
+                            Acto:
+                        </p:column>
+                        <p:column>
+                            Inscripción:
+                        </p:column>
+                        <p:column>
+                            Repertorio:
+                        </p:column>
+                        <p:column>
+                            Desde:
+                        </p:column>
+                        <p:column>
+                            Hasta:
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:selectOneMenu value="#{consultasRp.libroConsEsp}" converter="entityConverter">
+                                <f:selectItem itemLabel="TODOS LOS LIBROS" itemValue="#{null}" />  
+                                <f:selectItems value="#{consultasRp.libros}" var="libro" 
+                                               itemLabel="#{libro.nombre}" itemValue="#{libro}"/>  
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            <p:autoComplete id="selectActo" queryDelay="400" value="#{consultasRp.actoConsEsp}" converter="entityConverter" completeMethod="#{consultasRp.complete}"
+                                            var="acto" itemLabel="#{acto.abreviatura}#{acto eq null?'':' | '}#{acto.nombre}" itemValue="#{acto}" size="30" placeholder="TODOS LOS ACTOS">
+                            </p:autoComplete>
+                        </p:column>
+                        <p:column>
+                            <pe:inputNumber value="#{consultasRp.inscripcionConsEsp}" decimalPlaces="0"/>
+                        </p:column>
+                        <p:column>
+                            <pe:inputNumber value="#{consultasRp.repertorioConsEsp}" decimalPlaces="0"/>
+                        </p:column>
+                        <p:column>
+                            <p:calendar value="#{consultasRp.desdeConsEsp}" pattern="dd/MM/yyyy" placeholder="dd/MM/yyyy"/>
+                        </p:column>
+                        <p:column>
+                            <p:calendar value="#{consultasRp.hastaConsEsp}" pattern="dd/MM/yyyy" placeholder="dd/MM/yyyy"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="3">
+                            <p:commandButton value="Reporte" icon="ui-icon-document" styleClass="btnStyle" actionListener="#{consultasRp.imprimirInscripcionesEspecificas()}"/>
+                        </p:column>
+                        <p:column colspan="3">
+                            <p:commandButton value="Buscar" icon="ui-icon-search" styleClass="btnStyle" actionListener="#{consultasRp.consultaEspecifica}"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <p:spacer height="10"/>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="dlgIndices" header="Indices Especificos - Inscripciones" widgetVar="indicesEspecificos" resizable="false" modal="true" >
+            <h:form id="formIndices">
+                <p:panelGrid columns="3">
+                    <p:outputLabel value="Libro:"/>
+                    <p:outputLabel value="Desde:"/>
+                    <p:outputLabel value="Hasta:"/>
+                    <p:selectOneMenu value="#{consultasRp.libroIndice}" converter="entityConverter">
+                        <f:selectItem itemLabel="TODOS LOS LIBROS" itemValue="#{null}" />  
+                        <f:selectItems value="#{consultasRp.libros}" var="lbr" itemLabel="#{lbr.nombre}" itemValue="#{lbr}"/>  
+                    </p:selectOneMenu>
+                    <p:calendar value="#{consultasRp.desdeIndice}" pattern="dd/MM/yyyy" placeholder="dd/MM/yyyy"/>
+                    <p:calendar value="#{consultasRp.hastaIndice}" pattern="dd/MM/yyyy" placeholder="dd/MM/yyyy"/>
+                    <p:commandButton value="Reporte" icon="ui-icon-document" styleClass="btnStyle" actionListener="#{consultasRp.reporteIndices()}"/>
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="dlgMovsSelec" header="Movimientos Registrales Seleccionados" widgetVar="dlgMovsSelec" maximizable="true" minHeight="550" minWidth="850"
+                  modal="true" closeOnEscape="true" width="850" height="600" position="top">
+            <h:form id="formMovsSelec">
+                <p:dataGrid value="#{consultasRp.movimientosSeleccionados}" var="ms" rows="1" paginator="true" style="width: 100%;" columns="1">
+                    <p:panel>
+                        <p:panelGrid style="width:100%;" styleClass="noBorder">
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Inscripción :" style="font-weight: bold;"/>
+                                    <p:outputLabel value="#{ms.numInscripcion}"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="Fecha Inscripción:" style="font-weight: bold;"/>
+                                    <p:outputLabel value="#{ms.fechaInscripcion}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </p:outputLabel>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="Repertorio :" style="font-weight: bold;"/>
+                                    <p:outputLabel value="#{ms.numRepertorio}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Libro :" style="font-weight: bold;"/>
+                                    <p:outputLabel value="#{ms.libro.nombre}"/>
+                                </p:column>
+                                <p:column colspan="2">
+                                    <p:outputLabel value="Acto :" style="font-weight: bold;"/>
+                                    <p:outputLabel value="#{ms.acto.nombre}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Tomo :" style="font-weight: bold;"/>
+                                    <p:outputLabel value="#{ms.numTomo}"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="Folio Inicial :" style="font-weight: bold;"/>
+                                    <p:outputLabel value="#{ms.folioInicio}"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="Folio Fin :" style="font-weight: bold;"/>
+                                    <p:outputLabel value="#{ms.folioFin}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Cantón :" style="font-weight: bold;"/>
+                                    <p:outputLabel value="#{ms.codigoCan.nombre}"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="Fecha Otorgamiento:" style="font-weight: bold;"/>
+                                    <p:outputLabel value="#{ms.fechaOto}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </p:outputLabel>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="Not./Juz.:" style="font-weight: bold;"/>
+                                    <p:outputLabel value="#{ms.enteJudicial.nombre}"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Fecha Resolución:" style="font-weight: bold;"/>
+                                    <p:outputLabel value="#{ms.fechaResolucion}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </p:outputLabel>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="Escrit/Juic/Provi/Resolucion: " style="font-weight: bold;"/>
+                                    <p:outputLabel value="#{ms.escritJuicProvResolucion}"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="Estado/Mov: " style="font-weight: bold;"/>
+                                    <p:outputLabel value="#{ms.estado}"/>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        <p:tabView>
+                            <p:tab title="Intervinientes">
+                                <p:dataTable emptyMessage="No hay datos para mostrar..." var="inter" scrollable="true" 
+                                             value="#{ms.regMovimientoClienteCollection}" scrollHeight="200">
+                                    <p:column headerText="C.I/R.U.C" style="text-align: center" width="15%">
+                                        <p:outputLabel value="#{inter.enteInterv.cedRuc}"/>
+                                        <!-- <p:outputLabel value="# {inter.ente.catEntePersona.ci}" rendered="# {inter.ente.isPersona}"/> -->
+                                    </p:column>
+                                    <p:column headerText="Nombre del Cliente" style="text-align: center">
+                                        <p:outputLabel value="#{inter.enteInterv.nombre}"/>
+                                        <!-- <p:outputLabel value="# {inter.ente.catEntePersona.nombres} # {inter.ente.catEntePersona.apellidos}" rendered="# {inter.ente.isPersona}"/> -->
+                                    </p:column>
+                                    <p:column headerText="Papel" style="text-align: center" width="20%">
+                                        <p:outputLabel value="#{inter.papel.papel}"/>
+                                    </p:column>
+                                    <p:column headerText="Domicilio" style="text-align: center">
+                                        <p:outputLabel value="#{inter.domicilio.nombre}"/>
+                                    </p:column>
+                                    <p:column headerText="Estado" style="text-align: center">
+                                        <p:outputLabel value="#{inter.estado}"/>
+                                    </p:column>
+                                    <p:column headerText="Relacion" style="text-align: center">
+                                        <p:outputLabel value="#{inter.nombres}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:tab>
+                            <p:tab title="Bienes">
+                                <p:dataTable value="#{ms.regMovimientoFichaCollection}" var="f" style="width: 100%;text-align: center;" scrollable="true" 
+                                             scrollHeight="250" rowIndexVar="rowIndex" emptyMessage="No se encontraron elementos..."
+                                             resizableColumns="true" scrollWidth="725">
+                                    <p:column headerText="No" width="60">
+                                        #{rowIndex+1}
+                                    </p:column>
+                                    <p:column headerText="Num. Ficha" width="100">
+                                        <p:outputLabel value="#{f.ficha.numFicha}"/>
+                                    </p:column>
+                                    <p:column headerText="Fec.Apertura" width="100">
+                                        <p:outputLabel value="#{f.ficha.fechaApe}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </p:outputLabel>
+                                    </p:column>
+                                    <p:column headerText="Selec." width="50">
+                                        <p:commandLink actionListener="#{consultasRp.showDlgFichaSelect(f.ficha)}">
+                                            <p:graphicImage value="/css/homeIconsImages/abrir.png" height="16"/>   
+                                        </p:commandLink>
+                                    </p:column>
+                                    <p:column headerText="Linderos" width="2500" style="text-align: left;">
+                                        <h:outputText value="#{f.ficha.linderos}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:tab>
+                            <p:tab title="Observacion">
+                                <p:inputTextarea value="#{ms.observacion}" readonly="true"
+                                                 autoResize="false" scrollHeight="200" style="width: 100%; height: 250px"/>
+                            </p:tab>
+                            <p:tab title="Referencia(s)">
+                                <p:dataTable value="#{ms.regMovimientoReferenciaCollection}" var="movRef" style="text-align: center;width: 100%;" scrollable="true" 
+                                             scrollHeight="250" rowIndexVar="indexMovRef" emptyMessage="Movimiento sin referencia(s)." 
+                                             resizableColumns="true" scrollWidth="725">
+                                    <p:column headerText="No" width="30">
+                                        #{indexMovRef+1}
+                                    </p:column>
+                                    <p:column headerText="Libro">
+                                        <p:outputLabel value="#{movRef.movimientoReff.libro.nombre}"/>
+                                    </p:column>
+                                    <p:column headerText="Acto">
+                                        <p:outputLabel value="#{movRef.movimientoReff.acto.nombre}"/>
+                                    </p:column>
+                                    <p:column headerText="Inscripcion" width="110">
+                                        <p:outputLabel value="#{movRef.movimientoReff.numInscripcion}"/>                                   
+                                    </p:column>
+                                    <p:column headerText="Repertorio" width="100">
+                                        <p:outputLabel value="#{movRef.movimientoReff.numRepertorio}"/>                                   
+                                    </p:column>
+                                    <p:column headerText="Folio" width="100">
+                                        <p:outputLabel value="#{movRef.movimientoReff.folioInicio}"/>                                   
+                                    </p:column>
+                                    <p:column headerText="Fec.Inscripcion" width="110">
+                                        <p:outputLabel value="#{movRef.movimientoReff.fechaInscripcion}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </p:outputLabel>                                   
+                                    </p:column>
+                                </p:dataTable>
+                            </p:tab>
+                        </p:tabView>
+                    </p:panel>
+                </p:dataGrid>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

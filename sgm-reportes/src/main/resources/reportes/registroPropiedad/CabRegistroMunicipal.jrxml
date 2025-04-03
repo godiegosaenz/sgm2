@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CabRegistroMunicipal" pageWidth="555" pageHeight="802" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="50" bottomMargin="20" uuid="73dffb68-7828-4fb4-8b40-4b21f4aae5be">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="671"/>
+	<parameter name="p_cedula" class="java.lang.String"/>
+	<parameter name="p_idtramite" class="java.lang.Long"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\supergold\\Desktop\\cuerpoBomberos\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO_URL" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select t.id, da.fecha,t.nombre_propietario,
+replace(t.telefonos,',',' -') telefono, correos, da.num_tramite_rp, da.is_registro_propiedad,
+p.nombres||' '||p.apellidos as usuario, da.inf_adicional, v.nombre as uso_documento,
+ens.ci_ruc AS cedula_solicitante, cl.nombres as beneficiario,
+
+/*CASE en.es_persona when TRUE THEN
+coalesce(en.nombres,'')||' '||coalesce(en.apellidos,'')
+else en.razon_social end AS beneficiario,*/
+
+CASE ens.es_persona when TRUE THEN
+coalesce(ens.nombres,'')||' '||coalesce(ens.apellidos,'')
+else ens.razon_social end AS solicitante_nombre,
+
+da.parentesco_solicitante , da.cantidad_tasas_catastro
+
+from sgm_flow.historico_tramites t
+left join sgm_flow.regp_liquidacion_derechos_aranceles da on (da.historic_tramite=t.id_tramite)
+left join sgm_flow.vu_items v on (v.id=da.uso_documento)
+left join sgm_flow.regp_intervinientes cl on (cl.liquidacion=da.id and cl.es_beneficiario=true)
+left join sgm_app.acl_user us on (us.id=da.user_creador)
+left join sgm_app.cat_ente p on (p.id=us.ente)
+left join sgm_app.cat_ente ens on (ens.id=t.solicitante)
+where t.id=$P{p_idtramite}]]>
+	</queryString>
+	<field name="id" class="java.lang.Long"/>
+	<field name="fecha" class="java.sql.Timestamp"/>
+	<field name="nombre_propietario" class="java.lang.String"/>
+	<field name="telefono" class="java.lang.String"/>
+	<field name="correos" class="java.lang.String"/>
+	<field name="num_tramite_rp" class="java.lang.Long"/>
+	<field name="is_registro_propiedad" class="java.lang.Boolean"/>
+	<field name="usuario" class="java.lang.String"/>
+	<field name="inf_adicional" class="java.lang.String"/>
+	<field name="uso_documento" class="java.lang.String"/>
+	<field name="cedula_solicitante" class="java.lang.String"/>
+	<field name="beneficiario" class="java.lang.String"/>
+	<field name="solicitante_nombre" class="java.lang.String"/>
+	<field name="parentesco_solicitante" class="java.lang.String"/>
+	<field name="cantidad_tasas_catastro" class="java.lang.Long"/>
+	<variable name="fecha" class="java.util.Date">
+		<variableExpression><![CDATA[new java.util.Date()]]></variableExpression>
+		<initialValueExpression><![CDATA[new java.util.Date()]]></initialValueExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="510" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="b996330e-138d-4290-9f45-65b49a11e9ce" positionType="Float" x="207" y="0" width="311" height="78"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="20" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Registro de la Propiedad del Cantón Samborondón]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="56591592-f7f2-4f87-96f5-2829d8f0e141" positionType="Float" x="110" y="139" width="288" height="16"/>
+				<textElement textAlignment="Right" markup="none">
+					<font fontName="SansSerif" size="11" isBold="true" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["FECHA DE SOLICITUD DEL CERTIFICADO : "]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="bb4e4269-2274-4eb7-93ee-aeb3c26975d9" positionType="Float" x="207" y="85" width="311" height="27"/>
+				<textElement textAlignment="Center" markup="none">
+					<font size="16" isBold="true" isUnderline="true" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["# Trámite: "+$F{num_tramite_rp}+" - "+($F{fecha}.getYear()+1900)]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement uuid="53c0fae6-458b-438e-bdf1-fe5f7a880d4e" positionType="Float" x="78" y="11" width="129" height="117"/>
+				<imageExpression><![CDATA[$P{LOGO_URL}]]></imageExpression>
+			</image>
+			<textField pattern="dd/MM/yyyy h:mm a">
+				<reportElement uuid="888e88af-8804-44e1-8201-10217f844713" positionType="Float" x="398" y="139" width="120" height="16"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="eb037f80-6672-4ff6-8df5-cf87a44565ba" positionType="Float" x="207" y="112" width="311" height="27"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Num. Seguimiento: "+$F{id}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="35a0623d-0fee-407e-93d7-f78168d36f9b" positionType="Float" x="78" y="412" width="440" height="16" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{inf_adicional}!=null?"  * "+$F{inf_adicional}:null]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="30fa1cc7-c232-4cae-9fac-5524710d40c2" positionType="Float" x="78" y="156" width="440" height="16"/>
+				<textElement>
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Señor,]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ad3f413e-f74f-430f-a6be-d28788119ebe" positionType="Float" x="78" y="172" width="440" height="16"/>
+				<textElement>
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Registrador de la Propiedad del Cantón Samborondón]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ccd55b45-2fa8-4579-b56f-5440fadc3138" positionType="Float" x="78" y="188" width="440" height="16"/>
+				<textElement>
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ciudad.-]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bff9a7d6-aa6c-4c62-bb2b-c310d775da60" positionType="Float" x="78" y="204" width="440" height="16"/>
+				<textElement>
+					<font size="11" isBold="false"/>
+				</textElement>
+				<text><![CDATA[De mis consideraciones:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="4d762a63-54ed-4c1c-9050-d3bbeb5fd0a1" positionType="Float" x="78" y="220" width="440" height="28" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[$F{is_registro_propiedad}]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Comparezco ante su autoridad a fin de solicitarle información Registral sobre los bienes de propiedad de "+$F{beneficiario}+","]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="47a976c6-2c8a-442c-b741-c407ab7a364d" positionType="Float" x="78" y="276" width="440" height="60" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Justified">
+					<font size="11" isBold="false"/>
+				</textElement>
+				<text><![CDATA[para lo cual justifico y motivo mi requerimiento, conforme lo exige el inciso quinto del Artículo 6 de la Ley Orgánica del Sistema Nacional de Registro de Datos Públicos, publicada en el Suplemento del Registro Oficial No. 162 del 31 de Marzo del 2010, petición que la formulo bajo los siguientes términos:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ae293d66-f3b2-4d73-b419-1a00f9ae7c29" positionType="Float" x="78" y="338" width="440" height="18" isPrintWhenDetailOverflows="true"/>
+				<textElement>
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRIMERO:NOMBRES.- Nombres y/o razón social son(es):]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="78f9376f-8040-428c-bd95-075316632e36" positionType="Float" x="78" y="356" width="440" height="16"/>
+				<textElement>
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{solicitante_nombre}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="247b25f8-91d0-4d5a-94d6-256a9c0aa1c7" positionType="Float" x="78" y="372" width="440" height="16"/>
+				<textElement>
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA["C.I./R.U.C.: "+$F{cedula_solicitante}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="bea0de6d-cc4e-4c5a-b976-89480b3c38df" positionType="Float" x="78" y="392" width="440" height="18"/>
+				<textElement>
+					<font fontName="SansSerif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SEGUNDO: DESCRIPCIÓN DEL / O LOS BIENES.- Nota. Describir los bienes:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5698eccc-59bd-4705-ab68-91892dd3178d" positionType="Float" x="78" y="431" width="440" height="36"/>
+				<textElement>
+					<font fontName="SansSerif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TERCERO: JUSTIFICACIÓN Y MOTIVACIÓN DEL REQUERIMIENTO.- La información la requiero en mi condición de:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="6a20566e-1e85-4bff-95d3-435d689e0a91" positionType="Float" x="78" y="468" width="440" height="16" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<textElement>
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{parentesco_solicitante}!=null?$F{parentesco_solicitante}:null]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="0283e589-7b3a-4460-a6da-a8dae119d3da" positionType="Float" x="78" y="488" width="440" height="18"/>
+				<textElement>
+					<font fontName="SansSerif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Intervinientes]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="4bdd66b1-0fd5-49af-8741-048f8371f51b" positionType="Float" x="78" y="248" width="440" height="28" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[!$F{is_registro_propiedad}]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Comparezco ante su autoridad a fin de solicitarle información Mercantil sobre la compañía "+$F{beneficiario}+","]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="11">
+			<subreport>
+				<reportElement uuid="11951352-e731-469a-a591-8bfded6a21f2" positionType="Float" x="78" y="0" width="200" height="11"/>
+				<subreportParameter name="P_TRAMITE">
+					<subreportParameterExpression><![CDATA[$P{p_idtramite}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "DetListPersona.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="246">
+			<subreport>
+				<reportElement uuid="81b63b44-2b7b-474f-97f0-bcc1444bcc20" positionType="Float" x="78" y="93" width="200" height="10"/>
+				<subreportParameter name="p_idtramite">
+					<subreportParameterExpression><![CDATA[$P{p_idtramite}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "TipoInscripcioneRequeridas.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement uuid="d8db4257-c782-4ed0-85b6-11f5484e5ce6" positionType="Float" x="78" y="211" width="57" height="16"/>
+				<textElement>
+					<font size="11" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Teléfonos:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8dc38d66-7c48-42b5-b7c3-a81397c144eb" positionType="Float" x="78" y="227" width="119" height="16"/>
+				<textElement>
+					<font size="11" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Correo Electrónico:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="96536b3f-103d-4b9c-b353-dac019d51e1e" positionType="Float" x="135" y="211" width="383" height="16"/>
+				<textElement>
+					<font size="11" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{telefono}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="f9d0a008-936f-449f-8e24-a1492e3b56d2" positionType="Float" x="197" y="227" width="321" height="16"/>
+				<textElement>
+					<font size="11" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{correos}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="0436012e-888a-4cb6-af5a-d2acbaf57739" positionType="Float" x="78" y="12" width="440" height="54" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Justified">
+					<font fontName="SansSerif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CUARTO: DECLARACIÓN SOBRE EL USO QUE HARÉ DE LA INFORMACIÓN SOLICITADA.- La información que me proporciona el Registro de la Propiedad será utilizada como documento habilitante para:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8a960cb5-807d-4bbe-9400-cc413acb18c2" positionType="Float" x="78" y="106" width="440" height="60"/>
+				<textElement textAlignment="Justified">
+					<font size="11" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Las referencias aquí consignadas por el Suscrito son verdaderos y asumo mi responsabilidad determinada en ley del Sistema Nacional de Registro de Datos Públicos por el uso de la información que se me proporcione: Acompaño copia de la Cédula de Ciudadanía y certificado de votación.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4df09e6e-a79e-4d69-9450-3af44053c13f" positionType="Float" x="78" y="171" width="440" height="36"/>
+				<textElement textAlignment="Justified">
+					<font size="11" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Cualquier dato adicional que requiera el Registro para dar la información solicitada, favor llamarme al teléfono o correo electrónico:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="909abcb6-90c0-4865-8b6c-55d1b76140ac" positionType="Float" isPrintRepeatedValues="false" x="78" y="68" width="440" height="16" isPrintWhenDetailOverflows="true"/>
+				<textElement>
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{uso_documento}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="150">
+			<textField>
+				<reportElement uuid="b5f65c05-fe53-409d-b5af-243ac191c1dc" positionType="Float" x="78" y="130" width="229" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Liquidador : "+$F{usuario}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="a551e68e-215c-47d7-ba77-88d4f3e087f0" positionType="Float" x="398" y="130" width="80" height="20"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pag "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement uuid="d5751492-7c11-4213-a6b9-89925327ab43" positionType="Float" x="478" y="130" width="40" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="200">
+			<textField evaluationTime="Report">
+				<reportElement uuid="274e4e6d-d3fa-4d6e-95ed-e90f13cb4ea9" positionType="Float" x="478" y="177" width="40" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="11f35b24-6752-4045-be92-230970a98617" positionType="Float" x="78" y="177" width="229" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Liquidador : "+$F{usuario}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="ef6e9d76-1f7b-4953-bd80-687cfaad150c" positionType="Float" x="398" y="177" width="80" height="20"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pag "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="f40a94da-0315-43ba-8892-7e1089258f16" positionType="Float" x="78" y="58" width="440" height="18"/>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Atentamente,]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="c2d37ea9-aa8c-41ff-8b34-ba3eba6db72f" positionType="Float" x="148" y="136" width="300" height="16" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CC.No. "+$F{cedula_solicitante}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="77755fbd-5444-45df-b7ea-f5844e46c24b" positionType="Float" x="148" y="120" width="300" height="16" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{solicitante_nombre}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="a7959b09-f101-4373-af99-90b3d93fb049" positionType="Float" x="198" y="119" width="200" height="1"/>
+			</line>
+		</band>
+	</lastPageFooter>
+</jasperReport>

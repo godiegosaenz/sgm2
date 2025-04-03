@@ -1,0 +1,521 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="informePredios" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4f4d8b77-eac8-4c41-b690-3480c9480abb">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="376"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR_TITLE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[java.lang.System.getProperty("user.home") + "\\Documents\\NetBeansProjects\\sgmsanmigel\\src\\main\\webapp\\reportes\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\SUPERGOLD\\Documents\\NetBeansProjects\\sgmsanmigel\\src\\main\\webapp\\css\\homeIconsImages\\logo.jpg"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO2" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\SUPERGOLD\\Documents\\NetBeansProjects\\sgmsanmigel\\src\\main\\webapp\\css\\smb\\logomunicipal.png"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PARROQUIA" class="java.lang.Short">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<parameter name="ZONA" class="java.lang.Short">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SECTOR" class="java.lang.Short">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="MZ" class="java.lang.Short"/>
+	<parameter name="ANIO" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+  parro.descripcion,
+  clave_cat, predialant, parroquia, canton,  zona, sector, mz, solar, bloque, piso, unidad, tc.nombre as tipo_conjunto,
+  (SELECT STRING_AGG(TRIM(TRIM(COALESCE(ent.apellidos, '') || ' ' || COALESCE(ent.nombres, ''))  || ' ' ||  TRIM(COALESCE(ent.razon_social, '')) ) || chr(10) || TRIM(COALESCE(ent.ci_ruc, '')), ',  ' || chr(10) ORDER BY PP.ID ASC) FROM sgm_app.cat_predio_propietario PP
+  INNER JOIN sgm_app.cat_ente ENT ON ENT.ID=PP.ENTE WHERE PP.ESTADO='A' AND PP.PREDIO =PRE.ID) AS propietario,
+  ciu.nombre as ciudadela,pre.area_solar,
+  l.avaluo_solar, l.avaluo_construccion, l.avaluo_municipal,
+  l.id_liquidacion,l.total_pago,
+  COALESCE(imp.valor_imp, 0) AS valor_imp, COALESCE(serv.valor_serv, 0) AS valor_serv,
+  COALESCE(bom.valor_bom, 0) AS valor_bom, COALESCE(bas.valor_bas, 0) AS valor_bas,
+  COALESCE(fond_prop.valor_fond_prop, 0) AS valor_fond_prop
+FROM sgm_app.cat_predio pre
+  LEFT OUTER JOIN sgm_app.cat_tipo_conjunto tc ON tc.id = pre.tipo_conjunto
+  LEFT OUTER JOIN sgm_app.cat_ciudadela ciu ON ciu.id = pre.ciudadela
+  LEFT OUTER JOIN sgm_app.ctlg_item item ON item.id = pre.tenencia_vivienda
+  INNER JOIN sgm_app.cat_provincia cprov ON cprov.cod_nac=pre.provincia
+  INNER JOIN sgm_app.cat_canton cc ON (cc.id_provincia=cprov.id AND cc.codigo_nacional=pre.canton)
+  LEFT OUTER JOIN sgm_app.cat_parroquia parro ON (parro.codigo_parroquia = pre.parroquia AND parro.id_canton=cc.id)
+  LEFT OUTER JOIN sgm_financiero.ren_liquidacion l ON l.predio = pre.id
+  LEFT OUTER JOIN (SELECT COALESCE(valor, 0) AS valor_imp, liquidacion FROM sgm_financiero.ren_det_Liquidacion WHERE rubro=2) AS imp ON imp.liquidacion=l.id
+  LEFT OUTER JOIN (SELECT COALESCE(valor, 0) AS valor_serv, liquidacion FROM sgm_financiero.ren_det_Liquidacion WHERE rubro=3) AS serv ON serv.liquidacion=l.id
+  LEFT OUTER JOIN (SELECT COALESCE(dl.valor, 0) AS valor_bom, dl.liquidacion FROM sgm_financiero.ren_det_Liquidacion dl INNER JOIN sgm_financiero.ren_rubros_liquidacion rl ON rl.id=dl.rubro WHERE rl.rubro_del_municipio=false GROUP BY dl.valor, 2) AS bom ON bom.liquidacion=l.id
+  LEFT OUTER JOIN (SELECT COALESCE(valor, 0) AS valor_bas, liquidacion FROM sgm_financiero.ren_det_Liquidacion WHERE rubro=8) AS bas ON bas.liquidacion=l.id
+  LEFT OUTER JOIN (SELECT SUM(COALESCE(dl.valor, 0)) AS valor_fond_prop, dl.liquidacion FROM sgm_financiero.ren_det_Liquidacion dl INNER JOIN sgm_financiero.ren_rubros_liquidacion rl ON rl.id=dl.rubro WHERE rl.id NOT IN (2,3,7,8) AND rl.rubro_del_municipio GROUP BY 2) AS fond_prop ON fond_prop.liquidacion=l.id
+WHERE
+  CASE WHEN $P{PARROQUIA} > 0 THEN pre.parroquia= $P{PARROQUIA} ELSE pre.parroquia > 0 END
+  AND CASE WHEN $P{SECTOR} > 0 THEN pre.sector=$P{SECTOR} ELSE pre.sector > 0 END
+  AND CASE WHEN $P{MZ} > 0 THEN pre.mz= $P{MZ} ELSE pre.mz > 0 END
+  AND pre.estado='A'
+  AND l.anio=$P{ANIO}
+  AND l.estado_liquidacion=2
+ ORDER BY pre.parroquia, pre.sector, pre.mz, pre.solar;]]>
+	</queryString>
+	<field name="descripcion" class="java.lang.String"/>
+	<field name="clave_cat" class="java.lang.String"/>
+	<field name="predialant" class="java.lang.String"/>
+	<field name="parroquia" class="java.lang.Integer"/>
+	<field name="canton" class="java.lang.Integer"/>
+	<field name="zona" class="java.lang.Integer"/>
+	<field name="sector" class="java.lang.Integer"/>
+	<field name="mz" class="java.lang.Integer"/>
+	<field name="solar" class="java.lang.Integer"/>
+	<field name="bloque" class="java.lang.Integer"/>
+	<field name="piso" class="java.lang.Integer"/>
+	<field name="unidad" class="java.lang.Integer"/>
+	<field name="tipo_conjunto" class="java.lang.String"/>
+	<field name="propietario" class="java.lang.String"/>
+	<field name="ciudadela" class="java.lang.String"/>
+	<field name="area_solar" class="java.math.BigDecimal"/>
+	<field name="avaluo_solar" class="java.math.BigDecimal"/>
+	<field name="avaluo_construccion" class="java.math.BigDecimal"/>
+	<field name="avaluo_municipal" class="java.math.BigDecimal"/>
+	<field name="id_liquidacion" class="java.lang.String"/>
+	<field name="total_pago" class="java.math.BigDecimal"/>
+	<field name="valor_imp" class="java.math.BigDecimal"/>
+	<field name="valor_serv" class="java.math.BigDecimal"/>
+	<field name="valor_bom" class="java.math.BigDecimal"/>
+	<field name="valor_bas" class="java.math.BigDecimal"/>
+	<field name="valor_fond_prop" class="java.math.BigDecimal"/>
+	<variable name="clave_cat_1" class="java.lang.Integer" resetType="Page" calculation="Count">
+		<variableExpression><![CDATA[$F{clave_cat}]]></variableExpression>
+	</variable>
+	<variable name="total_pago_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{total_pago}]]></variableExpression>
+	</variable>
+	<variable name="valor_bas_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_bas}]]></variableExpression>
+	</variable>
+	<variable name="valor_bom_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_bom}]]></variableExpression>
+	</variable>
+	<variable name="valor_fond_prop_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_fond_prop}]]></variableExpression>
+	</variable>
+	<variable name="valor_serv_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_serv}]]></variableExpression>
+	</variable>
+	<variable name="valor_imp_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_imp}]]></variableExpression>
+	</variable>
+	<group name="predios">
+		<groupExpression><![CDATA[$V{PAGE_NUMBER}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="0" width="802" height="79" uuid="6aef342b-78e7-49b6-b392-262a4f4a1860">
+					<property name="net.sf.jasperreports.export.pdf.tag.table" value="full"/>
+				</reportElement>
+				<subreportParameter name="LOGO">
+					<subreportParameterExpression><![CDATA[$P{LOGO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SUB_TITLE"/>
+				<subreportParameter name="LOGO2">
+					<subreportParameterExpression><![CDATA[$P{LOGO2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR_TITLE} + "titleReporte2.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="19" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="167" height="19" uuid="2a7f33d1-a8f5-437c-aa64-fadc8124008b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total de Predios Registrados: ]]></text>
+			</staticText>
+			<textField evaluationTime="Page" isBlankWhenNull="true">
+				<reportElement x="167" y="0" width="136" height="19" uuid="f506f97a-4cbc-4686-bea0-65cb5b3fa3e0"/>
+				<textElement verticalAlignment="Middle">
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{clave_cat_1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="48" splitType="Stretch">
+			<textField>
+				<reportElement mode="Opaque" x="0" y="0" width="802" height="20" forecolor="#FFFFFF" backcolor="#999999" uuid="1579ad94-5294-4a6a-b3e4-942aa8823f53"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["  INFORMACION PREDIAL - PARROQUIA " + ($F{descripcion} == null? "Todas" : $F{descripcion})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="20" width="117" height="28" uuid="cdab8d92-1ae9-46d2-a7d4-bab92c2154b3"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NUMERO TÍTULO
+COD. CATASTRAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="117" y="20" width="231" height="28" uuid="736c7964-5f05-4ef0-8818-b2ba6a193a24"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[APELLIDOS Y NOMBRES
+RUC - C.I.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="349" y="20" width="40" height="28" uuid="13f8839e-7d71-4e44-911c-76503727f14d"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AREA SOLAR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="389" y="20" width="50" height="28" uuid="664ab682-8365-4409-9465-c5b925302eed"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AVALUO SOLAR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="439" y="20" width="52" height="28" uuid="5e9a0176-df9a-4fd1-9167-34f32610d5b6"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AVALUO CONST.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="491" y="20" width="55" height="28" uuid="747b35e8-ec96-42ea-96e6-dedc95bb4d62"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AVALUO MUNICIPAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="546" y="20" width="44" height="28" uuid="a09dbdb3-269c-40c9-ae3a-2eeb38a89248"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[IMPUESTO PREDIAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="590" y="20" width="42" height="28" uuid="3d23fc6e-69d8-4529-ba19-5ac6413c20cb"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SERV. ADMIN.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="632" y="20" width="37" height="28" uuid="172fad4b-bf94-4dd5-bb5c-40f146914927"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[OTROS FOND. PROPIOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="709" y="20" width="39" height="28" uuid="aeda00c9-3374-41c5-8359-12ae14d87cf4"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[BASURA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="669" y="20" width="40" height="28" uuid="12c6f347-8a9b-4109-bca5-a3a1a671169a"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[BOMBEROS + FOND. AJENOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="748" y="20" width="54" height="28" uuid="546a4eb4-4afa-4da5-af08-481e8e7b719f"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL EMITIDO]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="117" height="14" uuid="23f06e32-2c7d-4ba5-a175-8fc30901c8f5"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{id_liquidacion}
++ "\n" + $F{clave_cat}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="117" y="0" width="231" height="14" uuid="3d2d61d5-d1a4-41ab-8936-d7c8f4f249ef"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{propietario}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="349" y="0" width="40" height="14" uuid="02c6a3eb-de59-40ca-8e1c-6e5f3de4300b"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{area_solar}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="389" y="0" width="50" height="14" uuid="9ca5a891-d79f-4df2-afdd-fa259145c29d"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{avaluo_solar}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="439" y="0" width="52" height="14" uuid="4949ba92-de65-47c0-a230-c11cc8a7320d"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{avaluo_construccion}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="491" y="0" width="55" height="14" uuid="eccc7e62-fb20-41e0-9615-7981eed9001d"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{avaluo_municipal}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="546" y="0" width="44" height="14" uuid="190f238e-b6e4-483c-9385-20e7f9374f53"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_imp}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="590" y="0" width="42" height="14" uuid="923b921f-57dc-4dda-a9b0-abfecc7bf22e"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_serv}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="632" y="0" width="37" height="14" uuid="c10c74cc-f35f-4bd7-badf-ad84842f4a5e"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_fond_prop}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="669" y="0" width="40" height="14" uuid="07a90393-f881-44ca-802f-dd934244a390"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_bom}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="709" y="0" width="39" height="14" uuid="1fd3f170-630d-47c4-9057-7376de02f07c"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_bas}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="748" y="0" width="54" height="14" uuid="80fe6444-bf7f-4a33-8968-79625de2fcfe"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{total_pago}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="37" splitType="Stretch">
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement x="748" y="17" width="54" height="20" uuid="17cac3de-83d5-435a-9004-04f1dae6cf07"/>
+				<textElement textAlignment="Right">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{total_pago_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement x="709" y="17" width="39" height="20" uuid="56d90cca-0122-485c-9613-4be82b180e4d"/>
+				<textElement textAlignment="Right">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_bas_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement x="669" y="17" width="40" height="20" uuid="a04d34f9-d069-4c52-8207-dfc795986046"/>
+				<textElement textAlignment="Right">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_bom_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement x="632" y="17" width="37" height="20" uuid="cabe089b-1108-4d44-88a7-21e5b963c778"/>
+				<textElement textAlignment="Right">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_fond_prop_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement x="590" y="17" width="42" height="20" uuid="ac3f9c2d-b387-4bae-b89c-bf6774df2bbf"/>
+				<textElement textAlignment="Right">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_serv_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement x="546" y="17" width="44" height="20" uuid="bef7e283-3ac6-4dee-b865-f9aabf568496"/>
+				<textElement textAlignment="Right">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_imp_1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="389" y="17" width="73" height="20" uuid="535ab2ed-77a9-4c06-9fee-33f787bcb6b2"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Totales:]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

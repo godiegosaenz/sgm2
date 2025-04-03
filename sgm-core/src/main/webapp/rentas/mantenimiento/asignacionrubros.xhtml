@@ -1,0 +1,181 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="page_title">
+        Rubros
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="frmMain">
+            <div align="center"><h3>Tipo Liquidación #{rubrosView.tipoLiquidacion.nombreTitulo}</h3></div>
+            <p:commandButton value="Nuevo Rubro" styleClass="btnStyle" actionListener="#{rubrosView.nuevoRubro()}" onclick="PF('dlgNewRubro').show()" update=":frmNewRubro"/>
+            <center>
+                <!--<p:dataTable id="dtAsig" rows="5" paginator="true" var="tr" value="# {rubrosView.transaccionesList}" reflow="true" rowKey="#{tr.id}"
+                             paginatorPosition="top" emptyMessage="No tiene datos" style="width: 65%; margin-top: 10px;">
+                    <f:facet name="header">
+                        Lista de transacciones para seleccionar
+                    </f:facet>
+                    <p:column headerText="Descripción" filterBy="# {tr.descripcion}" width="50%">
+                        <center><h:outputText value="# {tr.descripcion}"/></center>
+                    </p:column>
+                    <p:column headerText="Tipo" width="30%">
+                        <center><h:outputText value="# {tr.tipo.descripcion}"/></center>
+                    </p:column>
+                    <p:column headerText="Acción" width="20%">
+                        <center><p:commandButton value="Agregar" actionListener="# {rubrosView.agregarTransaccion(tr)}" update="frmMain"/></center>
+                    </p:column>
+                </p:dataTable>-->
+                <p:accordionPanel>
+
+                    <p:tab title="Rubros de la transacción">
+                        <p:dataTable id="dtRubros" rows="10" paginator="true" var="rubro1" filterEvent="enter" 
+                                     value="#{rubrosView.rubrosList}" reflow="true" rowKey="#{rubro.id}"
+                                     paginatorPosition="top" rowIndexVar="index"  emptyMessage="No tiene datos" 
+                                     style="width: 100%; margin-top: 10px;" rowsPerPageTemplate="5, 10, 20, 50" >
+                            <f:facet name="header">
+                                Lista de rubros seleccionados
+                            </f:facet>
+                            <p:column headerText="Código rubro" width="8%">
+                                <center><h:outputText value="#{rubro1.codigoRubro}" style="width: 100px;"/></center>
+                            </p:column>
+                            <p:column headerText="Descripción" width="25%">
+                                <center><h:outputText value="#{rubro1.descripcion}" style="width: 95%;"/></center>
+                            </p:column>
+
+                            <p:column headerText="Cta. Contable" width="12%">
+                                <center><h:outputText value="#{rubro1.ctaContable}" style="width: 95%;"/></center>
+                            </p:column>
+                            <p:column headerText="Cta. Orden" width="12%">
+                                <center><h:outputText value="#{rubro1.ctaOrden}" style="width: 90%;"/></center>
+                            </p:column>
+                            <p:column headerText="Cta. Presupuesto" width="12%">
+                                <center><h:outputText value="#{rubro1.ctaPresupuesto}" style="width: 95%;"/></center>
+                            </p:column>
+                            <p:column headerText="Valor" width="7%">
+                                <center><h:outputText value="#{rubro1.valor}" style="width: 90%;"/></center>
+                            </p:column>                            
+                            <p:column headerText="Tipo de Valor" width="15%">
+                                <center>
+                                    <h:outputText value="#{rubro1.tipoValor.descripcion}" />
+                                </center>
+                            </p:column>
+                            <p:column headerText="Acción" width="10%">
+                                <center>
+                                    <p:commandLink value="Editar" actionListener="#{rubrosView.editarRubro(rubro1)}" update="frmEditRubro" oncomplete="PF('dlgEditRubro').show()"/>
+                                    <p:commandLink value="Eliminar" actionListener="#{rubrosView.eliminarRubro(index)}" update="frmMain"/>
+                                </center>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+
+                    <p:tab title="Rubros disponibles">
+                        <p:dataTable id="dtRubrosSel" rows="5" paginator="true" lazy="true" var="rubro" value="#{rubrosView.rubrosLazy}" reflow="true" 
+                                     filterEvent="enter" rowKey="#{rubro.id}"
+                                     paginatorPosition="top" rowIndexVar="index"  emptyMessage="No tiene datos" style="width: 100%; margin-top: 10px;">
+                            <f:facet name="header">
+                                Lista de Rubros Disponibles
+                            </f:facet>
+                            <p:column headerText="Descripción" width="12%" filterBy="#{rubro.descripcion}" filterStyle="width: 45%" filterMatchMode="contains">
+                                <center><h:outputText value="#{rubro.descripcion}"/></center>
+                            </p:column>
+
+                            <p:column headerText="Cta. Contable" width="10%">
+                                <center><h:outputText value="#{rubro.ctaContable}" style="width: 100px;"/></center>
+                            </p:column>
+                            <p:column headerText="Cta. Orden" width="10%">
+                                <center><h:outputText value="#{rubro.ctaOrden}" style="width: 100px;"/></center>
+                            </p:column>
+                            <p:column headerText="Cta. Presupuesto" width="10%">
+                                <center><h:outputText value="#{rubro.ctaPresupuesto}" style="width: 100px;"/></center>
+                            </p:column>
+                            <p:column headerText="Valor" width="8%">
+                                <center><h:outputText value="#{rubro.valor}" style="width: 100px;"/></center>
+                            </p:column>
+                            <p:column headerText="Tipo de Valor" width="12%">
+                                <center><p:selectOneMenu value="#{rubrosView.tipoValor}" converter="entityConverter">
+                                        <f:selectItems itemDisabled="true" value="#{serviceLists.getTipoValoresById(rubro.tipoValor.id)}" var="tipo" itemLabel="#{tipo.descripcion}" itemValue="#{tipo}"/>
+                                    </p:selectOneMenu></center>
+                            </p:column>
+                            <p:column headerText="Acción" width="8%">
+                                <center><p:commandButton value="Agregar" actionListener="#{rubrosView.agregarRubro(rubro)}" update="frmMain"/></center>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                </p:accordionPanel>
+            </center>
+        </h:form>
+
+        <!-- -->
+
+        <p:dialog id="dlgNewRubro" header="Nuevo rubro" widgetVar="dlgNewRubro" appendTo="@(body)" modal="true" width="500" resizable="false" closable="true" closeOnEscape="true">
+            <h:form id="frmNewRubro">
+                <center>
+                    <p:panelGrid columns="2">
+                        <h:outputText value="Tipo de valor"/>
+                        <p:selectOneMenu value="#{rubrosView.tipoValor}" converter="entityConverter" style="width: 76%">
+                            <f:selectItems value="#{serviceLists.getTipoValores('')}" var="tv2" itemLabel="#{tv2.id} #{tv2.descripcion}" itemValue="#{tv2}"/>
+                            <p:ajax update="frmNewRubro"/>
+                        </p:selectOneMenu>
+                        <h:outputText value="Descripción"/>
+                        <p:inputText value="#{rubrosView.rubro.descripcion}"/>
+                        <h:outputText value="Cuenta contable"/>
+                        <p:inputText value="#{rubrosView.rubro.ctaContable}"/>
+                        <h:outputText value="Cuenta de orden"/>
+                        <p:inputText value="#{rubrosView.rubro.ctaOrden}"/>
+                        <h:outputText value="Cuenta de presupuesto"/>
+                        <p:inputText value="#{rubrosView.rubro.ctaPresupuesto}"/>
+                        
+                        <h:outputText value="Valor"/>
+                        <p:inputText value="#{rubrosView.rubro.valor}" rendered="#{rubrosView.tipoValor.id ne 4 and !rubrosView.tipoValor.esPorcentaje}"/>
+                        <p:inputText value="#{rubrosView.rubro.valor}" readonly="#{rubrosView.tipoValor.id eq 4}" rendered="#{rubrosView.tipoValor.id eq 4}"/>
+                        <p:spinner value="#{rubrosView.rubro.valor}" rendered="#{rubrosView.tipoValor.esPorcentaje}" min="0" max="100" maxlength="3" />
+                        <h:outputText value="Es rubro del municipio"/>
+                        <p:selectBooleanCheckbox value="#{rubrosView.rubro.rubroDelMunicipio}"/>
+
+                    </p:panelGrid>
+                    <p:commandButton value="Guardar" actionListener="#{rubrosView.guardarRubro()}" styleClass="btnStyle" onclick="PF('dlgNewRubro').hide()" update=":frmMain"/>
+                    <p:commandButton value="Cancelar" onclick="PF('dlgNewRubro').hide()" styleClass="btnStyle"/>
+                </center>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="dlgEditRubro" header="Edición rubro" widgetVar="dlgEditRubro" appendTo="@(body)" modal="true" width="500" resizable="false" closable="true" closeOnEscape="true">
+            <h:form id="frmEditRubro">
+                <center>
+                    <p:panelGrid columns="2">
+                        <h:outputText value="Descripción"/>
+                        <p:inputText value="#{rubrosView.rubro.descripcion}"/>
+                        <h:outputText value="Cuenta contable"/>
+                        <p:inputText value="#{rubrosView.rubro.ctaContable}"/>
+                        <h:outputText value="Cuenta de orden"/>
+                        <p:inputText value="#{rubrosView.rubro.ctaOrden}"/>
+                        <h:outputText value="Cuenta de presupuesto"/>
+                        <p:inputText value="#{rubrosView.rubro.ctaPresupuesto}"/>
+                        <h:outputText value="Tipo de valor"/>
+                        <p:selectOneMenu value="#{rubrosView.tipoValor}" converter="entityConverter">
+                            <f:selectItems value="#{serviceLists.getTipoValores(null)}" var="tv1" itemLabel="#{tv1.id} #{tv1.descripcion}" itemValue="#{tv1}"/>
+                            <p:ajax update="frmEditRubro"/>
+                        </p:selectOneMenu>
+                        <h:outputText value="Valor"/>
+                        <p:inputText value="#{rubrosView.rubro.valor}" rendered="#{rubrosView.tipoValor.id ne 4 and !rubrosView.tipoValor.esPorcentaje}"/>
+                        <p:inputText value="#{rubrosView.rubro.valor}" readonly="#{rubrosView.tipoValor.id eq 4}" rendered="#{rubrosView.tipoValor.id eq 4}"/>
+                        <p:spinner value="#{rubrosView.rubro.valor}" rendered="#{rubrosView.tipoValor.esPorcentaje}" min="0" max="100" maxlength="3" />
+                        
+                        <h:outputText value="Es rubro del municipio"/>
+                        <p:selectBooleanCheckbox value="#{rubrosView.rubro.rubroDelMunicipio}"/>
+                        <h:outputText value="Estado"/>
+                        <p:selectBooleanCheckbox value="#{rubrosView.rubro.estado}"/>
+
+                    </p:panelGrid>
+                    <p:commandButton value="Guardar" actionListener="#{rubrosView.guardarEdicionRubro()}" styleClass="btnStyle" oncomplete="PF('dlgEditRubro').hide()" update=":frmMain"/>
+                    <p:commandButton value="Cancelar" onclick="PF('dlgEditRubro').hide()" styleClass="btnStyle"/>
+                </center>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

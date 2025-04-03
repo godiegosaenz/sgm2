@@ -1,0 +1,389 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      class="no-js" >
+
+    <f:view contentType="text/html" locale="es" encoding="UTF-8"/>
+    <f:event type="preRenderView" listener="#{userSession.redirectInvitado()}" />
+    <!--
+    <f:event type="preRenderView" listener="# {publicTempUserSession.redirectInvitado()}" />
+    -->
+
+    <ui:insert name="events">
+    </ui:insert>
+
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1.0" />
+
+        <!-- Icons -->
+        <!-- The following icons can be replaced with your own, they are used by desktop and mobile browsers -->
+        <link rel="shortcut icon" href="#{appConfig.urlbase}template/responsive/img/favicon.ico" />
+        <link rel="apple-touch-icon" href="#{appConfig.urlbase}template/responsive/img/icon57.png" sizes="57x57" />
+        <link rel="apple-touch-icon" href="#{appConfig.urlbase}template/responsive/img/icon72.png" sizes="72x72" />
+        <link rel="apple-touch-icon" href="#{appConfig.urlbase}template/responsive/img/icon76.png" sizes="76x76" />
+        <link rel="apple-touch-icon" href="#{appConfig.urlbase}template/responsive/img/icon114.png" sizes="114x114" />
+        <link rel="apple-touch-icon" href="#{appConfig.urlbase}template/responsive/img/icon120.png" sizes="120x120" />
+        <link rel="apple-touch-icon" href="#{appConfig.urlbase}template/responsive/img/icon144.png" sizes="144x144" />
+        <link rel="apple-touch-icon" href="#{appConfig.urlbase}template/responsive/img/icon152.png" sizes="152x152" />
+        <!-- END Icons -->
+
+        <!-- Stylesheets -->
+        <!-- Bootstrap is included in its original form, unaltered -->
+        <link rel="stylesheet" href="#{appConfig.urlbase}template/responsive/css/bootstrap.css"/>
+
+        <!-- Related styles of various icon packs and javascript plugins -->
+        <link rel="stylesheet" href="#{appConfig.urlbase}template/responsive/css/plugins.css"/>
+
+        <!-- The main stylesheet of this template. All Bootstrap overwrites are defined in here -->
+        <link rel="stylesheet" href="#{appConfig.urlbase}template/responsive/css/main.css"/>
+
+        <!-- Load a specific file here from css/themes/ folder to alter the default theme of the template -->
+
+        <!-- The themes stylesheet of this template (for using specific theme color in individual elements - must included last) -->
+        <link rel="stylesheet" href="#{appConfig.urlbase}template/responsive/css/themes.css"/>
+        <link rel="stylesheet" href="#{appConfig.urlbase}template/responsive/css/themes/smb.css"/>
+        <!-- END Stylesheets -->
+
+        <!-- Modernizr (browser feature detection library) & Respond.js (Enable responsive CSS code on browsers that don't support it, eg IE8) -->
+        <script src="#{appConfig.urlbase}template/responsive/js/vendor/modernizr-2.7.1-respond-1.4.2.min.js"></script>
+        <script src="#{appConfig.urlbase}resources/pfJs/columToggler.js"></script>
+
+        <link rel="stylesheet" href="#{appConfig.urlbase}bpm/publica/mobile.css"/>
+        <!--<script src="#{appConfig.urlbase}pfm/pfm.js"></script>-->
+        <link href="#{appConfig.urlbase}resources/css/main.css" rel="stylesheet" type="text/css" />
+        <script type="text/javascript">
+            PrimeFaces.locales['en_US'] = {
+                closeText: 'Cerrar',
+                prevText: 'Anterior',
+                nextText: 'Siguiente',
+                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                dayNamesMin: ['D', 'L', 'M', 'X ', 'J', 'V ', 'S'],
+                weekHeader: 'Semana',
+                firstDay: 0,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: '',
+                timeOnlyTitle: 'Solo hora',
+                timeText: 'Hora',
+                hourText: 'Hora',
+                minuteText: 'Minuto',
+                secondText: 'Segundo',
+                currentText: 'Fecha actual',
+                ampm: false,
+                month: 'Mes',
+                week: 'Semana',
+                day: 'Día',
+                allDayText: 'Día completo'
+            };
+
+            PrimeFaces.locales['es'] = {
+                closeText: 'Cerrar',
+                prevText: 'Anterior',
+                nextText: 'Siguiente',
+                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                dayNamesMin: ['D', 'L', 'M', 'X', 'J', 'V', 'S'],
+                weekHeader: 'Semana',
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: '',
+                timeOnlyTitle: 'Sólo hora',
+                timeText: 'Tiempo',
+                hourText: 'Hora',
+                minuteText: 'Minuto',
+                secondText: 'Segundo',
+                currentText: 'Fecha actual',
+                ampm: false,
+                month: 'Mes',
+                week: 'Semana',
+                day: 'Día',
+                allDayText: 'Todo el día'
+            };
+        </script>
+
+        <style>
+
+
+
+        </style>
+
+        <ui:insert name="head"></ui:insert>
+
+        <title><ui:insert name="page_title">Sistema de Gestión Municipal</ui:insert></title>
+
+    </h:head>
+
+    <!-- Body -->
+    <!-- In the PHP version you can set the following options from the config file -->
+    <!-- Add the class .hide-side-content to <body> to hide side content by default -->
+    <h:body>
+        <p:growl autoUpdate="true" globalOnly="true" showDetail="true"/>
+        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+            <center>
+                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes btnStyle" icon="ui-icon-check" />
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no btnStyle" icon="ui-icon-close" />
+            </center>
+        </p:confirmDialog>
+
+
+        <!-- Page Container -->
+        <!-- In the PHP version you can set the following options from the config file -->
+        <!-- Add the class .full-width for a full width page -->
+        <div id="page-container" class="full-width">
+            <!-- Header -->
+            <!-- In the PHP version you can set the following options from the config file -->
+            <!-- Add the class .navbar-fixed-top or .navbar-fixed-bottom for a fixed header on top or bottom respectively -->
+            <!-- If you add the class .navbar-fixed-top remember to add the class .header-fixed-top to <body> element! -->
+            <!-- If you add the class .navbar-fixed-bottom remember to add the class .header-fixed-bottom to <body> element! -->
+            <!-- <header class="navbar navbar-inverse navbar-fixed-top"> -->
+            <!-- <header class="navbar navbar-inverse navbar-fixed-bottom"> -->
+            <header class="navbar navbar-inverse">
+                <!-- div#row -->
+                <div class="row">
+
+                    <!-- Sidebar Toggle Buttons (Desktop & Tablet) -->
+                    <div class="col-sm-4 hidden-xs">
+                        <ul class="navbar-nav-custom pull-left">
+                            <!-- Desktop Button (Visible only on desktop resolutions) -->
+                            <li class="visible-md visible-lg">
+                                <a href="javascript:void(0)" id="toggle-side-content">
+                                    <i class="fa fa-bars"></i>
+                                </a>
+                            </li>
+                            <!-- END Desktop Button -->
+
+                            <!-- Divider -->
+                            <li class="divider-vertical"></li>
+                        </ul>
+                    </div>
+                    <!-- END Sidebar Toggle Buttons -->
+
+
+                    <ui:include src="responsive/busqueda.xhtml"  />
+
+                    <ui:include src="responsive/headerNav.xhtml"  />
+
+                </div>
+                <!-- END div#row -->
+            </header>
+            <!-- END Header -->
+
+
+            <ui:include src="responsive/menu.xhtml" />
+
+            <ui:insert name="encabezado">
+                <!-- Pre Page Content -->
+                <div id="pre-page-content">
+                    <!--
+                    <i class="gi">
+                        <img src="# {appConfig.urlbase}resources/image/publico/palacio.png"/>
+                    </i>
+                    -->
+                    <div style="float: left;" >
+                        <p:outputLabel value="Sistema de Gestión Municipal" style="font-weight: bolder; font-size: 14px;"/>
+                    </div>
+                    <div style="float: right;" >
+                        Bienvenid@ <h:outputText value="#{userSession.nombreBienvenida}"  />
+                    </div>
+                    <div style="clear: both;" ></div>
+                </div>
+                <!-- END Pre Page Content -->
+            </ui:insert>
+
+            <!-- Page Content -->
+            <div id="page-content">
+
+
+                <!--<ui:insert name="breadcrumb">-->
+                    <!-- Breadcrumb -->
+                   <!-- <ul class="breadcrumb breadcrumb-top">
+                        <li>
+                            <a href="# {appConfig.urlbase}"><i class="gi gi-display"></i></a>
+                        </li>-->
+                        <!--
+                        <li>
+                            <a href="#">Samborondón</a>
+                        </li>
+                        <li><a href="">Ventanilla</a></li>
+                        -->
+                    <!--</ul>
+                     END Breadcrumb 
+                </ui:insert>-->
+
+
+                <!-- Your Content -->
+
+                <h:panelGroup id="pnlgpTop">
+                    <ui:insert name="top"> </ui:insert>
+                </h:panelGroup>
+
+                <h:panelGroup id="mainContentGroup" >
+
+                    <ui:insert name="content"></ui:insert>
+
+                </h:panelGroup>
+
+
+                <!-- END Your Content -->
+            </div>
+            <!-- END Page Content -->
+
+            <!-- Footer -->
+            <footer>
+                <div class="pull-right">
+                    Desarrollado por Origami Solutions
+                </div>
+                <div class="pull-left">
+                    <span id="year-copy"></span> <strong> Versión 1.0 </strong>
+                </div>
+            </footer>
+            <!-- END Footer -->
+        </div>
+        <!-- END Page Container -->
+
+        <!-- Scroll to top link, check main.js - scrollToTop() -->
+        <a href="#" id="to-top"><i class="fa fa-chevron-up"></i></a>
+
+        <!-- User Modal Account, appears when clicking on 'User Settings' link found on user dropdown menu (header, top right) -->
+        <div id="modal-user-account" class="modal fade">
+            <!-- Modal Dialog -->
+            <div class="modal-dialog">
+                <!-- Modal Content -->
+                <div class="modal-content">
+                    <!-- Modal Body -->
+                    <div class="modal-body remove-padding">
+                        <!-- Modal Tabs -->
+                        <div class="block-tabs block-themed">
+                            <div class="block-options">
+                                <a href="javascript:void(0)" class="btn btn-option" data-dismiss="modal">Ã—</a>
+                            </div>
+                            <ul class="nav nav-tabs" data-toggle="tabs">
+                                <li class="active"><a href="#modal-user-account-account"><i class="fa fa-cog"></i> Account</a></li>
+                                <li><a href="#modal-user-account-profile"><i class="fa fa-user"></i> Profile</a></li>
+                            </ul>
+                            <div class="tab-content">
+                                <!-- Account Tab Content -->
+                                <div class="tab-pane active" id="modal-user-account-account">
+                                    <form action="index.html" method="post" class="form-horizontal" onsubmit="return false;">
+                                        <div class="form-group">
+
+                                            <label class="control-label col-md-4">Username</label>
+                                            <div class="col-md-8">
+                                                <p class="form-control-static">admin</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4" for="modal-account-email">Email</label>
+                                            <div class="col-md-8">
+                                                <input type="text" id="modal-account-email" name="modal-account-email" class="form-control" value="admin@exampleapp.com"/>
+                                            </div>
+                                        </div>
+                                        <h4 class="sub-header">Change Password</h4>
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4" for="modal-account-pass">Current Password</label>
+                                            <div class="col-md-8">
+                                                <input type="password" id="modal-account-pass" name="modal-account-pass" class="form-control"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4" for="modal-account-newpass">New Password</label>
+                                            <div class="col-md-8">
+                                                <input type="password" id="modal-account-newpass" name="modal-account-newpass" class="form-control"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4" for="modal-account-newrepass">Retype New Password</label>
+                                            <div class="col-md-8">
+                                                <input type="password" id="modal-account-newrepass" name="modal-account-newrepass" class="form-control"/>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- END Account Tab Content -->
+
+                                <!-- Profile Tab Content -->
+                                <div class="tab-pane" id="modal-user-account-profile">
+                                    <form action="index.html" method="post" class="form-horizontal" onsubmit="return false;">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4" for="modal-profile-name">Name</label>
+                                            <div class="col-md-8">
+                                                <input type="text" id="modal-profile-name" name="modal-profile-name" class="form-control" value="John Doe"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4" for="modal-profile-gender">Gender</label>
+                                            <div class="col-md-4">
+                                                <select id="modal-profile-gender" name="modal-profile-name" class="form-control">
+                                                    <option value="m">Male</option>
+                                                    <option value="f">Female</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4" for="modal-profile-birthdate">Birthdate</label>
+                                            <div class="col-md-4">
+                                                <div class="input-group">
+                                                    <input type="text" id="modal-profile-birthdate" name="modal-profile-birthdate" class="form-control input-datepicker-close"/>
+                                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4" for="modal-profile-bio">Bio</label>
+                                            <div class="col-md-8">
+                                                <textarea id="modal-profile-bio" name="modal-profile-bio" class="form-control" rows="3" placeholder="Bio Information.."></textarea>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- END Profile Tab Content -->
+                            </div>
+                        </div>
+                        <!-- END Modal Tabs -->
+                    </div>
+                    <!-- END Modal Body -->
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button class="btn btn-success" data-dismiss="modal"><i class="fa fa-floppy-o"></i> Save</button>
+                    </div>
+                    <!-- END Modal footer -->
+                </div>
+                <!-- END Modal Content -->
+            </div>
+            <!-- END Modal Dialog -->
+        </div>
+        <!-- END User Modal Settings -->
+
+
+
+        <p:ajaxStatus onstart="PF('statusDialog').show()" oncomplete="PF('statusDialog').hide()"  />
+
+        <p:dialog widgetVar="statusDialog" modal="true" draggable="false"  closable="false" resizable="false" showHeader="false">
+            <img src="#{appConfig.urlbase}image/publico/loader.gif" />
+        </p:dialog>
+
+
+        <!-- Bootstrap.js -->
+        <script src="#{appConfig.urlbase}template/responsive/js/vendor/bootstrap.min.js"></script>
+
+        <!-- Jquery plugins and custom javascript code -->
+        <script src="#{appConfig.urlbase}template/responsive/js/plugins.js"></script>
+        <script src="#{appConfig.urlbase}template/responsive/js/main.js"></script>
+        <h:form id="template_logoutForm" >
+            <p:remoteCommand id="logout" name="smbBpm_logout" actionListener="#{userSession.logout()}" />
+        </h:form>
+    </h:body>
+</html>

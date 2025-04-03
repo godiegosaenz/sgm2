@@ -1,0 +1,74 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                template="/template/template.xhtml"
+                xmlns:dialog="http://java.sun.com/jsf/composite/dialogs">
+    <ui:define name="metadata">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    </ui:define>
+    <ui:define name="content">
+        <div class="ContainerIndent">
+            <p:panel id="pFicha" style="width: 100%">
+                <div align="center"> 
+                    <h3 class="hardblue">Resumen general Ordenes de trabajo.</h3>
+                </div>
+                <h:form id="frmGral">
+                    <p:panelGrid id="pgResumenGeneral" columns="2" layout="grid" style="width: 100%">
+                        <p:dataTable id="dtResumen" value="#{resumenGeneral.resumen}" var="r" reflow="true" style="width: 100%" paginator="true" 
+                                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rows="10" rowsPerPageTemplate="20,50,100" emptyMessage="No tiene ordenes pendientes" paginatorPosition="top" filterEvent="enter">
+                            <f:facet name="header">
+                                <h:outputText value="Resumen general de ordenes"/>
+                                <br/>
+                                <h:commandLink value="Exportar a excel">
+                                    <p:dataExporter type="xls" target="dtResumen" fileName="resumen general" />
+                                </h:commandLink>
+                            </f:facet>
+                            <p:column headerText="No. Orden" style="width: 15%" filterBy="#{r.orden}" sortBy="#{r.orden}" filterMatchMode="exact">
+                                <!--<h:outputText value="#{r.orden}"/>-->
+                                <p:commandLink id="cmdVer" value="#{r.orden}" actionListener="#{resumenGeneral.verOrden(r.orden)}"/>
+                            </p:column>
+                            <p:column headerText="Responsable" style="width: 20%" filterBy="#{r.responsable}" sortBy="#{r.responsable}" filterMatchMode="contains">
+                                <h:outputText value="#{r.responsable}"/>
+                            </p:column>
+                            <p:column headerText="Finalizadas" style="width: 10%" sortBy="#{r.finalizadas}">
+                                <h:outputText value="#{r.finalizadas}"/>
+                            </p:column>
+                            <p:column headerText="Pendientes" style="width: 10%" sortBy="#{r.pendientes}">
+                                <h:outputText value="#{r.pendientes}"/>
+                            </p:column>
+                            <p:column headerText="Fecha" style="width: 20%" sortBy="#{r.fecha}">
+                                <h:outputText value="#{r.fecha}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy hh:mm"/>
+                                </h:outputText>
+                            </p:column>
+                        </p:dataTable>
+                        <p:dataTable id="dtResumenUsr" value="#{resumenGeneral.resumenUsrs}" var="r" reflow="true" style="width: 100%" paginator="true"
+                                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rows="10" rowsPerPageTemplate="20,50,100" emptyMessage="No tiene ordenes pendientes" paginatorPosition="top" filterEvent="enter">
+                            <f:facet name="header">
+                                <h:outputText value="Resumen general Usuarios"/>
+                            </f:facet>
+                            <p:column headerText="Responsable" style="width: 20%" filterBy="#{r.responsable}" sortBy="#{r.responsable}" filterMatchMode="contains">
+                                <h:outputText value="#{r.responsable}"/>
+                            </p:column>
+                            <p:column headerText="Finalizadas" style="width: 10%" sortBy="#{r.finalizadas}">
+                                <h:outputText value="#{r.finalizadas}"/>
+                            </p:column>
+                            <p:column headerText="Pendientes" style="width: 10%" sortBy="#{r.pendientes}">
+                                <h:outputText value="#{r.pendientes}"/>
+                            </p:column>
+                            <p:column headerText="Re-Procesados" style="width: 10%" sortBy="#{r.pendientes}">
+                                <h:outputText value="#{r.reprocesados}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:panelGrid>
+
+                </h:form>
+            </p:panel>
+        </div>
+    </ui:define>
+</ui:composition>

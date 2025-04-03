@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Listado de Fórmula Trámites</title>
+        <style type="text/css">
+            .ui-widget {
+                text-align: left;
+                font-size: 100%;
+            }
+            /*            input, textarea, keygen, select, button {
+                            text-rendering: auto;
+                            color: initial;
+                            letter-spacing: normal;
+                            word-spacing: normal;
+                            text-transform: none;
+                            text-indent: 0px;
+                            text-shadow: none;
+                            display: inline-block;
+                            text-align: match-parent;
+                            margin: 0em 0em 0em 0em;
+                            font: 13.3333px Arial;
+                        }
+                        user agent stylesheet
+                        input, textarea, keygen, select, button, meter, progress {
+                            -webkit-writing-mode: horizontal-tb;
+                            -webkit-text-fill-color: blue;
+                        }*/
+        </style>
+    </h:head>
+    <h:body>
+        <h:outputStylesheet name="css/font-icon-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/sentinel-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/core-layout.css" library="sentinel-layout" />
+        <h:form id="FormformulaTramite">
+            <p:growl id="growl" showDetail="true" sticky="true" autoUpdate="true" globalOnly="true" />
+            <p:messages autoUpdate="true" globalOnly="true"/>
+            <div align="right">
+                <p:commandButton value="Nuevo" icon="ui-icon-plus" actionListener="#{formulaTramite.showDlgNew()}" styleClass="btnStyle"></p:commandButton>
+                <br/><br/>
+            </div>
+            <p:dataTable id="dtuser" reflow="true"
+                         paginator="true" lazy="true" rows="10" rowsPerPageTemplate="10,15,20"
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         value="#{formulaTramite.formulaTramiteLazy}" var="formula" emptyMessage="No se encontró ningun Item">
+                <p:column headerText="Nombre" style="text-align: left ;padding-left: 1px; padding-right: 1px"
+                          filterBy="#{formula.nombre}" sortBy="#{formula.nombre}" filterStyle="width: 60%;">
+                    <h:outputText value="#{formula.nombre}" style="text-align: center; font-size: 12px"/>
+                </p:column>
+
+                <p:column headerText="No. Versión" style="text-align: center; width:9%;"  filterStyle="width: 40%;" filterBy="#{formula.nVersion}" sortBy="#{formula.nVersion}">
+                    <h:outputText value="#{formula.nVersion}" style="text-align: center; font-size: 12px"/>
+                </p:column>
+
+                <p:column  id="tratipo"  filterBy="#{formula.tipoTramite.descripcion}"
+                           headerText="Tipo Trámite"
+                           filterOptions="#{formulaTramite.lisTipoTramite}"
+                           filterMatchMode="exact"
+                           style="text-align: left ;padding-left: 1px; padding-right: 1px; width: 20%;" >
+                    <h:outputText value="#{formula.tipoTramite.descripcion}" style="font-size: 10px;"/>
+                </p:column>
+
+                <p:column headerText="Estado" style="text-align: center; width:7%;"  filterStyle="width: 40%;" >
+                    <h:outputText value="Activo" rendered="#{formula.estado}" style="text-align: center; font-size: 12px"/>
+                    <h:outputText value="Inactivo" rendered="#{!formula.estado}" style="text-align: center; font-size: 12px"/>
+                </p:column>
+
+                <p:column headerText="Prefijo" style="text-align: center; width:6%;"  filterStyle="width: 40%;" >
+                    <h:outputText value="#{formula.prefijo}" style="text-align: center; font-size: 12px"/>
+                </p:column>
+
+                <p:column headerText="Opciones" style="text-align: center; width:5%; ">
+                    <p:commandLink value="Editar" style="color: #0033FF" shape="circle" actionListener="#{formulaTramite.showDlgEdit(formula)}" />
+                </p:column>
+            </p:dataTable>
+        </h:form>
+
+
+        <p:dialog id="dlgNFormulaTramite" header="#{formulaTramite.datos['header']}" widgetVar="dlgAgrgFormulaTramite" resizable="false" modal="true"
+                  position="center" closeOnEscape="true" width="85%" height="60%">
+            <h:form  id="formNewFormulaTramite">
+                <p:panelGrid columns="4" layout="grid" columnClasses="ui-grid-col-3, ui-grid-col-5, ui-grid-col-2, ui-grid-col-3" >
+                    <p:outputLabel for="d1" value="Ingrese Nombre: " style="font-weight: bolder"/>
+                    <p:inputText id="d1" value="#{formulaTramite.nuevaFormulaTramite.nombre}" style="width: 100%;" required="true"/>
+                    <p:outputLabel for="d2" value="Prefijo: " style="font-weight: bolder"/>
+                    <p:inputText id="d2" value="#{formulaTramite.nuevaFormulaTramite.prefijo}" style="width: 100%;" required="true" requiredMessage="Debe ingresar Prefijo"/>
+
+                    <p:outputLabel value="Tipo Trámite: " style="font-weight: bolder"/>
+                    <p:selectOneMenu id="tipoTramite" value="#{formulaTramite.nuevaFormulaTramite.tipoTramite}" effect="fade" converter="entityConverter">
+                        <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                        <f:selectItems value="#{formulaTramite.geTipoTramites}" var="g" itemLabel="#{g.descripcion}" itemValue="#{g}"/>
+                    </p:selectOneMenu>
+                    <p:outputLabel value="" style="font-weight: bolder"/>
+                    <p:outputLabel value="" style="font-weight: bolder"/>
+                </p:panelGrid>
+                <p:outputLabel value="Fórmula: " style="font-weight: bolder"/><br/>
+                <p:inputTextarea rows="15" cols="60" value="#{formulaTramite.nuevaFormulaTramite.formula}"  queryDelay="750" minQueryLength="4" autoResize="false" style="width: 100%; "/>
+                <br/>
+                <br/><center><p:commandButton value="Grabar" actionListener="#{formulaTramite.guardarFormulaTramiteNuevo()}" update="FormformulaTramite"/></center>
+                <br/>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="dlgEditFormulaTramite" header="Editar Fórmula Trámite" widgetVar="dlgEditFormulaTramite" resizable="false" modal="true"
+                  position="center" closeOnEscape="true"  width="85%" height="60%">
+            <h:form id="frmEditarFormulaTramite">
+                <p:panelGrid columns="4" layout="grid" columnClasses="ui-grid-col-3, ui-grid-col-5, ui-grid-col-2, ui-grid-col-3" >
+                    <p:outputLabel value="Ingrese Nombre: " style="font-weight: bolder"/>
+                    <p:inputText value="#{formulaTramite.editFormulaTramiteCopia.nombre}" style="width: 100%;" placeholder="Nombre de la Fórmula"/>
+                    <p:outputLabel for="d2" value="Prefijo: " style="font-weight: bolder"/>
+                    <p:inputText id="d2" value="#{formulaTramite.editFormulaTramiteCopia.prefijo}" style="width: 100%;" required="true" requiredMessage="Debe ingresar Prefijo"/>
+
+                    <p:outputLabel value="Tipo Trámite: " style="font-weight: bolder"/>
+                    <p:selectOneMenu id="tipoTramite" value="#{formulaTramite.editFormulaTramiteCopia.tipoTramite}" effect="fade" converter="entityConverter" >
+                        <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                        <f:selectItems value="#{formulaTramite.geTipoTramites}" var="g" itemLabel="#{g.descripcion}" itemValue="#{g}"/>
+                    </p:selectOneMenu>
+                    <p:outputLabel value="" style="font-weight: bolder"/>
+                    <p:selectBooleanCheckbox itemLabel="Activo"  value="#{formulaTramite.editFormulaTramiteCopia.estado}" />
+                </p:panelGrid>
+                <br/>
+                <h:outputLabel value="Ingrese Fórmula: " style="font-weight: bolder"/>
+
+                <p:inputTextarea rows="15" value="#{formulaTramite.editFormulaTramiteCopia.formula}" queryDelay="750" minQueryLength="4" autoResize="false" style="width: 100%; "/>
+
+                <br/><center><p:commandButton value="Grabar" actionListener="#{formulaTramite.guardarFormulaTramiteEditado()}" update="FormformulaTramite" /></center>
+                <br/>
+            </h:form>
+        </p:dialog>
+
+    </h:body>
+
+</html>

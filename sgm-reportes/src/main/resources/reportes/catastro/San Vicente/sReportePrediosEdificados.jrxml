@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sReportePrediosConstructividad" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="20e56fe9-e9d4-40e2-abb3-ef7cd1a78bf6">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="106"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="LOGO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="USUARIO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+	cp.clave_cat clave_catastral, cp.predialant clave_anterior, cp.num_predio matricula_inmobiliaria, trim(sgm_app.propietarios_por_predio(cp.id)) propietarios,
+	barrio.nombre barrio,  (cp.calle || ' ' || cp.calle_s) calles,
+	constructividad.valor constructividad
+FROM sgm_app.cat_predio cp
+LEFT JOIN sgm_app.cat_ciudadela barrio ON barrio.id = cp.ciudadela
+INNER JOIN sgm_app.ctlg_item constructividad ON constructividad.id = cp.constructividad
+WHERE cp.estado = 'A']]>
+	</queryString>
+	<field name="clave_catastral" class="java.lang.String"/>
+	<field name="clave_anterior" class="java.lang.String"/>
+	<field name="matricula_inmobiliaria" class="java.lang.Long"/>
+	<field name="propietarios" class="java.lang.String"/>
+	<field name="barrio" class="java.lang.String"/>
+	<field name="calles" class="java.lang.String"/>
+	<field name="constructividad" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="121" splitType="Immediate">
+			<image hAlign="Center">
+				<reportElement x="2" y="0" width="71" height="62" uuid="401de52c-11cf-4e14-a811-2488e4fcf26e"/>
+				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="73" y="0" width="429" height="62" uuid="4ca6d95f-0982-4b63-aa62-b1dc0731e0cc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="17" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Gobierno Autónomo Descentralizado Municipal del Cantón San Vicente]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="73" y="62" width="429" height="18" uuid="f1d049f4-8235-4edb-ba10-3a2396c533c9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["PREDIOS SEGÚN SU CONSTRUCTIVIDAD"]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy h:mm a">
+				<reportElement x="301" y="80" width="150" height="15" uuid="252f27e9-a0f3-42ed-8de2-6589aaae79bc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="170" y="80" width="131" height="15" uuid="5b71abe7-00a8-4a47-964b-52242b3f4304"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Usuario: "+$P{USUARIO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="101" width="94" height="20" isPrintWhenDetailOverflows="true" uuid="3f970756-9d3e-4cd5-9fe0-a4f10d013587"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Clave Catastral]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="96" y="101" width="80" height="20" isPrintWhenDetailOverflows="true" uuid="2d145fa8-21ee-41a8-9d15-e327bfb752c0"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Clave Anterior]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="176" y="101" width="53" height="20" isPrintWhenDetailOverflows="true" uuid="12ec72ff-1abb-4080-a033-c3f799f73cf3"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Matricula Inmobiliaria]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="229" y="101" width="123" height="20" isPrintWhenDetailOverflows="true" uuid="431aa7f1-65b5-4791-88d1-66e815de7fd3"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Propietarios]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="352" y="101" width="68" height="20" isPrintWhenDetailOverflows="true" uuid="cb4b4ee9-619b-4794-879c-7f4cacab16ac"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Barrio]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="475" y="101" width="80" height="20" isPrintWhenDetailOverflows="true" uuid="ec9aa6cd-2962-46a1-91b6-502c3917b682"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Constructividad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="420" y="101" width="55" height="20" isPrintWhenDetailOverflows="true" uuid="682d0803-55b7-404e-a4ba-35d142bbaab7"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Calles]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="20">
+			<textField>
+				<reportElement x="2" y="0" width="94" height="20" isPrintWhenDetailOverflows="true" uuid="a8860981-248d-48ec-9629-23e3f372f87c"/>
+				<box>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{clave_catastral}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="96" y="0" width="80" height="20" isPrintWhenDetailOverflows="true" uuid="ac6dbf65-b507-49b4-b769-e97159584f79"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{clave_anterior}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="176" y="0" width="53" height="20" isPrintWhenDetailOverflows="true" uuid="3237a75d-778a-4f2a-9350-664e6bd5fec5"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{matricula_inmobiliaria}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="229" y="0" width="123" height="20" isPrintWhenDetailOverflows="true" uuid="122d023f-f503-4618-89f5-420b3c047728"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{propietarios}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="352" y="0" width="68" height="20" isPrintWhenDetailOverflows="true" uuid="e0278db5-cb49-4559-931b-43f3e92d0841"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{barrio}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="475" y="0" width="80" height="20" isPrintWhenDetailOverflows="true" uuid="f1c949a2-037a-4d3f-a1af-d0f0d297043d"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{constructividad}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="420" y="0" width="55" height="20" isPrintWhenDetailOverflows="true" uuid="d007ea50-7404-4ae6-baca-567c27060381"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{calles}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

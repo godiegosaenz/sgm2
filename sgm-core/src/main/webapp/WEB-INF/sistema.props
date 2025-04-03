@@ -1,0 +1,80 @@
+[sistema]
+geoserverUrl = http://localhost:8080/geoserver
+geoserverProxyUrl = http://localhost:8080/geoserver/
+urlServidorAlfrescoPublica = http://localhost:9091/
+urlServidorAlfrescoInterna = http://localhost:9091/
+ipPublica = localhost
+ipInterna = localhost
+ipPublicaAlfresco = localhost
+ipInternaAlfresco = localhost
+logoReportes = /template/balcon/sanvicente.png
+rutaReportesDinardap = C://servers_files//temp//repo
+rutaRepotiorioArchivo = C://servers_files//temp//repo
+rutaRepositorioUsuarios = /servers_files/cmbFlow/repo/perfil_usuarios/
+rutaRepositorioUsuariosInternos = /servers_files/cmbFlow/repo/perfil_usuarios_internos/
+carpetaAdministrativaAlfresco= documentoMunicipio
+formatoArchivos = /(\\.|\\/)(gif|jpe?g|png|pdf|xlsx|docx|xlsm|dwg|shp|doc|xls|ppt|pptx|tif|txt)$/
+sisLogo = /template/balcon/sanvicente.png
+sisLogo1 = /template/balcon/sanvicente.png
+varbackground = backgrounddes
+
+
+smtp_Host = smtp.gmail.com
+smtp_Port = 587
+correo = origamiintegrales@gmail.com
+pass= origamiintegrales1234
+ssl = true
+
+ejbRuta = java:global/sgmEE/
+
+urlServidorPublica = /sgmEE
+urlServidorCompleta = http://127.0.0.1:8080/sgmEE
+urlPublica = http://186.42.225.198:8080/sgmEE
+correoClienteGenerico = no_ingreso_correo@hotmail.com
+
+[wf.notficaciones]
+segundo = 0
+minuto = 0
+hora = 7
+dia = *
+
+[catdb]
+driverClass = org.postgresql.Driver
+url = jdbc:postgresql://127.0.0.1:5432/sgm
+username = sisapp
+password = sisapp98
+minPoolConSize = 5
+maxPoolConsize = 30
+maxIdleTime = 1800
+
+
+[ejbs]
+entityManager = java:module/manager
+bpmBaseEngine = java:module/bpmBaseEngine
+bpmProcessEngine = java:module/bpmProcessEngine
+datasource = java:module/dataSource
+solicitud = java:module/solicitudServ
+
+[zoning]
+region = EC
+
+[sgmdocsdb]
+driverClass = org.postgresql.Driver
+url = jdbc:postgresql://127.0.0.1:5432/sgm
+username = sisapp
+password = sisapp98
+minPoolConSize = 5
+maxPoolConsize = 30
+maxIdleTime = 1800
+
+[samdoc]
+url = http://localhost:8080/samdoc
+
+[censocat]
+driverClass = org.postgresql.Driver
+url = jdbc:postgresql://127.0.0.1:5432/fotos
+username = sisapp
+password = sisapp98
+minPoolConSize = 5
+maxPoolConsize = 30
+maxIdleTime = 1800

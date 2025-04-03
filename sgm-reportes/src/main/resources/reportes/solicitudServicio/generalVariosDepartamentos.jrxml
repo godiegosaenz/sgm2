@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="resumenDepartamento" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="aad27ee5-2e93-4639-a7c1-1ae73af853cb">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="estado" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="inicio" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fin" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="logo" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\Users\\supergold\\Documents\\sgm\\src\\main\\webapp\\css\\homeIconsImages\\logo.jpg"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+     sgm_flow.departamentos_solicitud_servicios1(ss.id) AS departamento,
+     COUNT(ht.id) AS numTramitesDep
+FROM
+     sgm_flow."historico_tramites" ht INNER JOIN sgm_flow."sv_solicitud_servicios" ss ON (ss."tramite" = ht."id_tramite")
+WHERE
+     ht.estado = $P{estado} AND
+     to_char(ht.fecha, 'YYYY-MM-DD') BETWEEN $P{inicio} AND $P{fin} AND
+     (SELECT COUNT(D.ID) FROM sgm_app.GE_DEPARTAMENTO D WHERE D.ID IN (SELECT SD.DEPARTAMENTO FROM sgm_flow."sv_solicitud_departamento" SD WHERE SD.SOLICITUD = SS.ID)) > 1
+GROUP BY
+    departamento
+ORDER BY
+     departamento ASC]]>
+	</queryString>
+	<field name="departamento" class="java.lang.String"/>
+	<field name="numtramitesdep" class="java.lang.Long"/>
+	<variable name="total" class="java.lang.Long" resetType="None" calculation="Sum">
+		<variableExpression><![CDATA[$F{numtramitesdep}]]></variableExpression>
+	</variable>
+	<variable name="numtramitesdep_1" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{numtramitesdep}]]></variableExpression>
+		<initialValueExpression><![CDATA[0L]]></initialValueExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="129" splitType="Stretch">
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="398" y="95" width="80" height="20" uuid="0f01c3bb-12d7-44f6-9044-77ea89c4a172"/>
+				<textFieldExpression><![CDATA[$P{fin}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="164" y="95" width="52" height="20" uuid="f1aba35f-669e-4854-83f7-c8a3bf622171"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Desde: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="345" y="95" width="52" height="20" uuid="e7fbd80c-88fb-4893-a845-e0efb8afdf1d"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hasta: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="139" y="27" width="370" height="27" uuid="0efbf03b-f3c0-4261-b36e-6c0a6f4073c4"/>
+				<textElement textAlignment="Center">
+					<font size="20"/>
+				</textElement>
+				<text><![CDATA[Resumen Solicitud de Servicios]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="217" y="95" width="80" height="20" uuid="7dade1f9-2e3e-43fb-a925-056767f6f2e3"/>
+				<textFieldExpression><![CDATA[$P{inicio}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="1" y="1" width="115" height="115" uuid="424365f4-e161-4f3b-97a9-383b52519980"/>
+				<imageExpression><![CDATA[$P{logo}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="139" y="54" width="370" height="27" uuid="fbd8fe01-4e88-455b-a9e6-ff8318eb43ca"/>
+				<textElement textAlignment="Center">
+					<font size="20"/>
+				</textElement>
+				<text><![CDATA[Varios Departamentos]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="24" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="447" height="20" uuid="c45473d8-a703-4e65-9a34-53eee53b6141"/>
+				<textElement>
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DEPARTAMENTOS]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="23" width="534" height="1" forecolor="#000000" uuid="db4d2c57-4fde-4b61-84e6-537c8e34c0c5"/>
+			</line>
+			<textField>
+				<reportElement x="447" y="1" width="87" height="20" uuid="78534387-d33e-4c60-b8ee-dbb12c816c08"/>
+				<textElement textAlignment="Right">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{estado}.toUpperCase()]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="22" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="1" y="0" width="447" height="18" uuid="38b524a6-85c2-48ea-8435-bf7d4d511b0f"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{departamento}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="448" y="0" width="86" height="18" uuid="2e1da5e5-d328-4bf7-b96c-6d28d9441a2a"/>
+				<textElement textAlignment="Right">
+					<font size="13"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numtramitesdep}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="49" splitType="Stretch">
+			<frame>
+				<reportElement mode="Transparent" x="0" y="2" width="555" height="22" forecolor="#FFFFFF" backcolor="#990000" uuid="c1e20ff5-ec4c-40a8-8cbb-46619e234a43"/>
+				<staticText>
+					<reportElement x="1" y="0" width="405" height="20" uuid="ed97c90b-e403-4747-955c-a87bb113d63b"/>
+					<textElement>
+						<font size="14" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total Trámites ]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="408" y="0" width="126" height="20" uuid="273a8a8b-fbd0-44bc-b4d1-b3a7251849fd"/>
+					<textElement textAlignment="Right">
+						<font size="14" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{numtramitesdep_1}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<line>
+				<reportElement mode="Opaque" x="1" y="0" width="533" height="1" forecolor="#000000" uuid="abd93c4a-70af-4471-869d-67a499185275"/>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

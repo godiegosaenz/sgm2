@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="metadata">
+
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="frmValoresSect">
+            <div align="right">
+                <p:commandButton value="Nuevo" actionListener="#{valoresSectores.mostrar(null)}" oncomplete="PF('Sectores').show()" update="Mostrar"/>
+            </div>
+            <p:dataTable value="#{valoresSectores.lazy}" reflow="true" var="vs" 
+                         rowsPerPageTemplate="15,20,50, 100" rows="15" lazy="true">
+                <p:column headerText="Uso">
+                    <p:outputLabel value="#{vs.uso}"/>    
+                </p:column>
+                <p:column headerText="Servicios">
+                    <p:outputLabel value="#{vs.servicios}"/>     
+                </p:column>
+                <p:column headerText="Detalles">
+                    <p:outputLabel value="#{vs.detalle}"/>
+                </p:column>
+                <p:column headerText="Valor M2">
+                    <p:outputLabel value="#{vs.valorM2}"/>
+                </p:column>
+                <p:column headerText="sector">
+                    <p:outputLabel value="#{vs.sector}"/>
+                </p:column>
+                <p:column headerText="Opciones">
+                    <p:commandButton value="Eliminar" actionListener="#{valoresSectores.eliminar(vs)}" update="frmValoresSect" >
+                        <p:confirm header="Confirmar" message="Confirmar eliminar el Registro?" icon="ui-icon-alert" />
+                    </p:commandButton>
+                    <p:spacer width="2"/>
+                    <p:commandButton value="Editar" actionListener="#{valoresSectores.mostrar(vs)}" oncomplete="PF('Sectores').show()" update="Mostrar"/>
+                </p:column>
+            </p:dataTable>
+
+            <br></br>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+            </p:confirmDialog>
+        </h:form>
+
+        <p:dialog widgetVar="Sectores" header=" Opciones Sectores" modal="true">
+            <h:form id="Mostrar">
+                <p:panelGrid columns="2" >
+
+                    <p:outputLabel value="Uso"/>
+                    <p:selectOneMenu id="localizacion" value="#{valoresSectores.sector.uso}" effect="fade">
+                        <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+                        <f:selectItems value="#{valoresSectores.getListado('predio.uso_solar')}" var="c" itemLabel="#{c.valor}" itemValue="#{c.valor}"/>
+                    </p:selectOneMenu>
+                    <p:outputLabel value="Servicios"/>
+                    <p:inputText value="#{valoresSectores.sector.servicios}"/>
+                    <p:outputLabel value="Detalles"/>
+                    <p:inputText value="#{valoresSectores.sector.detalle}"/>
+                    <p:outputLabel value="Valor M2"/>
+                    <p:inputText value="#{valoresSectores.sector.valorM2}"/>
+                    <p:outputLabel value="Sector"/>
+                    <p:inputText value="#{v.sector.sector}"/>
+                    <p:outputLabel value="Cobro de Bomberos"/>
+                    <p:selectBooleanCheckbox value="#{valoresSectores.sector.cobroBomberos}"/>
+                </p:panelGrid>
+
+                <center>
+                    <p:commandButton value="Guardar" actionListener="#{valoresSectores.nuevo()}" rendered="#{valoresSectores.sector.id eq null}" update="frmValoresSect" oncomplete="PF('Sectores').hide()"/>
+                    <p:commandButton value="Modificar" actionListener="#{valoresSectores.editar()}" rendered="#{valoresSectores.sector.id ne null}" update="frmValoresSect" oncomplete="PF('Sectores').hide()"/>
+                </center>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+
+</ui:composition>

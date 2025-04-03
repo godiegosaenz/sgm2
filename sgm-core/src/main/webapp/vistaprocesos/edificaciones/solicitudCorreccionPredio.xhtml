@@ -1,0 +1,232 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="top">
+        <h1>SOLICITUD CORRECCION DE PREDIO</h1>
+    </ui:define>
+
+    <ui:define name="content">
+        
+        <h:form id="formSolCorrPredio">
+            <p:tabView dynamic="true" id="tbVSolicitudes">
+                <p:tab title="Solicitar Corrección Predio">
+                    <p:outputLabel value="Numero de Tramite" style="font-weight: bold;"/>
+                    <p:inputText value="#{solicitudCorreccionPredioEdif.numTramite}" type="number"/>
+                    <p:commandLink style="height: 30px" title="BUSCAR TRAMITE" actionListener="#{solicitudCorreccionPredioEdif.buscarTramite()}" update="detTramite">
+                        <p:spacer width="15"/>
+                        <p:graphicImage value="/css/homeIconsImages/buscar.png" height="20" width="20"/>
+                    </p:commandLink>
+                    <br/>
+                    <p:panelGrid id="detTramite" style="width: 100%; margin: 0 auto; font-size: 15px;">
+                        <f:facet name="header">  
+                            <p:row>
+                                <p:column style="text-align: left;" colspan="5">
+                                    Detalle Tramite
+                                </p:column>
+                            </p:row>
+                        </f:facet>
+                        <p:row>
+                            <p:column>
+                                N. Tramite<br/>
+                               <p:outputLabel value="#{solicitudCorreccionPredioEdif.tramite.id}"/>
+                            </p:column>
+                            <p:column>
+                                Tramite<br/>
+                                <p:outputLabel value="#{solicitudCorreccionPredioEdif.tramite.tipoTramiteNombre}"/>
+                            </p:column>
+                            <p:column>
+                                Solicitante<br/>
+                                <p:outputLabel value="#{solicitudCorreccionPredioEdif.tramite.nombrePropietario}"/>
+                            </p:column>
+                            <p:column>
+                                Fecha<br/>
+                                <p:outputLabel value="#{solicitudCorreccionPredioEdif.tramite.fecha}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </p:outputLabel>
+                            </p:column>
+                            <p:column>
+                                Estado<br/>
+                                <p:outputLabel value="#{solicitudCorreccionPredioEdif.tramite.estado}"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <br/><br/>
+                    <p:outputLabel value="Numero de Predio" style="font-weight: bold;"/>
+                    <p:inputText value="#{solicitudCorreccionPredioEdif.numPredio}" type="number"/>
+                    <p:commandLink style="height: 30px" title="BUSCAR PREDIO" actionListener="#{solicitudCorreccionPredioEdif.buscarPredio()}" update="detPredio">
+                        <p:spacer width="15"/>
+                        <p:graphicImage value="/css/homeIconsImages/buscar.png" height="20" width="20"/>
+                    </p:commandLink>
+                    <br/>
+                    <p:panelGrid id="detPredio" style="width: 100%; margin: 0 auto;font-size: 15px;">
+                        <f:facet name="header">  
+                            <p:row>
+                                <p:column style="text-align: left;" colspan="3">
+                                    Detalle Predio
+                                </p:column>
+                            </p:row>
+                        </f:facet>
+                        <p:row>
+                            <p:column>
+                                N. Predio<br/>
+                                <p:outputLabel value="#{solicitudCorreccionPredioEdif.predio.numPredio}"/>
+                            </p:column>
+                            <p:column>
+                                Urbanizacion<br/>
+                                <p:outputLabel value="#{solicitudCorreccionPredioEdif.predio.nombreUrb}. Mz:#{solicitudCorreccionPredioEdif.predio.urbMz}. Sl:#{solicitudCorreccionPredioEdif.predio.urbSolarnew}."/>
+                            </p:column>
+                            <p:column>
+                                Cod. Predial<br/>
+                                <p:outputLabel value="#{solicitudCorreccionPredioEdif.predio.codigoPredial}"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <br/><br/>
+                    <p:outputLabel value="Detalle de la Solicitud"/><br/>
+                    <p:inputTextarea value="#{solicitudCorreccionPredioEdif.solicitud.detalleSolicitud}" style="width: 100%;" placeholder="PARA SOLICITAR LA MODIFICACION DEL PREDIO DEBE INGRESAR EL DETALLE DE LO QUE SE DEBE CORREGIR."/>
+                    <center>
+                        <p:outputLabel value="SOLICITUD REGISTRADA : #{solicitudCorreccionPredioEdif.solicitud.id}" style="font-weight: bold; font-size: 15px;" rendered="#{solicitudCorreccionPredioEdif.solicitudRegistrada}"/>
+                        <p:commandButton value="Registrar/Enviar Solicitud" styleClass="btnStyle" icon="ui-icon-check" iconPos="s" actionListener="#{solicitudCorreccionPredioEdif.validarSolicitud()}" rendered="#{!solicitudCorreccionPredioEdif.solicitudRegistrada}"/>
+                        <p:spacer width="20"/>
+                        <p:commandButton value="Nueva Solicitud" styleClass="btnStyle" icon="ui-icon-cancel" iconPos="s" actionListener="#{solicitudCorreccionPredioEdif.nuevaSolicitud()}"/>
+                    </center>
+                </p:tab>
+                <p:tab title="Consulta - Corrección Predios">
+                    <div align="right">
+                        <p:commandButton value="Reporte" icon="ui-icon-document" styleClass="btnStyle" oncomplete="PF('dlgReporteSol').show();" rendered="#{userSession.roles.contains(67)}"/>
+                    </div>
+                    <p:dataTable id="dtTramites" reflow="true" paginator="true" lazy="true" rows="20" rowsPerPageTemplate="20,50,100" filterEvent="enter"
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         value="#{solicitudCorreccionPredioEdif.solicitudes}" var="s" emptyMessage="No se encontró ningún Item.">
+                        <p:column headerText="Solicitud" style="text-align: center;" filterBy="#{s.id}" sortBy="#{s.id}" width="130">
+                            <p:outputLabel value="#{s.id}"/>
+                        </p:column>
+                        <p:column headerText="Num. Trámite" style="text-align: center;" width="130">
+                            <p:outputLabel value="#{s.tramite.id}"/>
+                        </p:column>
+                        <p:column headerText="Num. Predio" style="text-align: center;" width="130">
+                            <p:outputLabel value="#{s.predio.numPredio}"/>
+                        </p:column>
+                        <p:column headerText="Solicitante" style="text-align: center;">
+                            <p:outputLabel value="#{s.solicitante.usuario}" style="text-transform: uppercase"/>
+                        </p:column>
+                        <p:column headerText="Dir. Catastro" style="text-align: center;">
+                            <p:outputLabel value="#{s.directorCatastro.usuario}" style="text-transform: uppercase"/>
+                        </p:column>
+                        <p:column headerText="Tec. Catastro" style="text-align: center;">
+                            <p:outputLabel value="#{s.tecnicoCatastro.usuario}" style="text-transform: uppercase"/>
+                        </p:column>
+                        <p:column headerText="Fecha Solicitud" style="text-align: center;" width="130">
+                            <p:outputLabel value="#{s.fechaSolicitud}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column headerText="Estado" style="text-align: center;" width="130">
+                            <p:outputLabel value="#{s.accion eq 0?'PENDIENTE':''}" style="font-weight: bolder;"/>
+                            <p:outputLabel value="#{s.accion eq 1?'ASIGNADA':''}" style="font-weight: bolder;"/>
+                            <p:outputLabel value="#{s.accion eq 2?'FINALIZADA':''}" style="font-weight: bolder;"/>
+                        </p:column>
+                        <p:column headerText="Detalle" width="100" style="text-align: center;">
+                            <p:commandLink title="#{s.id}" actionListener="#{solicitudCorreccionPredioEdif.verDetalleSolicitud(s)}" update="formDetalle" oncomplete="PF('detalle').show();">
+                                <p:graphicImage value="/css/homeIconsImages/abrir.png" height="16"/>
+                            </p:commandLink>
+                        </p:column>
+                    </p:dataTable>
+                </p:tab>
+            </p:tabView>
+        </h:form>
+        
+        <p:dialog id="dlgConfirmacion" widgetVar="cofirmacion" header="Confirmación Envio de Solicitud" appendTo="@(body)" modal="true" width="40%" resizable="false" closable="true" closeOnEscape="true">
+            <h:form id="formConfirmacion">
+                <br/>
+                <p:outputLabel value="Enviar Solicitud Corrección de Predio al Departamento de Catastro?" style="font-weight: bold; font-size: 14px;"/><br/>
+                <p:outputLabel value="**Detalle**" style="font-weight: bold;"/><br/>
+                <p:outputLabel value="Tramite:#{solicitudCorreccionPredioEdif.tramite.tipoTramiteNombre}-#{solicitudCorreccionPredioEdif.tramite.id}"/><br/>
+                <p:outputLabel value="Predio:#{solicitudCorreccionPredioEdif.predio.numPredio}. Urbanizacion: #{solicitudCorreccionPredioEdif.predio.nombreUrb}. Mz:#{solicitudCorreccionPredioEdif.predio.urbMz}. Sl:#{solicitudCorreccionPredioEdif.predio.urbSolarnew}."/><br/><br/>
+                <center>
+                    <p:commandButton value="Aceptar" styleClass="btnStyle" icon="ui-icon-check" iconPos="s" actionListener="#{solicitudCorreccionPredioEdif.registraSolicitud()}"/>
+                    <p:spacer width="20"/>
+                    <p:commandButton value="Cancelar" styleClass="btnStyle" icon="ui-icon-cancel" iconPos="s" oncomplete="PF('cofirmacion').hide();"/>
+                </center>
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog id="dlgDetalle" widgetVar="detalle" header="Detalle Solicitud" appendTo="@(body)" modal="true" width="50%" resizable="false" closable="true" closeOnEscape="true">
+            <h:form id="formDetalle">
+                <p:outputLabel value="Tramite:#{solicitudCorreccionPredioEdif.solicitudView.tramite.tipoTramiteNombre}-#{solicitudCorreccionPredioEdif.solicitudView.tramite.id}" style="font-weight: bold;"/><br/>
+                <p:outputLabel value="Predio:#{solicitudCorreccionPredioEdif.solicitudView.predio.numPredio}. Urbanizacion: #{solicitudCorreccionPredioEdif.solicitudView.predio.nombreUrb}. Mz:#{solicitudCorreccionPredioEdif.solicitudView.predio.urbMz}. Sl:#{solicitudCorreccionPredioEdif.solicitudView.predio.urbSolarnew}." style="font-weight: bold;"/><br/><br/>
+                <p:outputLabel value="Detalle Solicitud" style="font-weight: bold;"/><br/>
+                <p:inputTextarea value="#{solicitudCorreccionPredioEdif.solicitudView.detalleSolicitud}"  readonly="true" style="width: 100%;"/>
+                <p:outputLabel value="Informe Solicitud" style="font-weight: bold;"/><br/>
+                <p:inputTextarea value="#{solicitudCorreccionPredioEdif.solicitudView.detalleInforme}" readonly="true" style="width: 100%;"/>
+                <br/>
+                <center>
+                    <p:commandButton value="Aceptar" styleClass="btnStyle" icon="ui-icon-check" iconPos="s" oncomplete="PF('detalle').hide();"/>
+                </center>
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog id="dlgReporte" header="Reporte Solicitudes" widgetVar="dlgReporteSol" modal="true" resizable="false" 
+                  closeOnEscape="false" position="center">
+            <h:form id="formReporte">
+                <p:panelGrid style="text-align: center;font-weight: bolder;width: 100%;" styleClass="noBorder">
+                    <p:row>
+                        <p:column>
+                            ESTADO SOLICITUD
+                        </p:column>
+                        <p:column>
+                            TECNICO SOLICITANTE
+                        </p:column>
+                        <p:column>
+                            TECNICO CATASTRO
+                        </p:column>
+                        <p:column>
+                            DESDE
+                        </p:column>
+                        <p:column>
+                            HASTA
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:selectOneMenu value="#{solicitudCorreccionPredioEdif.estadoReporte}">
+                                <f:selectItem itemLabel="TODOS" itemValue="#{null}" />
+                                <f:selectItem itemLabel="PENDIENTES" itemValue="#{0}" />
+                                <f:selectItem itemLabel="ASIGNADAS" itemValue="#{1}" />
+                                <f:selectItem itemLabel="REALIZADAS" itemValue="#{2}" />
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu value="#{solicitudCorreccionPredioEdif.solicitanteReporte}" effect="fade" converter="entityConverter">
+                                <f:selectItem itemLabel="TODOS LOS SOLICITANTES" itemValue="#{null}"/>
+                                <f:selectItems value="#{solicitudCorreccionPredioEdif.solicitantes}" var="usuario" itemLabel="#{usuario.usuario}-#{usuario.ente.apellidos} #{usuario.ente.nombres}" itemValue="#{usuario}"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu value="#{solicitudCorreccionPredioEdif.tecnicoReporte}" effect="fade" converter="entityConverter">
+                                <f:selectItem itemLabel="TODOS LOS TECNICOS" itemValue="#{null}"/>
+                                <f:selectItems value="#{solicitudCorreccionPredioEdif.tecnicos}" var="usuario" itemLabel="#{usuario.usuario}-#{usuario.ente.apellidos} #{usuario.ente.nombres}" itemValue="#{usuario}"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            <p:calendar value="#{solicitudCorreccionPredioEdif.desdeReporte}" pattern="dd/MM/yyyy" placeholder="dd/MM/yyyy"/>
+                        </p:column>
+                        <p:column>
+                            <p:calendar value="#{solicitudCorreccionPredioEdif.hastaReporte}" pattern="dd/MM/yyyy" placeholder="dd/MM/yyyy"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <p:spacer height="15"/>
+                <div align="center">
+                    <p:commandButton value="Generar Reporte" styleClass="btnStyle" actionListener="#{solicitudCorreccionPredioEdif.generarReporte()}"/>
+                </div>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+    
+</ui:composition>

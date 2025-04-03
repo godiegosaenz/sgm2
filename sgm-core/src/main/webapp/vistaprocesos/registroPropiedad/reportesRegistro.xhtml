@@ -1,0 +1,134 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    template="/template/template.xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{reportesRegistro.doPreRenderView()}"/>
+        </f:metadata>
+    </ui:define>
+    <ui:define name="top"><h3>Reportes Registro Propiedad</h3></ui:define>
+    <ui:define name="content">
+        <h:form id="mainForm">
+            <p:panelGrid styleClass="noBorder" style="margin: 0 auto;" columns="2">
+                Tipo de Consulta:
+                <p:selectOneMenu value="#{reportesRegistro.code}">
+                    <f:selectItem itemLabel="Reporte Tramites Asignados" itemValue="#{1}" />
+                    <f:selectItem itemLabel="Reporte Certificados Realizados" itemValue="#{2}" />
+                    <f:selectItem itemLabel="Reporte Tareas Realizadas por Usuario" itemValue="#{3}" />
+                    <f:selectItem itemLabel="Consulta de Ciudadanos" itemValue="#{4}" />
+                    <p:ajax event="change" listener="#{reportesRegistro.actualizaForm()}"/>
+                </p:selectOneMenu>
+            </p:panelGrid>
+            <h:panelGroup rendered="#{reportesRegistro.code == 1}">
+                <p:panelGrid styleClass="noBorder" style="margin: 0 auto;">
+                    <p:row>
+                        <p:column>
+                            Tipo Reporte:
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu value="#{reportesRegistro.tipoReporte}">
+                                <f:selectItem itemLabel="Certificados" itemValue="#{1}" />
+                                <f:selectItem itemLabel="Contratos" itemValue="#{2}" />
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            Fecha:
+                        </p:column>
+                        <p:column>
+                            <p:calendar value="#{reportesRegistro.fecha}" placeholder="dd/mm/yyyy" pattern="dd/MM/yyyy"  maxdate="sysdate"/>
+                        </p:column>
+                        <p:column>
+                            <p:commandButton value="Cargar Tramites" styleClass="btnStyle" icon="ui-icon-refresh"
+                                             actionListener="#{reportesRegistro.cargarTramitesRp()}"/>
+                        </p:column>
+                        <p:column>
+                            <p:commandButton value="Generar Reporte" styleClass="btnStyle" icon="ui-icon-document"
+                                             actionListener="#{reportesRegistro.generarDocumento()}"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <p:dataTable id="dtTramitesAsignados" paginator="true" rows="20" style="text-align: center" filterEvent="enter"
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             value="#{reportesRegistro.list}" var="tra" emptyMessage="No se encontraron elementos..." rowIndexVar="index">
+                    <p:column headerText="No" width="50">
+                        #{index + 1}
+                    </p:column>
+                    <p:column headerText="NoTramite" filterBy="#{tra.numtramite}" sortBy="#{tra.numtramite}" width="150">
+                        <p:outputLabel value="#{tra.numtramite}"/>
+                    </p:column>
+                    <p:column headerText="NoSeguimiento" filterBy="#{tra.numseguimiento}" sortBy="#{tra.numseguimiento}" width="150">
+                        <p:outputLabel value="#{tra.numseguimiento}" />
+                    </p:column>
+                    <p:column headerText="Fecha Liq." width="120">
+                        <p:outputLabel value="#{tra.fecha}" ><f:convertDateTime pattern="dd-MM-yyyy"/></p:outputLabel>
+                    </p:column>
+                    <p:column headerText="Beneficiario">
+                        <p:outputLabel value="#{tra.beneficiario}"/>
+                    </p:column>
+                    <p:column headerText="Tec. Asignado" width="100">
+                        <p:outputLabel value="#{tra.assigne.toUpperCase()}"/>
+                    </p:column>
+                    <p:column headerText="Ab. Asignado" rendered="#{reportesRegistro.tipoReporte != 1}" width="100">
+                        <p:outputLabel value="#{tra.userlegal.toUpperCase()}"/>
+                    </p:column>
+                </p:dataTable>
+            </h:panelGroup>
+
+            <h:panelGroup rendered="#{reportesRegistro.code == 2}">
+                <p:panelGrid styleClass="noBorder" style="margin: 0 auto;" columns="5">
+                    Desde:
+                    <p:calendar value="#{reportesRegistro.desde}" placeholder="dd/mm/yyyy" pattern="dd/MM/yyyy" maxdate="sysdate"/>
+                    Hasta:
+                    <p:calendar value="#{reportesRegistro.hasta}" placeholder="dd/mm/yyyy" pattern="dd/MM/yyyy"  maxdate="sysdate"/>
+                    <p:commandButton value="Generar Reporte" icon="ui-icon-document" styleClass="btnStyle" actionListener="#{reportesRegistro.reporteCertificadosRealizados()}"/>
+                </p:panelGrid>
+            </h:panelGroup>
+
+            <h:panelGroup rendered="#{reportesRegistro.code == 3}">
+                <p:panelGrid styleClass="noBorder" style="margin: 0 auto;" columns="7">
+                    Usuario:
+                    <p:selectOneMenu value="#{reportesRegistro.user}" converter="entityConverter">
+                        <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}" />
+                        <f:selectItems value="#{reportesRegistro.users}" var="us" itemLabel="#{us.usuario}" itemValue="#{us}"/>
+                    </p:selectOneMenu>
+                    Desde:
+                    <p:calendar value="#{reportesRegistro.desde}" placeholder="dd/mm/yyyy" pattern="dd/MM/yyyy" maxdate="sysdate"/>
+                    Hasta:
+                    <p:calendar value="#{reportesRegistro.hasta}" placeholder="dd/mm/yyyy" pattern="dd/MM/yyyy"  maxdate="sysdate"/>
+                    <p:commandButton value="Generar Reporte" icon="ui-icon-document" styleClass="btnStyle" actionListener="#{reportesRegistro.reporteTareasUsuario()}"/>
+                </p:panelGrid>
+            </h:panelGroup>
+
+            <h:panelGroup id="pnlResult" rendered="#{reportesRegistro.code == 4}">
+                <p:panelGrid styleClass="noBorder" style="margin: 0 auto;" columns="7">
+                    Tipo Reporte:
+                    <p:selectOneMenu value="#{reportesRegistro.tipoConsulta}">
+                        <f:selectItem itemLabel="Seleccionar..." itemValue="#{0}" />
+                        <f:selectItem itemLabel="Cantidad de Certificados Realizados" itemValue="#{1}"/>
+                        <f:selectItem itemLabel="Ciudadanos que Solicitaron Certificados" itemValue="#{2}"/>
+                        <f:selectItem itemLabel="Ciudadanos que Solicitaron Inscripciones" itemValue="#{3}"/>
+                        <f:selectItem itemLabel="Ciudadanos que Solicitaron Inscripciones de Gravamen" itemValue="#{4}"/>
+                        <f:selectItem itemLabel="Ciudadanos que Solicitaron Inscripciones Resoluciones" itemValue="#{5}"/>
+                    </p:selectOneMenu>
+                    Desde:
+                    <p:calendar value="#{reportesRegistro.desde}" placeholder="dd/mm/yyyy" pattern="dd/MM/yyyy" maxdate="sysdate"/>
+                    Hasta:
+                    <p:calendar value="#{reportesRegistro.hasta}" placeholder="dd/mm/yyyy" pattern="dd/MM/yyyy"  maxdate="sysdate"/>
+                    <p:commandButton value="Consultar" icon="ui-icon-search" styleClass="btnStyle" actionListener="#{reportesRegistro.consultaCantidades()}"
+                                     update="pnlResult"/>
+                </p:panelGrid><br/>
+                <p:panelGrid styleClass="noBorder" style="margin: 0 auto;font-weight: bolder;font-size: 14px;" columns="2">
+                    <h:outputText value="#{reportesRegistro.mensaje}"/>
+                    <h:outputText value="#{reportesRegistro.resultado}"/>
+                </p:panelGrid>
+            </h:panelGroup>
+
+        </h:form>
+    </ui:define>
+</ui:composition>

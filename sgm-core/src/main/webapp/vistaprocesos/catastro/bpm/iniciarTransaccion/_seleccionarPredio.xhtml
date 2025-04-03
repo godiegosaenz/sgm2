@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <p:panel style="margin-bottom: 15px;" header="Seleccion de predio sobre el cual se realiza el proceso">
+        <div class="ContainerIndent">
+            <p:dataTable id="dtPredios" value="#{iniciarTransaccionFlow.prediosLazy}" var="pt" widgetVar="preds" scrollable="true" paginator="true" resizableColumns="true"
+                         emptyMessage="No se encontro ningun predio" rows="5" lazy="true" rowsPerPageTemplate="5,10,20,50" filterEvent="enter" paginatorPosition="bottom"
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         selection="#{iniciarTransaccionFlow.predio}" rowKey="#{pt.id}" selectionMode="single" >
+                <p:ajax event="rowSelect" listener="#{iniciarTransaccionFlow.onRowSelectPredio}"  update="btn_iniciarTramite"/>
+                <p:ajax event="rowUnselect" listener="#{iniciarTransaccionFlow.onRowSelectPredio}" update="btn_iniciarTramite"/>
+                <p:column headerText="#PREDIO"  style="text-align: center; padding-left: 5px; padding-right: 5px;" filterStyle="width: 50%" filterBy="#{pt.numPredio}" sortBy="#{pt.numPredio}" filterMatchMode="contains">
+                    <h:outputText id="numPredio" value="#{pt.numPredio}"/>
+                    <p:tooltip for="numPredio" value="Codigo Catastral: #{pt.claveCat} - Codigo Anterior 1 #{pt.predialant}"  style="color : #0066cc; background-color : #000"/>
+                </p:column>
+                <p:column headerText="PARROQUIA" style="text-align: center; " filterBy="#{pt.parroquia}" sortBy="#{pt.parroquia}" filterStyle="width: 50%">
+                    <h:outputText value="#{pt.parroquia}"  />
+                </p:column>
+                <p:column headerText="ZONA." style="text-align: center; " filterBy="#{pt.zona}" sortBy="#{pt.zona}" filterStyle="width: 50%">
+                    <h:outputText value="#{pt.zona}"/>
+                </p:column>
+                <p:column headerText="SECTOR" style="text-align: center; " filterBy="#{pt.sector}" sortBy="#{pt.sector}" filterStyle="width: 50%">
+                    <h:outputText value="#{pt.sector}"/>
+                </p:column>
+                <p:column headerText="MZ" style="text-align: center; " filterBy="#{pt.mz}" sortBy="#{pt.mz}" filterStyle="width: 50%">
+                    <h:outputText value="#{pt.mz}"/>
+                </p:column>
+                <p:column headerText="LOTE" style="text-align: center; " filterBy="#{pt.solar}"  sortBy="#{pt.solar}" filterStyle="width: 50%">
+                    <h:outputText value="#{pt.solar}"/>
+                </p:column>
+                <p:column headerText="BLOQUE" style="text-align: center; " filterBy="#{pt.bloque}"  sortBy="#{pt.bloque}" filterStyle="width: 50%">
+                    <h:outputText value="#{pt.bloque}"/>
+                </p:column>
+                <p:column headerText="PISO" style="text-align: center; " filterBy="#{pt.piso}"  sortBy="#{pt.piso}" filterStyle="width: 50%">
+                    <h:outputText value="#{pt.piso}"/>
+                </p:column>
+                <p:column headerText="UNIDAD" style="text-align: center; " filterBy="#{pt.unidad}"  sortBy="#{pt.unidad}" filterStyle="width: 50%">
+                    <h:outputText value="#{pt.unidad}"/>
+                </p:column>
+                <p:column headerText="Area S./Alicuota" width="100" style="text-align: center;">
+                    <h:outputText value="#{pt.areaSolar}"/>
+                </p:column>
+                <p:column style="text-align: center;" headerText="Agregar" rendered="#{iniciarTransaccionFlow.trasDataCommand.requiereLista}">
+                    <p:commandButton icon="fa fa-plus white" title="Adicionar " actionListener="#{iniciarTransaccionFlow.addPredio(pt)}"  update="renderFusionarPredioPredio,btn_iniciarTramite"/>
+                </p:column>
+            </p:dataTable>
+        </div>
+    </p:panel>
+    <h:panelGroup id="renderFusionarPredioPredio" >
+        <p:panel style="margin-bottom: 15px;" header="Predio(s) Seleccionado(s) al proceso: #{iniciarTransaccionFlow.trasDataCommand.tipoTransaccion} " id="fusionList" rendered="#{iniciarTransaccionFlow.trasDataCommand.requiereLista}">
+            <div class="ContainerIndent">
+                <p:dataTable id="prediosAgregados" var="pt" value="#{iniciarTransaccionFlow.prediosSeleccionados}"  paginator="true" resizableColumns="true"
+                             emptyMessage="No se encontro ningun predio" rows="5" rowsPerPageTemplate="5,10,15,20" paginatorPosition="top" paginatorAlwaysVisible="false"
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+
+                    <p:column headerText="#PREDIO" width="80"  style="text-align: center; padding-left: 5px; padding-right: 5px;" filterStyle="width: 50%" filterBy="#{pt.numPredio}" sortBy="#{pt.numPredio}" filterMatchMode="contains">
+                        <h:outputText id="numPredio" value="#{pt.numPredio}"/>
+                        <p:tooltip for="numPredio" value="Codigo Catastral: #{pt.claveCat} - Codigo Anterior 1 #{pt.predialant}"  style="color : #0066cc; background-color : #000"/>
+                    </p:column>
+                    <p:column headerText="PARROQUIA" style="text-align: center;" filterBy="#{pt.parroquia}" sortBy="#{pt.parroquia}" filterStyle="width: 50%">
+                        <h:outputText value="#{pt.parroquia}"  />
+                    </p:column>
+                    <p:column headerText="ZONA." style="text-align: center;" filterBy="#{pt.zona}" sortBy="#{pt.zona}" filterStyle="width: 50%">
+                        <h:outputText value="#{pt.zona}"/>
+                    </p:column>
+                    <p:column headerText="SECTOR" style="text-align: center; " filterBy="#{pt.sector}" sortBy="#{pt.sector}" filterStyle="width: 50%">
+                        <h:outputText value="#{pt.sector}"/>
+                    </p:column>
+                    <p:column headerText="MZ" style="text-align: center; " filterBy="#{pt.mz}" sortBy="#{pt.mz}" filterStyle="width: 50%">
+                        <h:outputText value="#{pt.mz}"/>
+                    </p:column>
+                    <p:column headerText="LOTE" style="text-align: center; " filterBy="#{pt.solar}"  sortBy="#{pt.solar}" filterStyle="width: 50%">
+                        <h:outputText value="#{pt.solar}"/>
+                    </p:column>
+                    <p:column headerText="BLOQUE" style="text-align: center; " filterBy="#{pt.bloque}"  sortBy="#{pt.bloque}" filterStyle="width: 50%">
+                        <h:outputText value="#{pt.bloque}"/>
+                    </p:column>
+                    <p:column headerText="PISO" style="text-align: center;" filterBy="#{pt.piso}"  sortBy="#{pt.piso}" filterStyle="width: 50%">
+                        <h:outputText value="#{pt.piso}"/>
+                    </p:column>
+                    <p:column headerText="UNIDAD" style="text-align: center; " filterBy="#{pt.unidad}"  sortBy="#{pt.unidad}" filterStyle="width: 50%">
+                        <h:outputText value="#{pt.unidad}"/>
+                    </p:column>
+                    <p:column style="text-align: center;" headerText="Eliminar">
+                        <p:commandButton icon="fa fa-trash-o white" title="Eliminar " actionListener="#{iniciarTransaccionFlow.deletePredio(pt)}"  update="renderFusionarPredioPredio,btn_iniciarTramite"/>
+                    </p:column>
+                </p:dataTable>
+            </div>
+        </p:panel>
+    </h:panelGroup>
+</html>
+

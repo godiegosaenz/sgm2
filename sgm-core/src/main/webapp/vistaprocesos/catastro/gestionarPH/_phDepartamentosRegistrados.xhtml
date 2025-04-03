@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <h:panelGroup layout="block" class="Wid100 MarTop10 Container" style="margin-bottom: 20px;">
+        <h:panelGroup layout="block" class="Container Wid100" id="phs_generate">
+            <h1 class="BigTopic Fs16">Listado de Departamentos Registrados </h1>
+            <hr></hr>
+            <div class="ContainerIndent">
+                <!--                <div>
+                                    <h:panelGroup layout="block" rendered="#{propiedadHorizontal.predioMatriz != null}">
+                                        <p:outputLabel for="area_solar" value="Area Solar predio matriz:" styleClass="DispBlock Wid100"/>
+                                        <p:inputText id="area_solar" value="#{propiedadHorizontal.predioMatriz.areaSolar}"
+                                                     onkeypress="focusNextOnEnter(event, null)" readonly="true"/>
+                                    </h:panelGroup>
+                                </div>-->
+                <p:dataTable id="phs" value="#{propiedadHorizontal.prediosGenerados}" var="pt" paginator="true" emptyMessage="No se encontró ningun predio" style="top: 50px;"
+                             rows="10"  selection="#{propiedadHorizontal.predioSeleccionado}" rowKey="#{pt.id}" 
+                             selectionMode="single"
+
+                             paginatorPosition="bottom" rowsPerPageTemplate="5,10,15,20,30,50" filteredValue="#{propiedadHorizontal.prediosGeneradosFiltrados}"
+                             currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords}" rowIndexVar="index" filterEvent="enter"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+
+                    <p:ajax event="filter" update="phs" />
+                    <f:facet name="header">
+                        Alicuotas generadas
+                    </f:facet>
+                    <p:columnGroup type="header">
+                        <p:row>
+                            <p:column headerText="" rowspan="2" style="width:16px"/>
+                            <p:column headerText="PROPIETARIOS" rowspan="2" width="10%" filterBy="#{pt.nombrePropietarios}"  filterStyle="width: 80%" filterMatchMode="contains"/>
+                            <p:column headerText="#PREDIO " rowspan="2" width="8%" filterBy="#{pt.numPredio}"  filterStyle="width: 80%" filterMatchMode="exact"/>
+                            <p:column headerText="BL." rowspan="2" width="3%" />
+                            <p:column headerText="PISO" rowspan="2" width="3%"/>
+                            <p:column headerText="UNIDAD" rowspan="2" width="3%" />
+                            <p:column headerText="UBICACION" rowspan="2" width="25%"  filterBy="#{pt.propietarios}" filterStyle="width: 80%"   filterMatchMode="contains"/>
+                            <p:column headerText="ALICUOTA" rowspan="1" colspan="2"  width="12%"/>
+                            <p:column headerText="AREA DE CONSTRUCCION" rowspan="1" colspan="2" width="12%"/>
+                            <p:column headerText="AVALUOS" rowspan="1" colspan="3" width="20%"/>
+                        </p:row>
+                        <p:row>
+                            <p:column headerText="UTIL" />
+                            <p:column headerText="COMUNAL" />
+                            <p:column headerText="DECLARADA" />
+                            <p:column headerText="CONSTRUIDA" />
+                            <p:column headerText="SOLAR" />
+                            <p:column headerText="CONSTRUCCION" />
+                            <p:column headerText="MUNICIPAL" />
+                        </p:row>
+                    </p:columnGroup>
+                    <p:column >
+                        <p:rowToggler />
+                    </p:column>
+                    <p:column  style="text-align: center" >
+                        <h:outputText value="#{pt.nombrePropietarios}" style="font-size: 12px"  />
+                    </p:column>
+                    <p:column  style="text-align: center" >
+                        <h:outputText value="#{pt.numPredio}"  />
+                    </p:column>
+
+                    <p:column style="text-align: center;" >
+                        <h:outputText value="#{pt.bloque}" ></h:outputText>
+                    </p:column>
+                    <p:column style="text-align: center;" >
+                        <h:outputText value="#{pt.piso}" ></h:outputText>
+                    </p:column>
+                    <p:column style="text-align: center;" >
+                        <h:outputText value="#{pt.unidad}" ></h:outputText>
+                    </p:column>
+                    <p:column style="text-align: center;">
+                        <h:outputText value="#{pt.propietarios}"/>    
+                    </p:column>
+                    <p:column style="text-align: right;" >
+                        <h:outputText value="#{pt.alicuotaUtil}" >
+                            <f:convertNumber pattern="#0.00" />
+                        </h:outputText> 
+
+                    </p:column>
+                    <p:column style="text-align: right;">
+                        <h:outputText value="#{pt.alicuotaConst}" >
+                            <f:convertNumber pattern="#0.00" />
+                        </h:outputText> 
+                    </p:column>
+                    <p:column style="text-align: right;" >
+                        <h:outputText value="#{pt.areaDeclaradaConst}" >
+                            <f:convertNumber pattern="#0.00" />
+                        </h:outputText> 
+
+                    </p:column>
+                    <p:column style="text-align: right;" >
+                        <h:outputText value="#{pt.areaConstPh}" >
+                            <f:convertNumber pattern="#0.00" />
+                        </h:outputText> 
+                    </p:column>
+                    <p:column headerText="Avalùo Solar"  width="8%" style="text-align: center;" filterBy="#{pt.bloque}"  sortBy="#{pt.bloque}" filterStyle="width: 50%">
+                        <h:outputText value="#{pt.avaluoSolar}">
+                            <f:convertNumber pattern="$ #,##0.00" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Avalùo Construccion"  width="8%" style="text-align: center;" filterBy="#{pt.piso}"  sortBy="#{pt.piso}" filterStyle="width: 50%">
+                        <h:outputText value="#{pt.avaluoConstruccion}">
+                            <f:convertNumber pattern="$ #,##0.00" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Avalùo de la Propiedad"  width="8%" style="text-align: center;" filterBy="#{pt.unidad}"  sortBy="#{pt.unidad}" filterStyle="width: 50%">
+                        <h:outputText value="#{pt.avaluoMunicipal}">
+                            <f:convertNumber pattern="$ #,##0.00" />
+                        </h:outputText>
+                    </p:column>
+                    <f:facet name="footer">
+                        <h:panelGroup layout="block" id="footerPanel">
+                            Alicuota comunal total:  <h:outputText value="#{propiedadHorizontal.totalAlicuotasComunal}" ></h:outputText>
+                        </h:panelGroup>
+                    </f:facet>
+                    <p:rowExpansion id="rowEscritura">
+                        <p:tabView id="tabRowExpansion" prependId="false">
+                            <p:tab title="Componentes Alicuota" id="tabComponentes">
+                                <h:panelGroup class="Wid100 MarTop10 Container" >
+                                    <h:panelGroup layout="block" class="Responsive Wid100 Container100" id="panelFormComp">
+                                        <h:panelGroup layout="block" class="Fleft MarRight20">
+                                            <h:outputText value="Tipo de componente: " styleClass="DispBlock" />
+                                            <p:selectOneMenu id="tipo_comp" value="#{propiedadHorizontal.componenteSeleccionado.nombre}" style="width:125px">
+                                                <f:selectItem itemLabel="Departamento" itemValue="Departamento" />
+                                                <f:selectItem itemLabel="Suite" itemValue="Suite" />
+                                                <f:selectItem itemLabel="Penthouse" itemValue="Penthouse" />
+                                                <f:selectItem itemLabel="Local comercial" itemValue="Local comercial" />
+                                                <f:selectItem itemLabel="Garaje" itemValue="Garaje" />
+                                                <f:selectItem itemLabel="Bodega" itemValue="Bodega" />
+                                            </p:selectOneMenu>
+                                        </h:panelGroup>
+                                        <h:panelGroup layout="block" class="Fleft MarRight20">
+                                            <h:outputText value="Ubicacion: " styleClass="DispBlock" />
+                                            <p:inputText id="ubicacion_comp" value="#{propiedadHorizontal.componenteSeleccionado.descripcionUbicacion}" onkeypress="focusNextOnEnter(event, 'phs:#{index}:num_comp')"/>
+                                        </h:panelGroup>
+                                        <h:panelGroup layout="block" class="Fleft MarRight20">
+                                            <h:outputText value="Numero: " styleClass="DispBlock" />
+                                            <p:inputText id="num_comp" value="#{propiedadHorizontal.componenteSeleccionado.numero}" onkeypress="focusNextOnEnter(event, 'phs:#{index}:area_construccion_comp')"/>
+                                        </h:panelGroup>
+                                        <h:panelGroup layout="block" class="Fleft MarRight20">
+                                            <h:outputText value="Area Construccion: " styleClass="DispBlock" />
+                                            <p:inputText id="area_construccion_comp" value="#{propiedadHorizontal.componenteSeleccionado.areaConstruccion}" onkeypress="validateFloatValueAndFocusNext(event, 'phs:#{index}:area_declarada_comp')"/>
+                                        </h:panelGroup>
+                                        <h:panelGroup layout="block" class="Fleft MarRight20">
+                                            <h:outputText value="Area declarada " styleClass="DispBlock" />
+                                            <p:inputText id="area_declarada_comp" value="#{propiedadHorizontal.componenteSeleccionado.areaDeclarada}" onkeypress="validateFloatValueAndFocusNext(event, 'phs:#{index}:alicuota_util_comp')"/>
+                                        </h:panelGroup>
+                                        <h:panelGroup layout="block" class="Fleft MarRight20">
+                                            <h:outputText value="Alicuota util " styleClass="DispBlock" />
+                                            <p:inputText id="alicuota_util_comp" value="#{propiedadHorizontal.componenteSeleccionado.alicuotaUtil}" onkeypress="validateFloatValueAndFocusNext(event, 'phs:#{index}:alicuota_comunal_comp')"/>
+                                        </h:panelGroup>
+                                        <h:panelGroup layout="block" class="Fleft MarRight20">
+                                            <h:outputText value="Alicuota comunal " styleClass="DispBlock" />
+                                            <p:inputText id="alicuota_comunal_comp" value="#{propiedadHorizontal.componenteSeleccionado.alicuotaComunal}" onkeypress="validateFloatValueAndFocusNext(event, 'phs:#{index}:procesar_comp')"/>
+                                        </h:panelGroup>
+                                        <p:commandButton id="procesar_comp" value="Adicionar" actionListener="#{propiedadHorizontal.addComponenteAlicuotas(index)}" styleClass="MarRight20 " update="phs:#{index}:panel_componentes"
+                                                         process="phs:#{index}:panelFormComp"/>
+                                    </h:panelGroup>
+                                    <h:panelGroup layout="block" class="Responsive Wid100 Container100 MarTop20"  >
+                                        <p:commandButton value="Actualizar" actionListener="#{propiedadHorizontal.updatePH(index)}" styleClass="MarRight20 " update="phs_generate, phs" />
+                                    </h:panelGroup>
+                                    <h:panelGroup layout="block" class="Responsive Wid100 Container100" id="panel_componentes" >
+                                        <p:dataTable id="componentes" var="c" value="#{pt.alicuotaComponentes}" editable="true" editMode="cell" rowIndexVar="pos">
+                                            <f:facet name="header">
+                                                Componentes de Alicuota
+                                            </f:facet>
+
+                                            <p:columnGroup type="header">
+                                                <p:row>
+                                                    <p:column headerText="NOMBRE" rowspan="2"/>
+                                                    <p:column headerText="NUMERO" rowspan="2"/>
+                                                    <p:column headerText="UBICACION" rowspan="2"/>
+                                                    <p:column headerText="ALICUOTA" rowspan="1" colspan="2"/>
+                                                    <p:column headerText="AREA" rowspan="1" colspan="2"/>
+                                                    <p:column headerText="ACCIONES" rowspan="2"/>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column headerText="UTIL" />
+                                                    <p:column headerText="COMUNAL" />
+                                                    <p:column headerText="DECLARADA" />
+                                                    <p:column headerText="CONSTRUIDA" />
+                                                </p:row>
+                                            </p:columnGroup>
+                                            <p:column>
+                                                <p:cellEditor>
+                                                    <f:facet name="output"><h:outputText value="#{c.nombre}" /></f:facet>
+                                                    <f:facet name="input"><p:inputText id="modelInput" value="#{c.nombre}" style="width:96%"/></f:facet>
+                                                </p:cellEditor>
+                                            </p:column>
+                                            <p:column>
+                                                <p:cellEditor>
+                                                    <f:facet name="output"><h:outputText value="#{c.numero}" /></f:facet>
+                                                    <f:facet name="input"><p:inputText value="#{c.numero}" style="width:96%" /></f:facet>
+                                                </p:cellEditor>
+                                            </p:column>
+                                            <p:column>
+                                                <p:cellEditor>
+                                                    <f:facet name="output"><h:outputText value="#{c.descripcionUbicacion}" /></f:facet>
+                                                    <f:facet name="input"><p:inputText value="#{c.descripcionUbicacion}" style="width:96%" /></f:facet>
+                                                </p:cellEditor>
+                                            </p:column>
+                                            <p:column >
+                                                <p:cellEditor>
+                                                    <f:facet name="output"><h:outputText value="#{c.alicuotaUtil}" /></f:facet>
+                                                    <f:facet name="input"><p:inputText value="#{c.alicuotaUtil}" style="width:96%" onkeypress="validateFloatValueAndFocusNext(event, '')" >
+                                                            <!--<p:ajax event="blur" listener="#{propiedadHorizontal.updatePH(index)}" update="phs_generate,phs" />-->
+                                                        </p:inputText>
+                                                    </f:facet>
+                                                </p:cellEditor>
+                                            </p:column>
+                                            <p:column>
+                                                <p:cellEditor>
+                                                    <f:facet name="output"><h:outputText value="#{c.alicuotaComunal}" /></f:facet>
+                                                    <f:facet name="input"><p:inputText value="#{c.alicuotaComunal}" style="width:96%" onkeypress="validateFloatValueAndFocusNext(event, '')" >
+                                                            <!--<p:ajax event="blur" listener="#{propiedadHorizontal.updatePH(index)}" update="phs_generate,phs" />-->
+                                                        </p:inputText>
+                                                    </f:facet>
+                                                </p:cellEditor>
+                                            </p:column>
+                                            <p:column>
+                                                <p:cellEditor>
+                                                    <f:facet name="output"><h:outputText value="#{c.areaDeclarada}" /></f:facet>
+                                                    <f:facet name="input"><p:inputText value="#{c.areaDeclarada}" style="width:96%" onkeypress="validateFloatValueAndFocusNext(event, '')" >
+                                                            <!--<p:ajax event="blur" listener="#{propiedadHorizontal.updatePH(index)}" update="phs_generate,phs" />-->
+                                                        </p:inputText>
+                                                    </f:facet>
+                                                </p:cellEditor>
+                                            </p:column>
+                                            <p:column >
+                                                <p:cellEditor>
+                                                    <f:facet name="output"><h:outputText value="#{c.areaConstruccion}" /></f:facet>
+                                                    <f:facet name="input"><p:inputText value="#{c.areaConstruccion}" style="width:96%" onkeypress="validateFloatValueAndFocusNext(event, '')" >
+                                                            <!--<p:ajax event="blur" listener="#{propiedadHorizontal.updatePH(index)}" update="phs_generate,phs" />-->
+                                                        </p:inputText>
+                                                    </f:facet>
+                                                </p:cellEditor>
+                                            </p:column>
+                                            <p:column style="text-align: center;">
+                                                <p:commandButton icon="fa fa-trash-o white" title="Eliminar" actionListener="#{propiedadHorizontal.deleteComponenteAlicuotas(index, pos)}" update="phs:#{index}:panel_componentes">
+                                                    <p:confirm header="Confirmación" message="Seguro que desea eliminar el Componente  #{c.nombre} #{c.numero}" icon="ui-icon-alert" />
+                                                </p:commandButton>
+                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="fa fa-check white" />
+                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="fa fa-times white" />
+                                                </p:confirmDialog>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </h:panelGroup>
+                                    <h:panelGroup layout="block" class="Responsive Wid100 Container100 MarTop20"  >
+                                        <h:panelGroup layout="block" class="Fleft MarRight20">
+                                            <h:outputText value="Observaciones: " styleClass="DispBlock" />
+                                            <p:inputTextarea value="#{pt.observaciones}" style="width: 97% !important;" styleClass="Wid100" cols="300"/>
+                                        </h:panelGroup>
+                                    </h:panelGroup>
+                                </h:panelGroup>
+                            </p:tab>
+                            <p:tab title="Datos escrituras" >
+                                <h:panelGroup layout="block" id="infoEscritura" class="Wid100 MarTop10 Container" >
+                                    <h:panelGroup layout="block" class="Wid100 Container100">
+                                        <h:outputText value="Tiene escritura: " styleClass="FontBold TexAlLeft"/>
+                                        <p:selectBooleanCheckbox value="#{pt.tieneEscritura}" >
+                                            <p:ajax update="phs:#{index}:infoEscritura" listener="#{propiedadHorizontal.updateEscritura(index,pt.escritura )}"/>
+                                        </p:selectBooleanCheckbox>
+                                    </h:panelGroup>
+                                    <hr></hr>
+                                    <h:panelGroup layout="block" class="Responsive100 Wid100" style="margin-bottom: 20px;" rendered="#{pt.tieneEscritura}">
+                                        <h3>Datos de escritura</h3>
+                                        <hr></hr>
+                                        <h:panelGroup layout="block" class="Responsive Fleft Wid25">
+                                            <p:outputLabel for="phs:#{index}:ficha_registral" value="Ficha registral:" styleClass="DispBlock Wid100"/>
+                                            <p:inputText id="ficha_registral" value="#{pt.escritura.numFicha}"
+                                                         onkeypress="validateIntegerValueAndFocusNext(event, 'phs:#{index}:notaria')"/>
+                                        </h:panelGroup>
+                                        <h:panelGroup layout="block" class="Responsive Fleft Wid25">
+                                            <p:outputLabel for="phs:#{index}:notaria" value="Notaría:" styleClass="DispBlock Wid100"/>
+                                            <p:inputText id="notaria" value="#{pt.escritura.notaria}"
+                                                         onkeypress="focusNextOnEnter(event, 'phs:#{index}:fecha_escritura_input')"/>
+                                        </h:panelGroup>
+                                        <h:panelGroup layout="block" class="Responsive Fleft Wid25">
+                                            <p:outputLabel for="phs:#{index}:fecha_escritura" value="Fecha escritura:"  styleClass="DispBlock Wid100"/>
+                                            <p:calendar id="fecha_escritura" value="#{pt.escritura.fecEscritura}" style="width: 180px;"
+                                                        mask="true" pattern="dd/MM/yyyy" onkeypress="focusNextOnEnter(event, 'phs:#{index}:fojas_desde')"/>
+                                        </h:panelGroup>
+                                        <h:panelGroup layout="block" class="Responsive Fleft Wid25">
+                                            <p:outputLabel for="phs:#{index}:fojas_desde" value="Fojas desde:"  styleClass="DispBlock Wid100"/>
+                                            <p:inputText id="fojas_desde" value="#{pt.escritura.folioDesde}"
+                                                         onkeypress="focusNextOnEnter(event, 'phs:#{index}:fojas_hasta')"/>
+                                        </h:panelGroup>
+                                        <h:panelGroup layout="block" class="Responsive Fleft Wid25">
+                                            <p:outputLabel for="phs:#{index}:fojas_hasta" value="Fojas hasta:"  styleClass="DispBlock Wid100"/>
+                                            <p:inputText id="fojas_hasta" value="#{pt.escritura.folioDesde}"
+                                                         onkeypress="focusNextOnEnter(event, 'phs:#{index}:nro_inscripcion')"/>
+                                        </h:panelGroup>
+                                        <h:panelGroup layout="block" class="Responsive Fleft Wid25">
+                                            <p:outputLabel for="phs:#{index}:nro_inscripcion" value="Nro. Inscripción:" styleClass="DispBlock Wid100"/>
+                                            <p:inputText id="nro_inscripcion" value="#{pt.escritura.numRegistro}"
+                                                         onkeypress="validateIntegerValueAndFocusNext(event, 'phs:#{index}:repertorio')"/>
+                                        </h:panelGroup>
+                                        <h:panelGroup layout="block" class="Responsive Fleft Wid25">
+                                            <p:outputLabel for="phs:#{index}:repertorio" value="Repertorio:"  styleClass="DispBlock Wid100"/>
+                                            <p:inputText id="repertorio" value="#{pt.escritura.numRepertorio}"
+                                                         onkeypress="validateIntegerValueAndFocusNext(event, 'phs:#{index}:fecha_inscripcion_input')"/>
+                                        </h:panelGroup>
+                                        <h:panelGroup layout="block" class="Responsive Fleft Wid25">
+                                            <p:outputLabel for="phs:#{index}:fecha_inscripcion" value="Fecha inscripción:"  styleClass="DispBlock Wid100"/>
+                                            <p:calendar id="fecha_inscripcion" value="#{pt.escritura.fecInscripcion}"
+                                                        mask="true" pattern="dd/MM/yyyy" onkeypress="focusNextOnEnter(event, '')"/>
+                                        </h:panelGroup>
+                                    </h:panelGroup>
+                                    <h:panelGroup layout="block" class="Wid100 Container100">
+                                        <p:commandButton value="Grabar Escritura" styleClass="Fright" actionListener="#{propiedadHorizontal.grabarEscritura(index)}" update="phs:#{index}:tabRowExpansion" rendered="#{pt.tieneEscritura}" />
+                                    </h:panelGroup>
+                                </h:panelGroup>
+                            </p:tab>
+                            <p:tab title="Propietarios">
+                                <div align="right">
+                                    <p:commandButton value="Agregar propietario" iconPos="ui-icon-person" actionListener="#{propiedadHorizontal.propietario(null, index)}" styleClass="btnStyle"
+                                                     update="phs:#{index}:dtPropietarios">
+                                        <p:ajax event="dialogReturn" listener="#{propiedadHorizontal.procesarPropietario}" update="phs:#{index}:dtPropietarios"  />
+                                    </p:commandButton>
+                                </div>
+                                <p:dataTable id="dtPropietarios"  value="#{pt.catPredioPropietarioCollection}" var="pp" reflow="true" paginator="true" rows="5" paginatorPosition="top" style="width: 100%">
+                                    <p:column headerText="Tipo">
+                                        <h:outputText value="#{pp.tipo.valor}"/>
+                                    </p:column>
+                                    <p:column headerText="DNI">
+                                        <h:outputText value="#{pp.ente.ciRuc}"/>
+                                    </p:column>
+                                    <p:column headerText="Descripcion">
+                                        <h:outputText value="#{pp.ente.apellidos} #{pp.ente.nombres}" rendered="#{pp.ente.esPersona}" style="text-transform: uppercase"/>
+                                        <h:outputText value="#{pp.ente.razonSocial}" rendered="#{!pp.ente.esPersona}" style="text-transform: uppercase"/>
+                                    </p:column>
+                                    <p:column headerText="Accion" style="text-align: center" >
+                                        <p:commandLink value="Editar" actionListener="#{propiedadHorizontal.propietario(pp, index)}" >
+                                            <p:ajax event="dialogReturn" listener="#{propiedadHorizontal.procesarPropietario}" update="phs:#{index}:dtPropietarios"/>
+                                        </p:commandLink>
+                                        <p:spacer width="10"/>
+                                        <p:commandLink value="Quitar" actionListener="#{propiedadHorizontal.eliminarPropietario(pp, index)}" update="phs:#{index}:dtPropietarios" partialSubmitFilter="true" >
+                                            <p:ajax update="phs:#{index}:dtPropietarios"/>
+                                        </p:commandLink>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:tab>
+                        </p:tabView>
+                    </p:rowExpansion>
+                </p:dataTable>
+                <p:contextMenu for="phs" id="contexMenuPredios2"  widgetVar="ctxMenu" beforeShow="return true;" >
+                    <p:menuitem value="Editar" icon="ui-icon-pencil" actionListener="#{propiedadHorizontal.ver(true)}" rendered="#{acesosFicha.editar()}"/>
+                    <p:menuitem value="Ver" icon="ui-icon-search" actionListener="#{propiedadHorizontal.ver(false)}" rendered="#{acesosFicha.ver()}"/>
+                    <p:menuitem value="Imprimir" icon="ui-icon-print" actionListener="#{gestionPredios.imprimirFicha(false)}"  ajax="false" rendered="#{acesosFicha.imprimir() and !appConfig.mainConfig.fichaPredial.libertad}" update="@all"/>
+                    <p:menuitem value="Imprimir Croquis" icon="ui-icon-print" actionListener="#{gestionPredios.imprimirFicha(true)}"  ajax="false" rendered="#{acesosFicha.imprimir()}"/>
+                </p:contextMenu>
+            </div>
+        </h:panelGroup>
+    </h:panelGroup>
+</html>

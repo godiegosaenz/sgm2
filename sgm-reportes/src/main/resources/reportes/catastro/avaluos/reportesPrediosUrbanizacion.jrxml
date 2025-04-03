@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="tramites_ingresados" pageWidth="842" pageHeight="600" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2629ed2d-bbb5-4c29-a65b-351ff0232724">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="LOGO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[java.lang.System.getProperty("user.home")+"\\Documents\\NetBeansProjects\\sgm3\\src\\main\\webapp\\css\\homeIconsImages\\logo.jpg"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ID_CIUDADELA" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PARROQUIA" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\SUPERGOLD\\Documents\\NetBeansProjects\\sgmsanmigel\\src\\main\\webapp\\reportes\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+     cat_ciudadela."nombre" AS ciudadela_nombre,
+     pq.descripcion AS nombre_parroquia,
+     cat_predio.clave_cat as codigo_catastral,
+     cat_predio.predialant as codigo_catastral_ant,
+     cat_predio."nombre_urb" AS cat_predio_nombre_urb,
+     cat_predio."num_predio" AS Matricula_inmobiliaria,
+     cat_predio.solar AS solar,
+     cat_predio.mz AS manzana,
+     cat_predio."urb_secnew" AS cat_predio_urb_secnew,
+     cat_predio."propiedad_horizontal" AS cat_predio_propiedad_horizontal,
+     coalesce(cat_predio."calle",'') AS cat_predio_calle,
+     cat_predio."avaluo_municipal" AS avaluo_municipal,
+     cat_predio."avaluo_construccion" AS avaluo_construccion,
+     cat_predio."avaluo_solar" AS avaluo_solar,
+     cat_predio."area_solar" AS area_solar,
+     cat_predio."num_departamento" AS num_departamento,
+     cat_predio."observaciones" AS cat_predio_observaciones,
+      coalesce(cat_predio.division_urb,'')AS DIVISION,
+     prop.nombres AS propietarios
+FROM
+     sgm_app."cat_predio" cat_predio
+     INNER JOIN sgm_app.cat_parroquia pq ON (pq.codigo_parroquia=cat_predio.parroquia AND pq.id_canton=1)
+     LEFT OUTER JOIN sgm_app."cat_ciudadela" cat_ciudadela  ON cat_ciudadela."id" = cat_predio."ciudadela"
+     LEFT OUTER JOIN (SELECT cpp.predio, STRING_AGG((TRIM((TRIM(CPE.APELLIDOS) || ' ' || TRIM(CPE.NOMBRES) || ' ' || TRIM(CPE.RAZON_SOCIAL)))), ', ' ORDER BY CPP.ID DESC) AS NOMBRES
+     FROM sgm_app.cat_predio_propietario cpp INNER JOIN sgm_app.cat_ente cpe ON (cpe.id=cpp.ente and cpp.estado='A') GROUP BY 1) AS prop ON prop.predio=cat_predio.id
+WHERE CASE WHEN $P{PARROQUIA} IS NULL THEN true ELSE cat_predio.parroquia =$P{PARROQUIA} END
+   AND cat_predio.estado='A' AND cat_predio.solar > 0
+
+ORDER BY cat_predio.parroquia, cat_predio.sector, cat_predio.mz, cat_predio.solar ASC]]>
+	</queryString>
+	<field name="ciudadela_nombre" class="java.lang.String"/>
+	<field name="nombre_parroquia" class="java.lang.String"/>
+	<field name="codigo_catastral" class="java.lang.String"/>
+	<field name="codigo_catastral_ant" class="java.lang.String"/>
+	<field name="cat_predio_nombre_urb" class="java.lang.String"/>
+	<field name="matricula_inmobiliaria" class="java.lang.Long"/>
+	<field name="solar" class="java.lang.Integer"/>
+	<field name="manzana" class="java.lang.Integer"/>
+	<field name="cat_predio_urb_secnew" class="java.lang.String"/>
+	<field name="cat_predio_propiedad_horizontal" class="java.lang.Boolean"/>
+	<field name="cat_predio_calle" class="java.lang.String"/>
+	<field name="avaluo_municipal" class="java.math.BigDecimal"/>
+	<field name="avaluo_construccion" class="java.math.BigDecimal"/>
+	<field name="avaluo_solar" class="java.math.BigDecimal"/>
+	<field name="area_solar" class="java.math.BigDecimal"/>
+	<field name="num_departamento" class="java.lang.String"/>
+	<field name="cat_predio_observaciones" class="java.lang.String"/>
+	<field name="division" class="java.lang.String"/>
+	<field name="propietarios" class="java.lang.String"/>
+	<variable name="avaluo_solar_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{avaluo_solar}]]></variableExpression>
+	</variable>
+	<variable name="avaluo_municipal_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{avaluo_municipal}]]></variableExpression>
+	</variable>
+	<variable name="avaluo_construccion_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{avaluo_construccion}]]></variableExpression>
+	</variable>
+	<variable name="avaluo_municipal_2" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{avaluo_municipal}]]></variableExpression>
+	</variable>
+	<variable name="codigo_catastral_1" class="java.lang.Integer" calculation="Count">
+		<variableExpression><![CDATA[$F{codigo_catastral}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="129" splitType="Stretch">
+			<line>
+				<reportElement positionType="Float" x="0" y="116" width="802" height="1" uuid="4a076cfe-0ae0-4da2-a814-1ac2fa40a866"/>
+				<graphicElement>
+					<pen lineWidth="3.0" lineStyle="Double" lineColor="#00CC00"/>
+				</graphicElement>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="186" y="96" width="449" height="20" uuid="5e3a6d00-812a-416c-8744-96dc02494708"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Parroquia: " + $F{nombre_parroquia}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="79" y="0" width="722" height="83" uuid="49820202-6dae-4f97-ad90-dc3fb9aa0314"/>
+				<subreportParameter name="SUB_TITLE"/>
+				<subreportParameter name="LOGO">
+					<subreportParameterExpression><![CDATA[$P{LOGO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="LEGENDA"/>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "titleReporte2.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="35" splitType="Stretch">
+			<staticText>
+				<reportElement x="740" y="0" width="61" height="32" uuid="3f6e5915-c898-469b-9197-c5611622a784"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AREA DEL SOLAR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="57" y="0" width="128" height="32" uuid="3232bc3b-cf50-479f-ad72-674a71fdb44e"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CODIGO CATATRAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="57" height="32" uuid="7b8d6ade-f7e6-4a02-93aa-e0da17b87f93"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MATRICULA IMMOBILIARIA ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="291" y="0" width="382" height="32" uuid="a3c2ff99-e148-4cda-8fec-881241325b5a"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PROPIETARIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="673" y="0" width="67" height="32" uuid="25669f3b-d565-4155-8823-3b2891516e8a"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MANZANA Y SOLAR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="185" y="0" width="106" height="32" uuid="4b88c077-aed0-44b9-82b8-631b48acef22"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CODIGO CATATRAL ANTERIOR]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="740" y="0" width="61" height="15" uuid="6a3e5ccf-d82b-40f1-8e86-7d67aa1d5f7b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{area_solar}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="0" y="0" width="57" height="16" uuid="468d69e9-4e79-40b7-9396-0a620b6bccb5"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{matricula_inmobiliaria}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="57" y="0" width="129" height="16" uuid="7143d270-8156-4ac8-8198-c869dfd97466"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codigo_catastral}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="292" y="1" width="381" height="15" uuid="d25e5765-6961-4d9c-b4ad-a69f63d9d7f3"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{propietarios}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="673" y="1" width="67" height="15" uuid="ef932362-2ead-46c0-8047-ead47766c1cb"/>
+				<textFieldExpression><![CDATA["Mz: " + $F{manzana} + " Sl: " + $F{solar}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="186" y="0" width="105" height="16" uuid="460c4206-e7b1-4a7e-8695-542feb78eb4e"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codigo_catastral_ant}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="43" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="500" y="23" width="173" height="20" uuid="41c0ecc2-4acc-4f45-9655-bdf6f86bd43f"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{codigo_catastral_1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="261" y="23" width="239" height="20" uuid="21532c1d-2150-4323-a5cb-bd0d0850e73a"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total de predios encontrados:  ]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

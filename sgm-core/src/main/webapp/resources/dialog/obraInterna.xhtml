@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:poue="http://primefaces.org/ui/extensions">
+    <f:metadata >
+        <f:event type="preRenderView" listener="#{obrasInternas.initView()}"/>
+        <f:viewParam name="idPredio" value="#{obrasInternas.idPredio}"/>
+        <f:viewParam name="idCatPredioObraInterna" value="#{obrasInternas.idCatPredioObraInterna}"/>
+        <f:viewParam name="nuevo" value="#{obrasInternas.esNuevo}"/>
+        <f:viewParam name="ver" value="#{obrasInternas.ver}"/>
+    </f:metadata>
+    <h:head>
+        <title>Tipo de Obra o Inst. Especiales (Obras Internas o Complementarias)</title>
+        <style type="text/css">
+            .ui-widget {
+                font-size: 100%;
+            }
+            .ui-column-title{
+                font-size: 11px;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <h:form id="formProp">
+            <h:outputStylesheet name="css/font-icon-layout.css" library="sentinel-layout" />
+            <h:outputStylesheet name="css/sentinel-layout.css" library="sentinel-layout" />
+            <h:outputStylesheet name="css/core-layout.css" library="sentinel-layout" />
+            <p:growl autoUpdate="true" globalOnly="true" showDetail="true"/>
+            <p:messages autoUpdate="true" globalOnly="true"/>
+            <h:panelGrid columns="6" cellspacing="5" cellpadding="2">
+                <!--Tipo de Obra-->
+                <h:outputText value="Tipo de Obra: " style="font-weight: bolder"/>    
+                <p:selectOneMenu id="cboTipoObra" value="#{obrasInternas.obrInterna.tipo}" effect="fade" 
+                                 converter="entityConverter" filter="true" filterMatchMode="contains" style="width: 90%;box-sizing: border-box">
+                    <p:ajax listener="#{obrasInternas.referenciarMaterial(obrasInternas.obrInterna.tipo)}" update="formProp:cboMaterial" />
+                    <f:selectItem itemLabel="Seleccionar..." itemValue=""/>
+                    <f:selectItems value="#{serviceLists.getListado('predio.tipo.obra')}" var="tiob" itemLabel="#{tiob.valor}" itemValue="#{tiob}"/>                    
+                </p:selectOneMenu>
+                <!--Material-->
+                <h:outputText value="Material: " style="font-weight: bold"/> 
+                <p:selectOneMenu id="cboMaterial" value="#{obrasInternas.obrInterna.material}" effect="fade" converter="entityConverter" >                                
+                    <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>                    
+                    <f:selectItems value="#{obrasInternas.materiales}" var="mate" itemLabel="#{mate.valor}" itemValue="#{mate}"/>                                
+                </p:selectOneMenu>
+                <h:outputText value="Area(m2): " style="font-weight: bold"/> 
+                <pe:inputNumber id="area" value="#{obrasInternas.obrInterna.area}" decimalPlaces="2"/> 
+                <h:outputText value="Cantidad(u): " style="font-weight: bold"/> 
+                <pe:inputNumber id="cantidad" value="#{obrasInternas.obrInterna.cantidad}" decimalPlaces="2"/> 
+
+                <h:outputText value="Estado de Conservación: " style="font-weight: bold"/> 
+                <p:selectOneMenu id="cboConservacion" value="#{obrasInternas.obrInterna.conservacion}" effect="fade" converter="entityConverter" >                                
+                    <f:selectItem itemLabel="Seleccionar..." itemValue=""/>
+                    <f:selectItems value="#{serviceLists.getListado('estado.conservacion')}" var="esco" itemLabel="#{esco.valor}" itemValue="#{esco}"/>                                
+                </p:selectOneMenu>
+
+                <h:outputText value="Edad: " style="font-weight: bold"/> 
+                <p:selectOneMenu id="cboEdad" value="#{obrasInternas.obrInterna.edad}" effect="fade" converter="entityConverter" >                                
+                    <f:selectItem itemLabel="Seleccionar..." itemValue=""/>
+                    <f:selectItems value="#{serviceLists.getListado('edad.bloque')}" var="edad" itemLabel="#{edad.valor}" itemValue="#{edad}"/>                                
+                </p:selectOneMenu>             
+
+
+            </h:panelGrid>
+            <center style="float: bottom; ">
+                <p:commandButton actionListener="#{obrasInternas.agregarObraInterna()}" value="Agregar" rendered="#{obrasInternas.nuevo and !obrasInternas.esVer}" icon="ui-icon-plus" style="height: 30px;" styleClass="btnStyle">
+                     <p:confirm header="Confirmación" message="Estás seguro de guardar?" icon="ui-icon-alert" />
+                </p:commandButton>
+                <p:commandButton actionListener="#{obrasInternas.modificarObraInterna()}" value="Modificar" rendered="#{!obrasInternas.nuevo and !obrasInternas.esVer}" icon="ui-icon-pencil" style="height: 30px;" styleClass="btnStyle">
+                     <p:confirm header="Confirmación" message="Estás seguro de guardar?" icon="ui-icon-alert" />
+                </p:commandButton>
+            </center>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+            </p:confirmDialog>
+        </h:form>
+    </h:body>
+</html>
+

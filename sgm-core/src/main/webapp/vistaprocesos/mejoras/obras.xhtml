@@ -1,0 +1,312 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="top">
+
+    </ui:define>
+
+
+    <script type="text/css">
+        .selectOneMenu {
+            font-family: Verdana, Arial, Helvetica, sans-serif;
+            font-size: 11px;
+            color: #000000;
+            text-decoration: none;
+            width   : 193px; 
+            height  : 23px; 
+        }
+    </script>
+
+    <ui:define name="content">
+        <div align="center">
+            <h1>OBRAS INGRESADAS - MEJORAS</h1>
+        </div>
+
+
+        <h:form id="formObras">
+            <p:tabView>
+                <p:tab title="Obras">
+                    <div align="right">
+                        <p:commandButton value="Reporte" styleClass="btnStyle" icon="ui-icon-document" style="float: right;" oncomplete="PF('reporte').show();" update="formReporte"/>
+                        <p:commandButton value="Ingreso de Obra" styleClass="btnStyle" actionListener="#{obras.registerObraPage()}" icon="ui-icon-home" style="float: right;" />
+<!--                        <p:commandButton value="Ingreso de Obra" styleClass="btnStyle" actionListener="#{obras.seleccionarObra(null)}" icon="ui-icon-home" style="float: right;" oncomplete="PF('nuevaObra').show();" update="formNuevo"/>-->
+                    </div>
+                    <p:dataTable id="dtObras" reflow="true" paginator="true" lazy="true" rows="20" rowsPerPageTemplate="20,50,100" 
+                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 value="#{obras.obras}" var="obra" emptyMessage="No se encontró ningún Item.">
+
+                        <p:column headerText="Obra" filterBy="#{obra.tipoObra.descripcion}" filterMatchMode="exact">
+                            <p:outputLabel value="#{obra.tipoObra.descripcion}"/>
+                        </p:column>
+<!--                        <p:column headerText="Ubicacion" filterBy="#{obra.ubicacion.nombre}"  filterMatchMode="exact">
+                            <p:outputLabel value="#{obra.ubicacion.nombre}"/>
+                        </p:column>-->
+<!--                        <p:column headerText="Ubicacion" >
+                            <ui:repeat value="#{obra.mejObraUbicacions}" var="subentity">
+                                <p:outputLabel value="#{subentity.ubicacion.nombre}   - "/>
+                            </ui:repeat>
+                        </p:column>-->
+                        <p:column headerText="Costo" style="text-align: center;" sortBy="#{obra.anio}">
+                            <h:outputText value="#{obra.costoTotal}">
+                                <f:convertNumber pattern="$ #,##0.00" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Subsidio" style="text-align: center;" sortBy="#{obra.anio}">
+                            <p:outputLabel value="#{obra.subsidio} %"/>
+                        </p:column>
+                        <p:column headerText="Valor Recuperar" style="text-align: center;" sortBy="#{obra.anio}">
+                            <h:outputText value="#{obra.valorRecuperar}">
+                                <f:convertNumber pattern="$ #,##0.00" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Año" style="text-align: center;" filterBy="#{obra.anio}" sortBy="#{obra.anio}">
+                            <p:outputLabel value="#{obra.anio}"/>
+                        </p:column>
+                        <p:column headerText="Detalle" style="text-align: center;" width="60">
+                            <p:commandLink actionListener="#{obras.seleccionarObra(obra)}" oncomplete="PF('info').show();" update="formInfo">
+                                <p:graphicImage value="/css/homeIconsImages/abrir.png" height="16"/>   
+                            </p:commandLink>
+                        </p:column>
+                    </p:dataTable>       
+                </p:tab>
+                <!-- HAY QUE SEGUIR DESARROLLANDO  SE DESABILITO PARA QUE UNA BUENA ALMA CARITATIVA COMO
+                
+                ANGELITO O DAIRON PUEDAN CAMBIARLO JAJA PILAS SI LE ESTO ARREGLENLO JAJA :V -->
+                <p:tab title="Valores Por Ubicacion" rendered="false">
+                    <p:dataTable id="dtValoresUbicacion" value="#{obras.obra.valoresObraUbicacionsCollection}" var="valoresUbicacion" 
+                                 style="margin-bottom:0" editable="true" editMode="cell"  paginator="true">
+                        <f:facet name="header">
+                            VALORES POR UBICACION
+                            <p:commandButton value="Actualizar Valores" style="float: right;" styleClass="btnStyle" icon="ui-icon-refresh" update="dtValoresUbicacion"/>
+                            <div style="clear: both;"/>
+                        </f:facet>
+                        <p:ajax event="cellEdit" listener="#{obras.calcularValoresUbicacion(valoresUbicacion)}"/>
+                        <p:column headerText="Ubicación">
+                            <h:outputText value="#{valoresUbicacion.ubicacion.nombre}" />
+                        </p:column>
+                        <p:column headerText="Porcentaje" style="text-align: center;">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{valoresUbicacion.porcentaje}"/></f:facet>
+                                <f:facet name="input"><p:inputText type="number" value="#{valoresUbicacion.porcentaje}"/></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column id="valor" headerText="Valor" style="text-align: center;">
+                            <h:outputText value="#{valoresUbicacion.valorRecuperar}" />
+                        </p:column>
+                    </p:dataTable>
+                </p:tab>
+
+            </p:tabView>
+
+        </h:form>
+
+        <p:dialog id="dlgInfo" header="Informaci&#243;n" widgetVar="info" appendTo="@(body)" closeOnEscape="true" fitViewport="true" modal="true" responsive="true" width="75%" resizable="false" position="center">
+            <h:form id="formInfo">
+                <p:panelGrid style="width: 100%; margin: 0 auto;">
+                    <p:row>
+                        <p:column colspan="2">
+                            <p:outputLabel value="Tipo de Obra" style="font-weight: bold; font-size: 12px;"/><br/>
+                            <p:outputLabel value="#{obras.obra.tipoObra.descripcion}"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="Año" style="font-weight: bold; font-size: 12px;"/><br/>
+                            <p:inputText type="number" value="#{obras.obra.anio}" readonly="true"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="2">
+                            <p:outputLabel value="Concepto" style="font-weight: bold; font-size: 12px;"/><br/>
+                            <p:inputTextarea value="#{obras.obra.concepto}" style="width: 90%;" rows="3" readonly="true"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="Fecha Conclusión Obra" style="font-weight: bold; font-size: 12px;"/><br/>
+                            <p:inputText value="#{obras.obra.fechaConclusionObra}" readonly="true">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </p:inputText>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Base Legal" style="font-weight: bold; font-size: 12px;"/><br/>
+                            <p:inputText value="#{obras.obra.baseLegal}" readonly="true" size="60"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="Cuenta Contable" style="font-weight: bold; font-size: 12px;"/><br/>
+                            <p:inputText value="#{obras.obra.cuentaContable}" readonly="true" size="60"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="Costo Total" style="font-weight: bold; font-size: 12px;"/><br/>
+                            <p:inputText type="number" value="#{obras.obra.costoTotal}" readonly="true"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Procentaje Subsidio" style="font-weight: bold; font-size: 12px;"/><br/>
+                            <p:inputText type="number" value="#{obras.obra.subsidio}" readonly="true"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="Valor Subsidio" style="font-weight: bold; font-size: 12px;"/><br/>
+                            <p:inputText type="number" value="#{obras.obra.valorSubcidiado}" readonly="true"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="Valor a Recuperar" style="font-weight: bold; font-size: 12px;"/><br/>
+                            <p:inputText type="number" value="#{obras.obra.valorRecuperar}" readonly="true"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Plazo de Recuperación" style="font-weight: bold; font-size: 12px;"/><br/>
+                            <p:inputText type="number" value="#{obras.obra.plazo}" readonly="true"/>
+                        </p:column>
+                        <p:column colspan="2"> 
+                            <p:outputLabel value="Valor Emisión Anual" style="font-weight: bold; font-size: 12px;"/><br/>
+                            <p:inputText type="number" value="#{obras.obra.valorEmisionAnual}" readonly="true"/>
+                        </p:column>
+                        
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <p:dataTable value="#{obras.obra.valoresObraUbicacionsCollection}" 
+                             var="valoresUbicacion" style="margin-bottom:0" 
+                             rendered="#{obras.obra.valoresObraUbicacionsCollection ne null}"
+                             rows="5" rowsPerPageTemplate="5,10,15" paginator="true"
+                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                    <f:facet name="header">
+                        VALORES POR UBICACION
+                    </f:facet>
+                    <p:column headerText="Ubicación">
+                        <h:outputText value="#{valoresUbicacion.ubicacion.nombre}" />
+                    </p:column>
+                    <p:column headerText="Porcentaje" style="text-align: center;">
+                        <h:outputText value="#{valoresUbicacion.porcentaje}"/>
+                    </p:column>
+                    <p:column headerText="Valor" style="text-align: center;">
+                        <h:outputText value="#{valoresUbicacion.valorRecuperar}" />
+                    </p:column>
+                </p:dataTable>
+                <br/>
+                <center>
+                    <p:commandButton value="Aceptar" styleClass="btnStyle" icon="ui-icon-close" oncomplete="PF('info').hide();"/>
+                </center>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="dlgNuevo" header="Ingreso de Obra" widgetVar="nuevaObra" appendTo="@(body)" closeOnEscape="true" fitViewport="true" modal="true" responsive="true" width="98%" resizable="false" position="center">
+            <h:form id="formNuevo">
+                <p:panelGrid style="width: 100%; margin: 0 auto;" >
+                    <p:row>
+                        <p:column colspan="2">
+                            <h:outputText value="Tipo de Obra" style="font-weight: bold; font-size: 12px;"/><br/>
+                            <p:selectOneMenu value="#{obras.obra.tipoObra}" effect="fade" converter="entityConverter" style="width: 305px">
+                                <f:attribute name="name" value="MejTipoObra"/>
+                                <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+                                <f:selectItems value="#{obras.tiposObra}" var="tipoObra" itemLabel="#{tipoObra.descripcion}" itemValue="#{tipoObra}" />
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="Año" style="font-weight: bold; font-size: 12px;"/><br/>
+                            <p:inputText type="number" value="#{obras.obra.anio}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="2">
+                            <h:outputText value="Concepto" style="font-weight: bold; font-size: 12px;"/><br/>
+                            <p:inputTextarea value="#{obras.obra.concepto}" style="width: 98%;" rows="3" placeholder="Ingrese el Concepto de la Obra."/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="Fecha Conclusión Obra" style="font-weight: bold; font-size: 12px;"/><br/>
+                            <p:calendar value="#{obras.obra.fechaConclusionObra}" pattern="dd/MM/yyyy"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="Base Legal" style="font-weight: bold; font-size: 12px;"/><br/>
+                            <p:inputText value="#{obras.obra.baseLegal}" size="60"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="Cuenta Contable" style="font-weight: bold; font-size: 12px;"/><br/>
+                            <p:inputText value="#{obras.obra.cuentaContable}" size="60"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="Costo Total" style="font-weight: bold; font-size: 12px;"/><br/>
+                            <p:inputText type="number" value="#{obras.obra.costoTotal}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="Porcentaje Subsidio" style="font-weight: bold; font-size: 12px;"/><br/>
+                            <p:inputText type="number" value="#{obras.obra.subsidio}">
+                                <p:ajax event="blur" listener="#{obras.calcularValores()}" update="formNuevo" process="@all"/>
+                            </p:inputText>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="Valor Subsidio" style="font-weight: bold; font-size: 12px;"/><br/>
+                            <p:inputText type="number" value="#{obras.obra.valorSubcidiado}" readonly="true"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="Valor a Recuperar" style="font-weight: bold; font-size: 12px;"/><br/>
+                            <p:inputText type="number" value="#{obras.obra.valorRecuperar}" readonly="true"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="1">
+                            <h:outputText value="Plazo de Recuperación" style="font-weight: bold; font-size: 12px;"/><br/>
+                            <p:inputText type="number" value="#{obras.obra.plazo}">
+                                <p:ajax event="blur" listener="#{obras.calcularValores()}" update="formNuevo" process="@all"/>
+                            </p:inputText>
+                        </p:column>
+                        <p:column colspan="2" style="text-align: center">
+                            <h:outputText value="Valor Emisión Anual" style="font-weight: bold; font-size: 12px;"/><br/>
+                            <p:inputText type="number" value="#{obras.obra.valorEmisionAnual}" readonly="true"/>
+                        </p:column>
+                        <!--                        <p:column>
+                                                    <p:outputLabel value="Ubicación" style="font-weight: bold; font-size: 12px;"/><br/>
+                                                    <p:selectOneMenu value="#{obras.obra.ubicacion}" effect="fade" converter="entityConverter">
+                                                        <f:attribute name="name" value="CatUbicacion"/>
+                                                        <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+                                                        <f:selectItems value="#{obras.ubicaciones}" var="ubicacion" itemLabel="#{ubicacion.nombre}" itemValue="#{ubicacion}"/>
+                                                        <p:ajax listener="#{obras.seleccionUbicacion()}" update="formNuevo"/>
+                                                    </p:selectOneMenu>
+                                                </p:column>-->
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+
+                <br/>
+                <center>
+                    <p:commandButton value="Grabar" styleClass="btnStyle" icon="ui-icon-disk" actionListener="#{obras.guardarObra()}" oncomplete="PF('nuevaObra').hide();" update="formObras">
+                        <p:confirm header="Confirmacion" message="Grabar Obra?" icon="ui-icon-alert"/>
+                    </p:commandButton>
+                    <p:spacer width="40"/>
+                    <p:commandButton value="Cancelar" styleClass="btnStyle" icon="ui-icon-close" oncomplete="PF('nuevaObra').hide();"/>
+                </center>
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                </p:confirmDialog>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="dlgReporte" header="Reporte Obras" widgetVar="reporte" appendTo="@(body)" closeOnEscape="true" fitViewport="true" modal="true" responsive="true" width="50%" resizable="false" position="center">
+            <h:form id="formReporte">
+                <br/>
+                <center>
+                    <p:outputLabel value="AÑO"/><p:inputText type="number" value="#{obras.anioReporte}"/>
+                </center>
+                <br/><br/>
+                <center>
+                    <p:commandButton value="Generar" styleClass="btnStyle" icon="ui-icon-check" actionListener="#{obras.generarReporteObras()}" oncomplete="PF('reporte').hide();"/>
+                    <p:spacer width="40"/>
+                    <p:commandButton value="Cancelar" styleClass="btnStyle" icon="ui-icon-close" oncomplete="PF('reporte').hide();"/>
+                </center>
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+
+</ui:composition>

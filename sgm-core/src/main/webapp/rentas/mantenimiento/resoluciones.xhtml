@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:poue="http://primefaces.org/ui/extensions"
+                xmlns:dlg="http://xmlns.jcp.org/jsf/composite/dialog">
+
+    <ui:define name="page_title">
+        Resoluciones
+    </ui:define>
+
+    <ui:define name="top">
+        <h1>Resoluciones Ingresadas.</h1>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="frmRes">
+            <center>
+                <!--<div align="right">
+                    <p:commandButton value="Nuevo" accesskey="I" actionListener="#{resolucionesView.nuevo()}" styleClass="btnStyle" 
+                                     style="font-weight: bold; font-size: 13px;" />
+                </div>-->
+
+                <p:dataTable value="#{resolucionesView.fnResoluciones}" var="res1" reflow="true" rows="10"
+                             lazy="true" emptyMessage="No se encontraron registros..." style="width: 100%"
+                             rowsPerPageTemplate="10,20,50,100" paginator="true" filterEvent="enter" >
+
+                    <p:column headerText="Número de Resolución" filterBy="#{res1.numeroResolucion}" style="text-align: center"
+                              sortBy="#{res1.numeroResolucion}" filterStyle="width: 65%;" >
+                        <p:outputLabel value="#{res1.numeroResolucion}" />
+                    </p:column>
+                    <p:column headerText="Número de Oficio" filterBy="#{res1.numeroOficio}" sortBy="#{res1.numeroOficio}" style="text-align: center"  >
+                        <p:outputLabel value="#{res1.numeroOficio}" />
+                    </p:column>
+                    <p:column headerText="Fecha de resolución" sortBy="#{res1.fechaResolucion}" style="text-align: center"  >
+                        <p:outputLabel value="#{res1.fechaResolucion}" >
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </p:outputLabel>
+                    </p:column>
+                    <p:column headerText="Editar" style="text-align: center" width="10%"  >
+                        <p:commandLink actionListener="#{resolucionesView.editar(res1)}">
+                            <p:graphicImage value="/css/homeIconsImages/editar.png"/>
+                        </p:commandLink>
+                    </p:column>
+                    <p:column headerText="Acción" style="text-align: center" width="10%"  >
+                        <p:commandLink value="Anular" actionListener="#{resolucionesView.accion(res1)}" rendered="#{res1.estado}" />
+                        <p:commandLink value="Reactivar" actionListener="#{resolucionesView.accion(res1)}" rendered="#{!res1.estado}" />
+                    </p:column>
+                </p:dataTable> 
+            </center>
+        </h:form>
+
+        <p:dialog widgetVar="dlgBanco" modal="true" height="200" width="400" responsive="true"
+                  closable="true" header="#{resolucionesView.headerDLG}" resizable="false">
+            <h:form id="frmdlgBan">
+                <div align="center">
+                    <p:panelGrid columns="2" >
+                        <p:outputLabel value="Número de Resolución: "/>
+                        <p:inputText value="#{resolucionesView.resolucion.numeroResolucion}" style="width:  95%;" size="35" />
+
+                        <p:outputLabel value="Número de oficio: "/>
+                        <p:inputText value="#{resolucionesView.resolucion.numeroOficio}" />
+                        
+                        <p:outputLabel value="Fecha de Resolución: "/>
+                        <p:calendar value="#{resolucionesView.resolucion.fechaResolucion}" pattern="dd/MM/yyyy" maxdate="#{resolucionesView.fechaMax}" disabled="true"/>
+
+                    </p:panelGrid>
+                    <br/>
+
+                    <p:commandButton value="Guardar" actionListener="#{resolucionesView.guardar()}" rendered="#{resolucionesView.nuevo}"
+                                     styleClass="btnStyle" icon="ui-icon-disk" update="frmRes" accesskey="G">
+                        <p:confirm header="Advertencia" message="Va ingresar una nueva resolución. ¿desea continuar?"/>
+                    </p:commandButton>
+
+                    <p:commandButton value="Guardar Cambios" actionListener="#{resolucionesView.guardar()}" rendered="#{!resolucionesView.nuevo}"
+                                     styleClass="btnStyle" icon="ui-icon-disk" update="frmRes" accesskey="G">
+                        <p:confirm header="Advertencia" message="Esta seguro de guardar los cambios."/>
+                    </p:commandButton>
+
+                </div>
+            </h:form>
+        </p:dialog>
+        
+        <dlg:dialogConfirmacion 
+                                  id ="mensajeDlg" 
+                                  mensaje="#{resolucionesView.mensajeConfirmacion}" 
+                                  actionButton="#{resolucionesView.metodoSel()}"
+                                  update="frmRes"/>
+        
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:panelGroup layout="block" class="Wid100 MarTop10 Container"  style="margin-bottom: 20px;">
+        <h:panelGroup layout="block" class="Container Wid100">
+            <div class="ContainerIndent">
+                <h1 class="BigTopic Fs16">Datos de Obra </h1>
+                <hr></hr>
+                <h:panelGroup layout="block" class="Responsive Container100">
+                    <div class="ContainerIndent Wid100 MarRigh320">
+                        <h:panelGrid columns="3" style="width: 100%">
+                            <h:panelGroup layout="block">
+                                <p:outputLabel for="tipoObras" value="Tipo de Obra" style="font-weight: bold; font-size: 13px;"/><br/>
+                                <p:inputText id="tipoObras"  value="#{obrasR.obra.tipoObra.descripcion}" readonly="true"  />                                    <f:attribute name="name" value="MejTipoObra"/>
+
+                            </h:panelGroup>
+                            <h:panelGroup layout="block">
+                                <p:outputLabel for="anios" value="Año" style="font-weight: bold; font-size: 13px;"/><br/>
+                                <p:inputText id="anios" type="number" value="#{obrasR.obra.anio}" required="true" readonly="true"   />
+                            </h:panelGroup>
+                            <h:panelGroup layout="block">
+                                <h:outputText value="Fecha Conclusión Obra" style="font-weight: bold; font-size: 13px;"/><br/>
+                                <p:calendar value="#{obrasR.obra.fechaConclusionObra}" pattern="dd/MM/yyyy" readonly="true"  />
+                            </h:panelGroup>
+                        </h:panelGrid>
+                    </div>
+                </h:panelGroup>
+                <h:panelGroup layout="block" class="Responsive Container100">
+                    <div class="ContainerIndent Wid100 MarRigh320">
+                        <h:panelGrid columns="2" style="width: 100%">
+                            <h:panelGroup layout="block">
+                                <h:outputText value="Concepto" style="font-weight: bold; font-size: 13px;"/><br/>
+                                <p:inputTextarea value="#{obrasR.obra.concepto}" readonly="true"   style="width: 98%;" rows="3" placeholder="Ingrese el Concepto de la Obra."/>
+                            </h:panelGroup>
+                            <h:panelGroup layout="block">
+                                <h:outputText value="" style="font-weight: bold; font-size: 13px;"/><br/>
+                                <h:outputText value="" style="font-weight: bold; font-size: 13px;"/>
+                            </h:panelGroup>
+                        </h:panelGrid>
+                    </div>
+                </h:panelGroup>
+
+                <h:panelGroup   layout="block" class="Container Wid100 MarTop10" >
+                    <p:fieldset legend="Rubro Seleccionado" toggleable="true" toggleSpeed="500" style="margin-bottom: 10px;">
+                        <div class="ContainerIndent" align="center">
+
+
+                            <h:panelGroup layout="block">
+                                <h:outputText value="Rubro:" style="font-size: 16px; font-weight: bolder; width: 100%"/><br></br>
+                                <p:inputText value="#{obrasR.rubroSelected.descripcion}" readonly="true" style="text-align: center; font-size: 16px; font-weight: bolder; width: 100%"/>
+                            </h:panelGroup>
+
+                        </div>
+
+                    </p:fieldset>
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" class="Responsive Container100">
+                    <div class="ContainerIndent Wid100 MarRigh320">
+                        <h:panelGrid columns="4" style="width: 100%">
+                            <h:panelGroup layout="block">
+                                <h:outputText value="Base Legal" style="font-weight: bold; font-size: 13px;"/><br/>
+                                <p:inputText value="#{obrasR.obra.baseLegal}" readonly="true"  />
+                            </h:panelGroup>
+                            <h:panelGroup layout="block">
+                                <h:outputText value="Cuenta Contable" style="font-weight: bold; font-size: 13px;"/><br/>
+                                <p:inputText value="#{obrasR.obra.cuentaContable}" readonly="true"   />
+                            </h:panelGroup>
+                            <h:panelGroup layout="block">
+                                <p:outputLabel for="costoTotales" value="Costo Total" style="font-weight: bold; font-size: 13px;"/><br/>
+                                <p:inputText id="costoTotales" type="number" readonly="true"   value="#{obrasR.obra.costoTotal}"  />
+                            </h:panelGroup>
+                            <h:panelGroup layout="block">
+                                <p:outputLabel for="plazos" value="Plazo de Recuperación" style="font-weight: bold; font-size: 13px;"/><br/>
+                                <p:inputText id="plazos" type="number" readonly="true"   value="#{obrasR.obra.plazo}" >
+                                    <!--<p:ajax event="blur" listener="# {obrasR.calcularValores()}"  update="registroCEMForm"   process="@all"/>-->
+                                </p:inputText>
+                            </h:panelGroup>
+                            <h:panelGroup layout="block">
+                                <p:outputLabel for="subsidios" value="Porcentaje Subsidio" style="font-weight: bold; font-size: 13px;"/><br/>
+                                <p:inputText id="subsidios" type="number" value="#{obrasR.obra.subsidio}"  />
+                            </h:panelGroup>
+                            <h:panelGroup layout="block">
+                                <p:outputLabel for="subsidioFrentistaPorcen" value="Porcentaje Frentista" style="font-weight: bold; font-size: 13px;"/><br/>
+                                <p:inputText id="subsidioFrentistaPorcen" type="number" value="#{obrasR.obra.porcentajeFrentista}" required="true" />
+                            </h:panelGroup>
+                            <h:panelGroup layout="block">
+                                <p:outputLabel for="subsidioGeneralPorcen" value="Porcentaje General" style="font-weight: bold; font-size: 13px;"/><br/>
+                                <p:inputText id="subsidioGeneralPorcen" type="number" value="#{obrasR.obra.porcentajeGeneral}" required="true" />
+                            </h:panelGroup>
+                            <h:panelGroup layout="block">
+                                <h:outputText value="Valor Subsidio" style="font-weight: bold; font-size: 13px;"/><br/>
+                                <p:inputText type="number" value="#{obrasR.obra.valorSubcidiado}" readonly="true"/>
+                            </h:panelGroup>
+                            <h:panelGroup layout="block">
+                                <h:outputText value="Valor a Recuperar" style="font-weight: bold; font-size: 13px;"/><br/>
+                                <p:inputText type="number" value="#{obrasR.obra.valorRecuperar}" readonly="true"/>
+                            </h:panelGroup>
+                            <h:panelGroup layout="block">
+                                <h:outputText value="Valor a Recuperar Frentista" style="font-weight: bold; font-size: 13px;"/><br/>
+                                <p:inputText type="number" value="#{obrasR.obra.valorFrentista}" readonly="true"/>
+                            </h:panelGroup>
+                            <h:panelGroup layout="block">
+                                <h:outputText value="Valor a Recuperar General" style="font-weight: bold; font-size: 13px;"/><br/>
+                                <p:inputText type="number" value="#{obrasR.obra.valorGeneral}" readonly="true"/>
+                            </h:panelGroup>
+                            <h:panelGroup layout="block">
+                                <h:outputText value="Valor Emisión Anual" style="font-weight: bold; font-size: 13px;"/><br/>
+                                <p:inputText type="number" value="#{obrasR.obra.valorEmisionAnual}" readonly="true"/>
+                            </h:panelGroup>
+
+                        </h:panelGrid>
+                    </div>
+                </h:panelGroup>
+                <h:panelGroup   layout="block" class="Container Wid100 MarTop10" >
+                    <p:fieldset legend="Ubicacion(es) Seleccionada(s) Segun: #{obrasR.tipoDefinicion}" toggleable="true" toggleSpeed="500" style="margin-bottom: 10px;">
+                        <div class="ContainerIndent" align="center">
+                            <h:panelGrid columns="1" style="width: 100%" rendered="#{obrasR.tipoDefinicion eq 'Parroquia'}">
+                                <h:panelGroup layout="block">
+                                    <h:outputText value="Parroquias" style="font-size: 16px; font-weight: bolder;"/><br></br>
+                                    <p:selectOneMenu  value="#{obrasR.parroquia}"  style="width:200px" effect="fade" converter="entityConverter"  filter="true" filterMatchMode="contains" disabled="true">
+                                        <f:selectItem itemLabel="TODAS" itemValue="#{null}"/>
+                                        <f:selectItems value="#{obrasR.parroquias}" var="t" itemLabel="#{t.codigoParroquia} - #{t.descripcion}" itemValue="#{t}"/>
+                                    </p:selectOneMenu>
+                                </h:panelGroup>
+                            </h:panelGrid>
+                            <h:panelGrid columns="1" style="width: 100%" rendered="#{obrasR.tipoDefinicion ne 'Parroquia'}">
+                                <h:panelGroup layout="block">
+                                    <p:dataTable id="dtUbicacionesZona" value="#{obrasR.ubicaciones}" var="pt" rendered="#{obrasR.tipoDefinicion eq 'Zona'}"
+                                                 rows="10"  paginator="true" emptyMessage="No se encontró ningun dato Seleccionado" >
+
+                                        <p:column headerText="Parroquia" width="8%" style="text-align: center;" >
+                                            <h:outputText value="#{pt.parroquia}"  />
+                                        </p:column>
+                                        <p:column headerText="Zona"  width="5%" style="text-align: center;" >
+                                            <h:outputText value="#{pt.zona}"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                    <p:dataTable id="dtUbicacionesSector" value="#{obrasR.ubicaciones}" var="pt" rendered="#{obrasR.tipoDefinicion eq 'Sector'}"
+                                                 rows="10"  paginator="true" emptyMessage="No se encontró ningun dato Seleccionado" >
+
+                                        <p:column headerText="Parroquia" width="8%" style="text-align: center;" >
+                                            <h:outputText value="#{pt.parroquia}"  />
+                                        </p:column>
+                                        <p:column headerText="Zona"  width="5%" style="text-align: center;" >
+                                            <h:outputText value="#{pt.zona}"/>
+                                        </p:column>
+                                        <p:column headerText="Sector"  width="7%" style="text-align: center;" >
+                                            <h:outputText value="#{pt.sector}"/>
+                                        </p:column>    
+                                    </p:dataTable>
+                                    <p:dataTable id="dtUbicacionesSectorMz" value="#{obrasR.ubicaciones}" var="pt" rendered="#{obrasR.tipoDefinicion eq 'Mz'}"
+                                                 rows="10"  paginator="true" emptyMessage="No se encontró ningun dato Seleccionado" >
+
+                                        <p:column headerText="Parroquia" width="8%" style="text-align: center;" >
+                                            <h:outputText value="#{pt.parroquia}"  />
+                                        </p:column>
+                                        <p:column headerText="Zona"  width="5%" style="text-align: center;" >
+                                            <h:outputText value="#{pt.zona}"/>
+                                        </p:column>
+                                        <p:column headerText="Sector"  width="7%" style="text-align: center;" >
+                                            <h:outputText value="#{pt.sector}"/>
+                                        </p:column>
+                                        <p:column headerText="Mz"  width="5%" style="text-align: center;" >
+                                            <h:outputText value="#{pt.mz}"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                    <p:dataTable id="dtUbicacionesSectorLote" value="#{obrasR.ubicacionesFrentista}" var="pt" rendered="#{obrasR.tipoDefinicion eq 'Lote'}"
+                                                 rows="10"  paginator="true" emptyMessage="No se encontró ningun dato Seleccionado" >
+                                        <f:facet name="header"> 
+                                            Lotes Frentistas
+                                        </f:facet>
+                                        <p:column headerText="Parroquia" width="8%" style="text-align: center;" >
+                                            <h:outputText value="#{pt.parroquia}"  />
+                                        </p:column>
+                                        <p:column headerText="Zona"  width="5%" style="text-align: center;" >
+                                            <h:outputText value="#{pt.zona}"/>
+                                        </p:column>
+                                        <p:column headerText="Sector"  width="7%" style="text-align: center;">
+                                            <h:outputText value="#{pt.sector}"/>
+                                        </p:column>
+                                        <p:column headerText="Mz"  width="5%" style="text-align: center;">
+                                            <h:outputText value="#{pt.mz}"/>
+                                        </p:column>
+                                        <p:column headerText="Lote"  width="5%" style="text-align: center;" >
+                                            <h:outputText value="#{pt.solar}"/>
+                                        </p:column>1
+                                        <p:column headerText="Total Avalúo"  width="5%" style="text-align: center;" >
+                                            <h:outputText value="#{pt.avaluoMunicipal}">
+                                                <f:convertNumber pattern="$ #,##0.00" />
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column headerText="% Avalúo"  width="5%" style="text-align: center;" >
+                                            <h:outputText value="#{pt.porcentajeAvaluo}"/>
+                                        </p:column>
+                                        <p:column headerText="Total CEM"  width="5%" style="text-align: center;" >
+                                            <h:outputText value="#{pt.totalCem}">
+                                                <f:convertNumber pattern="$ #,##0.00" />
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column headerText="Para el Año"  width="5%" style="text-align: center;" >
+                                            <h:outputText value="#{pt.totalCemAnio}">
+                                                <f:convertNumber pattern="$ #,##0.00" />
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:columnGroup type="footer">
+                                            <p:row>
+                                                <p:column footerText="Totales: " colspan="5" style="text-align:right"/>
+                                                <p:column footerText="#{obrasR.totalAvaluoMunicipalesFrentistas}" style="text-align:right"/>
+                                                <p:column footerText="#{obrasR.totalPorcentajeFrentistaAvaluo}  %" style="text-align:right"/>
+                                                <p:column footerText="#{obrasR.totalFrentistaCem}" style="text-align:right"/>
+                                                <p:column footerText="#{obrasR.totalFrentistaCemAnual}" style="text-align:right"/>
+                                            </p:row>
+                                        </p:columnGroup>
+                                    </p:dataTable>
+                                    <p:dataTable id="dtUbicacionesSectorLoteGeneral" value="#{obrasR.ubicacionesGeneral}" var="pt" rendered="#{obrasR.tipoDefinicion eq 'Lote'}"
+                                                 rows="10"  paginator="true" emptyMessage="No se encontró ningun dato Seleccionado" >
+                                        <f:facet name="header"> 
+                                            Lotes Generales
+                                        </f:facet>
+                                        <p:column headerText="Parroquia" width="8%" style="text-align: center;" >
+                                            <h:outputText value="#{pt.parroquia}"  />
+                                        </p:column>
+                                        <p:column headerText="Zona"  width="5%" style="text-align: center;" >
+                                            <h:outputText value="#{pt.zona}"/>
+                                        </p:column>
+                                        <p:column headerText="Sector"  width="7%" style="text-align: center;">
+                                            <h:outputText value="#{pt.sector}"/>
+                                        </p:column>
+                                        <p:column headerText="Mz"  width="5%" style="text-align: center;">
+                                            <h:outputText value="#{pt.mz}"/>
+                                        </p:column>
+                                        <p:column headerText="Lote"  width="5%" style="text-align: center;" >
+                                            <h:outputText value="#{pt.solar}"/>
+                                        </p:column>
+                                        <p:column headerText="Total Avalúo"  width="5%" style="text-align: center;" >
+                                            <h:outputText value="#{pt.avaluoMunicipal}">
+                                                <f:convertNumber pattern="$ #,##0.00" />
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column headerText="% Avalúo"  width="5%" style="text-align: center;" >
+                                            <h:outputText value="#{pt.porcentajeAvaluo}"/>
+                                        </p:column>
+                                        <p:column headerText="Total CEM"  width="5%" style="text-align: center;" >
+                                            <h:outputText value="#{pt.totalCem}">
+                                                <f:convertNumber pattern="$ #,##0.00" />
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column headerText="Para el Año"  width="5%" style="text-align: center;" >
+                                            <h:outputText value="#{pt.totalCemAnio}">
+                                                <f:convertNumber pattern="$ #,##0.00" />
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:columnGroup type="footer">
+                                            <p:row>
+                                                <p:column footerText="Totales: " colspan="5" style="text-align:right"/>
+                                                <p:column footerText="#{obrasR.totalAvaluoMunicipalesGenerales}" style="text-align:right"></p:column>
+                                                <p:column footerText="#{obrasR.totalPorcentajeGeneralesAvaluo}" style="text-align:right"/>
+                                                <p:column footerText="#{obrasR.totalGeneralesCem}" style="text-align:right"/>
+                                                <p:column footerText="#{obrasR.totalGeneralesCemAnual}" style="text-align:right"/>
+                                            </p:row>
+                                        </p:columnGroup>
+                                    </p:dataTable>
+
+                                </h:panelGroup>
+                            </h:panelGrid>
+
+                        </div>
+
+                    </p:fieldset>
+                </h:panelGroup>
+
+
+
+            </div>
+        </h:panelGroup>
+    </h:panelGroup>
+
+</html>

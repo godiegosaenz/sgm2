@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <collaboration id="Collaboration">
+    <participant id="pool1" name="Fusion de Predios" processRef="fusionPredios"></participant>
+  </collaboration>
+  <process id="fusionPredios" name="Fusion de Predios" isExecutable="true">
+    <laneSet id="laneSet_fusionPredios">
+      <lane id="lane2" name="Usuario">
+        <flowNodeRef>startevent1</flowNodeRef>
+        <flowNodeRef>usertask1</flowNodeRef>
+        <flowNodeRef>cargarDocumentosUsuario</flowNodeRef>
+      </lane>
+      <lane id="lane3" name="Director">
+        <flowNodeRef>revisarTasaLiquidacionFP</flowNodeRef>
+        <flowNodeRef>exclusivegateway3</flowNodeRef>
+        <flowNodeRef>exclusivegateway4</flowNodeRef>
+        <flowNodeRef>callRentas</flowNodeRef>
+      </lane>
+      <lane id="lane4" name="Tecnico">
+        <flowNodeRef>cargarLiquidacionFP</flowNodeRef>
+        <flowNodeRef>cargarInformeTecFP</flowNodeRef>
+        <flowNodeRef>consulPagTasaCargInfFP</flowNodeRef>
+        <flowNodeRef>editarTasaLiqFP</flowNodeRef>
+        <flowNodeRef>liquidacionFP</flowNodeRef>
+        <flowNodeRef>notifcarTecnicoCorrTasaFP</flowNodeRef>
+      </lane>
+      <lane id="lane5" name="Juridico">
+        <flowNodeRef>exclusivegateway5</flowNodeRef>
+        <flowNodeRef>endevent3</flowNodeRef>
+        <flowNodeRef>callJuridico</flowNodeRef>
+      </lane>
+      <lane id="lane6" name="Secretaria general">
+        <flowNodeRef>asigTecSecFP</flowNodeRef>
+        <flowNodeRef>cargarResolucionConsejoFP</flowNodeRef>
+        <flowNodeRef>callCatastro</flowNodeRef>
+        <flowNodeRef>exclusivegateway6</flowNodeRef>
+        <flowNodeRef>endevent4</flowNodeRef>
+        <flowNodeRef>resolConsejoSG</flowNodeRef>
+      </lane>
+    </laneSet>
+    <startEvent id="startevent1" name="Start"></startEvent>
+    <userTask id="liquidacionFP" name="Revision tecnica, generar tasa liquidacion" activiti:assignee="${tecnico}" activiti:formKey="/faces/vistaprocesos/edificaciones/fusionPredio/generarTasaLiqFP.xhtml" activiti:priority="${prioridad}">
+      <documentation>Fusión de Predios</documentation>
+    </userTask>
+    <serviceTask id="cargarLiquidacionFP" name="Cargar Liquidación" activiti:async="true" activiti:expression="${subirDocumentos.execute(execution)}">
+      <documentation>Fusión de Predios</documentation>
+    </serviceTask>
+    <sequenceFlow id="flow11" sourceRef="cargarLiquidacionFP" targetRef="revisarTasaLiquidacionFP"></sequenceFlow>
+    <userTask id="revisarTasaLiquidacionFP" name="Revisar tasa liquidacion" activiti:assignee="${director}" activiti:formKey="/faces/vistaprocesos/edificaciones/revisionTramDir.xhtml" activiti:priority="${prioridad}">
+      <documentation>Fusión de Predios</documentation>
+    </userTask>
+    <userTask id="editarTasaLiqFP" name="Editar tasa" activiti:assignee="${tecnico}" activiti:formKey="/faces/vistaprocesos/edificaciones/fusionPredio/editarTasa.xhtml" activiti:priority="${prioridad}">
+      <documentation>Fusión de Predios</documentation>
+    </userTask>
+    <sequenceFlow id="flow15" sourceRef="editarTasaLiqFP" targetRef="cargarLiquidacionFP"></sequenceFlow>
+    <callActivity id="callRentas" name="Rentas" calledElement="rentas">
+      <documentation>Fusión de Predios</documentation>
+      <extensionElements>
+        <activiti:in source="tramite" target="tramite"></activiti:in>
+        <activiti:in source="renta" target="renta"></activiti:in>
+        <activiti:in source="aprobado" target="aprobado"></activiti:in>
+        <activiti:in source="taskdef" target="taskdef"></activiti:in>
+        <activiti:in source="prioridad" target="prioridad"></activiti:in>
+        <activiti:in source="descripcion" target="descripcion"></activiti:in>
+        <activiti:in source="carpeta" target="carpeta"></activiti:in>
+        <activiti:out source="aprobado" target="aprobado"></activiti:out>
+      </extensionElements>
+    </callActivity>
+    <sequenceFlow id="flow17" sourceRef="callRentas" targetRef="exclusivegateway3"></sequenceFlow>
+    <userTask id="consulPagTasaCargInfFP" name="Consultar Pago de la Tasa, cargar informe" activiti:assignee="${tecnico}" activiti:formKey="/faces/vistaprocesos/edificaciones/fusionPredio/validarPagoGenInforme.xhtml" activiti:priority="${prioridad}">
+      <documentation>Fusión de Predios</documentation>
+    </userTask>
+    <sequenceFlow id="flow18" sourceRef="consulPagTasaCargInfFP" targetRef="cargarInformeTecFP"></sequenceFlow>
+    <serviceTask id="cargarInformeTecFP" name="Cargar Informe Tecnico" activiti:async="true" activiti:expression="${subirDocumentos.execute(execution)}">
+      <documentation>Fusión de Predios</documentation>
+    </serviceTask>
+    <exclusiveGateway id="exclusivegateway3" name="Exclusive Gateway"></exclusiveGateway>
+    <sequenceFlow id="flow19" sourceRef="exclusivegateway3" targetRef="consulPagTasaCargInfFP">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${aprobado==true}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow20" sourceRef="exclusivegateway3" targetRef="revisarTasaLiquidacionFP">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${aprobado==false}]]></conditionExpression>
+    </sequenceFlow>
+    <exclusiveGateway id="exclusivegateway4" name="Exclusive Gateway"></exclusiveGateway>
+    <sequenceFlow id="flow21" sourceRef="revisarTasaLiquidacionFP" targetRef="exclusivegateway4"></sequenceFlow>
+    <sequenceFlow id="flow22" sourceRef="exclusivegateway4" targetRef="callRentas">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${estatus==1}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow23" sourceRef="exclusivegateway4" targetRef="notifcarTecnicoCorrTasaFP">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${estatus==2}]]></conditionExpression>
+    </sequenceFlow>
+    <userTask id="usertask1" name="Correcion de documentos"></userTask>
+    <sequenceFlow id="flow40" sourceRef="liquidacionFP" targetRef="cargarLiquidacionFP"></sequenceFlow>
+    <serviceTask id="cargarDocumentosUsuario" name="Cargar documentos usuario" activiti:async="true" activiti:expression="${subirDocumentosCarpeta.execute(execution)}">
+      <documentation>Fusión de Predios</documentation>
+    </serviceTask>
+    <sequenceFlow id="flow41" sourceRef="startevent1" targetRef="cargarDocumentosUsuario"></sequenceFlow>
+    <sequenceFlow id="flow42" sourceRef="cargarDocumentosUsuario" targetRef="liquidacionFP">
+      <documentation>Fusión de Predios</documentation>
+    </sequenceFlow>
+    <userTask id="asigTecSecFP" name="Asignación Técnico Secretaria General" activiti:assignee="${secretariaGeneral}" activiti:formKey="/faces/vistaprocesos/secretariaGral/asignarTecnicoSG.xhtml" activiti:priority="${prioridad}">
+      <documentation>Fusión de Predios</documentation>
+    </userTask>
+    <userTask id="resolConsejoSG" name="Redactar Resolución del Consejo" activiti:assignee="${tecnicoSecretariaGeneral}" activiti:formKey="/faces/vistaprocesos/secretariaGral/cargarDocumentacionTecSG.xhtml" activiti:priority="${prioridad}">
+      <documentation>Fusión de Predios</documentation>
+    </userTask>
+    <sequenceFlow id="flow52" sourceRef="asigTecSecFP" targetRef="resolConsejoSG"></sequenceFlow>
+    <sequenceFlow id="flow53" sourceRef="resolConsejoSG" targetRef="cargarResolucionConsejoFP"></sequenceFlow>
+    <serviceTask id="cargarResolucionConsejoFP" name="Cargar resolucion" activiti:async="true" activiti:expression="${subirDocumentos.execute(execution)}">
+      <documentation>Fusión de Predios</documentation>
+    </serviceTask>
+    <callActivity id="callCatastro" name=" Catastro" calledElement="catastro">
+      <extensionElements>
+        <activiti:in source="tramite" target="tramite"></activiti:in>
+        <activiti:in source="descripcion" target="descripcion"></activiti:in>
+        <activiti:in source="prioridad" target="prioridad"></activiti:in>
+        <activiti:in source="directorCatastro" target="directorCatastro"></activiti:in>
+        <activiti:in source="urlTec" target="urlTec"></activiti:in>
+        <activiti:in source="carpeta" target="carpeta"></activiti:in>
+        <activiti:in source="listaArchivosFinal" target="listaArchivosFinal"></activiti:in>
+        <activiti:in source="listaArchivos" target="listaArchivos"></activiti:in>
+        <activiti:out source="aprobado" target="aprobado"></activiti:out>
+      </extensionElements>
+    </callActivity>
+    <callActivity id="callJuridico" name="Juridico" calledElement="juridico">
+      <extensionElements>
+        <activiti:in source="directorJuridico" target="directorJuridico"></activiti:in>
+        <activiti:in source="tramite" target="tramite"></activiti:in>
+        <activiti:in source="prioridad" target="prioridad"></activiti:in>
+        <activiti:in source="descripcion" target="descripcion"></activiti:in>
+        <activiti:in source="carpeta" target="carpeta"></activiti:in>
+        <activiti:in source="listaArchivosFinal" target="listaArchivosFinal"></activiti:in>
+        <activiti:in source="listaArchivos" target="listaArchivos"></activiti:in>
+        <activiti:out source="aprobado" target="aprobado"></activiti:out>
+      </extensionElements>
+    </callActivity>
+    <exclusiveGateway id="exclusivegateway5" name="Exclusive Gateway"></exclusiveGateway>
+    <sequenceFlow id="flow57" sourceRef="callJuridico" targetRef="exclusivegateway5"></sequenceFlow>
+    <sequenceFlow id="flow58" sourceRef="exclusivegateway5" targetRef="asigTecSecFP">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${aprobado==true}]]></conditionExpression>
+    </sequenceFlow>
+    <endEvent id="endevent3" name="End"></endEvent>
+    <sequenceFlow id="flow59" sourceRef="exclusivegateway5" targetRef="endevent3">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${aprobado==false}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow60" sourceRef="cargarInformeTecFP" targetRef="callJuridico"></sequenceFlow>
+    <exclusiveGateway id="exclusivegateway6" name="Exclusive Gateway"></exclusiveGateway>
+    <sequenceFlow id="flow61" sourceRef="callCatastro" targetRef="exclusivegateway6">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${aprobado==true}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow62" sourceRef="exclusivegateway6" targetRef="revisarTasaLiquidacionFP">
+      <documentation>${aprobado==false}</documentation>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${aprobado==false}]]></conditionExpression>
+    </sequenceFlow>
+    <endEvent id="endevent4" name="End"></endEvent>
+    <sequenceFlow id="flow63" sourceRef="exclusivegateway6" targetRef="endevent4">
+      <documentation>${aprobado==true}</documentation>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${aprobado==true}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow64" sourceRef="exclusivegateway4" targetRef="callCatastro">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${estatus==3}]]></conditionExpression>
+    </sequenceFlow>
+    <serviceTask id="notifcarTecnicoCorrTasaFP" name="Notifcar, correcion tasa" activiti:async="true" activiti:expression="${messenger.execute(execution)}">
+      <documentation>Fusión de Predios</documentation>
+    </serviceTask>
+    <sequenceFlow id="flow24" sourceRef="notifcarTecnicoCorrTasaFP" targetRef="editarTasaLiqFP"></sequenceFlow>
+    <sequenceFlow id="flow66" sourceRef="cargarResolucionConsejoFP" targetRef="callCatastro"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_Collaboration">
+    <bpmndi:BPMNPlane bpmnElement="Collaboration" id="BPMNPlane_Collaboration">
+      <bpmndi:BPMNShape bpmnElement="pool1" id="BPMNShape_pool1">
+        <omgdc:Bounds height="1217.0" width="1481.0" x="40.0" y="60.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lane2" id="BPMNShape_lane2">
+        <omgdc:Bounds height="200.0" width="1461.0" x="60.0" y="60.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lane3" id="BPMNShape_lane3">
+        <omgdc:Bounds height="200.0" width="1461.0" x="60.0" y="260.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lane4" id="BPMNShape_lane4">
+        <omgdc:Bounds height="272.0" width="1461.0" x="60.0" y="460.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lane5" id="BPMNShape_lane5">
+        <omgdc:Bounds height="272.0" width="1461.0" x="60.0" y="732.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lane6" id="BPMNShape_lane6">
+        <omgdc:Bounds height="272.0" width="1461.0" x="60.0" y="1004.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="100.0" y="120.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="liquidacionFP" id="BPMNShape_liquidacionFP">
+        <omgdc:Bounds height="55.0" width="171.0" x="110.0" y="518.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="cargarLiquidacionFP" id="BPMNShape_cargarLiquidacionFP">
+        <omgdc:Bounds height="55.0" width="131.0" x="340.0" y="518.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="revisarTasaLiquidacionFP" id="BPMNShape_revisarTasaLiquidacionFP">
+        <omgdc:Bounds height="55.0" width="105.0" x="750.0" y="303.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="editarTasaLiqFP" id="BPMNShape_editarTasaLiqFP">
+        <omgdc:Bounds height="55.0" width="121.0" x="862.0" y="630.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="callRentas" id="BPMNShape_callRentas">
+        <omgdc:Bounds height="55.0" width="105.0" x="1000.0" y="303.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="consulPagTasaCargInfFP" id="BPMNShape_consulPagTasaCargInfFP">
+        <omgdc:Bounds height="73.0" width="105.0" x="1127.0" y="530.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="cargarInformeTecFP" id="BPMNShape_cargarInformeTecFP">
+        <omgdc:Bounds height="55.0" width="111.0" x="1124.0" y="630.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway3" id="BPMNShape_exclusivegateway3">
+        <omgdc:Bounds height="40.0" width="40.0" x="1160.0" y="310.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway4" id="BPMNShape_exclusivegateway4">
+        <omgdc:Bounds height="40.0" width="40.0" x="900.0" y="311.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask1" id="BPMNShape_usertask1">
+        <omgdc:Bounds height="55.0" width="105.0" x="1320.0" y="630.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="cargarDocumentosUsuario" id="BPMNShape_cargarDocumentosUsuario">
+        <omgdc:Bounds height="55.0" width="135.0" x="200.0" y="110.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="asigTecSecFP" id="BPMNShape_asigTecSecFP">
+        <omgdc:Bounds height="55.0" width="105.0" x="140.0" y="1110.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="resolConsejoSG" id="BPMNShape_resolConsejoSG">
+        <omgdc:Bounds height="55.0" width="141.0" x="290.0" y="1110.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="cargarResolucionConsejoFP" id="BPMNShape_cargarResolucionConsejoFP">
+        <omgdc:Bounds height="55.0" width="135.0" x="476.0" y="1110.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="callCatastro" id="BPMNShape_callCatastro">
+        <omgdc:Bounds height="55.0" width="105.0" x="690.0" y="1110.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="callJuridico" id="BPMNShape_callJuridico">
+        <omgdc:Bounds height="55.0" width="105.0" x="190.0" y="830.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway5" id="BPMNShape_exclusivegateway5">
+        <omgdc:Bounds height="40.0" width="40.0" x="340.0" y="838.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent3" id="BPMNShape_endevent3">
+        <omgdc:Bounds height="35.0" width="35.0" x="425.0" y="841.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway6" id="BPMNShape_exclusivegateway6">
+        <omgdc:Bounds height="40.0" width="40.0" x="832.0" y="1040.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent4" id="BPMNShape_endevent4">
+        <omgdc:Bounds height="35.0" width="35.0" x="917.0" y="1043.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="notifcarTecnicoCorrTasaFP" id="BPMNShape_notifcarTecnicoCorrTasaFP">
+        <omgdc:Bounds height="61.0" width="105.0" x="870.0" y="500.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow11" id="BPMNEdge_flow11">
+        <omgdi:waypoint x="405.0" y="518.0"></omgdi:waypoint>
+        <omgdi:waypoint x="405.0" y="330.0"></omgdi:waypoint>
+        <omgdi:waypoint x="750.0" y="330.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow15" id="BPMNEdge_flow15">
+        <omgdi:waypoint x="862.0" y="657.0"></omgdi:waypoint>
+        <omgdi:waypoint x="405.0" y="657.0"></omgdi:waypoint>
+        <omgdi:waypoint x="405.0" y="573.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow17" id="BPMNEdge_flow17">
+        <omgdi:waypoint x="1105.0" y="330.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1160.0" y="330.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow18" id="BPMNEdge_flow18">
+        <omgdi:waypoint x="1179.0" y="603.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1179.0" y="630.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow19" id="BPMNEdge_flow19">
+        <omgdi:waypoint x="1180.0" y="350.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1179.0" y="457.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1179.0" y="530.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow20" id="BPMNEdge_flow20">
+        <omgdi:waypoint x="1180.0" y="310.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1179.0" y="269.0"></omgdi:waypoint>
+        <omgdi:waypoint x="801.0" y="269.0"></omgdi:waypoint>
+        <omgdi:waypoint x="802.0" y="303.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow21" id="BPMNEdge_flow21">
+        <omgdi:waypoint x="855.0" y="330.0"></omgdi:waypoint>
+        <omgdi:waypoint x="900.0" y="331.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow22" id="BPMNEdge_flow22">
+        <omgdi:waypoint x="940.0" y="331.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1000.0" y="330.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow23" id="BPMNEdge_flow23">
+        <omgdi:waypoint x="920.0" y="351.0"></omgdi:waypoint>
+        <omgdi:waypoint x="922.0" y="500.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow40" id="BPMNEdge_flow40">
+        <omgdi:waypoint x="281.0" y="545.0"></omgdi:waypoint>
+        <omgdi:waypoint x="340.0" y="545.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow41" id="BPMNEdge_flow41">
+        <omgdi:waypoint x="135.0" y="137.0"></omgdi:waypoint>
+        <omgdi:waypoint x="200.0" y="137.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow42" id="BPMNEdge_flow42">
+        <omgdi:waypoint x="267.0" y="165.0"></omgdi:waypoint>
+        <omgdi:waypoint x="267.0" y="236.0"></omgdi:waypoint>
+        <omgdi:waypoint x="195.0" y="236.0"></omgdi:waypoint>
+        <omgdi:waypoint x="195.0" y="518.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow52" id="BPMNEdge_flow52">
+        <omgdi:waypoint x="245.0" y="1137.0"></omgdi:waypoint>
+        <omgdi:waypoint x="290.0" y="1137.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow53" id="BPMNEdge_flow53">
+        <omgdi:waypoint x="431.0" y="1137.0"></omgdi:waypoint>
+        <omgdi:waypoint x="476.0" y="1137.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow57" id="BPMNEdge_flow57">
+        <omgdi:waypoint x="295.0" y="857.0"></omgdi:waypoint>
+        <omgdi:waypoint x="340.0" y="858.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow58" id="BPMNEdge_flow58">
+        <omgdi:waypoint x="360.0" y="878.0"></omgdi:waypoint>
+        <omgdi:waypoint x="359.0" y="972.0"></omgdi:waypoint>
+        <omgdi:waypoint x="193.0" y="972.0"></omgdi:waypoint>
+        <omgdi:waypoint x="192.0" y="1110.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow59" id="BPMNEdge_flow59">
+        <omgdi:waypoint x="380.0" y="858.0"></omgdi:waypoint>
+        <omgdi:waypoint x="425.0" y="858.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow60" id="BPMNEdge_flow60">
+        <omgdi:waypoint x="1179.0" y="685.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1179.0" y="767.0"></omgdi:waypoint>
+        <omgdi:waypoint x="242.0" y="767.0"></omgdi:waypoint>
+        <omgdi:waypoint x="242.0" y="830.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow61" id="BPMNEdge_flow61">
+        <omgdi:waypoint x="795.0" y="1137.0"></omgdi:waypoint>
+        <omgdi:waypoint x="852.0" y="1137.0"></omgdi:waypoint>
+        <omgdi:waypoint x="852.0" y="1080.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow62" id="BPMNEdge_flow62">
+        <omgdi:waypoint x="832.0" y="1060.0"></omgdi:waypoint>
+        <omgdi:waypoint x="802.0" y="1059.0"></omgdi:waypoint>
+        <omgdi:waypoint x="802.0" y="358.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow63" id="BPMNEdge_flow63">
+        <omgdi:waypoint x="872.0" y="1060.0"></omgdi:waypoint>
+        <omgdi:waypoint x="917.0" y="1060.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow64" id="BPMNEdge_flow64">
+        <omgdi:waypoint x="920.0" y="351.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1094.0" y="428.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1094.0" y="1237.0"></omgdi:waypoint>
+        <omgdi:waypoint x="742.0" y="1237.0"></omgdi:waypoint>
+        <omgdi:waypoint x="742.0" y="1165.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow24" id="BPMNEdge_flow24">
+        <omgdi:waypoint x="922.0" y="561.0"></omgdi:waypoint>
+        <omgdi:waypoint x="922.0" y="630.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow66" id="BPMNEdge_flow66">
+        <omgdi:waypoint x="611.0" y="1137.0"></omgdi:waypoint>
+        <omgdi:waypoint x="690.0" y="1137.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

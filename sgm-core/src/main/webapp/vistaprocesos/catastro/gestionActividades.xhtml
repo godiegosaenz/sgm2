@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:define name="metadata">
+    </ui:define>
+    <ui:define name="top">
+        <div align="center">
+            <h1>Gestión de predios</h1>
+            <h2>Seleccione la actividad respectiva para iniciar el tramite</h2>
+        </div>
+    </ui:define>
+    <ui:define name="content">
+        <h:form id="frmMain">
+            <p:panel id="pGral" header="Datos generales" style="width: 100%">
+                <div align="center">
+                    <p:panelGrid columns="2" layout="grid" style="width: 50%">
+                        <h:outputText value="Actividad" style="font-weight: bolder"/>
+                        <p:selectOneMenu id="actividad" value="" converter="entityConverter" style="width: 80%">
+                            <f:selectItem itemLabel="Elija la actividad respectiva" itemValue="#{null}"/>
+                            <f:selectItems value="" var="" itemLabel="" itemValue=""/>
+                        </p:selectOneMenu>
+                        <h:outputText value="Tecnico responsable" style="font-weight: bolder"/>
+                        <p:selectOneMenu id="responsable" value="#{catGestionActividades.responsable}" converter="entityConverter"  style="width: 80%" var="r" filter="true" filterMatchMode="contains">
+                            <f:attribute name="name" value="AclUser"/>
+                            <f:selectItem itemLabel="Seleccione al responsable" itemValue="#{null}"/>
+                            <f:selectItems value="#{catGestionActividades.responsables}" var="resp" itemLabel="#{resp.ente.apellidos} #{resp.ente.nombres}" itemValue="#{resp}"/>
+                            <p:column>
+                                <h:outputText value="#{r.ente.apellidos} #{r.ente.nombres}"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{r.ente.ciRuc}"/>
+                            </p:column>
+                        </p:selectOneMenu>
+                        <f:facet name="footer">
+                            <div align="center">
+                                <p:commandButton id="btnValidar" value="Continuar" style="height: 30px"/>
+                            </div>
+                        </f:facet>
+                    </p:panelGrid>
+                </div>
+
+            </p:panel>
+        </h:form>
+    </ui:define>
+</ui:composition>

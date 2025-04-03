@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reporteSolicitudServicioAudiencia10" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b6755d6e-7100-4778-a9c5-8b80d970fa27">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="141"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="LOGO" class="java.lang.String"/>
+	<parameter name="INICIO" class="java.util.Date"/>
+	<parameter name="FIN" class="java.util.Date"/>
+	<queryString>
+		<![CDATA[SELECT s.fecha_creacion,s.tramite,
+CASE p.es_persona WHEN TRUE THEN
+	coalesce(p.nombres,'')||' '||coalesce(p.apellidos,'')
+        ELSE p.razon_social END AS nombre_del_solicitante,
+(SELECT t.telefono FROM sgm_app.ente_telefono t WHERE t.ente = s.ente_solicitante ORDER BY t.id DESC LIMIT 1)  as telefono,
+(SELECT c.email FROM sgm_app.ente_correo c WHERE c.ente = s.ente_solicitante ORDER BY c.id DESC LIMIT 1) as correounico,
+
+UPPER (it.nombre) as descripcion, s.descripcion_inconveniente as motivo, la.nombre as lugar,
+    (SELECT razon_social from sgm_application.empresa) AS nombre_empresa
+
+FROM sgm_flow.sv_solicitud_servicios s
+LEFT OUTER JOIN sgm_app.cat_ente p ON (s.ente_solicitante=p.id)
+LEFT OUTER JOIN sgm_flow.historico_tramites tr ON (s.tramite=tr.id_tramite)
+INNER JOIN sgm_flow.vu_items it ON(s.tipo_servicio=it.id)
+INNER JOIN sgm_flow.vu_items la ON(s.lugar_audiencia=la.id)
+
+WHERE 	s.fecha_creacion>=$P{INICIO} AND s.fecha_creacion<$P{FIN} AND s.lugar_audiencia=784 AND NOT s.asignado
+ORDER BY it.nombre ASC,s.tramite ASC;]]>
+	</queryString>
+	<field name="fecha_creacion" class="java.sql.Timestamp"/>
+	<field name="tramite" class="java.lang.Long"/>
+	<field name="nombre_del_solicitante" class="java.lang.String"/>
+	<field name="telefono" class="java.lang.String"/>
+	<field name="correounico" class="java.lang.String"/>
+	<field name="descripcion" class="java.lang.String"/>
+	<field name="motivo" class="java.lang.String"/>
+	<field name="lugar" class="java.lang.String"/>
+	<field name="nombre_empresa" class="java.lang.String"/>
+	<group name="descripcion">
+		<groupExpression><![CDATA[$F{descripcion}]]></groupExpression>
+		<groupHeader>
+			<band height="41">
+				<textField>
+					<reportElement x="118" y="0" width="282" height="20" uuid="d4febba0-b7ac-481a-8699-939ac24bc971"/>
+					<textElement verticalAlignment="Bottom">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{descripcion}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="0" width="118" height="20" uuid="4aac1f41-a7cb-42a9-9456-006b356b1e4c"/>
+					<textElement verticalAlignment="Bottom">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Tipo de Solicitud:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="21" width="74" height="20" uuid="2209b759-d5ba-4466-8955-798eb43b653f"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom"/>
+					<text><![CDATA[Fecha]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="74" y="21" width="72" height="20" uuid="1ff5a794-f0b8-4676-a5f9-7d0553d33f55"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom"/>
+					<text><![CDATA[Trámite]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="146" y="21" width="154" height="20" uuid="3af93bb1-1803-4e03-910c-1080ef2a7893"/>
+					<textElement verticalAlignment="Bottom"/>
+					<text><![CDATA[Nombre del solicitante]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="300" y="21" width="128" height="20" uuid="3d6af528-cdcb-4e64-bd12-2b439c9bcfa1"/>
+					<textElement verticalAlignment="Bottom"/>
+					<text><![CDATA[Correo]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="428" y="21" width="93" height="20" uuid="e4824787-b427-4080-884e-0e1b678562a2"/>
+					<textElement verticalAlignment="Bottom"/>
+					<text><![CDATA[Télefono]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="521" y="21" width="204" height="20" uuid="11c94067-1228-42c6-815e-2fa610f5870c"/>
+					<textElement verticalAlignment="Bottom"/>
+					<text><![CDATA[Motivo]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="428" y="0" width="374" height="20" uuid="e3e4bce0-78b2-4267-bd10-ad99ad135fb5"/>
+					<textElement verticalAlignment="Bottom">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{lugar}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="725" y="21" width="77" height="20" uuid="ebdf9469-aedd-44b5-8bde-0622555ba44a"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom"/>
+					<text><![CDATA[Asignar]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="50">
+				<staticText>
+					<reportElement x="0" y="0" width="802" height="20" uuid="6750b56b-b378-437f-b041-dc0b44478f97"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<text><![CDATA[]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="44" y="12" width="74" height="62" uuid="6995dda5-49f5-4539-9965-0fcd465dc881"/>
+				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="142" y="0" width="660" height="79" uuid="d2dfeb30-2b95-4d8c-af3b-cdcf95144e8a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_empresa}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="74" height="20" uuid="2d8159a8-fba4-4557-9bb9-22f7a41d04db"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{fecha_creacion}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="74" y="0" width="72" height="20" uuid="941c3cd8-1cc3-4780-97c8-53b91ac22719"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{tramite}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="146" y="0" width="154" height="20" uuid="61af4581-4c0d-41eb-b633-7136cd3af9fc"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textFieldExpression><![CDATA[$F{nombre_del_solicitante}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="300" y="0" width="128" height="20" uuid="16ea5b60-7ae5-4c53-a8c6-6ecb86428af0"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textFieldExpression><![CDATA[$F{correounico}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="428" y="0" width="93" height="20" uuid="e5bd1c7a-b1eb-40b5-b839-b67c403f1eb9"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{telefono}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="521" y="0" width="204" height="20" uuid="dc366fac-43ad-4477-b6ce-0de68b5b29e5"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<textFieldExpression><![CDATA[$F{motivo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="725" y="0" width="77" height="20" uuid="7d7d5834-7dad-458b-93ba-c29690981fdd"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

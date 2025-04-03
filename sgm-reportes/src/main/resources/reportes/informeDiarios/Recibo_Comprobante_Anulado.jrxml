@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Recibo_Comprobantes_Anulados" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4c6517c4-6b3d-40b2-ae2b-f3a3dc3a88b7">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="DESDE" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="HASTA" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\supergold\\Documents\\NetBeansProjects\\sgm\\src\\main\\webapp\\css\\homeIconsImages\\logo.jpg"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\SUPERGOLD\\Documents\\NetBeansProjects\\sgmsanmigel\\src\\main\\webapp\\reportes\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO2" class="java.lang.String"/>
+	<parameter name="SUBREPORT_TITLE" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+     ren_pago.num_comprobante AS ren_pago_num_comprobante,
+     to_char(ren_pago.fecha_pago,'DD/MM/YYYY') AS ren_pago_fecha_pago,
+     ren_pago.valor AS ren_pago_valor,
+     CASE WHEN ren_liquidacion.comprador IS NULL THEN ren_liquidacion.nombre_comprador ELSE TRIM(COALESCE(e.apellidos,'')||' '||COALESCE(e.nombres,'')||' '||COALESCE(e.razon_social,'')) END n_contribuyente,
+     acl_user.usuario AS acl_user_usuario,
+     ren_tipo_liquidacion.nombre_titulo AS ren_tipo_liquidacion_nombre_titulo
+FROM
+     sgm_financiero."ren_tipo_liquidacion" ren_tipo_liquidacion RIGHT OUTER JOIN sgm_financiero."ren_liquidacion" ren_liquidacion ON ren_tipo_liquidacion."id" = ren_liquidacion."tipo_liquidacion"
+LEFT OUTER JOIN sgm_financiero."ren_pago" ren_pago ON ren_pago.liquidacion = ren_liquidacion."id"
+  LEFT OUTER JOIN sgm_app."cat_ente" e ON ren_liquidacion."comprador" = e."id"
+  LEFT OUTER JOIN sgm_app.acl_user acl_user ON ren_pago.cajero = acl_user.id
+ WHERE
+      ren_pago.estado = false
+ AND ren_pago.fecha_anulacion::DATE BETWEEN $P{DESDE} AND $P{HASTA}
+GROUP BY
+ren_tipo_liquidacion.nombre_titulo, ren_pago.num_comprobante, ren_pago.fecha_anulacion, ren_pago.fecha_pago,
+ren_pago.valor, n_contribuyente, acl_user.usuario
+
+ORDER BY ren_tipo_liquidacion.nombre_titulo,TO_DATE(ren_pago.fecha_anulacion::TEXT,'DD/MM/YYYY') asc]]>
+	</queryString>
+	<field name="ren_pago_num_comprobante" class="java.lang.Long"/>
+	<field name="ren_pago_fecha_pago" class="java.lang.String"/>
+	<field name="ren_pago_valor" class="java.math.BigDecimal"/>
+	<field name="n_contribuyente" class="java.lang.String"/>
+	<field name="acl_user_usuario" class="java.lang.String"/>
+	<field name="ren_tipo_liquidacion_nombre_titulo" class="java.lang.String"/>
+	<variable name="ren_pago_valor_1" class="java.math.BigDecimal" resetType="Page" calculation="Sum">
+		<variableExpression><![CDATA[$F{ren_pago_valor}]]></variableExpression>
+	</variable>
+	<group name="TITULO REPORTE">
+		<groupExpression><![CDATA[$F{ren_tipo_liquidacion_nombre_titulo}]]></groupExpression>
+		<groupHeader>
+			<band height="12">
+				<textField isBlankWhenNull="true">
+					<reportElement x="11" y="0" width="534" height="12" uuid="a9830b44-ca88-4cce-9cd3-6709dbff7221"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ren_tipo_liquidacion_nombre_titulo}==null?"":$F{ren_tipo_liquidacion_nombre_titulo}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="5"/>
+		</groupFooter>
+	</group>
+	<title>
+		<band height="77" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="0" width="555" height="77" uuid="3493d678-ff60-4f66-85a1-7a79f227e5a7"/>
+				<subreportParameter name="LOGO2">
+					<subreportParameterExpression><![CDATA[$P{LOGO2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="LOGO">
+					<subreportParameterExpression><![CDATA[$P{LOGO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_TITLE} + "titleReporte2.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="39">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="18" width="553" height="18" uuid="4e887fae-b739-4087-bba8-0aae2d935369"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["DESDE: "+new java.text.SimpleDateFormat("dd/MM/yyyy").format($P{DESDE}) + "     " + "HASTA: "+new java.text.SimpleDateFormat("dd/MM/yyyy").format($P{HASTA})]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2" y="0" width="553" height="18" uuid="51acafb7-b514-49f9-b95a-923c3ae80beb"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["REPORTES DE COMPROBANTES ANULADOS"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="14">
+			<staticText>
+				<reportElement x="11" y="0" width="63" height="14" uuid="6617aeb9-7ec4-4deb-bd07-2ec10f5fcbb9"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[N° INGRESO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="102" y="0" width="55" height="14" uuid="8a0920a0-fb23-4c6b-a6b5-54d28960f033"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[FECHA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="211" y="0" width="125" height="14" uuid="5092d5cb-3f30-4fa1-b3ec-5c2464c0a850"/>
+				<textElement>
+					<font size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[CONTRIBUYENTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="490" y="0" width="55" height="14" uuid="d2b9fc41-99f3-41df-ad44-15ef69ee862c"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="375" y="0" width="100" height="14" uuid="122e1fa4-000d-46a6-a0e7-27162c725749"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[USUARIO INGRESO]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="11" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="11" y="0" width="63" height="11" uuid="3f8ccf32-f83d-4166-a288-80c8374f38e1"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_num_comprobante}==null?"0":$F{ren_pago_num_comprobante}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="102" y="0" width="55" height="11" uuid="2d6dd8a1-2ac3-4158-8820-cd002529601a"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_fecha_pago}==null?"":$F{ren_pago_fecha_pago}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ #,##0.00" isBlankWhenNull="true">
+				<reportElement x="490" y="0" width="55" height="11" uuid="fff1504e-3c8f-46a2-9a73-93592c3747a1"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_valor}==null?"0.00":$F{ren_pago_valor}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="391" y="0" width="76" height="11" uuid="db98fc58-c5ee-464a-93a6-237a83d1a74e"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{acl_user_usuario}==null?"":$F{acl_user_usuario}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="180" y="0" width="180" height="11" uuid="dc51f351-ef13-47e7-b13a-7ad88f7308ed"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{n_contribuyente}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="13" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="12">
+			<textField pattern="$ #,##0.00" isBlankWhenNull="true">
+				<reportElement x="490" y="0" width="55" height="11" uuid="a98987ac-1b30-4871-a921-be3ab181ac7d"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{ren_pago_valor_1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="431" y="0" width="56" height="12" uuid="7e4183a2-4e55-4199-832c-b955718bfd04"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[TOTAL >>>>>]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+</jasperReport>

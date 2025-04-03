@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:define name="head">
+        <style type="text/css">
+            .ui-selectonemenu .ui-selectonemenu-label {
+                font-size: 1.2em;
+                font-weight: bold;
+            }
+            .ui-selectonemenu-list-item {
+                font-size: 1.2em;
+                font-weight: bolder !important;
+            }
+            .ui-datepicker .ui-datepicker-title select {
+                font-size: 1em;
+                margin: 1px 0;
+                color: black;
+            }
+        </style>
+    </ui:define>
+    <ui:define name="top">
+        <p:graphicImage value="/css/homeIconsImages/reporte.png" height="30" style="float: left;"/>
+        <h3>Fondos Ajenos</h3>
+    </ui:define>
+    <ui:define name="content">
+        <h:form id="mainForm">
+            <p:fieldset legend="** REPORTE **" style="font-size: 14px; text-align: center;">
+                <p:selectOneMenu value="#{fondosAjenosRubros.tipoReporte}" style="width:450px; font-weight: bold;">
+                    <f:selectItem itemLabel="Seleccione..." itemValue="#{null}" />
+                    <f:selectItem itemLabel="MUNICIPIO DE SAN VICENTE" itemValue="#{1}"/>
+                    <f:selectItem itemLabel="DEFENSA NACIONAL" itemValue="#{2}"/>
+                    <f:selectItem itemLabel="CONSEJO PROVINCIAL" itemValue="#{3}"/>
+                    <f:selectItem itemLabel="AGUA POTABLE" itemValue="#{4}"/>
+                    <f:selectItem itemLabel="BOMBEROS DE CANOA" itemValue="#{5}"/>
+                    <f:selectItem itemLabel="BOMBEROS DE SAN VICENTE" itemValue="#{6}"/>
+                    <f:selectItem itemLabel="VIVIENDA RURAL" itemValue="#{7}"/>
+                    <f:selectItem itemLabel="JUNTA DE BENEFICENCIA" itemValue="#{8}"/>
+                    <f:selectItem itemLabel="SALUD PECUARIA" itemValue="#{9}"/>
+                    <f:selectItem itemLabel="CENTRO AGRICOLA" itemValue="#{10}"/>
+                    <f:selectItem itemLabel="COACTIVA" itemValue="#{11}"/>
+                    <f:selectItem itemLabel="TRANSPORTE TERRESTRE Y SEGURIDAD VIAL" itemValue="#{12}"/>
+                </p:selectOneMenu>
+                <p:panelGrid style="margin: 0 auto;">
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Fecha Desde" style="font-weight: bold;"/>
+                        </p:column>
+                        <p:column>
+                            <p:calendar value="#{fondosAjenosRubros.fechaDesde}" navigator="true" pattern="dd/MM/yyyy" maxdate="sysdate" style="font-weight: bold;"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="Fecha Hasta" style="font-weight: bold;"/>
+                        </p:column>
+                        <p:column>
+                            <p:calendar value="#{fondosAjenosRubros.fechaHasta}" navigator="true" pattern="dd/MM/yyyy" maxdate="sysdate" style="font-weight: bold;"/>
+                        </p:column>
+                    </p:row>           
+                </p:panelGrid>
+                <p:commandButton value="Generar" actionListener="#{fondosAjenosRubros.generarReporte()}" styleClass="btnStyle" style="float: right; font-size: 15px;" icon="ui-icon-print"/>
+            </p:fieldset>
+        </h:form>
+    </ui:define>
+</ui:composition>

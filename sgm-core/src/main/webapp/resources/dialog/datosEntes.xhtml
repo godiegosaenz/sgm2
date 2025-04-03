@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html" >
+
+    <!-- INTERFACE -->
+    <cc:interface componentType="datosEntesCont">
+        <cc:attribute name="ente" type="com.origami.sgm.entities.CatEnte" required="true" />
+        <cc:attribute name="esPersona"  type="java.lang.Boolean" default="true"  />
+        <cc:attribute name="width" />
+        <cc:attribute name="buscar" method-signature="void listener()"/>
+        <cc:attribute name="header" />
+        <cc:attribute name="update"/>
+        <cc:attribute name="mostrarBuscar" default="false"/>
+        <cc:attribute name="seleccion"  method-signature="void listener(org.primefaces.event.SelectEvent)"/>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <div id="#{cc.clientId}">
+            <p:panelGrid id="outDatosEnte"  style="width: 420px; padding: 0px;">
+                <f:facet name="header" class="ui-widget-header">
+                    <p:row>
+                        <p:column colspan="2" >
+                            <p:outputLabel value="#{cc.attrs.header}" style="font-size: 16px; font-weight: bold; color: #006699"/>
+                            <div style="float: right; ">
+                                <p:commandLink actionListener="#{cc.attrs.buscar}" rendered="#{cc.attrs.mostrarBuscar}"  >
+                                    <p:ajax event="dialogReturn" listener="#{cc.seleccionEnte}" update="#{cc.clientId}, #{cc.attrs.update}" />
+                                    <p:graphicImage value="/css/homeIconsImages/buscar.png" width="25" height="25"/>
+                                </p:commandLink>
+                            </div>
+                        </p:column>
+                    </p:row>
+                </f:facet>
+                <p:row>
+                    <p:column >
+                        Tipo de Persona:<br/>
+                        <p:inputText value="Natural" rendered="#{cc.attrs.esPersona}" readonly="true"/>
+                        <p:inputText value="Jurídica" rendered="#{!cc.attrs.esPersona}" readonly="true"/>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="Cédula" rendered="#{cc.attrs.esPersona}"/>
+                        <p:outputLabel value="Ruc" rendered="#{!cc.attrs.esPersona}"/><br/>
+                        <p:inputText value="#{cc.attrs.ente.ciRuc}" readonly="true"/>
+                    </p:column>
+                </p:row>
+                <p:row  rendered="#{cc.attrs.esPersona}">
+                    <p:column >
+                        <p:outputLabel value="Nombres:" /><br/>
+                        <p:inputText value="#{cc.attrs.ente.nombres}" style="width: 90%" readonly="true"/>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="Apellidos:" /><br/>
+                        <p:inputText value="#{cc.attrs.ente.apellidos}" style="width: 90%" readonly="true"/>
+                    </p:column>
+                </p:row>
+                <p:row  rendered="#{!cc.attrs.esPersona}">
+                    <p:column colspan="2" >
+                        <p:outputLabel value="Razón Social:" /><br/>
+                        <p:inputText value="#{cc.attrs.ente.razonSocial}" style="width: 90%" readonly="true"/>
+                    </p:column>
+                </p:row>
+                <p:row  rendered="#{!cc.attrs.esPersona}">
+                    <p:column colspan="2" >
+                        <p:outputLabel value="Representante Legal:" /><br/>
+                        <p:inputText value="#{cc.getNombreRepresentante(cc.attrs.ente.representanteLegal)}" style="width: 90%" readonly="true"/>
+                    </p:column>
+                </p:row>
+                <p:row  >
+                    <p:column colspan="2" >
+                        <p:outputLabel value="Direccion:" /><br/>
+                        <p:inputText value="#{cc.attrs.ente.direccion}" style="width: 90%" readonly="true"/>
+                    </p:column>
+                </p:row>
+                <p:row  >
+                    <p:column  >
+                        <p:outputLabel value="Fecha de Nacimiento:" rendered="#{cc.attrs.esPersona}" /><br/>
+                        <p:inputText value="#{cc.attrs.ente.fechaNacimiento}" style="width: 90%" readonly="true">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </p:inputText>
+                    </p:column>
+                    <p:column  >
+                        <p:outputLabel value="Condición:" rendered="#{cc.attrs.esPersona and cc.attrs.ente.estado eq 'F'}" />
+                        <p:outputLabel value="Edad:" rendered="#{cc.attrs.esPersona and cc.attrs.ente.estado ne 'F'}" /><br/>
+                        <p:inputText value="#{cc.attrs.ente.edad}" style="width: 90%" readonly="true" />
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+        </div>
+    </cc:implementation>
+</html>

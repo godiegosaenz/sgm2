@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://java.sun.com/jsf/html">
+    <!-- INTERFACE -->
+    <cc:interface componentType="seccionesFicha" >
+        <cc:attribute name="headerDialog"/>
+        <cc:attribute name="predio" type="com.origami.sgm.entities.CatPredio" required="true"/>
+        <cc:attribute name="predioant" type="com.origami.sgm.entities.CatPredio" required="true"/>
+    </cc:interface>
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <h:form id="frmSeccion9">
+            <p:tab id="s9" title="9. Adicionales ">
+                <h:form id="frmObservaciones">
+                    <div align="center">
+                        <p:fieldset legend="Observaciones" style="font-size: 13px;">
+                            <p:inputTextarea value="#{cc.attrs.predio.observaciones}" style="width: 99%" styleClass="#{cc.comparar(cc.attrs.predio.observaciones, cc.attrs.predioant.observaciones)}" readonly="true"/>
+                        </p:fieldset>
+                        <p:fieldset legend="INFORMANTE" style="font-size: 13px;" >
+                            <h:panelGrid columns="1" border="0" cellpadding="5" styleClass="dataGridBorderNone">
+                                <h:panelGroup layout="block">
+                                    <h:outputText value="CI/RUC:" styleClass="DispBlock Wid100"/>
+                                    <p:inputText value="#{cc.attrs.predio.informante.ciRuc}" styleClass="#{cc.comparar(cc.attrs.predio.informante.ciRuc, cc.attrs.predioant.informante.ciRuc)}" readonly="true"/>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block">
+                                    <h:outputText value="Nombres:" styleClass="DispBlock Wid100" rendered="#{cc.attrs.predio.informante.esPersona}"/>
+                                    <p:inputText value="#{cc.attrs.predio.informante.nombres}" rendered="#{cc.attrs.predio.informante.esPersona}" styleClass="#{cc.comparar(cc.attrs.predio.informante.nombres, cc.attrs.predioant.informante.nombres)}" readonly="true"/>
+                                    <h:outputText value="Razón Social:" styleClass="DispBlock Wid100" rendered="#{!cc.attrs.predio.informante.esPersona}"/>
+                                    <p:inputText value="#{cc.attrs.predio.informante.razonSocial}" rendered="#{!cc.attrs.predio.informante.esPersona}" styleClass="#{cc.comparar(cc.attrs.predio.informante.razonSocial, cc.attrs.predioant.informante.razonSocial)}" readonly="true"/>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block">
+                                    <h:outputText value="Apellidos:" styleClass="DispBlock Wid100" rendered="#{cc.attrs.predio.informante.esPersona}"/>
+                                    <p:inputText value="#{cc.attrs.predio.informante.apellidos}" rendered="#{cc.attrs.predio.informante.esPersona}" styleClass="#{cc.comparar(cc.attrs.predio.informante.apellidos, cc.attrs.predioant.informante.apellidos)}" readonly="true"/>
+                                    <h:outputText value="Nombre Comercial:" styleClass="DispBlock Wid100" rendered="#{!cc.attrs.predio.informante.esPersona}"/>
+                                    <p:inputText value="#{cc.attrs.predio.informante.nombreComercial}" rendered="#{!cc.attrs.predio.informante.esPersona}" styleClass="#{cc.comparar(cc.attrs.predio.informante.nombreComercial, cc.attrs.predioant.informante.nombreComercial)}" readonly="true"/>
+                                </h:panelGroup>
+                            </h:panelGrid>
+                        </p:fieldset>
+                    </div>
+                </h:form>
+            </p:tab>
+        </h:form>
+    </cc:implementation>
+</html>

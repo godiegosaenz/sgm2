@@ -1,0 +1,172 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+    <ui:define name="head">
+        <script src="../../resources/pfJs/keyPress.js" type="text/javascript"></script>
+        <style type="text/css">
+            .ui-selectoneradio label{
+                font-size: 1.2em;
+                font-weight: bold;
+            }
+        </style>
+    </ui:define>
+    
+    
+    <ui:define name="content">
+        <center>
+            <h1>Cálculo de Coactiva</h1>
+        </center>
+        <h:form id="mainForm">
+            <p:tabView id="tvPrediosCoactivar">
+                <p:tab title="PREDIO URBANO">
+                    <p:commandButton value="REPORTE" actionListener="#{prediosACoactivar.generarReporte(1)}" style="float: right; font-size: 15px; font-weight: bolder;" styleClass="btnStyle" icon="ui-icon-print"/>
+                    <p:selectOneRadio value="#{prediosACoactivar.predioModel.tipoConsultaUrbano}">
+                        <f:selectItem itemLabel="MATRICULA INMOBILIARIA" itemValue="1" />
+                        <f:selectItem itemLabel="CONTRIBUYENTE" itemValue="2" />
+                        <f:selectItem itemLabel="CODIGO PREDIAL" itemValue="3" />
+                        <f:selectItem itemLabel="URBANIZACION-MZ/SL" itemValue="4" />
+                        <f:selectItem itemLabel="CODIGO ANTERIOR" itemValue="5" />
+                        <p:ajax update="consulta"/>
+                    </p:selectOneRadio>
+                    
+                    <p:panel id="consulta">
+                        <p:inputText value="#{prediosACoactivar.predioModel.numPredio}" style="font-size: 13px; font-weight: bolder;" rendered="#{prediosACoactivar.predioModel.tipoConsultaUrbano eq 1}"/>
+                        
+                        <p:outputLabel value="C.I./R.U.C.: " style="font-size: 13px; font-weight: bolder; width: 140px;" rendered="#{prediosACoactivar.predioModel.tipoConsultaUrbano eq 2}"/>
+                        <p:outputLabel value="CONTRIBUYENTE: " style="font-size: 13px; font-weight: bolder;" rendered="#{prediosACoactivar.predioModel.tipoConsultaUrbano eq 2}"/>
+                        <br/>
+                        <p:inputText value="#{prediosACoactivar.contribuyenteConsulta.ciRuc}" style="font-size: 13px; font-weight: bolder;" size="15" readonly="true" rendered="#{prediosACoactivar.predioModel.tipoConsultaUrbano eq 2}"/>
+                        <p:spacer width="10"/>
+                        <p:inputText value="#{prediosACoactivar.contribuyenteConsulta.apellidos} #{prediosACoactivar.contribuyenteConsulta.nombres} #{prediosACoactivar.contribuyenteConsulta.razonSocial}" style="font-size: 13px; font-weight: bolder;" readonly="true" size="50" rendered="#{prediosACoactivar.predioModel.tipoConsultaUrbano eq 2}"/>
+                        <p:spacer width="10"/>
+                        <p:commandButton id="btnCambiarBuscar" value="Buscar/Cambiar" style="height: 30px" onclick="PF('dlgSolicitante').show()" update=":frmSolicitante" rendered="#{prediosACoactivar.predioModel.tipoConsultaUrbano eq 2}"/>
+                        
+                        <p:panelGrid style="width: 100%;" rendered="#{prediosACoactivar.predioModel.tipoConsultaUrbano eq 3}">
+                            <p:row>
+                                <p:column><p:outputLabel value="SECTOR" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                <p:column><p:outputLabel value="MZ" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                <p:column><p:outputLabel value="CDLA " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                <p:column><p:outputLabel value="LOTE " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                
+                            </p:row>
+                            <p:row>
+                                <p:column><p:inputText value="#{prediosACoactivar.predioModel.sector}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                <p:column><p:inputText value="#{prediosACoactivar.predioModel.mz}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                <p:column><p:inputText value="#{prediosACoactivar.predioModel.cdla}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                <p:column><p:inputText value="#{prediosACoactivar.predioModel.mzDiv}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                <p:column><p:inputText value="#{prediosACoactivar.predioModel.solar}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                <p:column><p:inputText value="#{prediosACoactivar.predioModel.div1}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                <p:column><p:inputText value="#{prediosACoactivar.predioModel.div2}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                <p:column><p:inputText value="#{prediosACoactivar.predioModel.div3}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                <p:column><p:inputText value="#{prediosACoactivar.predioModel.div4}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                <p:column><p:inputText value="#{prediosACoactivar.predioModel.div5}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                <p:column><p:inputText value="#{prediosACoactivar.predioModel.div6}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                <p:column><p:inputText value="#{prediosACoactivar.predioModel.div7}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                <p:column><p:inputText value="#{prediosACoactivar.predioModel.div8}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                <p:column><p:inputText value="#{prediosACoactivar.predioModel.div9}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                <p:column><p:inputText value="#{prediosACoactivar.predioModel.phv}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                <p:column><p:inputText value="#{prediosACoactivar.predioModel.phh}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        
+                        <p:panelGrid styleClass="noBorder" rendered="#{prediosACoactivar.predioModel.tipoConsultaUrbano eq 4}">
+                            <p:row>
+                                <p:column><p:outputLabel value="URBANIZACION" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                <p:column><p:outputLabel value="MANZANA" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                <p:column><p:outputLabel value="SOLAR" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:selectOneMenu  value="#{prediosACoactivar.predioModel.ciudadela}" effect="fade" converter="entityConverter"  style="width:300px;">
+                                        <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+                                        <f:selectItems value="#{prediosACoactivar.ciudadelas}" var="c" itemLabel="#{c.nombre}" itemValue="#{c}"/>  
+                                    </p:selectOneMenu>
+                                </p:column>
+                                <p:column><p:inputText value="#{prediosACoactivar.predioModel.mzUrb}"/></p:column>
+                                <p:column><p:inputText value="#{prediosACoactivar.predioModel.slUrb}"/></p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        
+                        <p:panelGrid styleClass="noBorder" rendered="#{prediosACoactivar.predioModel.tipoConsultaUrbano eq 5}">
+                            <p:row>
+                                <p:column><p:outputLabel value="ZONA" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                <p:column><p:outputLabel value="SECTOR" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                <p:column><p:outputLabel value="MZ" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                <p:column><p:outputLabel value="SOLAR" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                
+                            </p:row>
+                            <p:row>
+                                <p:column><p:inputText value="#{prediosACoactivar.predioModel.codAnt1}" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                <p:column><p:inputText value="#{prediosACoactivar.predioModel.codAnt2}" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                <p:column><p:inputText value="#{prediosACoactivar.predioModel.codAnt3}" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                <p:column><p:inputText value="#{prediosACoactivar.predioModel.codAnt5}" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                <p:column><p:inputText value="#{prediosACoactivar.predioModel.codAnt6}" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                <p:column><p:inputText value="#{prediosACoactivar.predioModel.codAnt7}" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                <p:column><p:inputText value="#{prediosACoactivar.predioModel.codAnt8}" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        
+                        <br/>
+                        <center>
+                            <p:commandButton value="CONSULTAR" actionListener="#{prediosACoactivar.consultarPredioUrbano()}" update="prediosUrbanos" style="font-size: 15px; font-weight: bolder;" styleClass="btnStyle" icon="ui-icon-search" iconPos="right"/>
+                        </center>
+                    </p:panel>
+                    <br/>
+                    <p:dataTable id="prediosUrbanos" value="#{prediosACoactivar.prediosUrbanos}" var="urbano" rowKey="#{urbano.id}"  scrollHeight="350" lazy="true" reflow="true" rows="20" paginator="true" emptyMessage=""
+                                 rowsPerPageTemplate="20,50,100" paginatorPosition="top" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                        <p:column headerText="Matricula Inmobiliaria" width="100"><p:outputLabel value="#{urbano.numPredio}"/></p:column>
+                        <p:column headerText="Cod. Catastral"><p:outputLabel value="#{urbano.codigoPredialCompleto}"/></p:column>
+                        <p:column headerText="Dirección"><p:outputLabel value="#{urbano.ciudadela.nombre} - #{urbano.mz}/#{urbano.solar}"/></p:column>
+                        <p:column headerText="Propietario"><p:outputLabel value="#{urbano.nombrePropietarios}"/></p:column>
+                        <p:column headerText="Eliminar" style="text-align: center;" width="100"><p:commandLink update="prediosUrbanos" actionListener="#{prediosACoactivar.eliminarPredioUrbano(urbano)}"><p:graphicImage value="/css/homeIconsImages/delete.png" height="16"/></p:commandLink></p:column>
+                    </p:dataTable>
+                </p:tab>
+            </p:tabView>
+        </h:form>
+        
+        <p:dialog id="dlgSolicitante" widgetVar="dlgSolicitante" header="Listado de contribuyentes" appendTo="@(body)" width="70%" responsive="true" closable="true" closeOnEscape="true" modal="true" position="top">
+            <h:form id="frmSolicitante">
+                <p:dataTable id="dtSolicitante" value="#{prediosACoactivar.contribuyentes}" var="s" selection="#{prediosACoactivar.contribuyenteConsulta}" rowKey="#{s.id}" style="width: 100%" lazy="true" reflow="true" paginator="true" rows="10" selectionMode="single" filterEvent="enter" paginatorPosition="top">
+                    <f:facet name="header">Seleccione Contribuyente</f:facet>
+                    <p:column headerText="No. Identificacion" sortBy="#{s.ciRuc}" filterBy="#{s.ciRuc}" filterMatchMode="contains" filterStyle="width: 95%;">
+                        <h:outputText value="#{s.ciRuc}"/>
+                    </p:column>
+                    <p:column headerText="Apellidos" filterBy="#{s.apellidos}" sortBy="#{s.apellidos}" filterMatchMode="contains" filterStyle="width: 95%;">
+                        <h:outputText value="#{s.apellidos}" style="text-transform: uppercase"/>
+                    </p:column>
+                    <p:column headerText="Nombres" filterBy="#{s.nombres}" sortBy="#{s.nombres}" filterMatchMode="contains" filterStyle="width: 95%;">
+                        <h:outputText value="#{s.nombres}" style="text-transform: uppercase"/>
+                    </p:column>
+                    <p:column headerText="Razon Social" filterBy="#{s.razonSocial}" sortBy="#{s.razonSocial}"  filterMatchMode="contains" filterStyle="width: 95%;">
+                        <h:outputText value="#{s.razonSocial}" style="text-transform: uppercase"/>
+                    </p:column>
+                    <f:facet name="footer">
+                        <p:commandButton id="btnSeleccionar" value="Seleccionar" update="mainForm:tvPrediosCoactivar:consulta" style="height: 30px" oncomplete="PF('dlgSolicitante').hide()"/>
+                    </f:facet>
+                </p:dataTable>         
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog header="Listado de Predios - Seleccione Predio" widgetVar="dlgPrediosConsulta" appendTo="@(body)" width="90%" responsive="true" closable="true" closeOnEscape="true" modal="true" position="top">
+            <h:form id="frmPredios">
+                <p:dataTable value="#{prediosACoactivar.prediosUrbanosConsulta}" var="p" selection="#{prediosACoactivar.prediosUrbanosConsultaSeleccionados}" rowKey="#{p.id}" style="width: 90%; margin: 0 auto;" reflow="true" paginator="true" rows="15" filterEvent="enter" paginatorPosition="top">
+                    <p:column selectionMode="multiple" style="width:30px;text-align:center"/>
+                    <p:column headerText="No. Predio" sortBy="#{p.numPredio}" filterBy="#{p.numPredio}" filterMatchMode="exact" filterStyle="width: 95%;"><h:outputText value="#{p.numPredio}"/></p:column>
+                    <p:column headerText="Urbanizacion" filterBy="#{p.ciudadela.nombre}" filterMatchMode="contains" filterStyle="width: 95%;"><h:outputText value="#{p.ciudadela.nombre}"/></p:column>
+                    <p:column headerText="Mz" filterBy="#{p.urbMz}" filterMatchMode="contains" filterStyle="width: 95%;"><h:outputText value="#{p.urbMz}"/></p:column>
+                    <p:column headerText="Sl" filterBy="#{p.urbSolarnew}" filterMatchMode="contains" filterStyle="width: 95%;"><h:outputText value="#{p.urbSolarnew}"/></p:column>
+                    <p:column headerText="Cod. Predial"><h:outputText value="#{p.codigoPredialCompleto}"/></p:column>
+                    <f:facet name="footer">
+                        <p:commandButton value="Seleccionar" actionListener="#{prediosACoactivar.seleccionarPredio(1)}" update="mainForm:tvPrediosCoactivar:prediosUrbanos"/>
+                    </f:facet>
+                </p:dataTable>         
+            </h:form>
+        </p:dialog>
+        
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,129 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html" >
+    <!-- INTERFACE -->
+    <cc:interface >
+        <cc:attribute name="liquidacion"/>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <p:fieldset legend="LIQUIDACION: #{cc.attrs.liquidacion.tipoLiquidacion.prefijo} - #{cc.attrs.liquidacion.tipoLiquidacion.nombreTitulo}" style="font-weight: bold; font-size: 14px;">
+            <p:panelGrid style="width: 100%; font-size: 14px;">
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="Contribuyente:" style="font-weight: bold;"/>
+                    </p:column>
+                    <p:column colspan="4">
+                        <p:outputLabel value="#{cc.attrs.liquidacion.comprador.ciRuc}-#{cc.attrs.liquidacion.comprador.apellidos} #{cc.attrs.liquidacion.comprador.nombres} #{cc.attrs.liquidacion.comprador.razonSocial} #{cc.attrs.liquidacion.nombreComprador}" style="text-align: left;"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="N. Liquidacion:" style="font-weight: bold;"/>
+                        <p:outputLabel value="#{cc.attrs.liquidacion.numLiquidacion}" style="text-align: left;"/>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="Fecha:" style="font-weight: bold;"/>
+                        <p:outputLabel value="#{cc.attrs.liquidacion.fechaIngreso}" style="text-align: left;"><f:convertDateTime pattern="dd/MM/YYYY"/></p:outputLabel>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="Valor:" style="font-weight: bold;"/>
+                        <p:outputLabel value="#{cc.attrs.liquidacion.totalPago}"/>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="Total Pago:" style="font-weight: bold;"/>
+                        <p:outputLabel value="#{cc.attrs.liquidacion.pagoFinal}"/>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="Estado:" style="font-weight: bold;"/>
+                        <p:outputLabel value="#{cc.attrs.liquidacion.estadoLiquidacion.descripcion}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column><p:outputLabel value="Emision:" style="font-weight: bold;"/></p:column>
+                    <p:column><p:outputLabel value="#{cc.attrs.liquidacion.totalPago}"/></p:column>
+                    <p:column colspan="3" rowspan="5" style="width: 60%;">
+                        <p:dataTable value="#{cc.attrs.liquidacion.renDetLiquidacionCollection}" var="rubro">
+                            <p:column headerText="Rubro">
+                                <p:outputLabel value="#{recaudaciones.getDescripcionRubro(rubro.rubro)}"/>
+                            </p:column>
+                            <p:column headerText="Valor" style="text-align: center;">
+                                <p:outputLabel value="#{rubro.valor}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column><p:outputLabel value="Descuento:" style="font-weight: bold;"/></p:column>
+                    <p:column><p:outputLabel value="#{cc.attrs.liquidacion.descuento}"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column><p:outputLabel value="Recargo:" style="font-weight: bold;"/></p:column>
+                    <p:column><p:outputLabel value="#{cc.attrs.liquidacion.recargo}"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column><p:outputLabel value="Interes:" style="font-weight: bold;"/></p:column>
+                    <p:column><p:outputLabel value="#{cc.attrs.liquidacion.interes}"/></p:column>
+                </p:row>
+                <p:row>
+                    <p:column><p:outputLabel value="Total Pago:" style="font-weight: bold;"/></p:column>
+                    <p:column><p:outputLabel value="#{cc.attrs.liquidacion.pagoFinal}"/></p:column>
+                </p:row>
+                <p:row rendered="#{cc.attrs.liquidacion.predio ne null}">
+                    <p:column colspan="1">
+                        <p:outputLabel value="Matricula Inmobiliaria: " style="font-weight: bold;"/>
+                        <p:outputLabel value="#{cc.attrs.liquidacion.predio.numPredio}"/>
+                    </p:column>
+                    <p:column colspan="2">
+                        <p:outputLabel value="Mz:" style="font-weight: bold;"/>
+                        <p:outputLabel value="#{cc.attrs.liquidacion.predio.mz}"/>
+                        <p:spacer width="10"/>
+                        <p:outputLabel value="Solar:" style="font-weight: bold;"/>
+                        <p:outputLabel value="#{cc.attrs.liquidacion.predio.solar}"/>
+                        <p:spacer width="10"/>
+                        <p:outputLabel value="Direcciòn:" style="font-weight: bold;"/>
+                        <p:outputLabel value="Calle Principal: #{cc.attrs.liquidacion.predio.calle} - Calle Secundaria: #{cc.attrs.liquidacion.predio.calleS}" />
+                    </p:column>
+                    <p:column colspan="2">
+                        <p:outputLabel value="Cod. Catastral:" style="font-weight: bold;"/>
+                        <p:outputLabel value="#{cc.attrs.liquidacion.predio.codigoPredial}"/>
+                    </p:column>
+                </p:row>
+                <p:row rendered="#{cc.attrs.liquidacion.predio ne null}">
+                    <p:column colspan="2">
+                        <h:outputText value="Avalùo del Solar: " style="font-weight: bolder;"/>
+                        <h:outputText value="#{cc.attrs.liquidacion.avaluoSolar}">
+                            <f:convertNumber pattern="$ #,##0.00" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column colspan="2">
+                        <h:outputText value="Avalùo de la Construcciòn: " style="font-weight: bold;"/>
+                        <h:outputText value="#{cc.attrs.liquidacion.avaluoConstruccion}">
+                            <f:convertNumber pattern="$ #,##0.00" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column colspan="2">
+                        <h:outputText value="Avalùo Municipal: " style="font-weight: bold;"/>
+                        <h:outputText value="#{cc.attrs.liquidacion.avaluoMunicipal}">
+                            <f:convertNumber pattern="$ #,##0.00" />
+                        </h:outputText>
+                    </p:column>
+                </p:row>
+                <p:row rendered="#{cc.attrs.liquidacion.predio ne null}">
+                    <p:column colspan="5">
+                        <p:dataTable value="#{cc.attrs.liquidacion.predio.catPredioPropietarioCollection}" var="propietario">
+                            <p:column headerText="Propietario(s)" style="text-align: center;">
+                                <p:outputLabel value="#{propietario.ente.ciRuc} #{propietario.ente.apellidos} #{propietario.ente.nombres} #{propietario.ente.razonSocial}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+        </p:fieldset>
+    </cc:implementation>
+</html>

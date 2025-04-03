@@ -1,0 +1,318 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:dialog="http://xmlns.jcp.org/jsf/composite/dialog">
+    <ui:define name="top">
+        <h3>Reingreso de Tramites</h3>
+    </ui:define>
+    <ui:define name="content">
+        <h:form id="frmTramites">
+            <p:panel id="pTramites" header="Los campos marcados con * son obligatorios" style="width: 100%" toggleable="true">
+                <div align="center">
+                    <p:panelGrid id="pgTramites" style="width: 50%" styleClass="noBorder">
+                        <f:facet name="header">
+                            <h:outputText value="Nota: El numero de trámite que ingrese sera reemplazado por el que actualmente esta en ejecucion." style="font-weight: bolder"/>
+                        </f:facet>
+                        <p:row>
+                            <p:column style="text-align: right">
+                                <h:outputText value="(*) No. Trámite" style="font-weight: bolder; text-align: right"/>
+                            </p:column>
+                            <p:column>
+                                <p:inputText value="#{reingresoTramites.numTramite}" label="(*) No. Trámite" style="width: 250px">
+                                    <pe:keyFilter regEx="[0-9]"/>
+                                </p:inputText>
+                                <p:commandButton id="btnBuscar" value="Buscar" actionListener="#{reingresoTramites.buscar()}" style="height: 30px; width: 30%" icon="ui-icon-check" update="frmTramites"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </div>
+                <br/>
+                <p:panel id="pDatosTram" header="Datos del trámite ##{reingresoTramites.numTramite}" style="width: 100%; display: inline-table" toggleable="true" rendered="#{reingresoTramites.res}">
+                    <p:tabView id="tvTramite" style="width: 100%">
+                        <p:tab id="tSolicitante" title="Solicitante/Propietario">
+                            <div align="center">
+                                <p:panelGrid id="pgSolicitante" style="width: 50%">
+                                    <p:row>
+                                        <p:column>
+                                            <h:outputText value="(*) No. Identificacion" style="font-weight: bolder"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText id="identificacion" value="#{reingresoTramites.solicitante.ciRuc}" style="width: 50%" maxlength="13">
+                                                <pe:keyFilter regEx="[0-9]"/>
+                                            </p:inputText>
+                                            <p:commandButton id="btnCambiarBuscar" value="Buscar/Cambiar" title="Buscar o Cambiar" style="height: 30px" onclick="PF('dlgSolicitante').show()" update=":frmSolicitante"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column>
+                                            <h:outputText value="(*) Nombres" style="font-weight: bolder"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText id="nombres" value="#{reingresoTramites.solicitante.nombres}" style="width: 100%"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column>
+                                            <h:outputText value="(*) Apellidos" style="font-weight: bolder"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText id="apellidos" value="#{reingresoTramites.solicitante.apellidos}" style="width: 100%"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column>
+                                            <h:outputText value="(*) Razon Social" style="font-weight: bolder"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText id="rsocial" value="#{reingresoTramites.solicitante.razonSocial}" style="width: 100%" placeholder="LLenar en caso de ser empresa"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column>
+                                            <h:outputText value="Direccion" style="font-weight: bolder"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText id="direccion" value="#{reingresoTramites.solicitante.direccion}" style="width: 100%"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column>
+                                            <h:outputText value="(*) Telefono" style="font-weight: bolder"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText id="telefono" value="#{reingresoTramites.telefono.telefono}" style="width: 100%" rendered="#{!reingresoTramites.telfs}" maxlength="13" placeholder="9999999999"/>
+                                            <p:dataTable id="dtTelefonos" var="t" value="#{reingresoTramites.solicitante.enteTelefonoCollection}" style="width: 100%" reflow="true" rendered="#{reingresoTramites.telfs}">
+                                                <p:column headerText="No. Telefonicos" style="text-align: left">
+                                                    <h:outputText value="#{t.telefono}"/>
+                                                </p:column>
+                                            </p:dataTable>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column>
+                                            <h:outputText value="(*) Email" style="font-weight: bolder"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText id="email" value="#{reingresoTramites.correo.email}" style="width: 100%" rendered="#{!reingresoTramites.mails}" maxlength="150" placeholder="correo@micuenta"/>
+                                            <p:dataTable id="dtEmails" var="e" value="#{reingresoTramites.solicitante.enteCorreoCollection}" style="width: 100%" reflow="true" rendered="#{reingresoTramites.mails}">
+                                                <p:column headerText="Emails" style="text-align: left">
+                                                    <h:outputText value="#{e.email}"/>
+                                                </p:column>
+                                            </p:dataTable>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                            </div>
+                        </p:tab>
+                        <p:tab id="tDetalle" title="Detalle del tramite">
+                            <div align="center">
+                                <p:panelGrid id="pgTramite" style="width: 50%" styleClass="noBorder">
+                                    <p:row>
+                                        <p:column style="text-align: right">
+                                            <h:outputText value="(*) Tipo de trámite" style="font-weight: bolder; text-align: right"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:selectOneMenu id="tipoTramite" value="#{reingresoTramites.tramite.tipoTramite}" converter="entityConverter" style="width: 250px">
+                                                <f:selectItem itemLabel="Elija el tipo de tramite" itemValue="#{null}"/>
+                                                <f:selectItems var="tt" value="#{reingresoTramites.tipoTramites}" itemLabel="#{tt.descripcion}" itemValue="#{tt}"/>
+                                                <p:ajax update="tvTramite:pgTramite,tvTramite:tRequisitos, frmTramites:tvTramite:pgTramite" listener="#{reingresoTramites.listarRequisitos()}"/>
+                                            </p:selectOneMenu>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row rendered="#{reingresoTramites.otros}">
+                                        <p:column style="text-align: right">
+                                            <h:outputText value="Tipo de sub-trámite" style="font-weight: bolder; text-align: right"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:selectOneMenu id="subTipoTramite" value="#{reingresoTramites.tramite.subTipoTramite}" converter="entityConverter" style="width: 250px">
+                                                <f:selectItem itemLabel="Elija el tipo de sub-tramite" itemValue="#{null}"/>
+                                                <f:selectItems var="tt" value="#{reingresoTramites.otrosTramites}" itemLabel="#{tt.tipoTramite}" itemValue="#{tt}"/>
+                                                <p:ajax update="tvTramite:tRequisitos, tvTramite:pgTramite" listener="#{reingresoTramites.listarRequisitos()}"/>
+                                            </p:selectOneMenu>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row rendered="#{reingresoTramites.esPermisoConst}">
+                                        <p:column style="text-align: right">
+                                            <h:outputText value="(*) Tipo de permiso de construccion" style="font-weight: bolder; text-align: right"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:selectOneMenu id="pcs" value="#{reingresoTramites.tramite.tipoTramiteNombre}" style="width: 250px">
+                                                <f:selectItems var="tt" value="#{reingresoTramites.tipoConstruccion}" itemLabel="#{tt.nombre}" itemValue="#{tt.nombre}"/>
+                                            </p:selectOneMenu>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row rendered="#{reingresoTramites.pa}">
+                                        <p:column style="text-align: right">
+                                            <h:outputText value="Tipo de permiso" style="font-weight: bolder; text-align: right"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:selectOneMenu id="tipoPermiso" value="#{reingresoTramites.tipoPermiso}" converter="entityConverter" style="width: 250px">
+                                                <f:selectItem itemLabel="Elija el tipo permiso" itemValue="#{null}"/>
+                                                <f:selectItems var="tt" value="#{reingresoTramites.permisosAdicionales}" itemLabel="#{tt.descripcion}" itemValue="#{tt}"/>
+                                                <p:ajax update="tvTramite:tRequisitos, tvTramite:pgTramite" listener="#{reingresoTramites.listarRequisitos()}"/>
+                                            </p:selectOneMenu>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column style="text-align: right">
+                                            <h:outputText value="(*) Nombre del comprobante" style="font-weight: bolder; text-align: right"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText id="comprobante" value="#{reingresoTramites.tramite.nombrePropietario}" style="width: 100%"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column style="text-align: right">
+                                            <h:outputText value="Predio anterior" style="font-weight: bolder; text-align: right"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText id="predioRef" value="#{reingresoTramites.predio.numPredio}" style="width: 40%" readonly="true"/>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                            </div>
+                            <p:tabView id="tRequisitos" style="width: 100%">
+                                <p:tab id="tObservaciones" title="Observaciones Registradas" rendered="#{reingresoTramites.tramite.observacionesCollection!=null}">
+                                    <p:dataTable id="dtObservaciones" var="obs" value="#{reingresoTramites.tramite.observacionesCollection}" reflow="true" paginator="true" rows="10" style="width: 100%">
+                                        <p:column headerText="Observaciones" style="width: 40%">
+                                            <h:outputText value="#{obs.observacion}" style="text-transform: uppercase"/>
+                                        </p:column>
+                                        <p:column headerText="Responsable" style="width: 20%">
+                                            <h:outputText value="#{obs.userCre}" style="text-transform: uppercase"/>
+                                        </p:column>
+                                        <p:column headerText="Tarea" style="width: 20%">
+                                            <h:outputText value="#{obs.tarea}" style="text-transform: uppercase"/>
+                                        </p:column>
+                                        <p:column headerText="Fecha" style="width: 20%">
+                                            <h:outputText value="#{obs.fecCre}"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:tab>
+                                <p:tab id="tPredios" title="Predios">
+                                    <p:dataTable id="dtPredios" var="itemPr" value="#{reingresoTramites.predios}" style="width: 100%" paginator="true" rows="10" reflow="true" rendered="#{reingresoTramites.predios.size()>0}" 
+                                                 selectionMode="single" selection="#{reingresoTramites.predio}" rowKey="#{itemPr.id}" emptyMessage="No tiene predios asociados">
+                                        <f:facet name="header">Elija un predio en caso del listado en caso de ser necesario</f:facet>
+                                        <p:column headerText="Código Predial" style="width: 50%">
+                                            <h:outputText value="##{itemPr.claveCat}" style="text-align: center"/>
+                                        </p:column>
+                                        <p:column headerText="No. Predio" style="width: 20%">
+                                            <h:outputText value="#{itemPr.numPredio}" style="text-align: center"/>
+                                        </p:column>
+                                        <p:column headerText="Ciudadela" style="width: 20%">
+                                            <h:outputText value="#{itemPr.ciudadela.nombre}" style="text-align: center"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                    <p:dataTable value="#{reingresoTramites.prediosLazy}" var="p" emptyMessage="No tiene datos" style="width: 100%;" reflow="true"
+                                                 selection="#{reingresoTramites.predio}" rowKey="#{p.id}" lazy="true" paginator="true" rows="20" rendered="#{reingresoTramites.mostrarPredio}">
+                                        <f:facet name="header">Elija un predio para referenciarlo en caso de ser necesario</f:facet>
+                                        <p:column headerText="Seleccion" selectionMode="single" style="width: 8%; text-align: center" />
+                                        <p:column headerText="Num Predio" width="15%" filterBy="#{p.numPredio}" sortBy="#{p.numPredio}" filterMatchMode="contains">
+                                            <h:outputText value="#{p.numPredio}"/>
+                                        </p:column>
+                                        <p:column headerText="Codigo Predial" width="22%">
+                                            <h:outputText value="#{p.claveCat}" style="text-align: center"/>
+                                        </p:column>
+                                        <p:column headerText="Ciudadela">
+                                            <p:outputLabel value="#{p.ciudadela.nombre}"/>
+                                        </p:column>
+                                        <p:column headerText="Mz. Urb" width="10%" filterBy="#{p.mz}" filterMatchMode="contains">
+                                            <p:outputLabel value="#{p.urbMz}"/>
+                                        </p:column>
+                                        <p:column headerText="Sol. Urb" style="text-align: center;padding-left: 1px; padding-right: 1px" filterBy="#{p.urbSolarnew}" sortBy="#{p.urbSolarnew}" filterStyle="width: 40px">
+                                            <h:outputText value="#{pt.urbSolarnew}"/>
+                                        </p:column>
+                                        <p:column headerText="Dpto." filterBy="#{p.numDepartamento}" 
+                                                  sortBy="#{p.numDepartamento}" filterStyle="width: 90%" style="width: 80px;">
+                                            <p:outputLabel value="#{p.numDepartamento}"/>
+                                        </p:column>
+                                        <p:column headerText="Edif." filterBy="#{p.nombreEdificio}" 
+                                                  sortBy="#{p.nombreEdificio}" filterStyle="width: 90%" style="width: 80px;">
+                                            <p:outputLabel value="#{p.nombreEdificio}"/>
+                                        </p:column>
+                                        <p:column headerText="Dirección" style="text-align: center; padding-left: 1px; padding-right: 1px">
+                                            <h:outputText value="Mz:#{p.urbMz} Sl:#{p.urbSolarnew}"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:tab>
+                                <p:tab id="tanexos" title="Documentos anteriores">
+                                    <dialog:detalleArchivosAct archivos="#{reingresoTramites.adjuntos}" />
+                                </p:tab>
+                                <p:tab id="tRequisitos" title="Requisitos">
+                                    <p:dataTable id="dtrequisitos" value="#{reingresoTramites.requisitos}" rendered="#{reingresoTramites.mostrarRequisitos}"
+                                                 var="req" reflow="true"  emptyMessage="No se encontró ningun Requisito">
+                                        <f:facet name="header">Listado de Requisitos: #{reingresoTramites.tramite.tipoTramite.descripcion}</f:facet>
+                                        <p:column headerText="Requisito" style="width: 75%;">
+                                            <h:outputText value="#{req.nombre}" style="text-transform: uppercase;"/>
+                                        </p:column>
+                                        <p:column headerText="Presentar Documento">
+                                            <center>
+                                                <p:inputText value="#{validarRequisito.entrada}"  rendered="#{req.tieneComprobante}" />
+                                                <p:fileUpload  rendered="#{!req.tieneComprobante}" fileUploadListener="#{reingresoTramites.handleFileUpload}"
+                                                               multiple="true"
+                                                               mode="advanced"
+                                                               fileLimit="6"
+                                                               uploadLabel="Subir"
+                                                               label="Seleccionar"
+                                                               cancelLabel="Cancelar"
+                                                               skinSimple="true"
+                                                               update="messages"
+                                                               sizeLimit="35000000" 
+                                                               allowTypes="/(\.|\/)(gif|jpe?g|png|pdf|dwg|doc?x|xls?x)$/"/>
+                                                <p:growl id="messages" showDetail="true"/>
+                                            </center>
+                                        </p:column>
+                                        <f:facet name="footer">
+                                            <p:commandButton id="btnValidar" value="Iniciar" onclick="PF('obs').show()" style="color: #ffffff; background: #616161 !important; font-weight: bold; height: 30px" icon="ui-icon-circle-arrow-e" iconPos="s"/>
+                                        </f:facet>
+                                    </p:dataTable>
+                                </p:tab>
+                            </p:tabView>
+                        </p:tab>
+                    </p:tabView>                    
+                </p:panel>
+            </p:panel>
+        </h:form>
+        <p:dialog id="dlgSolicitante" widgetVar="dlgSolicitante" header="Listado de contribuyentes" appendTo="@(body)" width="700" responsive="true" closable="true" closeOnEscape="true">
+            <h:form id="frmSolicitante">
+                <div align="right">
+                    <p:commandButton id="btnNuevo" value="Agregar/Actualizar" style="height: 30px" actionListener="#{reingresoTramites.nuevoSolicitane()}" oncomplete="PF('dlgSolicitante').hide()"/>
+                </div>
+                <br/>
+                <p:dataTable id="dtSolicitante" var="s" value="#{reingresoTramites.solicitantes}" style="width: 100%" lazy="true" reflow="true" paginator="true" rows="10" selectionMode="single" selection="#{reingresoTramites.solicitante}" rowKey="#{s.id}">
+                    <f:facet name="header">Seleccione el solicitante respectivo</f:facet>
+                    <p:column headerText="No. Identificacion" sortBy="#{s.ciRuc}" filterBy="#{s.ciRuc}" filterMatchMode="contains">
+                        <h:outputText value="#{s.ciRuc}"/>
+                    </p:column>
+                    <p:column headerText="Descripcion" rendered="#{s.esPersona}" filterBy="#{s.apellidos} #{s.nombres}" sortBy="#{s.apellidos}" filterMatchMode="contains">
+                        <h:outputText value="#{s.apellidos} #{s.nombres}" rendered="#{s.esPersona}" style="text-transform: uppercase"/>
+                    </p:column>
+                    <p:column headerText="Descripcion" rendered="#{!s.esPersona}" filterBy="#{s.razonSocial}" sortBy="#{s.razonSocial}"  filterMatchMode="contains">
+                        <h:outputText value="#{s.razonSocial}" rendered="#{!s.esPersona}" style="text-transform: uppercase"/>
+                    </p:column>
+                    <p:column headerText="Direccion">
+                        <h:outputText value="#{s.direccion}"/>
+                    </p:column>
+                    <f:facet name="footer">
+                        <p:commandButton id="btnSeleccionar" value="Seleccionar" actionListener="#{reingresoTramites.seleccionar()}" update=":frmTramites" style="height: 30px" oncomplete="PF('dlgSolicitante').hide()"/>
+                    </f:facet>
+                </p:dataTable>         
+            </h:form>
+        </p:dialog>
+        <p:dialog id="dlgObs" widgetVar="obs" header="#{reingresoTramites.tramite.tipoTramite.descripcion}" appendTo="@(body)" modal="true" width="500" resizable="false" closable="true" closeOnEscape="true">
+            <h:form id="frmObs">
+                <p:panel id="pobs" header="Ingrese sus observaciones" style="width: 100%">
+                    <div align="center">
+                        <p:inputTextarea id="obsservacion" value="#{reingresoTramites.obs.observacion}" rows="4" style="width: 100%; text-transform: uppercase" required="true" placeholder="Las observaciones son obligatorias para continuar con el tramite"/>
+                        <br/>
+                        <p:commandButton id="btnValidar" value="Reingresar" actionListener="#{reingresoTramites.reingresarTramite()}" oncomplete="PF('obs').hide()" style="color: #ffffff; background: #616161 !important; font-weight: bold; height: 30px" icon="ui-icon-circle-arrow-e" iconPos="s"/>
+                    </div>
+                </p:panel>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

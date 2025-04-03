@@ -1,0 +1,165 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:dialog="http://xmlns.jcp.org/jsf/composite/dialog">
+   
+    <ui:define name="content">
+        <div align="center">
+            <h1>Ingreso Titulo Predial</h1>
+        </div>
+        <h:form id="mainForm">            
+            <dialog:busquedaPredio  predio="#{ingresoTituloPredial.predioConsulta}"
+                                    consultar="#{ingresoTituloPredial.consultar()}"
+                                    tipoCons="#{ingresoTituloPredial.tipoCons}" 
+                                    predioModel="#{ingresoTituloPredial.predioModel}"
+                                    alcabalasPlusvalia="false"
+                                    update="mainForm"
+                                    contribuyenteConsulta="#{ingresoTituloPredial.contribuyenteConsulta}"                                    
+                                    dlgSolicitante="PF('dlgSolicitante').show()"
+                                    updateFrmSolicitante=":frmSolicitante"/>
+            <center>
+                <p:commandButton value="CONSULTAR PREDIO" actionListener="#{ingresoTituloPredial.consultar()}" update="mainForm"/>
+            </center>
+            <br/>
+            <center>
+            <dialog:datosPredio  predio="#{ingresoTituloPredial.predioConsulta}"
+                                                buscar="false"
+                                                header="Datos del Predio" 
+                                                width="400"/>
+            </center>
+            <p:commandButton value="Historial Emisiones" actionListener="#{ingresoTituloPredial.consultarLiquidaciones()}" style="float: right;" oncomplete="PF('liquidaciones').show();" update="formLiquidaciones"/>
+            <p:panelGrid style="width: 100%; margin: 0 auto;" >
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="Año"/>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="Avalúo Solar"/>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="Avalúo Construcción"/>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="Avalúo Municipal"/>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="CEM PARQUES Y PLAZAS"/>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="CEM ALCANTARILLADOS"/>
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="Accion"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <p:inputText type="number" value="#{ingresoTituloPredial.liquidacion.anio}"/>
+                    </p:column>
+                    <p:column>
+                        <p:inputText value="#{ingresoTituloPredial.avaluoSolar}" />
+                    </p:column>
+                    <p:column>
+                        <p:inputText value="#{ingresoTituloPredial.avaluoConstruccion}" />
+                    </p:column>
+                    <p:column>
+                        <p:inputText value="#{ingresoTituloPredial.avaluoMunicipal}" />
+                    </p:column>
+                    <p:column>
+                        <p:inputText value="#{ingresoTituloPredial.cemParquesPlazas}" />
+                    </p:column>
+                    <p:column>
+                        <p:inputText value="#{ingresoTituloPredial.cemAlcantarillado}" />
+                    </p:column>
+                    <p:column>
+                        <p:commandButton value="Generar Titulo" actionListener="#{ingresoTituloPredial.generarValores()}" update="valores,totalLiquidacion"/>
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+            <br/>
+            <p:dataTable id="valores" value="#{ingresoTituloPredial.liquidacion.renDetLiquidacionCollection}" var="detalle" reflow="true">
+                <p:column headerText="Id" width="40" style="text-align: center;"><p:outputLabel value="#{detalle.rubro}"/></p:column>
+                <p:column headerText="Rubro"><p:outputLabel value="#{ingresoTituloPredial.getNombreRubro(detalle.rubro)}"/></p:column>
+                <p:column headerText="Valor" style="text-align: right;"><p:inputText value="#{detalle.valor}"/></p:column>
+            </p:dataTable>
+            <p:panel id="totalLiquidacion" style="float: right;">
+                <p:outputLabel value="Total: "/>   
+                <p:inputText value="#{ingresoTituloPredial.liquidacion.totalPago}"  readonly="true"/>                     
+            </p:panel>
+            <br/>
+            <center>
+                <p:commandButton value="Grabar" actionListener="#{ingresoTituloPredial.registarTitulo()}"/>
+                <p:spacer width="50"/>
+                <p:commandButton value="Nuevo" actionListener="#{ingresoTituloPredial.nuevoRegistro()}"/>
+            </center>
+        </h:form>
+        
+        <p:dialog id="dlgLiquidaciones" header="Liquidaciones" widgetVar="liquidaciones" appendTo="@(body)" closeOnEscape="true" fitViewport="true" 
+                  modal="true" responsive="true" width="80%" resizable="false" position="center">
+            <h:form id="formLiquidaciones">
+                <p:dataTable id="dtEmisiones" value="#{ingresoTituloPredial.liquidaciones}" var="emision" rowKey="#{emision.id}" emptyMessage="" style="text-align: center;">
+                    <f:facet name="header" >
+                        EMISIONES
+                    </f:facet>
+                    <p:column headerText="Año" style="font-weight: bolder;">
+                        <h:outputText value="#{emision.anio}"/>
+                    </p:column>
+                    <p:column headerText="area" style="font-weight: bolder;">
+                        <h:outputText value="#{emision.areaTotal}">
+                            <f:convertNumber pattern="#,##0.00"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Avaluo Solar" style="font-weight: bolder;">
+                        <h:outputText value="#{emision.avaluoSolar}">
+                            <f:convertNumber pattern="#,##0.00"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Avaluo Construcción" style="font-weight: bolder;">
+                        <h:outputText value="#{emision.avaluoConstruccion}">
+                            <f:convertNumber pattern="#,##0.00"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Avaluo Municipal" style="font-weight: bolder;">
+                        <h:outputText value="#{emision.avaluoMunicipal}">
+                            <f:convertNumber pattern="#,##0.00"/>
+                        </h:outputText>
+                    </p:column>
+                </p:dataTable>
+                <br/><br/>
+                <center>
+                    <p:commandButton value="Aceptar" styleClass="btnStyle" oncomplete="PF('liquidaciones').hide();"/>
+                </center>
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog id="dlgSolicitante" widgetVar="dlgSolicitante" header="Listado de contribuyentes" appendTo="@(body)" width="700" responsive="true" closable="true" closeOnEscape="true" modal="true">
+            <h:form id="frmSolicitante">
+                <p:dataTable id="dtSolicitante" value="#{aplicacionExoneraciones.propietarios}" var="s" selection="#{ingresoTituloPredial.propietario}" 
+                             rowKey="#{s.id}" style="width: 100%" lazy="true" reflow="true" paginator="true" rows="10" 
+                             selectionMode="single" filterEvent="enter" paginatorPosition="top">
+                    <f:facet name="header">Seleccione Contribuyente</f:facet>
+                    <p:column headerText="No. Identificacion" sortBy="#{s.ente.ciRuc}" filterBy="#{s.ente.ciRuc}" filterMatchMode="contains" filterStyle="width: 95%;">
+                        <h:outputText value="#{s.ente.ciRuc}"/>
+                    </p:column>
+                    <p:column headerText="Apellidos" filterBy="#{s.ente.apellidos}" sortBy="#{s.ente.apellidos}" filterMatchMode="contains" filterStyle="width: 95%;">
+                        <h:outputText value="#{s.ente.apellidos}" style="text-transform: uppercase"/>
+                    </p:column>
+                    <p:column headerText="Nombres" filterBy="#{s.ente.nombres}" sortBy="#{s.ente.nombres}" filterMatchMode="contains" filterStyle="width: 95%;">
+                        <h:outputText value="#{s.ente.nombres}" style="text-transform: uppercase"/>
+                    </p:column>
+                    <p:column headerText="Razon Social" filterBy="#{s.ente.razonSocial}" sortBy="#{s.ente.razonSocial}"  filterMatchMode="contains" filterStyle="width: 95%;">
+                        <h:outputText value="#{s.ente.razonSocial}" style="text-transform: uppercase"/>
+                    </p:column>
+                    <f:facet name="footer">
+                        <p:commandButton id="btnSeleccionar" value="Seleccionar" update="mainForm" style="height: 30px" oncomplete="PF('dlgSolicitante').hide()"/>
+                    </f:facet>
+                </p:dataTable>         
+            </h:form>
+        </p:dialog>
+        
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,197 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/template/template.xhtml">
+    <ui:define name="metadata">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    </ui:define>
+    <ui:define name="head">
+        <script src="../../resources/pfJs/keyPress.js" type="text/javascript"></script>
+        <script src="../../../resources/pfJs/number.js" type="text/javascript"></script>
+    </ui:define>
+    <ui:define name="content">
+        <div class="ContainerIndent">
+            <h:form id="frmOrdenes">
+                <p:growl autoUpdate="true" showDetail="true"/>
+                <p:panel id="pOrdenes">
+                    <div align="center">
+                        <h3 class="hardblue">Seleccione la orden de trabajo respectiva para visualizar el detalle.</h3>
+                    </div>
+                    <div align="right">
+                        <p:commandButton id="btnNuevo" value="Nueva orden" style="height: 30px" oncomplete="PF('dlgNuevo').show()" update=":frmNuevo" actionListener="#{ordenes.ver(null)}"/>
+                    </div>
+                    <br/>
+                    <p:dataTable id="dtOrdenes" value="#{ordenes.ordenes}" var="ot" lazy="true" reflow="true" paginator="true" widgetVar="ots"
+                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rows="100" rowsPerPageTemplate="20,50,100" emptyMessage="No tiene ordenes pendientes" paginatorPosition="top" filterEvent="enter">
+                        <p:column headerText="Num.Orden" style="width: 10%; text-align: left" filterBy="#{ot.numOrden}" sortBy="#{ot.numOrden}" filterStyle="width:80%" filterMatchMode="equals">
+                            <h:outputText value="#{ot.numOrden}"/>
+                        </p:column>
+                        <p:column headerText="Inicio" style="width: 10%; text-align: center" filterBy="#{ot.fecIni}" filterStyle="width:80%" filterMatchMode="equals">
+                            <f:facet name="filter">
+                                <p:calendar id="ffecIni" pattern="dd/MM/yyyy">
+                                    <p:ajax event="dateSelect" oncomplete="PF('ots').filter()"/>
+                                </p:calendar>
+                            </f:facet>
+                            <h:outputText value="#{ot.fecIni}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Finaliza" style="width: 10%; text-align: center" filterBy="#{ot.fecFin}" filterStyle="width:80%" filterMatchMode="equals">
+                            <f:facet name="filter">
+                                <p:calendar id="ffecFin" pattern="dd/MM/yyyy">
+                                    <p:ajax event="dateSelect" oncomplete="PF('ots').filter()"/>
+                                </p:calendar>
+                            </f:facet>
+                            <h:outputText value="#{ot.fecFin}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Parroquia" style="width: 25%; text-align: left" filterBy="#{ot.parroquia}" filterStyle="width:100%">
+                            <f:facet name="filter">
+                                <p:selectOneMenu id="fUrb" onchange="PF('ots').filter()" converter="entityConverter" filter="true" filterMatchMode="contains" var="cdlas">
+                                    <f:selectItem itemLabel="Parroquia" itemValue="#{null}" noSelectionOption="true"/>
+                                    <f:selectItems var="urb" value="#{ordenes.parroquias}" itemLabel="#{urb.descripcion}" itemValue="#{urb}"/>
+                                    <p:column>
+                                        <h:outputText value="#{cdlas.descripcion}"/>
+                                    </p:column>
+                                </p:selectOneMenu>
+                            </f:facet>
+                            <h:outputText value="#{ot.parroquia.descripcion}"/>
+                        </p:column>
+                        <p:column headerText="Zona" style="width: 5%; text-align: center" filterBy="#{ot.zona}" filterStyle="width:80%" filterMatchMode="equals">
+                            <h:outputText value="#{ot.zona}"/>
+                        </p:column>
+                        <p:column headerText="Sector" style="width: 5%; text-align: center" filterBy="#{ot.sector}" filterStyle="width:80%" filterMatchMode="equals">
+                            <h:outputText value="#{ot.sector}"/>
+                        </p:column>
+                        <p:column headerText="Mz" style="width: 5%; text-align: center" filterBy="#{ot.mz}" filterStyle="width:80%" filterMatchMode="equals">
+                            <h:outputText value="#{ot.mz}"/>
+                        </p:column>
+                        <p:column headerText="Responsable" style="width: 15%; text-align: left" filterBy="#{ot.responsable.usuario}" filterStyle="width:80%">
+                            <h:outputText value="#{ot.responsable.usuario}"/>
+                        </p:column>
+                        <p:column headerText="Supervisor" style="width: 15%; text-align: left">
+                            <h:outputText value="#{ot.supervisor.usuario}"/>
+                        </p:column>
+                        <p:column headerText="Estado" style="width: 5%; text-align: center" sortBy="#{ot.estadoOt}">
+                            <h:outputText value="#{ot.estadoOt}"/>
+                        </p:column>
+                        <p:column style="width: 5%; text-align: center">
+                            <p:commandButton id="btnVer" icon="ui-icon-info" actionListener="#{ordenes.ver(ot)}" update=":frmNuevo" oncomplete="PF('dlgNuevo').show()"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:panel>
+            </h:form>
+        </div>
+        <p:dialog id="dlgNuevo" widgetVar="dlgNuevo" header="Emision de ordenes" height="500" appendTo="@(body)"  modal="true" width="80%" closable="true" closeOnEscape="true">
+            <!--<script src="../../../resources/pfJs/number.js" type="text/javascript"></script>-->
+            <h:form id="frmNuevo">
+                <p:messages autoUpdate="true" showDetail="true" closable="true"/>
+                <p:panelGrid columns="4" layout="grid">
+                    <h:outputText value="Fecha Inicio"/>
+                    <p:calendar id="inicio" value="#{ordenes.orden.fecIni}" pattern="dd/MM/yyyy" />
+                    <h:outputText value="Fecha Fin"/>
+                    <p:calendar id="fin" value="#{ordenes.orden.fecFin}" pattern="dd/MM/yyyy"/>
+                    <h:outputText value="Responsable"/>
+                    <p:selectOneMenu id="responsables" value="#{ordenes.orden.responsable}" style="width: 80%" converter="entityConverter" filter="true" filterMatchMode="contains" var="fr">
+                        <!--<p:ajax update="frmOrdUsr" listener="#{ordenes.verOrdenesInterviniente()}" oncomplete="PF('dlgOrdUsr').show()"/>-->
+                        <f:selectItem itemLabel="Elija el responsable" itemValue="#{null}"/>
+                        <f:selectItems value="#{ordenes.usuarios}" var="resp" itemLabel="#{resp.usuario}" itemValue="#{resp}"/>
+                        <p:column>
+                            <h:outputText value="#{fr.usuario}"/>
+                        </p:column>
+                    </p:selectOneMenu>
+                    <h:outputText value="* Parroquia"/>  
+                    <p:selectOneMenu id="parroquias" value="#{ordenes.orden.parroquia}" style="width: 80%" converter="entityConverter" filter="true" filterMatchMode="contains" var="fr1">
+                        <f:selectItem itemLabel="Elija la parroquia" itemValue="#{null}"/>
+                        <f:selectItems value="#{ordenes.parroquias}" var="resp1" itemLabel="#{resp1.descripcion} (#{resp1.codNac})" itemValue="#{resp1}"/>
+                        <p:column>
+                            <h:outputText value="#{fr1.descripcion} (#{fr1.codNac})"/>
+                        </p:column>
+                    </p:selectOneMenu> 
+                    <h:outputText value="* Zona"/>
+                    <p:inputText id="zona" value="#{ordenes.zona}" maxlength="6" disabled="#{ordenes.orden.id!=null}" onkeypress="return isNumber(event)"/>
+                    <h:outputText value="* Sector"/>
+                    <p:inputText id="sector" value="#{ordenes.sector}" maxlength="6" disabled="#{ordenes.orden.id!=null}" onkeypress="return isNumber(event)"/>
+                    <h:outputText value="* Mz"/>
+                    <p:inputText id="mz" value="#{ordenes.manzana}" maxlength="6" disabled="#{ordenes.orden.id!=null}" onkeypress="return isNumber(event)"/>
+                    <f:facet name="footer">
+                        <div align="center">
+                            <p:commandButton id="btnBuscarPredios" value="Agregar Predios" actionListener="#{ordenes.buscar()}" update="dtPredios" rendered="#{ordenes.orden.id==null}"/>
+                            <p:commandButton id="btnReasignar" value="Reasignar" actionListener="#{ordenes.reasignar()}" update="frmOrdenes" rendered="#{ordenes.orden.id!=null}" oncomplete="PF('dlgNuevo').hide()"/>
+                        </div>
+                    </f:facet>
+                </p:panelGrid>
+                <p:panel id="pPredios" header="Elija los predios de la orden" toggleable="true">
+                    <div align="center">
+                        <p:commandButton id="btnGenerar" value="Generar Orden" style="height: 30px" actionListener="#{ordenes.selecPredios()}" rendered="#{ordenes.orden.id==null}"/>
+                    </div>
+                    <p:dataTable id="dtPredios" var="pt" value="#{ordenes.predios}" lazy="true" paginator="true" rows="50" rowsPerPageTemplate="15,20,50,100" widgetVar="preds"
+                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" filterEvent="enter"
+                                 selection="#{ordenes.spredios}" rowKey="#{pt.id}" paginatorPosition="top" 
+                                 emptyMessage="Elija una urbanizacion para listar los predios respectivos" rendered="#{ordenes.orden.id==null}"
+                                 paginatorAlwaysVisible="false"> 
+                        <p:column selectionMode="multiple" style="width: 4%; text-align: center"/>
+                        <p:column headerText="Predio" style="width: 5%" filterBy="#{pt.numPredio}" filterMatchMode="equals">
+                            <h:outputText value="#{pt.numPredio}"/>
+                        </p:column>
+                        <p:column headerText="Cod. catastral" style="text-align: center; padding-left: 5px; padding-right: 5px; width: 5%" filterBy="#{pt.claveCat}" filterMatchMode="contains">
+                            <h:outputText value="#{pt.claveCat}"  />
+                        </p:column>
+                        <p:column headerText="Cod. Anterior" style="text-align: center; width: 5%" filterBy="#{pt.predialant}" filterMatchMode="equals">
+                            <h:outputText value="#{pt.predialant}"/>
+                        </p:column>
+                    </p:dataTable>
+                    <p:dataTable id="dtDetOrdenes" value="#{ordenes.orden.ordenDetCollection}" var="d" paginator="true" rows="10" rowsPerPageTemplate="15,20" paginatorPosition="top"
+                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                                 emptyMessage="No tiene ordenes pendientes" rendered="#{ordenes.orden.id!=null}">                        
+                        <p:column headerText="# Orden" style="width: 10%">
+                            <h:outputText value="#{d.orden.numOrden}"/>
+                        </p:column>
+                        <p:column headerText="Predio" filterBy="#{d.numPredio}" filterMatchMode="exact">
+                            <h:outputText value="#{d.numPredio}"/>
+                        </p:column>
+                        <p:column headerText="Fecha">
+                            <h:outputText value="#{d.orden.fecCre}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Estado">
+                            <h:outputText value="#{d.estadoDet}"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:panel>
+            </h:form>
+        </p:dialog>
+        <p:dialog id="dlgOrdUsr" widgetVar="dlgOrdUsr" header="Seleccione un predio del listado" appendTo="@(body)" modal="true" width="75%" height="450px" closable="true" closeOnEscape="true">
+            <h:form id="frmOrdUsr">
+                <p:panel id="pDetalle" header="Detalle de ordenes asignadas">
+                    <p:dataTable id="dtDetOrdenes" value="#{ordenes.pendientes}" var="d" paginator="true" rows="10" rowsPerPageTemplate="15,20" paginatorPosition="top"
+                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" emptyMessage="No tiene ordenes pendientes">
+                        <p:column headerText="# Orden" style="width: 10%">
+                            <h:outputText value="#{d.orden.numOrden}"/>
+                        </p:column>
+                        <p:column headerText="Predio" filterBy="#{d.numPredio}" filterMatchMode="exact">
+                            <h:outputText value="#{d.numPredio}"/>
+                        </p:column>
+                        <p:column headerText="Fecha">
+                            <h:outputText value="#{d.orden.fecCre}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Observaciones">
+                            <h:outputText value="#{d.observaciones}"/>
+                        </p:column>
+                        <p:column headerText="Estado">
+                            <h:outputText value="#{d.estadoDet}"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:panel>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>
+

@@ -1,0 +1,142 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    template="/template/template.xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html" 
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{actualizaDatos.doPreRenderView()}"/>
+        </f:metadata>
+    </ui:define>
+    <ui:define name="content">
+        <center>
+            <h1>Datos del Usuario</h1>
+        </center>
+        <h:form id="mainForm">
+            <p:tabView id="tabInfUsuarios" style="width: 100%;height: 350px">
+                <p:tab title="Datos Personales">
+                    <h:panelGrid styleClass="noBorder" style="margin: 0 auto;font-weight: bolder;font-size: 12px">
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="Nombres:" style="font-weight: bolder;"/>
+                            </p:column>
+                            <p:spacer width="7"/>
+                            <p:column>
+                                <p:inputText value="#{actualizaDatos.ente.nombres}" readonly="true" size="50"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="Apellidos:" style="font-weight: bolder;"/>
+                            </p:column>
+                            <p:spacer width="7"/>
+                            <p:column>
+                                <p:inputText value="#{actualizaDatos.ente.apellidos}" readonly="true" size="50"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="Direccion:" style="font-weight: bolder;"/>
+                            </p:column>
+                            <p:spacer width="7"/>
+                            <p:column>
+                                <p:inputText value="#{actualizaDatos.ente.direccion}" readonly="true" size="50"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="Fecha Nac.:" style="font-weight: bolder;"/>
+                            </p:column>
+                            <p:spacer width="7"/>
+                            <p:column>
+                                <p:inputText value="#{actualizaDatos.ente.fechaNacimiento}" readonly="true">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </p:inputText>
+                            </p:column>
+                        </p:row>
+                        <br></br>
+                        <center>
+                            <p:row>
+                                <p:column colspan="2">
+                                    <p:dataTable value="#{actualizaDatos.ente.enteCorreoCollection}" var="cor" scrollable="true" scrollHeight="100"
+                                                 style="width: 420px">
+                                        <p:column headerText="Correos" style="text-align: center">
+                                            <p:outputLabel value="#{cor.email}"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:column>
+                            </p:row>
+                        </center>
+                    </h:panelGrid>
+                </p:tab>
+                <p:tab title="Cambio de Clave">
+                    <h:panelGrid styleClass="noBorder" style="margin: 0 auto;">
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="Nombre de Usuario: " style="font-weight: bolder;font-size: 16px"/>
+                            </p:column>
+                            <p:column>
+                                <p:inputText value="#{actualizaDatos.username}" readonly="true"/>
+                            </p:column>
+                        </p:row>
+                        <br></br>
+                        <p:row>
+                            <p:column colspan="2">
+                                <center>
+                                    <p:commandButton value="Cambiar Clave" icon="ui-icon-wrench" styleClass="btnStyle"
+                                                     actionListener="#{actualizaDatos.showDlgClave()}"/>
+                                </center>
+                            </p:column>
+                        </p:row>
+                    </h:panelGrid>
+                </p:tab>
+                <p:tab title="Foto de Perfil" rendered="false">
+                    <br/>
+                    <center>
+                        <p:graphicImage value="#{actualizaDatos.image}" style="border: #27ae60 solid 2px !important; width: 200px;height: 200px;" styleClass="img-circle"/>
+                        <br/><br/>
+                        <p:commandButton value="Cambiar Foto" icon="ui-icon-folder-open" oncomplete="PF('dlgPerfil').show()"/>
+                    </center>
+                </p:tab>
+            </p:tabView>
+        </h:form>
+
+        <p:dialog id="perfil" header="Foto de Perfil" widgetVar="dlgPerfil" resizable="false" modal="true" 
+                  style="z-index: 2;" appendTo="@(body)" closeOnEscape="true" height="530" width="600" position="center" >
+            <h:form id="formPerfil">
+                <p:fileUpload fileUploadListener="#{actualizaDatos.uploadFile}" mode="advanced" label="Seleccione Foto(max.400Kb)" auto="true" 
+                              sizeLimit="400000" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" update="pnlFoto" style="width: 100%">
+                    <p:panelGrid id="pnlFoto" columns="1" styleClass="noBorder" style="margin: 0 auto;">
+                        <p:graphicImage value="/image/usuarios/avatar2.jpg" rendered="#{!actualizaDatos.foto}"
+                                        height="440" width="440" />
+                        <p:imageCropper value="#{actualizaDatos.croppedImage}" image="/image/usuarios/#{actualizaDatos.imageTemp}" aspectRatio="1"
+                                        initialCoords="0,0,300,300" minSize="50,50" maxSize="400,400" rendered="#{actualizaDatos.foto}"/>
+                    </p:panelGrid>
+                </p:fileUpload>
+                <center>
+                    <p:commandButton value="Guardar como foto Perfil" icon="ui-icon-person" actionListener="#{actualizaDatos.crop()}"/>
+                </center>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="changePass" widgetVar="dlgChangePass" header="Cambio de Clave" resizable="false" modal="true">
+            <h:form id="formChangePass">
+                <p:panelGrid columns="1" style="text-align: center;font-size: 14px;font-weight: bolder" styleClass="noBorder">
+                    <p:outputLabel value="Ingrese clave actual:"/>
+                    <p:password value="#{actualizaDatos.pass}"/>
+                    <p:outputLabel value="Ingrese nueva clave: (Minimo 8 caracteres)"/>
+                    <p:password value="#{actualizaDatos.passOne}"/>
+                    <p:outputLabel value="Repita nueva clave:"/>
+                    <p:password value="#{actualizaDatos.passTwo}"/>
+                    <p:commandButton value="Guardar" icon="ui-icon-check" styleClass="btnStyle"
+                                     actionListener="#{actualizaDatos.cambioClave()}"/>
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,654 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Recibo_Registro_PropiedadMer" pageWidth="612" pageHeight="907" whenNoDataType="AllSectionsNoDetail" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="15" bottomMargin="15" uuid="0914703f-83dd-426e-ad90-6086157b3c1c">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA["C:\\Users\\supergold\\Documents\\NetBeansProjects\\sgm\\src\\main\\webapp\\reportes\\Emision\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ID_LIQUIDACION" class="java.lang.Long"/>
+	<parameter name="cobros" class="java.util.List" isForPrompting="false"/>
+	<parameter name="NUM_COMPROBANTE" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ruta_firmas" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\supergold\\Documents\\NetBeansProjects\\sgm\\src\\main\\webapp\\css\\firmas\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+     ren_liquidacion.vendedor AS ren_liquidacion_vendedor,
+     ren_liquidacion.comprador AS ren_liquidacion_comprador,
+     cat_ente."es_persona" AS comprador_es_persona,
+     cat_ente."nombres" AS comprador_nombres,
+     cat_ente."apellidos" AS comprador_apellidos,
+     cat_ente."ci_ruc" AS comprador_ci_ruc,
+     cat_ente."razon_social" AS comprador_razon_social,
+     ren_pago."num_cajero" AS ren_pago_num_cajero,
+     ren_pago."num_comprobante" AS ren_pago_num_comprobante,
+     ren_liquidacion."observacion" AS ren_liquidacion_observacion,
+     ren_pago."fecha_pago" AS ren_pago_fecha_pago,
+     ren_pago.valor AS ren_pago_valor,
+     ren_liquidacion.vendedor AS ren_liquidacion_vendedor,
+     historico_tramites.id AS historico_tramite_id,
+     ren_liquidacion."valor_comercial" AS ren_liquidacion_valor_comercial,
+     ren_tipo_liquidacion."nombre_titulo" AS ren_tipo_liquidacion_nombre_titulo,
+     ren_tipo_liquidacion."codigo_titulo_reporte" AS codigo_titulo_reporte,
+     cat_predio."usuario_creador" AS cat_predio_usuario_creador,
+     ren_liquidacion."id_liquidacion" AS ren_liquidacion_id_liquidacion,
+     acl_user.usuario AS acl_user_usuario,
+substring( ren_liquidacion.observacion FROM 0 FOR position('|' IN ren_liquidacion.observacion)) as nombre_contribuyente,
+substring( ren_liquidacion.observacion FROM position('|' IN ren_liquidacion.observacion)+1 ) as observacion_liquidacion
+FROM
+"financiero"."ren_tipo_liquidacion" ren_tipo_liquidacion RIGHT OUTER JOIN "financiero"."ren_liquidacion" ren_liquidacion ON ren_tipo_liquidacion."id" = ren_liquidacion."tipo_liquidacion"
+    LEFT OUTER JOIN flow.historico_tramites historico_tramites ON ren_liquidacion.tramite = historico_tramites.id_tramite
+     LEFT OUTER JOIN "app1"."cat_predio" cat_predio ON ren_liquidacion."predio" = cat_predio."id"
+     LEFT OUTER JOIN "financiero"."ren_pago" ren_pago ON ren_pago.liquidacion = ren_liquidacion."id"
+     LEFT OUTER JOIN "app1"."cat_ente" cat_ente ON ren_pago."contribuyente" = cat_ente."id"
+     LEFT OUTER JOIN app1.acl_user acl_user ON ren_pago.cajero = acl_user.id
+WHERE
+    ren_liquidacion."id" =$P{ID_LIQUIDACION}
+ AND ren_pago.num_comprobante = $P{NUM_COMPROBANTE}
+ AND ren_liquidacion."estado_liquidacion" = 1
+limit 1]]>
+	</queryString>
+	<field name="ren_liquidacion_vendedor" class="java.lang.Long"/>
+	<field name="ren_liquidacion_comprador" class="java.lang.Long"/>
+	<field name="comprador_es_persona" class="java.lang.Boolean"/>
+	<field name="comprador_nombres" class="java.lang.String"/>
+	<field name="comprador_apellidos" class="java.lang.String"/>
+	<field name="comprador_ci_ruc" class="java.lang.String"/>
+	<field name="comprador_razon_social" class="java.lang.String"/>
+	<field name="ren_pago_num_cajero" class="java.lang.String"/>
+	<field name="ren_pago_num_comprobante" class="java.lang.Long"/>
+	<field name="ren_liquidacion_observacion" class="java.lang.String"/>
+	<field name="ren_pago_fecha_pago" class="java.sql.Timestamp"/>
+	<field name="ren_pago_valor" class="java.math.BigDecimal"/>
+	<field name="historico_tramite_id" class="java.lang.Long"/>
+	<field name="ren_liquidacion_valor_comercial" class="java.math.BigDecimal"/>
+	<field name="ren_tipo_liquidacion_nombre_titulo" class="java.lang.String"/>
+	<field name="codigo_titulo_reporte" class="java.lang.Long"/>
+	<field name="cat_predio_usuario_creador" class="java.lang.Long"/>
+	<field name="ren_liquidacion_id_liquidacion" class="java.lang.String"/>
+	<field name="acl_user_usuario" class="java.lang.String"/>
+	<field name="nombre_contribuyente" class="java.lang.String"/>
+	<field name="observacion_liquidacion" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="251" splitType="Stretch">
+			<textField>
+				<reportElement x="349" y="5" width="72" height="13" uuid="d286d9f7-a90f-4016-a179-2d2ccb9cbc0c"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CAJA-"+($F{ren_pago_num_cajero}==null?"01":$F{ren_pago_num_cajero})]]></textFieldExpression>
+			</textField>
+			<textField pattern="MMMM">
+				<reportElement x="192" y="5" width="45" height="13" uuid="556edd87-16ea-4f91-a308-c61390db06c2"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_fecha_pago}== null?"":$F{ren_pago_fecha_pago}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd">
+				<reportElement x="241" y="5" width="50" height="13" uuid="825f4726-cdc7-407a-aa31-6ea332e11404"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_fecha_pago}==null?"":$F{ren_pago_fecha_pago}]]></textFieldExpression>
+			</textField>
+			<textField pattern="yyyy">
+				<reportElement x="293" y="5" width="56" height="13" uuid="08bf959c-a390-4b1c-b7b3-81e4c6263836"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_fecha_pago}==null?"":$F{ren_pago_fecha_pago}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$#,##0.00">
+				<reportElement x="455" y="142" width="100" height="20" uuid="78ac1a6b-c83f-462b-9fb4-2c34294ee8c0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_valor}== null?"$0.00":$F{ren_pago_valor}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="455" y="109" width="58" height="13" uuid="43b7a3bc-0900-498c-8a13-ec292b693835"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$F{ren_pago_num_comprobante}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PAGO">
+					<subreportParameterExpression><![CDATA[2]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalle_cobro.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="455" y="63" width="58" height="12" uuid="7392630b-41d9-49eb-bb72-abf4e0b3c46d"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$F{ren_pago_num_comprobante}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PAGO">
+					<subreportParameterExpression><![CDATA[1]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalle_cobro.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="455" y="79" width="58" height="12" uuid="e2514cbe-4706-4455-bdef-64e5fd7a00a6"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$F{ren_pago_num_comprobante}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PAGO">
+					<subreportParameterExpression><![CDATA[4]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalle_cobro.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="455" y="94" width="58" height="13" uuid="9e14565e-2da8-475d-9aeb-7c97c73742ce"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$F{ren_pago_num_comprobante}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PAGO">
+					<subreportParameterExpression><![CDATA[3]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalle_cobro.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="455" y="124" width="58" height="13" uuid="e277c0ee-71bf-4df1-a9f7-1ece8c9aad98"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$F{ren_pago_num_comprobante}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PAGO">
+					<subreportParameterExpression><![CDATA[5]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalle_cobro.jasper"]]></subreportExpression>
+			</subreport>
+			<textField isBlankWhenNull="true">
+				<reportElement x="4" y="155" width="300" height="25" uuid="756b8ec7-565a-4a45-b8ee-5dc0235d7da5"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{observacion_liquidacion}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Top" onErrorType="Blank">
+				<reportElement x="348" y="210" width="80" height="41" uuid="92aff46f-8abf-442b-9748-f2202aa10e70"/>
+				<imageExpression><![CDATA[$P{ruta_firmas}+"JefeRentas.png"]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Top" onErrorType="Blank">
+				<reportElement x="348" y="68" width="80" height="41" uuid="8fd897c9-56b6-433d-857b-9eef6fdd1f1e"/>
+				<imageExpression><![CDATA[$P{ruta_firmas}+ "DirectorFinanciero.png"]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Top" onErrorType="Blank">
+				<reportElement x="348" y="137" width="80" height="41" uuid="8473a4c3-45bf-4855-b32f-d0cd3fb09d14"/>
+				<imageExpression><![CDATA[$P{ruta_firmas}+ "TesoreroMunicipal.png"]]></imageExpression>
+			</image>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="1" y="37" width="303" height="12" uuid="84606f29-9a6b-432e-806d-86251cb218bc"/>
+				<textElement>
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{comprador_ci_ruc}==null?$F{nombre_contribuyente}:(
+$F{comprador_es_persona}?
+($F{comprador_apellidos}==null?"": $F{comprador_apellidos})+ " " + ($F{comprador_nombres} == null? "" : $F{comprador_nombres})
+: ($F{comprador_razon_social} == null? "" : $F{comprador_razon_social}))]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="444" y="5" width="107" height="13" uuid="306b3714-d178-45db-9a12-37367601ad67"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_num_comprobante} == null? "" : $F{ren_pago_num_comprobante}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="454" y="233" width="91" height="12" uuid="97d47cbf-97f5-45a9-94b7-ac8355c0ed38"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{acl_user_usuario}==null?"":$F{acl_user_usuario}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="444" y="37" width="110" height="13" uuid="a33815f8-2cd5-4a4f-ad37-db6f9d8e776f"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_liquidacion_id_liquidacion}==null?"":$F{ren_liquidacion_id_liquidacion}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement stretchType="RelativeToTallestObject" x="179" y="206" width="130" height="17" uuid="604a15ad-826c-42f6-80d9-65e36f2dca69"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{cobros})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "CobroDs.jasper"]]></subreportExpression>
+			</subreport>
+			<textField>
+				<reportElement x="4" y="133" width="300" height="20" uuid="0b9e77ba-9000-4125-a3ac-79fd4934c4e1"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["# SEGUIMIENTO  " +($F{historico_tramite_id}==null?"":$F{historico_tramite_id})]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="3" y="60" width="286" height="15" uuid="ce1e0c4c-2bba-4ec9-8662-a17aaf561f0e"/>
+				<subreportParameter name="titulo_reporte">
+					<subreportParameterExpression><![CDATA[$F{ren_tipo_liquidacion_nombre_titulo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="liquidacion">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "rubros_Registro_Propiedad_Merc.jasper"]]></subreportExpression>
+			</subreport>
+			<textField isBlankWhenNull="true">
+				<reportElement x="328" y="36" width="100" height="13" uuid="befab538-8715-433b-a828-24e78a2484af"/>
+				<textFieldExpression><![CDATA[$F{comprador_ci_ruc}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement x="4" y="206" width="135" height="20" uuid="6b3ba9fd-4ef9-4a10-8550-76476ece4efe"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="251">
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Top" onErrorType="Blank">
+				<reportElement x="348" y="140" width="80" height="41" uuid="842116b9-1117-4f16-8970-a5f576d335eb"/>
+				<imageExpression><![CDATA[$P{ruta_firmas}+ "TesoreroMunicipal.png"]]></imageExpression>
+			</image>
+			<subreport>
+				<reportElement x="455" y="132" width="58" height="13" uuid="be9026f1-f0a9-4691-9245-b997aee5103a"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$F{ren_pago_num_comprobante}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PAGO">
+					<subreportParameterExpression><![CDATA[5]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalle_cobro.jasper"]]></subreportExpression>
+			</subreport>
+			<textField>
+				<reportElement x="454" y="233" width="91" height="12" uuid="cc3e0317-a454-431e-9c57-e362a291514d"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{acl_user_usuario}==null?"":$F{acl_user_usuario}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="455" y="102" width="58" height="13" uuid="e590c256-6237-45bd-ac17-d953b93e7e13"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$F{ren_pago_num_comprobante}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PAGO">
+					<subreportParameterExpression><![CDATA[3]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalle_cobro.jasper"]]></subreportExpression>
+			</subreport>
+			<textField isBlankWhenNull="true">
+				<reportElement x="328" y="46" width="100" height="13" uuid="df14117d-eca4-4824-a5e4-021eec9acdec"/>
+				<textFieldExpression><![CDATA[$F{comprador_ci_ruc}]]></textFieldExpression>
+			</textField>
+			<textField pattern="yyyy">
+				<reportElement x="293" y="15" width="56" height="13" uuid="131888cc-8e17-43b3-9a52-13072ac5ecfd"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_fecha_pago}==null?"":$F{ren_pago_fecha_pago}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="444" y="47" width="110" height="13" uuid="b822556a-82e3-4d3b-b0b4-c0a1ddf07d18"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_liquidacion_id_liquidacion}==null?"":$F{ren_liquidacion_id_liquidacion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="4" y="137" width="300" height="20" uuid="22121b41-6aaa-4dec-82e8-05e0893cd8a9"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["# SEGUIMIENTO  " +($F{historico_tramite_id}==null?"":$F{historico_tramite_id})]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="455" y="71" width="58" height="12" uuid="88d6b869-e17d-4ca2-814c-5212dded2b70"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$F{ren_pago_num_comprobante}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PAGO">
+					<subreportParameterExpression><![CDATA[1]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalle_cobro.jasper"]]></subreportExpression>
+			</subreport>
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Top" onErrorType="Blank">
+				<reportElement x="348" y="210" width="80" height="41" uuid="9015eb02-7e97-433f-bb86-9809ea1f564a"/>
+				<imageExpression><![CDATA[$P{ruta_firmas}+"JefeRentas.png"]]></imageExpression>
+			</image>
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement x="4" y="210" width="135" height="20" uuid="39d886b8-e83a-424c-b4ed-74ed9f7a5a4a"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField pattern="$#,##0.00">
+				<reportElement x="455" y="150" width="100" height="20" uuid="6f86d015-4fac-42b5-85a4-57811f54ec7a"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_valor}== null?"$0.00":$F{ren_pago_valor}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="1" y="47" width="303" height="12" uuid="bea814f7-7957-45f1-8639-a232c5c47e0b"/>
+				<textElement>
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{comprador_ci_ruc}==null?$F{nombre_contribuyente}:(
+$F{comprador_es_persona}?
+($F{comprador_apellidos}==null?"": $F{comprador_apellidos})+ " " + ($F{comprador_nombres} == null? "" : $F{comprador_nombres})
+: ($F{comprador_razon_social} == null? "" : $F{comprador_razon_social}))]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="349" y="15" width="72" height="13" uuid="7a34801d-cbd6-4428-8a5d-814c7084d10f"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CAJA-"+($F{ren_pago_num_cajero}==null?"01":$F{ren_pago_num_cajero})]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="455" y="87" width="58" height="12" uuid="e1958315-a9d9-49df-b42b-da95067e629e"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$F{ren_pago_num_comprobante}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PAGO">
+					<subreportParameterExpression><![CDATA[4]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalle_cobro.jasper"]]></subreportExpression>
+			</subreport>
+			<textField pattern="dd">
+				<reportElement x="241" y="15" width="50" height="13" uuid="0d619dcc-3741-4a65-8c23-75eca5635af4"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_fecha_pago}==null?"":$F{ren_pago_fecha_pago}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="444" y="15" width="107" height="13" uuid="c6539b33-f358-4811-a642-34a635e69748"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_num_comprobante} == null? "" : $F{ren_pago_num_comprobante}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="455" y="117" width="58" height="13" uuid="3479c080-5fff-4b87-b5bb-482620978fc2"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$F{ren_pago_num_comprobante}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PAGO">
+					<subreportParameterExpression><![CDATA[2]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalle_cobro.jasper"]]></subreportExpression>
+			</subreport>
+			<textField isBlankWhenNull="true">
+				<reportElement x="4" y="159" width="300" height="25" uuid="8ce37f39-fd3f-4013-bab8-fba352c94642"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{observacion_liquidacion}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MMMM">
+				<reportElement x="192" y="15" width="45" height="13" uuid="6ecc931f-2a98-4fbb-8073-7315c79b8202"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_fecha_pago}== null?"":$F{ren_pago_fecha_pago}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Top" onErrorType="Blank">
+				<reportElement x="348" y="68" width="80" height="41" uuid="eca00850-8c9f-4482-87f9-f7879beaacb4"/>
+				<imageExpression><![CDATA[$P{ruta_firmas}+ "DirectorFinanciero.png"]]></imageExpression>
+			</image>
+			<subreport>
+				<reportElement stretchType="RelativeToTallestObject" x="179" y="210" width="130" height="17" uuid="35df3435-2273-4b6c-bee2-50b42772ea09"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{cobros})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "CobroDs.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="3" y="74" width="286" height="15" uuid="f3a5ab8a-1637-4845-9f36-89925f613ea8"/>
+				<subreportParameter name="titulo_reporte">
+					<subreportParameterExpression><![CDATA[$F{ren_tipo_liquidacion_nombre_titulo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="liquidacion">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "rubros_Registro_Propiedad_Merc.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="251">
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Top" onErrorType="Blank">
+				<reportElement x="348" y="148" width="80" height="41" uuid="1612531b-8810-4950-9beb-cf71963ce161"/>
+				<imageExpression><![CDATA[$P{ruta_firmas}+ "TesoreroMunicipal.png"]]></imageExpression>
+			</image>
+			<subreport>
+				<reportElement x="455" y="142" width="58" height="13" uuid="f9c426e7-a668-4763-b65f-43d9f6170f8b"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$F{ren_pago_num_comprobante}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PAGO">
+					<subreportParameterExpression><![CDATA[5]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalle_cobro.jasper"]]></subreportExpression>
+			</subreport>
+			<textField>
+				<reportElement x="454" y="239" width="91" height="12" uuid="f0ab9200-78be-4021-9403-2e8bbfeb59aa"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{acl_user_usuario}==null?"":$F{acl_user_usuario}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="455" y="112" width="58" height="13" uuid="618ed5cf-d56c-46d1-8e9a-79620da4fa43"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$F{ren_pago_num_comprobante}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PAGO">
+					<subreportParameterExpression><![CDATA[3]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalle_cobro.jasper"]]></subreportExpression>
+			</subreport>
+			<textField isBlankWhenNull="true">
+				<reportElement x="328" y="49" width="100" height="13" uuid="b703ae2e-310a-4512-a044-9b577cb363c1"/>
+				<textFieldExpression><![CDATA[$F{comprador_ci_ruc}]]></textFieldExpression>
+			</textField>
+			<textField pattern="yyyy">
+				<reportElement x="293" y="18" width="56" height="13" uuid="0d514e1c-f058-4d3a-9611-c955690321f4"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_fecha_pago}==null?"":$F{ren_pago_fecha_pago}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="444" y="50" width="110" height="13" uuid="a90769a9-1177-47ad-ad49-ba52d91a3a56"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_liquidacion_id_liquidacion}==null?"":$F{ren_liquidacion_id_liquidacion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="4" y="143" width="300" height="20" uuid="ce5b5cf7-0a05-4c98-9afc-763a4a531ef2"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["# SEGUIMIENTO  " +($F{historico_tramite_id}==null?"":$F{historico_tramite_id})]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="455" y="81" width="58" height="12" uuid="e35d97b6-3140-4e1b-9b31-0f166aeb9d36"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$F{ren_pago_num_comprobante}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PAGO">
+					<subreportParameterExpression><![CDATA[1]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalle_cobro.jasper"]]></subreportExpression>
+			</subreport>
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Top" onErrorType="Blank">
+				<reportElement x="348" y="210" width="80" height="41" uuid="b5f5daa6-b5f8-4c20-b7a1-891a2d635cde"/>
+				<imageExpression><![CDATA[$P{ruta_firmas}+"JefeRentas.png"]]></imageExpression>
+			</image>
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement x="4" y="214" width="135" height="20" uuid="40dad5b1-7049-4635-afa6-3fd9d4bdb18e"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField pattern="$#,##0.00">
+				<reportElement x="455" y="160" width="100" height="20" uuid="13812a65-7bb7-4b99-8a02-a6e28c26f3d0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_valor}== null?"$0.00":$F{ren_pago_valor}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="1" y="50" width="303" height="12" uuid="d456e165-394e-46bd-986e-257876bb059b"/>
+				<textElement>
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{comprador_ci_ruc}==null?$F{nombre_contribuyente}:(
+$F{comprador_es_persona}?
+($F{comprador_apellidos}==null?"": $F{comprador_apellidos})+ " " + ($F{comprador_nombres} == null? "" : $F{comprador_nombres})
+: ($F{comprador_razon_social} == null? "" : $F{comprador_razon_social}))]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="349" y="18" width="72" height="13" uuid="cdd85d4e-caeb-4881-be6b-886ec4611e50"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CAJA-"+($F{ren_pago_num_cajero}==null?"01":$F{ren_pago_num_cajero})]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="455" y="97" width="58" height="12" uuid="9c93c9a2-c1a3-4b4f-b988-2a226ac69d97"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$F{ren_pago_num_comprobante}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PAGO">
+					<subreportParameterExpression><![CDATA[4]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalle_cobro.jasper"]]></subreportExpression>
+			</subreport>
+			<textField pattern="dd">
+				<reportElement x="241" y="18" width="50" height="13" uuid="07c6f11d-442a-4e33-acc9-3ad205bfc334"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_fecha_pago}==null?"":$F{ren_pago_fecha_pago}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="444" y="18" width="107" height="13" uuid="ecf49aac-a946-49c9-a11c-e92318884bb0"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_num_comprobante} == null? "" : $F{ren_pago_num_comprobante}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="455" y="127" width="58" height="13" uuid="0d96f84e-5d7c-40e3-8a0f-74157c8a2906"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$F{ren_pago_num_comprobante}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PAGO">
+					<subreportParameterExpression><![CDATA[2]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalle_cobro.jasper"]]></subreportExpression>
+			</subreport>
+			<textField isBlankWhenNull="true">
+				<reportElement x="4" y="165" width="300" height="25" uuid="24bcf59f-bf9b-4de5-bdb0-ec03299595ef"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{observacion_liquidacion}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MMMM">
+				<reportElement x="192" y="18" width="45" height="13" uuid="008a19a3-3aea-4f20-96c3-2f2596232908"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_fecha_pago}== null?"":$F{ren_pago_fecha_pago}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Top" onErrorType="Blank">
+				<reportElement x="348" y="81" width="80" height="41" uuid="4dcb098b-7b75-431f-af4c-b1f4554aad90"/>
+				<imageExpression><![CDATA[$P{ruta_firmas}+ "DirectorFinanciero.png"]]></imageExpression>
+			</image>
+			<subreport>
+				<reportElement stretchType="RelativeToTallestObject" x="179" y="206" width="130" height="17" uuid="5d644ec9-22b0-4903-917f-37dde1697db9"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{cobros})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "CobroDs.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="3" y="83" width="286" height="15" uuid="59a99069-b225-4c1e-8aec-bedf0f05a9f6"/>
+				<subreportParameter name="titulo_reporte">
+					<subreportParameterExpression><![CDATA[$F{ren_tipo_liquidacion_nombre_titulo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="liquidacion">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "rubros_Registro_Propiedad_Merc.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>

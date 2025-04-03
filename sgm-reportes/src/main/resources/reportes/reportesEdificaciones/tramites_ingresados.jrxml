@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="tramites_ingresados" pageWidth="842" pageHeight="600" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2629ed2d-bbb5-4c29-a65b-351ff0232724">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="111"/>
+	<property name="ireport.y" value="76"/>
+	<parameter name="LOGO_URL" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\Users\\origami\\Documents\\NetBeansProjects\\sgm\\src\\main\\webapp\\css\\homeIconsImages\\logo.jpg"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FECHA_INICIO" class="java.lang.String">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FECHA_FIN" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DEPARTAMENTO" class="java.lang.Long"/>
+	<parameter name="ESTADO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    ht.id AS numtramite,
+    (CASE WHEN ht.urbanizacion IS NOT NULL THEN
+        (SELECT C.NOMBRE FROM sgm_app.CAT_CIUDADELA C WHERE C.ID = ht.urbanizacion)
+      ELSE
+        (SELECT C.NOMBRE FROM sgm_app.CAT_CIUDADELA C LEFT JOIN sgm_app.CAT_PREDIO P ON (P.CIUDADELA = C.ID) WHERE P.NUM_PREDIO = ht.num_predio)
+      END ) AS ciudadela,
+    (CASE WHEN ht.urbmz IS NOT NULL AND ht.urbsolar IS NOT NULL THEN
+        ('Mz ' || ht.urbmz || ' Sl ' || ht.urbsolar)
+      WHEN ht.urbmz IS NULL THEN
+        ('Mz - Sl ' || ht.urbsolar)
+      WHEN ht.urbsolar IS NULL THEN
+        ('Mz ' || ht.urbmz || ' Sl -')
+      ELSE
+        'Mz - Sl -'
+      END ) AS mzsl,
+    (CASE WHEN ht.nombre_propietario IS NOT NULL THEN
+        ht.nombre_propietario
+      ELSE
+        (SELECT E.NOMBRES || ' ' || E.APELLIDOS FROM sgm_app.CAT_ENTE E WHERE E.ID = ht.solicitante)
+      END) AS solicitante,
+    ot.tipo_tramite AS tipotramite,
+    ot.necesita_valija AS tienevalija,
+    ht.tipo_tramite_nombre AS tipotramite_nombre_principal ,
+    ht.fecha AS fechainicio,
+    ht.estado AS estadotramite,
+    (SELECT razon_social from sgm_application.empresa) AS nombre_empresa
+FROM sgm_flow.historico_tramites as ht left join sgm_flow.otros_tramites as ot ON (ot.id = ht.sub_tipo_tramite)
+    where ht.tipo_tramite in (select d.id from sgm_app.ge_tipo_tramite d where d.departamento = $P{DEPARTAMENTO}) and
+    lower(ht.estado) = lower($P{ESTADO}) and
+    TO_CHAR(ht.fecha, 'YYYY-MM-DD') BETWEEN $P{FECHA_INICIO} AND $P{FECHA_FIN}
+order by ht.id ASC]]>
+	</queryString>
+	<field name="numtramite" class="java.lang.Long"/>
+	<field name="ciudadela" class="java.lang.String"/>
+	<field name="mzsl" class="java.lang.String"/>
+	<field name="solicitante" class="java.lang.String"/>
+	<field name="tipotramite" class="java.lang.String"/>
+	<field name="tienevalija" class="java.lang.Boolean"/>
+	<field name="tipotramite_nombre_principal" class="java.lang.String"/>
+	<field name="fechainicio" class="java.sql.Timestamp"/>
+	<field name="estadotramite" class="java.lang.String"/>
+	<field name="nombre_empresa" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="129" splitType="Stretch">
+			<image>
+				<reportElement x="29" y="3" width="123" height="103" uuid="2a2752ec-d919-4581-b32a-5abf9f6aa835"/>
+				<imageExpression><![CDATA[$P{LOGO_URL}]]></imageExpression>
+			</image>
+			<line>
+				<reportElement x="0" y="116" width="802" height="1" uuid="4a076cfe-0ae0-4da2-a814-1ac2fa40a866"/>
+				<graphicElement>
+					<pen lineWidth="3.0" lineStyle="Double" lineColor="#00CC00"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement x="158" y="0" width="644" height="116" uuid="e9152471-4299-4726-ad3d-1b5928334249"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_empresa}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="478" y="0" width="248" height="20" uuid="ac05bf97-50d0-4ec5-a8b1-706d61699498"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tipo Trámite]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="303" y="0" width="175" height="20" uuid="3f6e5915-c898-469b-9197-c5611622a784"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Solicitante]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="726" y="0" width="76" height="20" uuid="c4f5bea0-516f-4a61-b6c2-817701ec1f9d"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="225" y="0" width="78" height="20" uuid="12d621fc-e69e-42a2-989c-41e4cb06b846"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Mz y Sl]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="54" height="20" uuid="7b8d6ade-f7e6-4a02-93aa-e0da17b87f93"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[# Trámite]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="54" y="0" width="171" height="20" uuid="3232bc3b-cf50-479f-ad72-674a71fdb44e"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ciudalela]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="225" y="0" width="78" height="20" uuid="5e3a6d00-812a-416c-8744-96dc02494708"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{mzsl}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="303" y="0" width="175" height="20" uuid="6a3e5ccf-d82b-40f1-8e86-7d67aa1d5f7b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{solicitante}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="478" y="0" width="248" height="20" uuid="d3656c1c-699c-44c6-a91b-e994f07c470d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipotramite_nombre_principal}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="726" y="0" width="76" height="20" uuid="c0488c75-8b85-490a-a879-de1b22f0224f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fechainicio}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="0" y="0" width="54" height="20" uuid="468d69e9-4e79-40b7-9396-0a620b6bccb5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numtramite}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="54" y="0" width="171" height="20" uuid="7143d270-8156-4ac8-8198-c869dfd97466"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ciudadela}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

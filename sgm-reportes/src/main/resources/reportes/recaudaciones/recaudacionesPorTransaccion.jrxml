@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="recaudacionesPorTransaccion" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="48aaf8b6-8a28-4322-a564-d270f82162f3">
+	<property name="ireport.zoom" value="1.2396694214876032"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="LOGO_URL" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\Users\\SUPERGOLD\\Documents\\NetBeansProjects\\sgm\\src\\main\\webapp\\css\\homeIconsImages\\logo.jpg"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FECHA" class="java.lang.String"/>
+	<parameter name="USUARIO" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\SUPERGOLD\\Documents\\NetBeansProjects\\sgm\\src\\main\\webapp\\reportes\\recaudaciones\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DESDE" class="java.lang.String"/>
+	<parameter name="HASTA" class="java.lang.String"/>
+	<parameter name="FECHA_CIERRE" class="java.util.Date"/>
+	<parameter name="MUNICIPIO" class="java.lang.String"/>
+	<parameter name="SUBREPORT_TITLE" class="java.lang.String"/>
+	<parameter name="LOGO2" class="java.lang.String"/>
+	<parameter name="LOGO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select id as id_usuario,usuario,
+    (SELECT razon_social from sgm_application.empresa) AS nombre_empresa from sgm_app.acl_user where
+(CASE WHEN $P{USUARIO} IS NOT NULL THEN usuario = $P{USUARIO} ELSE usuario = 'admin' END)]]>
+	</queryString>
+	<field name="id_usuario" class="java.lang.Long"/>
+	<field name="usuario" class="java.lang.String"/>
+	<field name="nombre_empresa" class="java.lang.String"/>
+	<title>
+		<band height="78" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="0" width="555" height="77" uuid="df89a9f6-aebb-43dc-8ad7-187e6caeccb5"/>
+				<subreportParameter name="LOGO2">
+					<subreportParameterExpression><![CDATA[$P{LOGO2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SUB_TITLE">
+					<subreportParameterExpression><![CDATA["INFORME DIARIO DE RECAUDACIONES"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="LOGO">
+					<subreportParameterExpression><![CDATA[$P{LOGO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_TITLE} + "titleReporte2.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="46">
+			<staticText>
+				<reportElement x="0" y="0" width="553" height="15" uuid="0762073b-7f00-4385-a84d-7eb364ebb128"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE RECAUDACIONES POR TRANSACCIÓN]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="15" width="553" height="15" uuid="4bd11785-8c6a-4639-96b6-06e766b8e35b"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["FECHA CIERRE DESDE: " + $P{DESDE} + " - HASTA: " + $P{FECHA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="30" width="555" height="15" uuid="1796f8dd-31ae-4c51-9061-bc87c94a4d0c">
+					<printWhenExpression><![CDATA[$P{USUARIO} != null && $P{USUARIO} != "jquinto" && $P{USUARIO} !="admin"]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CAJA: " + $F{usuario}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="80" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="10" width="555" height="50" uuid="a38b3b4e-7a66-4ec7-af8e-ffd261bd6ebc"/>
+				<subreportParameter name="HASTA">
+					<subreportParameterExpression><![CDATA[$P{HASTA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="USUARIO">
+					<subreportParameterExpression><![CDATA[($P{USUARIO}==null || $P{USUARIO}=="jquinto" || $P{USUARIO}=="admin" || $P{USUARIO}=="gvalero"|| $P{USUARIO}=="vpowhing" || $P{USUARIO}=="dvillacis" || $P{USUARIO}=="ecruz")? null: $F{id_usuario}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DESDE">
+					<subreportParameterExpression><![CDATA[$P{DESDE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "recaudacionesPorTransaccion_subreport1.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="6" width="75" height="14" uuid="74f82a76-2830-4bc1-8a56-28db03aea040"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Fecha impresión:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy h.mm a">
+				<reportElement x="75" y="6" width="152" height="14" uuid="228dcb78-e54f-44e3-8931-0b0bf774b6ad"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{FECHA_CIERRE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="433" y="6" width="80" height="14" uuid="72518cfc-7c3f-481e-aabc-3e4db338a3be"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA["Pág. "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="513" y="6" width="40" height="14" uuid="b0e3889c-fde0-4f96-a062-020c4ed4f9be"/>
+				<textElement verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="3" width="555" height="1" uuid="5a7a3060-9ae8-46f4-aef3-27001aeca204"/>
+			</line>
+		</band>
+	</pageFooter>
+</jasperReport>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="actaEspecies" language="groovy" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="30" bottomMargin="20" uuid="0bb6cf93-1b51-462a-b79f-ae2c0ac22a1b">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="78"/>
+	<parameter name="LOGO" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\Anyelo\\Desktop\\NetBeansProjects\\sgm\\src\\main\\webapp\\reportes\\recaudaciones\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ID_ACTA" class="java.lang.Long"/>
+	<parameter name="TESORERO" class="java.lang.String"/>
+	<parameter name="CAJERO" class="java.lang.String"/>
+	<parameter name="NOMBRECANTON" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select es.num_acta, es.anio, es.fecha_ingreso, es.total, es.usuario_ingreso,
+    (SELECT razon_social from sgm_application.empresa) AS nombre_empresa
+from sgm_financiero.rec_actas_especies as es
+left join sgm_app.acl_user as us on (us.id = es.usuario_asignado)
+where es.id = $P{ID_ACTA}]]>
+	</queryString>
+	<field name="num_acta" class="java.lang.Integer"/>
+	<field name="anio" class="java.lang.Integer"/>
+	<field name="fecha_ingreso" class="java.sql.Timestamp"/>
+	<field name="total" class="java.math.BigDecimal"/>
+	<field name="usuario_ingreso" class="java.lang.String"/>
+	<field name="nombre_empresa" class="java.lang.String"/>
+	<title>
+		<band height="79" splitType="Stretch">
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="2" y="1" width="168" height="57" uuid="1c5ace1d-09cd-4167-aedf-5da3f14bf165"/>
+				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="143" y="58" width="255" height="20" uuid="9e1f310a-0279-442f-b4dd-c3d2fb5a39af"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ACTA DE ENTREGA/RECEPCIÓN]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="398" y="58" width="137" height="20" uuid="3b4daa21-4d8b-4643-80ce-15c3185e5900"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["No " + $F{num_acta} + " - " + $F{anio}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement x="170" y="0" width="364" height="58" uuid="8ea0a83a-a51f-4f6c-b1dd-36e5c65f0b14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_empresa}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="225" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="7" width="535" height="20" uuid="5219865b-e6c5-4714-9c18-cd4a106a86d9"/>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Recibí de la Sr(a) TESORERO(A) MUNICIPAL las siguientes especies y/o carpetas:]]></text>
+			</staticText>
+			<textField pattern="dd MMMMM yyyy">
+				<reportElement positionType="Float" x="104" y="205" width="217" height="20" uuid="41785346-63bb-4322-bf6d-3194cfa4b525"/>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{fecha_ingreso}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="66" y="131" width="170" height="16" uuid="48eda4c4-8eef-4a28-8132-6c2a2e75d03a"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[ENTREGADO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="309" y="131" width="170" height="16" uuid="57fb2e85-824c-4cb7-b93e-d0efb66c3821"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[RECIBIDO]]></text>
+			</staticText>
+			<textField>
+				<reportElement positionType="Float" x="66" y="147" width="170" height="16" uuid="28dc38ba-72ab-4afe-8e4d-831a077bd4a2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TESORERO}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="309" y="147" width="170" height="16" uuid="b5c5f83d-8bac-4708-b419-5a17570bc311"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{CAJERO}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="0" y="36" width="535" height="21" uuid="62d18311-21d2-436c-a934-de731328f6f1"/>
+				<subreportParameter name="ID_ACTA">
+					<subreportParameterExpression><![CDATA[$P{ID_ACTA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TOTAL">
+					<subreportParameterExpression><![CDATA[$F{total}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "actaEspecies_subreport1.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement positionType="Float" x="66" y="163" width="170" height="16" uuid="fa2d178d-2625-4d95-806f-66644e72f0c8"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[TESORERO(A)]]></text>
+			</staticText>
+			<textField>
+				<reportElement positionType="Float" x="0" y="205" width="105" height="20" uuid="41785346-63bb-4322-bf6d-3194cfa4b525"/>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{NOMBRECANTON}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="20">
+			<textField>
+				<reportElement x="414" y="0" width="80" height="20" uuid="4124d910-b266-45b2-b575-7d4109bf6cae"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["Pág. "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="494" y="0" width="40" height="20" uuid="df334e7d-6630-495f-b427-0013caa52455"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2" y="0" width="234" height="20" uuid="caa4474f-0b32-4bce-a041-f0c726f0dc06"/>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["Usuario ingreso: " + $F{usuario_ingreso}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

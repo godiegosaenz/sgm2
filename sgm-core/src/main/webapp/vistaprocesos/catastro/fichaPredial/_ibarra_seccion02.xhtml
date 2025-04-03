@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:cs="http://xmlns.jcp.org/jsf/composite/dialog">
+
+    <h:form id="frmEscrituras">
+        <div align="right">
+            <p:remoteCommand name="rc2" immediate="false" async="true" actionListener="#{fichaPredial.guardarDatosPredio('ACTUALIZACION DE IDENTIFICACION LEGAL', fichaPredial.informante)}" rendered="#{fichaPredial.editable}" />
+            <p:commandButton id="btnS2" value="Guardar" rendered="#{fichaPredial.editable}"  
+                             icon="ui-icon-disk"  actionListener="#{fichaPredial.openDialog}" 
+                             action="#{fichaPredial.setRemotteCommand('rc2')}" update="frmSubirDocumentosDialog" />
+        </div>
+        <p:fieldset legend="Tenencia" toggleable="true">
+            <p:panelGrid columns="2" layout="grid" style="width: 100%">
+                <h:panelGroup layout="block">
+                    <h:outputText value="Tenencia :" style="font-weight: bolder" class="DispBlock Wid100"/>
+                    <p:selectOneMenu value="#{fichaPredial.predio.propiedad}" effect="fade" converter="entityConverter" disabled="#{!fichaPredial.editable and !userSession.isAdmin}">
+                        <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+                        <f:selectItems value="#{fichaPredial.tiposPropiedad}" var="propiedad" itemLabel="#{propiedad.nombre}" itemValue="#{propiedad}"/>
+                    </p:selectOneMenu>
+                </h:panelGroup>
+                <cs:compInputSelect bind="#{fichaPredial.predio.formaAdquisicion}" catalogo="predio-formaadquisicion"
+                                    label="Forma de Adquisición o Tenencia" defaultValue="15" disabled="#{!fichaPredial.editable and !userSession.isAdmin}"/>
+            </p:panelGrid>
+        </p:fieldset>
+        <p:fieldset legend="Financiamiento" toggleable="true">
+            <p:panelGrid columns="4"  layout="grid">
+                <!--                            <h:outputText value="Recurso propios :" style="font-weight: bolder"/>
+                                            <p:selectBooleanCheckbox value="#{fichaPredial.caracteristicas.extras.recursosPropios}" />
+                                            <h:outputText value="Tiene Hipoteca :" style="font-weight: bolder"/>
+                                            <p:selectBooleanCheckbox value="#{fichaPredial.caracteristicas.tieneHipoteca}" />
+                                            <h:outputText id="lbinstHip" value="Institución Hipoteca :" style="font-weight: bolder" />
+                                            <p:inputText id="instHip" value="#{fichaPredial.caracteristicas.instFinancieraHip}" style="width: 75%; " />-->
+                <cs:decorateForm id="cod_prest" label="Código de prestamo:" bind="#{fichaPredial.prestamoPredio.codigoPrestamo}" 
+                                 integerValidate="true" readonly="true" />
+                <cs:decorateForm id="inst_prest" label="Institucion Prestamo:" bind="#{fichaPredial.prestamoPredio.codFinanPrestamo.valor}" 
+                                 readonly="true" />
+                <cs:decorateForm id="numTra_prest" label="Número de trámite:" bind="#{fichaPredial.prestamoPredio.numeroTramite}" 
+                                 readonly="true" />
+                <h:panelGroup layout="block">
+                    <h:outputText value="Fecha de prestamo:" style="font-weight: bolder" class="DispBlock Wid100"/>
+                    <p:inputText value="#{fichaPredial.prestamoPredio.fechaConsecionPrestamo}" style="width: 50%; " readonly="true" >
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </p:inputText>
+                </h:panelGroup>
+                <h:panelGroup layout="block">
+                    <h:outputText value="Porcentaje de prestamo:" style="font-weight: bolder" class="DispBlock Wid100"/>
+                    <pe:inputNumber value="#{fichaPredial.prestamoPredio.porcentajeExonPrestamo}" symbol="%" symbolPosition="r" style="width: 75%; " readonly="true" />
+                </h:panelGroup>
+                <cs:decorateForm id="plazo_prest" label="Plazo del prestamo:" bind="#{fichaPredial.prestamoPredio.plazoPrestamo}" 
+                                 readonly="true" />
+                <cs:decorateForm id="tasa_prest" label="Tasa del trámite:" bind="#{fichaPredial.prestamoPredio.tasaInteresPrestamo}" 
+                                 readonly="true" />
+                <cs:decorateForm id="mod_prest" label="Modalidad Prestamo:" bind="#{fichaPredial.prestamoPredio.modalidadPrestamo.valor}" 
+                                 readonly="true" />
+                <cs:decorateForm id="valor_prest" label="Valor del prestamo:" bind="#{fichaPredial.prestamoPredio.estadoPrestamo.valor}" 
+                                 readonly="true" />
+                <cs:decorateForm id="estado_prest" label="Estado del prestamo:" bind="#{fichaPredial.prestamoPredio.comentarioEstadoPrestamo}" 
+                                 readonly="true" />
+            </p:panelGrid>
+        </p:fieldset>
+        <p:fieldset legend="Predio Sin Título" toggleable="true">
+            <p:panelGrid columns="3" layout="grid" style="width: 100%">
+                <h:panelGroup layout="block">
+                    <h:outputText value="Requiere Perfeccionamiento :" style="font-weight: bolder" class="DispBlock Wid100"/>
+                    <p:selectOneMenu value="#{fichaPredial.predio.requierePerfeccionamiento}" effect="fade" disabled="#{!fichaPredial.editable}">
+                        <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+                        <f:selectItem itemLabel="Si" itemValue="#{true}"/>
+                        <f:selectItem itemLabel="No" itemValue="#{false}"/>
+                    </p:selectOneMenu>
+                </h:panelGroup>
+                <cs:decorateForm id="anio_sinPerf" label="Años sin Perfeccionamiento:" bind="#{fichaPredial.predio.aniosSinPerfeccionamiento}" 
+                                readonly="#{!fichaPredial.editable}" integerValidate="true" />
+                <cs:decorateForm id="anioPoss" label="Años en Posesión:" bind="#{fichaPredial.predio.aniosPosesion}" 
+                                 readonly="#{!fichaPredial.editable}" integerValidate="true" />
+                <cs:compInputSelect bind="#{fichaPredial.predio.tipoPoseedor}" catalogo="predio-tipo_poseedor"
+                                    label="Tipo de Poseedor" defaultValue="15" next="tdatos:frmEscrituras:puebloEtnia:puebloEtnia-form" disabled="#{!fichaPredial.editable}"/>
+                <cs:decorateForm id="puebloEtnia" label="Nombre Pueblo/Etnia:" bind="#{fichaPredial.predio.nombrePuebloEtnia}" 
+                                 readonly="#{!fichaPredial.editable}" />  
+            </p:panelGrid>
+        </p:fieldset>
+
+        <p:fieldset legend="Propietario(s)" toggleable="true">
+            <div align="right">
+                <p:commandButton value="Agregar propietario" iconPos="ui-icon-person" actionListener="#{fichaPredial.propietario(null)}" styleClass="btnStyle" 
+                                 disabled="#{!userSession.isAdmin}" rendered="#{fichaPredial.editable}" update="tdatos:frmEscrituras:dtPropietarios">
+                    <p:ajax event="dialogReturn" listener="#{fichaPredial.procesarPropietario}" update="tdatos:frmEscrituras:dtPropietarios"  />
+                </p:commandButton>
+            </div>
+            <p:dataTable id="dtPropietarios" value="#{fichaPredial.propietarios}" var="pp" reflow="true" 
+                         paginator="true" rows="5" paginatorPosition="top" style="width: 100%"
+                         paginatorAlwaysVisible="false">
+                <!--                        <p:column headerText="Tipo Ente">
+                                            <h:outputText value="Natural" rendered="#{pp.ente.esPersona}"/>
+                                            <h:outputText value="Juridica" rendered="#{!pp.ente.esPersona}"/>
+                                        </p:column>-->
+                <p:column headerText="DNI">
+                    <h:outputText value="#{pp.ciuCedRuc}"/>
+                </p:column>
+                <p:column headerText="Descripcion">
+                    <h:outputText value="#{pp.extras.ciudadano.ciuNombreCompleto}"  style="text-transform: uppercase"/>
+                </p:column>
+                <p:column headerText="Porcentaje Posesión" style="text-align:right">
+                    <h:outputText value="#{pp.porcentajePosecion}%" style="text-transform: uppercase; text-align:right "/>
+                </p:column>
+                <p:column headerText="Accion" style="text-align: center" rendered="#{fichaPredial.editable}">
+                    <p:commandLink title="Editar" actionListener="#{fichaPredial.propietario(pp)}" >
+                        <p:ajax event="dialogReturn" listener="#{fichaPredial.procesarPropietario}" update="tdatos:frmEscrituras"/>
+                        <p:graphicImage value="/css/homeIconsImages/edicion.png" width="25" height="25"/>                              
+                    </p:commandLink>
+                    <p:spacer width="10"/>
+                    <p:commandLink title="Quitar" 
+                                   update="tdatos:frmEscrituras:dtPropietarios" process="tdatos:frmEscrituras"
+                                   actionListener="#{fichaPredial.observacionesEliminar(1)}" action="#{fichaPredial.setObjectoEliminar(pp)}">
+                        <p:graphicImage value="/css/homeIconsImages/delete.png" width="25" height="25"/>                              
+                    </p:commandLink>
+
+                </p:column>
+                <p:column headerText="Accion" style="text-align: center" rendered="#{!fichaPredial.editable}">
+                    <p:commandLink value="Ver" actionListener="#{fichaPredial.propietario(pp)}" >
+                    </p:commandLink>
+                </p:column>
+            </p:dataTable>
+        </p:fieldset>
+        <p:fieldset legend="Propietario Anterior">
+            <h:panelGrid columns="2" columnClasses="ui-cols-grid-3, ui-cols-grid-6" class="Wid100">
+                <cs:decorateForm id="ciRucPropAnt" label="Número de Identificación:" bind="#{fichaPredial.predio.cedulaPropAnterior}" 
+                                 readonly="true" />
+                <cs:decorateForm id="nomPropAnt" label="Nombres:" bind="#{fichaPredial.predio.propAnteriorPredio}" 
+                                 readonly="true" />
+            </h:panelGrid>
+        </p:fieldset>
+
+        <div align="right">
+            <p:commandButton id="btnAddEscritura" value="Agregar Escritura" rendered="#{fichaPredial.editable}" actionListener="#{fichaPredial.saveEscrituraControl(null)}" >
+                    <p:ajax event="dialogReturn" listener="#{fichaPredial.procesarEscritura}" update="tdatos:frmEscrituras:dtEscrituras"  />
+                </p:commandButton>
+        </div>
+        <p:dataTable id="dtEscrituras" value="#{fichaPredial.predio.catEscrituraCollection}" var="e" scrollable="true" style="width: 100%"
+                     emptyMessage="No se encontraron registros" paginator="true" paginatorPosition="top" 
+                     rows="20"   rowsPerPageTemplate="20,50,100" filterEvent="enter"
+                     paginatorAlwaysVisible="false"
+                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                     rowKey="#{e.idEscritura}" selectionMode="single" >
+            <p:column headerText="No. Repertorio">
+                <h:outputText value="#{e.numRepertorio}"/>
+            </p:column>    
+            <p:column headerText="Notaria">
+                <h:outputText value="#{e.notaria}"/>
+            </p:column>  
+            <p:column headerText="Fecha Escritura">
+                <h:outputText value="#{e.fecEscritura}"><f:convertDateTime pattern="dd-MM-yyyy " /></h:outputText>
+            </p:column> 
+            <p:column headerText="Fecha Inscripción">
+                <h:outputText value="#{e.fecInscripcion}"><f:convertDateTime pattern="dd-MM-yyyy " /></h:outputText>
+            </p:column> 
+            <p:column headerText="Area">
+                <h:outputText value="#{e.areaSolar}" ><f:convertNumber pattern="##############.####" locale="us"/></h:outputText>
+            </p:column>                         
+            <p:column headerText="Estado">
+                <h:outputText value="#{e.estado}"/>
+            </p:column>
+            <p:column headerText="Accion" style="text-align: center" rendered="#{fichaPredial.editable}">
+                <p:commandLink title="Editar" actionListener="#{fichaPredial.saveEscrituraControl(e)}" 
+                               rendered="#{fichaPredial.editable}">
+                    <p:ajax event="dialogReturn" listener="#{fichaPredial.procesarEscritura}" update="tdatos:frmEscrituras:dtEscrituras"  />
+                    <p:graphicImage value="/css/homeIconsImages/edicion.png" width="25" height="25"/>
+                </p:commandLink>
+            </p:column>                        
+        </p:dataTable>
+    </h:form>
+</html>

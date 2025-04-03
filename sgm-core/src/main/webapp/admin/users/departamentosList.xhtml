@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{departamentos.doPreRenderView()}"/>
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="content">
+        <center><h1>Departamentos</h1></center>
+        <h:form id="formDeps">
+            <div align="right">
+                <p:commandButton value="Nuevo" icon="ui-icon-plus" actionListener="#{departamentos.showDlgNewDep()}" styleClass="btnStyle"/>
+            </div>
+            <br/>
+            <center>
+                <p:dataTable id="dtuser" paginator="true" lazy="true" rows="10" rowsPerPageTemplate="10,30,50"  style="width: 95%"
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             value="#{departamentos.departamentosLazy}" var="dep" emptyMessage="No se encontró ningun Item"> 
+                    <p:column  headerText="Nombre" style="text-align: center;" filterBy="#{dep.nombre}" sortBy="#{dep.nombre}" filterStyle="width: 50%;">
+                        <p:outputLabel id="iduser" value="#{dep.nombre}"/>
+                    </p:column>
+                    <p:column  headerText="Estado" style="text-align: center;" width="100">
+                        <p:outputLabel value="Activo" rendered="#{dep.estado}"/>
+                        <p:outputLabel value="Inactivo" rendered="#{!dep.estado}"/>
+                    </p:column>
+                    <p:column  headerText="¿Es Dirección?" style="text-align: center;" width="100">
+                        <p:outputLabel value="SI" rendered="#{dep.direccion}"/>
+                        <p:outputLabel value="NO" rendered="#{!dep.direccion}"/>
+                    </p:column>
+                    <p:column headerText="Editar" style="text-align: center;" width="60">           
+                        <p:commandLink value="Editar" style="font-weight: bolder; color: #0033FF"
+                                       actionListener="#{departamentos.showDlgEditDep(dep)}"/>                            
+                    </p:column>
+                </p:dataTable>    
+            </center>
+        </h:form>
+
+        <p:dialog id="dlgNewDep" header="Departamento" widgetVar="dlgNDep" modal="true" resizable="false" 
+                  closeOnEscape="false" position="center">
+            <h:form id="formNewDep">
+                <p:panelGrid styleClass="noBorder" columns="2">
+                    <p:outputLabel value="Estado:" style="font-weight: bolder" rendered="#{!departamentos.nuevo}"/>
+                    <p:selectOneMenu value="#{departamentos.departamento.estado}" rendered="#{!departamentos.nuevo}">
+                        <f:selectItem itemLabel="Activo" itemValue="#{true}"/>
+                        <f:selectItem itemLabel="Inactivo" itemValue="#{false}"/>
+                    </p:selectOneMenu>
+                    <p:outputLabel value="Nombre:" style="font-weight: bolder"/>
+                    <p:inputText value="#{departamentos.departamento.nombre}" style="width: 200px"/>
+                    <p:outputLabel value="¿Es Dirección?" style="font-weight: bolder;color: #0033FF"/>
+                    <p:selectOneRadio value="#{departamentos.departamento.direccion}" style="width: 150px">
+                        <f:selectItem itemLabel="SI" itemValue="#{true}" />
+                        <f:selectItem itemLabel="NO" itemValue="#{false}" />
+                    </p:selectOneRadio>
+                    <p:outputLabel value="Departamento Pertenence a:" style="font-weight: bolder"/>
+                    <p:selectOneMenu value="#{departamentos.padre}" converter="entityConverter">
+                        <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+                        <f:selectItems value="#{departamentos.listDep}" var="depart" itemLabel="#{depart.nombre}" itemValue="#{depart}"/>
+                    </p:selectOneMenu>
+                </p:panelGrid>
+                <br/>
+                <div align="center">
+                    <p:commandButton value="Guardar" icon="ui-icon-disk" actionListener="#{departamentos.guardarDepartamento()}"/>
+                </div>
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+</ui:composition>

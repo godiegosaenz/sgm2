@@ -1,0 +1,324 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="top">
+        <h1>Permiso Construcción</h1>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="reqPerCons">
+
+            <p:panel id="pnlTipoConst" header="Tipo Permiso Contrucción" >
+                <center>
+                    <p:outputLabel value="Tipo Construcción" style="font-size: 15px; font-weight: bold"/>
+                    <br/>
+                    <p:selectOneMenu value="#{requisitosPC.tipoConst}" panelStyle="font-size: 12px" style="font-size: 12px" >  
+                        <f:selectItem itemLabel="Seleccione un Elemento..." itemValue="#{null}"/>  
+                        <f:selectItems value="#{requisitosPC.tipoConstruccion}" var="rpc" itemLabel="#{rpc.nombre}" itemValue="#{rpc.nombre}" />
+                        <p:ajax listener="#{requisitosPC.updateRequisito()}" />
+                    </p:selectOneMenu>
+                </center>
+            </p:panel>
+            <br/>
+
+            <p:panel id="pDatSol" header="Datos Solicitante" style="width: 100%" toggleable="true" rendered="#{requisitosPC.selectTipoConst}">
+                <center>
+                    <p:panelGrid columns="3" style="width: 50%; border: 0">
+                        <h:outputText value="No. Identificacion" style="text-align: right; font-weight: bold"/>
+                        <p:inputText value="#{requisitosPC.cedulaRuc}" style="text-align: center; width: 100%"/>
+                        <p:commandButton update="reqPerCons" actionListener="#{requisitosPC.buscarEnte()}" style="color: #ffffff; background: #616161 !important; font-weight: bold; height: 30px;" value="Buscar" />
+                    </p:panelGrid>
+                </center>
+                <h:panelGrid columns="5" rendered="#{requisitosPC.mostrarDatos}" cellpadding="10">
+                    <h:panelGrid columns="2">
+                        <p:outputLabel value="Nombres" rendered="#{requisitosPC.ente.esPersona}"/>
+                        <h:panelGroup rendered="#{requisitosPC.ente.esPersona}" >
+                            <p:inputText readonly="true" value="#{requisitosPC.ente.nombres}" style="width: 160px;"/>
+                            <p:commandButton value="Editar" icon="ui-icon-pencil" style="height: 30px;" styleClass="btnStyle" update="formEditEnt" onclick="PF('editEnt').show()"/>
+                        </h:panelGroup>
+                        <p:outputLabel value="Apellidos" rendered="#{requisitosPC.ente.esPersona}"/>
+                        <p:inputText readonly="true" value="#{requisitosPC.ente.apellidos}" rendered="#{requisitosPC.ente.esPersona}" style="width: 160px;"/>
+
+                        <p:outputLabel value="Razon Social" rendered="#{!requisitosPC.ente.esPersona}"/>
+                        <h:panelGroup rendered="#{!requisitosPC.ente.esPersona}">
+                            <p:inputText readonly="true" value="#{requisitosPC.ente.razonSocial}" style="width: 160px;"/>
+                            <p:commandButton value="Editar" icon="ui-icon-pencil" style="height: 30px;" styleClass="btnStyle" update="formEditEnt" onclick="PF('editEnt').show()"/>
+                        </h:panelGroup>
+
+                        <p:outputLabel value="Dirección" />
+                        <p:inputText readonly="true" value="#{requisitosPC.ente.direccion}" size="50" />
+                    </h:panelGrid>
+                    <p:spacer height="5" width="20"/>
+                    <p:dataTable id="dtCorr" value="#{requisitosPC.ente.enteCorreoCollection}" var="c" emptyMessage="No se encontro ningún correo" style="width: 255px;" >
+                        <p:column headerText="Correo" >
+                            <h:outputLabel value="#{c.email}"/>
+                        </p:column>
+                    </p:dataTable>
+                    <p:spacer height="5" width="20"/>
+                    <p:dataTable id="dtTel" value="#{requisitosPC.ente.enteTelefonoCollection}" var="t" emptyMessage="No se encontro ningún Teléfono" style="width: 180px;">
+                        <p:column headerText="Teléfono" >
+                            <h:outputLabel value="#{t.telefono}"/>
+                        </p:column>
+                    </p:dataTable>
+                </h:panelGrid>
+            </p:panel>
+            <br/>
+
+            <p:panel id="pInfSol" header="Información del Solicitante" rendered="#{requisitosPC.mostrarDatos}" toggleable="true" >
+
+                <p:outputLabel value="Se encuentra en la seccion de incio de trámite con predio, para cambiar presione el botón(Sin Predio)" rendered="#{requisitosPC.sinPredio}" style="font-size: 12px; font-weight: bold" />
+                <p:outputLabel value="Se encuentra en la seccion de incio de trámite sin predio, para cambiar presione el botón(Con Predio)" rendered="#{!requisitosPC.sinPredio}" style="font-size: 12px; font-weight: bold"/>
+                <p:spacer width="15"/>
+                <p:selectBooleanButton value="#{requisitosPC.sinPredio}"  offLabel="Con Predio" onLabel="Sin Predio" styleClass="btnStyle" >
+                    <p:ajax listener="#{requisitosPC.actualizar()}" />
+                </p:selectBooleanButton>
+                <br/>
+                <p:commandButton value="Buscar Predio" onclick="PF('selPredio').show()" style="height: 30px;" styleClass="btnStyle" icon="ui-icon-search" rendered="#{requisitosPC.sinPredio}" />
+                <br/>
+                <p:dataTable value="#{requisitosPC.predio}" var="p" emptyMessage="No tiene datos" style="width: 100%;" reflow="true"
+                             selection="#{requisitosPC.predioSelect}" rowKey="#{p.id}" rendered="#{requisitosPC.sinPredio}" paginator="true" rows="10" rowsPerPageTemplate="15,50,100" paginatorPosition="top"
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                    <p:ajax event="rowSelectRadio" listener="#{requisitosPC.onRowSelect}" update="reqPerCons:pnlgUbiPredo" /> 
+                    <p:column headerText="Seleccion" selectionMode="single" style="width: 8%; text-align: center" />
+                    <p:column headerText="Num Predio" width="15%" filterBy="#{p.numPredio}" filterMatchMode="contains">
+                        <h:outputText value="#{p.numPredio}"/>
+                    </p:column>
+                    <p:column headerText="Codigo Predial" width="22%">
+                        <h:outputText value="#{p.sector}.#{p.mz}.#{p.cdla}.#{p.mzdiv}.#{p.solar}.#{p.div1}.#{p.div2}.#{p.div3}.#{p.div4}.#{p.div5}.#{p.div6}.#{p.div7}.#{p.div8}.#{p.div9}" style="text-align: center"/>
+                    </p:column>
+                    <p:column headerText="Ciudadela">
+                        <p:outputLabel value="#{p.ciudadela.nombre}"/>
+                    </p:column>
+                    <p:column headerText="Manzana" width="10%" filterBy="#{p.urbMz}" filterMatchMode="contains">
+                        <p:outputLabel value="#{p.urbMz}"/>
+                    </p:column>
+                    <p:column headerText="Solar" width="10%" filterBy="#{p.urbSolarnew}" filterMatchMode="contains">
+                        <p:outputLabel value="#{p.urbSolarnew}"/>
+                    </p:column>
+                </p:dataTable>
+
+                <h:panelGroup rendered="#{requisitosPC.sinPredio}"  id="pnlgUbiPredo">
+                    <p:outputLabel value="Urbanización: " style="font-size: 15px; font-weight: bold"/>
+                    <p:selectOneMenu value="#{requisitosPC.ciudadela}" converter="entityConverter" panelStyle="font-size: 12px" style="font-size: 12px" >  
+                        <f:attribute name="name" value="CatCiudadela" />
+                        <f:selectItem itemLabel="Seleccione un Elemento..." itemValue="#{null}"/>  
+                        <f:selectItems value="#{requisitosPC.ciudadelas}" var="cd" itemLabel="#{cd.nombre}" itemValue="#{cd}" />
+                    </p:selectOneMenu>
+                    <p:outputLabel value="Manzana: " style="font-size: 15px; font-weight: bold" />
+                    <p:inputText value="#{requisitosPC.mzUrb}" />
+                    <p:outputLabel value="Solar: " style="font-size: 15px; font-weight: bold"/>
+                    <p:inputText value="#{requisitosPC.solarUrb}"/>
+                </h:panelGroup>
+
+                <h:panelGrid columns="6" cellspacing="20" rendered="#{!requisitosPC.sinPredio}" >
+                    <p:outputLabel value="Urbanización: " style="font-size: 15px; font-weight: bold"/>
+                    <p:selectOneMenu value="#{requisitosPC.ciudadela}" converter="entityConverter" panelStyle="font-size: 12px" style="font-size: 12px" >  
+                        <f:attribute name="name" value="CatCiudadela" />
+                        <f:selectItem itemLabel="Seleccione un Elemento..." itemValue="#{null}"/>  
+                        <f:selectItems value="#{requisitosPC.ciudadelas}" var="cd" itemLabel="#{cd.nombre}" itemValue="#{cd}" />
+                    </p:selectOneMenu>
+
+                    <p:outputLabel value="Manzana: " style="font-size: 15px; font-weight: bold" onblur=""/>
+                    <p:inputText value="#{requisitosPC.mzUrb}" />
+
+                    <p:outputLabel value="Solar: " style="font-size: 15px; font-weight: bold"/>
+                    <h:panelGroup>
+                        <p:inputText value="#{requisitosPC.solarUrb}"/>
+                        <p:commandButton value="Verificar" style="height: 30px;" styleClass="btnStyle" icon="ui-icon-search" rendered="#{!requisitosPC.sinPredio}" actionListener="#{requisitosPC.buscar()}" />
+                    </h:panelGroup>
+                </h:panelGrid>
+            </p:panel>
+            <br/>
+            <p:panel id="pnlPerConsMain" >
+                <p:panel id="pnlPerCons" header="Listado de Requisitos #{requisitosPC.tramite.descripcion}" rendered="#{requisitosPC.mostraReq}">
+                    <p:dataTable id="dtReqPermCons" value="#{requisitosPC.requisitos}" 
+                                 var="reqPC" reflow="true"
+                                 emptyMessage="No se encontró ningun Requisito" 
+                                 style="font-size: 11px; margin: 0;">
+                        <p:column headerText="Requisitos" style="width: 70%;" >
+                            <p:outputLabel id="reqNomb" value="#{reqPC.nombre}"/>
+                            <!--p:tooltip for="reqNomb" value="# {reqPC.nombre}" /-->
+                        </p:column>
+
+                        <p:column headerText="cargar Documentos" >
+                            <p:inputText value="#{validarRequisito.entrada}" rendered="#{reqPC.tieneComprobante}" >
+                            </p:inputText>
+                            <p:fileUpload rendered="#{!reqPC.tieneComprobante}" fileUploadListener="#{requisitosPC.handleFileUpload}" 
+                                          multiple="false" mode="advanced" fileLimit="1" label="Seleccionar"
+                                          uploadLabel="Subir" cancelLabel="Cancelar" skinSimple="true"
+                                          sizeLimit="35000000" allowTypes="#{appConfig.formatoArchivos}"/>
+
+                            <p:growl id="messages" showDetail="true"/>
+                        </p:column>
+                    </p:dataTable>
+
+                    <br/>
+                    <center>
+                        <p:commandButton value="Validar Archivos" actionListener="#{requisitosPC.validar()}" style="height: 30px;" styleClass="btnStyle" icon="ui-icon-check"/>
+                    </center>
+                </p:panel>      
+            </p:panel>
+        </h:form>
+
+        <p:dialog widgetVar="dlgObsPC" modal="true" appendTo="@(body)" width="500" 
+                  resizable="false" closable="true" closeOnEscape="true">
+            <h:form id="forObsPC">
+                <p:panel id="pnlObsPC" header="Ingrese sus observaciones" style="width: 100%">
+                    <p:commandButton value="Observación Default" icon="ui-icon-plus" styleClass="btnStyle" update="observ" actionListener="#{requisitosPC.observacionDefault()}"/>
+                    <div align="center">
+                        <p:inputTextarea id="observ" value="#{requisitosPC.observaciones.observacion}" 
+                                         rows="4" style="width: 100%; text-transform: uppercase" 
+                                         placeholder="Las observaciones son obligatorias para continuar con el tramite"/>
+                        <br/>
+                        <p:commandButton id="btnVal" value="Validar Requisitos" 
+                                         actionListener="#{requisitosPC.iniciarProceso()}" 
+                                         oncomplete="PF('dlgObsPC').hide()" style="color: #ffffff; background: #616161 !important; font-weight: bold; height: 30px" 
+                                         icon="ui-icon-circle-arrow-e" iconPos="s"/>
+                    </div>
+                </p:panel>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="editEnte" widgetVar="editEnt" modal="true" width="650" height="450">
+            <h:form id="formEditEnt">
+                <h:panelGrid columns="2">
+                    <p:outputLabel value="Es Persona Natural:"/>
+                    <p:selectBooleanCheckbox value="#{requisitosPC.ente.esPersona}" >
+                        <p:ajax update="formEditEnt"/>
+                    </p:selectBooleanCheckbox>
+
+                    <p:outputLabel value="Cédula/ruc "/>
+                    <p:inputMask mask="9999999999" value="#{requisitosPC.ente.ciRuc}" rendered="#{requisitosPC.ente.esPersona}"/>
+                    <p:inputMask mask="9999999999999" value="#{requisitosPC.ente.ciRuc}" rendered="#{!requisitosPC.ente.esPersona}"/>
+
+                    <p:outputLabel value="Nombres " rendered="#{requisitosPC.ente.esPersona}"/>
+                    <p:inputText value="#{requisitosPC.ente.nombres}" style="width: 160px;" rendered="#{requisitosPC.ente.esPersona}"/>
+
+                    <p:outputLabel value="Apellidos " rendered="#{requisitosPC.ente.esPersona}"/>
+                    <p:inputText value="#{requisitosPC.ente.apellidos}" rendered="#{requisitosPC.ente.esPersona}" style="width: 160px;"/>
+
+                    <p:outputLabel value="Razon Social " rendered="#{!requisitosPC.ente.esPersona}"/>
+                    <p:inputText  value="#{requisitosPC.ente.razonSocial}" rendered="#{!requisitosPC.ente.esPersona}" style="width: 160px;"/>
+
+                    <p:outputLabel value="Dirección " />
+                    <p:inputText value="#{requisitosPC.ente.direccion}" size="50" />
+                </h:panelGrid>
+                <p:spacer height="5" width="20"/>
+                <p:panelGrid columns="2" layout="grid">
+                    <p:dataTable id="dtCorr" value="#{requisitosPC.ente.enteCorreoCollection}" scrollHeight="65" scrollable="true" rowIndexVar="index"
+                                 var="c" emptyMessage="No se encontro ningún correo" style="width: 300px;" >
+                        <f:facet name="header">
+                            <p:inputText value="#{requisitosPC.correo.email}" style="width: 160px"  />
+                            <p:commandButton value="Agregar" icon="ui-icon-plus" update="dtCorr" styleClass="btnStyle" actionListener="#{requisitosPC.agregarCorreo()}" />
+                        </f:facet>
+                        <p:column headerText="Correo" >
+                            <h:outputLabel value="#{c.email}"/>
+                        </p:column>
+                        <p:column headerText="Eliminar" width="60" >
+                            <p:commandLink value="eliminar" actionListener="#{requisitosPC.eliminarCorreo(index)}"/>
+                        </p:column>
+                    </p:dataTable>
+                    <p:dataTable id="dtTel" value="#{requisitosPC.ente.enteTelefonoCollection}" scrollHeight="65" scrollable="true" rowIndexVar="index"
+                                 var="t" emptyMessage="No se encontro ningún Teléfono" style="width: 255px;">
+                        <f:facet name="header">
+                            <p:inputText value="#{requisitosPC.telefono.telefono}" />
+                            <p:commandButton value="Agregar" icon="ui-icon-plus" actionListener="#{requisitosPC.agregarTelefono()}" update="dtTel" styleClass="btnStyle"/>
+                        </f:facet>
+                        <p:column headerText="Teléfono" >
+                            <h:outputLabel value="#{t.telefono}"/>
+                        </p:column>
+                        <p:column headerText="Eliminar"  width="60" >
+                            <p:commandLink value="eliminar" actionListener="#{requisitosPC.eliminarTelefono(index)}"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:panelGrid>
+                <br/>
+                <p:commandButton value="Guardar" style="height: 30px;" styleClass="btnStyle" icon="ui-icon-disk" actionListener="#{requisitosPC.actualizarEnte()}"/>
+                <p:commandButton value="Cancelar" style="height: 30px;" styleClass="btnStyle" icon="ui-icon-close" onclick="PF('editEnt').hide()"/>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Seleccione Predio" widgetVar="selPredio" modal="true" resizable="false" width="85%" height="80%">
+            <h:form id="formPredSel">
+                <center>
+<!--                    <p:panelGrid id="pgReferencia" columns="2">
+                        <f:facet name="header">
+                            <h:outputText value="Ingrese el numero de predio para referenciarlo"/>
+                        </f:facet>
+                        <p:row>
+                            <p:column>
+                                <h:outputText value="Numero de predio"/>
+                            </p:column>
+                            <p:column>
+                                <p:inputText value="#{requisitosPC.predRef}" label="Numero de predio"/>
+                                <p:spacer width="5"/>
+                                <p:commandButton id="btnReferenciarPredio" value="Referenciar" icon="ui-icon-check" actionListener="#{requisitosPC.referenciarPredio()}" update="formPredSel"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>-->
+                    <p:selectOneRadio id="optconsult" value="#{requisitosPC.codUrban}" layout="custom">
+                        <f:selectItem itemLabel="Código Urbanistico" itemValue="#{true}" />
+                        <f:selectItem itemLabel="Código Predial" itemValue="#{false}" />
+                        <p:ajax update="formPredSel" event="change"/>
+                    </p:selectOneRadio>
+                    <h:panelGrid columns="4" style="margin: 0 auto">
+                        <p:radioButton id="opt1" for="optconsult" itemIndex="0"/>
+                        <h:outputLabel for="opt1" value="Código Urbanistico" />
+                        <p:radioButton id="opt2" for="optconsult" itemIndex="1"/>
+                        <h:outputLabel for="opt2" value="Código Predial" />
+                    </h:panelGrid>
+                </center>
+                <p:dataTable id="dtSelPred" paginator="true" lazy="true" style="text-align: center; font-size: 11px;" scrollHeight="400" scrollable="true"
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rows="15" rowsPerPageTemplate="15,50,100" value="#{requisitosPC.predioLazy}" var="pl"
+                             emptyMessage="No se encontró Movimientos" filterEvent="enter">
+                    <p:column headerText="Núm. Predio" filterBy="#{pl.numPredio}" sortBy="#{pl.numPredio}" filterStyle="width: 40px" style="width: 100px;">
+                        <p:outputLabel value="#{pl.numPredio}"/>
+                    </p:column>
+                    <p:column headerText="Sector" rendered="#{!requisitosPC.codUrban}" filterBy="#{pl.sector}" sortBy="#{pl.sector}" filterStyle="width: 30px" style="width: 80px;">
+                        <p:outputLabel value="#{pl.sector}"/>
+                    </p:column>
+                    <p:column headerText="Mz." rendered="#{!requisitosPC.codUrban}" filterBy="#{pl.mz}" sortBy="#{pl.mz}" filterStyle="width: 30px" style="width: 60px;">
+                        <p:outputLabel value="#{pl.mz}"/>
+                    </p:column>
+                    <p:column headerText="Cdla." rendered="#{!requisitosPC.codUrban}" filterBy="#{pl.cdla}" sortBy="#{pl.cdla}" filterStyle="width: 30px" style="width: 70px;">
+                        <p:outputLabel value="#{pl.cdla}"/>
+                    </p:column>
+                    <p:column headerText="Mz. Div." rendered="#{!requisitosPC.codUrban}" filterBy="#{pl.mzdiv}" sortBy="#{pl.mzdiv}" filterStyle="width: 30px" style="width: 80px;">
+                        <p:outputLabel value="#{pl.mzdiv}"/>
+                    </p:column>
+                    <p:column headerText="Solar" rendered="#{!requisitosPC.codUrban}" filterBy="#{pl.solar}" sortBy="#{pl.solar}" filterStyle="width: 30px" style="width: 70px;">
+                        <p:outputLabel value="#{pl.solar}"/>
+                    </p:column>
+                    <p:column headerText="Div. 1" rendered="#{!requisitosPC.codUrban}" filterBy="#{pl.div1}" sortBy="#{pl.div1}" filterStyle="width: 30px" style="width: 130px;">
+                        <p:outputLabel value="#{pl.div1},#{pl.div2},#{pl.div3},#{pl.div4},#{pl.div5},#{pl.div6},#{pl.div7},#{pl.div8},#{pl.div9},#{pl.phv},#{pl.phh}"/>
+                    </p:column>
+                    <p:column style="width: 260px;" headerText="Urbanización" filterBy="#{pl.ciudadela.nombre}" rendered="#{requisitosPC.codUrban}" filterOptions="#{fichaIngresoNuevo.lisUrbanizaciones}" filterMatchMode="exact" >
+                        <p:outputLabel value="#{pl.ciudadela.nombre}"/>
+                    </p:column>
+                    <p:column style="width: 70px;" headerText="Mz.Urb." rendered="#{requisitosPC.codUrban}" filterBy="#{pl.urbMz}" sortBy="#{pl.urbMz}" filterStyle="width: 40px">
+                        <p:outputLabel value="#{pl.urbMz}"/>
+                    </p:column>
+                    <p:column style="width: 80px;" headerText="Sl. Urb" rendered="#{requisitosPC.codUrban}" filterBy="#{pl.urbSolarnew}" sortBy="#{pl.urbSolarnew}" filterStyle="width: 40px">
+                        <p:outputLabel value="#{pl.urbSolarnew}"/>
+                    </p:column>
+                    <p:column headerText="Nombre Propietario" filterBy="#{pl.nomCompPago}" filterStyle="width: 300px">
+                        <p:outputLabel value="#{pl.nomCompPago}"/>
+                    </p:column>
+                    <p:column headerText="Dirección" rendered="#{!requisitosPC.codUrban}" style="width: 80px;" >
+                        <p:outputLabel value="Mz. #{pl.urbMz} Sl. #{pl.urbSolarnew}"/>
+                    </p:column>
+                    <p:column headerText="Seleccionar" style="width: 75px;" >
+                        <p:commandButton icon="ui-icon-circle-check" actionListener="#{requisitosPC.selectPredio(pl)}" style="color: #ffffff; background: #616161 !important; font-weight: bold; height: 15px;"/>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+
+</ui:composition>

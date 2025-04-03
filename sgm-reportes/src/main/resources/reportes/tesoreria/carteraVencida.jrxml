@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="carteraVencida" language="groovy" pageWidth="2271" pageHeight="595" orientation="Landscape" whenNoDataType="BlankPage" columnWidth="2231" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c3fe3fe3-6c80-4291-ae21-d8e7cca8bbe1">
+	<property name="ireport.zoom" value="0.75"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="MZ" class="java.lang.String"/>
+	<parameter name="SL" class="java.lang.String"/>
+	<parameter name="LOGO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ANIO_DESDE" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TEMPORAL" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PARROQUIA" class="java.lang.Short">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO_MUNICIPIO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ANIO_HASTA" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[SELECT
+p.parroquia,
+p.zona,
+p.sector,
+p.mz,
+p.solar,
+L.ID_LIQUIDACION,
+p.num_predio,
+l.anio,
+p.clave_cat as cod_predial,
+c.nombre as ciudadela,
+CASE
+WHEN l.comprador IS NULL THEN l.nombre_comprador
+ELSE upper(CASE e.es_persona WHEN TRUE THEN TRIM(COALESCE(e.nombres, '') || ' ' || COALESCE(e.apellidos, '')) ELSE TRIM(e.razon_social) END)
+END as contribuyente,
+'Mz: '||COALESCE(p.mz::text, '')||' Sl:'||COALESCE(p.solar::text, '') as direccion,
+COALESCE(p.calle , '')||'-'||COALESCE(p.calle_s, '') as CALLE,
+l.saldo,
+p.predialant,
+parroquia.descripcion parroquia_descripcion,
+
+(select valor from sgm_financiero.ren_det_liquidacion det where det.rubro = 2 and det.liquidacion = l.id) ipu,
+(select valor from sgm_financiero.ren_det_liquidacion det where det.rubro = 3 and det.liquidacion = l.id) admin_tas,
+(select valor from sgm_financiero.ren_det_liquidacion det where det.rubro = 4 and det.liquidacion = l.id) no_edif,
+(select valor from sgm_financiero.ren_det_liquidacion det where det.rubro = 7 and det.liquidacion = l.id) bomb,
+(select valor from sgm_financiero.ren_det_liquidacion det where det.rubro = 640 and det.liquidacion = l.id) parques,
+(select valor from sgm_financiero.ren_det_liquidacion det where det.rubro = 641 and det.liquidacion = l.id) alc,
+
+
+(
+
+SELECT
+
+	CASE WHEN (L.ANIO= EXTRACT(YEAR FROM NOW())) AND (EXTRACT(MONTH FROM NOW())<7) THEN
+
+			(ROUND( D.VALOR*(
+				SELECT PORCENTAJE FROM SGM_APP.CTLG_DESCUENTO_EMISION
+				WHERE NUM_MES=EXTRACT(MONTH FROM NOW())
+				AND NUM_QUINCENA=(CASE WHEN EXTRACT(DAY FROM NOW())>15 THEN 2 ELSE 1 END))/100,2)*(-1))
+
+		WHEN (L.ANIO<EXTRACT(YEAR FROM NOW())) THEN
+			((ROUND((D.VALOR*0.1),2) + ROUND( (L.SALDO) * (SELECT ROUND((PORCENTAJE / 100),2) FROM SGM_FINANCIERO.REN_INTERESES I WHERE I.ANIO = l.anio),2)))
+
+		ELSE (ROUND((D.VALOR*0.1),2))
+
+		END AS VALOR_COMPLEMENTO
+
+FROM SGM_FINANCIERO.REN_DET_LIQUIDACION D
+WHERE D.LIQUIDACION = L.ID AND D.RUBRO=2
+
+) AS recargo_interes
+
+
+FROM sgm_financiero.ren_liquidacion l
+INNER JOIN sgm_app.cat_predio p ON (l.predio=p.id)
+LEFT OUTER JOIN sgm_app.cat_ciudadela c ON (p.ciudadela=c.id)
+LEFT OUTER JOIN sgm_app.cat_ente e ON (l.comprador=e.id)
+LEFT OUTER JOIN sgm_app.cat_parroquia parroquia  ON parroquia.cod_nac =  p.parroquia
+WHERE
+l.tipo_liquidacion=13
+AND l.estado_liquidacion=2
+AND (CASE WHEN $P{PARROQUIA}IS NOT NULL THEN p.parroquia = $P{PARROQUIA} ELSE TRUE END)
+AND l.anio between $P{ANIO_DESDE} and $P{ANIO_HASTA}
+ORDER BY p.num_predio ASC, l.anio ASC , l.saldo DESC]]>
+	</queryString>
+	<field name="parroquia" class="java.lang.Integer"/>
+	<field name="zona" class="java.lang.Integer"/>
+	<field name="sector" class="java.lang.Integer"/>
+	<field name="mz" class="java.lang.Integer"/>
+	<field name="solar" class="java.lang.Integer"/>
+	<field name="id_liquidacion" class="java.lang.String"/>
+	<field name="num_predio" class="java.lang.Long"/>
+	<field name="anio" class="java.lang.Integer"/>
+	<field name="cod_predial" class="java.lang.String"/>
+	<field name="ciudadela" class="java.lang.String"/>
+	<field name="contribuyente" class="java.lang.String"/>
+	<field name="direccion" class="java.lang.String"/>
+	<field name="calle" class="java.lang.String"/>
+	<field name="saldo" class="java.math.BigDecimal"/>
+	<field name="predialant" class="java.lang.String"/>
+	<field name="parroquia_descripcion" class="java.lang.String"/>
+	<field name="ipu" class="java.math.BigDecimal"/>
+	<field name="admin_tas" class="java.math.BigDecimal"/>
+	<field name="no_edif" class="java.math.BigDecimal"/>
+	<field name="bomb" class="java.math.BigDecimal"/>
+	<field name="parques" class="java.math.BigDecimal"/>
+	<field name="alc" class="java.math.BigDecimal"/>
+	<field name="recargo_interes" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="112" splitType="Stretch">
+			<staticText>
+				<reportElement positionType="Float" x="65" y="3" width="1314" height="41" uuid="00c5bcd7-9d65-4309-9691-15e8d626eae4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA["GOBIERNO AUTONOMO DESCENTRALIZADO MUNICIPAL DEL CANTÓN SAN VICENTE"]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="65" y="44" width="1314" height="34" uuid="304e35fa-03ee-490d-9fc4-79853ad80565"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE CARTERA VENCIDA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1044" y="82" width="168" height="30" uuid="3a8a0654-fdb4-42bd-965b-42ea1ea93d45"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[PARROQUIA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1378" y="82" width="100" height="30" uuid="93b8e65a-caeb-4348-bd80-ee40eb7e6c2d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Total Emision]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1212" y="82" width="166" height="30" uuid="f3015889-90d2-4f57-8212-cec38463f22d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[DIRECCION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="876" y="82" width="168" height="30" uuid="b94283f1-c1c0-438f-ae41-e198e33ccd39"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[CALLES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="713" y="82" width="163" height="30" uuid="34094ae6-8817-40e1-a105-916826848b4e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[CONTRIBUYENTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="267" y="82" width="113" height="30" uuid="6596833b-d2be-47b7-8677-c0a7aeec69e9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[COD. PREDIAL ANTERIOR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="170" y="82" width="97" height="30" uuid="8d931b9d-1259-4c93-8c68-b771d634d8bc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[CODIGO PREDIAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="133" y="82" width="37" height="30" uuid="d23c86b6-74cb-4704-b7be-8f1eca936ff8"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[AÑO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="81" y="82" width="52" height="30" uuid="fc268fd0-c7ef-4124-aadb-e89bb198cdf3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[NUMERO PREDIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="82" width="81" height="30" uuid="86363331-c94f-44bc-8aec-d8b2e23d3748"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[TITULO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="380" y="82" width="83" height="30" uuid="e38c555c-368b-41e6-9b7d-a0edc0cf624c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[COD. PARROQUIA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="526" y="82" width="63" height="30" uuid="1dcc5511-8f37-472e-8e02-47b6694fd876"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[COD.SECTOR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="589" y="82" width="69" height="30" uuid="dbe3e3d6-1dc4-4e99-a5b5-6c138eaa1fe4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[COD. MANZANA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="658" y="82" width="55" height="30" uuid="97caf653-2165-4131-9747-9f58978c0460"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[COD. SOLAR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="463" y="82" width="63" height="30" uuid="f3f3a85c-90ea-48cb-b5dc-6adc4684c49d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[COD.ZONA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1978" y="82" width="100" height="30" uuid="02d2986d-0d0f-4480-a34a-eeba40ecf91e"/>
+				<box rightPadding="3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Cem-Alcantarillados Y Vias]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1878" y="82" width="100" height="30" uuid="07043d24-c157-412e-b469-ad10e5b8c5e8"/>
+				<box rightPadding="3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Cem-Parques Y Plazas]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1778" y="82" width="100" height="30" uuid="93d37918-a29c-4b32-92a1-b474c9491cef"/>
+				<box rightPadding="3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Bombero]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1678" y="82" width="100" height="30" uuid="65ce2ee6-d704-4478-bb94-95ba4c9f82dc"/>
+				<box rightPadding="3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Sl. no Edif.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1478" y="82" width="100" height="30" uuid="a3a11310-db79-46ee-a8a5-715701b1577d"/>
+				<box rightPadding="3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Imp. Predial]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1578" y="82" width="100" height="30" uuid="e5b431cf-af41-4110-8ac9-851d6b78df88"/>
+				<box rightPadding="3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Administrativo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2078" y="82" width="81" height="30" uuid="e602abac-31b8-42dd-8e0d-8e7a205ee694"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Recargo + Intereses]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2159" y="82" width="72" height="30" uuid="2fdb0652-4dd6-4fdc-89d2-54a20dd091f0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Total Pago]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="713" y="0" width="163" height="15" uuid="e84c9b25-27e7-4774-950e-1dfecd3669e8"/>
+				<box leftPadding="4"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{contribuyente}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="876" y="0" width="168" height="15" uuid="6018c5f8-db95-4026-85b8-fb3ea6258568"/>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{calle}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1212" y="0" width="166" height="15" uuid="be579cf6-d92a-445f-aebb-44b6b9c36f88"/>
+				<box leftPadding="4"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{direccion}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1378" y="0" width="100" height="15" uuid="fe498f1e-27ee-4a7d-bdd0-c2b610435b82"/>
+				<box rightPadding="4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{saldo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1044" y="0" width="168" height="15" uuid="b0caf623-9745-43ea-9e9c-432ed978c7bd"/>
+				<box leftPadding="4"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{parroquia_descripcion}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="81" height="15" uuid="558d6e42-4e20-4961-92e0-c6c2382c06fb"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{id_liquidacion}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="380" y="0" width="83" height="15" uuid="975bea39-0dd6-42ab-a406-8e68b4ee56b2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{parroquia}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="526" y="0" width="63" height="15" uuid="e82476c5-5a99-45da-a692-23de2cf4d60c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{zona}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="589" y="0" width="69" height="15" uuid="fa13ed0a-323f-4518-b482-1829c4ad2c85"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{mz}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="658" y="0" width="55" height="15" uuid="d99e2cdf-f480-4b48-b0b6-02b5fe18b6e9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{solar}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="463" y="0" width="63" height="15" uuid="692db287-c335-4582-857d-b4dcf032cb73"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{zona}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="267" y="0" width="113" height="15" uuid="e6106ed6-340a-430f-bf90-218cbd3a3219"/>
+				<box leftPadding="4"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{predialant}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="170" y="0" width="97" height="15" uuid="07b8eff5-56b9-4ed0-9da2-e35a221d57a2"/>
+				<box leftPadding="4"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cod_predial}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="133" y="0" width="37" height="15" uuid="b00cfb6f-3145-4621-92fc-efe8d157a117"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{anio}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="81" y="0" width="52" height="15" uuid="0128b0f9-e266-4d91-9a77-9da8afc442fa"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{num_predio}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1478" y="0" width="100" height="15" uuid="bbd2faf1-6a39-4e51-be99-ee2a19185422"/>
+				<box rightPadding="4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ipu}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1578" y="0" width="100" height="15" uuid="d64c75ef-f04e-434c-8474-eb90d6097094"/>
+				<box rightPadding="4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{admin_tas}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1678" y="0" width="100" height="15" uuid="cc506ad9-b5c0-4d31-ab39-9dbae635c22d"/>
+				<box rightPadding="4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{no_edif}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1778" y="0" width="100" height="15" uuid="259aa816-63a3-4b87-82b4-7b3bc397e49c"/>
+				<box rightPadding="4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{bomb}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1878" y="0" width="100" height="15" uuid="5c878b44-03a4-419d-b228-a4c0ab1a3208"/>
+				<box rightPadding="4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{parques}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1978" y="0" width="100" height="15" uuid="f14313b7-4084-4756-a361-6c189d8f8a36"/>
+				<box rightPadding="4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{alc}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2078" y="0" width="81" height="15" uuid="8f3041c8-6e9c-4672-a976-3b484db81768"/>
+				<box rightPadding="4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{recargo_interes}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2159" y="0" width="72" height="15" uuid="ac0b0d33-b978-4d5c-8feb-516bfb3cce82"/>
+				<box rightPadding="4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{recargo_interes}.add( $F{saldo} )]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

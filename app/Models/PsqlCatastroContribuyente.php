@@ -86,5 +86,11 @@ class PsqlCatastroContribuyente extends Model
         return $this->hasMany(PsqlPaPatente::class);
     }
 
+    public function locales(): HasMany
+    {
+        return $this->hasMany('App\Models\CatastroLocal', 'idcatastro_contr', 'id')->with('provincia', 'canton', 'parroquia');
+    }
+
+
 
 }

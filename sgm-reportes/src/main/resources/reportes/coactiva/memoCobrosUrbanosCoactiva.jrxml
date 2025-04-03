@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="memoCobrosUrbanosCoactiva" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="5827604c-2d4b-4eab-8842-06d725da72ec">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="638"/>
+	<parameter name="LOGO_FOOTER" class="java.lang.String"/>
+	<parameter name="NO_OFICIO" class="java.lang.String"/>
+	<parameter name="LOGO" class="java.lang.String"/>
+	<parameter name="USUARIO" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\origami\\Documents\\NetBeansProjects\\sgm\\src\\main\\webapp\\reportes\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FECHA_CIERRE" class="java.util.Date"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="usuario" class="java.lang.String"/>
+	<title>
+		<band height="545" splitType="Stretch">
+			<staticText>
+				<reportElement x="233" y="80" width="100" height="16" uuid="f19a5869-409d-4fc5-91e9-6a4ea7311fb3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[TESORERÍA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="233" y="96" width="100" height="16" uuid="b0a898c5-8068-4106-b7b5-1c5e5a61eeb3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[MEMORANDUM]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="163" y="112" width="240" height="20" uuid="ff5361c0-6fc7-4bab-b025-ee7be49279ca"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Oficio No TES-INF-REC-JC-" + $P{NO_OFICIO}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="0" y="0" width="555" height="70" uuid="1008d8de-2c19-4424-aa03-126a8129d0d3"/>
+				<subreportParameter name="LOGO">
+					<subreportParameterExpression><![CDATA[$P{LOGO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "titleReporte.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement x="134" y="145" width="386" height="20" uuid="145d822b-87cf-4f13-9de1-04bd4d7c8218"/>
+				<text><![CDATA[Econ.  - JUEZ DE COACTIVA MUNICIPAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="70" y="145" width="64" height="20" uuid="01e1ca22-c08d-49e1-bfa9-03aabe40c337"/>
+				<text><![CDATA[A:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="70" y="165" width="64" height="20" uuid="259ad836-bf96-4ea3-aa5e-e779c7a2ada2"/>
+				<text><![CDATA[De:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="70" y="185" width="64" height="20" uuid="7392b8c3-356b-48e1-872e-0e484044555a"/>
+				<text><![CDATA[Asunto:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="70" y="205" width="64" height="20" uuid="77f47679-0c5b-4e23-904c-61dc47ec7f59"/>
+				<text><![CDATA[Fecha:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="70" y="225" width="64" height="20" uuid="c18e683a-1574-487c-8e31-eed763311d2b"/>
+				<text><![CDATA[CC:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="134" y="165" width="386" height="20" uuid="33c1338e-efb3-4d7f-a83e-e4000d798893"/>
+				<text><![CDATA[Ing. - SUPERVISORA DE CAJA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="134" y="185" width="386" height="20" uuid="14d0c84a-41a1-42b7-9859-7a0fc6013652"/>
+				<text><![CDATA[Informe de Recaudaciones Diarias]]></text>
+			</staticText>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement x="134" y="205" width="216" height="20" uuid="d211140c-a7cc-4fa9-b944-f8aeea41713d"/>
+				<textFieldExpression><![CDATA[$P{FECHA_CIERRE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="134" y="225" width="216" height="20" uuid="3e39a70c-e359-4ca5-a5e7-c0d2effd2e42"/>
+				<text><![CDATA[Archivo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="70" y="265" width="450" height="110" uuid="c06a73d6-774d-4b08-892a-29a549ebcdb6"/>
+				<text><![CDATA[Sírvase encontrar adjunto el Resumen de recaudaciones de Títulos de Créditos en proceso de cobro por la vía coactiva correspondiente al presente día.
+
+
+Particular que le remito a usted para los fines legales consiguientes.
+
+
+Atentamente,]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="70" y="426" width="200" height="20" uuid="13b1c67a-96fc-4982-b891-354efbeae49a"/>
+				<text><![CDATA[Persona a Cargo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="70" y="446" width="200" height="20" uuid="9f95451b-40fb-4ebc-a6b0-06bf653bcfec"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[SUPERVISORA DE CAJA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="70" y="494" width="200" height="20" uuid="6efb3746-35c7-4796-b0ae-11fb7a22f791"/>
+				<text><![CDATA[Adjunto lo indicado]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<pageFooter>
+		<band height="70" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="17" width="555" height="1" uuid="df5be6e0-0b3c-4a97-8036-a737d965ea54"/>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="FixRelativeToBottom" x="0" y="0" width="270" height="14" uuid="0e30e8b7-3dec-4140-aa04-9d5ff90af01e"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Impreso por: " + $P{USUARIO}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="0" y="20" width="555" height="50" uuid="e010868c-c0e5-4765-8083-91b28a81558b"/>
+				<subreportParameter name="LOGO">
+					<subreportParameterExpression><![CDATA[$P{LOGO_FOOTER}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "footerReporte.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</pageFooter>
+</jasperReport>

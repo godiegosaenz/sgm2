@@ -1,0 +1,220 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="events">
+
+    </ui:define>
+
+    <ui:define name="page_title">
+        Editar Liquidaci&#243;n
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="frmLiquiHTD">
+            <p:panelGrid styleClass="noBorder" columns="3" style="width: 100%;font-size: 14px;" >
+                <p:outputLabel value="Editar Tasa Liquidaci&#243;n: #{verLiquidacionHTD.ht.tipoTramite.descripcion}" style="font-weight: bolder;color: #005f9c"/>
+                <p:outputLabel value="No Trámite: #{verLiquidacionHTD.ht.id}" style="font-weight: bolder;color: #005f9c"/>
+                <p:outputLabel value="Responsable: #{verLiquidacionHTD.session.name_user}" style="font-weight: bolder;color: #005f9c"/>
+            </p:panelGrid>
+            <p:panelGrid id="pgliqPH">
+                <f:facet name="header" >
+                    <p:column colspan="17" styleClass="headerWhite" style="color: #0066cc; text-align: center; font-size: 14pt;">
+                        C&#243;digo Predial:
+                    </p:column>
+                </f:facet>
+                <p:row >
+                    <p:column>
+                        Sector<br/><p:inputText value="#{verLiquidacionHTD.predio.sector}" readonly="true" style="width: 50px;"/>
+                    </p:column>
+                    <p:column>
+                        Mnz. <p:inputText value="#{verLiquidacionHTD.predio.mz}" readonly="true" style="width: 80%;"/>
+                    </p:column>
+                    <p:column>
+                        Cdla. <p:inputText value="#{verLiquidacionHTD.predio.cdla}" readonly="true" style="width: 80%;"/>
+                    </p:column>
+                    <p:column>
+                        Mz. Div <p:inputText value="#{verLiquidacionHTD.predio.mzdiv}" readonly="true" style="width: 70%;"/>
+                    </p:column>
+                    <p:column>
+                        Solar <p:inputText value="#{verLiquidacionHTD.predio.solar}" readonly="true" style="width: 80%;"/>
+                    </p:column>
+                    <p:column>
+                        Div1 <p:inputText value="#{verLiquidacionHTD.predio.div1}" readonly="true"  style="width: 80%;"/>
+                    </p:column>
+                    <p:column>
+                        Div2 <p:inputText value="#{verLiquidacionHTD.predio.div2}" readonly="true"  style="width: 80%;"/>
+                    </p:column>
+                    <p:column>
+                        Div3 <p:inputText value="#{verLiquidacionHTD.predio.div3}" readonly="true"  style="width: 80%;"/>
+                    </p:column>
+                    <p:column>
+                        Div4 <p:inputText value="#{verLiquidacionHTD.predio.div4}" readonly="true"  style="width: 80%;"/>
+                    </p:column>
+                    <p:column>
+                        Div5 <p:inputText value="#{verLiquidacionHTD.predio.div5}" readonly="true"  style="width: 80%;"/>
+                    </p:column>
+                    <p:column>
+                        Div6 <p:inputText value="#{verLiquidacionHTD.predio.div6}" readonly="true"  style="width: 80%;"/>
+                    </p:column>
+                    <p:column>
+                        Div7 <p:inputText value="#{verLiquidacionHTD.predio.div7}" readonly="true"  style="width: 80%;"/>
+                    </p:column>
+                    <p:column>
+                        Div8 <p:inputText value="#{verLiquidacionHTD.predio.div8}" readonly="true" style="width: 80%;"/>
+                    </p:column>
+                    <p:column>
+                        Div9 <p:inputText value="#{verLiquidacionHTD.predio.div9}" readonly="true" style="width: 80%;"/>
+                    </p:column>
+                    <p:column>
+                        <p:commandLink update="frmLiquiHTD" style=" height: 30px;" >
+                            <p:graphicImage value="/css/homeIconsImages/buscar.png" height="20" width="20"/>
+                        </p:commandLink>
+                    </p:column>
+                </p:row>
+                <!--Datos Propietario-->
+                <p:row>
+                    <p:column colspan="15" styleClass="ui-widget-header headerWhite" style="text-align: center; color: #0066cc; padding-top: 14pt; font-size: 14px;">
+                        Datos de Propietario
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="15">
+                        <p:dataTable id="dtProp" value="#{verLiquidacionHTD.listaPropietarios}" var="prop" style="width: 100%" reflow="true" emptyMessage="No hay asignado Propietarios al Predio">
+                            <p:column headerText="#C.I. O R.U.C" style="text-align: center;font-weight: bold">
+                                <p:outputLabel value="#{prop.ente.ciRuc}"/>
+                            </p:column>
+                            <p:column headerText="Propietario" style="text-align: center;font-weight: bold">
+                                <p:outputLabel value="#{prop.ente.nombres} #{prop.ente.apellidos}" rendered="#{prop.ente.esPersona}"/>
+                                <p:outputLabel value="#{prop.ente.razonSocial}" rendered="#{!prop.ente.esPersona}"/>
+                            </p:column>
+                            <p:column headerText="Opci&#243;n" style="text-align: center;font-weight: bold">
+                                <!--p:commandLink value="Eliminar" update="frmLiquiHTD:dtProp" process="dtProp"/-->
+                            </p:column>
+                        </p:dataTable>
+                    </p:column>
+                </p:row>
+                <!--Urbanizaci&#243;n-->
+                <p:row>
+                    <p:column styleClass="ui-widget-header headerWhite" colspan="17" style="text-align: center; color: #0066cc; padding-top: 14pt; font-size: 14px;">Ubicaci&#243;n</p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="5">
+                        Cant&#243;n: <!--p:inputText value="# {verLiquidacionHTD.predio.nombreUrb}"  style="width: 70%" readonly="true" /-->
+                        <br/>
+                        <p:selectOneMenu value="#{verLiquidacionHTD.canton}" effect="fade" converter="entityConverter"  >  
+                            <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}" itemDisabled="true" />  
+                            <f:selectItems value="#{verLiquidacionHTD.catCantonsList}" var="c" itemLabel="#{c.nombre}" itemValue="#{c}" itemDisabled="true"/>  
+                        </p:selectOneMenu>
+                    </p:column>
+                    <p:column colspan="3">
+                        Parroquia: <!--p:inputText value="# {verLiquidacionHTD.predio.ciudadela.codParroquia.descripcion}" style="width: 50%" readonly="true" /-->
+                        <p:selectOneMenu value="#{verLiquidacionHTD.parroquia}" effect="fade" converter="entityConverter"  >  
+                            <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}" itemDisabled="true" />  
+                            <f:selectItems value="#{verLiquidacionHTD.catParroquiaList}" var="p" itemLabel="#{p.descripcion}" itemValue="#{p}" itemDisabled="true"/>  
+                        </p:selectOneMenu>
+                    </p:column>
+                    <p:column colspan="3">
+                        Urbanizaci&#243;n: <p:inputText value="#{verLiquidacionHTD.predio.ciudadela.nombre}" readonly="true" style="width: 50%" />
+                    </p:column>
+                    <p:column colspan="4">
+                        Calle: <p:inputText value="#{verLiquidacionHTD.predio.calle}" readonly="true" style="width: 70%" />
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="7">
+                        C&#243;digo catastral Actual: <p:inputText value="#{verLiquidacionHTD.predio.codigoPredial}" readonly="true" style="width: 70%"/>
+                    </p:column>
+                    <p:column colspan="4">
+                        Mz: <p:inputText value="#{verLiquidacionHTD.predio.urbMz}" readonly="true"/>
+                    </p:column>
+                    <p:column colspan="4">
+                        Solar: <p:inputText value="#{verLiquidacionHTD.predio.urbSolarnew}" readonly="true"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="8" styleClass="ui-widget-header" style="text-align: center; color: #0066cc;">
+                        CARACTERÍSTICAS DEL PREDIO
+                    </p:column>
+                    <p:column colspan="7" styleClass="ui-widget-header" style="text-align: center; color: #0066cc;">
+                        DESCRIPCIÓN DE LA EDIFICACIÓN
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="8">
+                        <p:panelGrid id="pgCaractPred" columns="2" layout="grid">
+                            <p:outputLabel value="N&deg;./Piso sobre nivel bordillo"/>
+                            <p:inputText value="#{verLiquidacionHTD.liquidacion.numPisosSobreBord}" readonly="true"/>
+
+                            <p:outputLabel value="N&deg;./Piso bajo nivel bordillo"/>
+                            <p:inputText value="#{verLiquidacionHTD.liquidacion.numPisosBajoBord}" readonly="true"/>
+
+                            <p:outputLabel value="Área de Edificaci&#243;n"/>
+                            <pe:inputNumber value="#{verLiquidacionHTD.liquidacion.areaEdificacion}" readonly="true"/>
+
+                            <p:outputLabel value="Avaluo de Construcci&#243;n"/>
+                            <pe:inputNumber id="avaluoConstrid" value="#{verLiquidacionHTD.liquidacion.avaluoConstruccion}" readonly="true"/>
+
+                            <p:outputLabel value="Avaluo del Solar"/>
+                            <pe:inputNumber value="#{verLiquidacionHTD.liquidacion.avaluoSolar}" readonly="true"/>
+
+                            <p:outputLabel value="Avaluo de la Propiedad"/>
+                            <p:inputText id="avaluoid" value="#{verLiquidacionHTD.liquidacion.avaluoPropiedad}" readonly="true"/>
+
+                        </p:panelGrid>
+                    </p:column>
+                    <p:column colspan="7">
+                        <p:inputTextarea value="#{verLiquidacionHTD.liquidacion.descripcion}" rows="10" style="width: 95%;" readonly="true"/>
+                    </p:column>
+                </p:row>
+
+                <p:row>
+                    <p:column colspan="5" styleClass="ui-widget-header" style="text-align: center; color: #0066cc;">
+                        BASE DEL CÁLCULO 1
+                    </p:column>
+                    <p:column styleClass="ui-widget-header" colspan="5" style="text-align: center; color: #0066cc;">
+                        BASE DEL CÁLCULO 2
+                    </p:column>
+                    <p:column styleClass="ui-widget-header" colspan="5" style="text-align: center; color: #0066cc;">
+                        TOTAL A PAGAR
+                    </p:column>
+                </p:row>
+                <p:row >
+                    <p:column headerText="BASE DEL CÁLCULO 1" colspan="5">
+                        <pe:inputNumber value="#{verLiquidacionHTD.liquidacion.baseCalculo}" decimalPlaces="0" symbol="%"  symbolPosition="s" rendered="#{!verLiquidacionHTD.isPropiedadHorizontal}" readonly="true" />
+                    </p:column>
+                    <p:column headerText="BASE DEL CÁLCULO 2" colspan="5">
+                        <pe:inputNumber value="#{verLiquidacionHTD.liquidacion.baseCalculo}" decimalPlaces="2" symbol="%"  symbolPosition="s" rendered="#{verLiquidacionHTD.isPropiedadHorizontal}" readonly="true" />
+                    </p:column>
+                    <p:column headerText="TOTAL A PAGAR" colspan="5">
+                        <p:inputText id="totalpagar" value="#{verLiquidacionHTD.liquidacion.total}"  readonly="true"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="8">
+                        Director(a) de Edificaciones: <br/>
+                        <p:selectOneMenu value="#{verLiquidacionHTD.liquidacion.firma}" effect="fade" converter="entityConverter"  >  
+                            <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}" itemDisabled="true"/>  
+                            <f:selectItems value="#{verLiquidacionHTD.listPeFirma}" var="f" itemLabel="#{f.nomCompleto}" itemValue="#{f}" itemDisabled="true"/>  
+                        </p:selectOneMenu>
+                    </p:column>
+                    <p:column colspan="7" >
+                        Responsable: <br/>
+                        <p:inputText value="#{verLiquidacionHTD.realizadorPor}" style="width: 300px" readonly="true"/>
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+            <p:spacer height="30"/>
+            <div align="center">
+                <p:commandButton actionListener="#{verLiquidacionHTD.retornar()}" value="Volver" icon="ui-icon-circle-arrow-w" style="height: 30px;" styleClass="btnStyle"/>
+            </div>
+        </h:form>
+        
+    </ui:define>
+
+</ui:composition>

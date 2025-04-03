@@ -1,0 +1,102 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    template="/template/template.xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pe="http://primefaces.org/ui/extensions"
+    xmlns:dialog="http://xmlns.jcp.org/jsf/composite/dialog">
+    <ui:define name="meta">
+    </ui:define>
+    <ui:define name="top">
+        <h1>No. Trámite: #{validarPagoLiqFP.tramite.id}</h1>
+        <h1>Tarea: #{validarPagoLiqFP.taskDataByTaskID.name}</h1>
+        <h1>Responsable: #{validarPagoLiqFP.taskDataByTaskID.assignee}</h1>
+    </ui:define>
+    <ui:define name="content">
+        <h:form id="mainForm">
+            <p:panel id="pDatos" header="Datos Generales : #{validarPagoLiqFP.tramite.tipoTramite.descripcion}" style="width: 100%">
+                <br/>
+                <p:panelGrid id="pgSolicitante" columns="4" styleClass="noBorder">
+                    <h:outputText value="Solicitante " style="font-weight: bold; text-transform: uppercase"/>
+                    <h:outputText value="#{validarPagoLiqFP.tramite.solicitante.apellidos} #{validarPagoLiqFP.tramite.solicitante.nombres}" rendered="#{validarPagoLiqFP.tramite.solicitante.esPersona}" style="text-transform: uppercase"/>
+                    <h:outputText value="#{validarPagoLiqFP.tramite.solicitante.razonSocial}" rendered="#{!validarPagoLiqFP.tramite.solicitante.esPersona}" style="text-transform: uppercase"/>
+                    <h:outputText value="No. Identificacion " style="font-weight: bold; text-transform: uppercase"/>
+                    <h:outputText value="#{validarPagoLiqFP.tramite.solicitante.ciRuc}" style="text-transform: uppercase"/>
+                    <h:outputText value="Total a pagar " style="font-weight: bold; text-transform: uppercase"/>
+                    <h:outputText value="#{validarPagoLiqFP.tramite.valorLiquidacion}" style=" text-transform: uppercase"/>
+                </p:panelGrid>
+                <br/>
+                <h:outputText value="Estatus : #{validarPagoLiqFP.mensaje}" style="font-weight: bold; text-transform: uppercase"/>
+                <br/>
+                <br/>
+                <p:tabView id="tdatos">
+                    <p:tab id="tgen" title="Tasa de liquidacion">
+                        <p:dataTable id="detDetalle" value="#{validarPagoLiqFP.tramite.historicoTramiteDetCollection}" var="p" reflow="true" style="width: 100%">
+                            <f:facet name="header">Detalle del tramite</f:facet>
+                            <p:column headerText="Predio" style="width: 10%; text-align: center">
+                                <p:outputLabel value="#{p.predio.numPredio}"/>
+                            </p:column>
+                            <p:column headerText="Codigo Catastral" style="width: 20%; text-align: center">
+                                <h:outputText value="#{p.predio.sector} - #{p.predio.mz} - #{p.predio.cdla} - #{p.predio.mzdiv} - #{p.predio.solar} - #{p.predio.div1} - #{p.predio.div2} - #{p.predio.div3} - 
+                                              #{p.predio.div4} - #{p.predio.div5} - #{p.predio.div6} - #{p.predio.div7} - #{p.predio.div8} - 
+                                              #{p.predio.div9} - #{p.predio.phv} - #{p.predio.phh} " style="text-transform: uppercase"/>
+                            </p:column>
+                            <p:column headerText="Aval. Solar" style="width: 10%">
+                                <p:outputLabel value="#{p.avaluoSolar}"/>
+                            </p:column>
+                            <p:column headerText="Aval. Construccion" style="width: 10%">
+                                <p:outputLabel value="#{p.avaluoConstruccion}"/>
+                            </p:column>
+                            <p:column headerText="Aval. Edif." style="width: 10%">
+                                <p:outputLabel value="#{p.avaluoEdificacion}"/>
+                            </p:column>
+                        </p:dataTable>
+                        <br/>
+                        <h:panelGroup id="botonesGroup">
+                            <center>
+                                <p:commandButton value="Cancelar Tasa" update="frmObs" onclick="PF('obs').show()" rendered="#{validarPagoLiqFP.mostrarBoton}" icon="ui-icon-check" styleClass="btnStyle" style="height: 30px;" />
+                            </center>
+                        </h:panelGroup>
+                    </p:tab>
+                    <p:tab id="tadicionales" title="Adicionales">
+                        <p:tabView id="tadic">
+                            <p:tab id="tdocs" title="Observaciones">
+                                <p:dataTable id="dtobs" value="#{validarPagoLiqFP.tramite.observacionesCollection}" var="obs" reflow="true" style="width: 100%">
+                                    <f:facet name="header">Observaciones</f:facet>
+                                    <p:column headerText="Descripcion" style="width: 40%">
+                                        #{obs.observacion}
+                                    </p:column>
+                                    <p:column headerText="tarea" style="width: 25%">
+                                        #{obs.tarea}
+                                    </p:column>
+                                    <p:column headerText="Responsable" style="width: 20%">
+                                        #{obs.userCre}
+                                    </p:column>
+                                    <p:column headerText="Fecha" style="width: 15%">
+                                        #{obs.fecCre}
+                                    </p:column>
+                                </p:dataTable>
+                            </p:tab>
+                            <p:tab id="tobs" title="Documentos">
+                                <dialog:detalleArchivosAct archivos="#{validarPagoLiqFP.processInstanceAttachmentsFiles}" />
+                            </p:tab>
+                        </p:tabView>
+                    </p:tab>
+                </p:tabView>
+            </p:panel>
+        </h:form>
+        <p:dialog id="dlgObs" widgetVar="obs" header="#{validarPagoLiqFP.tramite.tipoTramiteNombre}" appendTo="@(body)" modal="true" width="500" resizable="false" closable="true" closeOnEscape="true">
+            <h:form id="frmObs" target="_blank">
+                <p:panel id="pobs" header="Ingrese sus observaciones" style="width: 100%">
+                    <div align="center">
+                        <p:inputTextarea id="obsservacion" value="#{validarPagoLiqFP.obs.observacion}" rows="4" style="width: 100%; text-transform: uppercase" required="true" placeholder="Las observaciones son obligatorias para continuar con el tramite"/>
+                        <br/>
+                        <p:commandButton id="btnValidar" value="Finalizar"  actionListener="#{validarPagoLiqFP.completarTarea()}" oncomplete="PF('obs').hide()" style="color: #ffffff; background: #616161 !important; font-weight: bold; height: 30px"/>
+                    </div>
+                </p:panel>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

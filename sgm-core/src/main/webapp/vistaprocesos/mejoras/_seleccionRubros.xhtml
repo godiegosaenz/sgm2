@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:panelGroup layout="block" class="Wid100 MarTop10 Container"  style="margin-bottom: 20px;">
+        <h:panelGroup layout="block" class="Container Wid100">
+            <div class="ContainerIndent">
+                <h1 class="BigTopic Fs16">Rubro para la Emision</h1>
+                <hr></hr>
+                <h:panelGroup layout="block" class="Responsive Container100">
+                    <div class="ContainerIndent Wid100 MarRigh320">
+                        <p:dataTable id="dtRubrosSel" rows="10" paginator="true"  var="rubro" value="#{obrasR.rubrosList}" 
+                                     rowKey="#{rubro.id}" selection="#{obrasR.rubroSelected}"
+                                     emptyMessage="No tiene datos" style="width: 99%; margin-top: 10px;">
+                            <p:ajax event="rowSelect"  update="dtRubrosSel" />
+                            <p:ajax event="rowUnselect"  update="dtRubrosSel"  />
+                            <p:ajax event="rowSelectCheckbox"  update="dtRubrosSel" />
+                            <p:ajax event="rowUnselectCheckbox"  update="dtRubrosSel" />
+                            <p:ajax event="toggleSelect"  update="dtRubrosSel" />
+                            <p:ajax event="filter" update="dtRubrosSel" />
+                            <f:facet name="header">
+                                Lista de Rubros Disponibles
+                            </f:facet>
+                            <p:column selectionMode="single" style="width:10px;text-align:center" />
+                            <p:column headerText="Código rubro" width="3%">
+                                <center><h:outputText value="#{rubro.codigoRubro}" /></center>
+                            </p:column>
+                            <p:column headerText="Descripción" width="12%">
+                                <center><h:outputText value="#{rubro.descripcion}"/></center>
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+                </h:panelGroup>       
+            </div>
+        </h:panelGroup>
+    </h:panelGroup>
+
+</html>

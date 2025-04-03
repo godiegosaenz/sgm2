@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:poue="http://primefaces.org/ui/extensions"
+                xmlns:dlg="http://xmlns.jcp.org/jsf/composite/dialog">
+
+    <ui:define name="head">
+        <style type="text/css">
+            .ui-datepicker .ui-datepicker-title select {
+                font-size: 1em;
+                margin: 1px 0;
+                color: black;
+            }
+        </style>
+    </ui:define>
+    
+    <ui:define name="content">
+        <center>
+            <h1>Generar Liquidación de Construcción</h1>
+        </center>
+        <h:form id="frmLiquidaciones">
+            <center>
+                <p:outputLabel value="Tipo de Liquidación" style="height: 25px; font-size: 14px; font-weight: bold;" />
+                <p:spacer width="10"/>
+                <p:selectOneMenu value="#{liquidacionConstruccion.tipoLiquidacion}" converter="entityConverter" 
+                                 converterMessage="Error al intentar realizar conversión" style="vertical-align: middle;" >
+                    <f:selectItem itemLabel="Seleccione.." itemValue="#{null}"/>
+                    <f:selectItems value="#{liquidacionConstruccion.tiposLiquidacions}" var="tipo" itemLabel="#{tipo.nombreTransaccion}" itemValue="#{tipo}"/>
+                    <p:ajax update="frmLiquidaciones" listener="#{liquidacionConstruccion.consultarRubros()}"/>
+                </p:selectOneMenu>
+            </center>
+
+            <br/>
+            <p:panel >
+                <p:panelGrid columns="4" layout="grid"
+                             columnClasses="ui-grid-col-1, ui-grid-col-4, ui-grid-col-1, ui-grid-col-2">
+                    <p:outputLabel value="Clave Catastral: "/>
+                    <p:inputText id="cc1" value="#{liquidacionConstruccion.predio.claveCat}" readonly="true" style="width: 95%" />
+
+                    <p:outputLabel value="Barrio / Lotizacion "/>
+                    <p:inputText id="c2" value="#{liquidacionConstruccion.predio.ciudadela.nombre}" readonly="true" style="width: 95%" />
+
+                    <p:outputLabel value="Manzana: "/>
+                    <p:inputText id="c1" value="#{liquidacionConstruccion.predio.mz}" readonly="true" style="width: 100%"/>
+
+                    <p:outputLabel value="Solar: "/>
+                    <p:inputText id="c3" value="#{liquidacionConstruccion.predio.lote}" readonly="true" style="width: 100%" />
+
+                    <p:outputLabel value="Buscar Predio: "/>
+                    <p:commandLink actionListener="#{liquidacionConstruccion.mostrarDialog('/resources/dialog/predios')}" 
+                                   style="float: right; vertical-align: middle;" title="Buscar Comprador"  >
+                        <p:ajax event="dialogReturn" listener="#{liquidacionConstruccion.seleccionarPredios}" update="frmLiquidaciones"  />
+                        <p:graphicImage value="/css/homeIconsImages/buscar.png" height="25" width="25"/>
+                    </p:commandLink>
+                </p:panelGrid>
+                <br/>
+                <h:panelGrid columns="3">
+                    <h:panelGroup>
+                        <dlg:datosEntes ente="#{liquidacionConstruccion.comprador}"
+                                        esPersona="#{liquidacionConstruccion.esPersonaComp}"
+                                        buscar="#{liquidacionConstruccion.buscarEnte()}"
+                                        header="Datos del contribuyente"
+                                        seleccion="#{liquidacionConstruccion.seleccionarComprador}"
+                                        id="outComprador"
+                                        update="frmLiquidaciones:outComprador:outDatosEnte"
+                                        mostrarBuscar="true"/>
+                    </h:panelGroup>
+
+                    <p:spacer width="30"/>
+                    <!--                    RUBROS -->
+                    <p:dataTable id="dtRubros" reflow="true" value="#{liquidacionConstruccion.rubrosLiquidacion}" 
+                                 var="rub" rowIndexVar="index" style="width: 90%;" editable="true" editMode="cell" >
+                        <p:column style="width: 5%">
+                            <h:outputText value="#{index+1}" />
+                        </p:column>
+                        <p:column headerText="Descripción del Rubro" id="valorRubros">
+                            <h:outputText value="#{rub.descripcion}" />
+                        </p:column>
+                        <p:column headerText="Valor a Cobrar" id="colValor" style="width: 25%; text-align: center">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="$ #{rub.valorTotal}" />
+                                </f:facet>
+                                <f:facet name="input" >
+                                    <poue:inputNumber id="modelInput" value="#{rub.valorTotal}" />
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column id="colCobRub" headerText="Rubro a Cobrar" style="width: 15%; text-align: center;">
+                            <p:selectBooleanCheckbox id="check" value="#{rub.cobrar}" >
+                                <p:ajax update="frmLiquidaciones:t1, dtRubros" listener="#{liquidacionConstruccion.valorTotal()}"/>
+                            </p:selectBooleanCheckbox>
+                        </p:column>
+                    </p:dataTable>
+                    
+                </h:panelGrid>
+            </p:panel>
+            <br/>
+            <p:panel >
+                <div align="center">
+                    <p:outputLabel for="t1" value="Total a cancelar: " style="font-weight: bold;"/>
+                    <p:outputLabel for="t1" value="$ " style="font-weight: bold;"/>
+                    <p:inputText id="t1" value="#{liquidacionConstruccion.liquidacion.totalPago}" readonly="true" >
+                        <f:convertNumber maxFractionDigits="2" pattern="$ #,##0.00"  />
+                    </p:inputText>
+                </div>
+            </p:panel>
+            <br/>
+            <center >
+                <p:commandButton value="Procesar" oncomplete="PF('obs').show()" 
+                                 icon="ui-icon-gear" styleClass="btnStyle" iconPos="r" 
+                                 rendered="#{liquidacionConstruccion.tipoLiquidacion ne null}" >
+                    <p:confirm header="Advertencia" icon="ui-icon-info" message="¿Esta seguro de guardar los datos ingresados?" />
+                </p:commandButton>
+            </center>
+        </h:form>
+        <dlg:dialogNumLiquidacion headerDialog="#{liquidacionConstruccion.liquidacion.tipoLiquidacion.nombreTransaccion}"
+                                  idLiq="#{liquidacionConstruccion.liquidacion.idLiquidacion}" 
+                                  actionButton="#{liquidacionConstruccion.borrarDatos()}"
+                                  update="frmLiquidaciones"
+                                  id="numLiquidacion"/>
+
+        <dlg:observaciones actionButton="#{liquidacionConstruccion.procesar()}"
+                           observaciones="#{liquidacionConstruccion.liquidacion.observacion}"
+                           placeHolder="Observaciones de la Liquidacion, campo no obligatorio."
+                           requerido="false"
+                           />
+
+    </ui:define>
+
+</ui:composition>

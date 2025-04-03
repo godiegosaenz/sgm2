@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:dialog="http://xmlns.jcp.org/jsf/composite/dialog">
+
+    <ui:define name="content">
+        <h:form id="fDocR">
+            <p:panelGrid styleClass="noBorder" columns="4" style="width: 100%;font-size: 14px;">
+                <p:outputLabel value="Tarea: #{aprobarDocTecnico.taskDataByTaskID.name}" style="font-weight: bolder;color: #005f9c"/>
+                <p:outputLabel value="No Trámite: #{aprobarDocTecnico.tramite.id}" style="font-weight: bolder;color: #005f9c"/>
+                <p:outputLabel value="Responsable: #{aprobarDocTecnico.taskDataByTaskID.assignee}" style="font-weight: bolder;color: #005f9c"/>
+            </p:panelGrid>
+
+            <p:tabView id="aprDoc">
+                <p:tab id="aprDocRev" title="Documentos a Revisar">
+                    <p:panel>
+                        <dialog:detalleArchivosAct archivos="#{aprobarDocTecnico.processInstanceAttachmentsFiles}"/>
+                        <br/>
+                        <div align="center">
+                            <p:commandButton id="btnAprobar" value="Aprobar" onclick="PF('obs').show()" update="frmObsAD" style="color: #ffffff; background: #616161 !important; font-weight: bold; height: 30px; width: 155px" icon="ui-icon-check" iconPos="s"/>
+                            <p:spacer width="50" />
+                            <p:commandButton id="btnRechazo" value="Enviar Correcciones" onclick="PF('dlgObsCorr').show()" update="frmObs" style="color: #ffffff; background: #616161 !important; font-weight: bold; height: 30px; width: 155px" icon="ui-icon-close" iconPos="s"/>
+
+                            <!--p:commandButton id="bContinuar" value="Continuar" onclick="PF('obs').show()" style="color: #ffffff; background: #616161 !important; font-weight: bold; height: 30px" icon="ui-icon-circle-arrow-e" iconPos="s"/-->
+                        </div>
+                    </p:panel>
+                </p:tab>
+                <p:tab id="aprObs" title="Observaciones">
+                    <p:panel id="pnlObsAp" style="width: 100%;" header="Lista de Observaciones">
+                        <p:dataTable value="#{aprobarDocTecnico.tramite.observacionesCollection}" var="obsT" style="width: 100%;" reflow="true">
+                            <p:column headerText="Observación">
+                                <p:outputLabel value="#{obsT.observacion}"/>
+                            </p:column>
+
+                            <p:column headerText="Responsable">
+                                <p:outputLabel value="#{obsT.userCre}"/>
+                            </p:column>
+
+                            <p:column headerText="Tarea">
+                                <p:outputLabel value="#{obsT.tarea}"/>
+                            </p:column>
+
+                            <p:column headerText="Fecha">
+                                <p:outputLabel value="#{obsT.fecCre}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+                </p:tab>
+            </p:tabView>
+
+        </h:form>
+
+        <p:dialog id="dlgObsAD" widgetVar="obs" header="Observaciones del Tramite #{aprobarDocTecnico.tramite.id}" appendTo="@(body)" modal="true" width="500" resizable="false" closable="true" closeOnEscape="true">
+            <h:form id="frmObsAD">
+                <p:panel id="pobs" header="Ingrese sus observaciones" style="width: 100%">
+                    <div align="center">
+                        <p:inputTextarea id="obsservacion" value="#{aprobarDocTecnico.observ.observacion}" rows="4" style="width: 100%; text-transform: uppercase" required="true" placeholder="Las observaciones son obligatorias para continuar con el tramite"/>
+                        <br/>
+                        <p:commandButton id="bAprobar" value="Aprobar" actionListener="#{aprobarDocTecnico.aprobacion(1)}" oncomplete="PF('obs').hide()" style="color: #ffffff; background: #616161 !important; font-weight: bold; height: 30px" icon="ui-icon-circle-check" iconPos="s"/>
+
+                    </div>
+                </p:panel>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="dlgRechaso" widgetVar="dlgObsCorr" header="#{aprobarDocTecnico.taskDataByTaskID.name}" appendTo="@(body)" modal="true" width="500" resizable="false" closable="true" closeOnEscape="true">
+            <h:form id="frmObs">
+                <p:panel>
+                    <p:outputLabel  value="Correo: "/>
+                    <p:inputText id="newCor" value="#{aprobarDocTecnico.nuevoCorreo}" style="width: 60%;" />
+                    <p:spacer width="10"/>
+                    <p:commandButton value="Agregar" actionListener="#{aprobarDocTecnico.agregarCorreoConcat()}" update="newCor,corAdj" style="font-size: 14px;" icon="ui-icon-check" styleClass="btnStyle"/>
+                    <br/>
+                    <p:outputLabel  value="Correo adjuntos: "/><br/>
+                    <p:inputTextarea id="corAdj" value="#{aprobarDocTecnico.correosAdjuntos}" readonly="true" rows="2" style="width: 100%;" autoResize="false" placeholder="Correos a Enviar Información."/>
+                </p:panel>
+                <h1>Ingrese las observaciones de corrección</h1>
+                <div align="center">
+                    <p:inputTextarea id="obsservacionCor" value="#{aprobarDocTecnico.observ.observacion}" rows="4" style="width: 100%;"  placeholder="Las observaciones son obligatorias para continuar con el trámite"/>
+                    <br/>
+                    <p:commandButton id="bCorreciones" value="Enviar Correcciones" actionListener="#{aprobarDocTecnico.aprobacion(2)}" oncomplete="PF('dlgObsCorr').hide()"  style="color: #ffffff; background: #616161 !important; font-weight: bold; height: 30px" icon="ui-icon-mail-closed" iconPos="s"/>
+                    <p:commandButton id="bTramiteInc" value="Trámite Incorrecto" actionListener="#{aprobarDocTecnico.aprobacion(0)}" oncomplete="PF('dlgObsCorr').hide()"  style="color: #ffffff; background: #616161 !important; font-weight: bold; height: 30px" iconPos="s" icon="ui-icon-circle-close"/>
+                </div>
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+
+</ui:composition>

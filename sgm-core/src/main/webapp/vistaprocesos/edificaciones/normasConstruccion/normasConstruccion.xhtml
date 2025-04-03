@@ -1,0 +1,287 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="events">
+        <f:metadata>
+            <f:viewParam name="proceso" value="#{normasConstruccion.proceso}" />
+            <f:viewParam name="idCiudadela" value="#{normasConstruccion.idCiudadela}" />
+            <f:viewParam name="tipoNorma" value="#{normasConstruccion.tipoNorma}" />
+        </f:metadata> 
+        <f:event type="preRenderView" listener="#{normasConstruccion.doPreRenderView()}" />
+    </ui:define>
+
+    <ui:define name="page_title">
+        Norma Construcción
+    </ui:define>
+
+    <ui:define name="top">
+        <h1>Ingreso Norma Construcción</h1>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="formNormaConstIngr">
+            <p:panelGrid columns="2" layout="grid">
+                <h:panelGroup rendered="#{!normasConstruccion.esProceso}">
+                    <h:selectOneRadio id="tipoN" value="#{normasConstruccion.normaTipo}" style="font-family: Arial;font-weight:lighter;font-size: 12px" onkeyup="siguiente(this, event);" >                                             
+                        <f:selectItem itemLabel="Especial" itemValue="true" />
+                        <f:selectItem itemLabel="No Especial" itemValue="false"  />
+                        <p:ajax event="change" update="normaTipo" />  
+                    </h:selectOneRadio>
+                    <p:selectOneRadio id="normaTipo" value="#{normasConstruccion.idTipoNorma}" layout="pageDirection" style="font-size: 9px; margin: 0px;" >  
+                        <f:selectItems value="#{normasConstruccion.listNormaTipo}" var="tp" itemLabel="#{tp.tipo}" itemValue="#{tp.id}" />  
+                        <p:ajax event="change" listener="#{normasConstruccion.normaSelecionada()}" />  
+                    </p:selectOneRadio> 
+                </h:panelGroup>
+                <h:panelGroup>
+                    <p:outputLabel value="Ciudadela: " /> 
+                    <p:selectOneMenu id="ciudadela" value="#{normasConstruccion.ciudadela}" converter="entityConverter"   >
+                        <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}" />
+                        <f:selectItems value="#{normasConstruccion.ciudadelaList}" var="c" itemLabel="#{c.nombre}" itemValue="#{c}"/>
+                    </p:selectOneMenu>
+                </h:panelGroup>
+            </p:panelGrid>
+
+            <br/>
+            <p:accordionPanel id="inf">
+                <!-- RETIROS -->
+                <p:tab id="infRet" title="Retiros">
+                    <p:outputLabel value="Retiro Frontal: " style="color: #005f9c; font-size: 14px;"/>
+                    <br/>
+                    <p:dataTable id="dtRetFront" value="#{normasConstruccion.retiroFrontal}" var="rf" reflow="true" emptyMessage="No hay Información sobre Retiro Frontal..." >
+                        <f:facet name="header" >
+                            <div align="right">
+                                <p:commandLink value="Agregar" actionListener="#{normasConstruccion.mostrarIngreso(1)}" style="color: #0033FF; font-size: 14px; "/>
+                            </div>
+                        </f:facet>
+                        <p:column headerText="Mostrar" style="width: 80px;">
+                            <p:rowToggler />
+                        </p:column>
+                        <p:column headerText="Disposición" style="width: 25%; text-align: center;">
+                            <p:outputLabel value="#{rf.nombreCodigo}"   style="width: 100%;"/>
+                        </p:column>
+                        <p:column headerText="Descripción">
+                            <h:inputText readonly="true" value="#{rf.descripcion}"   style="width: 95%; border: 0 #ffffff"/>
+                        </p:column>
+                        <p:column headerText="Acción" style="width: 100px; text-align: center;">
+                            <p:commandLink value="Eliminar" actionListener="#{normasConstruccion.eliminarRetirosAumentos(rf)}" style="color: #0033FF; "/>
+                        </p:column>
+                        <p:rowExpansion>
+                            <p:panelGrid columns="1">
+                                <p:outputLabel value="#{rf.nombreCodigo}" style="color: #005f9c; font-size: 11px;"/>
+                                <p:inputTextarea value="#{rf.descripcion}" style="width: 100%;" readonly="true"/>
+                            </p:panelGrid>
+                        </p:rowExpansion>
+                    </p:dataTable>
+                    <p:spacer height="30"/>
+
+                    <p:outputLabel value="Retiro Posterior: " style="color: #005f9c; font-size: 14px;"/>
+                    <p:dataTable id="dtRetPost" value="#{normasConstruccion.retiroPosterior}" var="rp" reflow="true" emptyMessage="No hay Información sobre Retiro Posterior..." >
+                        <f:facet name="header" >
+                            <div align="right">
+                                <p:commandLink value="Agregar" actionListener="#{normasConstruccion.mostrarIngreso(3)}" style="color: #0033FF; font-size: 14px; "/>
+                            </div>
+                        </f:facet>
+                        <p:column headerText="Mostrar" style="width: 80px;">
+                            <p:rowToggler />
+                        </p:column>
+                        <p:column headerText="Disposición" style="width: 25%; text-align: center;">
+                            <p:outputLabel value="#{rp.nombreCodigo}"   style="width: 100%;"/>
+                        </p:column>
+                        <p:column headerText="Descripción">
+                            <h:inputText readonly="true" value="#{rp.descripcion}"   style="width: 95%; border: 0 #ffffff"/>
+                        </p:column>
+                        <p:column headerText="Acción" style="width: 100px; text-align: center;">
+                            <p:commandLink value="Eliminar" actionListener="#{normasConstruccion.eliminarRetirosAumentos(rp)}" style="color: #0033FF; "/>
+                        </p:column>
+                        <p:rowExpansion>
+                            <p:panelGrid columns="1">
+                                <p:outputLabel value="#{rp.nombreCodigo}" style="color: #005f9c; font-size: 11px;"/>
+                                <p:inputTextarea value="#{rp.descripcion}" style="width: 100%;" readonly="true"/>
+                            </p:panelGrid>
+                        </p:rowExpansion>
+                    </p:dataTable>
+                    <p:spacer height="30"/>
+
+                    <p:outputLabel value="Retiro Lateral: " style="color: #005f9c; font-size: 14px;"/>
+                    <p:dataTable id="dtRetLat" value="#{normasConstruccion.retiroLateral}" var="rl" reflow="true" emptyMessage="No hay Información sobre Retiro Lateral..." >
+                        <f:facet name="header" >
+                            <div align="right">
+                                <p:commandLink value="Agregar" actionListener="#{normasConstruccion.mostrarIngreso(2)}" style="color: #0033FF; font-size: 14px; "/>
+                            </div>
+                        </f:facet>
+                        <p:column headerText="Mostrar" style="width: 80px;">
+                            <p:rowToggler />
+                        </p:column>
+                        <p:column headerText="Disposición" style="width: 25%; text-align: center;">
+                            <p:outputLabel value="#{rl.nombreCodigo}"   style="width: 100%;"/>
+                        </p:column>
+                        <p:column headerText="Descripción">
+                            <h:inputText readonly="true" value="#{rl.descripcion}"   style="width: 95%; border: 0 #ffffff"/>
+                        </p:column>
+                        <p:column headerText="Acción" style="width: 100px; text-align: center;">
+                            <p:commandLink value="Eliminar" actionListener="#{normasConstruccion.eliminarRetirosAumentos(rl)}" style="color: #0033FF; "/>
+                        </p:column>
+                        <p:rowExpansion>
+                            <p:panelGrid columns="1">
+                                <p:outputLabel value="#{rl.nombreCodigo}" style="color: #005f9c; font-size: 11px;"/>
+                                <p:inputTextarea value="#{rl.descripcion}" style="width: 100%;" readonly="true"/>
+                            </p:panelGrid>
+                        </p:rowExpansion>
+                    </p:dataTable>
+                </p:tab>
+                <!-- ALTURAS -->
+                <p:tab id="infAlt" title="Alturas">
+                    <p:outputLabel value="Altura Max. Edificación: " style="color: #005f9c; font-size: 14px;"/>
+                    <p:dataTable id="dtAltEdif" value="#{normasConstruccion.alturaMaxEdificación}" var="ad" reflow="true" emptyMessage="No hay Información sobre Altura Max. Edificación..." >
+                        <f:facet name="header" >
+                            <div align="right">
+                                <p:commandLink value="Agregar" actionListener="#{normasConstruccion.mostrarIngreso(4)}" style="color: #0033FF; font-size: 14px; "/>
+                            </div>
+                        </f:facet>
+                        <p:column headerText="Mostrar" style="width: 80px;">
+                            <p:rowToggler />
+                        </p:column>
+                        <p:column headerText="Disposición" style="width: 25%; text-align: center;">
+                            <p:outputLabel value="#{ad.nombreCodigo}"   style="width: 100%;"/>
+                        </p:column>
+                        <p:column headerText="Descripción">
+                            <h:inputText readonly="true" value="#{ad.descripcion}"   style="width: 95%; border: 0 #ffffff"/>
+                        </p:column>
+                        <p:column headerText="Acción" style="width: 100px; text-align: center;">
+                            <p:commandLink value="Eliminar" actionListener="#{normasConstruccion.eliminarRetirosAumentos(ad)}" style="color: #0033FF; "/>
+                        </p:column>
+                        <p:rowExpansion>
+                            <p:panelGrid columns="1">
+                                <p:outputLabel value="#{ad.nombreCodigo}" style="color: #005f9c; font-size: 11px;"/>
+                                <p:inputTextarea value="#{ad.descripcion}" style="width: 100%;" readonly="true"/>
+                            </p:panelGrid>
+                        </p:rowExpansion>
+                    </p:dataTable>
+                    <p:spacer height="30"/>
+
+                    <p:outputLabel value="Altura Antepechos de Ventanas: " style="color: #005f9c; font-size: 14px;"/>
+                    <p:dataTable id="dtAltVent" value="#{normasConstruccion.alturaAntepechosVentanas}" var="av" reflow="true" emptyMessage="No hay Información sobre Altura Antepechos de Ventanas..." >
+                        <f:facet name="header" >
+                            <div align="right">
+                                <p:commandLink value="Agregar" actionListener="#{normasConstruccion.mostrarIngreso(6)}" style="color: #0033FF; font-size: 14px;"/>
+                            </div>
+                        </f:facet>
+                        <p:column headerText="Mostrar" style="width: 80px;">
+                            <p:rowToggler />
+                        </p:column>
+                        <p:column headerText="Disposición" style="width: 25%; text-align: center;">
+                            <p:outputLabel value="#{av.nombreCodigo}"   style="width: 100%;"/>
+                        </p:column>
+                        <p:column headerText="Descripción">
+                            <h:inputText readonly="true" value="#{av.descripcion}"   style="width: 95%; border: 0 #ffffff"/>
+                        </p:column>
+                        <p:column headerText="Acción" style="width: 100px; text-align: center;">
+                            <p:commandLink value="Eliminar" actionListener="#{normasConstruccion.eliminarRetirosAumentos(av)}" style="color: #0033FF; "/>
+                        </p:column>
+                        <p:rowExpansion>
+                            <p:panelGrid columns="1">
+                                <p:outputLabel value="#{av.nombreCodigo}" style="color: #005f9c; font-size: 11px;"/>
+                                <p:inputTextarea value="#{av.descripcion}" style="width: 100%;" readonly="true"/>
+                            </p:panelGrid>
+                        </p:rowExpansion>
+                    </p:dataTable>
+                    <p:spacer height="30"/>
+
+                    <p:outputLabel value="Altura Max. Cerramiento: " style="color: #005f9c; font-size: 14px;"/>
+                    <p:dataTable id="dtAltCerr" value="#{normasConstruccion.alturaMaxCerramiento}" var="ac" reflow="true" emptyMessage="No hay Información sobre Altura Max. Cerramiento..." >
+                        <f:facet name="header" >
+                            <div align="right">
+                                <p:commandLink value="Agregar" actionListener="#{normasConstruccion.mostrarIngreso(5)}" style="color: #0033FF; font-size: 14px; "/>
+                            </div>
+                        </f:facet>
+                        <p:column headerText="Mostrar" style="width: 80px;">
+                            <p:rowToggler />
+                        </p:column>
+                        <p:column headerText="Disposición" style="width: 25%; text-align: center;">
+                            <p:outputLabel value="#{ac.nombreCodigo}"   style="width: 100%;"/>
+                        </p:column>
+                        <p:column headerText="Descripción">
+                            <h:inputText readonly="true" value="#{ac.descripcion}"   style="width: 95%; border: 0 #ffffff"/>
+                        </p:column>
+                        <p:column headerText="Acción" style="width: 100px; text-align: center;">
+                            <p:commandLink value="Eliminar" actionListener="#{normasConstruccion.eliminarRetirosAumentos(ac)}" style="color: #0033FF; "/>
+                        </p:column>
+                        <p:rowExpansion>
+                            <p:panelGrid columns="1">
+                                <p:outputLabel value="#{ac.nombreCodigo}" style="color: #005f9c; font-size: 11px;"/>
+                                <p:inputTextarea value="#{ac.descripcion}" style="width: 100%;" readonly="true"/>
+                            </p:panelGrid>
+                        </p:rowExpansion>
+                    </p:dataTable>
+                </p:tab>
+                <!-- DISPO0SICIÓN -->
+                <p:tab id="infDis" title="Disposiciones Generales">
+                    <p:panelGrid id="pngDispGen" columns="2" layout="grid">
+                        <h:panelGroup>
+                            <p:outputLabel value="Estructura: " style="color: #005f9c; font-size: 14px;"/>
+                            <p:inputTextarea autoResize="false" id="estruct" value="#{normasConstruccion.normaConstruccion.estructura}" rows="4" style="width: 100%;" />
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <p:outputLabel value="Cubierta: " style="color: #005f9c; font-size: 14px;"/>
+                            <p:inputTextarea autoResize="false" id="cubiert" value="#{normasConstruccion.normaConstruccion.cubierta}" rows="4" style="width: 100%;" />
+                        </h:panelGroup>
+                    </p:panelGrid>
+                    <p:dataTable id="dtDisposiciones" value="#{normasConstruccion.disposicionGeneral}" var="ldg" 
+                                 reflow="true" emptyMessage="No hay Información sobre Retiro Lateral..." >
+                        <f:facet name="header" >
+                            <div align="right">
+                                <p:commandLink value="Agregar" actionListener="#{normasConstruccion.mostrarIngreso(7)}" style="color: #0033FF; font-size: 14px; "/>
+                            </div>
+                        </f:facet>
+                        <p:column headerText="Mostrar" style="width: 80px;">
+                            <p:rowToggler />
+                        </p:column>
+                        <p:column headerText="Disposición" style="width: 25%; text-align: center;">
+                            <p:outputLabel value="#{ldg.nombreCodigo}"   style="width: 100%;"/>
+                        </p:column>
+                        <p:column headerText="Descripción">
+                            <h:inputText readonly="true" value="#{ldg.descripcion}"   style="width: 95%; border: 0 #ffffff"/>
+                        </p:column>
+                        <p:column headerText="Acción" style="width: 100px; text-align: center;">
+                            <p:commandLink value="Eliminar" actionListener="#{normasConstruccion.eliminarRetirosAumentos(ldg)}" style="color: #0033FF; "/>
+                        </p:column>
+                        <p:rowExpansion>
+                            <p:panelGrid columns="1">
+                                <p:outputLabel value="#{ldg.nombreCodigo}" style="color: #005f9c; font-size: 11px;"/>
+                                <p:inputTextarea value="#{ldg.descripcion}" style="width: 100%;" readonly="true"/>
+                            </p:panelGrid>
+                        </p:rowExpansion>
+                    </p:dataTable>
+                    <br/>
+                    <br/>
+                    Foto:<br/>
+                    <p:fileUpload fileUploadListener="#{normasConstruccion.handleFileUpload}" 
+                                  mode="advanced" dragDropSupport="false" sizeLimit="35000000" 
+                                  label="Seleccionar" uploadLabel="Subir" cancelLabel="Cancelar"  
+                                  allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />  
+                </p:tab>
+            </p:accordionPanel>
+            <br/>
+            <p:commandButton value="Guardar" icon="ui-icon-disk" actionListener="#{normasConstruccion.guadarNormaConstruccion()}" style="height: 30px;" styleClass="btnStyle"/>
+        </h:form>
+
+        <p:dialog id="dlgObs" widgetVar="agregar" header="Ingreso Informacón" appendTo="@(body)" modal="true" width="500" resizable="false" closable="true" closeOnEscape="true" >
+            <h:form id="frmObsCor">
+                <h1>Ingrese Información de las normas</h1>
+                <div align="center">
+                    <p:inputTextarea autoResize="false" id="obsservacion" value="#{normasConstruccion.retirosAumentos.descripcion}" rows="10" style="width: 100%;" placeholder="Ingrese detalles de Norma"/>
+                    <br/>
+                    <p:commandButton id="btnAprobar" value="Agregar" actionListener="#{normasConstruccion.agregarRetiros()}" style="height: 30px;" styleClass="btnStyle" icon="ui-icon-plusthick" iconPos="s"/>
+                    <p:commandButton id="btnSalir" value="Salir" onclick="PF('agregar').hide();" style="height: 30px;" styleClass="btnStyle" icon="ui-icon-closethick" iconPos="s"/>
+                </div>
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+
+</ui:composition>

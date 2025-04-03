@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="DetalleCertificado" pageWidth="555" pageHeight="802" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="77d5effc-bf38-4708-9e20-3b99ba6c6022">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_REPERTORIO" class="java.lang.Long"/>
+	<parameter name="P_ANIO" class="java.lang.String"/>
+	<parameter name="ID_MOVIMIENTO" class="java.lang.Long"/>
+	<queryString>
+		<![CDATA[select ce.nombre as nombres, ce.ced_ruc as cedruc, ps.papel
+from sgm_app.reg_movimiento m
+left join sgm_app.reg_movimiento_cliente mc on(m.id=mc.movimiento)
+left join sgm_app.reg_ente_interviniente ce on (mc.ente_interv=ce.id)
+left join sgm_app.reg_cat_papel ps on (mc.papel=ps.id)
+where m.id=$P{ID_MOVIMIENTO};]]>
+	</queryString>
+	<field name="nombres" class="java.lang.String"/>
+	<field name="cedruc" class="java.lang.String"/>
+	<field name="papel" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="16" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="959cc0f3-5a3b-4c43-81fa-56dcbdd62f57" x="0" y="2" width="100" height="14"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nombre]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="addcb3df-f0e5-4f17-af88-38ae181c3ed8" x="215" y="2" width="77" height="14"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cédula/Ruc]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b07754b6-8ae7-47da-9db5-36e6ad51d5ee" x="327" y="2" width="143" height="14"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Papel]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="5753e7ec-b13c-41d8-8dcb-b40d286ce513" x="0" y="0" width="212" height="14"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombres}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement uuid="e3894ad8-3f70-4448-b9cc-7d296f33361a" x="215" y="0" width="111" height="14"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cedruc}!=null?$F{cedruc}:"**********"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="070fcd98-5f4a-482b-975e-aaa86ae918a7" x="327" y="0" width="143" height="14"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{papel}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:poue="http://primefaces.org/ui/extensions">
+    <f:metadata >
+        <f:event type="preRenderView" listener="#{cultivos.initView()}"/>
+        <f:viewParam name="idPredio" value="#{cultivos.idPredio}"/>
+        <f:viewParam name="idCatPredioCult" value="#{cultivos.idCatPredioCult}"/>
+        <f:viewParam name="nuevo" value="#{cultivos.esNuevo}"/>
+        <f:viewParam name="ver" value="#{cultivos.ver}"/>
+    </f:metadata>
+    <h:head>
+        <title>Cultivos</title>
+        <style type="text/css">
+            .ui-widget {
+                font-size: 100%;
+            }
+            .ui-column-title{
+                font-size: 11px;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <h:outputStylesheet name="css/font-icon-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/sentinel-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/core-layout.css" library="sentinel-layout" />
+        <h:form id="formProp">
+            <p:growl autoUpdate="true" globalOnly="true" showDetail="true"/>
+            <h:panelGrid columns="6" id="pnlCultivo" cellspacing="5" cellpadding="5">
+                <h:outputText value="Categoria de Cultivo: " style="font-weight: bolder"/>    
+                <p:selectOneMenu id="cboTipoCultivo" value="#{cultivos.padreItem}" appendTo="@this" effect="fade"  >                                
+                    <f:selectItem itemLabel="Seleccionar..." itemValue=""/>
+                    <f:selectItems value="#{serviceLists.getListado('cultivo.tipo')}" var="est" itemLabel="#{est.valor}" itemValue="#{est.id}"/> 
+                    <p:ajax update="formProp:cboSubCultivo"/>
+                </p:selectOneMenu>
+                <h:outputText value="SubCategoria de Cultivo: " style="font-weight: bolder"/>    
+                <p:selectOneMenu id="cboSubCultivo" value="#{cultivos.hijoItem}" appendTo="@this" effect="fade" >                                
+                    <f:selectItem itemLabel="Seleccionar..." itemValue=""/>
+                    <f:selectItems value="#{cultivos.listadoCultivos}" var="est" itemLabel="#{est.valor}" itemValue="#{est.id}"/>                                
+                    <p:ajax update="formProp:cboItemCultivo"/>
+                </p:selectOneMenu>
+                <h:outputText value="Plantación: " style="font-weight: bolder"/>    
+                <p:selectOneMenu id="cboItemCultivo" value="#{cultivos.cult.tipo}" appendTo="@this" effect="fade" converter="entityConverter" >                                
+                    <f:selectItem itemLabel="Seleccionar..." itemValue=""/>
+                    <f:selectItems value="#{cultivos.listadoItemsCultivos}" var="est" itemLabel="#{est.valor}" itemValue="#{est}"/>                                
+                </p:selectOneMenu>                
+<!--                <h:outputText value="Plantación: " style="font-weight: bold"/> 
+                <p:inputText value="#{cultivos.cult.plantacion}"/>-->
+                <h:outputText value="Area: " style="font-weight: bold"/> 
+                <pe:inputNumber id="area" value="#{cultivos.cult.area}" decimalPlaces="2"/> 
+                <h:outputText value="Cantidad: " style="font-weight: bold"/> 
+                <pe:inputNumber id="cantidad" value="#{cultivos.cult.cantidad}"/> 
+                
+                <h:outputText value="Edad: " style="font-weight: bold"/> 
+                <pe:inputNumber id="edad" value="#{cultivos.cult.edad}"/> 
+                
+                <h:outputText value="Conservación: " style="font-weight: bolder"/>    
+                <p:selectOneMenu id="cboConservacion" value="#{cultivos.cult.conservacion}" effect="fade" converter="entityConverter" >                                
+                    <f:selectItem itemLabel="Seleccionar..." itemValue=""/>
+                    <f:selectItems value="#{serviceLists.getListado('cultivo.conservacion')}" var="cons" itemLabel="#{cons.valor}" itemValue="#{cons}"/>                                
+                </p:selectOneMenu>
+                
+                <h:outputText value="Valor: " style="font-weight: bold"/> 
+                <pe:inputNumber id="valor" value="#{cultivos.cult.valor}" decimalPlaces="2"/> 
+            </h:panelGrid>
+            <center style="float: bottom; ">
+                <p:commandButton actionListener="#{cultivos.agregarCultivo}" value="Agregar" rendered="#{cultivos.nuevo and !cultivos.esVer}" icon="ui-icon-plus" style="height: 30px;" styleClass="btnStyle"/>
+                <p:commandButton actionListener="#{cultivos.modificarCultivo()}" value="Modificar" rendered="#{!cultivos.nuevo and !cultivos.esVer}" icon="ui-icon-pencil" style="height: 30px;" styleClass="btnStyle"/>
+            </center>
+        </h:form>
+    </h:body>
+</html>
+

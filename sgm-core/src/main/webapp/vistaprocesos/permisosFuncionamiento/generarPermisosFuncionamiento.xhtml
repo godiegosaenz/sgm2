@@ -1,0 +1,408 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:dialog="http://xmlns.jcp.org/jsf/composite/dialog"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:poue="http://primefaces.org/ui/extensions">
+    <ui:define name="head">
+        <style type="text/css">
+            .ui-datepicker .ui-datepicker-title select {
+                font-size: 1em;
+                margin: 1px 0;
+                color: black;
+            }
+        </style>
+    </ui:define>
+    <ui:define name="page_title">
+        Aprobar Liquidaciones
+    </ui:define>
+
+    <ui:define name="top">
+        <!--Aprobar Tasa de Liquidacion-->
+        <h:panelGroup >
+            <p:panelGrid styleClass="noBorder" columns="4" style="width: 100%;font-size: 14px;">
+                <p:outputLabel value="Trámite: #{generarPermisosFuncionamiento.ht.id}" style="font-weight: bolder;color: #005f9c"/>
+                <p:outputLabel value="Tarea: Aprobar Tasa de Liquidacion" style="font-weight: bolder;color: #005f9c"/>
+                <p:outputLabel value="Responsable: #{generarPermisosFuncionamiento.taskDataByTaskID.assignee}" style="font-weight: bolder;color: #005f9c"/>
+            </p:panelGrid>
+        </h:panelGroup>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="frmAprTasLiqPerFun">
+
+            <p:tabView id="tvSolicitud">
+                <p:tab title="Datos del permiso">
+                    <p:panelGrid style="width: 100%; margin-bottom: 15px;">
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:outputLabel value="SOLICITANTE: #{generarPermisosFuncionamiento.ht.solicitante.ciRuc} - #{generarPermisosFuncionamiento.ht.solicitante.apellidos} #{generarPermisosFuncionamiento.ht.solicitante.nombres} #{generarPermisosFuncionamiento.ht.solicitante.razonSocial}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="SOLICITUD: #{generarPermisosFuncionamiento.permiso.id}"/>
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="FECHA INGRESO: "/><p:outputLabel value="#{generarPermisosFuncionamiento.permiso.fechaEmision}"><f:convertDateTime pattern="dd/MM/yyyy"/></p:outputLabel>
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="PRIMERA VEZ: "/>
+                                <p:selectBooleanCheckbox value="#{generarPermisosFuncionamiento.permiso.primeraVez}" disabled="true" style="margin-left: 15px; margin-top: 5px;"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:outputLabel value="CONTADOR: #{generarPermisosFuncionamiento.permiso.contador.nombreCompleto}"/>
+                            </p:column>
+
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="AFILIACIÓN: #{generarPermisosFuncionamiento.permiso.afiliacionCamara.descripcion}"/>
+                            </p:column>
+                            <p:column >
+                                <p:outputLabel value="NO. DE TRABAJADORES: #{generarPermisosFuncionamiento.permiso.numTrabajadores}"/>
+                            </p:column>
+                            <p:column >
+                                <p:outputLabel value="NO. DE DECLARACIÓN: #{generarPermisosFuncionamiento.permiso.numDeclaracion}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:outputLabel value="ÁREA BOMBEROS: #{generarPermisosFuncionamiento.permiso.areaBombero} mtrs. cuadrados"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <br/>
+                    <p:tabView id="tdMain" >
+                        <p:tab title="Activos Totales (1.5 x mil)" 
+                               rendered="#{generarPermisosFuncionamiento.permiso.activos}">
+                            <!--                ACTIVOS TOTALES -->
+                            <p:panelGrid id="pnlAct" columns="2" layout="grid" columnClasses="ui-grid-col-8,ui-grid-col-7" >
+                                <p:panelGrid columns="4"  >
+                                    <p:outputLabel value="Activo Total: " for="at1"/>
+                                    <poue:inputNumber value="#{generarPermisosFuncionamiento.actAnual.activos.activoTotal}" id="at1">
+                                        <p:ajax  listener="#{generarPermisosFuncionamiento.sumarActivos()}" update="frmAprTasLiqPerFun:tvSolicitud:tdMain:pnlAct, dtRubAct"/>
+                                    </poue:inputNumber>
+
+                                    <p:outputLabel value="Activo Contingente: " for="at2"/>
+                                    <poue:inputNumber value="#{generarPermisosFuncionamiento.actAnual.activos.activoContingente}" id="at2">
+                                        <p:ajax  listener="#{generarPermisosFuncionamiento.sumarActivos()}" update="frmAprTasLiqPerFun:tvSolicitud:tdMain:pnlAct, dtRubAct"/>
+                                    </poue:inputNumber>
+
+                                    <p:outputLabel value="Pasivo Corriente: " for="at3"/>
+                                    <poue:inputNumber value="#{generarPermisosFuncionamiento.actAnual.activos.pasivoTotal}" id="at3">
+                                        <p:ajax  listener="#{generarPermisosFuncionamiento.sumarPasivos()}" update="frmAprTasLiqPerFun:tvSolicitud:tdMain:pnlAct, dtRubAct"/>
+                                    </poue:inputNumber>
+
+                                    <p:outputLabel value="Pasivo Contingente: " for="at4"/>
+                                    <poue:inputNumber value="#{generarPermisosFuncionamiento.actAnual.activos.pasivoContingente}" id="at4">
+                                        <p:ajax  listener="#{generarPermisosFuncionamiento.sumarPasivos()}" update="frmAprTasLiqPerFun:tvSolicitud:tdMain:pnlAct, dtRubAct"/>
+                                    </poue:inputNumber>
+
+                                    <p:outputLabel value="Año de Balance: " for="at5"/>
+                                    <p:spinner id="at5" value="#{generarPermisosFuncionamiento.actAnual.activos.anioBalance}" min="#{generarPermisosFuncionamiento.minAnio}" 
+                                               maxlength="4" max="#{generarPermisosFuncionamiento.maxAnio}" stepFactor="1" >
+                                        <poue:keyFilter mask="num"/>
+                                        <p:ajax  listener="#{generarPermisosFuncionamiento.impuesto()}" update="frmAprTasLiqPerFun:tvSolicitud:tdMain:pnlAct, dtRubAct"/>
+                                    </p:spinner>
+                                    <p:outputLabel value="Porcentaje de Ingreso: " for="at6"/>
+                                    <poue:inputNumber value="#{generarPermisosFuncionamiento.actAnual.activos.porcentajeIngreso}" id="at6">
+                                        <p:ajax  listener="#{generarPermisosFuncionamiento.impuesto()}" update="frmAprTasLiqPerFun:tvSolicitud:tdMain:pnlAct, dtRubAct"/>
+                                    </poue:inputNumber>
+
+                                    <p:outputLabel value="Año de Cobro: " for="at7"/>
+                                    <p:calendar value="#{generarPermisosFuncionamiento.actAnual.activos.fechaIngreso}" id="at7" disabled="true" pattern="dd/MM/yyyy">
+                                        <p:ajax  listener="#{generarPermisosFuncionamiento.impuesto()}" update="frmAprTasLiqPerFun:tvSolicitud:tdMain:pnlAct, dtRubAct"/>
+                                    </p:calendar>
+
+                                    <p:outputLabel value="" for="at8"/>
+                                    <p:outputLabel value="" id="at8"/>
+                                </p:panelGrid>
+                                <h:panelGroup>
+                                    <!--                    RUBROS LOCALES COMERCIALES -->
+                                    <p:dataTable id="dtRubAct" reflow="true" value="#{generarPermisosFuncionamiento.actAnual.detalle}" 
+                                                 var="rub" rowIndexVar="index" style="width: 100%;" >
+                                        <p:column style="width: 5%">
+                                            <h:outputText value="#{index+1}" />
+                                        </p:column>
+                                        <p:column headerText="Descripción" >
+                                            <h:outputText value="#{rub.descripcion}" />
+                                        </p:column>
+                                        <p:column headerText="Valor" style="width: 20%; text-align: right">
+                                            <h:outputText value="#{rub.valor}" >
+                                                <f:convertNumber maxFractionDigits="2" minFractionDigits="2" currencySymbol="$"/>
+                                            </h:outputText>
+                                        </p:column>
+                                    </p:dataTable>
+                                    <br/>
+                                    <div align="right">
+                                        <p:outputLabel for="actt1" value="Total a cancelar: " style="font-weight: bold;"/>
+                                        <p:outputLabel for="actt1" value="$ " style="font-weight: bold;"/>
+                                        <p:inputText id="actt1" value="#{generarPermisosFuncionamiento.actAnual.liquidacion.totalPago}" readonly="true" >
+                                            <f:convertNumber maxFractionDigits="2"  minFractionDigits="2"/>
+                                        </p:inputText>
+                                    </div>
+                                </h:panelGroup>
+                            </p:panelGrid>
+                        </p:tab>
+                        <p:tab title="Tasa de Habilitacion" rendered="#{generarPermisosFuncionamiento.permiso.tasaHabilitacion}">
+                            <!--                TASA DE HABILITACION -->
+                            <p:panelGrid id="pnlTasH" columns="2" layout="grid" columnClasses="ui-grid-col-8,ui-grid-col-7" >
+                                <p:panelGrid columns="4"  >
+                                    <p:outputLabel value="Área Permitida: " for="th1"/>
+                                    <poue:inputNumber value="#{generarPermisosFuncionamiento.permiso.areaBombero}" id="th1" readonly="false">
+                                        <p:ajax listener="#{generarPermisosFuncionamiento.calcularTasaHab()}" update="pnlTasH"/>
+                                    </poue:inputNumber>
+
+                                    <p:outputLabel value="Área Prohibida: " for="th2" />
+                                    <poue:inputNumber value="" id="th2" readonly="true"/>
+                                </p:panelGrid>
+                                <h:panelGroup>
+                                    <!--                    RUBROS LOCALES COMERCIALES -->
+                                    <p:dataTable id="dtRubTasHab" reflow="true" value="#{generarPermisosFuncionamiento.tasaHab.detalle}" 
+                                                 var="rub" rowIndexVar="index" style="width: 100%;" >
+                                        <p:column style="width: 5%">
+                                            <h:outputText value="#{index+1}" />
+                                        </p:column>
+                                        <p:column headerText="Descripción" >
+                                            <h:outputText value="#{rub.descripcion}" />
+                                        </p:column>
+                                        <p:column headerText="Valor" style="width: 20%; text-align: right">
+                                            <h:outputText value="#{rub.valor}" >
+                                                <f:convertNumber maxFractionDigits="2" minFractionDigits="2" currencySymbol="$"/>
+                                            </h:outputText>
+                                        </p:column>
+                                    </p:dataTable>
+                                    <br/>
+                                    <div align="right">
+                                        <p:outputLabel for="tasHabt1" value="Total a cancelar: " style="font-weight: bold;"/>
+                                        <p:outputLabel for="tasHabt1" value="$ " style="font-weight: bold;"/>
+                                        <p:inputText id="tasHabt1" value="#{generarPermisosFuncionamiento.tasaHab.liquidacion.totalPago}" readonly="true" >
+                                            <f:convertNumber maxFractionDigits="2"  minFractionDigits="2"/>
+                                        </p:inputText>
+                                    </div>
+                                </h:panelGroup>
+                            </p:panelGrid>
+                        </p:tab>
+                        <p:tab title="Patente Anual" rendered="#{generarPermisosFuncionamiento.permiso.patente}">
+                            <!--                PATENTE ANUAL -->
+                            <p:panelGrid id="pnlPat" columns="2" layout="grid" columnClasses="ui-grid-col-8,ui-grid-col-7" >
+                                <p:panelGrid columns="4"  >
+                                    <p:outputLabel value="Capital o Patrimonio: " for="pa1"/>
+                                    <poue:inputNumber value="#{generarPermisosFuncionamiento.patente.balance.capital}" id="pa1">
+                                        <p:ajax update="frmAprTasLiqPerFun:tvSolicitud:tdMain:pnlPat" listener="#{generarPermisosFuncionamiento.calcualrPatente()}" />
+                                    </poue:inputNumber>
+
+                                    <p:outputLabel value="Fecha de Balance: " for="pa2"/>
+                                    <p:calendar value="#{generarPermisosFuncionamiento.patente.balance.fechaBalance}" id="pa2" navigator="true"/>
+
+                                    <p:outputLabel value="Año de Cobro: " for="pa3"/>
+                                    <p:inputText value="#{generarPermisosFuncionamiento.patente.balance.anioBalance}" id="pa3"/>
+                                </p:panelGrid>
+                                <h:panelGroup>
+                                    <!--                    RUBROS LOCALES COMERCIALES -->
+                                    <p:dataTable id="dtpatAnu" reflow="true" value="#{generarPermisosFuncionamiento.patente.detalle}" 
+                                                 var="rub" rowIndexVar="index" style="width: 100%;" >
+                                        <p:column style="width: 5%">
+                                            <h:outputText value="#{index+1}" />
+                                        </p:column>
+                                        <p:column headerText="Descripción" >
+                                            <h:outputText value="#{rub.descripcion}" />
+                                        </p:column>
+                                        <p:column headerText="Valor" style="width: 20%; text-align: right">
+                                            <h:outputText value="#{rub.valor}" >
+                                                <f:convertNumber maxFractionDigits="2" minFractionDigits="2" currencySymbol="$"/>
+                                            </h:outputText>
+                                        </p:column>
+                                    </p:dataTable>
+                                    <br/>
+                                    <div align="right">
+                                        <p:outputLabel for="patAnut1" value="Total a cancelar: " style="font-weight: bold;"/>
+                                        <p:outputLabel for="patAnut1" value="$ " style="font-weight: bold;"/>
+                                        <p:inputText id="patAnut1" value="#{generarPermisosFuncionamiento.patente.liquidacion.totalPago}" readonly="true" >
+                                            <f:convertNumber maxFractionDigits="2"  minFractionDigits="2"/>
+                                        </p:inputText>
+                                    </div>
+                                </h:panelGroup>
+                            </p:panelGrid>
+                        </p:tab>
+                        <p:tab title="Turismo" rendered="#{generarPermisosFuncionamiento.permiso.turismo}">
+                            <!--                TURISMO -->
+                            <p:panelGrid id="pnlTur" columns="2" layout="grid" columnClasses="ui-grid-col-10,ui-grid-col-5" >
+                                <h:panelGroup >
+                                    <p:panelGrid columns="4"  >
+                                        <p:outputLabel value="Actividad: " for="tu1"/>
+                                        <!--<p:dataList id="tu1" value="#{generarPermisosFuncionamiento.getActividadesLocal()}" var="ct1" 
+                                                    emptyMessage="No se encontrarón registros de actividades" 
+                                                    type="definition" itemType="none">
+                                            <p:outputLabel value="#{ct1.descripcion}" style="margin: 0 0px; font-size: 10px;" title="#{ct1.descripcion}"/>
+                                        </p:dataList>-->
+                                        <p:inputText value="#{generarPermisosFuncionamiento.permiso.localComercial.actividades}" id="tu1" readonly="true"/>
+                                        <p:outputLabel value="Categoria: " for="tu2"/>
+                                        <p:inputText value="#{generarPermisosFuncionamiento.permiso.localComercial.tipoLocal.descripcion}" id="tu2" readonly="true"/>
+                                    </p:panelGrid>
+                                    <p:dataTable value="#{generarPermisosFuncionamiento.permiso.localComercial.cantidadAccesoriosCollection}" 
+                                                 var="alc1" emptyMessage="No se encontrarón registros de Cantidad">
+                                        <p:column headerText="Cantidad" >
+                                            <p:outputLabel value="#{alc1.cantidad}"/>
+                                        </p:column>
+                                        <p:column headerText="Valor Unitario" >
+                                            <p:selectOneMenu value="">
+                                                <f:selectItems value="#{generarPermisosFuncionamiento.valorTasa}" var="tt1" itemLabel="#{tt1.valor}" itemValue="#{tt1.valor}"/>
+                                            </p:selectOneMenu>
+                                        </p:column>
+                                    </p:dataTable>
+                                </h:panelGroup>
+                                <h:panelGroup>
+                                    <!--                    RUBROS LOCALES COMERCIALES -->
+                                    <p:dataTable id="dtTur" reflow="true" value="#{generarPermisosFuncionamiento.turismo.detalle}" 
+                                                 var="rub" rowIndexVar="index" style="width: 100%;" >
+                                        <p:column style="width: 10%">
+                                            <h:outputText value="#{index+1}" />
+                                        </p:column>
+                                        <p:column headerText="Descripción" >
+                                            <h:outputText value="#{rub.descripcion}" />
+                                        </p:column>
+                                        <p:column headerText="Valor" style="width: 20%; text-align: right">
+                                            <h:outputText value="#{rub.valor}" >
+                                                <f:convertNumber maxFractionDigits="2" minFractionDigits="2" currencySymbol="$"/>
+                                            </h:outputText>
+                                        </p:column>
+                                    </p:dataTable>
+                                    <br/>
+                                    <div align="right">
+                                        <p:outputLabel for="turt1" value="Total a cancelar: " style="font-weight: bold;"/>
+                                        <p:outputLabel for="turt1" value="$ " style="font-weight: bold;"/>
+                                        <p:inputText id="turt1" value="#{generarPermisosFuncionamiento.turismo.liquidacion.totalPago}" readonly="true" >
+                                            <f:convertNumber maxFractionDigits="2"  minFractionDigits="2"/>
+                                        </p:inputText>
+                                    </div>
+                                </h:panelGroup>
+                            </p:panelGrid>
+                        </p:tab>
+                        <p:tab title="Rotulos Publicitarios" rendered="#{generarPermisosFuncionamiento.permiso.rotulos}">
+                            <!--                VLLAS PUBLICITARIAS -->
+                            <p:panelGrid id="pnlPlu" columns="2" layout="grid" columnClasses="ui-grid-col-8,ui-grid-col-7" >
+                                <p:panelGrid columns="4" 
+                                             columnClasses="ui-grid-col-1, ui-grid-col-8, ui-grid-col-1, ui-grid-col-3">
+
+                                    <p:outputLabel value="Tipo: " for="vl1"/>
+                                    <p:selectOneRadio id="vl1" value="#{generarPermisosFuncionamiento.rotulos.liquidacion.codigoLocal}" style="width: 100%; " >
+                                        <f:selectItem itemLabel="Publicidad Normal" itemValue="rotulo"/>
+                                        <f:selectItem itemLabel="Pantalla Electronica Digital" itemValue="pantalla"/>
+                                        <p:ajax update="frmAprTasLiqPerFun:tvSolicitud:tdMain:pnlPlu" listener="#{generarPermisosFuncionamiento.calcularValorRotulos()}"/>
+                                    </p:selectOneRadio>
+
+                                    <p:outputLabel value="Valor: " for="vl3"/>
+                                    <p:inputText value="#{generarPermisosFuncionamiento.rotulos.liquidacion.areaTotal}" id="vl3" style="width: 100%; ">
+                                        <poue:keyFilter mask="num"/>
+                                        <p:ajax update="frmAprTasLiqPerFun:tvSolicitud:tdMain:pnlPlu" listener="#{generarPermisosFuncionamiento.calcularValorRotulos()}"/>
+                                    </p:inputText>
+                                </p:panelGrid>
+                                <h:panelGroup>
+                                    <!--                    RUBROS LOCALES COMERCIALES -->
+                                    <p:dataTable id="dtRot" reflow="true" value="#{generarPermisosFuncionamiento.rotulos.detalle}" 
+                                                 var="rub" rowIndexVar="index" style="width: 100%;" >
+                                        <p:column style="width: 5%">
+                                            <h:outputText value="#{index+1}" />
+                                        </p:column>
+                                        <p:column headerText="Descripción" >
+                                            <h:outputText value="#{rub.descripcion}" />
+                                        </p:column>
+                                        <p:column headerText="Valor" style="width: 20%; text-align: right">
+                                            <h:outputText value="#{rub.valor}" >
+                                                <f:convertNumber maxFractionDigits="2" minFractionDigits="2" currencySymbol="$"/>
+                                            </h:outputText>
+                                        </p:column>
+                                    </p:dataTable>
+                                    <br/>
+                                    <div align="right">
+                                        <p:outputLabel for="rott1" value="Total a cancelar: " style="font-weight: bold;"/>
+                                        <p:outputLabel for="rott1" value="$ " style="font-weight: bold;"/>
+                                        <p:inputText id="rott1" value="#{generarPermisosFuncionamiento.rotulos.liquidacion.totalPago}" readonly="true" >
+                                            <f:convertNumber maxFractionDigits="2"  minFractionDigits="2"/>
+                                        </p:inputText>
+                                    </div>
+                                </h:panelGroup>
+                            </p:panelGrid>
+                        </p:tab>
+                    </p:tabView>
+                    <br/><br/>
+                    <div align="center" >
+                        <p:commandButton value="Actulizar Valores" icon="ui-icon-gear" iconPos="r" style="height: 28px;"
+                                         actionListener="#{generarPermisosFuncionamiento.actualizarValores()}" 
+                                         styleClass="btnStyle" update="frmAprTasLiqPerFun:tvSolicitud:tdMain"/>
+                        <p:commandButton value="Procesar" icon="ui-icon-disk" iconPos="r" style="height: 28px;" 
+                                         actionListener="#{generarPermisosFuncionamiento.validar()}" styleClass="btnStyle"/>
+                    </div>
+                </p:tab>
+                <p:tab title="Datos del Local">
+                    <p:panelGrid  columns="4" layout="grid" 
+                                  columnClasses="ui-grid-col-2, ui-grid-col-4, ui-grid-col-2, ui-grid-col-4">
+
+                        <h:outputText value="Ruc"/>
+                        <p:inputText value="#{generarPermisosFuncionamiento.permiso.localComercial.razonSocial.ciRuc}" readonly="true" style="width: 100%" />
+                        <h:outputText value="Matricula Inmobiliaria"/>
+                        <p:inputText value="#{generarPermisosFuncionamiento.permiso.localComercial.numPredio}" readonly="false" style="width: 25%" />
+
+                        <h:outputText value="Nombre del local"/>
+                        <p:inputText value="#{generarPermisosFuncionamiento.permiso.localComercial.nombreLocal}" readonly="true" style="width: 100%" title="#{generarPermisosFuncionamiento.permiso.localComercial.nombreLocal}"/>
+                        <p:outputLabel value="Razón Social"/>
+                        <p:inputText value="#{generarPermisosFuncionamiento.permiso.localComercial.razonSocial.nombreCompleto}" readonly="true" style="width: 100%; " title="#{generarPermisosFuncionamiento.permiso.localComercial.razonSocial.nombreCompleto}"/>
+
+                        <p:outputLabel value="Propietario"/>
+                        <p:inputText value="#{generarPermisosFuncionamiento.permiso.localComercial.propietario.nombreCompleto}" readonly="true" style="width: 100%; " title="#{generarPermisosFuncionamiento.permiso.localComercial.propietario.nombreCompleto}"/>
+                        <h:outputText value="Número del local"/>
+                        <p:inputText value="#{generarPermisosFuncionamiento.permiso.localComercial.numLocal}" readonly="true"  style="width: 100%;"/>
+
+                        <h:outputText value="Área del local"/>
+                        <p:inputText value="#{generarPermisosFuncionamiento.permiso.localComercial.area}" readonly="true"/>
+                        <h:outputText value="Ubicacion"/>
+                        <p:inputText value="#{generarPermisosFuncionamiento.permiso.localComercial.ubicacion.descripcion}" readonly="true" style="width: 100%; " title="#{generarPermisosFuncionamiento.permiso.localComercial.ubicacion.descripcion}"/>
+
+                        <h:outputText value="Tipo"/>
+                        <p:inputText value="#{generarPermisosFuncionamiento.permiso.localComercial.tipoLocal.descripcion}" readonly="true"/>
+                        <h:outputText value=""/>
+                        <h:outputText value=""/>
+
+                        <h:outputText value="Actividad"/>
+                        <p:dataList value="#{generarPermisosFuncionamiento.permiso.localComercial.renActividadComercialCollection}" var="ac1" 
+                                    style="width: 100%; " emptyMessage="Local Comercial no tiene Actividades Asociadas">
+                            <h:outputText value="#{ac1.descripcion}" style="display:inline-block" />
+                        </p:dataList>
+                        <h:outputText value=""/>
+                        <h:outputText value=""/>
+                    </p:panelGrid>
+                </p:tab>
+                <p:tab title="Predio">
+                    <p:panelGrid columns="2">
+                        <h:outputText value="Codigo Catastral" style="font-weight: bold"/>
+                        <h:outputText value="#{generarPermisosFuncionamiento.predio.codigoPredialCompleto}"/>
+                        <h:outputText value="Ubicacion" style="font-weight: bold"/>
+                        <h:outputText value="#{generarPermisosFuncionamiento.predio.ciudadela.nombre}"/>
+                        <h:outputText value="Manzana" style="font-weight: bold"/>
+                        <h:outputText value="#{generarPermisosFuncionamiento.predio.urbMz}"/>
+                        <h:outputText value="Solar" style="font-weight: bold"/>
+                        <h:outputText value="#{generarPermisosFuncionamiento.predio.urbSolarnew}"/>
+                    </p:panelGrid>
+                </p:tab>
+                <p:tab title="Detalle trámite">
+                    <dialog:detalleTareas archivos="#{generarPermisosFuncionamiento.processInstanceAllAttachments}"
+                                          observaciones="#{generarPermisosFuncionamiento.ht.observacionesCollection}" />
+                </p:tab>
+            </p:tabView>
+
+        </h:form>   
+
+        <dialog:observaciones actionButton="#{generarPermisosFuncionamiento.completarTarea()}"
+                              observaciones="#{generarPermisosFuncionamiento.entradas['obs'].observacion}"
+                              valueCheckBox="#{generarPermisosFuncionamiento.permiso.inspeccionComisaria}" textCheckBox="Inspeccion Comisaria"
+                              checkBox="true"/>
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,254 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:dialog="http://xmlns.jcp.org/jsf/composite/dialog">
+    <ui:define name="top">
+        <p:panelGrid styleClass="noBorder" columns="4" style="width: 100%;font-size: 14px;">
+            <p:outputLabel value="Trámite: #{agregarCatPredioS4S6.ht.id}" style="font-weight: bolder;color: #005f9c"/>
+            <p:outputLabel value="Tarea: #{agregarCatPredioS4S6.taskDataByTaskID.name}" style="font-weight: bolder;color: #005f9c"/>
+            <p:outputLabel value="Responsable: #{agregarCatPredioS4S6.taskDataByTaskID.assignee}" style="font-weight: bolder;color: #005f9c"/>
+        </p:panelGrid>
+    </ui:define>
+    <ui:define name="content">
+        <h:form id="frmMain">
+
+            <p:panel id="pnlDP" style="width: 100%;">
+                <p:tabView id="tdatos">
+                    <p:tab id="tgen" title="Información de los Predios Divididos">
+                        <center>
+                            <p:dataTable id="dtobs" value="#{agregarCatPredioS4S6.prediosHijos}" var="predio" reflow="true" style="width: 70%">
+                                <f:facet name="header">
+                                    Lista de Predios Creados
+                                </f:facet>
+                                <p:column headerText="Código Predial" style="width: 30%; text-align: center;">
+                                    #{predio.codigoPredial}
+                                </p:column>
+                                <p:column headerText="Propietario" style="width: 40%; text-align: center;">
+                                    #{predio.propietarios}
+                                </p:column>
+                                <!--
+                                <p:column headerText="Detalle" rendered="#{predio.catPredioS4.predio==null&&predio.catPredioS6.predio==null}" style="width: 20%; text-align: center;">
+                                    <h:outputText value="Sin datos" style="color: red;"/>
+                                </p:column>
+                                <p:column headerText="Detalle" rendered="#{predio.catPredioS4.predio!=null&&predio.catPredioS6.predio!=null}" style="width: 20%; text-align: center;">
+                                    <h:outputText value="Datos listos" style="color: blue;"/>
+                                </p:column>
+                                -->
+                                <p:column headerText="Acción" style="width: 30%">
+                                    <center><p:commandButton value="Agregar Información" update="dlgForm" onclick="PF('dlgAgregarInfo').show()" style="color: #ffffff; background: #616161 !important; font-weight: bold;" actionListener="#{agregarCatPredioS4S6.setearPredio(predio)}"/></center>
+                                </p:column>
+                            </p:dataTable>
+                            <center>
+                                <p:commandButton value="Guardar Edificaciones" style="margin-top: 20px;" actionListener="#{agregarCatPredioS4S6.guardarCatPredioS4S6()}" />
+                            </center>
+                        </center>
+                    </p:tab>
+                    <p:tab id="tadicionales" title="Adicionales">
+                        <p:tabView id="tadic">
+                            <p:tab id="tdocs" title="Observaciones">
+                                <p:dataTable id="dtobs" value="#{agregarCatPredioS4S6.ht.observacionesCollection}" var="obs" reflow="true" style="width: 100%">
+                                    <f:facet name="header">Observaciones</f:facet>
+                                    <p:column headerText="Descripcion" style="width: 40%">
+                                        #{obs.observacion}
+                                    </p:column>
+                                    <p:column headerText="tarea" style="width: 25%">
+                                        #{obs.tarea}
+                                    </p:column>
+                                    <p:column headerText="Responsable" style="width: 20%">
+                                        #{obs.userCre}
+                                    </p:column>
+                                    <p:column headerText="Fecha" style="width: 15%">
+                                        #{obs.fecCre}
+                                    </p:column>
+                                </p:dataTable>
+                            </p:tab>
+                            <p:tab id="tobs" title="Documentos">
+                                <dialog:detalleArchivosAct archivos="#{agregarCatPredioS4S6.processInstanceAttachmentsFiles}"/>
+                            </p:tab>
+                        </p:tabView>
+                    </p:tab>
+                </p:tabView>
+            </p:panel>
+        </h:form>
+
+        <p:dialog header="Agregar Información Predio" modal="true" resizable="false" id="dlgEditar"  widgetVar="dlgAgregarInfo" height="auto" width="auto" position="center">  
+            <h:form id="dlgForm" >
+                <p:scrollPanel style="width:560px; height:650px;">
+                    <h:panelGroup id="editPGroup" rendered="#{agregarCatPredioS4S6.cpTemp!=null}">
+
+                        <p:panel header="Características Físicas del Solar">
+                            <p:panelGrid columns="2" style="width: 100%;">
+                                <h:outputText value="Cerramiento:"/>
+                                <h:panelGroup><center><p:selectOneMenu value="#{agregarCatPredioS4S6.cpTemp.catPredioS4.cerramientoCtlg}" effect="fade" style="width: 220px;"
+                                                                       converter="entityConverter"   >
+                                            <f:selectItems value="#{agregarCatPredioS4S6.cerramientosList}" var="item" itemLabel="#{item.codename}" itemValue="#{item}"/>  
+                                        </p:selectOneMenu></center></h:panelGroup>  
+                                <h:outputText value="Localización en Manzana:"/>
+                                <h:panelGroup><center><p:selectOneMenu value="#{agregarCatPredioS4S6.cpTemp.catPredioS4.locManzana}" effect="fade" style="width: 220px;"
+                                                                       converter="entityConverter"   >
+                                            <f:selectItems value="#{agregarCatPredioS4S6.tipoLocalList}" var="item2" itemLabel="#{item2.valor}" itemValue="#{item2}"/>  
+                                        </p:selectOneMenu></center></h:panelGroup>  
+                                <h:outputText value="Accesibilidad:"/>
+                                <h:panelGroup><center><p:selectManyCheckbox value="#{agregarCatPredioS4S6.cpTemp.catPredioS4.accesibilidadList}"  
+                                                                            converter="entityConverter">  
+                                            <f:selectItems value="#{agregarCatPredioS4S6.accesibilidadList}" var="item3" itemLabel=" #{item3.valor}" itemValue="#{item3}"/>  
+                                        </p:selectManyCheckbox></center></h:panelGroup> 
+                            </p:panelGrid>                        
+                        </p:panel>
+                        <p:panel header="Infraestructura y Servicios - Conexión Domiciliaria de:">
+                            <p:panelGrid columns="2" style="width: 100%;">
+                                <h:outputText value="Agua Potable:"/>
+                                <h:panelGroup><center><p:selectBooleanCheckbox value="#{agregarCatPredioS4S6.cpTemp.catPredioS6.tieneAguaPotable}" /> </center></h:panelGroup>
+                                <h:outputText value="Número de medidores:"/>
+                                <h:panelGroup><center><pe:inputNumber value="#{agregarCatPredioS4S6.cpTemp.catPredioS6.numMedidoresAgua}" style="width: 80px" decimalPlaces="0"/></center></h:panelGroup>
+                                <h:outputText value="Internet:"/>
+                                <h:panelGroup><center><p:selectBooleanCheckbox value="#{agregarCatPredioS4S6.cpTemp.catPredioS6.tieneInternet}" /> </center></h:panelGroup>
+                                <h:outputText value="Electricidad:"/>
+                                <h:panelGroup><center><p:selectBooleanCheckbox value="#{agregarCatPredioS4S6.cpTemp.catPredioS6.tieneElectricidad}" /> </center></h:panelGroup>
+                                <h:outputText value="Número de medidores"/>
+                                <h:panelGroup><center><pe:inputNumber value="#{agregarCatPredioS4S6.cpTemp.catPredioS6.numMedElect}" style="width: 80px" decimalPlaces="0"/></center></h:panelGroup>
+                                <h:outputText value="Teléfono fijo:"/>
+                                <h:panelGroup><center><p:selectBooleanCheckbox value="#{agregarCatPredioS4S6.cpTemp.catPredioS6.tieneTelfFijo}" /> </center></h:panelGroup>
+                                <h:outputText value="Número telefónico:"/>
+                                <h:panelGroup><center><p:inputText value="#{agregarCatPredioS4S6.cpTemp.catPredioS6.telfFijo}" style="width: 120px"/></center></h:panelGroup>
+                            </p:panelGrid>
+                        </p:panel>
+                        <p:panel header="Ocupación fisica del solar">
+                            <p:panelGrid columns="2" style="width: 100%;">
+                                <h:outputText value="Frente 1:" />
+                                <h:panelGroup><center><pe:inputNumber value="#{agregarCatPredioS4S6.cpTemp.catPredioS4.frente1}" style="width: 200px; text-align: center;" decimalPlaces="0"/></center></h:panelGroup>
+                                <h:outputText value="Frente 2:"/>
+                                <h:panelGroup><center><pe:inputNumber value="#{agregarCatPredioS4S6.cpTemp.catPredioS4.frente2}" style="width: 200px; text-align: center;" decimalPlaces="0"/></center></h:panelGroup>
+                                <h:outputText value="Frente 3:"/>
+                                <h:panelGroup><center><pe:inputNumber value="#{agregarCatPredioS4S6.cpTemp.catPredioS4.frente3}" style="width: 200px; text-align: center;" decimalPlaces="0"/></center></h:panelGroup>
+                                <h:outputText value="Frente 4:"/>
+                                <h:panelGroup><center><pe:inputNumber value="#{agregarCatPredioS4S6.cpTemp.catPredioS4.frente4}" style="width: 200px; text-align: center;" decimalPlaces="0"/></center></h:panelGroup>
+                                <h:outputText value="Frente total:"/>
+                                <h:panelGroup><center><pe:inputNumber value="#{agregarCatPredioS4S6.cpTemp.catPredioS4.frenteTotal}" style="width: 200px; text-align: center;" decimalPlaces="0"/></center></h:panelGroup>
+                                <h:outputText value="Fondo 1:"/>
+                                <h:panelGroup><center><pe:inputNumber value="#{agregarCatPredioS4S6.cpTemp.catPredioS4.fondo1}" style="width: 200px; text-align: center;" decimalPlaces="0"/></center></h:panelGroup>
+                                <h:outputText value="Fondo 2:"/>
+                                <h:panelGroup><center><pe:inputNumber value="#{agregarCatPredioS4S6.cpTemp.catPredioS4.fondo2}" style="width: 200px; text-align: center;" decimalPlaces="0"/></center></h:panelGroup>
+                                <h:outputText value="Área m2 calculada:"/>
+                                <h:panelGroup><center><pe:inputNumber value="#{agregarCatPredioS4S6.cpTemp.catPredioS4.areaCalculada}" style="width: 200px; text-align: center;" decimalPlaces="0"/></center></h:panelGroup>
+                            </p:panelGrid>
+                        </p:panel>
+                        <p:panel header="Datos de Estructura">
+                            <p:panelGrid columns="2" style="width: 100%;">
+                                <h:outputText value="Notaría:"/>
+                                <h:panelGroup><center><pe:inputNumber value="#{agregarCatPredioS4S6.cpTemp.catPredioS6.notaria}" style="width: 80px" decimalPlaces="0"/></center></h:panelGroup>
+                                <h:outputText value="Cantón:"/>
+                                <h:panelGroup><center><p:selectOneMenu value="#{agregarCatPredioS4S6.cpTemp.catPredioS6.canton}" effect="fade" style="width: 220px;"
+                                                                       converter="entityConverter"   >
+                                            <f:selectItems value="#{agregarCatPredioS4S6.cantonList}" var="item" itemLabel="#{item.nombre}" itemValue="#{item}"/>  
+                                        </p:selectOneMenu></center></h:panelGroup>
+                                <h:outputText value="Fecha de escritura:"/>
+                                <h:panelGroup><center><p:calendar value="#{agregarCatPredioS4S6.cpTemp.catPredioS6.fechaEscritura}" pattern="dd/MM/yyyy"/></center></h:panelGroup>
+                                <h:outputText value="Fecha de inscripción"/>
+                                <h:panelGroup><center><p:calendar value="#{agregarCatPredioS4S6.cpTemp.catPredioS6.fechaInscripcion}" pattern="dd/MM/yyyy"/></center></h:panelGroup>
+                                <h:outputText value="No. de registro:"/>
+                                <h:panelGroup><center><pe:inputNumber value="#{agregarCatPredioS4S6.cpTemp.catPredioS6.numRegistro}" style="width: 80px" decimalPlaces="0"/></center></h:panelGroup>
+                                <h:outputText value="No. de repertorio:"/>
+                                <h:panelGroup><center><pe:inputNumber value="#{agregarCatPredioS4S6.cpTemp.catPredioS6.numRepertorio}" style="width: 80px" decimalPlaces="0"/></center></h:panelGroup>
+                                <h:outputText value="Folio desde:"/>
+                                <h:panelGroup><center><p:inputText value="#{agregarCatPredioS4S6.cpTemp.catPredioS6.folioDesdeCad}" /></center></h:panelGroup>
+                                <h:outputText value="Folio hasta;"/>
+                                <h:panelGroup><center><p:inputText value="#{agregarCatPredioS4S6.cpTemp.catPredioS6.folioHastaCad}"/></center></h:panelGroup>
+                                <h:outputText value="Área solar:"/>
+                                <h:panelGroup><center><pe:inputNumber value="#{agregarCatPredioS4S6.cpTemp.catPredioS6.areaSolar}" style="width: 80px" decimalPlaces="0"/></center></h:panelGroup>
+                                <h:outputText value="Área de Construcción:"/>
+                                <h:panelGroup><center><pe:inputNumber value="#{agregarCatPredioS4S6.cpTemp.catPredioS6.areaCons}" style="width: 80px" decimalPlaces="0"/></center></h:panelGroup>
+                            </p:panelGrid>
+                        </p:panel>
+                        <p:panel header="Linderos (Según levantamiento)">
+                            <p:panelGrid columns="2">
+                                <p:panelGrid columns="2" style="width: 100%;">
+                                    <h:outputText value="Norte:" style="display: block; width: 100px;"/>
+                                    <p:inputText value="#{agregarCatPredioS4S6.cpTemp.catPredioS6.lindLevNorte}"/>
+                                </p:panelGrid>
+                                <p:panelGrid columns="2" style="width: 100%;">
+                                    <h:outputText value="limita con:" style="display: block; width: 100px;"/>
+                                    <pe:inputNumber value="#{agregarCatPredioS4S6.cpTemp.catPredioS6.lindLevNorteCon}" style="width: 80px" decimalPlaces="0"/>
+                                </p:panelGrid>
+                                <p:panelGrid columns="2" style="width: 100%;">
+                                    <h:outputText value="Sur:" style="display: block; width: 100px;"/>
+                                    <p:inputText value="#{agregarCatPredioS4S6.cpTemp.catPredioS6.lindLevSur}"/>
+                                </p:panelGrid>
+                                <p:panelGrid columns="2" style="width: 100%;">
+                                    <h:outputText value="Limita con:" style="display: block; width: 100px;"/>
+                                    <pe:inputNumber value="#{agregarCatPredioS4S6.cpTemp.catPredioS6.lindLevSurCon}" style="width: 80px" decimalPlaces="0"/>
+                                </p:panelGrid>
+                                <p:panelGrid columns="2" style="width: 100%;">
+                                    <h:outputText value="Este:" style="display: block; width: 100px;"/>
+                                    <p:inputText value="#{agregarCatPredioS4S6.cpTemp.catPredioS6.lindLevEste}"/>
+                                </p:panelGrid>
+                                <p:panelGrid columns="2" style="width: 100%;">
+                                    <h:outputText value="Limita con:" style="display: block; width: 100px;"/>
+                                    <pe:inputNumber value="#{agregarCatPredioS4S6.cpTemp.catPredioS6.lindLevEsteCon}" style="width: 80px" decimalPlaces="0"/>
+                                </p:panelGrid>
+                                <p:panelGrid columns="2" style="width: 100%;">
+                                    <h:outputText value="Oeste:" style="display: block; width: 100px;"/>
+                                    <p:inputText value="#{agregarCatPredioS4S6.cpTemp.catPredioS6.lindLevOeste}"/>
+                                </p:panelGrid>
+                                <p:panelGrid columns="2" style="width: 100%;">
+                                    <h:outputText value="Limita con:" style="display: block; width: 100px;"/>
+                                    <pe:inputNumber value="#{agregarCatPredioS4S6.cpTemp.catPredioS6.lindLevOesteCon}" style="width: 80px" decimalPlaces="0"/>
+                                </p:panelGrid>
+                            </p:panelGrid>
+                        </p:panel>
+                        <p:panel header="Linderos (Según escritura)">
+                            <p:panelGrid columns="2">
+                                <p:panelGrid columns="2" style="width: 100%;">
+                                    <h:outputText value="Norte:" style="display: block; width: 100px;"/>
+                                    <p:inputText value="#{agregarCatPredioS4S6.cpTemp.catPredioS6.lindEscNorte}"/>
+                                </p:panelGrid>
+                                <p:panelGrid columns="2" style="width: 100%;">
+                                    <h:outputText value="limita con:" style="display: block; width: 100px;"/>
+                                    <pe:inputNumber value="#{agregarCatPredioS4S6.cpTemp.catPredioS6.lindEscNorteCon}" style="width: 80px" decimalPlaces="0"/>
+                                </p:panelGrid>
+                                <p:panelGrid columns="2" style="width: 100%;">
+                                    <h:outputText value="Sur:" style="display: block; width: 100px;"/>
+                                    <p:inputText value="#{agregarCatPredioS4S6.cpTemp.catPredioS6.lindEscSur}"/>
+                                </p:panelGrid>
+                                <p:panelGrid columns="2" style="width: 100%;">
+                                    <h:outputText value="Limita con:" style="display: block; width: 100px;"/>
+                                    <pe:inputNumber value="#{agregarCatPredioS4S6.cpTemp.catPredioS6.lindEscSurCon}" style="width: 80px" decimalPlaces="0"/>
+                                </p:panelGrid>
+                                <p:panelGrid columns="2" style="width: 100%;">
+                                    <h:outputText value="Este:" style="display: block; width: 100px;"/>
+                                    <p:inputText value="#{agregarCatPredioS4S6.cpTemp.catPredioS6.lindEscEste}"/>
+                                </p:panelGrid>
+                                <p:panelGrid columns="2" style="width: 100%;">
+                                    <h:outputText value="Limita con:" style="display: block; width: 100px;"/>
+                                    <pe:inputNumber value="#{agregarCatPredioS4S6.cpTemp.catPredioS6.lindEscEsteCon}" style="width: 80px" decimalPlaces="0"/>
+                                </p:panelGrid>
+                                <p:panelGrid columns="2" style="width: 100%;">
+                                    <h:outputText value="Oeste:" style="display: block; width: 100px;"/>
+                                    <p:inputText value="#{agregarCatPredioS4S6.cpTemp.catPredioS6.lindEscOeste}"/>
+                                </p:panelGrid>
+                                <p:panelGrid columns="2" style="width: 100%;">
+                                    <h:outputText value="Limita con:" style="display: block; width: 100px;"/>
+                                    <pe:inputNumber value="#{agregarCatPredioS4S6.cpTemp.catPredioS6.lindEscOesteCon}" style="width: 80px" decimalPlaces="0"/>
+                                </p:panelGrid>
+                            </p:panelGrid>
+                        </p:panel>
+                        <p:panelGrid columns="2" style="width: 100%;">
+                            <h:outputText value="Trasl. Dom" style="display: block; width: 100px;"/>
+                            <h:panelGroup><center><p:selectOneMenu value="#{agregarCatPredioS4S6.escrituraPredio.traslDom}" effect="fade" style="width: 220px;"
+                                                                   converter="entityConverter"   >
+                                        <f:selectItems value="#{agregarCatPredioS4S6.tipoDominioList}" var="item" itemLabel="#{item.nombre}" itemValue="#{item}"/>  
+                                    </p:selectOneMenu></center></h:panelGroup>
+                        </p:panelGrid>
+
+                    </h:panelGroup>
+                </p:scrollPanel>
+                <center><p:commandButton actionListener="#{agregarCatPredioS4S6.setearEscrituraAlPredio()}" oncomplete ="PF('dlgAgregarInfo').hide()" style="margin-top: 10px; color: #ffffff; width: 150px; background: #616161 !important; font-weight: bold; height: 30px;" value="Aceptar"  /></center>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

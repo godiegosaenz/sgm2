@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="carteraVencidaRuralBarra" language="groovy" pageWidth="902" pageHeight="555" orientation="Landscape" columnWidth="902" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="dff12e90-0981-4d42-a132-f13a7216bad2">
+	<property name="ireport.zoom" value="0.75"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<queryString>
+		<![CDATA[SELECT SUM(L.TOTAL_PAGO) AS TOTAL, L.ANIO, PA.DESCRIPCION AS PARROQUIA,
+(SELECT RAZON_SOCIAL FROM SGM_APPLICATION.EMPRESA) AS RAZON_SOCIAL
+FROM SGM_FINANCIERO.REN_LIQUIDACION L
+INNER JOIN SGM_APP.CAT_PREDIO P ON (L.PREDIO = P.ID)
+INNER JOIN SGM_APP.CAT_PROVINCIA PR ON pr.cod_nac=p.provincia
+INNER JOIN SGM_APP.CAT_CANTON cc ON (cc.cod_nac=p.canton AND cc.id_provincia=pr.id)
+INNER JOIN SGM_APP.CAT_PARROQUIA PA ON (P.PARROQUIA = PA.codigo_parroquia AND PA.id_canton=cc.id)
+
+WHERE L.TIPO_LIQUIDACION = 13 AND L.ESTADO_LIQUIDACION = 2
+AND L.ANIO < EXTRACT(YEAR FROM NOW())
+GROUP BY L.ANIO,PA.DESCRIPCION
+HAVING SUM(L.TOTAL_PAGO) > 0
+ORDER BY L.ANIO , PA.DESCRIPCION DESC;]]>
+	</queryString>
+	<field name="total" class="java.math.BigDecimal"/>
+	<field name="anio" class="java.lang.Integer"/>
+	<field name="parroquia" class="java.lang.String"/>
+	<field name="razon_social" class="java.lang.String"/>
+	<group name="ANIO">
+		<groupExpression><![CDATA[$F{anio}]]></groupExpression>
+		<groupHeader>
+			<band height="31">
+				<staticText>
+					<reportElement x="22" y="0" width="34" height="31" uuid="6776047a-b2e0-4d54-8075-ba00c1b237f9"/>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[AÑO :]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="56" y="0" width="50" height="31" uuid="38e1fab9-e1a8-45fd-9c95-62c0e5adcd14"/>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{anio}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="15"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="90" splitType="Stretch">
+			<textField>
+				<reportElement x="106" y="11" width="731" height="32" uuid="fed53e6f-66a3-45a2-a08e-f2e61d8bc837"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{razon_social}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="6" y="11" width="100" height="79" uuid="1a03d264-a33e-402d-a636-2a614fbbb57d"/>
+			</image>
+			<staticText>
+				<reportElement x="150" y="43" width="648" height="20" uuid="4b935696-3ac6-4960-b750-a8ca5e36600c"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DETALLE  DE  CARTERA VENCIDA PREDIOS-RURALES  ]]></text>
+			</staticText>
+			<textField evaluationTime="Report" isBlankWhenNull="true">
+				<reportElement x="871" y="65" width="25" height="19" uuid="de1597f8-37f0-40fd-b5ff-9217e2e83416"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="830" y="65" width="41" height="19" uuid="9b5df36e-024b-4360-8298-27d76097d743"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pag "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="209" splitType="Stretch">
+			<stackedBar3DChart>
+				<chart>
+					<reportElement x="0" y="0" width="902" height="209" uuid="9865fc42-5905-46be-9281-bd54e0ca9ed3"/>
+					<chartTitle>
+						<titleExpression><![CDATA["DETALLE CARTERA VENCIDA PREDIO-RURALES"]]></titleExpression>
+					</chartTitle>
+					<chartSubtitle/>
+					<chartLegend position="Top">
+						<font size="8"/>
+					</chartLegend>
+				</chart>
+				<categoryDataset>
+					<dataset resetType="None">
+						<incrementWhenExpression><![CDATA[true]]></incrementWhenExpression>
+					</dataset>
+					<categorySeries>
+						<seriesExpression><![CDATA[$F{parroquia}]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{parroquia}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{total}]]></valueExpression>
+						<labelExpression><![CDATA[$F{parroquia} + " - " + $F{total}]]></labelExpression>
+					</categorySeries>
+				</categoryDataset>
+				<bar3DPlot>
+					<plot/>
+					<itemLabel/>
+					<categoryAxisFormat>
+						<axisFormat/>
+					</categoryAxisFormat>
+					<valueAxisFormat>
+						<axisFormat/>
+					</valueAxisFormat>
+				</bar3DPlot>
+			</stackedBar3DChart>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="4" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

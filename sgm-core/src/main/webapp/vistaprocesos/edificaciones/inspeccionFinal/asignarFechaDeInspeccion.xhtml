@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:dialog="http://xmlns.jcp.org/jsf/composite/dialog">
+    <ui:define name="top">
+        <p:panelGrid styleClass="noBorder" columns="4" style="width: 100%;font-size: 14px;">
+            <p:outputLabel value="Trámite: #{asignarFechaDeInspeccion.ht.id}" style="font-weight: bolder;color: #005f9c"/>
+            <p:outputLabel value="Tarea: #{asignarFechaDeInspeccion.taskDataByTaskID.name}" style="font-weight: bolder;color: #005f9c"/>
+            <p:outputLabel value="Responsable: #{asignarFechaDeInspeccion.taskDataByTaskID.assignee}" style="font-weight: bolder;color: #005f9c"/>
+        </p:panelGrid>
+    </ui:define>
+    <ui:define name="content">
+        <h:form id="frmMain">
+
+            <p:panel id="pnlDP" style="width: 100%;">
+                <p:tabView id="tdatos">
+                    <p:tab id="tgen" title="Fecha de Inspección">
+                        <center>
+                            <p:panelGrid columns="2" style="margin-top: 10px;">
+                                <h:outputText value="Fecha inspección: "/>
+                                <h:panelGroup><center><p:calendar value="#{asignarFechaDeInspeccion.fechaInspeccion}" pattern="dd/MM/yyyy">
+                                        <p:ajax event="dateSelect" listener="#{asignarFechaDeInspeccion.agregarMensaje()}" update="frmMain" />
+                                        </p:calendar></center></h:panelGroup>
+                                <h:outputText value="Detalle del correo al solicitante: "/>
+                                <p:inputTextarea value="#{asignarFechaDeInspeccion.detalleCorreo}" readonly="true" rows="4" cols="30"/>
+                            </p:panelGrid>
+                            <p:commandButton style="margin-top: 10px;" styleClass="btnStyle" value="Completar Tarea" actionListener="#{asignarFechaDeInspeccion.validarCampos()}"/>
+                        </center>
+                    </p:tab>
+                    
+                    <!-- -->
+
+                    <p:tab id="tadicionales" title="Adicionales">
+                        <p:tabView id="tadic">
+                            <p:tab id="tdocs" title="Observaciones">
+                                <p:dataTable id="dtobs" value="#{asignarFechaDeInspeccion.ht.observacionesCollection}" var="obs" reflow="true" style="width: 100%">
+                                    <f:facet name="header">Observaciones</f:facet>
+                                    <p:column headerText="Descripcion" style="width: 40%">
+                                        #{obs.observacion}
+                                    </p:column>
+                                    <p:column headerText="tarea" style="width: 25%">
+                                        #{obs.tarea}
+                                    </p:column>
+                                    <p:column headerText="Responsable" style="width: 20%">
+                                        #{obs.userCre}
+                                    </p:column>
+                                    <p:column headerText="Fecha" style="width: 15%">
+                                        #{obs.fecCre}
+                                    </p:column>
+                                </p:dataTable>
+                            </p:tab>
+                            <p:tab id="tobs" title="Documentos">
+                                <dialog:detalleArchivosAct archivos="#{asignarFechaDeInspeccion.processInstanceAttachmentsFiles}"/>
+                            </p:tab>
+                        </p:tabView>
+                    </p:tab>
+                </p:tabView>
+            </p:panel>
+        </h:form>
+        
+        <p:dialog id="dlgObs" widgetVar="dlgObs"  header="Observaciones" appendTo="@(body)" modal="true" width="500" resizable="false" closable="true" closeOnEscape="true">
+            <h:form id="frmObs">
+                <p:panel id="pobs" header="Ingrese sus observaciones" style="width: 100%" >
+                    <div align="center">
+                        <p:inputTextarea id="obsservacion" value="#{asignarFechaDeInspeccion.obs.observacion}" rows="4" style="width: 100%; text-transform: uppercase" required="true" placeholder="Las observaciones son obligatorias para continuar con el tramite"/>
+                        <br/>
+                        <p:commandButton id="btnValidar" value="Terminar Tarea" actionListener="#{asignarFechaDeInspeccion.terminarTarea()}" onclick="PF('obs').hide()" style="color: #ffffff; background: #616161 !important; font-weight: bold; height: 30px"/>
+                    </div>
+                </p:panel>
+            </h:form>
+        </p:dialog>
+        
+    </ui:define>
+</ui:composition>

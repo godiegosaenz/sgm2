@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="bienes" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c4dfc6ae-0dfb-47bb-a9e6-d89e2ffd7c79">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="279"/>
+	<style name="timeBold" fontName="Times New Roman" fontSize="14" isBold="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Times-Bold"/>
+	<style name="timeNormal" fontName="Times New Roman" fontSize="14" isBold="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Times-Roman"/>
+	<parameter name="LOGO" class="java.lang.String"/>
+	<parameter name="LOGO_FOOTER" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="NOMBRE_CERTIFICADO" class="java.lang.String"/>
+	<parameter name="DETALLE" class="java.lang.String"/>
+	<parameter name="OBSERVACION" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA["D:\\PROYECTOS IBARRA\\reportes\\trunk\\src\\main\\resources\\reportes\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FUNCIONARIO" class="java.lang.String"/>
+	<parameter name="PREDIOS" class="java.util.List"/>
+	<parameter name="USUARIO" class="java.lang.String"/>
+	<parameter name="FECHA" class="java.util.Date"/>
+	<parameter name="CODIGO" class="java.lang.Long"/>
+	<parameter name="PETIDOR" class="java.lang.String"/>
+	<parameter name="PERTIDOR_IDNT" class="java.lang.String"/>
+	<parameter name="TITULO" class="java.lang.String"/>
+	<parameter name="LOGO_1" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="tipoPredio" class="java.lang.String"/>
+	<field name="claveCat" class="java.lang.String"/>
+	<field name="catParroquia" class="java.lang.Object"/>
+	<field name="calle" class="java.lang.String"/>
+	<field name="calleS" class="java.lang.String"/>
+	<field name="areaSolar" class="java.math.BigDecimal"/>
+	<field name="areaDeclaradaConst" class="java.math.BigDecimal"/>
+	<field name="catParroquia.descripcion" class="java.lang.String"/>
+	<field name="avaluoSolar" class="java.math.BigDecimal"/>
+	<field name="avaluoConstruccion" class="java.math.BigDecimal"/>
+	<field name="avaluoMunicipal" class="java.math.BigDecimal"/>
+	<field name="bloque" class="java.lang.Short"/>
+	<field name="alicuotaTerreno" class="java.math.BigDecimal"/>
+	<group name="predio">
+		<groupExpression><![CDATA[$F{claveCat}]]></groupExpression>
+		<groupHeader>
+			<band height="113">
+				<printWhenExpression><![CDATA[$F{claveCat} != null]]></printWhenExpression>
+				<staticText>
+					<reportElement style="timeBold" x="54" y="0" width="102" height="14" uuid="6aadbe4a-87ee-47a7-bc36-73e5887ec67d"/>
+					<textElement>
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Sector]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement style="timeNormal" x="156" y="56" width="113" height="14" uuid="2fd45f6f-f868-4d5e-b25c-11bafe85af3e">
+						<printWhenExpression><![CDATA[$F{bloque}==0]]></printWhenExpression>
+					</reportElement>
+					<textElement>
+						<font size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{areaSolar}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement style="timeBold" x="54" y="84" width="102" height="14" uuid="5f15245d-af4e-4a14-8fa8-f2097b9b0207"/>
+					<textElement>
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Avalúo Obras]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="timeBold" positionType="Float" stretchType="RelativeToTallestObject" x="54" y="28" width="102" height="14" uuid="97d245bf-c2b5-4685-b0fd-0e184bcf5fb3"/>
+					<textElement>
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Parroquia]]></text>
+				</staticText>
+				<textField pattern="$###0.00;(###0.00)" isBlankWhenNull="true">
+					<reportElement style="timeNormal" x="411" y="70" width="113" height="14" uuid="f03bdad7-f33b-485f-85ba-9143b6cd4cb4"/>
+					<textElement>
+						<font size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{avaluoConstruccion}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement style="timeNormal" x="156" y="42" width="368" height="14" uuid="88539cde-20aa-47a4-abf6-bd8919e00cfc"/>
+					<textElement>
+						<font size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{calle} + " Y " + $F{calleS}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="timeNormal" x="156" y="28" width="368" height="14" uuid="c94b3639-19f7-42ad-b64b-faa59cd26e8f"/>
+					<textElement>
+						<font size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{catParroquia.descripcion}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement style="timeBold" x="54" y="98" width="102" height="14" uuid="c893a88a-7330-4821-bbc0-c380d42a6bdc"/>
+					<textElement>
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Valor Propiedad]]></text>
+				</staticText>
+				<textField pattern="$###0.00;(###0.00)" isBlankWhenNull="true">
+					<reportElement style="timeNormal" x="156" y="70" width="113" height="14" uuid="058c588b-3ad4-43b9-9678-27d66c43ea75"/>
+					<textElement>
+						<font size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{avaluoSolar}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement style="timeNormal" x="156" y="0" width="368" height="14" uuid="d7324a85-5b70-4f82-a6d8-ee443617081f"/>
+					<textElement>
+						<font size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{tipoPredio} == "U" ? "URBANO" : "RURAL"]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement style="timeNormal" x="156" y="14" width="368" height="14" uuid="4d42c5db-c560-44f9-bc18-0390f68df2e5"/>
+					<textElement>
+						<font size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{claveCat}]]></textFieldExpression>
+				</textField>
+				<textField pattern="$###0.00;(###0.00)" isBlankWhenNull="true">
+					<reportElement style="timeNormal" x="156" y="98" width="113" height="14" uuid="a7dd8d34-24a9-4e65-aad7-4ff77ce244ed"/>
+					<textElement>
+						<font size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{avaluoMunicipal}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement style="timeBold" x="54" y="56" width="102" height="14" uuid="f2b8535b-bacd-4adf-888d-8dc1bac1054a">
+						<printWhenExpression><![CDATA[$F{bloque}==0]]></printWhenExpression>
+					</reportElement>
+					<textElement>
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Área Terreno]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="timeBold" x="293" y="70" width="118" height="14" uuid="262dae50-13ec-42a7-a70e-f1e6d3fdfa64"/>
+					<textElement>
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Avalúo Construcción]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="timeBold" x="293" y="56" width="118" height="14" uuid="791a862b-9169-4e80-a897-5380152075b5"/>
+					<textElement>
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Área Construcción]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement style="timeNormal" x="411" y="56" width="113" height="14" uuid="c9352c68-b76b-45ee-ba7b-912b1f789138"/>
+					<textElement>
+						<font size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{areaDeclaradaConst}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement style="timeBold" x="54" y="14" width="102" height="14" uuid="ed4d2b5e-ca53-4f39-9c11-4e6b05884155"/>
+					<textElement>
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Clave Catastral]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="timeBold" x="54" y="70" width="102" height="14" uuid="1b44d050-8ec5-4bde-91fc-f7fcdb0c4186"/>
+					<textElement>
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Avalúo Terreno]]></text>
+				</staticText>
+				<textField pattern="$###0.00;(###0.00)" isBlankWhenNull="true">
+					<reportElement style="timeNormal" x="156" y="84" width="113" height="14" uuid="a1217d0b-8a82-4e8d-a825-55f9ef6146c2"/>
+					<textElement>
+						<font size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{areaDeclaradaConst}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement style="timeBold" x="54" y="42" width="102" height="14" uuid="53f252d0-ed83-45ee-bd38-1768ea8295d3"/>
+					<textElement>
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Dirección]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement style="timeNormal" x="157" y="56" width="113" height="14" uuid="03970e78-455d-40e0-bcac-6d544df67421">
+						<printWhenExpression><![CDATA[$F{bloque}>0]]></printWhenExpression>
+					</reportElement>
+					<textElement>
+						<font size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{alicuotaTerreno}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement style="timeBold" x="54" y="56" width="102" height="14" uuid="17000fe5-fcf1-48ed-9513-f1d3cb1fd749">
+						<printWhenExpression><![CDATA[$F{bloque}>0]]></printWhenExpression>
+					</reportElement>
+					<textElement>
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Alicuota Terreno]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="380" splitType="Stretch">
+			<textField>
+				<reportElement style="timeBold" x="125" y="329" width="322" height="20" uuid="1c675d4b-87c0-4624-9a81-cc5bb33f7d14"/>
+				<textElement textAlignment="Center">
+					<font size="13" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{NOMBRE_CERTIFICADO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="timeNormal" x="54" y="358" width="470" height="16" uuid="c08fd5eb-875d-44b0-a8e7-c086711c0c66"/>
+				<textElement textAlignment="Justified" markup="html">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{DETALLE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="timeNormal" x="124" y="146" width="322" height="20" uuid="1bfbb022-c1fb-4773-9559-a9d30447fcd8"/>
+				<textElement markup="none">
+					<font size="13" isBold="false"/>
+				</textElement>
+				<text><![CDATA[AVALÚOS Y CATASTROS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="timeNormal" x="124" y="167" width="322" height="20" uuid="98057495-61cc-4504-8f56-446208e8f919"/>
+				<textElement markup="none">
+					<font size="13" isBold="false"/>
+				</textElement>
+				<text><![CDATA[AVALÚOS]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="timeNormal" x="125" y="201" width="206" height="20" uuid="db7e0996-3f06-404d-9d63-dc1d33e9a278"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{PETIDOR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="timeNormal" x="125" y="224" width="206" height="20" uuid="c153e079-a196-465e-824b-fd50aa94869e"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{PERTIDOR_IDNT}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="0" y="0" width="555" height="100" uuid="caa90d2b-6b55-4ac9-a5f9-f35e148dd618"/>
+				<subreportParameter name="SUB_TITLE">
+					<subreportParameterExpression><![CDATA[$P{TITULO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="LOGO">
+					<subreportParameterExpression><![CDATA[$P{LOGO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="LOGO_1">
+					<subreportParameterExpression><![CDATA[$P{LOGO_1}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "titleReporte2.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement style="timeBold" x="3" y="168" width="122" height="14" uuid="1fbe5d3f-f1e4-4f93-96df-de5d6e1f6c7c"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SECCIÓN:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="timeNormal" x="4" y="224" width="122" height="14" uuid="11505037-5ddf-410e-bacf-7bb3b012d013"/>
+				<textElement>
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Portador de la cédula]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="timeBold" x="3" y="146" width="122" height="14" uuid="f5ec2540-d562-42c8-b1ac-520128ac1cb7"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DEPARTAMENTO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="timeNormal" x="4" y="250" width="310" height="14" uuid="69390d20-9ca8-440a-be82-cf1787b555db"/>
+				<textElement>
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[de ciudadanía y comprobante de votación respectivamente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="timeNormal" x="4" y="202" width="122" height="14" uuid="672b2b7c-8d96-4695-b749-246e576c42fb"/>
+				<textElement>
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[A petición verbal de]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="40" splitType="Stretch">
+			<image scaleImage="RealHeight" hAlign="Center" vAlign="Middle" onErrorType="Blank">
+				<reportElement x="3" y="0" width="552" height="40" uuid="5153c900-bc49-4823-9509-36e0684791b7"/>
+				<imageExpression><![CDATA[$P{LOGO_FOOTER}]]></imageExpression>
+			</image>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="220" splitType="Stretch">
+			<staticText>
+				<reportElement style="timeNormal" x="54" y="2" width="470" height="20" uuid="b708323f-8529-486a-a1ac-205c9cff42c9"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Es cuanto puedo certificar para los fines pertinentes.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="timeBold" x="54" y="41" width="309" height="20" uuid="74cbb008-545b-4fd0-85a9-574d4c31ea34"/>
+				<textElement>
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[FUNCIONARIO DAC - GADI]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement style="timeNormal" x="54" y="22" width="309" height="20" uuid="2699a18e-ba74-4c8c-be8e-dd5a59bc4d61"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{FUNCIONARIO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="timeBold" x="54" y="61" width="309" height="20" uuid="cb81b2c9-118a-423d-9b17-b9153cc36f68"/>
+				<textElement markup="none">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Procesado por: "+$P{USUARIO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="timeNormal" x="54" y="80" width="309" height="20" uuid="f4891d79-5037-4564-ae5f-f497d449a8d4"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{FECHA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="timeNormal" x="54" y="99" width="309" height="20" uuid="64d1158e-9085-46ea-9bcb-1bb6f64095c3"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{CODIGO}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement x="442" y="41" width="113" height="98" uuid="8266411d-dcbc-4521-97c8-207bf80cbdb8"/>
+				<jr:DataMatrix xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" textPosition="bottom">
+					<jr:codeExpression><![CDATA["http://172.16.8.125:8144/sgmEE/verificarCertificado?idCertificado="+$P{CODIGO}]]></jr:codeExpression>
+				</jr:DataMatrix>
+			</componentElement>
+		</band>
+	</summary>
+</jasperReport>

@@ -1,0 +1,44 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html" 
+    xmlns:ps="http://primefaces.org/sentinel"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+
+    <div id="layout-menubar" class="Unselectable fontRegular">
+        <div class="layout-menubarinner-box" id="buttonArea">
+            <a href="#" id="layout-menubar-resize" class="BordRad3" title="Menu Resize"><i class="icon-th-list-2"></i></a>
+            <a href="#" id="layout-menubar-resize2" class="BordRad3" title="Open Menu"><i class="icon-menu"></i></a>
+        </div>
+
+        <div class="layout-menubarinner-box" id="searchArea">
+            <h:form>
+                <i class="icon-search floatLeft gray"></i>
+                <h:inputText class="layout-menubar-search floatLeft Animated05" label="Search Here"  
+                             value="#{userSession.varTemp}"  >
+                    <p:ajax listener="#{appMenu.buscarMenu()}" event="keyup" delay="800" update=":frmMenu"/>
+                </h:inputText>
+            </h:form>
+        </div>
+        <h:form id="frmMenu" >
+<!--                        <ps:menu id="sm_leftmenu">
+                            <p:menuitem id="sm_dashboard" value="Inicio" icon="icon-home-home" containerStyleClass="layout-menubar-active" outcome="/vistaprocesos/dashBoard.xhtml"/>
+                            <p:submenu id="sm_admin" label="Catastro" icon="icon-building">
+                                <p:menuitem id="sm_contactos" value="Predios" icon="icon-building" outcome="/vistaprocesos/catastro/predios.xhtml"/>
+                                <p:menuitem id="sm_usuarios" value="Gestion Predial" icon="icon-sort-name-up" /> 
+                            </p:submenu>
+                            <p:submenu id="sm_dp" label="Levantamiento Predial" icon="icon-book">
+                                <p:menuitem id="sm_indice" value="Generar Ordenes" icon="icon-star-1" outcome="/vistaprocesos/catastro/ordenes/ordenes.xhtml"/>
+                                <p:menuitem id="sm_partidas" value="Revision" icon="icon-check" outcome="/vistaprocesos/catastro/ordenes/revision.xhtml"/>
+                                <p:menuitem id="sm_reports" value="Reportes" icon="icon-chart-pie" outcome="/vistaprocesos/catastro/ordenes/resumenGeneral.xhtml"/>
+                            </p:submenu>              
+                        </ps:menu>-->
+            <ps:menu id="sm_leftmenu" model="#{appMenu.model}" >
+            </ps:menu>
+
+        </h:form>
+
+    </div>
+
+</ui:composition>

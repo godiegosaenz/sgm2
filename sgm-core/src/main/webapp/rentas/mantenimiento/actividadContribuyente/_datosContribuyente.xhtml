@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:panelGroup layout="block" class="Wid100 MarTop10 Container"  style="margin-bottom: 20px;">
+        <h:panelGroup layout="block" class="Container Wid100">
+            <div class="ContainerIndent">
+                <h:panelGroup layout="block" class="Responsive Container100" >
+                    <h:panelGrid columns="1" style="width: 100%; ; text-align:left; ">
+                        <h:panelGroup layout="block"  >
+                            <div style="float: right; ">
+                                <p:commandLink actionListener="#{actividadContribuyentes.buscarEnte()}"  value="Buscar Contribuyente">
+                                    <p:ajax event="dialogReturn" listener="#{actividadContribuyentes.seleccionarContribuyente}" update="frmActividadContribuyente pnlContribuyente" />
+                                    <p:graphicImage value="/css/homeIconsImages/buscar.png" width="25" height="25"/>
+                                </p:commandLink>
+                            </div>
+                        </h:panelGroup>
+                    </h:panelGrid>
+                    <h:panelGrid columns="3" style="width: 100%" id="pnlContribuyente">
+                        <h:panelGroup layout="block" >
+                            <h:outputText value="No. RUC. o Cédula:" style="font-size: 14px; font-weight: bold; color: #006699"/>
+                            <p:spacer width="7"/>
+                            <p:inputText value="#{actividadContribuyentes.contribuyente.ciRuc}" readonly="true" style="width: 72%" />
+                        </h:panelGroup>    
+
+                        <h:panelGroup layout="block" >
+                            <h:outputText value="Calificación Artesanal:" style="font-size: 14px; font-weight: bold; color: #006699"/>
+                            <!--                                <p:spacer width="4"/>-->
+                        </h:panelGroup>    
+                        <h:panelGroup>    
+                            <p:selectOneRadio value="#{actividadContribuyentes.declaracionContribuyente.calificacionArtesanal}" >
+                                <f:selectItem itemLabel="SI" itemValue="#{true}" />
+                                <f:selectItem itemLabel="NO" itemValue="#{false}" />
+                            </p:selectOneRadio>
+                        </h:panelGroup>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" style="width: 100%">
+                        <h:panelGroup layout="block" >
+                            <h:outputText value="Contribuyente:" style="font-size: 14px; font-weight: bold; color: #006699"/>
+                            <p:spacer width="23"/>
+                            <p:inputText value="#{actividadContribuyentes.contribuyente.apellidos} #{actividadContribuyentes.contribuyente.nombres}" readonly="true"  rendered="#{actividadContribuyentes.contribuyente.esPersona}"  style="width: 80%" />
+                            <p:inputText value="#{actividadContribuyentes.contribuyente.razonSocial}" readonly="true"  rendered="#{!actividadContribuyentes.contribuyente.esPersona}"  style="width: 80%" />
+                        </h:panelGroup>
+                        <h:panelGroup layout="block" >
+                            <h:outputText value="Dirección:" style="font-size: 14px; font-weight: bold; color: #006699"/>
+                            <p:spacer width="33"/>
+                            <p:inputText value="#{actividadContribuyentes.contribuyente.direccion}" style="width: 82%" readonly="true"/>
+                        </h:panelGroup>
+                        <h:panelGroup layout="block" >
+                            <h:outputText value="Razón Social:" style="font-size: 14px; font-weight: bold; color: #006699"/>
+                            <p:spacer width="33"/>
+                            <p:inputText value="#{actividadContribuyentes.declaracionContribuyente.razonSocial}" style="width: 80%" />
+                        </h:panelGroup>
+                        <br></br>
+                        <h:panelGrid columns="1" style="width: 100%; ; text-align:left; ">
+                            <h:panelGroup layout="block"  >
+                                <div style="float: right; ">
+                                    <p:commandLink actionListener="#{actividadContribuyentes.buscarEnte()}"  value="Buscar Representante Legal">
+                                        <p:ajax event="dialogReturn" listener="#{actividadContribuyentes.seleccionarRepresentanteLegal}" update="frmActividadContribuyente" />
+                                        <p:graphicImage value="/css/homeIconsImages/buscar.png" width="25" height="25"/>
+                                    </p:commandLink>
+                                </div>
+                            </h:panelGroup>
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="3" style="width: 100%">
+                            <!--                            <h:panelGroup layout="block"  >
+                                                            <h:outputText value="Tipo de Persona:" style="font-size: 14px; font-weight: bold; color: #006699"/><br/>
+                                                            <p:inputText value="Natural" rendered="# {cc.attrs.esPersona}" readonly="true"/>
+                                                            <p:inputText value="Jurídica" rendered="# {!cc.attrs.esPersona}" readonly="true"/>
+                                                        </h:panelGroup>-->
+                            <h:panelGroup layout="block" >
+                                <h:outputText value="Rep. Legal (sociedades):" style="font-size: 14px; font-weight: bold; color: #006699"/>
+                                <p:spacer width="7"/>
+                                <p:inputText value="#{actividadContribuyentes.representanteLegal.ciRuc}" readonly="true" style="width: 70%" />
+                            </h:panelGroup>    
+
+                            <h:panelGroup layout="block" >
+                                <h:outputText value="Cédula R.L.:" style="font-size: 14px; font-weight: bold; color: #006699"/>
+                                <p:spacer width="7"/>
+                                <p:inputText value="#{actividadContribuyentes.representanteLegal.ciRuc}" readonly="true" style="width: 64%" />
+                            </h:panelGroup> 
+
+
+                        </h:panelGrid>
+                        <h:panelGrid columns="3" style="width: 100%">
+                            <h:panelGroup layout="block" >
+                                <h:outputText value="Inicio de Actividades:" style="font-size: 14px; font-weight: bold; color: #006699"/>
+                                <p:spacer width="24"/>
+                                <p:calendar value="#{actividadContribuyentes.declaracionContribuyente.inicioActividades}" 
+                                            pattern="dd/MM/yyyy" navigator="true" style="color: #000000; width: 80%" maxdate="sysdate" />
+                            </h:panelGroup> 
+                            <h:panelGroup layout="block" >
+                                <h:outputText value="Lleva Contabilidad:" style="font-size: 14px; font-weight: bold; color: #006699"/>
+                                <!--                                <p:spacer width="4"/>-->
+                            </h:panelGroup>    
+                            <h:panelGroup layout="block" >
+                                <p:selectOneRadio value="#{actividadContribuyentes.declaracionContribuyente.llevaContabilidad}" >
+                                    <f:selectItem itemLabel="SI" itemValue="#{true}" />
+                                    <f:selectItem itemLabel="NO" itemValue="#{false}" />
+                                </p:selectOneRadio>
+                            </h:panelGroup>
+
+                        </h:panelGrid>
+                        <br></br>
+                        <h:panelGrid columns="2" style="width: 98%; align-items: center" >
+                            <h:panelGroup layout="block" >
+
+                                <h:panelGrid styleClass="noBorder" style="width: 100%">
+                                    <p:row>
+                                        <p:column>
+                                            <p:outputLabel value="Teléfono:" style="font-weight: bolder"/>
+                                        </p:column>
+                                        <p:spacer width="9"/>
+                                        <p:column>
+                                            <p:inputText id="textTelfAct" value="#{actividadContribuyentes.tlfnNew}" size="40" placeholder="Ejemplo: 045555555 ó 0988888888"/>
+                                        </p:column>
+                                        <p:spacer width="9"/>
+                                        <p:column>
+                                            <p:commandButton value="Agregar" icon="ui-icon-plus" actionListener="#{actividadContribuyentes.agregarTlfn()}"
+                                                             update="dtTelefonosActividades,textTelfAct"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="3">
+                                            <p:dataTable id="dtTelefonosActividades" value="#{actividadContribuyentes.actividadContribuyenteTelefonos}" var="t1"
+                                                         rows="2" paginator="true" paginatorPosition="top" emptyMessage="No existen números telefónicos Regsitrados" paginatorAlwaysVisible="false"
+                                                         paginatorTemplate="{PreviousPageLink} {CurrentPageReport} {NextPageLink}">
+
+                                                <p:column headerText="Télefonos Actividades">
+                                                    <p:outputLabel value="#{t1.telefono}" title="#{t1.telefono}"/>
+                                                </p:column>
+                                                <p:column headerText="Acción" style="text-align: center" width="70">
+                                                    <p:commandLink value="Eliminar" style="font-weight: bolder;color: #0033FF" actionListener="#{actividadContribuyentes.eliminarTlfn(tlf)}"
+                                                                   update="dtTelefonosActividades"/>
+                                                </p:column>                                                                                        
+
+                                            </p:dataTable>
+                                        </p:column>
+                                    </p:row>
+                                </h:panelGrid>
+                            </h:panelGroup>
+                            <h:panelGroup layout="block" >
+                                <h:panelGrid styleClass="noBorder" style="width: 100%">
+                                    <p:row>
+                                        <p:column>
+                                            <p:outputLabel value="Teléfono:" style="font-weight: bolder"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText id="textTelf" value="#{actividadContribuyentes.tlfnNewContribuyente}" size="40" placeholder="Ejemplo: 045555555 ó 0988888888"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:commandButton value="Agregar" icon="ui-icon-plus" actionListener="#{actividadContribuyentes.agregarTlfnEnte()}"
+                                                             update="dtTelefonos,textTelf"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column colspan="3">
+                                            <p:dataTable  id="dtTelefonos" value="#{actividadContribuyentes.contribuyente.enteTelefonoCollection}" var="t1"
+                                                          rows="2" paginator="true" paginatorPosition="top" paginatorAlwaysVisible="false"
+                                                          emptyMessage="No existen números telefónicos Regsitrados" 
+                                                          paginatorTemplate="{PreviousPageLink} {CurrentPageReport} {NextPageLink}">
+                                                <p:column headerText="Télefonos Domicilio">
+                                                    <p:outputLabel value="#{t1.telefono}" title="#{t1.telefono}"/>
+                                                </p:column>
+                                            </p:dataTable>
+
+                                        </p:column>
+                                    </p:row>
+                                </h:panelGrid>
+
+                            </h:panelGroup>
+                        </h:panelGrid>
+                    </h:panelGrid>
+
+                </h:panelGroup>
+<br></br>
+                <h1 class="BigTopic Fs16">Lista de Actividades</h1>
+                <hr></hr>
+                <h:panelGroup layout="block" class="Responsive Container100" >
+                    <!--                    <div align="right">
+                                            <p:commandButton value="Agregar Actividad" onclick="PF('dlgAct').show()" 
+                                                             styleClass="btnStyle" update="frmActividadContribuyente" actionListener="#{localComercialView.nuevaActividad()}"/>
+                                        </div>-->
+                    <br></br>
+                    <p:dataTable id="dtActvs" value="#{localComercialView.actividadesLocal}" reflow="true" rowKey="#{actv.id}" filterEvent="enter"
+                                 var="actv" rows="5" paginator="true" paginatorPosition="top" selection="#{localComercialView.actividadesSeleccionadas}"
+                                 emptyMessage="No tiene datos" lazy="true">
+                        <f:facet name="header">
+                            Lista de Actividades
+                        </f:facet>
+                        <p:column selectionMode="multiple" style="width:35px;text-align:center"/>
+                        <p:column headerText="Descripción" filterBy="#{actv.descripcion}" filterMatchMode="contains">
+                            <center><h:outputText value="#{actv.descripcion}"/></center>
+                        </p:column>
+                    </p:dataTable>
+                </h:panelGroup>
+
+            </div>
+        </h:panelGroup>
+    </h:panelGroup>
+
+</html>

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reporte_tareas_por_usuario" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="28a8d1d7-0a6a-4ae9-ab8c-91808d63083e">
+	<property name="ireport.zoom" value="1.948717100000002"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="username" class="java.lang.String"/>
+	<parameter name="logo1" class="java.lang.String"/>
+	<parameter name="logo2" class="java.lang.String"/>
+	<parameter name="desde" class="java.util.Date"/>
+	<parameter name="hasta" class="java.util.Date"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\Users\\origami-idea\\Documents\\NetBeansProjects\\SGM_ULTIMATE\\src\\main\\webapp\\reportes\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="nombres" class="java.lang.String"/>
+	<parameter name="roles" class="java.lang.String"/>
+	<parameter name="departamento" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="nombreTarea" class="java.lang.String"/>
+	<field name="nombreTramite" class="java.lang.String"/>
+	<field name="numTramite" class="java.lang.Long"/>
+	<field name="fechaFin" class="java.util.Date"/>
+	<field name="estadoTramite" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="185" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="70" width="555" height="35" uuid="3019a0f2-84bd-4095-aae2-50a5c7670db3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Reportes de tareas del usuario: "+$P{username}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="50" y="105" width="505" height="18" uuid="5f7ef535-e4bb-4d34-a5f4-e37ad662c17c"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Desde: "+new SimpleDateFormat("dd 'de' MMM 'del' yyyy").format($P{desde})+". Hasta: "+new SimpleDateFormat("dd 'de' MMM 'del' yyyy").format($P{hasta})+"."]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="0" y="0" width="555" height="70" uuid="d818623b-6874-4a85-a6d2-77311e368d71"/>
+				<subreportParameter name="LOGO">
+					<subreportParameterExpression><![CDATA[$P{logo1}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "titleReporte.jasper"]]></subreportExpression>
+			</subreport>
+			<textField>
+				<reportElement x="14" y="123" width="541" height="20" uuid="a94b340a-9716-424c-8fe7-db4b2034a7b7"/>
+				<textFieldExpression><![CDATA["Nombres: "+$P{nombres}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="14" y="143" width="541" height="20" uuid="912b35ff-032e-40b5-97a5-d53a2501a2fa"/>
+				<textFieldExpression><![CDATA["Roles: " +$P{roles}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="14" y="163" width="541" height="20" uuid="af5cd312-c196-4c3b-ae1a-0e483f37272e"/>
+				<textFieldExpression><![CDATA["Departamento: " +$P{departamento}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="127" height="20" uuid="4f9cf666-c928-41d4-8f3c-33b55ff759a0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nombre de la Tarea]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="127" y="0" width="128" height="20" uuid="eb9b6312-5dac-4c2f-97e6-391a5baa0513"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nombre del Trámite]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="255" y="0" width="75" height="20" uuid="ec43d48d-c937-4991-85a4-09c27f7fba20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[# de Trámite]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="330" y="0" width="125" height="20" uuid="64752caa-0097-4302-b350-a6f2b902aa89"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha de realización]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="455" y="0" width="100" height="20" uuid="00bc152d-1ec8-449a-9fee-0a49571d2959"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Estado del Trámite]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="127" height="20" uuid="c8544913-bf60-441b-a60d-de4700b136d0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombreTarea}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="127" y="0" width="128" height="20" uuid="e670de7d-9fa0-4af6-85a7-07d15d7a6588"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombreTramite}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="255" y="0" width="75" height="20" uuid="fbde467f-4e47-48fd-82d6-37978af4d129"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numTramite}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="330" y="0" width="125" height="20" uuid="5678558b-c867-4ead-b636-4289768d21e5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd 'de' MMM 'del' yyyy. HH:mm:ss").format($F{fechaFin})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="455" y="0" width="100" height="20" uuid="6a923f30-19c1-4d76-af17-b5eff364da49"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{estadoTramite}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="51" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="0" width="555" height="50" uuid="6c7d77ce-a3e7-4136-ba09-1c5fd1229eb5"/>
+				<subreportParameter name="LOGO">
+					<subreportParameterExpression><![CDATA[$P{logo2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "footerReporte.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

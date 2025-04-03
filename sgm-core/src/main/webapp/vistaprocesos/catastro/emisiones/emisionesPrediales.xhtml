@@ -1,0 +1,214 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:define name="center">
+
+    </ui:define>
+    <ui:define name="content">
+        <center>
+            <h1>EMISIONES PREDIALES</h1>    
+        </center>
+        <h:form id="formEmisiones">
+            <p:tabView id="tvRecaudaciones">
+                <p:tab title="PROCESOS GLOBALES">
+                    <center>
+                        <p:panelGrid columns="5" styleClass="ui-panelgrid-blank">
+                            <h:panelGroup style="border-color: #252525; border-width: 1px; ">
+                                <p:commandLink title="Emisiones Urbanas" actionListener="#{emisionesPrediales.inicializarVariables()}" oncomplete="PF('infEmisionUrbanoDlg').show();" update="infEmisionUrbano">
+                                    <p:graphicImage value="/css/homeIconsImages/urbano.png" width="150" height="150"/>
+                                </p:commandLink><br/>
+                                <p:outputLabel value="Emisiones Urbanas" style="font-size: 18px; font-weight: bolder; padding: 0px; "/>
+                            </h:panelGroup>
+                            <p:spacer width="50"/>
+                            <h:panelGroup style="border-color: #252525; border-width: 1px;">
+                                <p:commandLink title="Emisiones Rurales" actionListener="#{emisionesPrediales.inicializarVariables()}" oncomplete="PF('infEmisionRuralDlg').show();" update="infEmisionRural">
+                                    <p:graphicImage value="/css/homeIconsImages/rural.png" width="150" height="150"/>
+                                </p:commandLink><br/>
+                                <p:outputLabel value="Emisiones Rurales" style="font-size: 18px; font-weight: bolder; padding: 0px; "/>
+                            </h:panelGroup>
+                            <p:spacer width="50"/>
+                            <h:panelGroup style="border-color: #252525; border-width: 1px;">
+                                <center>
+                                    <p:commandLink title="Exoneraciones Automáticas" actionListener="#{emisionesPrediales.inicializarVariablesExoAuto()}" oncomplete="PF('infExoneracionesAutomáticasDlg').show();" update="infEmisionRural">
+                                        <p:graphicImage value="/css/homeIconsImages/exoneracion.png" width="150" height="150"/>
+                                    </p:commandLink><br/>
+                                    <p:outputLabel value="Exoneraciones Automáticas" style="font-size: 18px; font-weight: bolder; padding:0px; "/>
+                                </center>
+                            </h:panelGroup>
+                        </p:panelGrid>
+                    </center>
+                </p:tab>
+                <p:tab title="Predios Urbanos">
+                    <p:dataTable value="#{emisionesPrediales.prediosUrbanos}" var="p" paginator="true" resizableColumns="true" emptyMessage="No se encontró ningun predio" rows="20" lazy="true" rowsPerPageTemplate="20,50,100"
+                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" filterEvent="enter" paginatorPosition="center">
+                        <p:column headerText="Emision"  style="text-align: center;" width="80">
+                            <p:commandButton value="Emitir" actionListener="#{emisionesPrediales.cargarPredio(p)}" oncomplete="PF('detalleEmisionDlg').show();" update="formEmision" rendered="#{p.estado eq 'A'}"/>
+                        </p:column>
+                        <p:column headerText="N. Predio"  style="text-align: center;" filterBy="#{p.numPredio}" sortBy="#{p.numPredio}" width="100" filterStyle="width: 95%;"><h:outputText value="#{p.numPredio}"/></p:column>
+                        <p:column headerText="Mz. Urb" style="text-align: center;" filterBy="#{p.urbMz}" sortBy="#{p.urbMz}" filterStyle="width: 90%;"><h:outputText value="#{p.urbMz}"/></p:column>
+                        <p:column headerText="Sl. Urb" style="text-align: center;" filterBy="#{p.urbSolarnew}" sortBy="#{p.urbSolarnew}" filterStyle="width: 90%"><h:outputText value="#{p.urbSolarnew}"/></p:column>
+                        <p:column headerText="Urbanización"><h:outputText value="#{p.ciudadela.nombre}"/></p:column>
+                        <p:column headerText="Sector" style="text-align: center;" filterBy="#{p.sector}" sortBy="#{p.sector}" filterStyle="width: 90%;"><h:outputText value="#{p.sector}"/></p:column>
+                        <p:column headerText="Mz." style="text-align: center;" filterBy="#{p.mz}" sortBy="#{p.mz}" filterStyle="width: 90%;"><h:outputText value="#{p.mz}"/></p:column>
+                        <p:column headerText="Cdla." style="text-align: center;" filterBy="#{p.cdla}" sortBy="#{p.cdla}" filterStyle="width: 90%;"><h:outputText value="#{p.cdla}"/></p:column>
+                        <p:column headerText="Mz. Div." style="text-align: center;" filterBy="#{p.mzdiv}" sortBy="#{p.mzdiv}" filterStyle="width: 90%;"><h:outputText value="#{p.mzdiv}"/></p:column>
+                        <p:column headerText="Solar" style="text-align: center;" filterBy="#{p.solar}"  sortBy="#{p.solar}" filterStyle="width: 90%;"><h:outputText value="#{p.solar}"/></p:column>
+                        <p:column headerText="Div1" style="text-align: center;" filterBy="#{p.div1}"  sortBy="#{p.div1}" filterStyle="width: 90%;"><h:outputText value="#{p.div1},#{p.div2},#{p.div3},#{p.div4},#{p.div5},#{p.div6},#{p.div7},#{p.div8},#{p.div9},#{p.phv},#{p.phh}"/></p:column>
+                    </p:dataTable>
+                </p:tab>
+                <p:tab title="Predios Rurales">
+                    <p:dataTable value="#{emisionesPrediales.prediosRurales}" var="pr" paginator="true" resizableColumns="true" emptyMessage="No se encontró ningun predio" rows="20" lazy="true" rowsPerPageTemplate="20,50,100"
+                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" filterEvent="enter" paginatorPosition="center">
+                        <p:column headerText="N. Predio"  style="text-align: center;" filterBy="#{pr.numPredioRustico}" sortBy="#{pr.numPredioRustico}" width="100" filterStyle="width: 95%;"><h:outputText value="#{pr.numPredioRustico}"/></p:column>
+                        <p:column headerText="Reg. Catastral" style="text-align: center;" filterBy="#{pr.regCatastral}" sortBy="#{pr.regCatastral}" width="140" filterStyle="width: 90%;"><h:outputText value="#{pr.regCatastral}"/></p:column>
+                        <p:column headerText="Id. Predial" style="text-align: center;" filterBy="#{pr.idPredial}" sortBy="#{pr.idPredial}" width="120" filterStyle="width: 90%"><h:outputText value="#{pr.idPredial}"/></p:column>
+                        <p:column headerText="Parroquia" width="250"><h:outputText value="#{pr.parroquia.descripcion}"/></p:column>
+                        <p:column headerText="Propietario"><h:outputText value="#{pr.propietario.nombres}#{pr.propietario.apellidos}#{pr.propietario.razonSocial}#{pr.propietario.nombreComercial}"/></p:column>
+                        <p:column headerText="Nombre Predio" style="text-align: center;" filterBy="#{pr.nombrePredio}" sortBy="#{pr.nombrePredio}" filterStyle="width: 90%;"><h:outputText value="#{pr.nombrePredio}"/></p:column>
+                        <p:column headerText="Sitio" style="text-align: center;" filterBy="#{pr.sitio}" sortBy="#{pr.sitio}" filterStyle="width: 90%;"><h:outputText value="#{pr.sitio}"/></p:column>
+                    </p:dataTable>
+                </p:tab>
+            </p:tabView>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <center>
+                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                </center>
+            </p:confirmDialog>
+        </h:form>
+
+        <p:dialog header="Informacion Emision - URBANO" widgetVar="infEmisionUrbanoDlg" modal="true" resizable="false" width="60%" closeOnEscape="true" position="center">
+            <h:form id="infEmisionUrbano">
+                <h:panelGrid columns="3" style="margin: 0 auto;" styleClass="noBorder">
+                    <p:outputLabel value="AÑO EMISION:" style="font-weight: bold; font-size: 14px;"/><p:inputText type="number" value="#{emisionesPrediales.anioEmision}" style="font-weight: bold; font-size: 12px;"/>
+                    <p:commandButton value="Información" actionListener="#{emisionesPrediales.generarInformacion(1)}" styleClass="btnStyle" icon="ui-icon-comment" update="infEmisionUrbano"/>
+                    <p:outputLabel value="GENERAR MEJORAS:" style="font-weight: bold; font-size: 14px;"/><p:selectBooleanCheckbox value="#{emisionesPrediales.incluirMejoras}" />
+                </h:panelGrid>
+                <p:spacer height="15"/>                
+                <p:dataTable value="#{emisionesPrediales.mensajes}" var="m" reflow="true" rendered="#{emisionesPrediales.mensajes ne null and emisionesPrediales.mensajes.size()>0}">
+                    <p:column headerText="Validacion" width="25%"><p:outputLabel value="#{m.mensaje}"/></p:column>
+                    <p:column headerText="Detalle"><p:outputLabel value="#{m.detalle}"/></p:column>
+                    <p:column headerText="Estado" width="10%">
+                        <p:graphicImage value="#{m.estado?'/image/check.png':'/image/delete.png'}" height="12"/>
+                    </p:column>
+                </p:dataTable>
+                <br/>
+                <p:fieldset legend="Detalle" rendered="#{emisionesPrediales.totalEmisiones>0}">
+                    <h:panelGrid columns="2" style="margin: 0 auto;" styleClass="noBorder">
+                        <p:outputLabel value="Mensaje de Proceso:" style="font-weight: bold; font-size: 12px;"/><p:outputLabel value="#{emisionesPrediales.totalEmisiones>0?'Proceso Realizado':'Error en el Proceso'}" style="font-weight: bold; font-size: 12px;"/>
+                        <p:outputLabel value="Cantidad de Emisiones:" style="font-weight: bold; font-size: 12px;"/><p:outputLabel value="#{emisionesPrediales.totalEmisiones}" style="font-weight: bold; font-size: 12px;"/>
+                    </h:panelGrid>
+                </p:fieldset>
+                <br/>
+                <center>
+                    <p:commandButton value="Aceptar" actionListener="#{emisionesPrediales.generarEmisiones(1)}" update="infEmisionUrbano" rendered="#{emisionesPrediales.habilitaProceso}" styleClass="btnStyle" icon="ui-icon-circle-check"><p:confirm header="Confirmacion" message="Realizar Proceso de Emisión?" icon="ui-icon-alert" /></p:commandButton>
+                    <p:spacer width="25"/>
+                    <p:commandButton value="Cancelar" oncomplete="PF('infEmisionUrbanoDlg').hide();" styleClass="btnStyle" icon="ui-icon-circle-close"/>
+                </center>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Informacion Emision - RURAL" widgetVar="infEmisionRuralDlg" modal="true" resizable="false" width="60%" closeOnEscape="true" position="center">
+            <h:form id="infEmisionRural">
+                <h:panelGrid columns="3" style="margin: 0 auto;" styleClass="noBorder">
+                    <p:outputLabel value="AÑO EMISION:" style="font-weight: bold; font-size: 14px;"/><p:inputText type="number" value="#{emisionesPrediales.anioEmision}" style="font-weight: bold; font-size: 12px;"/>
+                    <p:commandButton value="Información" actionListener="#{emisionesPrediales.generarInformacion(2)}" styleClass="btnStyle" icon="ui-icon-comment" update="infEmisionRural"/>
+                </h:panelGrid>
+                <p:spacer height="15"/>                
+                <p:dataTable value="#{emisionesPrediales.mensajes}" var="m" reflow="true" rendered="#{emisionesPrediales.mensajes ne null and emisionesPrediales.mensajes.size()>0}">
+                    <p:column headerText="Validacion" width="25%"><p:outputLabel value="#{m.mensaje}"/></p:column>
+                    <p:column headerText="Detalle"><p:outputLabel value="#{m.detalle}"/></p:column>
+                    <p:column headerText="Estado" width="10%">
+                        <p:graphicImage value="#{m.estado?'/image/check.png':'/image/delete.png'}" height="12"/>
+                    </p:column>
+                </p:dataTable>
+                <br/>
+                <p:fieldset legend="Detalle" rendered="#{emisionesPrediales.totalEmisiones>0}">
+                    <h:panelGrid columns="2" style="margin: 0 auto;" styleClass="noBorder">
+                        <p:outputLabel value="Mensaje de Proceso:" style="font-weight: bold; font-size: 12px;"/><p:outputLabel value="#{emisionesPrediales.totalEmisiones>0?'Proceso Realizado':'Error en el Proceso'}" style="font-weight: bold; font-size: 12px;"/>
+                        <p:outputLabel value="Cantidad de Emisiones:" style="font-weight: bold; font-size: 12px;"/><p:outputLabel value="#{emisionesPrediales.totalEmisiones}" style="font-weight: bold; font-size: 12px;"/>
+                    </h:panelGrid>
+                </p:fieldset>
+                <br/>
+                <center>
+                    <p:commandButton value="Aceptar" actionListener="#{emisionesPrediales.generarEmisiones(2)}" rendered="#{emisionesPrediales.habilitaProceso}" update="infEmisionRural" styleClass="btnStyle" icon="ui-icon-circle-check"><p:confirm header="Confirmacion" message="Realizar Proceso de Emisión?" icon="ui-icon-alert" /></p:commandButton>
+                    <p:spacer width="25"/>
+                    <p:commandButton value="Cancelar" oncomplete="PF('infEmisionRuralDlg').hide();" styleClass="btnStyle" icon="ui-icon-circle-close"/>
+                </center>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Informacion Emision" widgetVar="infEmisionDlg" modal="true" resizable="false" width="70%" closeOnEscape="true">
+            <h:form id="infEmision">
+                <p:panelGrid columns="1" style="width: 90%; margin: 0 auto;" styleClass="noBorder">
+                    <p:outputLabel value="LA EMISION PARA ESTE PREDIO EN EL AÑO SELECCIONADO YA FUE GENERADA" style="font-weight: bold;"/>
+                    <p:outputLabel value="Predio: #{emisionesPrediales.predio.numPredio}"/>
+                    <p:outputLabel value="Codigo Predial: #{emisionesPrediales.predio.codigoPredial}"/>
+                    <p:outputLabel value="Año: #{emisionesPrediales.anioEmision}"/>
+                </p:panelGrid>
+                <br/>
+                <center>
+                    <p:commandButton value="Aceptar" oncomplete="PF('infEmisionDlg').hide();"/>
+                </center>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Exoneraciones automáticas" widgetVar="infExoneracionesAutomáticasDlg" modal="true" resizable="false" width="70%" closeOnEscape="true">
+            <h:form id="frmExoAuto">
+                <h:panelGrid columns="3" style="margin: 0 auto;" styleClass="noBorder">
+                    <p:outputLabel value="AÑO A GENERAR" style="font-weight: bold; font-size: 14px;"/><p:inputText type="number" value="#{emisionesPrediales.anioEmision}" style="font-weight: bold; font-size: 12px;"/>
+                </h:panelGrid>
+                <p:spacer height="15"/>                
+
+                <p:fieldset legend="Detalle" rendered="#{emisionesPrediales.totalEmisiones>0}">
+                    <h:panelGrid columns="2" style="margin: 0 auto;" styleClass="noBorder">
+                        <p:outputLabel value="Mensaje de Proceso:" style="font-weight: bold; font-size: 12px;"/><p:outputLabel value="#{emisionesPrediales.totalEmisiones>0?'Proceso Realizado':'Error en el Proceso'}" style="font-weight: bold; font-size: 12px;"/>
+                        <p:outputLabel value="Cantidad de Emisiones:" style="font-weight: bold; font-size: 12px;"/><p:outputLabel value="#{emisionesPrediales.totalEmisiones}" style="font-weight: bold; font-size: 12px;"/>
+                    </h:panelGrid>
+                </p:fieldset>
+                <br/>
+                <center>
+                    <p:commandButton value="Aceptar" actionListener="#{emisionesPrediales.generarExoneraciones()}" onclick="PF('infExoneracionesAutomáticasDlg').hide()" styleClass="btnStyle" icon="ui-icon-circle-check"><p:confirm header="Confirmacion" message="Realizar Proceso de Emisión?" icon="ui-icon-alert" /></p:commandButton>
+                    <p:spacer width="25"/>
+                    <p:commandButton value="Cancelar" onclick="PF('infExoneracionesAutomáticasDlg').hide();" styleClass="btnStyle" icon="ui-icon-circle-close"/>
+                </center>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="DETALLE EMISION PAGO" widgetVar="detalleEmisionDlg" modal="true" resizable="false" width="50%" closeOnEscape="true">
+            <h:form id="formEmision">
+                <p:panelGrid style="width: 90%; margin: 0 auto;">
+                    <p:row>
+                        <p:column><p:outputLabel value="#Predio: #{emisionesPrediales.predio.numPredio}"/></p:column>
+                        <p:column><p:outputLabel value="#Año:"/><p:inputText type="number" value="#{emisionesPrediales.anioEmision}"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column><p:outputLabel value="Avaluo Solar"/></p:column>
+                        <p:column><p:inputText value="#{emisionesPrediales.predio.avaluoSolar}" readonly="true"><f:convertNumber minFractionDigits="2" /></p:inputText>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column><p:outputLabel value="Avaluo Construcción"/></p:column>
+                        <p:column><p:inputText value="#{emisionesPrediales.predio.avaluoConstruccion}" readonly="true"><f:convertNumber minFractionDigits="2" /></p:inputText></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column><p:outputLabel value="Avaluo Municipal"/></p:column>
+                        <p:column><p:inputText value="#{emisionesPrediales.predio.avaluoMunicipal}" readonly="true"><f:convertNumber minFractionDigits="2" /></p:inputText></p:column>
+                    </p:row>
+                </p:panelGrid>
+                <center>
+                    <p:commandButton value="Aceptar" actionListener="#{emisionesPrediales.generarEmision()}" oncomplete="PF('detalleEmisionDlg').hide();">
+                        <p:confirm header="Confirmacion" message="Generar Emisión?" icon="ui-icon-alert" />
+                    </p:commandButton>
+                    <p:spacer width="25"/>
+                    <p:commandButton value="Cancelar" oncomplete="PF('detalleEmisionDlg').hide();"/>
+                </center>
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+</ui:composition>

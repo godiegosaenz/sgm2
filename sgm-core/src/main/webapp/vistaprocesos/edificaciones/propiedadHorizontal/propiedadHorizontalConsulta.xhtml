@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="/template/template.xhtml">
+
+            <ui:define name="page_title">
+                Consulta
+            </ui:define>
+
+            <ui:define name="top">
+                <h1>Propiedades Horizontales Ingresados</h1>
+            </ui:define>
+
+            <ui:define name="content">
+                <h:form id="formPermConsTIng">
+                    <p:dataTable id="dtPermisoConsulta" paginator="true" rows="20" rowsPerPageTemplate="20, 50, 100"  
+                                 value="#{propiedadHorizontalConsulta.lazy}" var="tram" lazy="true" filterEvent="enter"
+                                 emptyMessage="No se encontró ningun Item" style="margin: 0px;">
+                        <!--f:facet name="header">
+                            <p:commandLink value="Reporte Semanal PC" style="float: left; color: #0066cc; font-size: 13px;" actionListener="#{propiedadHorizontalConsulta.mostrar()}"/>
+                        </f:facet-->
+                        <p:column headerText="Tipo Trámite" style="text-align: center; " width="30%">
+                            <p:outputLabel value="#{tram.tramite.tipoTramite.descripcion}"/>
+                        </p:column>
+                        <p:column headerText="Número Tramite" style="text-align: center;" filterStyle="width: 95%;" filterBy="#{tram.tramite.id}" sortBy="#{tram.tramite.id}">
+                            <p:outputLabel value="#{tram.tramite.id}"/>
+                        </p:column>
+                        <p:column headerText="Fecha Liquidación" style="text-align: center;" width="18%" sortBy="#{tram.fecCre}">
+                            <p:outputLabel value="#{tram.fecCre}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column headerText="Visualizar"  style="width: 70px; text-align: center;">
+                            <p:commandLink value="Ver" actionListener="#{propiedadHorizontalConsulta.redirectVistaPermiso(tram)}" disabled="#{tram.total eq null}" style="font-size: 12px; color: #0033FF; font-weight: bold; "/>
+                        </p:column>
+                        <p:column headerText="Editar" style="width: 60px; text-align: center;">
+                            <p:commandLink value="Editar" actionListener="#{propiedadHorizontalConsulta.redirectEditarPermiso(tram)}" disabled="#{tram.total eq null}" style="font-size: 12px; color: #0033FF; font-weight: bold; "/>
+                        </p:column>
+                        <p:column headerText="Liquidación" style="width: 90px; text-align: center;">
+                            <p:commandLink ajax="false" value="Imprimir" actionListener="#{propiedadHorizontalConsulta.imprimirLiquidación(tram)}" disabled="#{tram.total eq null}" style="font-size: 12px; color: #0033FF; font-weight: bold; "/>
+                        </p:column>
+                        <!--p:column headerText="Certificado" style="width: 90px; text-align: center;">
+                            <p:commandLink value="Imprimir" actionListener="#{propiedadHorizontalConsulta.imprimirCertificado(tram)}" disabled="#{tram.total eq null}" style="font-size: 12px; color: #0033FF; font-weight: bold; "/>
+                        </p:column-->
+                    </p:dataTable>
+                </h:form>
+
+                <p:dialog header="Reporte Permiso Construccion" id="DlgPermisConst" widgetVar="dlgConsulta" modal="true" height="180" width="50%" resizable="false">  
+                    <h:panelGroup id="nuevoPermisConstGroup">
+                        <h:form id="frmConsulta" >
+                            <p:panelGrid columns="4" layout="grid" style="margin: 0 auto">
+                                <p:outputLabel value="Memorandum #:"/>
+                                <h:panelGroup>
+                                    <p:inputText value="#{permisoConstruccionConsulta.memorandum}" size="4"/> <p:inputText value="#{permisoConstruccionConsulta.memorandum2}"/>
+                                </h:panelGroup>
+                                <p:outputLabel value="Desde Año"/>
+                                <p:inputText value="#{permisoConstruccionConsulta.anioDesde}"/>
+
+                                <p:outputLabel value="Dirigido a :"/>
+                                <p:inputText value="#{permisoConstruccionConsulta.dirigioA}" />
+                                <p:outputLabel value="Cargo :"/>
+                                <p:inputText value="#{permisoConstruccionConsulta.cargo}" />
+                                
+                                <p:outputLabel value="# PC desde:"/>
+                                <p:inputText value="#{permisoConstruccionConsulta.permisoDesde}" size="6"/>
+                                <p:outputLabel value="Hasta:"/>
+                                <p:inputText value="#{permisoConstruccionConsulta.permisoHasta}" size="6"/>
+                            </p:panelGrid>
+                            <br/>
+                            <p:commandButton value="Reporte" actionListener="#{permisoConstruccionConsulta.reporteSemanalPC()}" oncomplete="PF('dlgConsulta').hide()" style="float: right" styleClass="btnStyle" ajax="false"/>
+                        </h:form>
+                    </h:panelGroup>
+                </p:dialog>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

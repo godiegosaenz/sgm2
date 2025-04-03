@@ -1,0 +1,147 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <!-- INTERFACE -->
+    <cc:interface componentType="seccionesFicha" >
+        <cc:attribute name="headerDialog"/>
+        <cc:attribute name="predio" type="com.origami.sgm.entities.CatPredio" required="true"/>
+        <cc:attribute name="predioant" type="com.origami.sgm.entities.CatPredio" required="true"/>
+    </cc:interface>
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <h:form id="frmSeccion10">
+            <p:tab id="s10" title="10. Vivienda Censal">
+                <h:form id="frmViviendaCensal">
+                    <p:fieldset legend="Propiedad horizontal" toggleable="true" rendered="#{cc.attrs.predio.propiedadHorizontal}">
+                        <p:fieldset legend="Caracteristicas" toggleable="true">
+                            <h:panelGrid columns="2" border="0" cellpadding="5" styleClass="Wid100 dataGridBorderNone">
+                                <h:panelGroup layout="block">
+                                    <h:outputText value="Clasificacion de Vivienda:" styleClass="DispBlock Wid100"/>
+                                    <p:inputText value="#{cc.attrs.predio.clasificacionViviendaHorizontal.valor}" styleClass="#{cc.comparar(cc.attrs.predio.clasificacionViviendaHorizontal.valor, cc.attrs.predioant.clasificacionViviendaHorizontal.valor)}" readonly="true"/>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block">
+                                    <h:outputText value="Tipo de Vivienda:" styleClass="DispBlock Wid100"/>
+                                    <p:selectOneMenu  value="#{cc.attrs.predio.tipoViviendaHorizontal}" editable="true" styleClass="#{cc.comparar(cc.attrs.predio.tipoViviendaHorizontal, cc.attrs.predioant.tipoViviendaHorizontal)}">
+                                        <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                                        <f:selectItem itemLabel="Particular" itemValue="#{true}"/>
+                                        <f:selectItem itemLabel="Colectiva" itemValue="#{false}"/>
+                                    </p:selectOneMenu>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block">
+                                    <h:outputText value="Condicion de Ocupacion de la Vivienda:" styleClass="DispBlock Wid100"/>
+                                    <p:selectOneMenu  value="#{cc.attrs.predio.ocupacionViviendaHorizontal}"  editable="false" styleClass="#{cc.comparar(cc.attrs.predio.ocupacionViviendaHorizontal, cc.attrs.predioant.ocupacionViviendaHorizontal)}">
+                                        <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                                        <f:selectItem itemLabel="Ocupada" itemValue="#{true}"/>
+                                        <f:selectItem itemLabel="Desocupada" itemValue="#{false}"/>
+                                    </p:selectOneMenu>
+                                </h:panelGroup>
+                            </h:panelGrid>
+                        </p:fieldset>
+                        <p:fieldset legend="JEFE DEL HOGAR" style="font-size: 13px;" class="MarTop10">
+                            <h:panelGrid columns="2" border="0" cellpadding="5" styleClass="Wid100 dataGridBorderNone">
+                                <h:panelGroup layout="block">
+                                    <h:outputText value="CI/RUC:" styleClass="DispBlock Wid100"/>
+                                    <p:inputText value="#{cc.attrs.predio.enteHorizontal.ciRuc}" styleClass="#{cc.comparar(cc.attrs.predio.enteHorizontal.ciRuc, cc.attrs.predioant.enteHorizontal.ciRuc)}" readonly="true"/>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block">
+                                    <h:outputText value="Nombres:" styleClass="DispBlock Wid100" rendered="#{cc.attrs.predio.enteHorizontal.esPersona}"/>
+                                    <p:inputText value="#{cc.attrs.predio.enteHorizontal.nombres}" rendered="#{cc.attrs.predio.enteHorizontal.esPersona}" styleClass="#{cc.comparar(cc.attrs.predio.enteHorizontal.nombres, cc.attrs.predioant.enteHorizontal.nombres)}" readonly="true"/>
+                                    <h:outputText value="Razón Social:" styleClass="DispBlock Wid100" rendered="#{!cc.attrs.predio.enteHorizontal.esPersona}"/>
+                                    <p:inputText value="#{cc.attrs.predio.enteHorizontal.razonSocial}" rendered="#{!cc.attrs.predio.enteHorizontal.esPersona}" styleClass="#{cc.comparar(cc.attrs.predio.enteHorizontal.razonSocial, cc.attrs.predioant.enteHorizontal.razonSocial)}" readonly="true"/>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block">
+                                    <h:outputText value="Apellidos:" styleClass="DispBlock Wid100" rendered="#{cc.attrs.predio.enteHorizontal.esPersona}"/>
+                                    <p:inputText value="#{cc.attrs.predio.enteHorizontal.apellidos}" rendered="#{cc.attrs.predio.enteHorizontal.esPersona}" styleClass="#{cc.comparar(cc.attrs.predio.enteHorizontal.apellidos, cc.attrs.predioant.enteHorizontal.apellidos)}" readonly="true"/>
+                                    <h:outputText value="Nombre Comercial:" styleClass="DispBlock Wid100" rendered="#{!cc.attrs.predio.enteHorizontal.esPersona}"/>
+                                    <p:inputText value="#{cc.attrs.predio.enteHorizontal.nombreComercial}" rendered="#{!cc.attrs.predio.enteHorizontal.esPersona}" styleClass="#{cc.comparar(cc.attrs.predio.enteHorizontal.nombreComercial, cc.attrs.predioant.enteHorizontal.nombreComercial)}" readonly="true"/>
+                                </h:panelGroup>
+                            </h:panelGrid>
+                        </p:fieldset>
+                        <p:fieldset legend="Areas" toggleable="true" class="MarTop10">
+                            <h:panelGrid columns="2" styleClass="Wid100 dataGridBorderNone" >
+                                <h:panelGroup layout="block">
+                                    <h:outputText value="Alicuota terreno:" styleClass="DispBlock Wid100"/>
+                                    <p:inputText value="#{cc.attrs.predio.alicuotaUtil}" styleClass="#{cc.comparar(cc.attrs.predio.alicuotaUtil, cc.attrs.predioant.alicuotaUtil)}" readonly="true"/>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block">
+                                    <h:outputText value="Alicuota construccion:" styleClass="DispBlock Wid100"/>
+                                    <p:inputText value="#{cc.attrs.predio.alicuotaConst}" styleClass="#{cc.comparar(cc.attrs.predio.alicuotaConst, cc.attrs.predioant.alicuotaConst)}" readonly="true"/>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block">
+                                    <h:outputText value="Area declarada const:" styleClass="DispBlock Wid100"/>
+                                    <p:inputText value="#{cc.attrs.predio.areaDeclaradaConst}" styleClass="#{cc.comparar(cc.attrs.predio.areaDeclaradaConst, cc.attrs.predioant.areaDeclaradaConst)}" readonly="true"/>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block">
+                                    <h:outputText value="Unidad de Medida:" styleClass="DispBlock Wid100"/>
+                                    <p:inputText value="#{cc.attrs.predio.unidadMedida.valor}" styleClass="#{cc.comparar(cc.attrs.predio.unidadMedida.valor, cc.attrs.predioant.unidadMedida.valor)}" readonly="true"/>
+                                </h:panelGroup>
+                            </h:panelGrid>
+                        </p:fieldset>
+                    </p:fieldset>
+                    <p:fieldset legend="Instalaciones" toggleable="true" class="MarTop10">
+                        <p:fieldset legend="Habitaciones" toggleable="true">
+                            <h:panelGrid columns="2" style="width: 100%" styleClass="Wid100 dataGridBorderNone">
+                                <h:panelGroup layout="block">
+                                    <h:outputText value="Tenencia de Vivienda:" styleClass="DispBlock Wid100"/>
+                                    <p:inputText value="#{cc.attrs.predio.tenenciaVivienda.valor}" styleClass="#{cc.comparar(cc.attrs.predio.tenenciaVivienda.valor, cc.attrs.predioant.tenenciaVivienda.valor)}" readonly="true"/>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block">
+                                    <h:outputText value="Nro. de Habitantes:" styleClass="DispBlock Wid100"/>
+                                    <p:inputText value="#{cc.attrs.predio.habitantes}" styleClass="#{cc.comparar(cc.attrs.predio.habitantes, cc.attrs.predioant.habitantes)}" readonly="true"/>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block">
+                                    <h:outputText value="Nro. de Habitaciones (Excluye: baño, cocina y negocio):" styleClass="DispBlock Wid100"/>
+                                    <p:inputText value="#{cc.attrs.predio.numHabitaciones}" styleClass="#{cc.comparar(cc.attrs.predio.numHabitaciones, cc.attrs.predioant.numHabitaciones)}" readonly="true"/>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block">
+                                    <h:outputText value="Nro. de Dormitorios:" styleClass="DispBlock Wid100"/>
+                                    <p:inputText value="#{cc.attrs.predio.numDormitorios}" styleClass="#{cc.comparar(cc.attrs.predio.numDormitorios, cc.attrs.predioant.numDormitorios)}" readonly="true"/>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block">
+                                    <h:outputText value="Nro. de Hogares:" styleClass="DispBlock Wid100"/>
+                                    <p:inputText value="#{cc.attrs.predio.numHogares}" styleClass="#{cc.comparar(cc.attrs.predio.numHogares, cc.attrs.predioant.numHogares)}" readonly="true"/>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block">
+                                    <h:outputText value="Nro. de Celulares:" styleClass="DispBlock Wid100"/>
+                                    <p:inputText value="#{cc.attrs.predio.numCelulares}" styleClass="#{cc.comparar(cc.attrs.predio.numCelulares, cc.attrs.predioant.numCelulares)}" readonly="true"/>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block">
+                                    <h:outputText value="Espacios Para Bañarse o Duchas:" styleClass="DispBlock Wid100"/>
+                                    <p:inputText value="#{cc.attrs.predio.numEspaciosBanios}" styleClass="#{cc.comparar(cc.attrs.predio.numEspaciosBanios, cc.attrs.predioant.numEspaciosBanios)}" readonly="true"/>
+                                </h:panelGroup>
+                            </h:panelGrid>
+                        </p:fieldset>
+                    </p:fieldset>
+                    <p:fieldset legend="Servicios" toggleable="true" class="MarTop10">
+                        <h:panelGrid columns="2" style="width: 100%" styleClass="Wid100 dataGridBorderNone">
+                            <h:panelGroup layout="block">
+                                <h:outputText value="Abastecimiento de Agua:" styleClass="DispBlock Wid100"/>
+                                <p:inputText value="#{cc.attrs.predio.catPredioS6.abastAgua.valor}" styleClass="#{cc.comparar(cc.attrs.predio.catPredioS6.abastAgua.valor, cc.attrs.predioant.catPredioS6.abastAgua.valor)}" readonly="true"/>
+                            </h:panelGroup>
+                            <h:panelGroup layout="block">
+                                <h:outputText value="Medio de Abastecimiento de Agua:" styleClass="DispBlock Wid100"/>
+                                <p:inputText value="#{cc.attrs.predio.catPredioS6.abastAguaRecibe.valor}" styleClass="#{cc.comparar(cc.attrs.predio.catPredioS6.abastAguaRecibe.valor, cc.attrs.predioant.catPredioS6.abastAguaRecibe.valor)}" readonly="true"/>
+                            </h:panelGroup>
+                            <h:panelGroup layout="block">
+                                <h:outputText value="Abaste electrico:" styleClass="DispBlock Wid100"/>
+                                <p:inputText value="#{cc.attrs.predio.catPredioS6.abasteElectrico.valor}" styleClass="#{cc.comparar(cc.attrs.predio.catPredioS6.abasteElectrico.valor, cc.attrs.predioant.catPredioS6.abasteElectrico.valor)}" readonly="true"/>
+                            </h:panelGroup>
+                            <h:panelGroup layout="block">
+                                <h:outputText value="Eliminacion Excretas:" styleClass="DispBlock Wid100"/>
+                                <p:inputText value="#{cc.attrs.predio.catPredioS6.evacAguasServ.valor}" styleClass="#{cc.comparar(cc.attrs.predio.catPredioS6.evacAguasServ.valor, cc.attrs.predioant.catPredioS6.evacAguasServ.valor)}" readonly="true"/>
+                            </h:panelGroup>
+                            <h:panelGroup layout="block">
+                                <h:outputText value="Eliminacion de basura:" styleClass="DispBlock Wid100"/>
+                                <p:inputText value="#{cc.attrs.predio.catPredioS6.recolBasura.valor}" styleClass="#{cc.comparar(cc.attrs.predio.catPredioS6.recolBasura.valor, cc.attrs.predioant.catPredioS6.recolBasura.valor)}" readonly="true"/>
+                            </h:panelGroup>
+                        </h:panelGrid>
+                    </p:fieldset>
+                </h:form>
+            </p:tab>
+        </h:form>
+    </cc:implementation>
+</html>

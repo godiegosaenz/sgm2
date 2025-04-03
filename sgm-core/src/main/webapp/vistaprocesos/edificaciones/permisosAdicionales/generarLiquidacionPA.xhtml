@@ -1,0 +1,537 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:dialog="http://xmlns.jcp.org/jsf/composite/dialog">
+    <ui:define name="top">
+        <p:panelGrid styleClass="noBorder" columns="4" style="width: 100%;font-size: 14px;">
+            <p:outputLabel value="Tarea: #{generarTasaPA.taskDataByTaskID.name}" style="font-weight: bolder;color: #005f9c"/>
+            <p:outputLabel value="Trámite: #{generarTasaPA.ht.id}" style="font-weight: bolder;color: #005f9c"/>
+            <p:outputLabel value="Responsable: #{generarTasaPA.taskDataByTaskID.assignee}" style="font-weight: bolder;color: #005f9c"/>
+        </p:panelGrid>
+    </ui:define>
+    <ui:define name="content">
+        <h:form id="frmMain">
+
+            <p:panel id="pnlDP" style="width: 100%;">
+                <p:tabView id="tdatos">
+                    <p:tab id="tgen" title="Tasa de liquidacion">
+                        <h:panelGroup rendered="#{generarTasaPA.datosPredio!=null}">
+                            <p:panel header="Número de Trámite del Permiso previo">
+                                <center>
+                                    <p:panelGrid  style="width: 100%;"  columns="2" styleClass="noBorder" >
+                                        <h:outputText value="Ingrese el número de trámite del Permiso: " style="margin-left: 100px;"/>
+                                        <h:panelGroup style="margin-right: 160px;">
+                                            <p:inputText value="#{generarTasaPA.numTramite}" />
+                                            <p:commandButton update="frmMain, datosPermisosForm" value="Buscar" actionListener="#{generarTasaPA.buscarTramite()}" />
+                                        </h:panelGroup>
+                                    </p:panelGrid>
+                                </center>
+                            </p:panel>
+                            <h:panelGroup id="pnlContenedor">
+                                <p:panel header="Código Predial">
+                                    <p:panelGrid  style="width: 100%;" styleClass="noBorder" >
+
+                                        <f:facet name="header">  
+                                            <p:row>  
+                                                <p:column >Sector</p:column>  
+                                                <p:column >Mnz.</p:column>  
+                                                <p:column >Cdla.</p:column>  
+                                                <p:column >Mnz. Div</p:column>  
+                                                <p:column>Solar</p:column>  
+                                                <p:column>Div1</p:column>  
+                                                <p:column>Div2</p:column>  
+                                                <p:column>Div3</p:column>  
+                                                <p:column>Div4</p:column>  
+                                                <p:column>Div5</p:column>  
+                                                <p:column>Div6</p:column>  
+                                                <p:column>Div7</p:column>  
+                                                <p:column>Div8</p:column>  
+                                                <p:column>Div9</p:column>
+                                                <p:column>Phv</p:column>
+                                                <p:column>Phh</p:column>
+                                                <p:column>Buscar</p:column>
+                                            </p:row>  
+                                        </f:facet>
+                                        <p:row style="width: 100%;">
+                                            <p:column><p:inputText style="width: 100%" value="#{generarTasaPA.datosPredio.sector}"/></p:column>
+                                            <p:column><p:inputText style="width: 100%" value="#{generarTasaPA.datosPredio.mz}"/></p:column>
+                                            <p:column><p:inputText style="width: 100%" value="#{generarTasaPA.datosPredio.cdla}"/></p:column>
+                                            <p:column><p:inputText style="width: 100%" value="#{generarTasaPA.datosPredio.mzdiv}"/></p:column>
+                                            <p:column><p:inputText style="width: 100%" value="#{generarTasaPA.datosPredio.solar}"/></p:column>
+                                            <p:column><p:inputText style="width: 100%" value="#{generarTasaPA.datosPredio.div1}"/></p:column>
+                                            <p:column><p:inputText style="width: 100%" value="#{generarTasaPA.datosPredio.div2}"/></p:column>
+                                            <p:column><p:inputText style="width: 100%" value="#{generarTasaPA.datosPredio.div3}"/></p:column>
+                                            <p:column><p:inputText style="width: 100%" value="#{generarTasaPA.datosPredio.div4}"/></p:column>
+                                            <p:column><p:inputText style="width: 100%" value="#{generarTasaPA.datosPredio.div5}"/></p:column>
+                                            <p:column><p:inputText style="width: 100%" value="#{generarTasaPA.datosPredio.div6}"/></p:column>
+                                            <p:column><p:inputText style="width: 100%" value="#{generarTasaPA.datosPredio.div7}"/></p:column>
+                                            <p:column><p:inputText style="width: 100%" value="#{generarTasaPA.datosPredio.div8}"/></p:column>
+                                            <p:column><p:inputText style="width: 100%" value="#{generarTasaPA.datosPredio.div9}"/></p:column>
+                                            <p:column><p:inputText style="width: 100%" value="#{generarTasaPA.datosPredio.phv}"/></p:column>
+                                            <p:column><p:inputText style="width: 100%" value="#{generarTasaPA.datosPredio.phh}"/></p:column>
+                                            <p:column><p:commandButton update="frmMain" actionListener="#{generarTasaPA.buscarPredio}" style="color: #ffffff; background: #616161 !important; font-weight: bold; height: 30px; float: right" value="Buscar" /></p:column>
+                                        </p:row>
+                                    </p:panelGrid>
+                                </p:panel>
+
+                                <p:panel id="panelPropietarios" header="Datos del Solicitante">
+
+                                    <p:column colspan="5">
+                                        <h:outputText value="Propietarios: " style="font-weight: bold;font-size: 14px"/>
+                                        <p:commandButton actionListener="#{generarTasaPA.setearValores}" onclick="PF('dlgBuscar').show()" style="color: #ffffff; background: #616161 !important; font-weight: bold; height: 30px; float: right" value="Agregar Propietario"  disabled="true"/>
+                                        <br/>
+                                    </p:column>
+                                    <center>   
+                                        <h:panelGroup styleClass="noBorder">
+                                            <p:dataTable    id="dtpropietarios"
+                                                            rows="5"
+                                                            paginator="true"
+                                                            value="#{generarTasaPA.lisPropietarios}" var="itemP"
+                                                            emptyMessage="No tiene datos" style="width: 75%">
+
+                                                <p:column headerText="#C.I. o R.U.C." style="width: 75%;">
+                                                    <h:outputText value="#{itemP.ente.ciRuc}" style="text-transform: uppercase;"/>
+                                                </p:column>
+                                                <p:column headerText="Propietario" style="width: 75%;">
+                                                    <h:outputText value="#{itemP.ente.razonSocial}" rendered="#{!itemP.ente.esPersona}" style="text-transform: uppercase;"/>
+                                                    <h:outputText value="#{itemP.ente.nombres} #{itemP.ente.apellidos}" rendered="#{itemP.ente.esPersona}" style="text-transform: uppercase;"/>
+                                                </p:column>
+                                                <p:column headerText="Opción" style="width: 75%;">
+                                                    <center>
+                                                        <p:commandLink value="Eliminar" actionListener="#{generarTasaPA.eliminarPropietario(itemP)}" disabled="true" update="dtpropietarios"/>
+                                                    </center>
+                                                </p:column>
+                                            </p:dataTable>
+                                        </h:panelGroup>
+                                    </center>
+                                </p:panel>
+                                <p:panel header="Ubicación" style="width: 100%;">
+                                    <p:panelGrid style="width: 100%;" >
+                                        <p:row style="width: 100%;">
+                                            <p:column><h:outputText value="Cantón :" style="margin-right: 25px;"/> <p:inputText value="#{generarTasaPA.canton.nombre}" style="width: 75%" readonly="true"/></p:column>
+                                            <p:column><h:outputText value="Parroquia :" style="margin-right: 25px;"/> <p:inputText value="#{generarTasaPA.parroquia.descripcion}" style="width: 75%" readonly="true"/></p:column>
+                                            <p:column><h:outputText value="Urbanización :" style="margin-right: 25px;"/> <p:inputText value="#{generarTasaPA.datosPredio.ciudadela.nombre}" style="width: 75%" readonly="true"/></p:column>
+                                            <p:column><h:outputText value="Calle :" style="margin-right: 25px;"/> <p:inputText  value="#{generarTasaPA.datosPredio.calle}" style="width: 75%"/></p:column>
+
+                                        </p:row>
+                                        <p:row>
+                                            <p:column colspan="2"><h:outputText value="Código Catastral Actual :" style="margin-right: 25px;"/> <p:inputText value="#{generarTasaPA.codigoCatastral}" readonly="true" style="width: 70%"/></p:column>
+                                            <p:column><h:outputText value="Mz :" style="margin-right: 75px;"/> <p:inputText value="#{generarTasaPA.datosPredio.urbMz}" readonly="true" style="width: 75%"/></p:column>
+                                            <p:column><h:outputText value="Solar :" style="margin-right: 25px;"/> <p:inputText value="#{generarTasaPA.datosPredio.urbSolarnew}" readonly="true" style="width: 75%"/></p:column>
+                                        </p:row>
+                                    </p:panelGrid>
+                                </p:panel>
+                                <center>
+                                    <p:panelGrid columns="4" style="width: auto;">
+
+                                        <p:panel id="panelDatosDelPermiso" header="Datos del Permiso">
+                                            <p:panelGrid columns="2">
+                                                <h:outputText value="Tipo de permiso:"/>
+                                                <h:outputText value="#{generarTasaPA.permisoAdicional.tipoPermisoAdicional.descripcion}"/>
+                                                <h:outputText value="Trámite #:"/>
+                                                <h:outputText value="#{generarTasaPA.ht.id}"/>
+                                                <h:outputText value="Fecha de ingreso:"/>
+                                                <p:calendar value="#{generarTasaPA.permisoAdicional.fechaIngresoTramite}" pattern="dd/MM/yyyy"/>
+                                                <h:outputText value="Fecha de emisión:"/>
+                                                <p:calendar value="#{generarTasaPA.permisoAdicional.fechaEmision}" pattern="dd/MM/yyyy"/>
+                                                <h:outputText value="Fecha de caducidad:"/>
+                                                <p:calendar value="#{generarTasaPA.permisoAdicional.fechaCaducidad}" pattern="dd/MM/yyyy"/>
+                                            </p:panelGrid>
+                                        </p:panel>
+                                        <h:panelGrid columns="1" width="auto">
+                                            <h:panelGroup>
+                                                <p:outputLabel value="Entrego Carta de adosamiento"/>
+                                                <h:selectOneRadio styleClass="noBorder" id="catRet" value="#{generarTasaPA.permisoAdicional.cartaAdosamiento}" style="width: 150px" >                                             
+                                                    <f:selectItem itemLabel="Si" itemValue="#{true}" />  
+                                                    <f:selectItem itemLabel="No" itemValue="#{false}"  /> 
+                                                    <p:ajax update="frmMain" />
+                                                </h:selectOneRadio>
+                                            </h:panelGroup>
+                                            <p:dataTable id="dtCartaAdos" value="#{generarTasaPA.cartaAdosamiento}" var="cart" style="width: 235px;" reflow="true"
+                                                         emptyMessage="No ha cargado documento alguno" rendered="#{generarTasaPA.permisoAdicional.cartaAdosamiento}" >
+                                                <f:facet name="header">
+                                                    Carta de adosamiento
+                                                    <p:commandLink value="Adjuntar Carta" onclick="PF('dlgDocCarta').show()" rendered="#{generarTasaPA.permisoAdicional.cartaAdosamiento}" style="float: right" />
+                                                </f:facet>
+                                                <p:column headerText="Archivo" style="width: 60%">
+                                                    #{cart.nombre}
+                                                </p:column>
+                                                <p:column headerText="Tipo" style="width: 20%">
+                                                    #{cart.tipo}
+                                                </p:column>
+                                                <p:column headerText="Opci&#243;n" style="width: 20%">
+                                                    <p:commandLink value="Eliminar" actionListener="#{generarTasaPA.eliminarCartaAdosamiento(cart)}" update="frmMain" />
+                                                </p:column>
+                                            </p:dataTable>
+                                        </h:panelGrid>
+                                        <p:panel id="panelResponsable" header="Ingreso de Datos">
+                                            <p:panelGrid columns="2">
+                                                <h:outputText value="Agregar datos del predio"/>
+                                                <h:panelGroup>
+                                                    <center>
+                                                        <p:commandLink value="Agregar" onclick="PF('dlgDatosPredio').show()" style="color: red" rendered="#{!generarTasaPA.b2}" update="datosPredioForm"/>
+                                                        <p:commandLink value="Editar" style="color: #0033FF" onclick="PF('dlgDatosPredio').show()" rendered="#{generarTasaPA.b2}" update="datosPredioForm"/>
+                                                    </center>
+                                                </h:panelGroup>
+                                                <h:outputText value="Agregar detalles de construcción"/>
+                                                <h:panelGroup>
+                                                    <center>
+                                                        <p:commandLink value="Agregar" style="color: red" onclick="PF('dlgDetConst').show()" rendered="#{!generarTasaPA.b5}" update="detConstForm"/>
+                                                        <p:commandLink value="Editar" style="color: #0033FF" onclick="PF('dlgDetConst').show()" rendered="#{generarTasaPA.b5}" update="detConstForm"/>
+                                                    </center>
+                                                </h:panelGroup>
+                                                <h:outputText value="Permiso de Construcción"/>
+                                                <h:panelGroup>
+                                                    <center>
+                                                        <p:commandLink value="Agregar" style="color: red" onclick="PF('dlgDatosPermiso').show()" rendered="#{!generarTasaPA.b3}" update="datosPermisosForm"/>
+                                                        <p:commandLink value="Editar" style="color: #0033FF" onclick="PF('dlgDatosPermiso').show()" rendered="#{generarTasaPA.b3}" update="datosPermisosForm"/>
+                                                    </center>
+                                                </h:panelGroup>
+                                                <h:outputText value="Agregar materiales de construcción"/>
+                                                <h:panelGroup>
+                                                    <center>
+                                                        <p:commandLink value="Agregar" style="color: red" onclick="PF('dlgMatConst').show()" rendered="#{!generarTasaPA.b4}" update="matConstForm"/>
+                                                        <p:commandLink value="Editar" style="color: #0033FF" onclick="PF('dlgMatConst').show()" rendered="#{generarTasaPA.b4}" update="matConstForm"/>
+                                                    </center>
+                                                </h:panelGroup>
+                                            </p:panelGrid>
+                                        </p:panel>
+                                        <p:panel id="panelObs" header="Ingreso de Observaciones" style="width: 180px;">
+                                            <p:inputTextarea id="obsservacion" value="#{generarTasaPA.obs.observacion}" style="width: 100%; text-transform: uppercase; height: 70px;" placeholder="Las observaciones son obligatorias para continuar con el trámite."/>
+                                        </p:panel>
+                                        <p:panel id="panelIng" header="Responsable" style="width: 200px;">
+                                            <center>
+                                                <h:outputText value="Responsable técnico: " />
+                                                <p:inputText placeholder="# de cédula" value="#{generarTasaPA.cedulaRucResp}"/> <p:commandButton icon="ui-icon-search" actionListener="#{generarTasaPA.buscarResponsable}"/>   
+                                            </center>
+                                        </p:panel>
+                                        <p:panel id="panelFirma" header="Firma" style="width: 200px;">
+                                            <center>
+                                                <p:selectOneMenu value="#{generarTasaPA.htd.firma}" converter="entityConverter" style="width: 100%;">
+                                                    <f:selectItems value="#{generarTasaPA.firmas}" var="model" itemValue="#{model}" itemLabel="#{model.nomCompleto}"/>
+                                                </p:selectOneMenu>
+                                            </center>
+                                        </p:panel>
+                                        <p:panel id="panelArea" header="Área total de edificación" style="width: 200px;">
+                                            <h:outputText value="Total a edificar:"/>
+                                            <p:inputText value="#{generarTasaPA.permisoAdicional.totalEdificar}" readonly=""/>
+                                        </p:panel>
+                                    </p:panelGrid>
+                                </center>
+                                <h:panelGroup id="botonesGroup">
+                                    <center><p:commandButton rendered="#{generarTasaPA.clickInspeccion}" update="botonesGroup" actionListener="#{generarTasaPA.guardarDatos()}" style="color: #ffffff; width: 150px; background: #616161 !important; font-weight: bold; height: 30px;" value="Guardar"  />
+                                        <p:commandButton ajax="false"  actionListener="#{generarTasaPA.imprimirPDF()}" icon="ui-icon-document" style="color: #ffffff; width: 150px; background: #616161 !important; font-weight: bold; height: 30px;" value="Imprimir Tasa"  />
+                                        <p:commandButton id="btnBandTar" rendered="#{!generarTasaPA.clickInspeccion}" actionListener="#{generarTasaPA.continuar()}" value="Bandeja de Tareas" style="height: 30px;" styleClass="btnStyle"/></center>
+                                </h:panelGroup>
+
+                            </h:panelGroup>
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{generarTasaPA.datosPredio==null}">
+                            <center>
+                                <h1>
+                                    Hubo un error en el trámite.
+                                </h1>
+                            </center>
+                        </h:panelGroup>
+                    </p:tab>
+
+                    <!-- -->
+                    <p:tab id="tdocs" title="Observaciones">
+                        <p:dataTable id="dtobs" value="#{generarTasaPA.ht.observacionesCollection}" var="obs" reflow="true" style="width: 100%">
+                            <f:facet name="header">Observaciones</f:facet>
+                            <p:column headerText="Descripcion" style="width: 40%">
+                                #{obs.observacion}
+                            </p:column>
+                            <p:column headerText="tarea" style="width: 25%">
+                                #{obs.tarea}
+                            </p:column>
+                            <p:column headerText="Responsable" style="width: 20%">
+                                #{obs.userCre}
+                            </p:column>
+                            <p:column headerText="Fecha" style="width: 15%">
+                                #{obs.fecCre}
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+
+                    <p:tab id="tobs" title="Documentos">
+                        <dialog:detalleArchivosAct archivos="#{generarTasaPA.processInstanceAttachmentsFiles}"/>
+                    </p:tab>
+                </p:tabView>
+            </p:panel>
+        </h:form>
+
+        <!-- -->
+
+        <p:dialog header="Datos del responsable" id="dlgDatosResponsable" widgetVar="dlgDatosResponsable" modal="true" height="auto" width="auto" >  
+            <h:form id="datosResponsableForm" >
+                <h:panelGroup id="nuevoPGroup">                    
+                    <p:panelGrid columns="2">
+                        <h:outputText value="C.I. técnico responsable:"/>
+                        <p:panelGrid columns="2">
+                            <p:inputText value="#{generarTasaPA.usuario.ente.ciRuc}" readonly="true"/>
+                            <p:commandLink value="Buscar" actionListener="#{generarTasaPA.buscarEnte()}" update="datosResponsableForm" disabled="true"/>
+                        </p:panelGrid>
+                        <h:outputText value="Nombre del responsable técnico:"/>
+                        <p:inputText value="#{generarTasaPA.nombreResponsable}" readonly="true" style="width: 100%;"/>
+                        <h:outputText value="Reg. Prof.:"/>
+                        <p:inputText value="#{generarTasaPA.regProfResponsable}" readonly="true" style="width: 100%;"/>
+                    </p:panelGrid>
+                    <br/>
+                    <center><p:commandButton oncomplete="PF('dlgDatosResponsable').hide()" actionListener="#{generarTasaPA.guardarDatosResponsable()}" update=":frmMain:tdatos:panelResponsable" style="color: #ffffff; width: 150px; background: #616161 !important; font-weight: bold; height: 30px;" value="Aceptar"  /></center>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Datos del predio" id="dlgDatosPredio" widgetVar="dlgDatosPredio" modal="true" height="auto" width="auto" >  
+            <h:form id="datosPredioForm" >
+                <h:panelGroup id="nuevoPGroup">
+                    <p:panelGrid columns="2">
+                        <h:outputText value="Sector:"/>
+                        <p:inputText value="#{generarTasaPA.permisoAdicional.sector}"/>
+                        <h:outputText value="Urbanización:"/>
+                        <h:panelGroup>
+                            <center>
+                                <p:selectOneMenu value="#{generarTasaPA.permisoAdicional.urbanizacion}" converter="entityConverter" style="width: 80%;">
+                                    <f:selectItem itemLabel="Seleccionar" itemValue="#{null}" />
+                                    <f:selectItems value="#{generarTasaPA.catCiudadelaList}" var="modelo" itemValue="#{modelo}" itemLabel="#{modelo.nombre}"/>
+                                </p:selectOneMenu>
+                            </center>
+                        </h:panelGroup>
+                        <h:outputText value="Calle:"/>
+                        <p:inputText value="#{generarTasaPA.permisoAdicional.calle}"/>
+                        <h:outputText value="Mz:"/>
+                        <p:inputText value="#{generarTasaPA.permisoAdicional.urbmz}" />
+                        <h:outputText value="Solar:"/>
+                        <p:inputText value="#{generarTasaPA.permisoAdicional.urbsolar}" />
+                        <h:outputText value="Código catastral:"/>
+                        <p:inputText value="#{generarTasaPA.datosPredio.codigoPredial}" readonly="true"/>
+                    </p:panelGrid>
+                    <br/>
+                    <center><p:commandButton oncomplete="PF('dlgDatosPredio').hide()" actionListener="#{generarTasaPA.guardarDatosPredio()}" update=":frmMain:tdatos:panelResponsable" style="color: #ffffff; width: 150px; background: #616161 !important; font-weight: bold; height: 30px;" value="Guardar"  /></center>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Datos del permiso" id="dlgDatosPermiso" widgetVar="dlgDatosPermiso" modal="true" height="auto" width="auto" >  
+            <h:form id="datosPermisosForm" >
+                <h:panelGroup id="nuevoPGroup" >
+                    <p:panelGrid columns="2">
+                        <h:outputText value="Área del solar:"/>
+                        <p:inputText value="#{generarTasaPA.permisoAdicional.areaSolar}" />
+                        <h:outputText value="N° de pisos sobre nivel del bordillo:"/>
+                        <p:inputText value="#{generarTasaPA.permisoAdicional.numPisosSnb}" />
+                        <h:outputText value="N° de pisos bajo nivel del bordillo:"/>
+                        <p:inputText value="#{generarTasaPA.permisoAdicional.numPisosBnb}" />
+                        <h:outputText value="Altura de construcción:"/>
+                        <p:inputText value="#{generarTasaPA.permisoAdicional.alturaConst}" />
+                        <h:outputText value="Total a edificar:"/>
+                        <p:inputText value="#{generarTasaPA.permisoAdicional.totalEdificar}" />
+                    </p:panelGrid>
+                    <br/>
+                    <center><p:commandButton oncomplete="PF('dlgDatosPermiso').hide()" update=":frmMain:tdatos:panelResponsable" actionListener="#{generarTasaPA.guardarPermisos()}" style="color: #ffffff; width: 150px; background: #616161 !important; font-weight: bold; height: 30px;" value="Guardar"  /></center>
+                </h:panelGroup>
+
+                
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Materiales de construcción" id="dlgMatConst" resizable="false" widgetVar="dlgMatConst" modal="true" height="auto" width="auto" >  
+            <h:form id="matConstForm" >
+                <p:panelGrid columns="2" id="nuevoPGroup">
+                    <h:outputText value="Estructura:"/>
+                    <h:panelGroup>
+                        <center>
+                            <p:selectOneMenu value="#{generarTasaPA.estructura}" converter="entityConverter" style="width: 80%;">
+                                <f:selectItem itemLabel="Seleccionar" itemValue="#{null}" />
+                                <f:selectItems value="#{generarTasaPA.estructuraList}" var="model" itemValue="#{model}" itemLabel="#{model.nombre}"/>
+                            </p:selectOneMenu>
+                        </center>
+                    </h:panelGroup>
+                    <h:outputText value="Instalación:"/>
+                    <h:panelGroup>
+                        <center>
+                            <p:selectOneMenu value="#{generarTasaPA.instalacion}" converter="entityConverter" style="width: 80%;">
+                                <f:selectItem itemLabel="Seleccionar" itemValue="#{null}" />
+                                <f:selectItems value="#{generarTasaPA.instalacionesElecList}" var="model2" itemValue="#{model2}" itemLabel="#{model2.nombre}"/>
+                            </p:selectOneMenu>
+                        </center>
+                    </h:panelGroup>
+                    <h:outputText value="Piso PB:"/>
+                    <h:panelGroup>
+                        <center>
+                            <p:selectOneMenu value="#{generarTasaPA.pisoPB}" converter="entityConverter" style="width: 80%;">
+                                <f:selectItem itemLabel="Seleccionar" itemValue="#{null}" />
+                                <f:selectItems value="#{generarTasaPA.pisosList}" var="model3" itemValue="#{model3}" itemLabel="#{model3.nombre}"/>
+                            </p:selectOneMenu>
+                        </center>
+                    </h:panelGroup>
+                    <h:outputText value="Piso PA:"/>
+                    <h:panelGroup>
+                        <center>
+                            <p:selectOneMenu value="#{generarTasaPA.pisoPA}" converter="entityConverter" style="width: 80%;">
+                                <f:selectItem itemLabel="Seleccionar" itemValue="#{null}" />
+                                <f:selectItems value="#{generarTasaPA.pisosList}" var="model4" itemValue="#{model4}" itemLabel="#{model4.nombre}"/>
+                            </p:selectOneMenu>
+                        </center>
+                    </h:panelGroup>
+                    <h:outputText value="Cubierta:"/>
+                    <h:panelGroup>
+                        <center>
+                            <p:selectOneMenu value="#{generarTasaPA.cubierta}" converter="entityConverter" style="width: 80%;">
+                                <f:selectItem itemLabel="Seleccionar" itemValue="#{null}" />
+                                <f:selectItems value="#{generarTasaPA.cubiertaList}" var="model5" itemValue="#{model5}" itemLabel="#{model5.nombre}"/>
+                            </p:selectOneMenu>
+                        </center>
+                    </h:panelGroup>
+                    <h:outputText value="Paredes:"/>
+                    <h:panelGroup>
+                        <center>
+                            <p:selectOneMenu value="#{generarTasaPA.paredes}" converter="entityConverter" style="width: 80%;">
+                                <f:selectItem itemLabel="Seleccionar" itemValue="#{null}" />
+                                <f:selectItems value="#{generarTasaPA.paredesList}" var="model6" itemValue="#{model6}" itemLabel="#{model6.nombre}"/>
+                            </p:selectOneMenu>
+                        </center>
+                    </h:panelGroup>
+                    <h:outputText value="Línea de fabrica"/>
+                    <h:panelGroup>
+                        <center>
+                            <p:inputText value="#{generarTasaPA.lineaFabrica}" style="width: 80%;"/>
+                        </center>
+                    </h:panelGroup>
+                    <h:outputText value="Descripción:"/>
+                    <p:inputTextarea style="float: right; width: 250px;" rows="3" cols="60"  value="#{generarTasaPA.descripcion}"/>         
+                </p:panelGrid>
+                <br/>
+                <center><p:commandButton oncomplete="PF('dlgMatConst').hide()" update=":frmMain:tdatos:panelResponsable" actionListener="#{generarTasaPA.guardarMaterialesConst()}" style="color: #ffffff; width: 150px; background: #616161 !important; font-weight: bold; height: 30px;" value="Guardar"  /></center>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Detalles de construcción" id="dlgDetConst" widgetVar="dlgDetConst" modal="true" height="auto"  width="450px;" resizable="false">  
+            <h:form id="detConstForm" style="width: 450px;">
+                <h:panelGroup id="nuevoPGroup" >
+                    <center>
+                        <p:panelGrid columns="2" style="width: 440px;">
+                            <h:outputText value="Categoría:"/>
+                            <h:panelGroup>
+                                <center>
+                                    <p:inputText value="#{generarTasaPA.detallesPermisosAdicionales.descripcion}"/>
+                                </center>
+                            </h:panelGroup>
+                            <h:outputText value="Cantidad/Área:"/>
+                            <h:panelGroup>
+                                <center>
+                                    <p:inputText value="#{generarTasaPA.detallesPermisosAdicionales.area}" />
+                                </center>
+                            </h:panelGroup>
+                            <h:outputText value="Unidad de medida:"/>
+                            <h:panelGroup>
+                                <center>
+                                    <p:selectOneMenu value="#{generarTasaPA.detallesPermisosAdicionales.unidadMedida}" converter="entityConverter" style="width: 80%;">
+                                        <f:selectItem itemLabel="Seleccionar" itemValue="#{null}" />
+                                        <f:selectItems value="#{generarTasaPA.unidadMedidaList}" var="modl" itemValue="#{modl}" itemLabel="#{modl.abreviatura}"/>
+                                    </p:selectOneMenu>
+                                </center>
+                            </h:panelGroup>
+                        </p:panelGrid>
+                    </center>
+                    <center><p:commandButton update="detConstForm :frmMain" actionListener="#{generarTasaPA.agregarDetalle()}" style="color: #ffffff; width: 150px; margin-top: 10px; margin-bottom: 10px; background: #616161 !important; font-weight: bold; height: 30px;" value="Agregar"  /></center>
+
+                    <p:dataTable id="dtPermisos" value="#{generarTasaPA.peDetallePermisosAdicionalesList}" var="dpa" rowIndexVar="index"
+                                 rows="5" paginator="true" reflow="true" style="width: 100%">
+
+                        <p:column headerText="Descripcion" style="width: 25%">
+                            #{dpa.descripcion}
+                        </p:column>
+                        <p:column headerText="Cantidad" style="width: 25%">
+                            #{dpa.area}
+                        </p:column>
+                        <p:column headerText="Unidad" style="width: 25%">
+                            #{dpa.unidadMedida.abreviatura}
+                        </p:column>
+                        <p:column headerText="Acción" style="width: 20%">
+                            <center><p:commandLink update="dtPermisos :frmMain" actionListener="#{generarTasaPA.eliminarDetallePermisoAdicional(index)}" style="height: 30px;" value="Eliminar"  /></center>
+                        </p:column>
+                    </p:dataTable>
+
+                    <br/>
+                    <center><p:commandButton oncomplete="PF('dlgDetConst').hide()" update=":frmMain:tdatos:panelResponsable" actionListener="#{generarTasaPA.guardarDetallesConstruccion()}" style="color: #ffffff; width: 150px; background: #616161 !important; font-weight: bold; height: 30px;" value="Cerrar"  /></center>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+
+        <p:dialog header="Buscar Usuario" id="dlgBuscar" widgetVar="dlgBuscar" modal="true" height="auto" width="auto" >  
+            <h:form id="nuevoDlgForm" >
+                <h:panelGroup id="nuevoPGroup">
+                    <p:panelGrid columns="3" >
+                        <h:outputText value="Número de Cédula" style="display: block;"/>
+                        <p:inputText value="#{generarTasaPA.cedulaRuc}" style="display: block; margin: 0 auto;"/>
+                        <p:commandButton update="dataListEnte" actionListener="#{generarTasaPA.buscarEnte()}" style="color: #ffffff; background: #616161 !important; font-weight: bold; height: 30px;" value="Buscar" />
+                    </p:panelGrid>
+                    <p:panelGrid columns="1" style="width: 100%; height: auto;" id="panelList">
+                        <p:dataTable  id="dataListEnte"  value="#{generarTasaPA.enteList}" var="itemP"
+                                      emptyMessage="No tiene datos" style="width: 330px;">
+                            <p:column headerText="#C.I. o R.U.C.">
+                                <h:outputText value="#{itemP.ciRuc}" style="text-transform: uppercase;"/>
+                            </p:column>
+                            <p:column headerText="Nombres">
+                                <h:outputText value="#{itemP.nombreComercial}" rendered="#{!itemP.esPersona}" style="text-transform: uppercase;"/>
+                                <h:outputText value="#{itemP.nombres} #{itemP.apellidos}" rendered="#{itemP.esPersona}" style="text-transform: uppercase;"/>
+                            </p:column>
+                            <p:column headerText="Acción">
+                                <p:commandButton update="nuevoDlgForm" value="Agregar Propietario"  actionListener="#{generarTasaPA.agregarPropietario(itemP)}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:panelGrid>
+                    <br/>
+                    <center><p:commandButton onclick="PF('dlgBuscar').hide()" update=":frmMain:tdatos:panelPropietarios" style="color: #ffffff; width: 150px; background: #616161 !important; font-weight: bold; height: 30px;" value="Cerrar"  /></center>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Mensaje Responsable Técnico" id="dlgResp" widgetVar="dlgResp" modal="true" height="auto" width="auto" >  
+            <h:form id="respDlgForm" >
+                <h:outputText value="La persona: #{generarTasaPA.responsableTec.nombres} #{generarTasaPA.responsableTec.apellidos} será el responsable técnico." />
+                <br/>
+                <center><p:commandButton value="Aceptar" onclick="PF('dlgResp').hide()"/></center>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog widgetVar="dlgDocCarta" modal="true">
+            <h:form>
+                <p:fileUpload  fileUploadListener="#{generarTasaPA.handleFileUploadCarta}" multiple="true" mode="advanced"
+                               label="Seleccionar" uploadLabel="Subir" cancelLabel="Cancelar" 
+                               skinSimple="true" sizeLimit="35000000" update=":frmMain, frmConf"
+                               allowTypes="/(\.|\/)(png|jpg)$/" oncomplete="PF('dlgDocCarta').hide()" onstart="#{generarTasaPA.emptyCartaAdos()}"/>
+
+                <div align="center">
+                    <p:commandButton id="AgrCarta" value="Aceptar" onclick="PF('dlgDocCarta').hide()" styleClass="btnStyle" style="height: 30px;"/>
+                </div>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog appendTo="@(body)" id="confSave" widgetVar="confCartaAdo" modal="true" height="150" width="350" position="center" resizable="false" closable="true" header="Guardar Permiso de Construcción">
+            <h:form id="frmConf">
+                <p:outputLabel value="#{generarTasaPA.mensaje}" style="font-weight: bold; font-size: 14px;" />
+                <br/>
+                <p:commandLink value="Adjuntar Carta" onclick="PF('dlgDocCarta').show();" rendered="#{generarTasaPA.emptyCartaAdos()}" style="font-size: 14px;" >
+                </p:commandLink>
+                <br/>
+                <br/>
+                <center>
+                    <p:outputLabel value="¿Desea Continuar?" style="font-weight: bold; font-size: 14px;"/>
+                    <br/>
+                    <p:commandButton value="Si" icon="ui-icon-check" oncomplete="PF('confCartaAdo').hide()" actionListener="#{generarTasaPA.guardarDatos()}" style="height: 30px; " styleClass="btnStyle"/>
+                    <p:commandButton value="No" icon="ui-icon-closethick" onclick="PF('confCartaAdo').hide()" style="height: 30px;" styleClass="btnStyle" type="button"/>
+                </center>
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+</ui:composition>

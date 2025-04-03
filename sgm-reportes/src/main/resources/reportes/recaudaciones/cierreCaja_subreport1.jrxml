@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cierreCaja_subreport1" language="groovy" pageWidth="565" pageHeight="802" columnWidth="565" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="77c4b17c-da77-4291-9f62-ff9b625793f9">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="720"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="FECHA" class="java.lang.String"/>
+	<parameter name="USUARIO" class="java.lang.Long"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\Anyelo\\Desktop\\NetBeansProjects\\sgm\\src\\main\\webapp\\reportes\\recaudaciones\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT p.num_comprobante, l.id_liquidacion,
+CASE WHEN l.comprador IS NULL THEN l.nombre_comprador ELSE CASE en.es_persona WHEN true THEN COALESCE(en.apellidos,'')||' '||COALESCE(en.nombres,'') ELSE COALESCE(en.razon_social,'') end end as n_contribuyente, SUM(coalesce(d.valor,0.00)) as efectivo,
+SUM(coalesce(d1.valor,0.00)) as tarjeta, SUM(coalesce(d2.valor,0.00)) as nota_credito,
+SUM(coalesce(d3.valor,0.00)) as cheque, SUM(coalesce(d4.valor,0.00)) as transferencia,
+SUM(coalesce(d.valor,0.00)) + SUM(coalesce(d1.valor,0.00)) + SUM(coalesce(d2.valor,0.00)) +
+SUM(coalesce(d3.valor,0.00)) + SUM(coalesce(d4.valor,0.00)) as total
+FROM sgm_financiero.ren_pago p
+INNER JOIN sgm_financiero.ren_liquidacion l ON (p.liquidacion=l.id)
+LEFT JOIN sgm_financiero.ren_pago_detalle d ON (p.id=d.pago AND d.tipo_pago=1)
+LEFT OUTER JOIN (SELECT pago, SUM(valor) AS valor FROM sgm_financiero.ren_pago_detalle WHERE tipo_pago=2 GROUP BY 1) AS d1 ON (p.id=d1.pago)
+LEFT JOIN sgm_financiero.ren_pago_detalle d2 ON (p.id=d2.pago AND d2.tipo_pago=3)
+LEFT OUTER JOIN (SELECT pago, SUM(valor) AS valor FROM sgm_financiero.ren_pago_detalle WHERE tipo_pago=4 GROUP BY 1) d3 ON (p.id=d3.pago)
+LEFT JOIN sgm_financiero.ren_pago_detalle d4 ON (p.id=d4.pago AND d4.tipo_pago=5)
+LEFT JOIN sgm_app.cat_ente en ON (en.id = l.comprador)
+WHERE to_char(p.fecha_pago, 'dd-mm-yyyy') = $P{FECHA} AND p.cajero = $P{USUARIO} AND p.estado
+GROUP BY p.num_comprobante, l.id_liquidacion, n_contribuyente ORDER BY p.num_comprobante]]>
+	</queryString>
+	<field name="num_comprobante" class="java.lang.Long"/>
+	<field name="id_liquidacion" class="java.lang.String"/>
+	<field name="n_contribuyente" class="java.lang.String"/>
+	<field name="efectivo" class="java.math.BigDecimal"/>
+	<field name="tarjeta" class="java.math.BigDecimal"/>
+	<field name="nota_credito" class="java.math.BigDecimal"/>
+	<field name="cheque" class="java.math.BigDecimal"/>
+	<field name="transferencia" class="java.math.BigDecimal"/>
+	<field name="total" class="java.math.BigDecimal"/>
+	<variable name="SUM_EFECTIVO" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{efectivo}]]></variableExpression>
+		<initialValueExpression><![CDATA[new BigDecimal("0.00")]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_TRANSFERENCIA" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{transferencia}]]></variableExpression>
+		<initialValueExpression><![CDATA[new BigDecimal("0.00")]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_CHEQUE" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{cheque}]]></variableExpression>
+		<initialValueExpression><![CDATA[new BigDecimal("0.00")]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_TARJETA" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{tarjeta}]]></variableExpression>
+		<initialValueExpression><![CDATA[new BigDecimal("0.00")]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_NOTA" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{nota_credito}]]></variableExpression>
+		<initialValueExpression><![CDATA[new BigDecimal("0.00")]]></initialValueExpression>
+	</variable>
+	<variable name="SUM_TOTAL" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{total}]]></variableExpression>
+		<initialValueExpression><![CDATA[new BigDecimal("0.00")]]></initialValueExpression>
+	</variable>
+	<columnHeader>
+		<band height="15" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="60" height="15" uuid="7243a000-723b-4f0c-a9ac-f223c5b6c080"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nº COMP.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="60" y="0" width="50" height="15" uuid="eb2c4054-807b-49b6-acbd-a891f3f2040e"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TRANS.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="110" y="0" width="130" height="15" uuid="c52a8301-cf6f-442c-857c-562babd8a001"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CONTRIBUYENTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="240" y="0" width="53" height="15" uuid="e99c512a-9b4a-45d5-b1ce-092c80f4a30f"/>
+				<box rightPadding="0">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[EFEC.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="293" y="0" width="50" height="15" uuid="ee479b5e-8ae0-429b-a089-e23b4e1235c5"/>
+				<box rightPadding="0">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TRANSF.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="343" y="0" width="55" height="15" uuid="b4bcc24b-b5e3-43cf-9314-a9254e500432"/>
+				<box rightPadding="0">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CHEQUE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="398" y="0" width="53" height="15" uuid="9df23945-e7ae-428b-9767-7b58399ec41b"/>
+				<box rightPadding="0">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TARJETA C.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="451" y="0" width="50" height="15" uuid="265e68a1-43b5-4d33-afb3-83a50605d4ff"/>
+				<box rightPadding="0">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOTA CRED.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="501" y="0" width="64" height="15" uuid="8ff8303a-cdd6-4aac-b176-aa5ae4ad387b"/>
+				<box rightPadding="0">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="11" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="60" height="11" isPrintWhenDetailOverflows="true" uuid="b807cf26-bd68-496a-92b5-5760290c570d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{num_comprobante}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="60" y="0" width="50" height="11" isPrintWhenDetailOverflows="true" uuid="971ce1a9-b122-4619-a1fc-0751b951cd00"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{id_liquidacion}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement x="240" y="0" width="53" height="11" isPrintWhenDetailOverflows="true" uuid="3592548a-5978-45e4-9b99-bca81aee86d7"/>
+				<box rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{efectivo}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement x="293" y="0" width="50" height="11" isPrintWhenDetailOverflows="true" uuid="154e6b69-813d-4296-9517-058c5b4468d9"/>
+				<box rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{transferencia}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement x="343" y="0" width="55" height="11" isPrintWhenDetailOverflows="true" uuid="e5e9527f-1ddc-42d8-9abf-58df0a88ea50"/>
+				<box rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cheque}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement x="398" y="0" width="53" height="11" isPrintWhenDetailOverflows="true" uuid="60897950-436f-4ac4-b276-391d9a939706"/>
+				<box rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tarjeta}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement x="451" y="0" width="50" height="11" isPrintWhenDetailOverflows="true" uuid="4eba69fb-d349-483f-96d0-39ee54302731"/>
+				<box rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nota_credito}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement x="501" y="0" width="64" height="11" isPrintWhenDetailOverflows="true" uuid="b5bc2205-5e11-4372-94f3-61721311478b"/>
+				<box rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="110" y="0" width="130" height="11" uuid="dcc4369b-1a14-4364-bc51-1ff1ae523587"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{n_contribuyente}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="16">
+			<staticText>
+				<reportElement x="110" y="2" width="130" height="13" uuid="999a8986-077a-46ac-95f1-a580bd072845"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTALES]]></text>
+			</staticText>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement x="343" y="2" width="55" height="13" isPrintWhenDetailOverflows="true" uuid="62b1709b-b9e6-4db5-8e86-2ab40e0f3b89"/>
+				<box rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUM_CHEQUE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement x="293" y="2" width="50" height="13" isPrintWhenDetailOverflows="true" uuid="b13844b2-ab0d-43ec-8e0c-0e95895e48aa"/>
+				<box rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUM_TRANSFERENCIA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement x="240" y="2" width="53" height="13" isPrintWhenDetailOverflows="true" uuid="bcc0c8e0-015e-44d5-baa7-e73090e620b2"/>
+				<box rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUM_EFECTIVO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement x="501" y="2" width="64" height="13" isPrintWhenDetailOverflows="true" uuid="494687e0-43db-42e2-a61b-703eff45179e"/>
+				<box rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUM_TOTAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement x="398" y="2" width="53" height="13" isPrintWhenDetailOverflows="true" uuid="c052e68c-d3f9-4255-b944-c7c71a901fa5"/>
+				<box rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUM_TARJETA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement x="451" y="2" width="50" height="13" isPrintWhenDetailOverflows="true" uuid="1aafad8e-417b-45d5-8e1a-2b2cb683d0e8"/>
+				<box rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUM_NOTA}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="1" width="555" height="1" uuid="87a47fea-c836-41ba-bda6-873c75e7b224"/>
+			</line>
+		</band>
+	</pageFooter>
+</jasperReport>

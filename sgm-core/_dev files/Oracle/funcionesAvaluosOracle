@@ -1,0 +1,406 @@
+
+----avaluar_edificacion
+
+
+create or replace FUNCTION  sgm_app.avaluar_edificacion(p_id_edif number)
+  RETURN number is
+
+  cursor c_espec is
+        SELECT car1.porcentaje as porcentaje, esp1.valor_m2 AS valor_m2, tip1.is_porcentual AS es_porcentual
+        FROM sgm_app.cat_predio_edificacion_prop  car1
+        INNER JOIN sgm_app.cat_edf_prop  esp1 ON car1.prop = esp1.id
+        INNER JOIN sgm_app.cat_edf_categ_prop  tip1 ON tip1.id = esp1.CATEGORIA
+
+        WHERE valor_m2 > 0 AND car1.edificacion = p_id_edif;
+
+  edificacion1 SGM_APP.CAT_PREDIO_EDIFICACION%rowtype;
+  area_edif number;
+  valor_calculado number(19,4);
+  valorasumar number(19,4);
+
+BEGIN
+    -- obtener registro de edificacion
+  SELECT * INTO edificacion1 FROM SGM_APP.CAT_PREDIO_EDIFICACION  edif1 WHERE edif1.id = p_id_edif;
+  area_edif := edificacion1.AREA_CONS_CENSO;
+  valor_calculado := 0;
+  -- por cada caracteristica valuada, calcular y sumar:
+  FOR j IN c_espec LOOP
+    -- si es porcentual, multiplicar porcentaje:
+    valorasumar := 0;
+    IF (j.es_porcentual = 1) THEN
+      valorasumar := area_edif * ( (j.porcentaje * j.valor_m2) / 100);
+      -- RAISE NOTICE 'valor con porcentual: %', valorasumar;
+    ELSE
+      valorasumar := area_edif * j.valor_m2;
+      -- RAISE NOTICE 'valor NO porcentual: %', valorasumar;
+    END IF;
+    -- adicionar:
+    valor_calculado := valor_calculado + valorasumar;
+  END LOOP;
+  -- devolver valor_total * depreciacion:
+  RETURN valor_calculado * sgm_app.depreciacion_edificacion(p_id_edif);
+  EXCEPTION
+     WHEN NO_DATA_FOUND THEN
+    RETURN 0; 
+  WHEN OTHERS THEN
+    RETURN 0;
+END;
+
+
+---fin : avaluar_edificacion
+
+
+--inicio: avaluarSolar
+create or replace FUNCTION sgm_app.avaluarSolar(
+ p_predio_id number)
+    RETURN number is
+
+  predio sgm_app.cat_predio%rowtype;
+  vsuelo sgm_app.aval_categoria_valor_suelo%rowtype;
+  n_valor number := 0.0;
+  n_vsuelom2 number;
+  n_suma_coefs number(19);
+BEGIN
+  -- predio
+  SELECT * INTO predio
+    FROM sgm_app.cat_predio prd1 WHERE prd1.id = p_predio_id;
+  -- valor_suelo row
+  SELECT * INTO vsuelo
+    FROM sgm_app.aval_categoria_valor_suelo  vs1
+    WHERE vs1.zona = predio.zona AND vs1.sector = predio.sector AND vs1.mz = predio.mz;
+  n_vsuelom2 := vsuelo.valor;
+  -- suma de coeficientes:
+  n_suma_coefs := sgm_app.avaluarSolar_genCcl(p_predio_id)
+    + sgm_app.avaluarSolar_genCib(p_predio_id)
+    + sgm_app.avaluarSolar_genCic(p_predio_id)
+    + sgm_app.avaluarSolar_genCus(p_predio_id);
+  -- area * valorsuelom2 * coefs
+  n_valor := predio.area_solar * n_vsuelom2 * n_suma_coefs;
+  -- guardar en predio:
+  UPDATE sgm_app.cat_predio SET area_solar = n_valor WHERE id = p_predio_id;
+  COMMIT;
+  RETURN n_valor;
+  EXCEPTION
+     WHEN NO_DATA_FOUND THEN
+    RETURN 0; 
+  WHEN OTHERS THEN
+    RETURN 0;
+END;
+--fin
+
+--inicio: avaluarSolar_genCcl
+
+create or replace FUNCTION sgm_app.avaluarSolar_genCcl(p_predio_id number) return number is
+
+  predio1 sgm_app.cat_predio%rowtype;
+  coeficientes sgm_app.aval_coeficientes%rowtype;
+  suma number := 0.0;
+  coef_relff number := 0.0;
+  coef_sup number(19);
+begin
+  -- obtener coeficientes:
+  SELECT * INTO coeficientes
+    FROM sgm_app.aval_coeficientes  cfc1 WHERE cfc1.activo = 1;
+  -- predio
+  SELECT * INTO predio1
+    FROM sgm_app.cat_predio  prd1 WHERE prd1.id =p_predio_id;
+
+  -- Topografia:  predio.topografia
+  IF( predio1.topografia_solar = 4 ) THEN
+    suma := suma + (coeficientes.topografiaPlano * coeficientes.topografiaCoef);
+  ELSE
+    suma := suma + (coeficientes.topografiaConPendiente * coeficientes.topografiaCoef);
+  END IF;
+  -- Forma:
+  IF( predio1.FORMA_SOLAR = 1 ) THEN
+    suma := suma + (coeficientes.formaRegular * coeficientes.formaCoef);
+  ELSE
+    suma := suma + (coeficientes.formaIrregular * coeficientes.formaCoef);
+  END IF;
+  -- relacion frente fondo (default)
+  SELECT cr2.valor INTO coef_relff
+   from (select *
+    FROM sgm_app.aval_coef_relacionFrenteFondo  cr1
+    WHERE cr1.lower_bound <= 5.000
+    ORDER BY cr1.lower_bound DESC)cr2 where rownum=1;
+
+
+  suma := suma + ( coef_relff * coeficientes.relacionFrenteFondo_coef );
+  -- superficie:
+  SELECT cs2.valor INTO coef_sup
+    from (select * FROM sgm_app.aval_coef_superficie  cs1
+    WHERE cs1.upper_bound >= predio1.AREA_SOLAR
+    ORDER BY cs1.upper_bound ASC)cs2  where rownum=1;
+  suma := suma + ( coef_sup * coeficientes.superficie_coef );
+  -- devolver
+  return(suma);
+  EXCEPTION
+     WHEN NO_DATA_FOUND THEN
+    RETURN 0; 
+  WHEN OTHERS THEN
+    RETURN 0;
+end avaluarSolar_genCcl;
+--fin
+
+--inicio: avaluarSolar_genCib
+
+
+create or replace FUNCTION  sgm_app.avaluarSolar_genCib(p_predio_id number) return number is
+
+   pserv sgm_app.cat_predio_s6%rowtype;
+  coeficientes sgm_app.aval_coeficientes%ROWType;
+  valor_calculado number := 0.0;
+BEGIN
+  -- obtener coeficientes:
+  SELECT * INTO coeficientes
+    FROM sgm_app.aval_coeficientes  cfc1 WHERE cfc1.activo = 1;
+  -- obtener predio_servicio
+  SELECT * INTO pserv
+    FROM sgm_app.cat_predio_s6  ser1 WHERE ser1.predio = p_predio_id;
+  -- sumar agua potable:
+  IF (pserv.tiene_agua_potable = 1) THEN
+    valor_calculado := valor_calculado + (coeficientes.aguaPotableSup * coeficientes.aguaPotableCoef);
+  ELSE
+    valor_calculado := valor_calculado + (coeficientes.aguaPotableInf * coeficientes.aguaPotableCoef);
+  END IF;
+  -- sumar alcantarillado sanitario:
+  /*IF (pserv.asan_red_pub = 1) THEN
+    valor_calculado := valor_calculado + (coeficientes.alcanSaniSup * coeficientes.alcanSaniCoef);
+  ELSE
+    valor_calculado := valor_calculado + (coeficientes.alcanSaniInf * coeficientes.alcanSaniCoef);
+  END IF;*/
+  -- Alcantarillafo pluvial:
+  IF (pserv.alcantarillado_pluvial = 1) THEN
+    valor_calculado := valor_calculado + (coeficientes.alcanPluvSup * coeficientes.alcanPluvCoef);
+  ELSE
+    valor_calculado := valor_calculado + (coeficientes.alcanPluvInf * coeficientes.alcanPluvCoef);
+  END IF;
+  -- EE:
+  IF (pserv.TIENE_ELECTRICIDAD = 1) THEN
+
+    valor_calculado := valor_calculado + (coeficientes.enerElecSup * coeficientes.enerElecCoef);
+  ELSE
+    valor_calculado := valor_calculado + (coeficientes.enerElecInf * coeficientes.enerElecCoef);
+  END IF;
+  -- calzada acceso, default:
+  valor_calculado := valor_calculado + ( coeficientes.VIAACCESOCOEF * coeficientes.viaAcceso_tierra);
+  -- devolver valor:
+  RETURN valor_calculado;
+  EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+    RETURN 0; 
+  WHEN OTHERS THEN
+    RETURN 0;
+
+end avaluarSolar_genCib;
+
+
+
+
+--fin 
+
+---inicio: avaluarSolar_genCic
+
+create or replace FUNCTION sgm_app.avaluarSolar_genCic(
+  p_predio_id number) return  number is
+
+    predio sgm_app.cat_predio%rowtype;
+  coeficientes sgm_app.aval_coeficientes%rowtype;
+  suma number := 0.0;
+BEGIN
+  -- obtener coeficientes:
+  SELECT * INTO coeficientes
+    FROM sgm_app.aval_coeficientes  cfc1 WHERE cfc1.activo = 1;
+  -- predio
+  SELECT * INTO predio
+    FROM sgm_app.cat_predio  prd1 WHERE prd1.id = p_predio_id;
+
+  -- Telefonia:
+  suma := suma + (coeficientes.telefoniaFijaInf * coeficientes.telefoniaFijaCoef);
+  -- Acera:
+  suma := suma + (coeficientes.aceraSup * coeficientes.aceraCoef);
+  -- Bordillo:
+  suma := suma + (coeficientes.bordilloSup * coeficientes.bordilloCoef);
+  -- return suma
+  RETURN suma;
+  EXCEPTION
+     WHEN NO_DATA_FOUND THEN
+    RETURN 0; 
+  WHEN OTHERS THEN
+    RETURN 0;
+END;
+--fin
+
+
+--inicio: avaluarSolar_genCus
+
+create or replace FUNCTION sgm_app.avaluarSolar_genCus(p_predio_id number)
+    RETURN number is
+
+    predio sgm_app.cat_predio%rowtype;
+    coeficientes sgm_app.aval_coeficientes%rowtype;
+    suma number := 0.0;
+BEGIN
+  -- obtener coeficientes:
+  SELECT * INTO coeficientes
+    FROM sgm_app.aval_coeficientes  cfc1 WHERE cfc1.activo = 1;
+  -- predio
+  SELECT * INTO predio
+    FROM sgm_app.cat_predio  prd1 WHERE prd1.id = p_predio_id;
+  -- casos de predio.uso_suelo
+  CASE predio.uso_solar
+    WHEN 167 THEN
+      suma := suma + coeficientes.usoSueloIndustrial;
+    WHEN 166 THEN
+      suma := suma + coeficientes.usoSueloComercial;
+    WHEN 52 THEN
+      suma := suma + coeficientes.usoSueloRecreacional;
+    WHEN 212 THEN
+      suma := suma + coeficientes.usoSueloTuristico;
+    WHEN 179 THEN
+
+      suma := suma + coeficientes.usoSueloResidencial;
+    ELSE
+      suma := suma + coeficientes.usoSueloComunasOtros;
+  END CASE;
+  RETURN suma;
+  EXCEPTION
+     WHEN NO_DATA_FOUND THEN
+    RETURN 0; 
+  WHEN OTHERS THEN
+    RETURN 0;
+END;
+--fin 
+
+--inicio: depreciacion_edificacion
+
+
+create or replace FUNCTION sgm_app.depreciacion_edificacion(
+  p_id_edif number)
+    RETURN number is
+
+    anio_actual number(4) := 2017;
+    deprec_row sgm_app.aval_depreciacion%rowtype;
+    edad number;
+    n_zona number;
+    n_condicion number;
+    n_ano_fin_cons number;
+
+BEGIN
+  -- obtener datos de edificacion
+  SELECT   edif1.anio_cons, pred1.zona, edif1.estado_conservacion
+    INTO n_ano_fin_cons, n_zona, n_condicion
+    FROM sgm_app.cat_predio_edificacion  edif1
+    INNER JOIN sgm_app.cat_predio  pred1 ON pred1.id = edif1.predio
+    WHERE edif1.id = p_id_edif;
+  -- comprobar si edificacion tiene a?o-fin-construccion, caso contrario elegir por default:
+  IF (n_ano_fin_cons IS NULL) THEN
+    SELECT ed1.edad INTO edad FROM sgm_app.aval_edad_const_default  ed1
+      WHERE ed1.zona = n_zona;
+  ELSE
+    edad := anio_actual - n_ano_fin_cons;
+  END IF;
+  -- obtener row de depreciacion
+    BEGIN
+         SELECT  a.* 
+         INTO deprec_row 
+         from (
+         SELECT dep1.*
+         FROM sgm_app.cat_predio_edificacion_prop  car1
+         INNER JOIN SGM_APP.CAT_EDF_PROP  esp1 ON esp1.id = car1.prop
+
+         INNER JOIN sgm_app.aval_depreciacion  dep1 ON dep1.espec = esp1.id
+         WHERE car1.edificacion = p_id_edif AND esp1.tipo = 1 AND dep1.anios = edad
+         ORDER BY car1.porcentaje DESC) a where rownum=1;
+    EXCEPTION WHEN NO_DATA_FOUND THEN
+    -- si no hay row de depreciacion, return 1:
+    RETURN 1;
+    END;
+
+    -- dependiendo de la condicion, retornar el coeficiente
+  IF ( n_condicion = 43 OR n_condicion = 86 ) THEN
+    -- bueno:
+    RETURN deprec_row.bueno;
+  ELSIF ( n_condicion = 45 OR n_condicion = 47 ) THEN
+    -- malo:
+    RETURN deprec_row.malo;
+  ELSE
+    RETURN deprec_row.regular;
+  END IF;
+  EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    RETURN 0; 
+  WHEN OTHERS THEN
+    RETURN 0;
+END;
+
+--fin 
+
+--iniicio: emitir_all
+
+create or replace FUNCTION sgm_app.emitir_all RETURN varchar2 is
+
+   CURSOR c_predio1 is
+          SELECT * FROM sgm_app.cat_predio;
+   -- CURSOR c_edificacion1(n_id number) is
+          -- SELECT * FROM sgm_app.predio_edificacion  edi1 WHERE edi1.predio=n_id;
+
+  -- n_valor_calculado number(19,4);
+	ret_val varchar2(10);
+BEGIN
+	-- n_valor_calculado := sgm_app.avaluar_edificacion(k.id);
+  -- por cada predio:
+  FOR j in c_predio1 loop
+	-- emitir predio
+ret_val := sgm_app.emitir_predio(j.id);
+    commit;
+  END LOOP; 
+  RETURN 'ok';
+  EXCEPTION
+   WHEN NO_DATA_FOUND THEN
+     dbms_output.put_line('SIN DATOS!'); 
+END;
+--fin
+
+
+--inicio: emitir_predio
+
+
+create or replace FUNCTION  sgm_app.emitir_predio(p_predio_id number)
+    RETURN varchar2 is
+
+    cursor c_edif is
+    SELECT * FROM sgm_app.cat_predio_edificacion  edf1 WHERE edf1.predio=p_predio_id;
+
+  avalsolar number;
+  avaledif number;
+  avaltotal number;
+  valorpagar number;
+  banda number;
+BEGIN
+  -- obtener banda impositiva:
+  SELECT cfc1.multiploImpuestoPredial INTO banda
+    FROM sgm_app.aval_coeficientes  cfc1 WHERE cfc1.activo = 1;
+  -- alavuar solar:
+  avalsolar := sgm_app.avaluarSolar(p_predio_id);
+  -- avaluar edificaciones y sumarlas:
+  avaledif := 0.0;
+  FOR j IN c_edif loop
+      avaledif:= avaledif + sgm_app.avaluar_edificacion(j.id);
+  END LOOP;
+  -- total:
+  avaltotal:= avalsolar + avaledif;
+  -- emision
+  valorpagar:= avaltotal * banda;
+  -- guardar:
+  UPDATE sgm_app.cat_predio SET avaluo_construccion = avaledif,
+   avaluo_municipal = avaltotal, calculo_imp  = valorpagar
+    WHERE id = p_predio_id;
+  COMMIT;
+  RETURN 'ok';
+  EXCEPTION
+   WHEN NO_DATA_FOUND THEN
+     dbms_output.put_line('SIN DATOS!'); 
+   WHEN OTHERS THEN
+    RETURN 'Not Okay';  
+END;

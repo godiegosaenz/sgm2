@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+    <!-- INTERFACE -->
+    <cc:interface componentType="seccionesFicha" >
+        <cc:attribute name="headerDialog"/>
+        <cc:attribute name="predio" type="com.origami.sgm.entities.CatPredio" required="true"/>  
+        <cc:attribute name="predioant" type="com.origami.sgm.entities.CatPredio" required="true"/>  
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+
+
+        <!--<h:form id="frmSeccion5">-->
+        <!--<p:tab id="s8" title="5. Grafico y linderos del predio">-->
+        <h:form id="frmLinderos">                
+            <p:fieldset legend="Linderos Prediales" toggleable="true">                      
+                <p:dataTable id="pLinderos" value="#{cc.attrs.predio.predioCollection}" 
+                             var="lp1" reflow="true" paginator="true" rows="6" paginatorPosition="top" 
+                             style="width: 100%" paginatorAlwaysVisible="false"
+                             rowsPerPageTemplate="6, 12, 18" emptyMessage="No se encontraron registros">
+                    <p:column headerText="Orientación">
+                        <h:outputText value="#{lp1.orientacion.valor}" styleClass="#{cc.buscarObjeto(lp1,cc.attrs.predioant.catPredioLinderosCollection)}"/>
+                    </p:column>
+                    <p:column headerText="Con">
+                        <h:outputText value="#{lp1.predioColindante.claveCat}" rendered="#{lp1.predioColindante != null}"/>
+                        <h:outputText value="#{lp1.colindante}" rendered="#{lp1.predioColindante == null}"/>
+                    </p:column>
+                    <p:column headerText="En">
+                        <h:outputText value="#{lp1.predioColindante.areaSolar}"/>
+                    </p:column>                          
+
+                </p:dataTable>
+            </p:fieldset>
+        </h:form>
+        <!--</p:tab>-->
+        <!--</h:form>-->
+
+
+
+    </cc:implementation>
+</html>

@@ -1,0 +1,274 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:poue="http://primefaces.org/ui/extensions">
+
+    <ui:define name="events">
+
+    </ui:define>
+
+    <ui:define name="content">
+        <center>
+            <h1>Liquidaciones de Locales Comerciales</h1>
+        </center>
+        <h:form id="frmLocales">
+            <center>
+                <p:dataTable id="dtLiq" value="#{liquidacionLocales.lazy}" reflow="true"
+                             filterEvent="enter" rows="20" rowsPerPageTemplate="20,50,100" style="width: 98%"
+                             emptyMessage="No se encontraron registros" lazy="true" paginator="true"
+                             var="lc1">
+                    <p:column headerText="Tipo Liquidacion" filterStyle="width: 90%" filterBy="#{lc1.tipoLiquidacion.nombreTitulo}" style="align-content: center">
+                        <p:outputLabel value="#{lc1.tipoLiquidacion.nombreTitulo}" />
+                    </p:column>
+                    <p:column headerText="Id. Liquidacion" filterStyle="width: 90%" filterBy="#{lc1.idLiquidacion}" width="10%">
+                        <p:outputLabel value="#{lc1.idLiquidacion}"/>
+                    </p:column>
+                    <p:column headerText="Num. Liquidacion" filterStyle="width: 90%" filterBy="#{lc1.numLiquidacion}" width="10%">
+                        <p:outputLabel value="#{lc1.numLiquidacion}"/>
+                    </p:column>
+                    <p:column headerText="Año" filterStyle="width: 80%" filterBy="#{lc1.anio}" width="8%">
+                        <p:outputLabel value="#{lc1.anio}"/>
+                    </p:column>
+                    <p:column headerText="Identificación" filterStyle="width: 90%" filterBy="#{lc1.comprador.ciRuc}" width="15%">
+                        <p:outputLabel value="#{lc1.comprador.ciRuc}"/>
+                    </p:column>
+                    <p:column headerText="Contribuyente" filterStyle="width: 95%" filterBy="#{lc1.comprador.nombreCompleto}">
+                        <p:outputLabel value="#{lc1.comprador.nombreCompleto}"/>
+                    </p:column>
+                    <p:column headerText="Estado" filterStyle="width: 95%" width="10%" filterBy="#{lc1.estadoLiquidacion.descripcion}">
+                        <p:outputLabel value="#{lc1.estadoLiquidacion.descripcion}"/>
+                    </p:column>
+                    <p:column headerText="Opciones" width="10%" style="text-align: center; ">
+                        
+                        <p:spacer width="3"/>
+                        <p:commandLink actionListener="#{liquidacionLocales.detalle(lc1)}" title="Detalle de la Liquidación"  update="dlgDetalle, detalle">
+                            <p:graphicImage value="/css/homeIconsImages/abrir.png"/>
+                        </p:commandLink>
+                        <p:spacer width="3"/>
+                        <p:commandLink actionListener="#{liquidacionLocales.imprimir(lc1)}" title="Imprimir"  >
+                             <p:graphicImage value="/css/homeIconsImages/reporte.png" height="16"/>
+                        </p:commandLink>
+                        <p:spacer width="3"/>
+<!--                        <p:commandButton icon="ui-icon-search"  
+                                         actionListener="# {liquidacionLocales.imprimirDetalle(lc1)}" title="Detalle de liquidacion"/>-->
+                    </p:column>
+                </p:dataTable>
+            </center>
+        </h:form>
+
+        <p:dialog id="dlgDetalle" widgetVar="detalle" width="70%" height="450" modal="true" closeOnEscape="true" 
+                  closable="true" appendTo="@(body)" position="center" resizable="false" 
+                  header="Detalle Liquidación - #{liquidacionLocales.liquidacion.idLiquidacion}" >
+            <h:form id="detalle">
+                <p:tabView id="tabDetalle">
+                    <p:tab title="Información de la Liquidacion">
+
+                        <p:panelGrid columns="4" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-5, ui-grid-col-2, ui-grid-col-3">
+                            <f:facet name="header">
+                                Datos de la Liquidacion
+                            </f:facet>
+                            <h:outputText value="Tipo Liquidacion"/>
+                            <p:inputText value="#{liquidacionLocales.liquidacion.tipoLiquidacion.nombreTitulo}" readonly="true"/>
+                            <h:outputText value="Num. Liquidacion"/>
+                            <p:inputText value="#{liquidacionLocales.liquidacion.numLiquidacion}" readonly="true"/>
+
+                            <h:outputText value="Fecha de Ingreso"/>
+                            <p:inputText value="#{liquidacionLocales.liquidacion.fechaIngreso}" readonly="true">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </p:inputText>
+                            <h:outputText value="Año"/>
+                            <p:inputText value="#{liquidacionLocales.liquidacion.anio}" readonly="true"/>
+
+                            <h:outputText value="Total a Pagar"/>
+                            <p:inputText value="#{liquidacionLocales.liquidacion.totalPago}" readonly="true"/>
+                            <p:outputLabel value="Multa: " for="at9"/>
+                            <p:inputText id="at9" value="#{liquidacionLocales.liquidacion.recargo}" readonly="true"/>
+
+                            <p:outputLabel value="Interes: " for="at10"/>
+                            <p:inputText value="#{liquidacionLocales.liquidacion.interes}" id="at10" readonly="true"/>
+                            <h:outputText value="Comprobante"/>
+                            <p:inputText value="#{liquidacionLocales.pago.numComprobante}" readonly="true"/>
+
+                            <h:outputText value="Estado"/>
+                            <p:inputText value="#{liquidacionLocales.liquidacion.estadoLiquidacion.descripcion}" readonly="true"/>
+                            <h:outputText value=""/>
+                            <h:outputText value=""/>
+                        </p:panelGrid>
+                        <br/>
+                        <p:panelGrid columns="4" rendered="#{liquidacionLocales.liquidacion.tipoLiquidacion.codigoTituloReporte == 11}" >
+                            <p:outputLabel value="Activo Total: " for="at1"/>
+                            <p:inputText value="#{liquidacionLocales.activosLocal.activoTotal}" id="at1" readonly="true"/>
+
+                            <p:outputLabel value="Activo Contingente: " for="at2"/>
+                            <p:inputText value="#{liquidacionLocales.activosLocal.activoContingente}" id="at2" readonly="true"/>
+
+                            <p:outputLabel value="Pasivo Corriente: " for="at3"/>
+                            <p:inputText value="#{liquidacionLocales.activosLocal.pasivoTotal}" id="at3" readonly="true"/>
+
+                            <p:outputLabel value="Pasivo Contingente: " for="at4"/>
+                            <p:inputText value="#{liquidacionLocales.activosLocal.pasivoContingente}" id="at4" readonly="true"/>
+
+                            <p:outputLabel value="Año de Balance: " for="at5"/>
+                            <p:inputText id="at5" value="#{liquidacionLocales.activosLocal.anioBalance}" readonly="true"/>
+                            <p:outputLabel value="Porcentaje de Ingreso: " for="at6"/>
+                            <p:inputText value="#{liquidacionLocales.activosLocal.porcentajeIngreso}" id="at6" readonly="true"/>
+
+                            <p:outputLabel value="Año de Cobro: " for="at7"/>
+                            <p:inputText value="#{liquidacionLocales.activosLocal.fechaIngreso}" id="at7" disabled="true" readonly="true">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </p:inputText>
+
+                            <p:outputLabel value="" for="at8"/>
+                            <p:outputLabel value="" id="at8"/>
+                        </p:panelGrid>
+
+                        <!--                TASA DE HABILITACION -->
+                        <h:panelGrid columns="4" rendered="#{liquidacionLocales.liquidacion.tipoLiquidacion.codigoTituloReporte == 15}" >
+                            <p:outputLabel value="Área Permitida: " for="th1"/>
+                            <p:inputText value="#{liquidacionLocales.local.area}" id="th1" readonly="true"/>
+
+                            <p:outputLabel value="Área Prohibida: " for="th2" />
+                            <p:inputText value="" id="th2" readonly="true" />
+                        </h:panelGrid>
+
+                        <!--                PATENTE ANUAL -->
+                        <h:panelGrid columns="6" rendered="#{liquidacionLocales.liquidacion.tipoLiquidacion.codigoTituloReporte == 14}" >
+                            <p:outputLabel value="Capital o Patrimonio: " for="pa1"/>
+                            <p:inputText value="#{liquidacionLocales.balance.capital}" id="pa1" readonly="true"/>
+
+                            <p:outputLabel value="Fecha de Balance: " for="pa2"/>
+                            <p:inputText value="#{liquidacionLocales.balance.fechaBalance}" id="pa2" readonly="true">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </p:inputText>
+
+                            <p:outputLabel value="Año de Cobro: " for="pa3"/>
+                            <p:inputText value="#{liquidacionLocales.balance.anioBalance}" id="pa3" readonly="true"/>
+                        </h:panelGrid>
+
+                        <!--                TURISMO -->
+                        <p:panelGrid columns="4" rendered="#{liquidacionLocales.liquidacion.tipoLiquidacion.codigoTituloReporte == 98}" >
+                            <p:outputLabel value="Actividad: " for="tu1"/>
+                            <p:dataList id="tu1" value="#{liquidacionLocales.local.renActividadComercialCollection}" var="ct1" 
+                                        emptyMessage="No se encontrarón registros de actividades">
+                                <p:outputLabel value="#{ct1.descripcion}"/>
+                            </p:dataList>
+
+                            <p:outputLabel value="Categoria: " for="tu2"/>
+                            <p:inputText value="#{liquidacionLocales.local.categoria.descripcion}" id="tu2" readonly="true"/>
+
+                            <p:outputLabel value="Cantidad: " for="tu3"/>
+                            <p:dataList id="tu3" value="#{liquidacionLocales.local.cantidadAccesoriosCollection}" var="ac1"
+                                        emptyMessage="No se encontrarón registros de Cantidad">
+                                <p:outputLabel value="#{ac1.cantidad}"/>
+                            </p:dataList>
+
+                            <p:outputLabel value="Valor Unitario: " for="tu4"/>
+                            <p:inputText value="0" id="tu4" readonly="true" />
+                        </p:panelGrid>
+
+                        <!--                BOMBEROS -->
+                        <h:panelGrid columns="4" rendered="#{liquidacionLocales.liquidacion.tipoLiquidacion.codigoTituloReporte == 53   }" >
+                            <p:outputLabel value="Año Liquidación: " for="bo1"/>
+                            <p:inputText value="#{liquidacionLocales.liquidacion.anio}" id="bo1" readonly="true"/>
+
+                            <p:outputLabel value="Valor: " for="bo2"/>
+                            <p:inputText value="#{liquidacionLocales.liquidacion.totalPago}" id="bo2" readonly="true"/>
+                        </h:panelGrid>
+                        <!--                VLLAS PUBLICITARIAS -->
+                        <h:panelGrid columns="4" rendered="#{liquidacionLocales.liquidacion.tipoLiquidacion.codigoTituloReporte == 102 or liquidacionLocales.liquidacion.tipoLiquidacion.codigoTituloReporte == 206}"
+                                     columnClasses="ui-grid-col-1, ui-grid-col-6, ui-grid-col-1, ui-grid-col-3">
+
+                            <p:outputLabel value="Tipo: " for="vl1"/>
+                            <p:selectOneRadio id="vl1" value="#{liquidacionLocales.liquidacion.codigoLocal}" style="width: 100%; "  >
+                                <f:selectItem itemLabel="Rotulo Publicitario" itemValue="rotulo" itemDisabled="true"/>
+                                <f:selectItem itemLabel="Pantalla Digital" itemValue="pantalla" itemDisabled="true"/>
+                            </p:selectOneRadio>
+
+                            <p:outputLabel value="Valor: " for="vl3"/>
+                            <p:inputText value="#{liquidacionLocales.liquidacion.areaTotal}" id="vl3" style="width: 100%; " readonly="true"/>
+                        </h:panelGrid>
+                    </p:tab>
+                    <p:tab title="Datos del Local">
+                        <p:panelGrid  columns="4" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-4, ui-grid-col-2, ui-grid-col-4">
+                            <f:facet name="header">
+                                Datos del Local
+                            </f:facet>
+                            <h:outputText value="Nombre del local"/>
+                            <p:inputText value="#{liquidacionLocales.local.nombreLocal}" readonly="true" style="width: 100%" title="#{liquidacionLocales.local.nombreLocal}"/>
+                            <p:outputLabel value="Razón Social"/>
+                            <p:inputText value="#{liquidacionLocales.local.razonSocial.nombreCompleto}" readonly="true" style="width: 100%; " title="#{liquidacionLocales.local.razonSocial.nombreCompleto}"/>
+
+                            <p:outputLabel value="Propietario"/>
+                            <p:inputText value="#{liquidacionLocales.local.propietario.nombreCompleto}" readonly="true" style="width: 100%; " title="#{liquidacionLocales.local.propietario.nombreCompleto}"/>
+                            <h:outputText value="Número del local"/>
+                            <p:inputText value="#{liquidacionLocales.local.numLocal}" readonly="true"  style="width: 100%;"/>
+
+                            <h:outputText value="Área del local"/>
+                            <p:inputText value="#{liquidacionLocales.local.area}" readonly="true"/>
+                            <h:outputText value="Ubicacion"/>
+                            <p:inputText value="#{liquidacionLocales.local.ubicacion.descripcion}" readonly="true" style="width: 100%; " title="#{liquidacionLocales.local.ubicacion.descripcion}"/>
+
+                            <h:outputText value="Tipo"/>
+                            <p:inputText value="#{liquidacionLocales.local.tipoLocal.descripcion}" readonly="true"/>
+                            <h:outputText value="Categoria"/>
+                            <p:inputText value="#{liquidacionLocales.local.categoria.descripcion}" readonly="true" style="width: 100%; "/>
+                        </p:panelGrid>
+                        <br/>
+                    </p:tab>
+                    <p:tab title="Pagos">
+                        <p:dataTable id="dtPagos" value="#{liquidacionLocales.liquidacion.renPagoCollection}" 
+                                     reflow="true" rowKey="#{p2.id}" var="p2" rows="5" paginator="true" 
+                                     paginatorPosition="top" emptyMessage="No hay datos para mostrar">
+                            <p:column headerText="Num. Comprobante" >
+                                <h:outputText value="#{p2.numComprobante}"/>
+                            </p:column>
+                            <p:column headerText="Valor Pago" >
+                                <h:outputText value="#{p2.valor}"/>
+                            </p:column>
+                            <p:column headerText="Estado" >
+                                <h:outputText value="Activo" rendered="#{p2.estado}"/>
+                                <h:outputText value="Inactivo" rendered="#{!p2.estado}"/>
+                            </p:column>
+                            <p:column headerText="Fecha Pago" >
+                                <h:outputText value="#{p2.fechaPago}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                                </h:outputText>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                    <p:tab title="Observaciones">
+                        <p:fieldset legend="Observacion liquidacion">
+                            <p:inputTextarea value="#{liquidacionLocales.liquidacion.observacion}" readonly="true" style="width: 100%; "/>
+                        </p:fieldset>
+                        <br/><br/>
+                        <p:fieldset legend="Observacion Pago">
+                            <p:inputTextarea value="#{liquidacionLocales.pago.observacion}" readonly="true" style="width: 100%; "/>
+                        </p:fieldset>
+                    </p:tab>
+                    <p:tab title="Acitidad Comercial">
+                        <p:dataTable id="dtActvs1" value="#{liquidacionLocales.local.renActividadComercialCollection}" 
+                                     reflow="true" rowKey="#{actv2.id}" var="actv2" rows="5" paginator="true" 
+                                     paginatorPosition="top" emptyMessage="No hay datos para mostrar">
+                            <p:column headerText="Descripción" >
+                                <center><h:outputText value="#{actv2.descripcion}"/></center>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                </p:tabView>
+                <br></br>
+                <div style="float: bottom">
+                    <center >
+                        <p:commandButton value="Salir" onclick="PF('detalle').hide()" styleClass="btnStyle"/>
+                        <p:spacer width="10"/>
+                        <p:commandButton value="Anular" actionListener="#{liquidacionLocales.anular()}" styleClass="btnStyle"/>
+                    </center>
+                </div>
+
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+
+</ui:composition>

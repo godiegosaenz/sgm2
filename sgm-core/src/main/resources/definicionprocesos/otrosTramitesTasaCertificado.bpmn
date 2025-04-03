@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <collaboration id="Collaboration">
+    <participant id="pool1" name="Otros trámites tasa y certificado" processRef="otrosTramitesTasaCertificado"></participant>
+  </collaboration>
+  <process id="otrosTramitesTasaCertificado" name="Otros trámites tasa y certificado" isExecutable="true">
+    <laneSet id="laneSet_otrosTramitesTasaCertificado">
+      <lane id="lane1" name="Director">
+        <flowNodeRef>startevent1</flowNodeRef>
+        <flowNodeRef>endevent1</flowNodeRef>
+        <flowNodeRef>exclusivegateway1</flowNodeRef>
+        <flowNodeRef>subirdocumentosAlfresco</flowNodeRef>
+        <flowNodeRef>revisionLiquidacionOT</flowNodeRef>
+        <flowNodeRef>usertaskconsultarLiquidacion</flowNodeRef>
+        <flowNodeRef>exclusivegateway2</flowNodeRef>
+        <flowNodeRef>callRentas</flowNodeRef>
+        <flowNodeRef>usertask1</flowNodeRef>
+        <flowNodeRef>servicetask1</flowNodeRef>
+      </lane>
+      <lane id="lane2" name="Tecnico">
+        <flowNodeRef>liquidacionOT</flowNodeRef>
+        <flowNodeRef>subirpdfliquidacionOT</flowNodeRef>
+        <flowNodeRef>usertaskeditLiq</flowNodeRef>
+        <flowNodeRef>certificadotask</flowNodeRef>
+        <flowNodeRef>subirCertificadoOT</flowNodeRef>
+      </lane>
+    </laneSet>
+    <startEvent id="startevent1" name="Start"></startEvent>
+    <endEvent id="endevent1" name="End"></endEvent>
+    <serviceTask id="subirdocumentosAlfresco" name="Cargar documentos Alfresco" activiti:async="true" activiti:expression="${subirDocumentosCarpeta.execute(execution)}">
+      <documentation>Otros trámites de edificación</documentation>
+    </serviceTask>
+    <userTask id="liquidacionOT" name="Generar tasa de liquidación" activiti:assignee="${tecnico}" activiti:formKey="/vistaprocesos/edificaciones/otrosTramites/generarLiquidacionOT.xhtml" activiti:priority="${prioridad}">
+      <documentation>Otros trámites de edificación</documentation>
+    </userTask>
+    <userTask id="certificadotask" name="Generar certificado" activiti:assignee="${tecnico}" activiti:formKey="/vistaprocesos/edificaciones/otrosTramites/generarCertificadoOT.xhtml" activiti:priority="${prioridad}">
+      <documentation>Otros trámites de edificación</documentation>
+    </userTask>
+    <serviceTask id="subirCertificadoOT" name="Subir Certificado" activiti:async="true" activiti:expression="${subirDocumentos.execute(execution)}">
+      <documentation>Otros trámites de edificación</documentation>
+    </serviceTask>
+    <exclusiveGateway id="exclusivegateway1" name="Exclusive Gateway"></exclusiveGateway>
+    <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="subirdocumentosAlfresco"></sequenceFlow>
+    <sequenceFlow id="flow2" sourceRef="subirdocumentosAlfresco" targetRef="liquidacionOT"></sequenceFlow>
+    <userTask id="usertaskeditLiq" name="Editar tasa de liquidación" activiti:assignee="${tecnico}" activiti:formKey="/vistaprocesos/edificaciones/otrosTramites/editarLiquidacionOT.xhtml" activiti:priority="${prioridad}">
+      <documentation>Otros trámites de edificación</documentation>
+    </userTask>
+    <sequenceFlow id="flow10" sourceRef="exclusivegateway1" targetRef="usertaskeditLiq">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${aprobado==false}]]></conditionExpression>
+    </sequenceFlow>
+    <serviceTask id="subirpdfliquidacionOT" name="Subir Liquidacion" activiti:async="true" activiti:expression="${subirDocumentos.execute(execution)}">
+      <documentation>Otros trámites de edificación</documentation>
+    </serviceTask>
+    <sequenceFlow id="flow11" sourceRef="liquidacionOT" targetRef="subirpdfliquidacionOT"></sequenceFlow>
+    <sequenceFlow id="flow12" sourceRef="subirpdfliquidacionOT" targetRef="certificadotask"></sequenceFlow>
+    <sequenceFlow id="flow13" sourceRef="usertaskeditLiq" targetRef="subirpdfliquidacionOT"></sequenceFlow>
+    <sequenceFlow id="flow14" sourceRef="certificadotask" targetRef="subirCertificadoOT"></sequenceFlow>
+    <userTask id="revisionLiquidacionOT" name="Revisión Tasa de Liquidación" activiti:assignee="${director}" activiti:formKey="/vistaprocesos/edificaciones/otrosTramites/aprobarDocumentosOT.xhtml" activiti:priority="${prioridad}">
+      <documentation>Otros trámites de edificación</documentation>
+    </userTask>
+    <sequenceFlow id="flow15" sourceRef="subirCertificadoOT" targetRef="revisionLiquidacionOT"></sequenceFlow>
+    <userTask id="usertaskconsultarLiquidacion" name="Entregar Certificado Usuario" activiti:assignee="${digitalizador}" activiti:formKey="/vistaprocesos/edificaciones/otrosTramites/entregarCertificadoOT.xhtml" activiti:priority="${prioridad}">
+      <documentation>Otros Trámites</documentation>
+    </userTask>
+    <sequenceFlow id="flow19" sourceRef="usertaskconsultarLiquidacion" targetRef="endevent1"></sequenceFlow>
+    <callActivity id="callRentas" name="Rentas" calledElement="rentas">
+      <documentation>Otros trámites de edificación</documentation>
+      <extensionElements>
+        <activiti:in source="tramite" target="tramite"></activiti:in>
+        <activiti:in source="renta" target="renta"></activiti:in>
+        <activiti:in source="aprobar" target="aprobado"></activiti:in>
+        <activiti:in source="taskdef" target="taskdef"></activiti:in>
+        <activiti:in source="prioridad" target="prioridad"></activiti:in>
+        <activiti:in source="descripcion" target="descripcion"></activiti:in>
+        <activiti:in source="listaArchivos" target="listaArchivos"></activiti:in>
+        <activiti:in source="listaArchivosFinal" target="listaArchivosFinal"></activiti:in>
+        <activiti:out source="aprobado" target="aprobado"></activiti:out>
+      </extensionElements>
+    </callActivity>
+    <exclusiveGateway id="exclusivegateway2" name="Exclusive Gateway"></exclusiveGateway>
+    <sequenceFlow id="flow20" sourceRef="callRentas" targetRef="exclusivegateway2"></sequenceFlow>
+    <sequenceFlow id="flow21" sourceRef="exclusivegateway2" targetRef="revisionLiquidacionOT">
+      <documentation>${aprobado==false}</documentation>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${aprobado==false}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow23" sourceRef="revisionLiquidacionOT" targetRef="exclusivegateway1"></sequenceFlow>
+    <sequenceFlow id="flow24" sourceRef="exclusivegateway1" targetRef="callRentas">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${aprobado==true}]]></conditionExpression>
+    </sequenceFlow>
+    <userTask id="usertask1" name="Realizar informe técnico" activiti:assignee="${tecnico}" activiti:formKey="/vistaprocesos/edificaciones/otrosTramites/realizarInformeTecnicoOT.xhtml" activiti:priority="${prioridad}">
+      <documentation>Otros trámites de edificación</documentation>
+    </userTask>
+    <serviceTask id="servicetask1" name="Cargar informe técnico" activiti:async="true" activiti:expression="${subirDocumentos.execute(execution)}">
+      <documentation>Otros trámites de edificación</documentation>
+    </serviceTask>
+    <sequenceFlow id="flow25" sourceRef="exclusivegateway2" targetRef="usertask1">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${aprobado==true}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow26" sourceRef="usertask1" targetRef="servicetask1"></sequenceFlow>
+    <sequenceFlow id="flow27" sourceRef="servicetask1" targetRef="usertaskconsultarLiquidacion"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_Collaboration">
+    <bpmndi:BPMNPlane bpmnElement="Collaboration" id="BPMNPlane_Collaboration">
+      <bpmndi:BPMNShape bpmnElement="pool1" id="BPMNShape_pool1">
+        <omgdc:Bounds height="782.0" width="500.0" x="240.0" y="60.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lane1" id="BPMNShape_lane1">
+        <omgdc:Bounds height="391.0" width="480.0" x="260.0" y="60.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lane2" id="BPMNShape_lane2">
+        <omgdc:Bounds height="391.0" width="480.0" x="260.0" y="451.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="350.0" y="120.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="400.0" y="92.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="subirdocumentosAlfresco" id="BPMNShape_subirdocumentosAlfresco">
+        <omgdc:Bounds height="81.0" width="105.0" x="315.0" y="220.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="liquidacionOT" id="BPMNShape_liquidacionOT">
+        <omgdc:Bounds height="65.0" width="105.0" x="320.0" y="560.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="certificadotask" id="BPMNShape_certificadotask">
+        <omgdc:Bounds height="65.0" width="105.0" x="560.0" y="565.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="subirCertificadoOT" id="BPMNShape_subirCertificadoOT">
+        <omgdc:Bounds height="55.0" width="105.0" x="560.0" y="480.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway1" id="BPMNShape_exclusivegateway1">
+        <omgdc:Bounds height="40.0" width="40.0" x="650.0" y="300.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertaskeditLiq" id="BPMNShape_usertaskeditLiq">
+        <omgdc:Bounds height="65.0" width="105.0" x="440.0" y="700.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="subirpdfliquidacionOT" id="BPMNShape_subirpdfliquidacionOT">
+        <omgdc:Bounds height="55.0" width="105.0" x="440.0" y="570.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="revisionLiquidacionOT" id="BPMNShape_revisionLiquidacionOT">
+        <omgdc:Bounds height="75.0" width="105.0" x="560.0" y="360.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertaskconsultarLiquidacion" id="BPMNShape_usertaskconsultarLiquidacion">
+        <omgdc:Bounds height="71.0" width="105.0" x="460.0" y="74.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="callRentas" id="BPMNShape_callRentas">
+        <omgdc:Bounds height="55.0" width="105.0" x="618.0" y="220.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway2" id="BPMNShape_exclusivegateway2">
+        <omgdc:Bounds height="40.0" width="40.0" x="540.0" y="227.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask1" id="BPMNShape_usertask1">
+        <omgdc:Bounds height="55.0" width="105.0" x="618.0" y="154.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="servicetask1" id="BPMNShape_servicetask1">
+        <omgdc:Bounds height="55.0" width="105.0" x="618.0" y="82.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="367.0" y="155.0"></omgdi:waypoint>
+        <omgdi:waypoint x="367.0" y="220.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="367.0" y="301.0"></omgdi:waypoint>
+        <omgdi:waypoint x="372.0" y="560.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow10" id="BPMNEdge_flow10">
+        <omgdi:waypoint x="690.0" y="320.0"></omgdi:waypoint>
+        <omgdi:waypoint x="703.0" y="318.0"></omgdi:waypoint>
+        <omgdi:waypoint x="703.0" y="732.0"></omgdi:waypoint>
+        <omgdi:waypoint x="545.0" y="732.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow11" id="BPMNEdge_flow11">
+        <omgdi:waypoint x="425.0" y="592.0"></omgdi:waypoint>
+        <omgdi:waypoint x="440.0" y="597.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow12" id="BPMNEdge_flow12">
+        <omgdi:waypoint x="545.0" y="597.0"></omgdi:waypoint>
+        <omgdi:waypoint x="560.0" y="597.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow13" id="BPMNEdge_flow13">
+        <omgdi:waypoint x="492.0" y="700.0"></omgdi:waypoint>
+        <omgdi:waypoint x="492.0" y="625.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow14" id="BPMNEdge_flow14">
+        <omgdi:waypoint x="612.0" y="565.0"></omgdi:waypoint>
+        <omgdi:waypoint x="612.0" y="535.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow15" id="BPMNEdge_flow15">
+        <omgdi:waypoint x="612.0" y="480.0"></omgdi:waypoint>
+        <omgdi:waypoint x="612.0" y="435.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow19" id="BPMNEdge_flow19">
+        <omgdi:waypoint x="460.0" y="109.0"></omgdi:waypoint>
+        <omgdi:waypoint x="435.0" y="109.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow20" id="BPMNEdge_flow20">
+        <omgdi:waypoint x="618.0" y="247.0"></omgdi:waypoint>
+        <omgdi:waypoint x="580.0" y="247.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow21" id="BPMNEdge_flow21">
+        <omgdi:waypoint x="560.0" y="267.0"></omgdi:waypoint>
+        <omgdi:waypoint x="564.0" y="297.0"></omgdi:waypoint>
+        <omgdi:waypoint x="612.0" y="297.0"></omgdi:waypoint>
+        <omgdi:waypoint x="612.0" y="360.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow23" id="BPMNEdge_flow23">
+        <omgdi:waypoint x="612.0" y="360.0"></omgdi:waypoint>
+        <omgdi:waypoint x="641.0" y="332.0"></omgdi:waypoint>
+        <omgdi:waypoint x="650.0" y="320.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow24" id="BPMNEdge_flow24">
+        <omgdi:waypoint x="670.0" y="300.0"></omgdi:waypoint>
+        <omgdi:waypoint x="670.0" y="275.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow25" id="BPMNEdge_flow25">
+        <omgdi:waypoint x="560.0" y="227.0"></omgdi:waypoint>
+        <omgdi:waypoint x="560.0" y="181.0"></omgdi:waypoint>
+        <omgdi:waypoint x="618.0" y="181.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow26" id="BPMNEdge_flow26">
+        <omgdi:waypoint x="670.0" y="154.0"></omgdi:waypoint>
+        <omgdi:waypoint x="670.0" y="137.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow27" id="BPMNEdge_flow27">
+        <omgdi:waypoint x="618.0" y="109.0"></omgdi:waypoint>
+        <omgdi:waypoint x="565.0" y="109.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

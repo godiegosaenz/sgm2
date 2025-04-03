@@ -1,0 +1,214 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:dlg="http://xmlns.jcp.org/jsf/composite/dialog">
+
+    <ui:define name="content">
+        <center>
+            <h1>Transferencia de dominio</h1>
+        </center>
+        <h:panelGroup layout="block" class="Wid100 Responsive100">
+            <h:form id="transferenciaDominio" prependId="false">
+                <div class="ContainerIndent">
+                    <h:panelGroup layout="block" class="Container Wid100 MarTop20">
+
+                        <p:fieldset legend="Código catastral" toggleable="false" toggleSpeed="500" style="margin-bottom: 10px;">
+                            <p:panelGrid style="margin-top:5px; float: left;">
+                                <f:facet name="header">
+                                    <p:row>
+                                        <p:column>Provincia:    </p:column>
+                                        <p:column>Cantón :      </p:column>
+                                        <p:column>Parroquia :   </p:column>
+                                        <p:column>Zona :        </p:column>
+                                        <p:column>Sector :      </p:column>
+                                        <p:column>Mz. :         </p:column>
+                                        <p:column>Lote :        </p:column>
+                                        <p:column>Bloque :      </p:column>
+                                        <p:column>Piso :        </p:column>
+                                        <p:column>Unidad :      </p:column>
+                                    </p:row>
+                                </f:facet>
+                                <p:row>
+                                    <p:column><p:inputText id="prov"  placeholder="Provincia" title="Provincia : #{transferenciaView.predio.provincia}" value="#{transferenciaView.predio.provincia}" readonly="true" style=" text-align: center; width: 89%" maxlength="2"  /></p:column>
+                                    <p:column><p:inputText id="cant" placeholder="Canton" title="Canton : #{transferenciaView.predio.canton}" value="#{transferenciaView.predio.canton}" readonly="true" style="text-align: center; width: 89%"  maxlength="2"/></p:column>
+                                    <p:column><p:inputText id="parrq" placeholder="Parroquia" title="Parroquia :#{transferenciaView.predio.parroquia}" value="#{transferenciaView.predio.parroquia}" readonly="true" style="text-align: center; width: 89%" maxlength="2"/></p:column>
+                                    <p:column><p:inputText id="zona" placeholder="Zona" title="Zona : #{transferenciaView.predio.zona}" value="#{transferenciaView.predio.zona}" readonly="true" style="text-align: center; width: 89%" maxlength="2"/></p:column>
+                                    <p:column><p:inputText id="sect" placeholder="Sector" title="Sector : #{transferenciaView.predio.sector}" value="#{transferenciaView.predio.sector}" readonly="true" style="text-align: center; width: 89%" maxlength="2"/></p:column>
+                                    <p:column><p:inputText id="mz" placeholder="Manzana" title="Manzana : #{transferenciaView.predio.mz}" value="#{transferenciaView.predio.mz}" readonly="true" style="text-align: center; width: 89%" maxlength="3"/></p:column>
+                                    <p:column><p:inputText id="lot" placeholder="Lote" title="Lote : #{transferenciaView.predio.solar}" value="#{transferenciaView.predio.solar}" readonly="true"  style="text-align: center; width: 89%" maxlength="3"/></p:column>
+                                    <p:column><p:inputText id="bloq" placeholder="Bloque" title="Bloque : #{transferenciaView.predio.bloque}" value="#{transferenciaView.predio.bloque}" readonly="true" style="text-align: center; width: 89%" maxlength="3"/></p:column>
+                                    <p:column><p:inputText id="piso" placeholder="Piso" title="Piso : #{transferenciaView.predio.piso}" value="#{transferenciaView.predio.piso}" readonly="true" style="text-align: center; width: 89%" maxlength="2"/></p:column>
+                                    <p:column><p:inputText id="unid" placeholder="Unidad" title="Unidad : #{transferenciaView.predio.unidad}" value="#{transferenciaView.predio.unidad}" readonly="true" style="text-align: center; width: 89%" maxlength="3"/></p:column>
+                                </p:row>
+                            </p:panelGrid>
+
+                        </p:fieldset>
+                    </h:panelGroup>
+                </div>
+                <div class="ContainerIndent">
+                    <div align="right">
+                        <p:commandButton value="Realizar tranferencia de dominio" iconPos="ui-icon-transferthick-e-w" actionListener="#{transferenciaView.transferenciaDominio()}" styleClass="btnStyle"
+                                          >
+                            <p:confirm header="Confirmación" message=" ¿ Esta seguro de realizar la transferencia de dominio ? " icon="ui-icon-info" />
+                        </p:commandButton>
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                        </p:confirmDialog>
+                    </div>
+                </div>
+                <h:panelGroup layout="block" class="Container Wid100 MarTop10">
+                    <div class="ContainerIndent">
+                        <p:fieldset legend="Forma de adquisición" toggleable="true">
+                            <dlg:compInputSelect id="formaAdquiscion" label="Forma de adquisición:"
+                                                 catalogo="predio-formaadquisicion" defaultValue="1"
+                                                 bind="#{transferenciaView.predio.formaAdquisicion}"
+                                                 next="addProp"/>
+
+                        </p:fieldset>
+                        <p:fieldset legend="Observaciones" toggleable="true" class="MarBot10">
+                            <div align="center">
+                                <p:inputTextarea id="observaciones" value="#{transferenciaView.predio.observaciones}" style="width: 98%"/>
+                            </div>
+                        </p:fieldset>
+                    </div>
+                </h:panelGroup>
+
+                <ui:include src="#{propietariosDefaultView.secTransferenciaDominio}" />
+
+                <h:panelGroup layout="block" class="Container Wid100 MarTop10">
+                    <div class="ContainerIndent">
+                        <p:fieldset legend="Escrituras" toggleable="true">
+                            <div align="right">
+                                <p:commandButton id="btnAddEscritura" value="Agregar Escritura"  actionListener="#{transferenciaView.saveEscrituraControl()}" style="margin-bottom: 10px;"
+                                                 oncomplete="PF('dlgEscritura').show();" update="frmDlgEscr" disabled="#{transferenciaView.escritura.idEscritura != null}"/>
+                            </div>
+                            <p:dataTable id="dtEscrituras" value="#{transferenciaView.escrituras}" var="e" scrollable="true" style="width: 100%"
+                                         emptyMessage="No se encontraron registros" paginator="true" paginatorPosition="top"
+                                         rows="10"  rowsPerPageTemplate="10,20,50,100"
+                                         paginatorAlwaysVisible="false"
+                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         >
+                                <p:column headerText="Tipo Dominio">
+                                    <h:outputText value="#{e.traslDom.nombre}"/>
+                                </p:column>
+                                <p:column headerText="No. Repertorio">
+                                    <h:outputText value="#{e.numRepertorio}"/>
+                                </p:column>
+                                <p:column headerText="Notaria">
+                                    <h:outputText value="#{e.notaria}"/>
+                                </p:column>
+                                <p:column headerText="Fecha Escritura">
+                                    <h:outputText value="#{e.fecEscritura}"><f:convertDateTime pattern="dd-MM-yyyy " /></h:outputText>
+                                </p:column>
+                                <p:column headerText="Fecha Inscripción">
+                                    <h:outputText value="#{e.fecInscripcion}"><f:convertDateTime pattern="dd-MM-yyyy " /></h:outputText>
+                                </p:column>
+                                <p:column headerText="Area">
+                                    <h:outputText value="#{e.areaSolar}" ><f:convertNumber pattern="##############.####" locale="us"/></h:outputText>
+                                </p:column>
+                                <p:column headerText="Estado">
+                                    <h:outputText value="#{e.estado}"/>
+                                </p:column>
+                                <p:column headerText="Accion" style="text-align: center">
+                                    <p:commandLink title="Editar" actionListener="#{transferenciaView.editEscritura(e)}" disabled="#{transferenciaView.disabledAdd(e)}" oncomplete="PF('dlgEscritura').show();" update="frmDlgEscr">
+                                        <p:ajax update="dtEscrituras" />
+                                        <p:graphicImage value="/css/homeIconsImages/edicion.png" width="25" height="25"/>
+                                    </p:commandLink>
+                                    <p:commandLink actionListener="#{transferenciaView.deleteEscritura(e)}" update="transferenciaDominio" partialSubmitFilter="true" disabled="#{transferenciaView.disabledAdd(e)}">
+                                        <p:ajax update="transferenciaDominio" />
+                                        <p:graphicImage value="/css/homeIconsImages/delete.png" width="25" height="25"/>
+                                    </p:commandLink>
+                                </p:column>
+                            </p:dataTable>
+                        </p:fieldset>
+                    </div>
+                </h:panelGroup>
+
+            </h:form>
+        </h:panelGroup>
+        <p:dialog id="dlgEscritura" widgetVar="dlgEscritura" header="Registro de Escrituras" modal="true" width="40%" height="430" closable="true" closeOnEscape="false" resizable="true" appendTo="@(body)" >
+            <h:form id="frmDlgEscr" prependId="false">
+                <!--<f:event listener="# {transferenciaView.validarFormulario}" type="postValidate"/>-->
+                <div align="center">
+
+                    <h:panelGrid columns="2" style="width: 100%">
+                        <h:panelGroup layout="block">
+                            <p:outputLabel for="cmbCanton" value="Cantón: "  styleClass="DispBlock Wid100"/>
+                            <p:selectOneMenu id="cmbCanton" value="#{transferenciaView.escritura.canton}" effect="fade" converter="entityConverter" filter="true" filterMatchMode="contains" required="true">
+                                <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+                                <f:selectItems value="#{transferenciaView.cantones}" var="cx" itemLabel="#{cx.nombre}" itemValue="#{cx}"/>
+                            </p:selectOneMenu>
+                        </h:panelGroup>
+                        <h:panelGroup layout="block">
+                            <p:outputLabel for="fechaEscritura" value="Fecha Escritura: "  styleClass="DispBlock Wid100"/>
+                            <p:calendar id="fechaEscritura" value="#{transferenciaView.escritura.fecEscritura}" placeholder="DÍA-MES-AÑO" maxdate="sysdate"
+                                        pattern="dd-MM-yyyy" mask="true" onkeypress="focusNextOnEnter(event, 'fechaInscripcion_input')"/>
+                        </h:panelGroup>
+                        <h:panelGroup layout="block">
+                            <p:outputLabel for="fechaInscripcion" value="Fecha Inscripcion "  styleClass="DispBlock Wid100"/>
+                            <p:calendar id="fechaInscripcion" value="#{transferenciaView.escritura.fecInscripcion}" placeholder="DÍA-MES-AÑO" maxdate="sysdate"
+                                        pattern="dd-MM-yyyy" mask="true" onkeypress="focusNextOnEnter(event, 'tipoProtclz_input')"/>
+                        </h:panelGroup>
+                        <h:panelGroup layout="block">
+                            <p:outputLabel for="tipoProtclz" value="Protocolización Celebrado Ante: "  styleClass="DispBlock Wid100"/>
+                            <p:selectOneMenu id="tipoProtclz" value="#{transferenciaView.escritura.tipoProtocolizacion}" converter="entityConverter" label="Tipo de Protocolización Celebrado Ante" required="true">
+                                <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                                <f:selectItems value="#{transferenciaView.getListado('predio.tipo_protocolizacion')}" var="tipt1" itemLabel="#{tipt1.valor}" itemValue="#{tipt1}"/>
+                            </p:selectOneMenu>
+                        </h:panelGroup>
+                        <h:panelGroup layout="block">
+                            <p:outputLabel for="repertorio" value="No. Repertorio: "  styleClass="DispBlock Wid100"/>
+                            <p:inputText id="repertorio"  value="#{transferenciaView.escritura.numRepertorio}" required="true" onkeypress="validateIntegerValueAndFocusNext(event, 'numRegistro')"/>
+                        </h:panelGroup>
+                        <h:panelGroup layout="block">
+                            <p:outputLabel for="numRegistro" value="#{infoExtrasView.labelEscrituraNoRegistro} :"  styleClass="DispBlock Wid100"/>
+                            <p:inputText id="numRegistro"  value="#{transferenciaView.escritura.numRegistro}" onkeypress="validateIntegerValueAndFocusNext(event, 'notaria')"/>
+                        </h:panelGroup>
+                        <h:panelGroup layout="block">
+                            <p:outputLabel for="notaria" value="Notaria :"  styleClass="DispBlock Wid100"/>
+                            <p:inputText id="notaria"  value="#{transferenciaView.escritura.notaria}" required="true" onkeypress="focusNextOnEnter(event, 'areaEscritura')"/>
+                        </h:panelGroup>
+                        <h:panelGroup layout="block">
+                            <p:outputLabel for="areaEscritura" value="Area de Solar :"  styleClass="DispBlock Wid100" />
+                            <p:inputText id="areaEscritura"  value="#{transferenciaView.escritura.areaSolar}" required="true" onkeypress="validateFloatValueAndFocusNext(event, 'unidadMedidaE')"/>
+                        </h:panelGroup>
+                        <h:panelGroup layout="block" rendered="false">
+                            <p:outputLabel for="unidadMedidaE" value="Unidad del Area :"  styleClass="DispBlock Wid100"/>
+                            <p:inputText id="unidadMedidaE" value="#{transferenciaView.escritura.unidadArea}" onkeypress="focusNextOnEnter(event, 'folioDesde')" />
+                        </h:panelGroup>
+                        <h:panelGroup layout="block">
+                            <p:outputLabel for="folioDesde" value="Folio Desde :"  styleClass="DispBlock Wid100"/>
+                            <p:inputText id="folioDesde"  value="#{transferenciaView.escritura.folioDesde}" onkeypress="focusNextOnEnter(event, 'folioHasta')"/>
+                        </h:panelGroup>
+                        <h:panelGroup layout="block">
+                            <p:outputLabel for="folioHasta" value="Folio Hasta :"  styleClass="DispBlock Wid100"/>
+                            <p:inputText id="folioHasta"   value="#{transferenciaView.escritura.folioHasta}" onkeypress="focusNextOnEnter(event, 'tipoDominio_input')"/>
+                        </h:panelGroup>
+
+                        <h:panelGroup layout="block">
+                            <p:outputLabel for="tipoDominio" value="Tipo Dominio :"  styleClass="DispBlock Wid100"/>
+                            <p:selectOneMenu value="#{transferenciaView.escritura.traslDom}" effect="fade" converter="entityConverter" id="tipoDominio">
+                                <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                                <f:selectItems value="#{transferenciaView.dominios}" var="td1" itemLabel="#{td1.nombre}" itemValue="#{td1}"/>
+                            </p:selectOneMenu>
+                        </h:panelGroup>
+                        <h:panelGroup layout="block">
+                            <p:outputLabel for="precioComp" value="Precio de Compra :"  styleClass="DispBlock Wid100"/>
+                            <p:inputText type="decimal" id="precioComp"  value="#{transferenciaView.escritura.precioCompra}"/>
+                        </h:panelGroup>
+                    </h:panelGrid>
+                    <div align="center">
+                        <p:commandButton value="Guardar" actionListener="#{transferenciaView.saveEscritura()}" update="frmDlgEscr,transferenciaDominio" process="frmDlgEscr"/>
+                        <!--<p:commandButton id="btnS5" value="Guardar"  actionListener="# {transferenciaView.openDialog}" oncomplete="PF('dlgEscritura').hide()" update=":tdatos:frmEscrituras" process="@form" />-->
+                    </div>
+                </div>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

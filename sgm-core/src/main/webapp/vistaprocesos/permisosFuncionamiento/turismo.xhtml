@@ -1,0 +1,335 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:dialog="http://xmlns.jcp.org/jsf/composite/dialog"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:poue="http://primefaces.org/ui/extensions"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:define name="events">
+        
+    </ui:define>
+
+    <ui:define name="page_title">
+        Permisos de Funcionamiento
+    </ui:define>
+    
+
+    <ui:define name="top">
+        <h:panelGroup >
+            <p:panelGrid styleClass="noBorder" columns="4" style="width: 100%;font-size: 14px;">
+                <p:outputLabel value="Trámite: #{turismoView.ht.id}" style="font-weight: bolder;color: #005f9c"/>
+                <p:outputLabel value="Tarea: #{turismoView.taskDataByTaskID.name}" style="font-weight: bolder;color: #005f9c"/>
+                <p:outputLabel value="Responsable: #{turismoView.taskDataByTaskID.assignee}" style="font-weight: bolder;color: #005f9c"/>
+            </p:panelGrid>
+        </h:panelGroup>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="frmMain">
+            <p:tabView id="tvSolicitud">
+                <p:tab title="Datos del permiso">
+                    <p:panelGrid style="width: 100%; margin-bottom: 15px;">
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:outputLabel value="SOLICITANTE: #{turismoView.ht.solicitante.ciRuc} - #{turismoView.ht.solicitante.apellidos} #{turismoView.ht.solicitante.nombres}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="SOLICITUD: #{turismoView.permiso.id}"/>
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="FECHA INGRESO: "/><p:outputLabel value="#{turismoView.permiso.fechaEmision}"><f:convertDateTime pattern="dd/MM/yyyy"/></p:outputLabel>
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="PRIMERA VEZ: "/>
+                                <p:selectBooleanCheckbox value="#{turismoView.permiso.primeraVez}" disabled="true" style="margin-left: 15px; margin-top: 5px;"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:outputLabel value="CONTADOR: #{turismoView.permiso.contador.nombreCompleto}"/>
+                            </p:column>
+                            
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="AFILIACIÓN: #{turismoView.permiso.afiliacionCamara.descripcion}"/>
+                            </p:column>
+                            <p:column >
+                                <p:outputLabel value="NO. DE TRABAJADORES: #{turismoView.permiso.numTrabajadores}"/>
+                            </p:column>
+                            <p:column >
+                                <p:outputLabel value="NO. DE DECLARACIÓN: #{turismoView.permiso.numDeclaracion}"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    
+                    <center>
+                        <p:dataTable style="margin-bottom: 15px; width: 60%;" value="#{turismoView.entradas['localComercialList']}" var="r" rows="5" emptyMessage="Sin datos...">
+                            <f:facet name="header">
+                                Local comercial
+                            </f:facet>
+                            <p:column headerText="Nombre del local" style="text-align: center;" width="20%">
+                                <h:outputText value="#{r.nombreLocal}"/>
+                            </p:column>
+                            <p:column headerText="Propietario" style="text-align: center;" width="35%">
+                                <h:outputText value="#{r.propietario.nombreCompleto}"/>
+                            </p:column>
+                            <p:column headerText="Num. del Local" style="text-align: center;" width="40%">
+                                <h:outputText value="#{r.numLocal}"/>
+                            </p:column>
+                            <p:column headerText="Ubicación" style="text-align: center;" width="40%">
+                                <h:outputText value="#{r.ubicacion.descripcion}"/>
+                            </p:column>
+                            <p:column headerText="Tipo de Local" style="text-align: center;" width="40%">
+                                <h:outputText value="#{r.tipoLocal.descripcion}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </center>
+                    
+                        <p:panel style="margin-bottom: 15px; width: 60%; margin-left: 20%" header="Informe de inspección de turismo">
+                            <p:panelGrid columns="2" style="width: 100%;">
+                                <h:panelGroup>
+                                    <p:fieldset legend="Propietario" style="font-weight: bold; font-size: 10px;">
+                                        <p:panelGrid styleClass="noBorder" columns="2" style="width: 100%;">
+                                            <h:outputText value="Nombres:" />
+                                            <p:inputText value="#{turismoView.turismo.propietario.nombres}" readonly="true" style="width: 100%;"/>
+                                            <h:outputText value="Apellidos:" />
+                                            <p:inputText value="#{turismoView.turismo.propietario.apellidos}" readonly="true" style="width: 100%;"/>
+                                            <h:outputText value="Dirección:" />
+                                            <p:inputText value="#{turismoView.turismo.propietario.direccion}" readonly="true" style="width: 100%;"/>
+                                            <h:outputText value="Teléfonos:" />
+                                            <p:inputText value="#{turismoView.turismo.propietario.telefono}" readonly="true" style="width: 100%;"/>
+                                        </p:panelGrid>
+                                        <p:commandButton value="Buscar propietario" onclick="PF('enteDlg').show()" actionListener="#{turismoView.setEsPropietario(true)}" />
+                                    </p:fieldset>
+                                </h:panelGroup>
+                                
+                                <!-- -->
+                                
+                                <h:panelGroup>
+                                    <p:fieldset legend="Representante legal" style="font-weight: bold; font-size: 10px;">
+                                        <p:panelGrid styleClass="noBorder" columns="2" style="width: 100%;">
+                                            <h:outputText value="Nombres:" />
+                                            <p:inputText value="#{turismoView.turismo.repesentanteLegal.nombres}" readonly="true" style="width: 100%;"/>
+                                            <h:outputText value="Apellidos:" />
+                                            <p:inputText value="#{turismoView.turismo.repesentanteLegal.apellidos}" readonly="true" style="width: 100%;"/>
+                                            <h:outputText value="Dirección:" />
+                                            <p:inputText value="#{turismoView.turismo.repesentanteLegal.direccion}" readonly="true" style="width: 100%;"/>
+                                            <h:outputText value="Teléfonos:" />
+                                            <p:inputText value="#{turismoView.turismo.repesentanteLegal.telefono}" readonly="true" style="width: 100%;"/>
+                                        </p:panelGrid>
+                                       <p:commandButton value="Buscar Representante" onclick="PF('enteDlg').show()" actionListener="#{turismoView.setEsPropietario(false)}" />
+                                    </p:fieldset>
+                                </h:panelGroup>
+                            </p:panelGrid>
+                            
+                            <!-- -->
+                            
+                            <p:panelGrid columns="3" style="width: 100%;">
+                                <h:panelGroup>
+                                    <p:fieldset legend="Organización" style="font-weight: bold; font-size: 10px;">
+                                        <p:panelGrid styleClass="noBorder" columns="1" style="width: 100%;">
+                                            <p:selectOneRadio id="sel1" layout="grid" columns="1">
+                                                <f:selectItem itemLabel="Persona Natural" itemValue="#{turismoView.turismo.repesentanteLegal.esPersona}" itemDisabled="true"/>
+                                                <f:selectItem itemLabel="Persona Jurídica" itemValue="#{!turismoView.turismo.repesentanteLegal.esPersona}" itemDisabled="true"/>
+                                            </p:selectOneRadio>
+                                        </p:panelGrid>
+                                    </p:fieldset>
+                                </h:panelGroup>
+                                
+                                <!-- -->
+                                
+                                <h:panelGroup>
+                                    <p:fieldset legend="Establecimiento" style="font-weight: bold; font-size: 10px;">
+                                        <p:panelGrid styleClass="noBorder" columns="2" style="width: 100%;">
+                                            <p:selectOneRadio id="sel2" value="#{turismoView.turismo.esMatriz}"  layout="grid" columns="1">
+                                                <f:selectItem itemLabel="Principal" itemValue="#{true}" />
+                                                <f:selectItem itemLabel="Sucursal" itemValue="#{false}" />
+                                            </p:selectOneRadio>
+                                        </p:panelGrid>
+                                    </p:fieldset>
+                                </h:panelGroup>
+                                
+                                <!-- -->
+                                
+                                <h:panelGroup>
+                                    <p:fieldset legend="Tipo de local" style="font-weight: bold; font-size: 10px;">
+                                        <p:panelGrid styleClass="noBorder" columns="2" style="width: 100%;">
+                                            <p:selectOneRadio id="sel3" value="#{turismoView.turismo.esPropio}"  layout="grid" columns="1">
+                                                <f:selectItem itemLabel="Propio" itemValue="#{true}" />
+                                                <f:selectItem itemLabel="Arrendado" itemValue="#{false}" />
+                                            </p:selectOneRadio>
+                                        </p:panelGrid>
+                                    </p:fieldset>
+                                </h:panelGroup>
+                            </p:panelGrid>
+                            
+                            <!-- -->
+                            
+                            <p:fieldset legend="Habitaciones" style="font-weight: bold; font-size: 10px;">
+                                <p:dataGrid value="#{turismoView.detallesList}" var="det" columns="12">
+                                    <p:row>
+                                        <h:outputText value="#{det.descripcion}" />
+                                        <p:inputText value="#{det.detalle.cbp}" style="width: 65px;" placeholder="cbp"/>
+                                        <p:inputText value="#{det.detalle.bc}" style="width: 65px;" placeholder="bc"/>
+                                        <p:inputText value="#{det.detalle.total}" style="width: 65px;" placeholder="total"/>
+                                        <p:inputText value="#{det.detalle.camas}" style="width: 65px;" placeholder="camas"/>
+                                        <p:inputText value="#{det.detalle.plazas}" style="width: 65px;" placeholder="plazas"/>
+                                        <p:inputText value="#{det.detalle.tvc}" style="width: 65px;" placeholder="tvc"/>
+                                        <p:inputText value="#{det.detalle.nev}" style="width: 65px;" placeholder="nev"/>
+                                        <p:inputText value="#{det.detalle.aire}" style="width: 65px;" placeholder="aire"/>
+                                        <p:inputText value="#{det.detalle.telf}" style="width: 65px;" placeholder="telf"/>
+                                        <p:inputText value="#{det.detalle.secad}" style="width: 65px;" placeholder="secad"/>
+                                        <p:inputText value="#{det.detalle.musica}" style="width: 65px;" placeholder="musica"/>
+                                    </p:row>
+                                </p:dataGrid>       
+                            </p:fieldset>
+                            
+                            <!-- -->
+                            
+                            <p:fieldset legend="Servicios" style="font-weight: bold; font-size: 10px;">
+                                <p:panelGrid columns="2" style="width: 100%">
+                                    <p:selectOneRadio id="servs" value="#{turismoView.turismo.servcios}" layout="grid" columns="1" converter="entityConverter">
+                                        <f:selectItems value="#{turismoView.serviciosGenerales}" var="serv" itemLabel="#{serv.descripcion}" itemValue="#{serv}" />
+                                    </p:selectOneRadio>
+                                    <p:panelGrid columns="2">
+                                        <h:outputText value="Clasificación de servicio" style="font-size: 12px;"/>
+                                        <p:inputText value="#{turismoView.turismo.clasificacionServicio}" style="font-size: 12px;"/> 
+                                        <h:outputText value="Mesas" style="font-size: 12px;"/>
+                                        <p:inputText value="#{turismoView.turismo.numMesas}" placeholder="# de mesas" style="font-size: 12px;"/>
+                                        <h:outputText value="Sillas" style="font-size: 12px;"/>
+                                        <p:inputText value="#{turismoView.turismo.numSillas}" placeholder="# de sillas" style="font-size: 12px;"/>
+                                        <h:outputText value="Baños" style="font-size: 12px;"/>
+                                        <p:inputText value="#{turismoView.turismo.numBanios}" placeholder="# de baños" style="font-size: 12px;"/>
+                                    </p:panelGrid>
+                                </p:panelGrid>
+                            </p:fieldset>
+                            
+                            <!-- -->
+                            
+                            <p:fieldset legend="Transporte turístico de pasajeros" style="font-weight: bold; font-size: 10px;">
+                                <p:fieldset legend="A) Terrestre" style="font-weight: bold; font-size: 10px;">
+                                    <p:selectOneRadio id="trst" value="#{turismoView.turismo.transporteTerrestre}" layout="grid" columns="1" converter="entityConverter">
+                                        <f:selectItem value="#{null}" itemLabel="NINGUNA"/>
+                                        <f:selectItems value="#{turismoView.transportesTerrestre}" var="trs" itemLabel="#{trs.descripcion}" itemValue="#{trs}" />
+                                    </p:selectOneRadio>
+                                    <p:panelGrid columns="2">
+                                        <h:outputText value="Vehículos" style="font-size: 12px;"/>
+                                        <p:inputText value="#{turismoView.turismo.numVehiculos}" placeholder="# de vehiculos" style="font-size: 12px;"/>
+                                    </p:panelGrid>
+                                </p:fieldset>
+                                
+                                <p:fieldset legend="B) Aéreos" style="font-weight: bold; font-size: 10px;">
+                                    <p:selectOneRadio id="trsa" value="#{turismoView.turismo.transporteAereo}" layout="grid" columns="1" converter="entityConverter">
+                                        <f:selectItem value="#{null}" itemLabel="NINGUNA"/>
+                                        <f:selectItems value="#{turismoView.transportesAereo}" var="trs" itemLabel="#{trs.descripcion}" itemValue="#{trs}" />
+                                    </p:selectOneRadio>
+                                </p:fieldset>
+                                
+                                <p:fieldset legend="C) Cruceros turísticos" style="font-weight: bold; font-size: 10px;">
+                                    <p:selectOneRadio id="trsm" value="#{turismoView.turismo.transporteMaritimo}" layout="grid" columns="1" converter="entityConverter">
+                                        <f:selectItem value="#{null}" itemLabel="NINGUNA"/>
+                                        <f:selectItems value="#{turismoView.transportesMaritimo}" var="trs" itemLabel="#{trs.descripcion}" itemValue="#{trs}" />
+                                    </p:selectOneRadio>
+                                    <p:panelGrid columns="2">
+                                        <h:outputText value="Plazas" style="font-size: 12px;"/>
+                                        <p:inputText value="#{turismoView.turismo.numPlazas}" placeholder="# de plazas" style="font-size: 12px;"/>
+                                    </p:panelGrid>
+                                </p:fieldset>
+                            </p:fieldset>
+                            
+                            <!-- -->
+                            
+                            <p:fieldset legend="Especialidad del establecimiento" style="font-weight: bold; font-size: 10px;">
+                                <p:selectOneRadio id="espes" value="#{turismoView.turismo.especialidadServiciosAlimenticios}" converter="entityConverter" layout="grid" columns="1">
+                                    <f:selectItem value="#{null}" itemLabel="NINGUNA"/>
+                                    <f:selectItems value="#{turismoView.serviciosAlimenticios}" var="trs" itemLabel="#{trs.descripcion}" itemValue="#{trs}" />
+                                </p:selectOneRadio>
+                            </p:fieldset>
+                            
+                            <!-- -->
+                            
+                            <p:fieldset legend="Tiene licencia anual de funcionamiento vigente?" style="font-weight: bold; font-size: 10px;">
+                                <center>
+                                    <p:selectOneRadio id="serva" value="#{turismoView.turismo.tieneLicencia}" layout="grid" columns="2">
+                                        <f:selectItem itemLabel="Sí " itemValue="#{true}" />
+                                        <f:selectItem itemLabel="No " itemValue="#{false}" />
+                                    </p:selectOneRadio>
+                                </center>
+                            </p:fieldset>
+                            <center style="margin-top: 25px;">
+                                <p:commandButton value="Guardar datos" onclick="PF('obs').show()" rendered="#{turismoView.mostrarGuardarDatos}" styleClass="btnStyle" update="frmObs"/>
+                                <p:commandButton value="Imprimir" ajax="false" actionListener="#{turismoView.completarTarea()}" styleClass="btnStyle" update="frmObs"/>
+                            </center>
+                        </p:panel>
+                    
+                </p:tab>
+                
+                <!-- -->
+                
+                <p:tab title="Detalle trámite">
+                    <dialog:detalleTareas archivos="#{turismoView.processInstanceAllAttachments}"
+                                  observaciones="#{turismoView.ht.observacionesCollection}" />
+                </p:tab>
+            </p:tabView>
+        </h:form>
+        
+        <!-- -->
+        
+        <p:dialog id="dlgObs" widgetVar="obs" header="Permisos de Funcionamiento" appendTo="@(body)" modal="true" width="500" resizable="false" closable="true" closeOnEscape="true">
+            <h:form id="frmObs">
+                <p:panel id="pobs" header="Ingrese sus observaciones" style="width: 100%">
+                    
+                    <div align="center">
+                        <p:inputTextarea id="obsservacion" value="#{turismoView.entradas['obs'].observacion}" rows="4" style="width: 100%; text-transform: uppercase" required="true" placeholder="Las observaciones son obligatorias para continuar con el tramite"/>
+                        <br/>
+                        <p:commandButton id="btnValidar" value="Validar Requisitos" update=":frmMain" actionListener="#{turismoView.guardarDatos()}" oncomplete="PF('obs').hide()" style="color: #ffffff; background: #616161 !important; font-weight: bold; height: 30px"/>
+                    </div>
+                </p:panel>
+            </h:form>
+        </p:dialog>
+        
+        <!-- -->
+        
+        <p:dialog id="dlgEnte" widgetVar="enteDlg" header="Permisos de Funcionamiento" appendTo="@(body)" modal="true" width="80%" resizable="false" closable="true" closeOnEscape="true">
+            <h:form id="frmEntes">
+                <p:dataTable id="tdListEntes" paginator="true" lazy="true" rows="10" 
+                         rowsPerPageTemplate="10,30,50,100" scrollable="true"
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         value="#{turismoView.entesList}" var="user" style="width: 100%"
+                         emptyMessage="No se encontr&#243; ningún Item">
+                    <p:column headerText="C.I./R.U.C." style="text-align: center;" 
+                              filterBy="#{user.ciRuc}" filterStyle="width: 80%;" width="20%">
+                        <h:outputText value="#{user.ciRuc}" style="text-align: center; font-size: 12px"/>
+                    </p:column>
+                    <p:column headerText="Nombres" style="text-align: center" 
+                              filterBy="#{user.nombres}" filterStyle="width: 80%;" width="30%" >
+                        <h:outputText value="#{user.nombres}"/>
+                    </p:column>
+                    <p:column headerText="Apellidos" style="text-align: center" 
+                              filterBy="#{user.apellidos}" filterStyle="width: 80%;" width="30%">
+                        <h:outputText value="#{user.apellidos}"/>
+                    </p:column>   
+                    <p:column headerText="Razón Social" style="text-align: center" 
+                              filterBy="#{user.razonSocial}" filterStyle="width: 80%;" width="30%" >
+                        <h:outputText value="#{user.razonSocial}"/>
+                    </p:column> 
+                    <p:column headerText="Nombre Comercial" style="text-align: center" 
+                              filterBy="#{user.nombreComercial}" filterStyle="width: 80%;" width="30%" >
+                        <h:outputText value="#{user.nombreComercial}"/>
+                    </p:column> 
+                    <p:column headerText="Seleccionar" style="text-align: center;" width="20%">
+                        <p:commandButton icon="ui-icon-plusthick" style="height: 20px;" styleClass="btnStyle" update=":frmMain" onclick="PF('enteDlg').hide()" actionListener="#{turismoView.selectEnte(user)}" />                           
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </p:dialog>
+        
+    </ui:define>
+</ui:composition>

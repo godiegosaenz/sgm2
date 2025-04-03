@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="tituloCredito" language="groovy" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="8df3ae17-9c96-4ea4-b157-077d744a0146">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="96"/>
+	<parameter name="LOGO_URL" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[java.lang.System.getProperty("user.home") + "\\Documents\\NetBeansProjects\\sgm\\src\\main\\webapp\\css\\homeIconsImages\\logo.jpg"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ruta_firmas" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[java.lang.System.getProperty("user.home") + "\\Documents\\NetBeansProjects\\sgm\\src\\main\\webapp\\css\\firmas\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ID_TITULO" class="java.lang.Long"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[java.lang.System.getProperty("user.home") + "\\Documents\\NetBeansProjects\\sgm\\src\\main\\webapp\\reportes\\coactiva\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TRAMITE" class="java.lang.Long"/>
+	<parameter name="FORMATO_ACTUAL" class="java.lang.Boolean"/>
+	<queryString>
+		<![CDATA[select liq.num_liquidacion, liq.anio, liq.avaluo_municipal, liq.avaluo_construccion, liq.avaluo_solar, liq.fecha_ingreso, liq.total_pago,
+CASE WHEN en IS NOT NULL THEN case en.es_persona when true then coalesce(en.nombres,'')||' '||coalesce(en.apellidos,'') else en.razon_social end ELSE liq.nombre_comprador END as nombres,
+CASE WHEN re IS NULL THEN pre.sitio ELSE re.sector END as direccion,
+CASE WHEN re IS NULL THEN pre.reg_catastral || '-' || pre.id_predial || '-' || pq.descripcion ELSE re.codigo_catastral || ' - ' || re.parroquia END as cod_predial,
+CASE WHEN re IS NULL THEN pre.id ELSE re.id END as num_predio
+from sgm_financiero.ren_liquidacion as liq
+left join sgm_app.cat_ente as en on (en.id = liq.comprador)
+LEFT OUTER JOIN sgm_app.cat_predio_rustico as pre on (pre.id = liq.predio_rustico)
+LEFT OUTER JOIN sgm_app.emisiones_rurales_excel re ON re.id=liq.rural_excel
+LEFT OUTER JOIN sgm_app.cat_parroquia pq ON pq.id=pre.parroquia
+where liq.id = $P{ID_TITULO}]]>
+	</queryString>
+	<field name="num_liquidacion" class="java.lang.Long"/>
+	<field name="anio" class="java.lang.Integer"/>
+	<field name="avaluo_municipal" class="java.math.BigDecimal"/>
+	<field name="avaluo_construccion" class="java.math.BigDecimal"/>
+	<field name="avaluo_solar" class="java.math.BigDecimal"/>
+	<field name="fecha_ingreso" class="java.sql.Timestamp"/>
+	<field name="total_pago" class="java.math.BigDecimal"/>
+	<field name="nombres" class="java.lang.String"/>
+	<field name="direccion" class="java.lang.String"/>
+	<field name="cod_predial" class="java.lang.String"/>
+	<field name="num_predio" class="java.lang.Long"/>
+	<detail>
+		<band height="260" splitType="Stretch">
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="444" y="62" width="100" height="55" uuid="4cdce02e-722e-4bf8-9177-d5ada68c71ed"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<imageExpression><![CDATA[$P{ruta_firmas} + "Directorsgm_financiero.png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="444" y="117" width="100" height="10" uuid="9e620fcb-1dd5-4a3c-82f2-88799dc798ec"/>
+				<box>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[DIRECTOR FINANCIERO]]></text>
+			</staticText>
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="444" y="128" width="100" height="55" uuid="645aff5f-1d30-49ff-bee2-cc2de8d1d5aa"/>
+				<box>
+					<leftPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<imageExpression><![CDATA[$P{ruta_firmas} + "TesoreroMunicipal.png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="444" y="183" width="100" height="10" uuid="aa29c075-ce56-4ba7-8fb1-7a79a7f6256a"/>
+				<box>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[TESORERO MUNICIPAL]]></text>
+			</staticText>
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="444" y="193" width="100" height="55" uuid="d116e6be-1c7e-4609-b7df-ceaf258006fb"/>
+				<box>
+					<leftPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<imageExpression><![CDATA[$P{FORMATO_ACTUAL} ? $P{ruta_firmas} + "JefeRentas.png" : $P{ruta_firmas} + "JefeRentasAnterior.png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="444" y="248" width="100" height="10" uuid="d063c8fe-034f-4897-a648-09e91f44c96d"/>
+				<box>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[JEFE DE RENTAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="36" y="62" width="100" height="12" uuid="8e4767d5-2114-448a-9800-cdaaefe275f6"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[CONTRIBUYENTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="36" y="116" width="100" height="12" uuid="f707b994-96b0-4173-8006-a701e390d8e2"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[COD. PREDIAL:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="36" y="128" width="100" height="12" uuid="2f7394d0-f2bb-4ae6-9521-363088237063"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MAT. INMOBILIARIA:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="36" y="140" width="100" height="12" uuid="c2e896e8-c0aa-49e9-986d-a94e479085f9"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DIRECCION:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="36" y="179" width="190" height="11" backcolor="#CCCCCC" uuid="3e123e37-0a3d-47a6-9dd9-5b22e2046c9f"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[IMPUESTOS MUNICIPALES ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="251" y="179" width="190" height="11" backcolor="#CCCCCC" uuid="e66c8cb3-340a-4a6c-8187-03171e575551"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FONDOS AJENOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="36" y="152" width="125" height="12" uuid="a78db6a2-ba9c-45a1-b365-320a8aa25d76"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Avalúo Solar]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="176" y="152" width="125" height="12" uuid="43ea0a7d-5020-4a7d-9ed7-6e3c3b65d196"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Avalúo Construcción]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="316" y="152" width="125" height="12" uuid="95617deb-af0f-4235-90c4-617e9025ad6f"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Avalúo Propiedad]]></text>
+			</staticText>
+			<subreport>
+				<reportElement x="36" y="192" width="190" height="56" uuid="b57cc1bb-a313-4840-a848-3018d0ba7fb2"/>
+				<subreportParameter name="rubro_municipio">
+					<subreportParameterExpression><![CDATA[true]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="liquidacion">
+					<subreportParameterExpression><![CDATA[$P{ID_TITULO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "rp_urbano.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="251" y="192" width="190" height="56" uuid="1c68ef31-2ed9-4966-ab40-f4c9e15c20b9"/>
+				<subreportParameter name="rubro_municipio">
+					<subreportParameterExpression><![CDATA[false]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="liquidacion">
+					<subreportParameterExpression><![CDATA[$P{ID_TITULO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "rp_urbano.jasper"]]></subreportExpression>
+			</subreport>
+			<textField isBlankWhenNull="true">
+				<reportElement x="36" y="102" width="405" height="14" uuid="d714183c-2f6b-46f4-b77f-560585061a97"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["TITULO DE CREDITO - PREDIO RURAL # " + $F{num_liquidacion} + " - " + $F{anio}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement x="316" y="164" width="125" height="12" uuid="2bc4146e-8e9b-460d-b38c-a4a29d094020"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{avaluo_municipal}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement x="176" y="164" width="125" height="12" uuid="0c5a0a1e-9c3e-4ab2-af8f-90ee9712502a"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{avaluo_construccion}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement x="36" y="164" width="125" height="12" uuid="a0749e0c-8b21-49ae-a54d-bd9e27ded607"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{avaluo_solar}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="36" y="74" width="405" height="28" uuid="8f06cf4b-3cce-4e80-990f-e6460f44f435"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombres}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="136" y="116" width="305" height="12" uuid="d72952d3-3f30-4d05-8a13-5e9c8eb36570"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cod_predial}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="136" y="128" width="113" height="12" uuid="c01023c2-826e-401a-a6c9-dcf6d4a3cc1f"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{num_predio}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="136" y="140" width="305" height="12" uuid="b8cdf01a-1bb5-4d6d-925b-457683c81ac0"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{direccion}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="36" y="16" width="508" height="46" uuid="f2bb46d8-79bd-4f54-b41c-74bbc7337839"/>
+				<subreportParameter name="LOGO">
+					<subreportParameterExpression><![CDATA[$P{LOGO_URL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SUB_TITLE"/>
+				<subreportParameter name="LOGO2"/>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "titleReporte2.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="30">
+			<staticText>
+				<reportElement positionType="Float" x="40" y="3" width="103" height="12" uuid="38ee087e-5660-4484-a8dd-e06e40387d66"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA DE EMISIÓN:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="143" y="3" width="83" height="12" uuid="aad8e4b3-cd8d-4934-ae6c-bd90187b39df"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha_ingreso}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="251" y="3" width="39" height="12" uuid="b6d7350e-ddd9-4eb9-bd0e-73fc32bd7a2b"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL:]]></text>
+			</staticText>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="290" y="3" width="151" height="12" uuid="72771496-23d1-42a9-bac7-246dee10ebbb"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{total_pago}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement positionType="Float" x="39" y="19" width="508" height="1" uuid="b7da16a7-2969-4bcb-a8cf-38cb87a40eee"/>
+				<graphicElement>
+					<pen lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+		</band>
+	</detail>
+</jasperReport>

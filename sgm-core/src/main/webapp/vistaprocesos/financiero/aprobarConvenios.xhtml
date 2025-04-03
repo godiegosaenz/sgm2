@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../template/template.xhtml"
+                xmlns:poue="http://primefaces.org/ui/extensions"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" 
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:dlg="http://xmlns.jcp.org/jsf/composite/dialog">
+
+    <ui:define name="content">
+        <div class="ContainerIndent">
+            <center>
+                <h1>Convenios Procesados</h1>
+            </center>
+            <center>
+                <h:form id="frmConvenio" >
+
+                    <p:dataTable id="dtLiquidaciones" lazy="true" value="#{generarConvenioView.convenios}" style="width: 100%;"
+                                 var="c" rows="10" paginator="true" paginatorPosition="bottom" class="MarTop20" rowKey="#{c.id}"
+                                 currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 filterEvent="enter"  >
+                        <p:ajax event="rowSelect" listener="#{generarConvenioView.onRowSelect}" update="frmConvenio" />
+                        <p:ajax event="rowUnselect" listener="#{generarConvenioView.onRowUnselect}" update="frmConvenio" />
+                        <p:ajax event="rowSelectCheckbox" listener="#{generarConvenioView.onRowSelect}" update="frmConvenio" />
+                        <p:ajax event="rowUnselectCheckbox" listener="#{generarConvenioView.onRowUnselect}" update="frmConvenio" />
+                        <f:facet name="header">
+                            Convenios a Iniciar 
+                        </f:facet>
+                        <p:column headerText="Nro convenio" width="10%;"  style="text-align: center;">
+                            <h:outputText value="#{c.id}"/>
+                        </p:column>
+                        <p:column headerText="Deuda inicial" width="10%;">
+                            <h:outputText value="#{c.deudaInicial}" />
+                        </p:column>
+                        <p:column headerText="Estado" width="50%;">
+                            <h:outputText value="#{c.observacion}" />
+                        </p:column>
+                        <p:column headerText="Identificacion" filterBy="#{c.contribuyente.ciRuc}" width="15%;" filterStyle="width:70%;" class="TexAlCenter">
+                            <h:outputText value="#{c.contribuyente.ciRuc}"/>
+                        </p:column>
+                        <p:column headerText="Contribuyente" width="60%;" filterBy="#{c.nombresCompletos}" filterStyle="width:70%;" >
+                            <h:outputText value="#{c.contribuyente.nombres} #{c.contribuyente.apellidos}" rendered="#{c.contribuyente.esPersona}" style="text-transform: uppercase; padding-left: 5px;"/>
+                            <h:outputText value="#{c.contribuyente.razonSocial}" rendered="#{!c.contribuyente.esPersona}" style="text-transform: uppercase; ; padding-left: 5px;"/>
+                        </p:column>
+
+                        <p:column headerText="Acciones" width="25%;" style="text-align: center;">
+                            <p:commandLink title="CANCELAR CONVENIO" styleClass="btnStyle" actionListener="#{generarConvenioView.aprobarConvenio(c, false)}" update="frmConvenio" disabled="#{generarConvenioView.deshabilitarOpcionCancelar(c)}">
+                                <p:graphicImage value="/css/homeIconsImages/delete.png"  height="20" width="20"/>
+                                <p:confirm header="Confirmación" message="Esta Seguro de CANCELAR el convenio ?" icon="ui-icon-alert" />
+                            </p:commandLink>
+                            <p:commandLink actionListener="#{generarConvenioView.imprimirConvenioCuotaInicial(c)}" title="DETALLE CONVENIO">
+                                <p:graphicImage value="/css/homeIconsImages/reporte.png" height="16"/>
+                            </p:commandLink>
+                            <p:spacer width="2"/>
+                            <p:commandLink title="EDITAR CONVENIO" styleClass="btnStyle" actionListener="#{generarConvenioView.openDlgConvenio(c)}" >
+                                <p:graphicImage value="/css/homeIconsImages/edicion.png"  height="20" width="20"/>
+                                <p:ajax event="dialogReturn" listener="#{generarConvenioView.procesarConvenio}"  update="frmConvenio"  />
+                            </p:commandLink>
+                            <p:spacer width="2"/>
+
+                            <p:commandLink title="PAGO CUOTA INICIAL" actionListener="#{generarConvenioView.aprobarConvenio(c, true)}" update="frmConvenio" styleClass="btnStyle" >
+                                <p:graphicImage value="/css/homeIconsImages/exoneracion.png" height="20" width="20"/>
+                                <p:confirm header="Confirmación" message="Esta Seguro de GENERAR EL PAGO INICIAL DEL CONVENIO?" icon="ui-icon-alert" />
+                            </p:commandLink>
+                            <p:commandLink title="APROBAR CONVENIO" styleClass="btnStyle" actionListener="#{generarConvenioView.activarConvenio(c, true)}" update="frmTexto" oncomplete="PF('dlgMemoConvenio').show()">
+                                <p:graphicImage value="/css/homeIconsImages/ir.png" height="20" width="20"/>
+                                <p:confirm header="Confirmación" message="Esta Seguro de APROBAR el convenio ?" icon="ui-icon-alert"/>
+                            </p:commandLink>
+                            <p:commandLink actionListener="#{generarConvenioView.generarMemoConvenio(c)}" title="CONTRATO CONVENIO" disabled="#{generarConvenioView.deshabilitarOpcionMemo(c)}">
+                                <p:graphicImage value="/css/homeIconsImages/reporte.png" height="16"/>
+                            </p:commandLink>
+                        </p:column>
+                    </p:dataTable>
+
+                </h:form>
+            </center>
+        </div>
+        <!--Dialogo de Confirmacion-->
+        <p:dialog widgetVar="dlgMemoConvenio" header="Texto" height="70%" position="center"
+                  width="80%" responsive="true" closable="true" closeOnEscape="true" resizable="true"
+                  modal="true" appendTo="@(body)" >
+
+            <h:form id="frmTexto">
+                <center>
+                    <p:editor widgetVar="editor2" value="#{generarConvenioView.observaciones}" height="300" style="margin-bottom:10px" >
+
+                    </p:editor>
+                </center>
+                <center style="float: bottom; ">
+                    <p:commandButton value="Guardar" actionListener="#{generarConvenioView.generarMemoConvenio(null)}" update="frmConvenio" oncomplete="PF('dlgMemoConvenio').hide();"/>
+                </center> 
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

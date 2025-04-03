@@ -1,0 +1,140 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+    <ui:define name="metada">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{revisarFolios.doPreRenderView()}" />
+        </f:metadata>
+    </ui:define>
+    <ui:define name="top"><h3>Revisar Folios</h3></ui:define>
+    <ui:define name="content">
+        <h:form  id="formFolios">
+            <p:fieldset legend="Criterio de Busqueda">
+                <p:panelGrid style="margin: 0 auto;" >
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Libro: "/>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu value="#{revisarFolios.libro}" converter="entityConverter">
+                                <f:selectItem itemLabel="Seleccionar" itemValue="#{null}" />  
+                                <f:selectItems value="#{revisarFolios.regLibroList}" var="libro" itemLabel="#{libro.nombre}" itemValue="#{libro}"/>  
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="F. Inscripción Desde: "/>
+                        </p:column>
+                        <p:column>
+                            <p:calendar value="#{revisarFolios.inscripcionDesde}" pattern="dd/MM/yyyy" placeholder="dd/MM/yyyy"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="F. Inscripción Hasta: "/>
+                        </p:column>
+                        <p:column>
+                            <p:calendar value="#{revisarFolios.inscripcionHasta}" pattern="dd/MM/yyyy" placeholder="dd/MM/yyyy"/>
+                        </p:column>
+                        <p:column>
+                            <p:commandButton value="Consultar" actionListener="#{revisarFolios.consultarFolios()}" icon="ui-icon-search" styleClass="btnStyle" update="formFolios"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:fieldset>
+            <br/>
+            <p:dataTable id="dtFolios" reflow="true" paginator="true" lazy="true" rows="30" rowsPerPageTemplate="30,50,100" 
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         value="#{revisarFolios.foliosLazy}" var="folio" emptyMessage="No se encontró ningún Item."
+                         style="text-align: center;" filterEvent="enter" resizableColumns="true">
+                <p:column headerText="Acto" filterBy="#{folio.acto.nombre}" filterStyle="width: 95%">
+                    <h:outputText  value="#{folio.acto.nombre}"/>
+                </p:column>
+                <p:column headerText="Inscripcion" filterBy="#{folio.numInscripcion}" filterStyle="width: 95%"
+                          sortBy="#{folio.numInscripcion}" width="100">
+                    <h:outputText value="#{folio.numInscripcion}"/>
+                </p:column>
+                <p:column headerText="Repertorio"  filterBy="#{folio.numRepertorio}" filterStyle="width: 95%"
+                          sortBy="#{folio.numRepertorio}" width="100">
+                    <h:outputText value="#{folio.numRepertorio}"/>
+                </p:column> 
+                <p:column headerText="Folio Inicio" filterBy="#{folio.folioInicio}" sortBy="#{folio.folioInicio}" width="100"
+                          filterStyle="width: 90%">
+                    <h:outputText value="#{folio.folioInicio}"/>
+                </p:column>
+                <p:column headerText="Folio Fin" filterBy="#{folio.folioFin}" sortBy="#{folio.folioFin}" width="100"
+                          filterStyle="width: 90%">
+                    <h:outputText value="#{folio.folioFin}"/>
+                </p:column>
+                <p:column headerText="Verificador" width="100">
+                    <h:outputText value="#{folio.numPaginaRazon+folio.numPaginaInscripcion+folio.numPaginasContabilizada+folio.folioAnterior-folio.folioFin}"/>
+                </p:column>
+                <p:column headerText="Fec.Inscripcion" sortBy="#{folio.fechaInscripcion}" width="100">
+                    <h:outputText value="#{folio.fechaInscripcion}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                    </h:outputText>
+                </p:column>
+                <p:column headerText="Usuario" width="100">
+                    <h:outputText value="#{folio.userCreador.usuario}"/>
+                </p:column>
+                <p:column headerText="Selec." width="50">
+                    <p:commandLink actionListener="#{revisarFolios.showDlgFolioSelect(folio)}" update="formMovRegSelec">
+                        <p:graphicImage value="/css/homeIconsImages/abrir.png" height="16"/>   
+                    </p:commandLink>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+        
+        <p:dialog id="dlgMovimientoRegistral" header="Movimiento Registral Seleccionado" widgetVar="dlgMovRegSelec" 
+                  resizable="false" modal="true" closeOnEscape="true" width="800" height="550">
+            <h:form id="formMovRegSelec">
+                <p:fieldset legend="Datos de la Inscripcion">
+                    <p:panelGrid styleClass="noBorder" style="width: 100%;font-size: 12px;font-weight: bolder;">
+                        <p:row>
+                            <p:column>
+                                Num.Inscrip.:
+                                <p:outputLabel value="#{revisarFolios.movimiento.numInscripcion}"/>
+                            </p:column>
+                            <p:column>
+                                Fecha Inscrip.:
+                                <p:outputLabel value="#{revisarFolios.movimiento.fechaInscripcion}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </p:outputLabel>
+                            </p:column>
+                            <p:column>
+                                Num.Rep.: 
+                                <p:outputLabel  value="#{revisarFolios.movimiento.numRepertorio}"/>
+                            </p:column>
+                        </p:row>                  
+                        <p:row>
+                            <p:column>
+                                Libro: 
+                                <p:outputLabel value="#{revisarFolios.movimiento.libro.nombre}"/>
+                            </p:column>
+                            <p:column colspan="2">
+                                Acto: 
+                                <p:outputLabel value="#{revisarFolios.movimiento.acto.nombre}"/>
+                            </p:column>
+                        </p:row>                  
+                        <p:row>
+                            <p:column>
+                                Tomo: 
+                                <p:outputLabel value="#{revisarFolios.movimiento.numTomo}"/>
+                            </p:column>
+                            <p:column>
+                                Folio Inicio: 
+                                <p:outputLabel value="#{revisarFolios.movimiento.folioInicio}"/>
+                            </p:column>
+                            <p:column>
+                                Folio Fin: 
+                                <p:outputLabel value="#{revisarFolios.movimiento.folioFin}"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:fieldset>                
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

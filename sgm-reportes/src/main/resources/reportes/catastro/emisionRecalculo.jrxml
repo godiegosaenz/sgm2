@@ -1,0 +1,691 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="emisionRecalculo" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="425b0c1f-f2cf-4f3d-949e-d8b35edd7cd6">
+	<property name="ireport.zoom" value="1.1269722013523664"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="logo" class="java.lang.String"/>
+	<parameter name="id" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT T.NUM_PREDIO,
+T.LIQUIDACION,
+RP.FECHA_PAGO,
+T.AREA_TOTAL,
+T.AVALUO_SOLAR,
+T.AVALUO_CONSTRUCCION,
+T.AVALUO_MUNICIPAL,
+T.IP_LIQ,
+T.TASA_MANT_LIQ,
+T.DESCUENTO_LIQ,
+T.EMISION_LIQ,
+T.BOMBEROS_LIQ,
+T.MEJORAS_LIQ,
+T.SOL_NEDIF_LIQ,
+RL.NOMBRE_COMPRADOR,
+T.AREA_CALC,
+T.AVAL_SOL_CALC,
+T.AVAL_EDIF_CALC,
+T.AVAL_MUN_CALC,
+T.IP_CALC,
+T.EMISION_CALC,
+T.SOL_NEDIF_CALC,
+T.BOMBEROS_CALC,
+T.TASA_MANT_CALC,
+    (SELECT razon_social from sgm_application.empresa) AS nombre_empresa
+FROM sgm_historico.COMPARATIVO_EMISION T
+INNER JOIN sgm_financiero.REN_LIQUIDACION RL ON RL.ID = T.LIQUIDACION
+INNER JOIN sgm_financiero.REN_PAGO RP ON RP.LIQUIDACION = T.LIQUIDACION
+WHERE T.ID = $P{id}]]>
+	</queryString>
+	<field name="num_predio" class="java.lang.Long"/>
+	<field name="liquidacion" class="java.lang.Long"/>
+	<field name="fecha_pago" class="java.sql.Timestamp"/>
+	<field name="area_total" class="java.math.BigDecimal"/>
+	<field name="avaluo_solar" class="java.math.BigDecimal"/>
+	<field name="avaluo_construccion" class="java.math.BigDecimal"/>
+	<field name="avaluo_municipal" class="java.math.BigDecimal"/>
+	<field name="ip_liq" class="java.math.BigDecimal"/>
+	<field name="tasa_mant_liq" class="java.math.BigDecimal"/>
+	<field name="descuento_liq" class="java.math.BigDecimal"/>
+	<field name="emision_liq" class="java.math.BigDecimal"/>
+	<field name="bomberos_liq" class="java.math.BigDecimal"/>
+	<field name="mejoras_liq" class="java.math.BigDecimal"/>
+	<field name="sol_nedif_liq" class="java.math.BigDecimal"/>
+	<field name="nombre_comprador" class="java.lang.String"/>
+	<field name="area_calc" class="java.math.BigDecimal"/>
+	<field name="aval_sol_calc" class="java.math.BigDecimal"/>
+	<field name="aval_edif_calc" class="java.math.BigDecimal"/>
+	<field name="aval_mun_calc" class="java.math.BigDecimal"/>
+	<field name="ip_calc" class="java.math.BigDecimal"/>
+	<field name="emision_calc" class="java.math.BigDecimal"/>
+	<field name="sol_nedif_calc" class="java.math.BigDecimal"/>
+	<field name="bomberos_calc" class="java.math.BigDecimal"/>
+	<field name="tasa_mant_calc" class="java.math.BigDecimal"/>
+	<field name="nombre_empresa" class="java.lang.String"/>
+	<variable name="vliquidacion" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{ip_liq}+$F{tasa_mant_liq}+$F{emision_liq}+$F{bomberos_liq}+$F{mejoras_liq}+$F{sol_nedif_liq}]]></variableExpression>
+	</variable>
+	<variable name="vcliquidacion" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{ip_calc}+$F{emision_calc}+$F{sol_nedif_calc}+$F{bomberos_calc}+$F{tasa_mant_calc}+$F{mejoras_liq}]]></variableExpression>
+	</variable>
+	<variable name="vtotalliquidacion" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$V{vliquidacion}-$F{descuento_liq}]]></variableExpression>
+	</variable>
+	<variable name="vtotalcalculado" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$V{vcliquidacion}-$F{descuento_liq}]]></variableExpression>
+	</variable>
+	<variable name="vgeneral" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$V{vtotalliquidacion}-$V{vtotalcalculado}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="82" splitType="Stretch">
+			<staticText>
+				<reportElement x="157" y="47" width="348" height="16" uuid="7cd74a07-f6fb-4ff0-9810-9d3bcecf4ee7"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Direccion de Avaluos y Catastro]]></text>
+			</staticText>
+			<image onErrorType="Blank">
+				<reportElement x="12" y="0" width="116" height="82" uuid="4cb68d19-752e-46cc-8deb-9e6deb9854b9"/>
+				<imageExpression><![CDATA[$P{logo}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="128" y="1" width="427" height="30" uuid="6a3bfc00-3b53-4f93-bae2-09416741459f"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_empresa}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="86" splitType="Stretch">
+			<staticText>
+				<reportElement x="11" y="0" width="286" height="26" uuid="e1c781e8-a88e-4d8c-9959-d4d2ec4138a9"/>
+				<textElement>
+					<font size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Matrícula Inmobiliaria No:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="11" y="26" width="286" height="20" uuid="5a3aedf6-2247-4079-947c-4a9ca0128e39"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha recaudación:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="297" y="0" width="124" height="26" uuid="05224f61-b8f0-4f26-ae6a-67493675670e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{num_predio}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="297" y="26" width="124" height="20" uuid="957c0ed0-00f0-4e40-8026-f6b74ef970cb"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{fecha_pago}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="11" y="47" width="286" height="39" uuid="9071d78a-8850-488c-be5a-d380e878fc06"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Contriuyente :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="297" y="47" width="258" height="39" uuid="e59ba8b8-d69a-4e5b-ae14-f932d990046f"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{nombre_comprador}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="49" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="11" y="19" width="336" height="30" forecolor="#000000" backcolor="#CCCCCC" uuid="6a5fafec-0204-4001-8845-c5fb8d94c714"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valores recaudados con la 3ra. Reforma]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="362" y="19" width="193" height="30" forecolor="#000000" backcolor="#CCCCCC" uuid="fb53d4ff-96f3-4fa4-8a07-2b53b200fe96"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valores calculados 4ta. Reforma]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="351" splitType="Stretch">
+			<staticText>
+				<reportElement x="11" y="1" width="199" height="20" uuid="be62288e-2dba-4078-9d02-fb3e872d6a1c"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[ Impuesto predial urbano :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="11" y="21" width="199" height="21" uuid="dc010b91-089e-405c-b949-4fd7810aaa76"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[ Tasa de mantenimiento catastral:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="11" y="42" width="199" height="21" uuid="0bf3b031-a9a0-45b8-b887-9d78b581b56a"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[ Contribución especial de mejoras:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="11" y="63" width="199" height="21" uuid="1aecf130-55d4-4b55-ab20-54d4702550bf"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[ Emisión:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="11" y="84" width="199" height="25" uuid="ab39f8b7-19eb-4e56-9d0e-da8b99c439f9"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[ Recargo por solar no edificado:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="11" y="109" width="199" height="19" uuid="4166d616-65d4-4dff-a301-bd18aeed7b8a"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[ Cuerpo de bomberos:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="11" y="153" width="199" height="20" uuid="6d33e567-75ee-4ff4-b38a-aae1b543faa4"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ Valor de Liquidación]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="11" y="173" width="199" height="19" uuid="a59909f9-5cda-4aaf-b56f-fe83ed6931dd"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ (-) Descuento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="11" y="192" width="199" height="21" uuid="046d10df-69e2-41b9-a6d8-fb2e28dab07f"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ Valor Pagado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="249" width="198" height="21" uuid="65814d06-4f56-4d63-b6bf-f5c811c74ca8"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ Avaluo solar]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="270" width="198" height="19" uuid="b74045fa-fd5a-47d9-871f-1f558d7f05ba"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ Avaluo construccion]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="289" width="198" height="20" uuid="6c87d616-915f-4873-9236-5e96ce1f0758"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ Avaluo municipal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="11" y="221" width="544" height="25" forecolor="#000000" backcolor="#CCCCCC" uuid="60c523c7-2d61-4e1a-9624-3772a0138c92"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AVALUOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="320" width="350" height="31" uuid="7623c7ea-1646-4b8d-b2b0-d3fb13b4c385"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Saldo a favor del contribuyente =====>                         $]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="210" y="249" width="137" height="21" uuid="59944fdb-92a3-41dd-9cab-9a71c6e9c115"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{avaluo_solar}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="210" y="270" width="137" height="19" uuid="c7cd1d51-877b-4846-8359-47479b5b9c1f"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{avaluo_construccion}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="210" y="289" width="137" height="20" uuid="2712423e-48b7-4ffe-a82d-4739602a3bc6"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{avaluo_municipal}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="210" y="1" width="137" height="20" uuid="78f38c4f-7bf7-4572-a749-602992871a90"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ip_liq}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="210" y="21" width="137" height="21" uuid="ad3b775e-a26c-4031-ace6-d45bf9dec6f2"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{tasa_mant_liq}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="210" y="42" width="137" height="21" uuid="719be53a-4e95-4fd9-a556-059f6a119461"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{mejoras_liq}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="210" y="63" width="137" height="21" uuid="b8ccb864-04a8-477a-bd39-48f56fc8d81a"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{emision_liq}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="210" y="84" width="137" height="25" uuid="462f2d07-0c5a-4fd4-80f4-ce4705c63630"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{sol_nedif_liq}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="210" y="109" width="137" height="19" uuid="b3a85a65-d8d7-404a-a27f-d274264793f2"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{bomberos_liq}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="210" y="173" width="137" height="20" uuid="67748f4c-d51b-4f9e-8ea5-9e4224243098"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{descuento_liq}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="362" y="249" width="193" height="20" uuid="078bf75f-e1b4-419b-90b1-181140cfc59f"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{aval_sol_calc}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="362" y="269" width="193" height="20" uuid="683d2274-e4e6-45d2-8dc1-85bf8451cf38"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{aval_edif_calc}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="362" y="289" width="193" height="20" uuid="4bb85ba7-918d-42e8-8fc8-d112e07e6f01"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{aval_mun_calc}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="362" y="2" width="193" height="20" uuid="7e3735ce-1caa-4f09-a82a-635b49d857f2"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ip_calc}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="362" y="22" width="193" height="20" uuid="0659f10b-a6d4-4e32-9b61-e2069ba11d11"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{tasa_mant_calc}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="362" y="63" width="193" height="20" uuid="1befe6b7-062a-470e-baa6-47f9e2d97fd2"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{emision_calc}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="362" y="42" width="193" height="21" uuid="a95d0d8d-fa67-463a-af46-cf5890702d21"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{mejoras_liq}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="362" y="83" width="193" height="26" uuid="e968a6f5-40b3-4acb-be52-d8237c454281"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{sol_nedif_calc}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="362" y="109" width="193" height="20" uuid="854fbe6c-cc7d-48c2-908a-8abd361af88c"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{bomberos_calc}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="362" y="173" width="193" height="20" uuid="bfcf720f-8f77-4131-9845-f7be1fdf8a1e"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{descuento_liq}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="210" y="153" width="137" height="20" uuid="3ec7340e-38fb-494c-89b4-b0298072d660"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{vliquidacion}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="362" y="153" width="193" height="20" uuid="400bda0f-8638-4627-aa6f-6d7e00de61e2"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{vcliquidacion}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="210" y="193" width="137" height="20" uuid="ea566015-eb10-4e5c-b9da-354ff18b3b69"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{vtotalliquidacion}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="362" y="193" width="193" height="20" uuid="8056b309-9dad-41c7-8d29-81f8929f5ac1"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{vtotalcalculado}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="362" y="320" width="193" height="31" uuid="73f91ea4-34f7-4b0e-90dc-3f7557d02ae6"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{vgeneral}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="26" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="56" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="15" splitType="Stretch"/>
+	</summary>
+</jasperReport>

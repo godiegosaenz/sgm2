@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="solicitudesPorDepartamento" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="aa5c8dbd-b918-4282-9ec6-d4402881b920">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="53"/>
+	<parameter name="LOGO" class="java.lang.String"/>
+	<parameter name="NOMBRE_EMPRESA" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="solicitud.fechaInconveniente" class="java.util.Date"/>
+	<field name="solicitud.descripcionInconveniente" class="java.lang.String"/>
+	<field name="solicitante" class="java.lang.String"/>
+	<field name="solicitud.fechaCreacion" class="java.util.Date"/>
+	<field name="solicitud.tipoServicio.nombre" class="java.lang.String"/>
+	<field name="solicitud.tramite.id" class="java.lang.Long"/>
+	<field name="asignado" class="java.lang.String"/>
+	<field name="tarea" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="0" y="0" width="100" height="79" uuid="f6d74a53-47df-4db9-887b-82f1592e88a6"/>
+				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="100" y="0" width="702" height="79" uuid="dd5b7001-36dc-4b81-903d-d021953a6fe2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{NOMBRE_EMPRESA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="24" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="28" splitType="Stretch">
+			<staticText>
+				<reportElement x="42" y="0" width="68" height="28" uuid="7914c85a-76b5-4f3c-ab09-3081fe6f40e1"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom"/>
+				<text><![CDATA[Fecha]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="110" y="0" width="89" height="28" uuid="44d28408-e76d-4748-b2ed-147d725a12e2"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom"/>
+				<text><![CDATA[Solicitante]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="199" y="0" width="141" height="28" uuid="628f2109-d5d4-4340-8aa0-47dbd33b290b"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom"/>
+				<text><![CDATA[Tipo Servicio]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="42" height="28" uuid="74bdb914-7cc1-47dd-ab41-60b0d11015c6"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom"/>
+				<text><![CDATA[Tramite]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="507" y="0" width="155" height="28" uuid="34ebc402-d707-4d07-8c89-81d9d8e0f01e"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom"/>
+				<text><![CDATA[Asignado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="662" y="0" width="140" height="28" uuid="f4592ac3-62bf-42bf-a5ec-196768e8b82c"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom"/>
+				<text><![CDATA[Tarea]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="340" y="0" width="167" height="28" uuid="4c7094bf-f87a-49d1-a918-7b1d97564bf0"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom"/>
+				<text><![CDATA[Descripcion]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="42" y="0" width="68" height="20" uuid="25cba380-e5b3-4738-a03a-23f18916d6b9"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{solicitud.fechaCreacion}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="110" y="0" width="89" height="20" uuid="08a1b08a-6f67-4b4c-a208-31c8553fc4c1"/>
+				<textFieldExpression><![CDATA[$F{solicitante}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="199" y="0" width="141" height="20" uuid="2670fa5a-90de-44d4-a35e-0bccf7a8b86f"/>
+				<textFieldExpression><![CDATA[$F{solicitud.tipoServicio.nombre}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="340" y="0" width="167" height="20" uuid="3d4ae1de-aa24-482b-a7b2-2af59b221d4c"/>
+				<textFieldExpression><![CDATA[$F{solicitud.descripcionInconveniente}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="42" height="20" uuid="4437028c-25b7-4382-8c56-34a8cac342ce"/>
+				<textFieldExpression><![CDATA[$F{solicitud.tramite.id}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="507" y="0" width="155" height="20" uuid="06ae55c2-6ee3-4a77-80f8-00a0f091c206"/>
+				<textFieldExpression><![CDATA[$F{asignado}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="662" y="0" width="140" height="20" uuid="26364d32-bfc0-45af-9ed9-5ea312f2ed9a"/>
+				<textFieldExpression><![CDATA[$F{tarea}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

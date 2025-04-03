@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://java.sun.com/jsf/html">
+    <!-- INTERFACE -->
+    <cc:interface componentType="seccionesFicha" >
+        <cc:attribute name="headerDialog"/>
+        <cc:attribute name="escritura" type="com.origami.sgm.entities.CatEscritura" required="true"/>
+        <cc:attribute name="escrituraAnterior" type="com.origami.sgm.entities.CatEscritura" required="true"/>
+    </cc:interface>
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <h:form id="frmSeccion4">
+            <p:tab id="s7" title="7. Grafico y linderos del predio">
+                <h:form id="frmLinderos">
+                    <p:fieldset legend="Linderos Prediales" toggleable="true">
+                        <h:panelGrid id="pngSup1" columns="2" style="width: 100%">
+                            <h:panelGroup layout="block">
+                                <p:outputLabel value="Superior:" styleClass="DispBlock Wid100"/>
+                                <p:inputText value="#{cc.attrs.escritura.lindSuperior}"/>
+                            </h:panelGroup>
+                            <h:panelGroup layout="block">
+                                <p:outputLabel value="Con:" styleClass="DispBlock Wid100"/>
+                                <p:inputText value="#{cc.attrs.escritura.lindPredioSuperior.areaSolar}" rendered="#{cc.attrs.escritura.lindPredioSuperior != null}"/>
+                                <p:inputText value="#{cc.attrs.escritura.lindSuperiorCon}" rendered="#{cc.attrs.escritura.lindPredioSuperior == null}" />
+                            </h:panelGroup>
+                            <h:panelGroup layout="block">
+                                <p:outputLabel value="Inferior:" styleClass="DispBlock Wid100"/>
+                                <p:inputText value="#{cc.attrs.escritura.lindInferior}"/>
+                            </h:panelGroup>
+                            <h:panelGroup layout="block">
+                                <p:outputLabel value="Con:" styleClass="DispBlock Wid100"/>
+                                <p:inputText value="#{cc.attrs.escritura.lindPredioInferior.areaSolar}" rendered="#{cc.attrs.escritura.lindPredioInferior != null}"/>
+                                <p:inputText value="#{cc.attrs.escritura.lindInferiorCon}" rendered="#{cc.attrs.escritura.lindPredioInferior == null}" />
+                            </h:panelGroup>
+                            <h:panelGroup layout="block">
+                                <p:outputLabel value="Norte:" styleClass="DispBlock Wid100"/>
+                                <p:inputText value="#{cc.attrs.escritura.lindEscrNorte}"/>
+                            </h:panelGroup>
+                            <h:panelGroup layout="block">
+                                <p:outputLabel value="Con:" styleClass="DispBlock Wid100"/>
+                                <p:inputText value="#{cc.attrs.escritura.lindPredioNorte.areaSolar}" rendered="#{cc.attrs.escritura.lindPredioNorte != null}"/>
+                                <p:inputText value="#{cc.attrs.escritura.lindEscrNorteCon}" rendered="#{cc.attrs.escritura.lindPredioNorte == null}" />
+                            </h:panelGroup>
+
+                            <h:panelGroup layout="block">
+                                <p:outputLabel value="Sur:" styleClass="DispBlock Wid100"/>
+                                <p:inputText value="#{cc.attrs.escritura.lindEscrSur}"/>
+                            </h:panelGroup>
+                            <h:panelGroup layout="block">
+                                <p:outputLabel value="Con:" styleClass="DispBlock Wid100"/>
+                                <p:inputText value="#{cc.attrs.escritura.lindPredioSur.areaSolar}" rendered="#{cc.attrs.escritura.lindPredioSur != null}"/>
+                                <p:inputText value="#{cc.attrs.escritura.lindEscrSurCon}" rendered="#{cc.attrs.escritura.lindPredioSur == null}" />
+                            </h:panelGroup>
+
+                            <h:panelGroup layout="block">
+                                <p:outputLabel value="Este:" styleClass="DispBlock Wid100"/>
+                                <p:inputText value="#{cc.attrs.escritura.lindEscrEste}"/>
+                            </h:panelGroup>
+                            <h:panelGroup layout="block">
+                                <p:outputLabel value="Con:" styleClass="DispBlock Wid100"/>
+                                <p:inputText value="#{cc.attrs.escritura.lindPredioEste.areaSolar}" rendered="#{cc.attrs.escritura.lindPredioEste != null}"/>
+                                <p:inputText value="#{cc.attrs.escritura.lindEscrEsteCon}" rendered="#{cc.attrs.escritura.lindPredioEste == null}" />
+                            </h:panelGroup>
+
+                            <h:panelGroup layout="block">
+                                <p:outputLabel value="Oeste:" styleClass="DispBlock Wid100"/>
+                                <p:inputText value="#{cc.attrs.escritura.lindEscrOeste}"/>
+                            </h:panelGroup>
+                            <h:panelGroup layout="block">
+                                <p:outputLabel value="Con:" styleClass="DispBlock Wid100"/>
+                                <p:inputText value="#{cc.attrs.escritura.lindPredioOeste.areaSolar}" rendered="#{cc.attrs.escritura.lindPredioOeste != null}"/>
+                                <p:inputText value="#{cc.attrs.escritura.lindEscrOesteCon}" rendered="#{cc.attrs.escritura.lindPredioOeste == null}" />
+                            </h:panelGroup>
+                        </h:panelGrid>
+                    </p:fieldset>
+                </h:form>
+            </p:tab>
+        </h:form>
+    </cc:implementation>
+</html>

@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+    
+    <ui:define name="top">
+        <p:panelGrid styleClass="noBorder" columns="4" style="width: 100%;font-size: 14px;">
+            <p:outputLabel value="Responsable: #{editarFotosViewIF.nomResponsable}" style="font-weight: bolder;color: #005f9c"/>
+        </p:panelGrid>
+    </ui:define>
+    <ui:define name="content">
+        <h:form id="frmMain">
+
+            
+            <p:panel id="pnlDP2" style="width: 100%;" header="Fachada Frontal">
+                <p:panelGrid columns="#{editarFotosViewIF.cont2}">
+                    <p:graphicImage value="#{editarFotosViewIF.f4}" rendered="#{editarFotosViewIF.f4!=null}" height="150px" width="150px"/>    
+                    <p:graphicImage value="#{editarFotosViewIF.f5}" rendered="#{editarFotosViewIF.f5!=null}" height="150px" width="150px"/>   
+                    <p:graphicImage value="#{editarFotosViewIF.f6}" rendered="#{editarFotosViewIF.f6!=null}" height="150px" width="150px"/>   
+                    <p:commandLink style="float: right" actionListener="#{editarFotosViewIF.subirFachadaFrontal()}">
+                        <f:attribute name="tipoFoto" value="Fachada_Frontal" />
+                        <p:graphicImage value="/css/homeIconsImages/agregarFotos.png" height="150px" width="150px"/>   
+                    </p:commandLink>
+                    <p:column rendered="#{editarFotosViewIF.f4!=null}"><center><p:commandLink value=" Eliminar" actionListener="#{editarFotosViewIF.eliminarFachadaFrontal(1)}"/></center></p:column>
+                    <p:column rendered="#{editarFotosViewIF.f5!=null}"><center><p:commandLink value=" Eliminar" actionListener="#{editarFotosViewIF.eliminarFachadaFrontal(2)}"/></center></p:column>
+                    <p:column rendered="#{editarFotosViewIF.f6!=null}"><center><p:commandLink value=" Eliminar" actionListener="#{editarFotosViewIF.eliminarFachadaFrontal(3)}"/></center></p:column>
+                </p:panelGrid>
+                
+            </p:panel>
+            
+            <p:panel id="pnlDP3" style="width: 100%;" header="Fachada Izquierda">
+                <p:panelGrid columns="#{editarFotosViewIF.cont3}">
+                    <p:graphicImage value="#{editarFotosViewIF.f7}" rendered="#{editarFotosViewIF.f7!=null}" height="150px" width="150px"/>     
+                    <p:graphicImage value="#{editarFotosViewIF.f8}" rendered="#{editarFotosViewIF.f8!=null}" height="150px" width="150px"/>   
+                    <p:graphicImage value="#{editarFotosViewIF.f9}" rendered="#{editarFotosViewIF.f9!=null}" height="150px" width="150px"/>   
+                    <p:commandLink style="float: right"  actionListener="#{editarFotosViewIF.subirFachadaIzquierda()}">
+                        <f:attribute name="tipoFoto" value="Fachada_Izquierda" />
+                        <p:graphicImage value="/css/homeIconsImages/agregarFotos.png" height="150px" width="150px"/>   
+                    </p:commandLink>
+                    <p:column rendered="#{editarFotosViewIF.f7!=null}"><center><p:commandLink value=" Eliminar" actionListener="#{editarFotosViewIF.eliminarFachadaIzquierda(1)}"/></center></p:column>
+                    <p:column rendered="#{editarFotosViewIF.f8!=null}"><center><p:commandLink value=" Eliminar" actionListener="#{editarFotosViewIF.eliminarFachadaIzquierda(2)}"/></center></p:column>
+                    <p:column rendered="#{editarFotosViewIF.f9!=null}"><center><p:commandLink value=" Eliminar" actionListener="#{editarFotosViewIF.eliminarFachadaIzquierda(3)}"/></center></p:column>
+                </p:panelGrid>
+
+            </p:panel>
+
+            <p:panel id="pnlDP4" style="width: 100%;" header="Fachada Derecha">
+                <p:panelGrid columns="#{editarFotosViewIF.cont4}">
+                    <p:graphicImage value="#{editarFotosViewIF.f10}" rendered="#{editarFotosViewIF.f10!=null}" height="150px" width="150px"/> 
+                    <p:graphicImage value="#{editarFotosViewIF.f11}" rendered="#{editarFotosViewIF.f11!=null}" height="150px" width="150px"/>   
+                    <p:graphicImage value="#{editarFotosViewIF.f12}" rendered="#{editarFotosViewIF.f12!=null}" height="150px" width="150px"/>  
+                    <p:commandLink style="float: right" actionListener="#{editarFotosViewIF.subirFachadaDerecha()}">
+                        <f:attribute name="tipoFoto" value="Fachada_Derecha" />
+                        <p:graphicImage value="/css/homeIconsImages/agregarFotos.png" height="150px" width="150px"/>   
+                    </p:commandLink>
+                    <p:column rendered="#{editarFotosViewIF.f10!=null}"><center><p:commandLink value=" Eliminar" actionListener="#{editarFotosViewIF.eliminarFachadaDerecha(1)}"/></center></p:column>
+                    <p:column rendered="#{editarFotosViewIF.f11!=null}"><center><p:commandLink value=" Eliminar" actionListener="#{editarFotosViewIF.eliminarFachadaDerecha(2)}"/></center></p:column>
+                    <p:column rendered="#{editarFotosViewIF.f12!=null}"><center><p:commandLink value=" Eliminar" actionListener="#{editarFotosViewIF.eliminarFachadaDerecha(3)}"/></center></p:column>
+                </p:panelGrid>
+                
+            </p:panel>
+            
+            <p:panel id="pnlDP" style="width: 100%;" header="Fachada Posterior">
+                <p:panelGrid columns="#{editarFotosViewIF.cont1}">
+                    <p:graphicImage value="#{editarFotosViewIF.f1}" rendered="#{editarFotosViewIF.f1!=null}" height="150px" width="150px"/>
+                    <p:graphicImage value="#{editarFotosViewIF.f2}" rendered="#{editarFotosViewIF.f2!=null}" height="150px" width="150px"/>   
+                    <p:graphicImage value="#{editarFotosViewIF.f3}" rendered="#{editarFotosViewIF.f3!=null}" height="150px" width="150px"/>
+                    <p:commandLink actionListener="#{editarFotosViewIF.subirFachadaPosterior()}">
+                        <f:attribute name="tipoFoto" value="Fachada_Posterior" />
+                        <p:graphicImage value="/css/homeIconsImages/agregarFotos.png" height="150px" width="150px"/>   
+                    </p:commandLink>
+                    <p:column rendered="#{editarFotosViewIF.f1!=null}"><center><p:commandLink value=" Eliminar" actionListener="#{editarFotosViewIF.eliminarFachadaPosterior(1)}"/></center></p:column>
+                    <p:column rendered="#{editarFotosViewIF.f2!=null}"><center><p:commandLink value=" Eliminar" actionListener="#{editarFotosViewIF.eliminarFachadaPosterior(2)}"/></center></p:column>
+                    <p:column rendered="#{editarFotosViewIF.f3!=null}"><center><p:commandLink value=" Eliminar" actionListener="#{editarFotosViewIF.eliminarFachadaPosterior(3)}"/></center></p:column>
+                </p:panelGrid>
+                
+            </p:panel>
+        </h:form>
+
+        <p:dialog header="Subir Fotos De Inspección Final" id="nuevoDlgfoto" widgetVar="nuevoDlgfoto" modal="true" height="250" width="550" >
+            <h:form id="frmNewFoto">
+                <p:panelGrid id="panelfoto" styleClass="noBorder">
+                    <p:row>
+                        <p:column>
+                            Foto: #{editarFotosViewIF.tipoFoto}<br/>
+                            <p:fileUpload fileUploadListener="#{editarFotosViewIF.handleFileUpload}" 
+                                          mode="advanced" 
+                                          fileLimit="1"
+                                          dragDropSupport="false"  
+                                          sizeLimit="200000000" 
+                                          label="Seleccionar"
+                                          uploadLabel="Subir"
+                                          style="width: auto;"
+                                          cancelLabel="Cancelar"  
+                                          allowTypes="/(\.|\/)(gif|jpe?g|JPE?G|png)$/" />  
+                        </p:column>
+                    </p:row>
+                </p:panelGrid> 
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog header="Editar Foto De Inspección Final" id="editDlgfoto" widgetVar="editDlgfoto" modal="true" height="250" width="550" >
+            <h:form id="frmEditFoto">
+                <p:panelGrid id="panelfoto" styleClass="noBorder">
+                    <p:row>
+                        <p:column>
+                            Foto: #{editarFotosViewIF.tipoFoto}<br/>
+                            <p:fileUpload fileUploadListener="#{editarFotosViewIF.handleFileUploadEdit}" 
+                                          mode="advanced" 
+                                          fileLimit="1"
+                                          dragDropSupport="false"  
+                                          sizeLimit="200000000" 
+                                          label="Seleccionar"
+                                          uploadLabel="Subir"
+                                          cancelLabel="Cancelar"  
+                                          allowTypes="/(\.|\/)(gif|jpe?g|JPE?G|png)$/" />  
+                        </p:column>
+                    </p:row>
+                </p:panelGrid> 
+            </h:form>
+        </p:dialog>
+
+        <script>
+            function close_window() {
+                close();
+            }
+        </script>
+
+    </ui:define>
+</ui:composition>

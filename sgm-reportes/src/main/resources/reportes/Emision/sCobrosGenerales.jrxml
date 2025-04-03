@@ -1,0 +1,594 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sCobrosGenerales" language="groovy" printOrder="Horizontal" pageWidth="595" pageHeight="841" orientation="Landscape" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="e32bcbe7-38b1-48c8-b71c-ef2bf341c014">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="88"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+			<topPen lineWidth="0.0"/>
+			<leftPen lineWidth="0.0"/>
+			<bottomPen lineWidth="0.0"/>
+			<rightPen lineWidth="0.0"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<pen lineWidth="0.0"/>
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 5">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 5_TH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 5_CH" mode="Opaque" backcolor="#E6F3FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 5_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 6">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 6_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 6_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 6_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 7">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 7_TH" mode="Opaque" backcolor="#73B0E6">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 7_CH" mode="Opaque" backcolor="#CFDBE6">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 7_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="RUBROS" uuid="7e556c91-b3d4-4e61-adec-52701467e2ac">
+		<parameter name="NUM_COMPROBANTE" class="java.lang.Long">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="ID_LIQUIDACION" class="java.lang.Long">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT
+   RL.DESCRIPCION, RL.RUBRO_DEL_MUNICIPIO, PR.VALOR AS VALOR_RECAUDADO , RD.DESDE , RD.HASTA
+FROM
+   SGM_FINANCIERO.REN_RUBROS_LIQUIDACION RL
+   INNER JOIN SGM_FINANCIERO.REN_DET_LIQUIDACION  RD ON (RL.ID = RD.RUBRO)
+   INNER JOIN SGM_FINANCIERO.REN_PAGO_RUBRO PR ON PR.RUBRO = RL.ID
+   INNER JOIN SGM_FINANCIERO.REN_PAGO P ON P.ID = PR.PAGO AND RD.LIQUIDACION=P.LIQUIDACION
+
+WHERE
+   P.LIQUIDACION = $P{ID_LIQUIDACION} AND P.NUM_COMPROBANTE = $P{NUM_COMPROBANTE}
+ORDER BY RL.PRIORIDAD ASC]]>
+		</queryString>
+		<field name="descripcion" class="java.lang.String"/>
+		<field name="rubro_del_municipio" class="java.lang.Boolean"/>
+		<field name="valor_recaudado" class="java.math.BigDecimal"/>
+		<field name="desde" class="java.lang.Long"/>
+		<field name="hasta" class="java.lang.Long"/>
+	</subDataset>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[System.getProperty("user.home") + "\\Documents\\NetBeansProjects\\SGM-SV\\Reportes\\trunk\\src\\main\\resources\\reportes\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ID_LIQUIDACION" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="NUM_COMPROBANTE" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT LQ.ID AS REN_LIQUIDACION_ID,
+       LQ.NUM_COMPROBANTE AS REN_LIQUIDACION_NUM_COMPROBANTE,
+       LQ.NUM_LIQUIDACION AS REN_LIQUIDACION_NUM_LIQUIDACION,
+       LQ.ID_LIQUIDACION AS REN_LIQUIDACION_ID_LIQUIDACION,
+       LQ.ANIO AS REN_LIQUIDACION_ANIO,
+       LQ.NOMBRE_COMPRADOR AS REN_LIQUIDACION_NOMBRE_COMPRADOR,
+       LQ.NOMBRE_COMPRADOR_HISTORIC AS REN_LIQUIDACION_NOMBRE_COMPRADOR_HISTORIC,
+       LQ.NOMBRE_COMPRADOR_RESPALDO AS REN_LIQUIDACION_NOMBRE_COMPRADOR_RESPALDO,
+       LQ.OBSERVACION AS REN_LIQUIDACION_OBSERVACION,
+
+       PA.FECHA_PAGO AS REN_PAGO_FECHA_PAGO,
+       PA.LIQUIDACION AS REN_PAGO_LIQUIDACION,
+       PA.VALOR AS REN_PAGO_VALOR,
+       PA.ESTADO AS REN_PAGO_ESTADO,
+       PA.DESCUENTO AS REN_PAGO_DESCUENTO,
+       PA.RECARGO  AS REN_PAGO_RECARGO,
+       PA.INTERES AS RN_PAGO_INTERES,
+       PA.OBSERVACION AS REN_PAGO_OBSERVACION,
+       PA.CONTRIBUYENTE AS REN_PAGO_CONTRIBUYENTE,
+       PA.NOMBRE_CONTRIBUYENTE AS REN_PAGO_NOMBRE_CONTRIBUYENTE,
+       PA.COMPROBANTE AS REN_PAGO_COMPROBANTE,
+       PA.NUM_COMPROBANTE REN_PAGO_NUM_COMPROBANTE,
+
+       EN.DIRECCION  AS CAT_ENTE_DIRECCION,
+       EN.CI_RUC AS CAT_ENTE_CI_RUC,
+
+       CASE WHEN LQ.COMPRADOR IS NULL THEN LQ.NOMBRE_COMPRADOR
+       ELSE CASE EN.ES_PERSONA WHEN TRUE THEN COALESCE
+       (EN.APELLIDOS,'')||' '||COALESCE(EN.NOMBRES,'') ELSE COALESCE(EN.RAZON_SOCIAL,'')
+       END END AS N_CONTRIBUYENTE,
+
+       PA.ID AS REN_PAGO_ID,
+
+       LQ.FECHA_INGRESO AS REN_LIQUIDACION_FECHA_INGRESO
+  FROM SGM_FINANCIERO.REN_LIQUIDACION LQ
+  INNER JOIN SGM_FINANCIERO.REN_PAGO PA ON LQ.ID = PA.LIQUIDACION
+  LEFT OUTER  JOIN  SGM_APP.CAT_ENTE EN ON EN.ID = PA.CONTRIBUYENTE
+   WHERE LQ.ID =  $P{ID_LIQUIDACION}]]>
+	</queryString>
+	<field name="ren_liquidacion_id" class="java.lang.Long"/>
+	<field name="ren_liquidacion_num_comprobante" class="java.lang.Long"/>
+	<field name="ren_liquidacion_num_liquidacion" class="java.lang.Long"/>
+	<field name="ren_liquidacion_id_liquidacion" class="java.lang.String"/>
+	<field name="ren_liquidacion_anio" class="java.lang.Integer"/>
+	<field name="ren_liquidacion_nombre_comprador" class="java.lang.String"/>
+	<field name="ren_liquidacion_nombre_comprador_historic" class="java.lang.String"/>
+	<field name="ren_liquidacion_nombre_comprador_respaldo" class="java.lang.String"/>
+	<field name="ren_liquidacion_observacion" class="java.lang.String"/>
+	<field name="ren_pago_fecha_pago" class="java.sql.Timestamp"/>
+	<field name="ren_pago_liquidacion" class="java.lang.Long"/>
+	<field name="ren_pago_valor" class="java.math.BigDecimal"/>
+	<field name="ren_pago_estado" class="java.lang.Boolean"/>
+	<field name="ren_pago_descuento" class="java.math.BigDecimal"/>
+	<field name="ren_pago_recargo" class="java.math.BigDecimal"/>
+	<field name="rn_pago_interes" class="java.math.BigDecimal"/>
+	<field name="ren_pago_observacion" class="java.lang.String"/>
+	<field name="ren_pago_contribuyente" class="java.lang.Long"/>
+	<field name="ren_pago_nombre_contribuyente" class="java.lang.String"/>
+	<field name="ren_pago_comprobante" class="java.lang.Long"/>
+	<field name="ren_pago_num_comprobante" class="java.lang.Long"/>
+	<field name="cat_ente_direccion" class="java.lang.String"/>
+	<field name="cat_ente_ci_ruc" class="java.lang.String"/>
+	<field name="n_contribuyente" class="java.lang.String"/>
+	<field name="ren_pago_id" class="java.lang.Long"/>
+	<field name="ren_liquidacion_fecha_ingreso" class="java.sql.Timestamp"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="31" splitType="Stretch">
+			<subreport>
+				<reportElement x="20" y="3" width="542" height="28" uuid="f73c888e-8603-430d-a77f-44c52158d9ca"/>
+				<subreportParameter name="SUB_TITLE">
+					<subreportParameterExpression><![CDATA["DEPARTAMENTO DE TESORERIA"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="LOGO">
+					<subreportParameterExpression><![CDATA[$P{LOGO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="LEGENDA">
+					<subreportParameterExpression><![CDATA["COBRO GENERAL - TITULO DE CREDITO No.:"+$F{ren_liquidacion_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "titleReporte.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<detail>
+		<band height="324" splitType="Stretch">
+			<staticText>
+				<reportElement x="2" y="19" width="105" height="15" uuid="1c103911-3de0-439a-83ce-af485fa6e992"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[CONTRIBUYENTE:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="33" width="105" height="15" uuid="9d90d434-a541-45a0-abbc-35531e785b2d"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[RUC / CC:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="47" width="105" height="15" uuid="008b7390-bfb6-43de-af8b-d3eafcd12a61"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Domicilio Dirección:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="392" y="203" width="91" height="13" uuid="3b3aa981-25e5-46c6-94ae-96d64341ffbe"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DESCUENTO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="392" y="215" width="68" height="13" uuid="138fe3ce-8787-45ba-b8fd-6056324dc839"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[RECARGO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="392" y="227" width="67" height="13" uuid="f13cb8af-3a7e-4258-9750-438492dbabed"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[INTERES:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="393" y="246" width="95" height="13" uuid="3d66e9ce-8fcc-429b-94d9-8fb74d75d141"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL A PAGAR:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="8" y="66" width="579" height="1" uuid="6b2a95f6-480e-4b72-bc50-2fdebb54d999"/>
+			</line>
+			<line>
+				<reportElement x="8" y="200" width="580" height="1" uuid="f1aa9866-1561-424c-b8a1-f42486a8d84e"/>
+			</line>
+			<line>
+				<reportElement x="8" y="262" width="579" height="1" uuid="03173fc4-8f5a-40d0-b894-4d274d87d16d"/>
+			</line>
+			<line>
+				<reportElement x="3" y="319" width="592" height="1" uuid="84f7f42c-9fa5-4f1d-94f4-deaa3b308223"/>
+			</line>
+			<staticText>
+				<reportElement x="10" y="296" width="119" height="12" uuid="3062e218-3981-4259-a752-8e4cabd195b3"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DIRECTOR FINANCIERO]]></text>
+			</staticText>
+			<line>
+				<reportElement x="10" y="292" width="120" height="1" uuid="935e0581-4023-4801-99b9-24cf0305c198"/>
+			</line>
+			<staticText>
+				<reportElement x="2" y="5" width="105" height="15" uuid="49256f3b-2774-4de4-ac28-fb38c12cfdea"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[COMPROBANTE No.:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="587" y="67" width="1" height="196" uuid="0d5284d6-4e36-45fc-a809-e0f36996a294"/>
+			</line>
+			<line>
+				<reportElement x="7" y="66" width="1" height="196" uuid="85698af6-bc87-4d58-930f-a3e693f0d098"/>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement x="107" y="5" width="123" height="15" uuid="a3d06c2d-f146-4410-9de8-11db6ce13eeb"/>
+				<textFieldExpression><![CDATA[$F{ren_pago_num_comprobante}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="107" y="33" width="182" height="15" uuid="58c34463-48ee-4918-b9cb-c9ee065cef28"/>
+				<textFieldExpression><![CDATA[$F{cat_ente_ci_ruc}==null?"SIN REGISTRO":$F{cat_ente_ci_ruc}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="107" y="47" width="182" height="15" uuid="690453ef-15a7-4a72-b25d-a60e1572fe88"/>
+				<textFieldExpression><![CDATA[$F{cat_ente_direccion}==null?"SIN REGISTRO":$F{cat_ente_direccion}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="336" y="2" width="105" height="15" uuid="9471b744-ebba-4093-b9af-3b6246e41efa"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[AÑO:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="441" y="2" width="121" height="15" uuid="26372f43-48f8-49c0-8615-4ceefdbcc094"/>
+				<textFieldExpression><![CDATA[$F{ren_liquidacion_anio}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="492" y="247" width="83" height="13" uuid="9d47985e-cb05-4d31-91ed-c52549bd0a26"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_valor}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="492" y="204" width="83" height="13" uuid="13874249-a48e-4291-bbdd-a1db01e36532"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_descuento}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="492" y="216" width="83" height="13" uuid="f54cbb4d-f57e-4853-948c-16676f82dd9a"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_recargo}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="492" y="228" width="83" height="13" uuid="e57c3119-a32c-46b9-a978-9912e85c4b2d"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{rn_pago_interes}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="276" y="193" width="1" height="69" uuid="50694aba-33b2-4eec-b449-da7b3f7ee129"/>
+			</line>
+			<staticText>
+				<reportElement x="20" y="221" width="136" height="13" uuid="4c854568-5de8-4346-9d7b-9ab252527e07"/>
+				<text><![CDATA[Fecha de Emisión:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="20" y="233" width="136" height="13" uuid="10987a99-f1a4-44aa-a506-0fb9eca3e7e2"/>
+				<text><![CDATA[Fecha Recaudacion:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="156" y="221" width="106" height="13" uuid="e339074a-2f19-4abe-8dc7-e36454f15839"/>
+				<textFieldExpression><![CDATA[$F{ren_liquidacion_fecha_ingreso}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="156" y="233" width="106" height="13" uuid="0ddbdffc-73f9-4a40-a1c9-a6d936d1ff8f"/>
+				<textFieldExpression><![CDATA[$F{ren_pago_fecha_pago}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="107" y="19" width="229" height="15" uuid="8f59a588-ae81-49e2-b441-8a84a4890f78"/>
+				<textFieldExpression><![CDATA[$F{n_contribuyente}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="170" y="296" width="119" height="12" uuid="66215444-3f49-4f51-b6e2-bfcbf162ef84"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[JEFE DE RENTAS]]></text>
+			</staticText>
+			<line>
+				<reportElement x="170" y="292" width="120" height="1" uuid="2e6efed8-a5c9-488b-85d5-eb080dd6c49d"/>
+			</line>
+			<staticText>
+				<reportElement x="464" y="296" width="119" height="12" uuid="7c77fe46-31b5-4fee-ba15-8d911bd5c320"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TESORERO]]></text>
+			</staticText>
+			<line>
+				<reportElement x="464" y="292" width="120" height="1" uuid="cf46556f-d19e-47c4-808b-416d859f031b"/>
+			</line>
+			<staticText>
+				<reportElement x="322" y="296" width="119" height="12" uuid="785a0677-4f97-408f-b42d-408cd3467965"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RECAUDADOR]]></text>
+			</staticText>
+			<line>
+				<reportElement x="322" y="292" width="120" height="1" uuid="e4c1a3be-3981-4c65-9b05-4a258d797b1f"/>
+			</line>
+			<line>
+				<reportElement x="276" y="67" width="1" height="125" uuid="a034822f-1501-4be5-ba38-a935a087253e"/>
+			</line>
+			<staticText>
+				<reportElement mode="Opaque" x="12" y="70" width="257" height="13" backcolor="#FEFEFE" uuid="fa4b6928-67c5-498e-a66d-8cf35ebaf913"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[OBSERVACIÓN]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="20" y="87" width="242" height="105" uuid="c1847f4e-12f5-42d6-9560-4ec035a8cf7e"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA[$F{ren_liquidacion_observacion}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement key="" x="279" y="87" width="296" height="105" uuid="6a4cfc35-b58a-4368-afd8-9e8ecaef47b7"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="RUBROS" uuid="c445c8d0-9242-498b-b0b6-01cebabc3c24">
+						<datasetParameter name="NUM_COMPROBANTE">
+							<datasetParameterExpression><![CDATA[$P{NUM_COMPROBANTE}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="ID_LIQUIDACION">
+							<datasetParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="257" uuid="d44cde95-d4e8-4420-ba94-f253d3f7e738">
+						<jr:columnHeader height="15" rowSpan="1">
+							<staticText>
+								<reportElement mode="Opaque" x="0" y="1" width="257" height="14" uuid="4e61a3cb-34e9-45a9-b545-6cf589e3c215"/>
+								<textElement textAlignment="Center" verticalAlignment="Top"/>
+								<text><![CDATA[RUBROS]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="16" rowSpan="1">
+							<textField isStretchWithOverflow="true">
+								<reportElement mode="Opaque" x="1" y="1" width="256" height="10" uuid="c596e6ec-d51a-49ab-8272-da07354aa136"/>
+								<textElement verticalAlignment="Top">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{descripcion}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="44" uuid="33e9ba9b-db0d-42b7-ab34-023bed79267f">
+						<jr:columnHeader height="15" rowSpan="1">
+							<staticText>
+								<reportElement mode="Opaque" x="1" y="1" width="41" height="14" uuid="46a3e79a-5cd8-4f60-ac41-17816716f0bf">
+									<printWhenExpression><![CDATA[$F{desde}>0]]></printWhenExpression>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Top"/>
+								<text><![CDATA[DESDE]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="16" rowSpan="1">
+							<textField>
+								<reportElement mode="Opaque" x="1" y="1" width="41" height="12" uuid="2efa9895-43d4-4f0b-a18c-5329b9a79b88">
+									<printWhenExpression><![CDATA[$F{desde}>0]]></printWhenExpression>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Bottom">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{desde}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="37" uuid="548d4433-088c-4306-a840-d82c99093576">
+						<jr:columnHeader height="15" rowSpan="1">
+							<staticText>
+								<reportElement mode="Opaque" x="1" y="1" width="34" height="14" uuid="6d8e3985-b15b-4fb1-b58c-539587b2bd9a">
+									<printWhenExpression><![CDATA[$F{hasta}>0]]></printWhenExpression>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Top"/>
+								<text><![CDATA[HASTA]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="16" rowSpan="1">
+							<textField>
+								<reportElement mode="Opaque" x="1" y="1" width="34" height="12" uuid="9bdf4bf1-1717-4434-aa4f-7d621035de1a">
+									<printWhenExpression><![CDATA[$F{hasta}>0]]></printWhenExpression>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Bottom">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{hasta}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="57" uuid="dc9b91f1-76be-453e-90c8-fbadc1f1d359">
+						<jr:columnHeader height="15" rowSpan="1">
+							<staticText>
+								<reportElement mode="Opaque" x="1" y="1" width="56" height="14" uuid="f150f367-292e-4182-8664-088b4f0abc39"/>
+								<textElement textAlignment="Center" verticalAlignment="Top"/>
+								<text><![CDATA[VALORES]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="16" rowSpan="1">
+							<textField pattern="$ #,##0.00">
+								<reportElement mode="Opaque" x="1" y="1" width="56" height="12" uuid="8a47d440-9bed-419e-9dd0-07485de35828"/>
+								<textElement textAlignment="Right" verticalAlignment="Bottom">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{valor_recaudado}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<staticText>
+				<reportElement mode="Opaque" x="277" y="70" width="298" height="13" backcolor="#FEFEFE" uuid="79a037f6-5b0f-4f8a-a062-42c947a1999e"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DETALLES DEL PAGO]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

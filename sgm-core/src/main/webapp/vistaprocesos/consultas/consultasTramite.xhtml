@@ -1,0 +1,198 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:dialog="http://xmlns.jcp.org/jsf/composite/dialog">
+    <ui:define name="metadata">
+        <f:metadata>
+
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="content">
+        <center>
+            <h1>Consulta de Trámites</h1>
+        </center>
+        <h:form id="frmP">
+            <center>
+                <p:panelGrid id="pnlDP" columns="1" style="width: 70%;">
+                    <p:panelGrid id="pnlDP2" style="width: 100%;">
+                        <f:facet name="header">
+                            <p:row>
+                                <p:column colspan="6">
+                                    Consulta de Trámites
+                                </p:column>
+                            </p:row>
+                            <p:row id="rowP">
+                                <p:column colspan="2">
+                                    <p:selectBooleanCheckbox id="busqC" value="#{consultas.tipo1}" itemLabel="Por Cédula">
+                                        <p:ajax listener="#{consultas.cambiarTipo1}"
+                                                update="pnlDP"/>
+                                    </p:selectBooleanCheckbox>
+                                </p:column>
+                                <p:column colspan="2">
+                                    <p:selectBooleanCheckbox id="busqT" value="#{consultas.tipo2}" itemLabel="Por Trámite">
+                                        <p:ajax listener="#{consultas.cambiarTipo2}"
+                                                update="pnlDP"/>
+                                    </p:selectBooleanCheckbox>
+                                </p:column>
+                            </p:row>
+                        </f:facet>
+                    </p:panelGrid>
+
+                    <p:row>  
+
+                        <p:column colspan="4" style="font-weight: bold; width: 100%;">
+                            <center>
+                                <h:panelGrid columns="2">
+                                    <p:inputText required="true" id="ingresoC" style="width: 200px;"  value="#{consultas.cedula}" rendered="#{consultas.tipo1}" placeholder="Número de Cédula">
+                                        <f:validateRegex pattern="[0-9]+" />
+                                    </p:inputText>
+                                    <p:inputText  required="true" id="ingresoT" style="width: 200px;" value="#{consultas.numeroTramite}" rendered="#{consultas.tipo2}" placeholder="Número de Trámite">
+                                        <f:validateRegex pattern="[0-9]+" />
+                                    </p:inputText>
+                                    <p:commandButton style="width: 120px;" styleClass="btnStyle" icon="ui-icon-search" iconPos="s" disabled="#{!consultas.selected}" actionListener="#{consultas.buscarTramite()}" value="Buscar" update="frmP"/>
+                                </h:panelGrid>
+                            </center>
+                        </p:column>  
+
+                    </p:row>
+                    <p:panel id="pnlBusqEnte" rendered="#{consultas.enteList!=null}" style="width: 100%;" header="Usuario encontrado">
+                        <p:panelGrid style="width: 100%" styleClass="noBorder" >
+                            <p:column>
+                                <p:dataTable    id="dtente"
+                                                value="#{consultas.enteList}" var="itemP"
+                                                emptyMessage="No tiene datos" style="width: 100%">
+
+                                    <p:column headerText="#C.I. o R.U.C." style="width: 75%;">
+                                        <h:outputText value="#{itemP.ciRuc}" style="text-transform: uppercase;"/>
+                                    </p:column>
+                                    <p:column headerText="Nombres" style="width: 75%;">
+                                        <h:outputText value="#{itemP.nombreComercial}" rendered="#{!itemP.esPersona}" style="text-transform: uppercase;"/>
+                                        <h:outputText value="#{itemP.nombres} #{itemP.apellidos}" rendered="#{itemP.esPersona}" style="text-transform: uppercase;"/>
+                                    </p:column>                                    
+                                </p:dataTable>
+                            </p:column>
+                        </p:panelGrid>
+                    </p:panel>
+                    <p:panel id="pnlBusqC" rendered="#{consultas.hayTramite}" style="width: 100%;" header="Trámites">
+                        <p:dataTable value="#{consultas.hts}" 
+                                     var="instanciaProceso" 
+                                     style="width: 100%;"
+                                     paginator="true"
+                                     rows="5"
+                                     emptyMessage="No se han encontrados trámites asociados">
+                            <p:column headerText="#Trámite" style="text-align: center" width="40">
+                                <p:outputLabel value="#{instanciaProceso.id}"/>
+                            </p:column>
+                            <p:column headerText="# de liq." style="text-align: center" width="40">
+                                <p:outputLabel value="#{instanciaProceso.numLiquidacion}" style="text-transform: uppercase"/>
+                            </p:column>
+                            <p:column headerText="Nombre" style="text-align: center" width="80">
+                                <p:outputLabel value="#{instanciaProceso.tipoTramiteNombre}" style="text-transform: uppercase"/>
+                            </p:column>
+                            <p:column headerText="Solicitante" style="text-align: center" width="80">
+                                <p:outputLabel value="#{instanciaProceso.nombrePropietario}" >
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"    />
+                                </p:outputLabel>
+                            </p:column>
+
+                            <p:column headerText="Acción" style="text-align: center" width="100">
+                                <p:commandButton value="Observaciones" actionListener="#{consultas.verObservaciones(instanciaProceso)}" style="width: 120px;" onclick="PF('obs').show()" update=":frmObs" styleClass="btnStyle" icon="ui-icon-info" iconPos="s"/>
+                                <p:commandButton value="Tareas" actionListener="#{consultas.setearTareas(instanciaProceso)}" style="width: 120px;" update=":frmTareas" onclick="PF('tareas').show()" styleClass="btnStyle" icon="ui-icon-circle-plus" iconPos="s"/>
+                            </p:column>
+                            <p:column headerText="Documentos" style="text-align: center" width="100">
+                                <p:commandButton value="Ver" actionListener="#{consultas.verificarDoc(instanciaProceso)}" style="width: 120px;" styleClass="btnStyle" icon="ui-icon-arrowthickstop-1-s" iconPos="s"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+                </p:panelGrid>
+            </center>
+        </h:form>
+
+        <p:dialog id="dlgObs" widgetVar="obs" header="Observaciones" appendTo="@(body)" position="center" modal="true" width="80%" resizable="false" closable="true" closeOnEscape="true">
+            <h:form id="frmObs">
+                <p:panel header="Observaciones del proceso: #{consultas.htinst.description}">
+                    <br/>
+                    <p:dataTable value="#{consultas.obsList}" 
+                                 var="ob" 
+                                 paginator="true"
+                                 rows="5"
+                                 style="width: 100%;"
+                                 emptyMessage="No se han encontrados trámites asociados">
+                        <p:column headerText="Nombre de la Tarea" width="90">
+                            <p:outputLabel value="#{ob.tarea}"/>
+                        </p:column>
+                        <p:column headerText="Observación" width="100">
+                            <p:outputLabel value="#{ob.observacion}" />
+                        </p:column>
+                        <p:column headerText="Autor" width="80">
+                            <p:outputLabel value="#{ob.userCre}"/>
+                        </p:column>
+                        <p:column headerText="Fecha" width="90">
+                            <p:outputLabel value="#{ob.fecCre}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"    />
+                            </p:outputLabel>
+                        </p:column>
+
+                    </p:dataTable>
+                    <br/>
+                    <center>
+                        <p:commandButton value="Cerrar" onclick="PF('obs').hide()" styleClass="btnStyle" icon="ui-icon-circle-plus" iconPos="s"/>
+                    </center>
+                </p:panel>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="dlgTareas" widgetVar="tareas" header="Tareas" position="center" appendTo="@(body)" modal="true" width="80%" resizable="false" closable="true" closeOnEscape="true"  >
+            <h:form id="frmTareas">
+                <p:panel header="Tareas del proceso: #{consultas.hs.tipoTramiteNombre} - #{consultas.hs.id}">
+                    <br/>
+                    <p:dataTable value="#{consultas.tareas}" 
+                                 var="tarea" 
+                                 style="width: 100%;"
+                                 paginator="true"
+                                 rows="6"
+                                 emptyMessage="No se han encontrados tareas asociadas">
+                        <p:column headerText="Nombre de la Tarea" width="90">
+                            <p:outputLabel value="#{tarea.name}"/>
+                        </p:column>
+                        <p:column headerText="Trámite a la que pertenece" width="90">
+                            <p:outputLabel value="#{tarea.description}" style="text-transform: uppercase"/>
+                        </p:column>
+                        <p:column headerText="Asignado" width="80">
+                            <!-- <p:outputLabel value="# {tarea.assignee}"/>-->
+                            <p:outputLabel value="#{tarea.assignee eq null? consultas.usuariosCandidatos(tarea.id) :tarea.assignee}"/>
+                        </p:column>
+                        <p:column headerText="Fecha de Inicio" width="80">
+                            <p:outputLabel value="#{tarea.createTime}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"    />
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column headerText="Fecha de Fin" width="80">
+                            <p:outputLabel value="#{tarea.endTime}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"    />
+                            </p:outputLabel>
+                        </p:column>
+
+                    </p:dataTable>
+                    <br/>
+                    <center>
+                        <p:commandButton value="Cerrar" onclick="PF('dlgTareas').hide()" styleClass="btnStyle" icon="ui-icon-circle-plus" iconPos="s"/>
+                    </center>
+                </p:panel>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Documentos Adjuntados al Trámite" id="dlgDocAlf" position="center" widgetVar="docAsoc" resizable="false" width="600px" height="80%" modal="true" appendTo="@(body)">
+            <h:form id="formDoc">
+                <dialog:detalleArchivosAct archivos="#{consultas.attachments}" />
+                <br/><br/>
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+</ui:composition>

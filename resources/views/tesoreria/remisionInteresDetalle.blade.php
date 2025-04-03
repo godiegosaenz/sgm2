@@ -37,7 +37,7 @@
                         <tr>
                             <td><i class="fa fa-user"></i> Matricula Inmobiliaria :</td>
                             <td>{{$RemisionInteres->num_predio}}</td>
-                            <td><i class="fa fa-user"></i> Contribuyente :</td>
+                            <td><i class="fa fa-user"></i> Usuario :</td>
                             <td><i class="fa fa-user"></i> {{$RemisionInteres->usuario}}</td>
                         </tr>
                         <tr>
@@ -49,7 +49,7 @@
                             @endif
 
                             <td><i class="fa fa-user"></i> Contribuyente :</td>
-                            <td><i class="fa fa-user"></i> {{$RemisionInteres->usuario}}</td>
+                            <td><i class="fa fa-user"></i> {{$RemisionInteres->contribuyente}}</td>
                         </tr>
                         <tr>
                             <td><i class="fa fa-user"></i> Documento adjunto :</td>

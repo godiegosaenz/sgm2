@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <collaboration id="Collaboration">
+    <participant id="pool1" name="Division de Predios" processRef="process_divisionPredio"></participant>
+  </collaboration>
+  <process id="process_divisionPredio" name="process_divisionPredio" isExecutable="true">
+    <laneSet id="laneSet_process_divisionPredio">
+      <lane id="iniciador" name="Iniciador">
+        <flowNodeRef>startevent1</flowNodeRef>
+      </lane>
+      <lane id="dibujante" name="Dibujante">
+        <flowNodeRef>editGrafica</flowNodeRef>
+        <flowNodeRef>editAlfanumerica</flowNodeRef>
+      </lane>
+      <lane id="revisor" name="Revisor">
+        <flowNodeRef>revisar</flowNodeRef>
+        <flowNodeRef>endevent1</flowNodeRef>
+        <flowNodeRef>exclusivegateway1</flowNodeRef>
+      </lane>
+    </laneSet>
+    <startEvent id="startevent1" name="Start"></startEvent>
+    <userTask id="editGrafica" name="Editar grafico" activiti:assignee="${dibujante}" activiti:formKey="${formEdicionGrafica}" activiti:priority="${prioridad}"></userTask>
+    <userTask id="editAlfanumerica" name="Editar alfanumerica" activiti:assignee="${dibujante}" activiti:formKey="${formEdicionAlfanumerica}" activiti:priority="${prioridad}"></userTask>
+    <sequenceFlow id="flow4" sourceRef="editGrafica" targetRef="editAlfanumerica"></sequenceFlow>
+    <userTask id="revisar" name="Revisar edicion" activiti:assignee="${revisor}" activiti:formKey="${formRevision}" activiti:priority="${prioridad}"></userTask>
+    <sequenceFlow id="flow5" sourceRef="editAlfanumerica" targetRef="revisar"></sequenceFlow>
+    <sequenceFlow id="flow6" sourceRef="revisar" targetRef="exclusivegateway1"></sequenceFlow>
+    <endEvent id="endevent1" name="End"></endEvent>
+    <sequenceFlow id="flow7" sourceRef="exclusivegateway1" targetRef="endevent1">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${aprobado == 1}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow8" sourceRef="exclusivegateway1" targetRef="editGrafica">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${aprobado == 0}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow9" sourceRef="startevent1" targetRef="editGrafica"></sequenceFlow>
+    <exclusiveGateway id="exclusivegateway1" name="Parallel Gateway"></exclusiveGateway>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_Collaboration">
+    <bpmndi:BPMNPlane bpmnElement="Collaboration" id="BPMNPlane_Collaboration">
+      <bpmndi:BPMNShape bpmnElement="pool1" id="BPMNShape_pool1">
+        <omgdc:Bounds height="450.0" width="500.0" x="350.0" y="210.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="iniciador" id="BPMNShape_iniciador">
+        <omgdc:Bounds height="150.0" width="480.0" x="370.0" y="210.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="dibujante" id="BPMNShape_dibujante">
+        <omgdc:Bounds height="150.0" width="480.0" x="370.0" y="360.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="revisor" id="BPMNShape_revisor">
+        <omgdc:Bounds height="150.0" width="480.0" x="370.0" y="510.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="430.0" y="270.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="editGrafica" id="BPMNShape_editGrafica">
+        <omgdc:Bounds height="55.0" width="105.0" x="610.0" y="413.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="editAlfanumerica" id="BPMNShape_editAlfanumerica">
+        <omgdc:Bounds height="61.0" width="105.0" x="440.0" y="410.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="revisar" id="BPMNShape_revisar">
+        <omgdc:Bounds height="55.0" width="105.0" x="440.0" y="550.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="760.0" y="560.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway1" id="BPMNShape_exclusivegateway1">
+        <omgdc:Bounds height="40.0" width="40.0" x="640.0" y="557.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
+        <omgdi:waypoint x="610.0" y="440.0"></omgdi:waypoint>
+        <omgdi:waypoint x="545.0" y="440.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
+        <omgdi:waypoint x="492.0" y="471.0"></omgdi:waypoint>
+        <omgdi:waypoint x="492.0" y="550.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow6" id="BPMNEdge_flow6">
+        <omgdi:waypoint x="545.0" y="577.0"></omgdi:waypoint>
+        <omgdi:waypoint x="640.0" y="577.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow7" id="BPMNEdge_flow7">
+        <omgdi:waypoint x="680.0" y="577.0"></omgdi:waypoint>
+        <omgdi:waypoint x="760.0" y="577.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow8" id="BPMNEdge_flow8">
+        <omgdi:waypoint x="660.0" y="557.0"></omgdi:waypoint>
+        <omgdi:waypoint x="662.0" y="468.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow9" id="BPMNEdge_flow9">
+        <omgdi:waypoint x="465.0" y="287.0"></omgdi:waypoint>
+        <omgdi:waypoint x="662.0" y="287.0"></omgdi:waypoint>
+        <omgdi:waypoint x="662.0" y="413.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

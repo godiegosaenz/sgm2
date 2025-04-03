@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reporteInspeccion" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ec7367f0-a410-43bf-a86d-199c23f3b84e">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="62"/>
+	<parameter name="MEMORANDUM" class="java.lang.String"/>
+	<parameter name="DE" class="java.lang.Long"/>
+	<parameter name="HASTA" class="java.lang.Long"/>
+	<parameter name="DIRIGIDO_A" class="java.lang.String"/>
+	<parameter name="CARGO" class="java.lang.String"/>
+	<parameter name="DESDE_ANIO" class="java.lang.Long"/>
+	<queryString>
+		<![CDATA[SELECT 	CASE enpro.es_persona
+	WHEN TRUE THEN  coalesce(enpro.apellidos,'')||' '||coalesce(enpro.nombres,'')
+	ELSE enpro.razon_social END as nombrepropietario,
+	insp.num_reporte,
+	ht.id as numero_tramite_inspeccion,
+	pre.sector|| '-' || pre.mz || '-' || pre.cdla || '-' || pre.mzdiv || '-' || COALESCE(pre.solar, 0)
+	|| '-' ||pre.div1 || '-' || pre.div2|| '-' ||  pre.div3  || '-' ||pre.div4 || '-' ||pre.div5|| '-' || pre.div6|| '-' ||  pre.div7
+	|| '-' ||pre.div8 || '-' ||pre.div9 cod_catast_actual,insp.area_const,
+	insp.impuesto,insp.inspeccion,insp.revicion,insp.no_adeudar,insp.area_edificada
+FROM
+        sgm_flow.historico_tramites ht INNER JOIN sgm_app.pe_inspeccion_final insp ON (ht.id_tramite = insp.tramite)
+        LEFT OUTER JOIN sgm_app.pe_permiso perm ON(insp.num_permiso_construc=perm.id)
+        LEFT OUTER JOIN sgm_app.cat_predio	pre ON(insp.predio=pre.id)
+        LEFT OUTER JOIN sgm_app.cat_ente enpro ON(insp.solicitante=enpro.id)
+WHERE
+       insp.estado like 'A' AND insp.num_reporte!=368 AND
+insp.anio_inspeccion=$P{DESDE_ANIO} AND
+	   insp.num_reporte BETWEEN $P{DE} AND $P{HASTA} AND
+       ht.id IS NOT NULL
+ORDER BY insp.num_reporte ASC;]]>
+	</queryString>
+	<field name="nombrepropietario" class="java.lang.String"/>
+	<field name="num_reporte" class="java.lang.Long"/>
+	<field name="numero_tramite_inspeccion" class="java.lang.Long"/>
+	<field name="cod_catast_actual" class="java.lang.String"/>
+	<field name="area_const" class="java.math.BigDecimal"/>
+	<field name="impuesto" class="java.math.BigDecimal"/>
+	<field name="inspeccion" class="java.math.BigDecimal"/>
+	<field name="revicion" class="java.math.BigDecimal"/>
+	<field name="no_adeudar" class="java.math.BigDecimal"/>
+	<field name="area_edificada" class="java.math.BigDecimal"/>
+	<variable name="contador" class="java.lang.Long" calculation="Count">
+		<variableExpression><![CDATA[$F{num_reporte}]]></variableExpression>
+	</variable>
+	<variable name="liquidacion" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{impuesto}.add( $F{inspeccion} ).add( $F{revicion} ).add( $F{no_adeudar}).add($F{area_edificada}!=null?$F{area_edificada}:new BigDecimal(0.0))]]></variableExpression>
+	</variable>
+	<variable name="suma_liquidacion" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$V{liquidacion}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="160" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="dd5f1558-a562-4cf1-955a-bc5d341db248" x="10" y="64" width="100" height="14"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Señor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="35bcb548-b46c-4fc7-9e46-82f52ee796cd" x="10" y="30" width="83" height="20"/>
+				<textElement/>
+				<text><![CDATA[Memorandum #]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d99305f3-c377-4f2d-abda-57ace81088b7" x="10" y="116" width="100" height="15"/>
+				<textElement/>
+				<text><![CDATA[En su despacho.-]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0bc804e2-075b-4521-81ec-5ac72f4b7cf4" x="10" y="10" width="72" height="20"/>
+				<textElement/>
+				<text><![CDATA[Samborondón,]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="fef53cff-c3cf-4fee-8f6a-d225e6cb234c" x="10" y="131" width="524" height="29"/>
+				<textElement/>
+				<text><![CDATA[Para su conocimiento y aprobación, sírvase recibir el detalle de la lista que por concepto de Inspecciones Finales que se tramita en esta oficina]]></text>
+			</staticText>
+			<textField pattern="dd MMMMM yyyy">
+				<reportElement uuid="387d87fe-8842-4bf4-96d3-8ca0a0f623e1" x="82" y="10" width="144" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="1ec90a5d-85a6-4605-b161-3bd35898ebc9" x="93" y="30" width="133" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{MEMORANDUM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="e6b4a15e-6191-404e-b9f5-87ea59149564" x="10" y="78" width="323" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{DIRIGIDO_A}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="a64646e5-6a00-492f-82f8-a317c4f76818" x="10" y="98" width="323" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{CARGO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="48" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="e940aabd-a260-49ba-a1f8-a4d1f4886554" x="36" y="31" width="57" height="15"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[# Trámite]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="783b021d-dc4d-4989-8e1c-c99df260a55a" x="291" y="31" width="78" height="15"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Código]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a878ea6d-a13b-43cd-9537-5e753595f7dc" x="0" y="31" width="35" height="15"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[# Insp.]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="49f5986e-e44c-4193-8057-a35addc461ac" x="0" y="47" width="555" height="1"/>
+			</line>
+			<staticText>
+				<reportElement uuid="5271bfc3-73dd-403e-80fc-524c5953e404" x="92" y="31" width="74" height="15"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Propietario]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a20b07ba-633f-426c-b2ef-6b7917b28306" x="403" y="31" width="76" height="15"/>
+				<textElement/>
+				<text><![CDATA[Area/Cons. m2]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8f80add3-391d-4aa4-90ee-20bcee1b06db" x="491" y="25" width="53" height="21"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[V/Liquidación Tasa]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="b0e4ccc0-67e6-431a-a425-325c083f2137" x="35" y="0" width="57" height="12"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numero_tramite_inspeccion}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="97eed151-bea5-4026-8ae6-3ed4192e5aba" x="291" y="0" width="112" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cod_catast_actual}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="8f723476-122b-4879-b8ec-d7f674afa349" x="0" y="0" width="35" height="12"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{num_reporte}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="5d992e0d-9af4-472f-9b2c-393b5b6dc270" x="413" y="0" width="66" height="12"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{area_const}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="8069877c-7b60-4803-935a-e5af5d305c55" x="491" y="0" width="53" height="12"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{liquidacion}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="001e34a4-9b92-4ce3-8ff3-cfa92f662644" x="93" y="0" width="198" height="12"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombrepropietario}.toUpperCase()]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="50" splitType="Stretch">
+			<textField>
+				<reportElement uuid="dd872154-7001-428f-9e84-5a1ea7e2e24d" x="424" y="30" width="80" height="20"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pag "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" isBlankWhenNull="true">
+				<reportElement uuid="564ff161-82b0-47e2-877f-1f409e70bbd3" x="504" y="30" width="40" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="20">
+			<textField>
+				<reportElement uuid="a2b81400-08ec-4c2b-9acc-5e3592278f07" x="424" y="0" width="80" height="20"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pag "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" isBlankWhenNull="true">
+				<reportElement uuid="29764de9-e4f2-426a-b68b-2118f71864e6" x="504" y="0" width="40" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
+	<summary>
+		<band height="127" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="17e3f9da-12ef-4bd6-baff-a624146cd068" x="213" y="79" width="156" height="20"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Arq. Liliana Guerrero]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7c574772-06bc-4c2d-a04a-b22f4d19d44b" x="198" y="99" width="185" height="20"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Directora de Edificaciones]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bd65c044-529b-48d6-9e76-b299ed1481a2" x="243" y="21" width="100" height="20"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Atentamente,]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="57e60d3f-ce51-49d3-830c-959576b897d1" x="428" y="0" width="51" height="20"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="a4291cae-951f-4b98-918e-5e9d8762b4c0" x="479" y="0" width="76" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{suma_liquidacion}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:define name="head">
+        <style type="text/css">
+            .ui-selectonemenu .ui-selectonemenu-label {
+                font-size: 1.2em;
+                font-weight: bold;
+            }
+            .ui-selectonemenu-list-item {
+                font-size: 1.2em;
+                font-weight: bolder !important;
+            }
+            .ui-datepicker .ui-datepicker-title select {
+                font-size: 1em;
+                margin: 1px 0;
+                color: black;
+            }
+        </style>
+    </ui:define>
+    <ui:define name="top">
+        <p:graphicImage value="/css/homeIconsImages/reporte.png" height="25" />
+        <p:outputLabel value="REPORTES MEJORAS" style="font-weight: bold; font-size: 20px;"/>        
+    </ui:define>
+     <ui:define name="content">
+        <h:form id="frmReportes">
+            <p:fieldset legend="** TIPO REPORTE **" style="font-size: 13px; text-align: center;">
+                <p:selectOneMenu value="#{mejoras.tipoReporte}" effect="fade" style="width:400px; font-weight: bold;">
+                    <f:selectItem itemLabel="Recaudación por Periodos" itemValue="#{1}"/>
+                    <f:selectItem itemLabel="Detalle Emision y Bajas por Tipo" itemValue="#{2}"/>
+                    <f:selectItem itemLabel="Saldo de Mejoras por Obra" itemValue="#{3}"/>
+                    <f:selectItem itemLabel="Recaudación por Obras" itemValue="#{4}"/>
+                    <f:selectItem itemLabel="Saldo por Rubros - Predios Urbanos" itemValue="#{5}"/>
+                    <f:selectItem itemLabel="Saldo por Rubros - Predios Rurales" itemValue="#{6}"/>
+                    <p:ajax update="datos"/>
+                </p:selectOneMenu>
+                <br/><br/>
+                <p:panelGrid id="datos" style="margin: 0 auto;">
+                    <p:row rendered="#{mejoras.tipoReporte ne 1}">
+                        <p:column colspan="2">
+                            <p:outputLabel value="AÑO:" style="font-weight: bold; font-size: 15px;"/>
+                        </p:column>
+                        <p:column colspan="2">
+                            <p:selectOneMenu value="#{mejoras.anioReporte}" effect="fade" style="width:100px; font-weight: bold;">
+                                <f:selectItems value="#{mejoras.aniosReporte}" var="anio" itemLabel="#{anio}" itemValue="#{anio}"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="DESDE" style="font-weight: bold; font-size: 15px;"/>
+                        </p:column>
+                        <p:column>
+                            <p:calendar value="#{mejoras.fechaDesde}" navigator="true" pattern="dd/MM/yyyy" style="font-weight: bold; font-size: 14px;"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="HASTA" style="font-weight: bold; font-size: 15px;"/>
+                        </p:column>
+                        <p:column>
+                            <p:calendar value="#{mejoras.fechaHasta}" navigator="true" pattern="dd/MM/yyyy" style="font-weight: bold; font-size: 14px;"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <center>
+                    <p:commandButton value="Generar" styleClass="btnStyle" icon="ui-icon-document-b" actionListener="#{mejoras.generarReporteMejoras()}"/>
+                </center>
+            </p:fieldset>
+        </h:form>
+     </ui:define>
+    
+</ui:composition>

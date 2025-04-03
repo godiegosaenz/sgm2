@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:dlg="http://xmlns.jcp.org/jsf/composite/dialog">
+    <head>
+        <link href="#{appConfig.urlbase}resources/css/main.css" rel="stylesheet" type="text/css" />
+        <style type="text/css">
+            .ui-panel .ui-panel-title{color: white !important;}
+        </style>
+    </head>
+    <ui:define name="content">
+        <center>
+            <h1>Actualizar información alfanumerica de las construcciones</h1>
+        </center>
+        <h:panelGroup layout="block" class="Wid100 Responsive100">
+
+            <h:form id="listadoConstruccion" prependId="false" >
+                <div class="ContainerIndent">
+                    <p:panel header="Información general de la tarea"  style="margin-bottom:20px">
+                        <h:panelGrid columns="4" style="width: 100%;font-size: 14px;">
+                            <p:outputLabel value="Tarea: #{actualizarConstruccionFlow.taskDataByTaskID.name}" class="FontBold"/>
+                            <p:outputLabel value="No Tramite: #{actualizarConstruccionFlow.ht.id}" class="FontBold"/>
+                            <p:outputLabel value="Responsable: #{actualizarConstruccionFlow.taskDataByTaskID.assignee}" class="FontBold"/>
+                        </h:panelGrid>
+                    </p:panel>
+                    <p:panel header="Detalle de las construcciones a editar geograficamente"  style="margin-bottom:20px">
+                        <div align="left">
+                            <p:commandButton id="btnAgregarBloque" value="Adicionar" actionListener="#{actualizarConstruccionFlow.formEdificacion(null)}">
+                                <p:ajax event="dialogReturn" listener="#{actualizarConstruccionFlow.procesarEdificacion}" update="dtBloquesResult"  />
+                            </p:commandButton>
+                        </div>
+                        <p:dataTable id="dtBloquesResult" reflow="true" paginator="true" rows="5" rowsPerPageTemplate="5,10,15,20,50" filterEvent="enter" widgetVar="pts"
+                                     paginatorAlwaysVisible="false" paginatorPosition="top"
+                                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     value="#{actualizarConstruccionFlow.edificaciones}" var="edf" emptyMessage="No se encontró ningún Item">
+
+                            <p:column headerText="Num. bloque" >
+                                <p:outputLabel value="#{edf.noEdificacion}"/>
+                            </p:column>
+                            <p:column headerText="Num. pisos">
+                                <p:outputLabel value="#{edf.numPisos}"/>
+                            </p:column>
+                            <p:column headerText="Condiición fisica">
+                                <p:outputLabel value="#{edf.condicionFisica.valor}"/>
+                            </p:column>
+                            <p:column headerText="Valor Cultural">
+                                <p:outputLabel value="#{edf.valorCultural.valor}"/>
+                            </p:column>
+                            <p:column headerText="Estado Conservación">
+                                <p:outputLabel value="#{edf.estadoConservacion.valor}"/>
+                            </p:column>
+                            <p:column headerText="Uso Construc.">
+                                <p:outputLabel value="#{edf.usoConstructivoPiso.valor}"/>
+                            </p:column>
+                            <p:column headerText="Área bloque.">
+                                <p:outputLabel value="#{edf.areaBloque}"/>
+                            </p:column>
+                            <p:column style="text-align: center; vertical-align: central;" headerText="Acciones">
+                                <p:commandButton icon="fa fa-edit white" title="Editar" action="#{actualizarConstruccionFlow.formEdificacion(edf)}" process="@this" update="dtBloquesResult">
+                                    <p:ajax event="dialogReturn" listener="#{actualizarConstruccionFlow.procesarEdificacion}" update="dtBloquesResult"  />
+                                </p:commandButton>
+                                <p:commandButton icon="fa fa-trash-o white" title="Eliminar" action="#{actualizarConstruccionFlow.eliminarEdificacion(edf)}" process="@this" update="dtBloquesResult">
+                                    <p:confirm header="Confirmación de eliminacion" message=" ¿ Esta seguro que desea eliminar el bloque seleccionado ? " icon="ui-icon-info" />
+                                </p:commandButton>
+
+                            </p:column>
+                        </p:dataTable>
+
+                    </p:panel>
+                    <center>
+                        <p:commandButton icon="fa fa-edit white" title="Completar tarea" value="Completar tarea" action="#{actualizarConstruccionFlow.completarEdicion(true)}" >
+                            <p:confirm header="Confirmación terminar tarea " message=" ¿ Esta seguro que desea terminar la edición alfanumérica de las construcciones ? " icon="ui-icon-info" />
+                        </p:commandButton>
+                    </center>
+                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                        <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                    </p:confirmDialog>
+                </div>
+            </h:form>
+        </h:panelGroup>
+    </ui:define>
+</ui:composition>

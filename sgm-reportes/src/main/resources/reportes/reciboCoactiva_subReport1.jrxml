@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reciboCoactiva_subReport1" pageWidth="160" pageHeight="220" whenNoDataType="AllSectionsNoDetail" columnWidth="160" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="c086c928-0029-46a6-9ac1-bd87d1a321be">
+	<property name="ireport.zoom" value="4.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="liquidacion" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="rubro_municipio" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select detalle.cantidad as anio, detalle.valor as valor_pago
+from sgm_financiero.ren_det_liquidacion as detalle
+where detalle.liquidacion = $P{liquidacion}
+order by detalle.cantidad]]>
+	</queryString>
+	<field name="anio" class="java.lang.Integer"/>
+	<field name="valor_pago" class="java.math.BigDecimal"/>
+	<variable name="VALOR" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_pago}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="13" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="88" height="13" isRemoveLineWhenBlank="true" uuid="058d6a2b-07e0-4c96-b837-be10d390fce7"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{anio}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ #,##0.00" isBlankWhenNull="true">
+				<reportElement x="88" y="0" width="72" height="13" isRemoveLineWhenBlank="true" uuid="8becc3f2-d3ea-49a8-82fb-23b9087558c1"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_pago}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="13">
+			<textField pattern="$ #,##0.00" isBlankWhenNull="true">
+				<reportElement x="88" y="0" width="72" height="12" uuid="3261696d-e961-49be-bd87-5011a7508e1a"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{VALOR}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="32" y="0" width="56" height="12" uuid="4632be93-a6b9-4907-a480-7f401e5a0302"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+		</band>
+	</columnFooter>
+</jasperReport>

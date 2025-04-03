@@ -1,0 +1,117 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+
+    <ui:define name="content">
+        <style>
+            .ui-button-text-only .ui-button-text {
+                padding: 3px 7px 7px 3px !important;
+            }
+        </style>
+        <h:form id="frmCatEdfCategorias">
+            <center>
+                <h1>Categorias de Construcción</h1>
+            </center>
+            <div align="right">
+                <p:commandButton value="Agregar Nuevo" actionListener="#{catEdfCategoriaMant.nuevo()}" oncomplete="PF('dlgGuardar').show()" update="frmguardar"/>
+            </div>
+            <br></br>
+            <p:dataTable id="ctCatEdfCategorias" value="#{catEdfCategoriaMant.categorias}" var="c1" style="width: 98%"
+                         emptyMessage="No se encontraron registro" paginator="true" paginatorPosition="top" 
+                         rows="20" lazy="true" rowsPerPageTemplate="20,50,100">
+
+                <p:column headerText="Identificador">
+                    <p:outputLabel value="#{c1.id}"/>
+                </p:column>
+                <p:column headerText="Nombre">
+                    <p:outputLabel value="#{c1.nombre}"/>
+                </p:column>
+                <p:column headerText="GuiOrden" sortBy="#{c1.guiOrden}">
+                    <p:outputLabel value="#{c1.guiOrden}"/>
+                </p:column>
+                <p:column headerText=" Opciones">
+                    <p:commandButton value=" Editar" actionListener="#{catEdfCategoriaMant.editar(c1)}" 
+                                     update="frmguardar" oncomplete="PF('dlgGuardar').show()"/>
+                </p:column>
+            </p:dataTable>
+        </h:form >
+        <p:dialog id="dlgGuadar" header="Categorias" widgetVar="dlgGuardar"
+                  closable="true" width="50%" resizable="false" modal="true" height="500" >
+            <h:form id="frmguardar">
+                <p:panelGrid columns="2" layout="grid">
+                    <p:outputLabel value="Nombre"/>
+                    <p:inputText value="#{catEdfCategoriaMant.categoria.nombre}" style="width: 70%" />
+                    <p:outputLabel value="Orden"/>
+                    <p:inputText value="#{catEdfCategoriaMant.categoria.guiOrden}" style="width: 70%" />
+                    <p:outputLabel value="Peso"/>
+                    <p:inputText value="#{catEdfCategoriaMant.categoria.peso}" style="width: 70%" />
+                    <p:outputLabel value="Validacion tipo Estructura"/>
+                    <p:inputText value="#{catEdfCategoriaMant.categoria.tipoEstruc}" style="width: 70%" />
+                </p:panelGrid>
+                <div align="right">
+                       <p:commandButton value="Guardar" actionListener="#{catEdfCategoriaMant.guardar()}"                                   
+                                     update="frmCatEdfCategorias"/>
+                    <p:commandButton value="Agregar Nueva propiedad" actionListener="#{catEdfCategoriaMant.nuevoPropiedad()}" 
+                                     oncomplete="PF('dlgItemGuardar').show()" update="frmItemGuadar"/>
+                   
+                </div>
+               
+                
+                <p:dataTable  value="#{catEdfCategoriaMant.categoria.catEdfPropCollection}" var="ct1" style="width: 100%"
+                              emptyMessage="No se encontraron registro" paginator="true" paginatorPosition="top"
+                              rows="5" rowsPerPageTemplate="5,10,15,20"> 
+                    <p:column headerText=" Nombre">
+                        <p:outputLabel value="#{ct1.nombre}"/>
+                    </p:column>
+                    <p:column headerText=" Orden" width="8%">
+                        <p:outputLabel value="#{ct1.orden}"/>
+                    </p:column>
+                    <p:column headerText="Peso"  width="8%">
+                        <p:outputLabel value="#{ct1.peso}"/>
+                    </p:column>
+                    <p:column headerText="Codigo"  width="8%" rendered="false">
+                        <p:outputLabel value="#{ct1.codigo}"/>
+                    </p:column>
+                    <p:column headerText="Opciones" width="30%">
+                        <p:commandButton value="Editar" actionListener="#{catEdfCategoriaMant.editarPropiedad (ct1)}" 
+                                         oncomplete="PF('dlgItemGuardar').show()" update="frmItemGuadar"/>
+                        <p:commandButton value="Eliminar" actionListener="#{catEdfCategoriaMant.eliminarPropiedad(ct1)}"                                 update="frmguardar" oncomplete="PF('dlgItemGuardar').hide()"/> 
+                    </p:column>
+                </p:dataTable>
+                <div align="center">
+                    <p:commandButton value="Salir" onclick="PF('dlgGuardar').hide()"/>                              
+                                    
+                </div>
+            </h:form> 
+        </p:dialog>
+
+        <p:dialog id="dlgItemGuadar" header="Propiedad" widgetVar="dlgItemGuardar" closable="true"
+                  width="30%" resizable="false" modal="true" height="200" >
+            <h:form id="frmItemGuadar">
+                <p:panelGrid columns="2" layout="grid">
+                    <p:outputLabel value="Nombre"/>
+                    <p:inputText value="#{catEdfCategoriaMant.propiedad.nombre}" style="width: 70%" />
+                    <p:outputLabel value="Orden"/>
+                    <p:inputText value="#{catEdfCategoriaMant.propiedad.orden}" style="width: 70%"/>
+                    <p:outputLabel value="Peso"/>
+                    <p:outputLabel value="Codigo" rendered="false"/>
+                    <p:inputText value="#{catEdfCategoriaMant.propiedad.peso}" style="width: 70%"/>
+                    <p:inputText value="#{catEdfCategoriaMant.propiedad.codigo}" style="width: 70%" rendered="false"/>
+                    <p:outputLabel value="Validacion tipo Estructura"/>
+                    <p:inputText value="#{catEdfCategoriaMant.propiedad.tipoEstruc}" style="width: 70%" />
+                </p:panelGrid>
+                <div align="right">
+                    <p:commandButton value="Guardar" actionListener="#{catEdfCategoriaMant.guardarPropiedad()}" 
+                                     oncomplete="PF('dlgItemGuardar').hide()" update="frmguardar"/>
+                </div>
+            </h:form>
+        </p:dialog>
+
+
+    </ui:define>
+</ui:composition>

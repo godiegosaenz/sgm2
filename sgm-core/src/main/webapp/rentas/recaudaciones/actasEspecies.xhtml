@@ -1,0 +1,141 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{actasEspecies.doPreRenderView()}"/>
+        </f:metadata>
+    </ui:define>
+    <ui:define name="content">
+        <center>
+            <h1>
+                Actas por Especies
+            </h1>
+        </center>
+        <h:form id="mainForm">
+            <h:panelGrid styleClass="noBorder" style="width: 100%">
+                <p:commandButton value="Nueva Acta" icon="ui-icon-plus" style="float: right"
+                                 styleClass="btnStyle" actionListener="#{actasEspecies.actaNueva()}"/>
+            </h:panelGrid>
+            <br></br>
+            <p:dataTable rows="20" rowsPerPageTemplate="20,50,100" emptyMessage="No se encontraron elementos..." var="acta" reflow="true" filterEvent="enter"
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                         lazy="true" value="#{actasEspecies.actaslazy}" paginator="true" id="dtActas" style="text-align: center">
+                <p:column headerText="No.Acta" width="150" filterBy="#{acta.numActa}" sortBy="#{acta.numActa}">
+                    <p:outputLabel value="#{acta.numActa}"/>
+                </p:column>
+                <p:column headerText="Anio" width="150" filterBy="#{acta.anio}" sortBy="#{acta.anio}">
+                    <p:outputLabel value="#{acta.anio}"/>
+                </p:column>
+                <p:column headerText="Fec.Ing." width="150">
+                    <p:outputLabel value="#{acta.fechaIngreso}">
+                        <f:convertDateTime pattern="dd-MM-yyyy"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column headerText="Usuario">
+                    <p:outputLabel value="#{actasEspecies.getNombreUsuarioAsignado(acta)}"/>
+                </p:column>
+                <!--<p:column headerText="Estado" width="100">
+                    <p:outputLabel value="FINALIZADA" rendered="# {acta.estado}"/>
+                    <p:outputLabel value="PENDIENTE" rendered="# {!acta.estado}"/>
+                </p:column>-->
+                <p:column headerText="Doc." width="60">
+                    <p:commandLink actionListener="#{actasEspecies.generarActa(acta)}">
+                        <p:graphicImage value="/css/homeIconsImages/reporte.png" height="16"/>   
+                    </p:commandLink>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+
+        <p:dialog widgetVar="dlgCrearActa" header="Nueva Acta" resizable="false" modal="true" position="center" width="650">
+            <h:form id="formActa">
+                <h:panelGrid styleClass="noBorder" columns="3" style="width: 100%;">
+                    Usuarios:
+                    <p:selectOneMenu  value="#{actasEspecies.recSel}" converter="entityConverter">  
+                        <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}" />  
+                        <f:selectItems value="#{actasEspecies.recaudadores}" var="rec" itemLabel="#{rec.ente.apellidos.toUpperCase()} #{rec.ente.nombres.toUpperCase()}" itemValue="#{rec}"/>  
+                    </p:selectOneMenu>
+                    <p:spacer width="1"/>
+                    Especie:
+                    <p:selectOneMenu  value="#{actasEspecies.espSel}" converter="entityConverter">  
+                        <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}" />  
+                        <f:selectItems value="#{actasEspecies.especies}" var="esp" itemLabel="#{esp.nombre}" itemValue="#{esp}"/>  
+                    </p:selectOneMenu>
+                    <p:commandButton value="Agregar" icon="ui-icon-plus" styleClass="btnStyle"
+                                     actionListener="#{actasEspecies.showDlgAgregarEspecie()}"/>
+                </h:panelGrid>
+                <p:dataTable id="dtDetActa" value="#{actasEspecies.listDetalles}" var="det" emptyMessage="Sin elementos..."
+                             style="text-align: center" rowIndexVar="index" scrollable="true" scrollHeight="100">
+                    <f:facet name="header">
+                        Detalle de Especies
+                    </f:facet>
+                    <p:column headerText="No" width="30">
+                        #{index+1}
+                    </p:column>
+                    <p:column headerText="Especie">
+                        #{det.especie.nombre}
+                    </p:column>
+                    <p:column headerText="Cant." width="75">
+                        #{det.cantidad}
+                    </p:column>
+                    <p:column headerText="V.Uni." width="100">
+                        <h:outputText value="#{det.valorUni}">
+                            <f:convertNumber type="currency" currencySymbol="$" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="V.Total" width="100">
+                        <h:outputText value="#{det.valorTotal}">
+                            <f:convertNumber type="currency" currencySymbol="$" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Del." width="40">
+                        <p:commandLink update="dtDetActa" actionListener="#{actasEspecies.eliminarDetalle(index)}">
+                            <p:graphicImage value="/css/homeIconsImages/delete.png" height="16"/>   
+                        </p:commandLink>
+                    </p:column>
+                    <f:facet name="footer">
+                        TOTAL:
+                        <h:outputText value="#{actasEspecies.total}">
+                            <f:convertNumber type="currency" currencySymbol="$" />
+                        </h:outputText>
+                    </f:facet>
+                </p:dataTable>
+                <div align="center">
+                    <p:commandButton value="Guardar" icon="ui-icon-check" styleClass="btnStyle" actionListener="#{actasEspecies.guardarActa()}">
+                        <p:confirm header="Confirmacion" message="Guardar Acta?" icon="ui-icon-alert" />
+                    </p:commandButton>
+                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                        <p:commandButton value="SI" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                        <p:commandButton value="NO" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                    </p:confirmDialog>
+                </div>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog widgetVar="dlgIngresoEspecie" header="Cantidad por Especie" resizable="false" position="center" modal="true">
+            <h:form id="formEspecie">
+                <h:panelGrid styleClass="noBorder" columns="2">
+                    Nombre:
+                    <p:inputText value="#{actasEspecies.detalle.especie.nombre}" readonly="true" style="width: 200px;"/>
+                    Valor Uni.:
+                    <pe:inputNumber value="#{actasEspecies.detalle.valorUni}" decimalPlaces="2" readonly="true"/>
+                    Cantidad:
+                    <pe:inputNumber value="#{actasEspecies.detalle.cantidad}" decimalPlaces="0"/>
+                    No Desde:
+                    <pe:inputNumber value="#{actasEspecies.detalle.desde}" decimalPlaces="0" />
+                    <!--No Hasta:
+                    <p:inputText id="textHasta" value="# {actasEspecies.detalle.hasta}" readonly="true"/> -->
+                </h:panelGrid>
+                <div align="center">
+                    <p:commandButton value="Aceptar" icon="ui-icon-check" styleClass="btnStyle" actionListener="#{actasEspecies.agregarEspecie()}"/>
+                </div>
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+</ui:composition>

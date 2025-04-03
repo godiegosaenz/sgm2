@@ -1,0 +1,186 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:dialog="http://xmlns.jcp.org/jsf/composite/dialog">
+    <ui:define name="top">
+        <p:panelGrid styleClass="noBorder" columns="4" style="width: 100%;font-size: 14px;">
+            <p:outputLabel value="Trámite: #{agregarEdificaciones.ht.id}" style="font-weight: bolder;color: #005f9c"/>
+            <p:outputLabel value="Tarea: #{agregarEdificaciones.taskDataByTaskID.name}" style="font-weight: bolder;color: #005f9c"/>
+            <p:outputLabel value="Responsable: #{agregarEdificaciones.taskDataByTaskID.assignee}" style="font-weight: bolder;color: #005f9c"/>
+        </p:panelGrid>
+    </ui:define>
+    <ui:define name="content">
+        <h:form id="frmMain">
+
+            <p:panel id="pnlDP" style="width: 100%;">
+                <p:tabView id="tdatos">
+                    <p:tab id="tgen" title="Información de los Predios Divididos">
+                        <center>
+                            <p:panel id="panelPrincipal" rendered="#{!agregarEdificaciones.enEdicion}">
+                                <p:dataTable id="dtobs" value="#{agregarEdificaciones.prediosHijos}" var="predio" reflow="true" style="width: 70%" >
+                                    <f:facet name="header">
+                                        Lista de Predios Creados
+                                    </f:facet>
+                                    <p:column headerText="Código Predial" style="width: 30%; text-align: center;">
+                                        #{predio.codigoPredial}
+                                    </p:column>
+                                    <p:column headerText="Propietario" style="width: 40%; text-align: center;">
+                                        #{predio.propietarios}
+                                    </p:column>
+                                    <p:column headerText="Detalle" rendered="#{predio.catPredioEdificacionCollection==null}" style="width: 20%; text-align: center;">
+                                        <h:outputText value="Sin edificaciones" style="color: red;"/>
+                                    </p:column>
+                                    <p:column headerText="Detalle" rendered="#{predio.catPredioEdificacionCollection!=null}" style="width: 20%; text-align: center;">
+                                        <h:outputText value="Edificaciones listas" style="color: blue;"/>
+                                    </p:column>
+                                    <p:column headerText="Acción" style="width: 30%">
+                                        <center><p:commandButton update="frmMain" value="Agregar Edificación" style="color: #ffffff; background: #616161 !important; font-weight: bold;" actionListener="#{agregarEdificaciones.setearPredio(predio)}"/></center>
+                                    </p:column>
+                                </p:dataTable>
+                                <center>
+                                    <p:commandButton value="Guardar Edificaciones" style="margin-top: 20px;" actionListener="#{agregarEdificaciones.guardarEdificaciones()}" />
+                                </center>
+                            </p:panel>
+                            <h:panelGroup id="edifPGroup" rendered="#{agregarEdificaciones.enEdicion}" >
+                                <p:commandButton value="Agregar Edificación" onclick="PF('dlgAgregarEd').show()" update=":dlgForm" actionListener="#{agregarEdificaciones.agregarEdificacion()}" />
+                                <p:dataTable id="dtedificaciones" style="width: 70%; margin-top: 20px;" value="#{agregarEdificaciones.cpTemp.catPredioEdificacionCollection}" var="edif">
+                                    <p:column headerText="Número de Edificación" style="text-align: center">
+                                        <h:outputText value="#{edif.noEdificacion}"/>
+                                    </p:column>
+                                    <p:column headerText="Área construcción censo " style="text-align: center">
+                                        <h:outputText value="#{edif.areaConsCenso}"/>
+                                    </p:column>
+                                    <p:column headerText="Área Con. según permiso " style="text-align: center">
+                                        <h:outputText value="#{edif.areaConsPermiso}"/>
+                                    </p:column>
+                                    <p:column headerText="Área Con. sobre losa " style="text-align: center">
+                                        <h:outputText value="#{edif.areaConsLosa}"/>
+                                    </p:column>
+                                    <p:column headerText="En construcción 30-60-80% " style="text-align: center">
+                                        <h:outputText value="#{edif.enConstruccionPorc}"/>
+                                    </p:column>
+                                    <p:column headerText="Opciones " style="text-align: center">
+                                        <p:commandButton value="Editar" update=":dlgEditForm" onclick="PF('dlgEditEd').show()" actionListener="#{agregarEdificaciones.setEdificacionEdit(edif)}"/>
+                                        <p:commandButton value="Borrar" />
+                                    </p:column>
+                                </p:dataTable>
+                                <center>
+                                    <p:commandButton value="Terminar de Agregar Edificaciones" update="frmMain" style="margin-top: 20px;" actionListener="#{agregarEdificaciones.terminarDeAgregarEdificaciones()}" />
+                                </center>
+                            </h:panelGroup>
+                            
+                        </center>
+                    </p:tab>
+                    <p:tab id="tadicionales" title="Adicionales">
+                        <p:tabView id="tadic">
+                            <p:tab id="tdocs" title="Observaciones">
+                                <p:dataTable id="dtobs" value="#{agregarEdificaciones.ht.observacionesCollection}" var="obs" reflow="true" style="width: 100%">
+                                    <f:facet name="header">Observaciones</f:facet>
+                                    <p:column headerText="Descripcion" style="width: 40%">
+                                        #{obs.observacion}
+                                    </p:column>
+                                    <p:column headerText="tarea" style="width: 25%">
+                                        #{obs.tarea}
+                                    </p:column>
+                                    <p:column headerText="Responsable" style="width: 20%">
+                                        #{obs.userCre}
+                                    </p:column>
+                                    <p:column headerText="Fecha" style="width: 15%">
+                                        #{obs.fecCre}
+                                    </p:column>
+                                </p:dataTable>
+                            </p:tab>
+                            <p:tab id="tobs" title="Documentos">
+                                <dialog:detalleArchivosAct archivos="#{agregarEdificaciones.processInstanceAttachmentsFiles}"/>
+                            </p:tab>
+                        </p:tabView>
+                    </p:tab>
+                </p:tabView>
+            </p:panel>
+        </h:form>
+        
+        <p:dialog header="Agregar Edificaciones al Predio" modal="true" resizable="false" id="dlgAgregarEd"  widgetVar="dlgAgregarEd" height="auto" width="auto" position="center">  
+            <h:form id="dlgForm" >
+                <p:panelGrid columns="2">
+                    <h:outputText value="Número de Edificación:" />
+                    <p:inputText value="#{agregarEdificaciones.edificacionNew.noEdificacion}" disabled="true"/>
+                    <h:outputText value="Área de Construcción Censo:" />
+                    <p:inputText value="#{agregarEdificaciones.edificacionNew.areaConsCenso}"/>
+                    <h:outputText value="Área de Construcción según permiso:" />
+                    <p:inputText value="#{agregarEdificaciones.edificacionNew.areaConsPermiso}"/>
+                    <h:outputText value="Área de Construcción sobre losa:" />
+                    <p:inputText value="#{agregarEdificaciones.edificacionNew.areaConsLosa}"/>
+                    <h:outputText value="En construcción 30-60-80%:" />
+                    <p:inputText value="#{agregarEdificaciones.edificacionNew.enConstruccionPorc}"/>
+                    <h:outputText value="Año de Construcción:" />
+                    <p:inputText value="#{agregarEdificaciones.edificacionNew.anioCons}"/>
+                    <h:outputText value="Está Rentado:" />
+                    <h:panelGroup><center><p:selectBooleanCheckbox value="#{agregarEdificaciones.edificacionNew.estaRentado}" /> </center></h:panelGroup>
+                    <h:outputText value="Número de pisos:" />
+                    <p:inputText value="#{agregarEdificaciones.edificacionNew.numPisos}"/>
+                    <h:outputText value="Categoría:" />
+                    <h:panelGroup><center><p:selectOneMenu value="#{agregarEdificaciones.cecp}" effect="fade" style="width: 220px;"
+                                converter="entityConverter"   >
+                                <f:selectItems value="#{agregarEdificaciones.cecpList}" var="item" itemLabel="#{item.nombre}" itemValue="#{item}"/>  
+                    </p:selectOneMenu></center></h:panelGroup>
+                    <h:outputText value="Estado de conservación:" />
+                    <h:panelGroup><center><p:selectOneMenu value="#{agregarEdificaciones.edificacionNew.estadoConservacion}" effect="fade" style="width: 220px;"
+                                converter="entityConverter"   >
+                                <f:selectItems value="#{agregarEdificaciones.estadoEdifList}" var="item" itemLabel="#{item.valor}" itemValue="#{item}"/>  
+                    </p:selectOneMenu></center></h:panelGroup>
+                    <h:outputText value="Instalaciones eléctricas (1:Em / 2:So):" />
+                    <p:selectOneRadio id="instaelectr" value="#{agregarEdificaciones.edificacionNew.instalacionesElectricas}">  
+                        <f:selectItem itemLabel="Em" itemValue="1" />  <br/>
+                        <f:selectItem itemLabel="So" itemValue="2" />  
+                    </p:selectOneRadio>
+                </p:panelGrid>
+                <center><p:commandButton id="btnVer1" value="Guardar Edificación" oncomplete ="PF('dlgAgregarEd').hide()" update=":frmMain" actionListener="#{agregarEdificaciones.guardarEdifNew()}" style="margin-top: 20px; margin-bottom: 20px; height: 25px;"/></center>
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog header="Editar Edificaciones al Predio" modal="true" resizable="false" id="dlgEditEd"  widgetVar="dlgEditEd" height="auto" width="auto" position="center">  
+            <h:form id="dlgEditForm" >
+                <p:panelGrid columns="2">
+                    <h:outputText value="Número de Edificación" />
+                    <p:inputText value="#{agregarEdificaciones.edificacionEdit.noEdificacion}"/>
+                    <h:outputText value="Área de Construcción Censo" />
+                    <p:inputText value="#{agregarEdificaciones.edificacionEdit.areaConsCenso}"/>
+                    <h:outputText value="Área de Construcción según permiso" />
+                    <p:inputText value="#{agregarEdificaciones.edificacionEdit.areaConsPermiso}"/>
+                    <h:outputText value="Área de Construcción sobre losa" />
+                    <p:inputText value="#{agregarEdificaciones.edificacionEdit.areaConsLosa}"/>
+                    <h:outputText value="En construcción 30-60-80%" />
+                    <p:inputText value="#{agregarEdificaciones.edificacionEdit.enConstruccionPorc}"/>
+                    <h:outputText value="Año de Construcción:" />
+                    <p:inputText value="#{agregarEdificaciones.edificacionEdit.anioCons}"/>
+                    <h:outputText value="Está Rentado:" />
+                    <h:panelGroup><center><p:selectBooleanCheckbox value="#{agregarEdificaciones.edificacionEdit.estaRentado}" /> </center></h:panelGroup>
+                    <h:outputText value="Número de pisos:" />
+                    <p:inputText value="#{agregarEdificaciones.edificacionEdit.numPisos}"/>
+                    <h:outputText value="Categoría:" />
+                    <h:panelGroup><center><p:selectOneMenu value="#{agregarEdificaciones.cecp}" effect="fade" style="width: 220px;"
+                                converter="entityConverter"   >
+                                <f:selectItems value="#{agregarEdificaciones.catConsList}" var="item" itemLabel="#{item.valor}" itemValue="#{item}"/>  
+                    </p:selectOneMenu></center></h:panelGroup>
+                    <h:outputText value="Estado de conservación:" />
+                    <h:panelGroup><center><p:selectOneMenu value="#{agregarEdificaciones.edificacionEdit.estadoConservacion}" effect="fade" style="width: 220px;"
+                                converter="entityConverter"   >
+                                <f:selectItems value="#{agregarEdificaciones.estadoEdifList}" var="item" itemLabel="#{item.valor}" itemValue="#{item}"/>  
+                    </p:selectOneMenu></center></h:panelGroup>
+                    <h:outputText value="Instalaciones eléctricas (1:Em / 2:So):" />
+                    <p:selectOneRadio id="instaelectr" value="#{agregarEdificaciones.edificacionEdit.instalacionesElectricas}">  
+                        <f:selectItem itemLabel="Em" itemValue="1" />  <br/>
+                        <f:selectItem itemLabel="So" itemValue="2" />  
+                    </p:selectOneRadio>
+                </p:panelGrid>
+                <center><p:commandButton id="btnVer2" value="Terminar Edición" update=":frmMain" onclick="PF('dlgEditEd').hide()" style="margin-top: 20px; margin-bottom: 20px; height: 25px;"/></center>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>
+

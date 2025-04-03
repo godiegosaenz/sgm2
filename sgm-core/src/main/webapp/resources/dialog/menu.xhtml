@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html" >
+
+    <!-- INTERFACE -->
+    <cc:interface >
+        <cc:attribute name="headerDialog"/>
+        <cc:attribute name="menu" type="com.origami.sgm.entities.PubGuiMenu" required="true"/>
+        <cc:attribute name="esPadre" type="java.lang.Boolean"  />
+        <cc:attribute name="update"  />
+        <cc:attribute name="selector" type="java.util.List" />
+        <cc:attribute name="tipoAcceso" type="java.util.List" />
+        <cc:attribute name="actionButton" method-signature="void listener()"/>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <p:dialog id="dlgMenu" appendTo="@(body)" widgetVar="dlgMenu" header="#{cc.attrs.headerDialog}"
+                  height="50%" width="50%" modal="true" closeOnEscape="true"
+                  closable="true" position="center" positionType="absolute"
+                  resizable="false" responsive="true">
+
+            <h:form id="frmMenu">
+                <p:panelGrid columns="2" columnClasses="ui-grid-col-3, ui-grid-col-8" layout="grid" >
+                    <p:outputLabel value="Nombre"/>
+                    <p:inputText value="#{cc.attrs.menu.nombre}" style="width: 100%" required="true" requiredMessage="Campo Nombre requerido "/>
+
+                    <p:outputLabel value="Menu Bar" rendered="#{cc.attrs.esPadre}"/>
+                    <p:selectOneMenu value="#{cc.attrs.menu.menubar}" converter="entityConverter"  rendered="#{cc.attrs.esPadre}" >
+                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione..."/>
+                        <f:selectItems value="#{cc.attrs.selector}" var="b1" itemLabel="#{b1.identificador}" itemValue="#{b1}"/>
+                    </p:selectOneMenu>
+
+                    <p:outputLabel value="Posición"/>
+                    <p:inputText value="#{cc.attrs.menu.numPosicion}" style="width: 100%"/>
+
+                    <p:outputLabel value="Página Url"  rendered="#{!cc.attrs.esPadre}"/>
+                    <p:inputText value="#{cc.attrs.menu.hrefUrl}" style="width: 100%" rendered="#{!cc.attrs.esPadre}"/>
+
+                    <p:outputLabel value="Tipo de Acceso" />
+                    <p:selectOneMenu value="#{cc.attrs.menu.tipoAcceso}" converter="entityConverter" converterMessage="Error"
+                                     caseSensitive="true" immediate="true" required="true" requiredMessage="Campo Tipo de Acceso Requerido">
+                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione..."/>
+                        <f:selectItems value="#{cc.attrs.tipoAcceso}" var="sw1"
+                                       itemLabel="#{sw1.identificador}" itemValue="#{sw1}"/>
+                    </p:selectOneMenu>
+                </p:panelGrid>
+                <br/>
+                <center>
+                    <p:commandButton actionListener="#{cc.attrs.actionButton}" value="Guardar"
+                                     update="#{cc.attrs.update}" styleClass="btnStyle"  />
+                </center>
+            </h:form>
+
+        </p:dialog>
+
+    </cc:implementation>
+</html>

@@ -1,0 +1,1 @@
+﻿select * from sgm_historico.predio where  ficha_ant like '% CHAVEZ SANTANA YESSICA%'

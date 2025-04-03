@@ -1,0 +1,750 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reportePrueba" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isSummaryNewPage="true" uuid="46794205-ed34-4ec6-8216-2a0667ce6dc3">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="307"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="logo" class="java.io.InputStream"/>
+	<parameter name="id_solicitud" class="java.lang.Long"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA["C:\\Users\\supergold\\Documents\\sgm\\src\\main\\webapp\\reportes\\normasConstruccion\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="logotipo" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\Users\\supergold\\Documents\\sgm\\src\\main\\webapp\\css\\homeIconsImages\\logo.jpg"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="nomresponsable" class="java.lang.String"/>
+	<parameter name="regprofesional" class="java.lang.String"/>
+	<parameter name="ciprofesional" class="java.lang.String"/>
+	<parameter name="NOMBRE_TECNICO" class="java.lang.String"/>
+	<parameter name="NUMTRAMITE" class="java.lang.String"/>
+	<parameter name="firmaDirec" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\Users\\supergold\\Documents\\sgm\\src\\main\\webapp\\css\\firmas\\lilianaGerrero.jpg"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="firmaTecni" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\Users\\supergold\\Documents\\sgm\\src\\main\\webapp\\css\\firmas\\damarisBravo.jpg"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="validador" class="java.lang.String"/>
+	<parameter name="codigoQR" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select c.nombre nomb_ciudadela,s.urb_mz, s.urb_solar, p.urb_mz as urbmzpred, p.urb_solarnew as urbsolpre,s.tramite,s.anio_tramite,p.id as idprediosss,
+s.lindero_norte_escritura,s.lindero_sur_escritura,s.lindero_este_escritura,s.lindero_oeste_escritura,s.area_total,p.sector||'-'||p.mz||'-'||p.cdla||'-'||p.mzdiv||'-'||p.solar||'-'||p.div1||'-'||p.div2||'-'||p.div3||'-'||p.div4||'-'||p.div5||'-'||p.div6||'-'||p.div7||'-'||p.div8||'-'||p.div9||'-'||p.phv||'-'||p.phh as cod_catastral,s.fecha_caducidad,
+s.uso_suelo,s.tipo_edificacion,s.cos,s.cus,s.num_plantas,x.indicaciones_generales,x.id as idnorma_construccion, x.retiro_frontal,x.retiro_lateral,x.retiro_posterior,x.altura_maxima_edificacion,x.altura_maxima_cerramientos,x.altura_antepechos_ventanas,x.estructura,x.cubierta,x.disposiciones_generales,(SELECT razon_social from sgm_application.empresa) AS nombre_empresa
+from sgm_app.cat_solicitud_norma_construccion s, sgm_app.cat_predio p, sgm_app.cat_ciudadela c, sgm_app.cat_normas_construccion x
+where s.id_predio=p.id
+and  s.id_ciudadela=c.id
+and x.id=s.norma_construccion
+and s.id=$P{id_solicitud}]]>
+	</queryString>
+	<field name="nomb_ciudadela" class="java.lang.String"/>
+	<field name="urb_mz" class="java.lang.String"/>
+	<field name="urb_solar" class="java.lang.String"/>
+	<field name="urbmzpred" class="java.lang.String"/>
+	<field name="urbsolpre" class="java.lang.String"/>
+	<field name="tramite" class="java.lang.Integer"/>
+	<field name="anio_tramite" class="java.lang.Integer"/>
+	<field name="idprediosss" class="java.lang.Long"/>
+	<field name="lindero_norte_escritura" class="java.math.BigDecimal"/>
+	<field name="lindero_sur_escritura" class="java.math.BigDecimal"/>
+	<field name="lindero_este_escritura" class="java.math.BigDecimal"/>
+	<field name="lindero_oeste_escritura" class="java.math.BigDecimal"/>
+	<field name="area_total" class="java.math.BigDecimal"/>
+	<field name="cod_catastral" class="java.lang.String"/>
+	<field name="fecha_caducidad" class="java.sql.Timestamp"/>
+	<field name="uso_suelo" class="java.lang.String"/>
+	<field name="tipo_edificacion" class="java.lang.String"/>
+	<field name="cos" class="java.math.BigDecimal"/>
+	<field name="cus" class="java.math.BigDecimal"/>
+	<field name="num_plantas" class="java.lang.String"/>
+	<field name="indicaciones_generales" class="java.lang.String"/>
+	<field name="idnorma_construccion" class="java.lang.Long"/>
+	<field name="retiro_frontal" class="java.lang.String"/>
+	<field name="retiro_lateral" class="java.lang.String"/>
+	<field name="retiro_posterior" class="java.lang.String"/>
+	<field name="altura_maxima_edificacion" class="java.lang.String"/>
+	<field name="altura_maxima_cerramientos" class="java.lang.String"/>
+	<field name="altura_antepechos_ventanas" class="java.lang.String"/>
+	<field name="estructura" class="java.lang.String"/>
+	<field name="cubierta" class="java.lang.String"/>
+	<field name="disposiciones_generales" class="java.lang.String"/>
+	<field name="nombre_empresa" class="java.lang.String"/>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="562" splitType="Stretch">
+			<image>
+				<reportElement x="34" y="58" width="74" height="70" isRemoveLineWhenBlank="true" uuid="76e1c5bc-9ec1-4636-9bdb-2c7307fb995f"/>
+				<imageExpression><![CDATA[$P{logotipo}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="321" y="131" width="100" height="15" uuid="79dcd01e-ad3d-4dcc-b706-2366f1a656e4"/>
+				<box leftPadding="5">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[TRAMITE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="419" y="131" width="108" height="15" uuid="7ebf44d2-3810-4231-b407-9d8ca14719e6"/>
+				<box leftPadding="5">
+					<topPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[FECHA CADUCIDAD]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="321" y="146" width="100" height="20" uuid="3e653d61-9fd8-4612-987c-dacd5a1d376a"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{NUMTRAMITE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="419" y="146" width="108" height="20" uuid="e1b6b131-1dfd-4dd2-98c8-aec29cf98a91"/>
+				<box leftPadding="5">
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{fecha_caducidad}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="121" y="108" width="401" height="20" uuid="0069047a-024e-4383-9a44-c21ada64e56e"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DIRECCIÓN DE EDIFICACIONES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="322" y="246" width="53" height="15" uuid="093bb8cc-70ca-4152-89f7-951423ea55f4"/>
+				<box leftPadding="5">
+					<topPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Solar]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="375" y="246" width="154" height="15" uuid="30503044-d424-4aaa-b127-05671f3faefe"/>
+				<box leftPadding="5">
+					<topPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cod. Catastral]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="26" y="228" width="130" height="16" uuid="e95ebe91-74dc-467b-a6ed-0d42ce403fab"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DATOS DEL PREDIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="26" y="246" width="169" height="15" uuid="022af570-363d-4ab4-aa25-88180ff7d690"/>
+				<box leftPadding="5">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Urbanizacion]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="195" y="246" width="72" height="15" uuid="4d58daa0-cc71-44f6-9e96-01c520fe6a52"/>
+				<box leftPadding="5">
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sector]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="267" y="246" width="55" height="15" uuid="90203c40-55da-46eb-8c63-32d7637780f8"/>
+				<box leftPadding="4">
+					<topPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Manzana]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="322" y="261" width="53" height="20" uuid="8bb02003-5f53-4889-9977-2bc41bc05dae"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{urb_solar}==null?$F{urbsolpre}!=null?$F{urbsolpre}:"**":$F{urb_solar}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="26" y="261" width="169" height="20" uuid="09b32e5e-49bc-40c6-a207-c8ee1380516f"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nomb_ciudadela}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="267" y="261" width="55" height="20" uuid="a8bdd581-1c7e-4c64-b2c1-27dfac5b71fd"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{urb_mz}==null?$F{urbmzpred}==null?"***":$F{urbmzpred}:$F{urb_mz}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="375" y="261" width="154" height="20" uuid="3fe1fe5a-2f93-41c8-b32d-127a87900bb4"/>
+				<box leftPadding="5">
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cod_catastral}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="195" y="261" width="72" height="20" uuid="6086237a-4b52-4a59-ba84-fc090a0cb19f"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[La Puntilla]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="25" y="284" width="201" height="15" uuid="71385d80-14be-4e5e-bb91-082f5cb75593"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[LINDEROS SEGUN ESCRITURA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="25" y="300" width="120" height="15" uuid="d9246df6-6c12-4232-a828-71cb25d1cb9f"/>
+				<box leftPadding="5">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[NORTE  (M.)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="145" y="300" width="82" height="15" uuid="b2f66600-ae39-4260-a77d-c1f79429986a"/>
+				<box leftPadding="5">
+					<topPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[SUR (M.)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="227" y="300" width="80" height="15" uuid="226ec9bb-f0aa-455f-b77e-eabbb77837dd"/>
+				<box leftPadding="5">
+					<topPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[ESTE  (M.)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="307" y="300" width="92" height="15" uuid="9035f07f-a060-4a33-b1e6-824959b2a13f"/>
+				<box leftPadding="5">
+					<topPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[OESTE (M.)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="399" y="300" width="129" height="15" uuid="b644958a-f110-4e55-b86e-545307506c9b"/>
+				<box leftPadding="5">
+					<topPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[AREA TOTAL (M2.)]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="25" y="315" width="120" height="20" uuid="2aeda9f5-0d5f-4936-b10d-53dbe63b47a4"/>
+				<box leftPadding="14">
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{lindero_norte_escritura}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="145" y="315" width="82" height="20" uuid="d11644c7-85f1-4a4b-83ae-d1384c58490b"/>
+				<box leftPadding="20">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{lindero_sur_escritura}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="228" y="315" width="79" height="20" uuid="58ad6fb8-858b-4cab-bb92-692c7cd8653d"/>
+				<box leftPadding="20">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{lindero_este_escritura}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="307" y="315" width="92" height="20" uuid="30e2d559-ab3c-4ef7-a4a1-b29f7fd2e8f8"/>
+				<box leftPadding="20">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{lindero_oeste_escritura}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="399" y="315" width="129" height="20" uuid="44f2204d-5569-4089-bfe7-0fc576036aa9"/>
+				<box leftPadding="20">
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{area_total}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="25" y="358" width="151" height="17" uuid="7cee58d2-c973-4ffa-89a0-b2a8bcdcac9f"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[USO DEL SUELO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="139" y="375" width="128" height="15" uuid="9f8ef435-6d57-4549-b88e-3b37d5a67297"/>
+				<box leftPadding="5">
+					<topPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TIPO DE EDIFICACION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="268" y="375" width="77" height="15" uuid="e965f6cf-cebc-407d-b40a-74d934a816c7"/>
+				<box leftPadding="5">
+					<topPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[COS  (%)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="345" y="375" width="74" height="15" uuid="859fe6d3-c49d-4d8e-82de-eba07dc1ecff"/>
+				<box leftPadding="5">
+					<topPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CUS  (%)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="419" y="375" width="110" height="15" uuid="8adde276-af34-4011-8ec3-0c717120987d"/>
+				<box leftPadding="5">
+					<topPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[# DE PLANTAS:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="25" y="390" width="114" height="20" uuid="e40b56d4-a1cd-4892-9d7e-847dabcc5963"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textFieldExpression><![CDATA[$F{uso_suelo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="139" y="390" width="128" height="20" uuid="bbd9aaad-7f7e-4bd2-b67d-fa4190d84f48"/>
+				<box leftPadding="5">
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textFieldExpression><![CDATA[$F{tipo_edificacion}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="268" y="390" width="77" height="20" uuid="aa0886bd-7781-48c3-a4f7-7f7655324cee"/>
+				<box leftPadding="5">
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textFieldExpression><![CDATA[$F{cos}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="345" y="390" width="74" height="20" uuid="e911322e-f5ef-4f0f-b34f-02ead9059161"/>
+				<box leftPadding="5">
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textFieldExpression><![CDATA[$F{cus}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="419" y="390" width="110" height="20" uuid="a00c5075-c99e-4b48-a8fb-d39aae684d4d"/>
+				<box leftPadding="5">
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textFieldExpression><![CDATA[$F{num_plantas}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="25" y="410" width="504" height="17" uuid="febc2ee5-6eda-494b-8c0d-7dbc48794c72"/>
+				<box leftPadding="5"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RETIROS DE LA EDIFICACION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="25" y="375" width="114" height="15" uuid="e01ab815-9e39-447d-ab37-95880047ba4c"/>
+				<box leftPadding="5">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[USO DEL PREDIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="27" y="173" width="130" height="14" uuid="35d9ec3e-c1c0-4109-9262-5676720db544"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DATOS DEL USUARIO]]></text>
+			</staticText>
+			<subreport>
+				<reportElement x="27" y="187" width="500" height="39" uuid="7b9da2b6-fbb0-4e5e-8032-ce03e7b217e3"/>
+				<subreportParameter name="nom_responsable">
+					<subreportParameterExpression><![CDATA[$P{nomresponsable}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ci_profesional">
+					<subreportParameterExpression><![CDATA[$P{ciprofesional}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="reg_profesional">
+					<subreportParameterExpression><![CDATA[$P{regprofesional}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="id_predio">
+					<subreportParameterExpression><![CDATA[$F{idprediosss}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "subrep_propietarios.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement positionType="Float" x="193" y="343" width="229" height="17" uuid="4ebaa943-69ef-45c1-960b-22e56c119061"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NORMAS DE EDIFICACIÓN]]></text>
+			</staticText>
+			<subreport>
+				<reportElement positionType="Float" x="25" y="427" width="202" height="40" uuid="3b6fdc19-1169-45f4-a3e8-9e274ca29b4d"/>
+				<subreportParameter name="CODIGO">
+					<subreportParameterExpression><![CDATA[1]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_NOMBRE">
+					<subreportParameterExpression><![CDATA["RETIRO FRONTAL : "]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_SOLICITUD_NORMASCONST">
+					<subreportParameterExpression><![CDATA[$F{idnorma_construccion}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_report_retiro_aumeto_altura_detalle.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement positionType="Float" x="25" y="470" width="202" height="40" uuid="237afe2a-530c-4875-816b-a2ca86a7f93b"/>
+				<subreportParameter name="CODIGO">
+					<subreportParameterExpression><![CDATA[2]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_NOMBRE">
+					<subreportParameterExpression><![CDATA["RETIROS LATERALES – MEDIDA INTERIOR:"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_SOLICITUD_NORMASCONST">
+					<subreportParameterExpression><![CDATA[$F{idnorma_construccion}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_report_retiro_aumeto_altura_detalle.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement positionType="Float" x="24" y="513" width="202" height="40" uuid="f9dab878-f096-4405-bf07-da25803742ff"/>
+				<subreportParameter name="CODIGO">
+					<subreportParameterExpression><![CDATA[3]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_NOMBRE">
+					<subreportParameterExpression><![CDATA["RETIRO POSTERIOR – MEDIDA INTERIOR: "]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_SOLICITUD_NORMASCONST">
+					<subreportParameterExpression><![CDATA[$F{idnorma_construccion}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_report_retiro_aumeto_altura_detalle.jasper"]]></subreportExpression>
+			</subreport>
+			<textField>
+				<reportElement x="118" y="24" width="423" height="51" uuid="bc6f5f11-ae2c-49eb-8516-fae2006c2934"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_empresa}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band/>
+	</pageHeader>
+	<columnHeader>
+		<band/>
+	</columnHeader>
+	<detail>
+		<band height="415">
+			<staticText>
+				<reportElement positionType="Float" x="23" y="10" width="504" height="15" uuid="99e5212a-2578-42d3-8fb0-b033985c5135"/>
+				<box leftPadding="5"/>
+				<textElement>
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ALTURAS]]></text>
+			</staticText>
+			<subreport>
+				<reportElement positionType="Float" x="24" y="25" width="202" height="40" uuid="1f03cb58-494b-409a-af7e-d74a3b66f68d"/>
+				<subreportParameter name="CODIGO">
+					<subreportParameterExpression><![CDATA[4]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_NOMBRE">
+					<subreportParameterExpression><![CDATA["ALTURA MÁXIMA DE LA EDIFICACIÓN: "]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_SOLICITUD_NORMASCONST">
+					<subreportParameterExpression><![CDATA[$F{idnorma_construccion}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_report_retiro_aumeto_altura_detalle.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement positionType="Float" x="24" y="67" width="202" height="40" uuid="09ce1433-d15b-4210-984a-039b230f9f77"/>
+				<subreportParameter name="CODIGO">
+					<subreportParameterExpression><![CDATA[5]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_NOMBRE">
+					<subreportParameterExpression><![CDATA["ALTURA MÁXIMA DE LOS CERRAMIENTOS: "]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_SOLICITUD_NORMASCONST">
+					<subreportParameterExpression><![CDATA[$F{idnorma_construccion}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_report_retiro_aumeto_altura_detalle.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement positionType="Float" x="24" y="110" width="202" height="40" uuid="372ce03d-a49c-42a6-a53a-4a44cf965e50"/>
+				<subreportParameter name="CODIGO">
+					<subreportParameterExpression><![CDATA[6]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_NOMBRE">
+					<subreportParameterExpression><![CDATA["ALTURA DE ANTEPECHOS DE VENTANAS: "]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_SOLICITUD_NORMASCONST">
+					<subreportParameterExpression><![CDATA[$F{idnorma_construccion}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_report_retiro_aumeto_altura_detalle.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement positionType="Float" x="24" y="197" width="501" height="40" uuid="1e6e6887-5b9d-483c-bba7-c05fd132b444"/>
+				<subreportParameter name="CODIGO">
+					<subreportParameterExpression><![CDATA[7]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_NOMBRE">
+					<subreportParameterExpression><![CDATA["INDICACIONES GENERALES:"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_SOLICITUD_NORMASCONST">
+					<subreportParameterExpression><![CDATA[$F{idnorma_construccion}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_report_retiro_aumeto_altura_detalle.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement positionType="Float" x="24" y="150" width="501" height="14" uuid="42ec640d-83a8-4320-948a-7502be4e433f"/>
+				<textElement>
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DISPOSICIONES GENERALES:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="24" y="164" width="263" height="13" uuid="211d2f01-c946-4f20-af84-83f176165e51"/>
+				<box leftPadding="5">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[ESTRUCTURA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="287" y="164" width="238" height="13" uuid="e03ca80e-8932-43b1-8f76-7b13748fb2ec"/>
+				<box leftPadding="5">
+					<topPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[CUBIERTA]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="24" y="177" width="263" height="20" isPrintWhenDetailOverflows="true" uuid="f07ba1df-345b-4080-a717-b9960754163b"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textFieldExpression><![CDATA[$F{estructura}==null?"***":$F{estructura}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="287" y="177" width="238" height="20" isPrintWhenDetailOverflows="true" uuid="d67a7250-a304-4fde-a4cc-d318abb164c2"/>
+				<box leftPadding="5">
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textFieldExpression><![CDATA[$F{cubierta}==null?"**":$F{cubierta}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" x="44" y="252" width="148" height="15" uuid="2df709c3-4a0c-494e-a1ed-8ddeaa8c7804"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[REVISADO Y ELABORADO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" x="263" y="252" width="262" height="15" uuid="7f2c0418-1ae0-4c20-ba54-96d3215b2c03"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DIRECTOR DE CONTROL DE CONSTRUCCIONES]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="FixRelativeToBottom" x="15" y="301" width="203" height="15" uuid="20a73dde-9de6-4bb3-b214-f77f51c41664"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{NOMBRE_TECNICO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" x="264" y="301" width="240" height="15" uuid="b0b1ab9b-a251-43f1-a508-3168cb2ec6a3"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[ARQ. LILIANA GUERRERO]]></text>
+			</staticText>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="23" y="300" width="183" height="1" uuid="a6f37dbd-1335-47a6-9ddb-0cd03b880521"/>
+			</line>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="264" y="300" width="239" height="1" uuid="758a4eeb-d988-4640-a46e-d0dbb1a39226"/>
+			</line>
+			<image hAlign="Center">
+				<reportElement positionType="FixRelativeToBottom" x="34" y="267" width="161" height="32" isRemoveLineWhenBlank="true" uuid="1385a205-3b96-433b-903f-1cc6a8a8c0fe"/>
+				<imageExpression><![CDATA[$P{firmaTecni}]]></imageExpression>
+			</image>
+			<image hAlign="Center" onErrorType="Blank">
+				<reportElement positionType="FixRelativeToBottom" x="277" y="267" width="215" height="31" isRemoveLineWhenBlank="true" uuid="9d7fe3d0-ac9c-4541-a298-06bf40bac834"/>
+				<imageExpression><![CDATA[$P{firmaDirec}]]></imageExpression>
+			</image>
+			<componentElement>
+				<reportElement positionType="Float" x="15" y="316" width="80" height="75" uuid="b2343447-5556-458d-afc2-460e4d528a96"/>
+				<jr:DataMatrix xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" textPosition="bottom">
+					<jr:codeExpression><![CDATA[$P{codigoQR}]]></jr:codeExpression>
+				</jr:DataMatrix>
+			</componentElement>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="15" y="391" width="252" height="20" isRemoveLineWhenBlank="true" uuid="0490872e-e103-4637-a88c-4a2e3fb272f6"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{validador}!=null?"Validador : "+$P{validador}:null]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band/>
+	</pageFooter>
+	<lastPageFooter>
+		<band/>
+	</lastPageFooter>
+	<summary>
+		<band height="400">
+			<image onErrorType="Blank">
+				<reportElement positionType="Float" x="108" y="24" width="311" height="325" isRemoveLineWhenBlank="true" uuid="14a8afdf-c6e7-4165-8f90-feea3740b6cd"/>
+				<imageExpression><![CDATA[$P{logo}]]></imageExpression>
+			</image>
+		</band>
+	</summary>
+</jasperReport>

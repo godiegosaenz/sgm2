@@ -1,0 +1,176 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    template="/template/template.xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+    <ui:define name="events">
+        <!--<f:metadata>
+            <f:viewParam name="param" value="# {managedEnte.id}" />
+        </f:metadata>-->
+        <f:event type="preRenderView" listener="#{managedEnte.doPreRenderView()}"/>
+    </ui:define>
+    <ui:define name="top"><h3>Clientes</h3></ui:define>
+    <ui:define name="content">
+        <h:form id="formEnte">
+            <center>
+                <p:panelGrid styleClass="noBorder" style="width: 100%">
+
+
+                        <p:panelGrid columns="2">
+                            <p:outputLabel value="Tipo Persona:" style="font-weight: bolder"/>
+                            <p:selectOneMenu value="#{managedEnte.tipoEnte}" style="width: 160px;">
+                                <f:selectItem itemLabel="Natural" itemValue="1" />
+                                <f:selectItem itemLabel="Jurídica" itemValue="2" />
+                                <f:selectItem itemLabel="Excepcionales" itemValue="3" />
+                                <p:ajax update="tabEditEnte"/>
+                            </p:selectOneMenu>
+                        </p:panelGrid>
+
+                            <!--
+                            <p:selectOneMenu value="#{managedEnte.esNatural}">
+                                <f:selectItem itemLabel="Natural" itemValue="#{true}" />
+                                <f:selectItem itemLabel="Jurídica" itemValue="#{false}" />
+
+                                <p:ajax update="tabEditEnte"/>
+                            </p:selectOneMenu>-->
+
+
+                </p:panelGrid>
+            </center>
+            <center>
+                <p:tabView id="tabEditEnte" style="width: 520px;height: 400px; margin-top: 15px;">
+                    <p:tab title="Datos Principales">
+                        <p:panelGrid styleClass="noBorder" style="width: 100%">
+                            <p:row>
+                                <p:column colspan="4">
+                                    <p:outputLabel value="NOTA: CAMPOS OBLIGATORIOS (*)" style="font-weight: bolder;color: #0033FF"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="(*)Cédula:" rendered="#{managedEnte.tipoEnte==1}" style="font-weight: bolder"/>
+                                    <p:outputLabel value="(*)R.U.C.:" rendered="#{managedEnte.tipoEnte==2}" style="font-weight: bolder"/>
+                                    <p:outputLabel value="(*)Identificación:" rendered="#{managedEnte.tipoEnte==3}" style="font-weight: bolder"/>
+                                </p:column>
+                                <p:column>
+                                    <p:inputText value="#{managedEnte.enteEdit.ciRuc}" rendered="#{managedEnte.tipoEnte==1 or managedEnte.tipoEnte==2}"/>
+                                    <p:inputText readonly="true" value="Lo asigna el sistema" disabled="#{managedEnte.tipoEnte==3}" rendered="#{managedEnte.tipoEnte==3}"/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="Fec. Nacimiento:" rendered="#{managedEnte.tipoEnte==1}" style="font-weight: bolder"/>
+                                    <p:outputLabel value="Fec. Constitución:" rendered="#{managedEnte.tipoEnte==2}" style="font-weight: bolder"/>
+                                    <p:outputLabel value="Fec. Nacimiento:" rendered="#{managedEnte.tipoEnte==3}" style="font-weight: bolder"/>
+                                </p:column>
+                                <p:column>
+                                    <p:calendar value="#{managedEnte.enteEdit.fechaNacimiento}" placeholder="DÍA-MES-AÑO" maxdate="sysdate"
+                                                pattern="dd-MM-yyyy" mask="true" />
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="(*)Nombres:" rendered="#{managedEnte.tipoEnte==1}" style="font-weight: bolder"/>
+                                    <p:outputLabel value="(*)Razón Social:" rendered="#{managedEnte.tipoEnte==2}" style="font-weight: bolder"/>
+                                    <p:outputLabel value="(*)Nombres:" rendered="#{managedEnte.tipoEnte==3}" style="font-weight: bolder"/>
+                                </p:column>
+                                <p:column colspan="3">
+                                    <p:inputText value="#{managedEnte.enteEdit.nombres}" rendered="#{managedEnte.tipoEnte==1}"
+                                                 style="width: 100%"/>
+                                    <p:inputText value="#{managedEnte.enteEdit.razonSocial}" rendered="#{managedEnte.tipoEnte==2}"
+                                                 style="width: 100%"/>
+                                    <p:inputText value="#{managedEnte.enteEdit.nombres}" rendered="#{managedEnte.tipoEnte==3}"
+                                                 style="width: 100%"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="(*)Apellidos:" rendered="#{managedEnte.tipoEnte==1}" style="font-weight: bolder"/>
+                                    <p:outputLabel value="Nombre Comercial:" rendered="#{managedEnte.tipoEnte==2}" style="font-weight: bolder"/>
+                                    <p:outputLabel value="(*)Apellidos:" rendered="#{managedEnte.tipoEnte==3}" style="font-weight: bolder"/>
+                                </p:column>
+                                <p:column colspan="3">
+                                    <p:inputText value="#{managedEnte.enteEdit.apellidos}" rendered="#{managedEnte.tipoEnte==1}"
+                                                 style="width: 100%"/>
+                                    <p:inputText value="#{managedEnte.enteEdit.nombreComercial}" rendered="#{managedEnte.tipoEnte==2}"
+                                                 style="width: 100%"/>
+                                    <p:inputText value="#{managedEnte.enteEdit.apellidos}" rendered="#{managedEnte.tipoEnte==3}"
+                                                 style="width: 100%"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Dirección:" style="font-weight: bolder"/>
+                                </p:column>
+                                <p:column colspan="3">
+                                    <p:inputText value="#{managedEnte.enteEdit.direccion}" style="width: 100%"/>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </p:tab>
+                    <p:tab title="Información Adicional">
+                        <p:panelGrid styleClass="noBorder" style="width: 100%">
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Correo:" style="font-weight: bolder"/>
+                                </p:column>
+                                <p:column>
+                                    <p:inputText id="textCorreo" value="#{managedEnte.emailNew}" size="40" placeholder="Ejemplo: correo@ejemplo.com"/>
+                                </p:column>
+                                <p:column>
+                                    <p:commandButton value="Agregar" icon="ui-icon-plus" actionListener="#{managedEnte.agregarEmail()}"
+                                                     update="dtCorreos,textCorreo"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="3">
+                                    <p:dataTable id="dtCorreos" value="#{managedEnte.listCorreos}" rows="5" var="cor" scrollable="true"
+                                                 scrollHeight="100">
+                                        <p:column headerText="Correos" style="text-align: center">
+                                            <p:outputLabel value="#{cor.email}"/>
+                                        </p:column>
+                                        <p:column headerText="Acción" style="text-align: center" width="70">
+                                            <p:commandLink value="Eliminar" style="font-weight: bolder;color: #0033FF" actionListener="#{managedEnte.eliminarEmail(cor)}"
+                                                           update="dtCorreos"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Teléfono:" style="font-weight: bolder"/>
+                                </p:column>
+                                <p:column>
+                                    <p:inputText id="textTelf" value="#{managedEnte.tlfnNew}" size="40" placeholder="Ejemplo: 045555555 ó 0988888888"/>
+                                </p:column>
+                                <p:column>
+                                    <p:commandButton value="Agregar" icon="ui-icon-plus" actionListener="#{managedEnte.agregarTlfn()}"
+                                                     update="dtTelefonos,textTelf"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="3">
+                                    <p:dataTable id="dtTelefonos" value="#{managedEnte.listTlfs}" var="tlf"  rows="5" scrollable="true"
+                                                 scrollHeight="100">
+                                        <p:column headerText="Teléfonos" style="text-align: center">
+                                            <p:outputLabel value="#{tlf.telefono}"/>
+                                        </p:column>
+                                        <p:column headerText="Acción" style="text-align: center" width="70">
+                                            <p:commandLink value="Eliminar" style="font-weight: bolder;color: #0033FF" actionListener="#{managedEnte.eliminarTlfn(tlf)}"
+                                                           update="dtTelefonos"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </p:tab>
+                </p:tabView>
+            </center>
+            <div align="center">
+                <p:commandButton value="Guardar" icon="ui-icon-disk" actionListener="#{managedEnte.editarEnte()}"/>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,699 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:comp="http://xmlns.jcp.org/jsf/composite/dialog"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:define name="head">
+        <style type="text/css">
+            .ui-selectoneradio label{
+                font-size: 1em;
+                font-weight: bold;
+            }
+            .ui-selectmanycheckbox label{
+                font-size: 1.3em;
+                font-weight: bold;
+            }
+            .ui-fieldset, .ui-fieldset .ui-fieldset-legend {
+                padding: 1.5px 1em;
+            }
+            /*            .ui-datatable.borderless thead th,
+                        .ui-datatable.borderless tbody,
+                        .ui-datatable.borderless tbody tr,
+                        .ui-datatable.borderless tbody td {
+                            border-style: none;
+                        }*/
+
+            .vd-hidden-column {
+                display: none;
+                width: 0;
+                height: 0;
+            }
+            .ui-tooltip {
+                border: 1px solid #ccc;
+                box-shadow: 0 0 10px 0 #ddd;
+                -moz-box-shadow: 0 0 10px 0 #ddd;
+                -webkit-box-shadow: 0 0 10px 0 #ddd;
+                color: #666;
+                background: #f8f8f8;
+                opacity: 1;
+            }
+
+        </style>
+    </ui:define>
+    <ui:define name="content">
+        <h:form id="frmPredios">
+
+            <div align="center">
+                <h1>Listado de predios</h1>
+            </div>
+
+            <div align="center">
+                <p:selectOneRadio value="#{gestionPredios.tipoPredio}" >
+                    <f:selectItem itemLabel="Todos" itemValue="#{null}" />
+                    <f:selectItem itemLabel="Predios Urbanos" itemValue="U" />
+                    <f:selectItem itemLabel="Predios Rusticos" itemValue="R" />
+                    <p:ajax listener="#{gestionPredios.consultaTipoPredio()}" update="dtPredios"/>
+                </p:selectOneRadio>
+            </div>
+            <p:tabView id="tbConsultas" dynamic="true">
+                <p:tab title="TIPO DE CONSULTA" >
+                    <p:panel id="consulta">
+                        <p:selectOneRadio id="optconsult" value="#{gestionPredios.optFiltro}" class="Fs10" >
+                            <f:selectItem itemLabel="Matricula Inmobiliaria" itemValue="1"/>
+                            <f:selectItem itemLabel="Propietario" itemValue="2" />
+                            <!--                            <f:selectItem itemLabel="Codigo Anterior 2" itemValue="3" rendered="# {appConfig.mainConfig.fichaPredial.redenerFichaIb}" />-->
+                            <f:selectItem itemLabel="Codigo Catastral " itemValue="4"/>
+                            <f:selectItem itemLabel="Codigo Anterior" itemValue="5"/>
+                            <f:selectItem itemLabel="Propiedades Horizontales" itemValue="6"/>
+                            <p:ajax listener="#{gestionPredios.filtrar()}" update="consulta"/>
+                        </p:selectOneRadio>
+                        <p:fieldset legend="CODIGO UNICO" style="font-size: 13px;" rendered="#{gestionPredios.optFiltro eq 1}">
+                            <p:outputLabel value="CODIGO UNICO: " style="font-size: 13px; font-weight: bolder;"/>
+                            <p:inputText value="#{gestionPredios.predioModel.numPredio}" style="font-size: 13px; font-weight: bolder;"/>
+                        </p:fieldset>
+                        <p:fieldset legend="CONTRIBUYENTE" style="font-size: 13px;" rendered="#{gestionPredios.optFiltro eq 2 and !appConfig.mainConfig.fichaPredial.redenerFichaIb}">
+                            <p:outputLabel value="C.I./R.U.C.: " style="font-size: 13px; font-weight: bolder; width: 140px;"/>
+                            <p:outputLabel value="CONTRIBUYENTE: " style="font-size: 13px; font-weight: bolder;"/>
+                            <br/>
+                            <p:inputText value="#{gestionPredios.contribuyenteConsulta.ciRuc}" style="font-size: 13px; font-weight: bolder;" size="15" readonly="true"/>
+                            <p:spacer width="10"/>
+                            <p:inputText value="#{gestionPredios.contribuyenteConsulta.apellidos} #{gestionPredios.contribuyenteConsulta.nombres} #{gestionPredios.contribuyenteConsulta.razonSocial} #{gestionPredios.contribuyenteConsulta.nombreComercial}" style="font-size: 13px; font-weight: bolder;" readonly="true" size="50"/>
+                            <p:spacer width="10"/>
+                            <p:commandButton id="btnCambiarBuscar" value="Listar" style="height: 30px" onclick="PF('dlgSolicitante').show()" />
+                        </p:fieldset>
+                        <p:fieldset id="fieldCiudada" legend="PROPIETARIO" style="font-size: 13px;" rendered="#{gestionPredios.optFiltro eq 2 and appConfig.mainConfig.fichaPredial.redenerFichaIb}">
+                            <h:panelGrid columns="3">
+                                <h:panelGroup layout="block" >
+                                    <p:outputLabel value="C.I./R.U.C.: " style="font-size: 13px; font-weight: bolder; width: 140px;" class="FontBold DispBlock Wid100"/>
+                                    <p:inputText value="#{gestionPredios.responsable.ciuCedRuc}" style="font-size: 13px; font-weight: bolder;" size="15" readonly="true"/>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block" >
+                                    <p:outputLabel value="DESCRIPCION " style="font-size: 13px; font-weight: bolder;" class="FontBold DispBlock Wid100"/>
+                                    <p:inputText value="#{gestionPredios.responsable.ciuApellidoPat} #{gestionPredios.responsable.ciuApellidoMat} #{gestionPredios.responsable.ciuPrimerNombre} #{gestionPredios.responsable.ciuSegundoNombre}" style="font-size: 13px; font-weight: bolder;" readonly="true" size="50"/>
+                                </h:panelGroup>
+                                <p:commandButton id="btnBuscarCiud" value="Listar" style="height: 30px" actionListener="#{gestionPredios.loadResponsablesPredio()}" >
+                                    <p:ajax event="dialogReturn" listener="#{gestionPredios.selectedResponsableCiudadano}" update="frmPredios:dtPredios, frmPredios:tbConsultas:fieldCiudada"/>
+                                </p:commandButton>
+                            </h:panelGrid>
+                        </p:fieldset>
+                        <p:fieldset legend="URBANIZACION-MZ/SL" style="font-size: 13px;" rendered="false">
+                            <p:panelGrid styleClass="noBorder">
+                                <p:row>
+                                    <p:column><p:outputLabel value="URBANIZACION" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                    <p:column><p:outputLabel value="MANZANA" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                    <p:column><p:outputLabel value="LOTE" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <p:selectOneMenu  value="#{gestionPredios.predioModel.ciudadela}" effect="fade" converter="entityConverter"  style="width:200px;" filter="true" filterMatchMode="contains">
+                                            <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+                                            <f:selectItems value="#{gestionPredios.ciudadelas}" var="c" itemLabel="#{c.nombre}" itemValue="#{c}"/>
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                    <p:column><p:inputText value="#{gestionPredios.predioModel.mzUrb}"/></p:column>
+                                    <p:column><p:inputText value="#{gestionPredios.predioModel.slUrb}"/></p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:fieldset>
+                        <p:fieldset legend="CODIGO CATASTRAL" style="font-size: 13px;" rendered="#{gestionPredios.optFiltro eq 4}">
+                            <p:panelGrid id="codigoCatastral" columns="2" styleClass="ui-responsive" style="width: 100%">
+                                <h:outputLabel value="Clave Catastral" style="width: 95%"/>
+                                <p:inputText id="unid" placeholder="Codigo Predial" value="#{gestionPredios.predioModel.codigoPredial}" style="width: 95%" maxlength="24"/>
+                            </p:panelGrid>
+                        </p:fieldset>
+                        <p:fieldset legend="CODIGO ANTERIOR 2" style="font-size: 13px;" rendered="#{gestionPredios.optFiltro eq 3 and appConfig.mainConfig.fichaPredial.redenerFichaIb}">
+                            <p:panelGrid id="codigoAnterior2" columns="2" styleClass="ui-responsive" style="width: 100%">
+                                <h:outputLabel value="Codigo Anterior 2" style="width: 95%"/>
+                                <p:inputText id="codAnt2" placeholder="Codigo Anterior 2" value="#{gestionPredios.predioModel.predialAnt}" style="width: 95%" maxlength="24"/>
+                            </p:panelGrid>
+                        </p:fieldset>
+                        <p:fieldset legend="CODIGO ANTERIOR" style="font-size: 13px;" rendered="#{gestionPredios.optFiltro eq 5}">
+                            <p:inputText id="codAnterior" placeholder="Codigo Anterior" title="Codigo Anterior : #{gestionPredios.predioModel.predialAnterior}" value="#{gestionPredios.predioModel.predialAnterior}" style="width: 40%"/>
+                        </p:fieldset>
+                        <f:facet name="footer" >
+                            <div align="center" >
+                                <p:commandButton id="btnConsultar" value="CONSULTAR" style="font-size: 15px; font-weight: bolder;" styleClass="btnStyle"  iconPos="right" actionListener="#{gestionPredios.consultar()}" update="frmPredios:dtPredios" action="#{gestionPredios.limpiarVariablesConsulta()}"/>
+                                <!--<p:commandButton  value="IMPRIMIR PREDIOS" style="font-size: 15px; font-weight: bolder;" styleClass="btnStyle"  iconPos="right" actionListener="#{gestionPredios.imprimirCatastroPredial}" update="frmPredios:dtPredios"/>-->
+                            </div>
+                        </f:facet>
+                    </p:panel>
+                </p:tab>
+                <p:tab title="GENERAR REPORTE" rendered="#{acesosFicha.editar()}"  >
+                    <p:panelGrid id="pngReportes" styleClass="ui-responsive noBorder" style="width: 100%">
+                        <center>
+                            <p:selectOneMenu value="#{gestionPredios.tipoReporte}" style="width:425px;  font-weight: bold;">
+                                <f:selectItem itemLabel="Seleccione..." itemValue="#{null}" />
+
+                                <!--<f:selectItem itemLabel="TOTAL DE PREDIOS REGISTRADOS POR USUARIO" itemValue="#{1}"/>-->
+                                <f:selectItem itemLabel="TOTAL DE PREDIOS REGISTRADOS POR PARROQUIA - ZONA - SECTOR - MZ" itemValue="#{5}"/>
+                                <f:selectItem itemLabel="TOTAL DE PREDIOS POR USO DEL SUELO" itemValue="#{6}"/>
+                                <f:selectItem itemLabel="PREDIOS POR PROPIETARIOS" itemValue="#{7}"/>
+                                <f:selectItem itemLabel="PREDIOS POR BARRIOS" itemValue="#{8}"/>
+                                <p:ajax update="frmPredios:tbConsultas"/>
+                            </p:selectOneMenu>
+                        </center>
+                    </p:panelGrid>
+                    <br></br>
+
+                    <h:panelGrid id="pUsuarioReporte" styleClass="ui-responsive noBorder" style="width: 100%" rendered="#{gestionPredios.tipoReporte eq 1}">
+                        <p:row>
+                            <p:column>
+                                <center>
+                                    <h:outputLabel value="Usuarios:   " style="font-weight: bolder"/>
+                                    <p:selectOneMenu  value="#{gestionPredios.user}"  style="width: 30%" effect="fade" converter="entityConverter">
+                                        <f:selectItem itemLabel="Todos" itemValue="#{null}"/>
+                                        <f:selectItems value="#{gestionPredios.usuarios}" var="t" itemLabel="#{t.ente.nombres} #{t.ente.apellidos}" itemValue="#{t}"/>
+                                    </p:selectOneMenu>
+                                    <p:spacer width="11"/>
+                                    <p:outputLabel value="Fecha Desde" style="width: 100%;"/>
+                                    <p:calendar value="#{gestionPredios.fecha}" navigator="true" pattern="dd/MM/yyyy" maxdate="sysdate" style="width: 100%;" />
+                                    <p:spacer width="11"/>
+                                    <p:outputLabel value="Fecha Hasta" style="width: 100%;"/>
+                                    <p:calendar value="#{gestionPredios.fecha_hasta}" navigator="true" pattern="dd/MM/yyyy" maxdate="sysdate" style="width: 100%;" />
+
+                                </center>
+                            </p:column>
+                        </p:row>
+                        <br></br>
+                        <p:row >
+                            <p:column colspan="2">
+                                <center>
+                                    <p:commandButton  value="IMPRIMIR" style="font-size: 15px; font-weight: bolder;" styleClass="btnStyle"  actionListener="#{gestionPredios.reportePredioUsuario()}" ajax="false"/>
+                                </center>
+                            </p:column>
+                        </p:row>
+                    </h:panelGrid>
+                    <br></br>
+                    <p:panelGrid id="pPredioReporte" styleClass="ui-responsive noBorder" style="width: 100%" rendered="#{gestionPredios.tipoReporte eq 5}">
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Nombre Parroquia: " style="font-weight: bolder"/>
+                            </p:column>
+                            <p:column><p:outputLabel value="ZONA" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:outputLabel value="SECTOR" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:outputLabel value="MANZANA" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:selectOneMenu  value="#{gestionPredios.parroquia}"  style="width: 80%" effect="fade" converter="entityConverter"  filter="true" filterMatchMode="contains">
+                                    <f:selectItem itemLabel="Todos" itemValue="#{null}"/>
+                                    <f:selectItems value="#{gestionPredios.parroquias}" var="t" itemLabel="#{t.descripcion}" itemValue="#{t}"/>
+                                </p:selectOneMenu>
+                            </p:column>
+                            <center>
+                                <p:column ><p:inputText onkeypress="validateIntegerValueAndFocusNext(event, '')" maxlength="3"  placeholder="Campo  Obligatorio" value="#{gestionPredios.p.zona}"/></p:column>
+                                <p:column><p:inputText onkeypress="validateIntegerValueAndFocusNext(event, '')" maxlength="3"  placeholder="Campo  Obligatorio" value="#{gestionPredios.p.sector}"/></p:column>
+                                <p:column><p:inputText onkeypress="validateIntegerValueAndFocusNext(event, '')" maxlength="3"  placeholder="Campo  Obligatorio" value="#{gestionPredios.p.mz}"/></p:column>
+                            </center>
+                        </p:row>
+                        <div align="center">
+                            <p:commandButton id="btnReporte" value="IMPRIMIR PDF" style="font-size: 15px; font-weight: bolder;" 
+                                             styleClass="btnStyle"  actionListener="#{gestionPredios.generarReportePredios(false)}" ajax="false" />
+                            <p:spacer width="10" rendered="#{!appConfig.mainConfig.fichaPredial.redenerFichaIb}"/>
+                            <p:commandButton id="btnReporterEXCEL" value="IMPRIMIR EXCEL" style="font-size: 15px; font-weight: bolder;" styleClass="btnStyle"  actionListener="#{gestionPredios.generarReportePredios(true)}" />
+                            <!--<p:commandButton id="btnReporteCatastro" value="IMPRIMIR CATASTRO" style="font-size: 15px; font-weight: bolder;" styleClass="btnStyle"  actionListener="#{gestionPredios.reporteCatastro()}" ajax="false" rendered="#{appConfig.mainConfig.fichaPredial.libertad}"/>-->
+                        </div>
+
+                    </p:panelGrid>
+                    <p:panelGrid id="pPredioReporteUsos" styleClass="ui-responsive noBorder" style="width: 100%" rendered="#{gestionPredios.tipoReporte eq 6}">
+                        <h:panelGrid columns="2" style="width: 100%">
+                            <comp:compInputSelect id="usoSolar" label="Uso del predio:" 
+                                                  catalogo="predio-uso_solar" defaultValue="1"
+                                                  bind="#{fichaPredial.predio.usoSolar}"/>
+
+
+                        </h:panelGrid>
+                        <p:commandButton id="btnReporterPDF" value="IMPRIMIR PDF" 
+                                         style="font-size: 15px; font-weight: bolder;"
+                                         styleClass="btnStyle"  actionListener="#{gestionPredios.generarReportePredios(false)}" ajax="false" />
+
+                    </p:panelGrid>
+                    <p:panelGrid id="pPredioReportePropietarios" styleClass="ui-responsive noBorder" style="width: 100%"
+                                 rendered="#{gestionPredios.tipoReporte eq 7}">
+                        <div align="center">
+                            <p:commandButton id="btnSearchContribuyentes" value="BUSCAR CONTRIBUYENTES" style="font-size: 15px; font-weight: bolder;" styleClass="btnStyle"  oncomplete="PF('dlgSolicitanteCertificado').show()" />
+                        </div>
+
+
+                    </p:panelGrid>
+
+
+                    <p:panelGrid id="pBarrios" styleClass="ui-responsive noBorder" style="width: 100%" rendered="#{gestionPredios.tipoReporte eq 8}">
+                        
+                        <h:panelGroup layout="block">
+                            <h:outputLabel for="ciudadela" value="Nombre de Barrio o Ciudadela:" class="DispBlock Wid100 FontBold"/>
+                            <p:selectOneMenu id="ciudadela" value="#{gestionPredios.ciudadela}" effect="fade" converter="entityConverter" filter="true" filterMatchMode="contains" styleClass="selectWidth170">
+                                <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+                                <f:selectItems value="#{gestionPredios.ciudadelas}" var="cdla" itemLabel="#{cdla.nombre}" itemValue="#{cdla}"/>
+                            </p:selectOneMenu>
+                        </h:panelGroup>
+                        
+                        <p:commandButton id="btnReporterCiduadelasPDF" value="IMPRIMIR PDF" 
+                                         style="font-size: 15px; font-weight: bolder;" styleClass="btnStyle"  
+                                         actionListener="#{gestionPredios.generarReportePrediosByCiudadela(false)}" ajax="false" />
+                        
+                    </p:panelGrid>
+
+                </p:tab>
+                <p:tab title="INFORMACIÓN GENERAL" >
+                    <p:fieldset legend="Totales de Predios" toggleable="true">
+                        <h:panelGrid id="totales" columns="4" style="width: 100%"  >
+                            <h:outputLabel  value="Total de Predios : #{gestionPredios.numPredios}" class="DispBlock Wid100 FontBold"/>
+                            <h:outputLabel  value="Total de Predios Activos : #{gestionPredios.numPrediosActivos}" class="DispBlock Wid100 FontBold"/>
+                            <h:outputLabel  value="Total de Predios Inactivos: #{gestionPredios.numPrediosInactivos}" class="DispBlock Wid100 FontBold"/>
+                            <h:outputLabel  value="Total de Predios Históricos: #{gestionPredios.numPrediosHistorico}" class="DispBlock Wid100 FontBold"/>
+                            <h:outputLabel  value="Total de Predios Privados: #{gestionPredios.numPrediosPrivados}" class="DispBlock Wid100 FontBold"/>
+                            <h:outputLabel  value="Total de Predios Públicos: #{gestionPredios.numPrediosPublicos}" class="DispBlock Wid100 FontBold"/>
+                        </h:panelGrid>
+                    </p:fieldset>
+
+                    <br></br><br></br>
+                    <p:fieldset legend="Totales de Avalúos" toggleable="true">
+                        <h:panelGrid id="totalesAvaluos" columns="3" style="width: 100%"  >
+                            <p:column>
+                                <h:outputText  value="Total de Avalúos del Terreno: $ "/>
+                                <h:outputText  value="#{gestionPredios.avaluosTerrenos}" class="DispBlock Wid100 FontBold">
+                                    <f:convertNumber type="currency" currencySymbol="" locale="en_US" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column>
+                                <h:outputText  value="Total de Avalúos del Construcción: $ "/>
+                                <h:outputText  value="#{gestionPredios.avaluosConstruccion}" class="DispBlock Wid100 FontBold">
+                                    <f:convertNumber type="currency" currencySymbol="" locale="en_US" />
+                                </h:outputText>    
+                            </p:column>
+
+                            <p:column>
+                                <h:outputText  value="Total de Avalúos de la Propiedad: $ "/>
+                                <h:outputText  value="#{gestionPredios.avaluosPropiedad}" class="DispBlock Wid100 FontBold">
+                                    <f:convertNumber type="currency" currencySymbol="" locale="en_US" />
+                                </h:outputText>
+
+                            </p:column>
+
+                        </h:panelGrid>
+                    </p:fieldset>
+
+                </p:tab>
+            </p:tabView>
+            <p:dataTable id="dtPredios" value="#{gestionPredios.predios}" var="pt" widgetVar="preds" scrollable="true" paginator="true" resizableColumns="true"
+                         emptyMessage="No se encontro ningun predio" rows="50" lazy="true" rowsPerPageTemplate="20,50,100" filterEvent="enter"
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         selection="#{gestionPredios.predio}" rowKey="#{pt.id}" selectionMode="single"
+                         rowStyleClass="#{pt.fichaMadre eq true ? 'old' : null}">
+                <f:facet name="header">
+                    <h:outputText value="Clic derecho en los registros, para acceder a la informacion del predio"/>
+                </f:facet>
+                <p:column headerText="#PREDIO" width="80"  style="text-align: center; padding-left: 5px; padding-right: 5px;" filterStyle="width: 50%" filterBy="#{pt.numPredio}" sortBy="#{pt.numPredio}" filterMatchMode="contains">
+                    <h:outputText id="numPredio" value="#{pt.numPredio}"/>
+
+                    <p:tooltip id="toolTipContent" for="numPredio" style="width: 50%; font-size: 14px;" trackMouse="true">
+
+                        <h:outputText value="Clave Catastral Anterior" style="font-weight: bolder;"/>
+                        <p:spacer width="10"/> 
+                        <p:outputLabel value="#{pt.predialant}" />
+                        <h:panelGrid >
+
+                            <p:row>
+                                <p:column colspan="2">
+                                    <h:outputText value="Avalùo del Solar: " style="font-weight: bolder;"/>
+                                    <h:outputText value="#{pt.avaluoSolar}">
+                                        <f:convertNumber pattern="$ #,##0.00" />
+                                    </h:outputText>
+                                </p:column>
+                                <p:spacer width="10"/>
+                                <p:column colspan="2">
+                                    <h:outputText value="Avalùo de la Construcciòn: " style="font-weight: bold;"/>
+                                    <h:outputText value="#{pt.avaluoConstruccion}">
+                                        <f:convertNumber pattern="$ #,##0.00" />
+                                    </h:outputText>
+                                </p:column>
+                                <p:spacer width="10"/>
+                                <p:column colspan="2">
+                                    <h:outputText value="Avalùo Municipal: " style="font-weight: bold;"/>
+                                    <h:outputText value="#{pt.avaluoMunicipal}">
+                                        <f:convertNumber pattern="$ #,##0.00" />
+                                    </h:outputText>
+                                </p:column>
+                            </p:row>
+                            <p:row >
+                                <p:column colspan="5">
+                                    <p:dataTable value="#{pt.catPredioPropietarioCollection}" var="propietario" emptyMessage="No existen registros de Propietarios">
+                                        <p:column headerText="Propietario(s)" style="text-align: center;">
+                                            <p:outputLabel value="#{propietario.ente.ciRuc} #{propietario.ente.apellidos} #{propietario.ente.nombres} #{propietario.ente.razonSocial}"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:column>
+                            </p:row>
+                            <center>
+                                <h:outputText value="Informacion de Edificaciones" style="text-align: center; font-weight: bolder; font-size: 15px"/>    
+                            </center>
+                            <p:row >
+                                <p:column colspan="2" style="text-align: center; ">
+                                    <p:dataTable value="#{pt.catPredioEdificacionCollection}" var="bq1"  
+                                                 emptyMessage="Predio no tiene Construcciones"> 
+                                        <p:column headerText="Numero de Bloque"  style="text-align: center;">
+                                            <p:outputLabel value="#{bq1.noEdificacion}"/>
+                                        </p:column>
+                                        <p:column headerText="Área de Construción" style="text-align: center;">
+                                            <p:outputLabel value="#{bq1.areaConsCenso}"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:column>
+                            </p:row>
+                        </h:panelGrid>
+
+                    </p:tooltip>
+
+                </p:column>
+                <p:column headerText="PARROQUIA" style="text-align: center; width: 6%" filterBy="#{pt.parroquia}" sortBy="#{pt.parroquia}" filterStyle="width: 50%">
+                    <h:outputText value="#{pt.parroquia}"  />
+                </p:column>
+                <p:column headerText="ZONA." style="text-align: center; width: 3%" filterBy="#{pt.zona}" sortBy="#{pt.zona}" filterStyle="width: 50%">
+                    <h:outputText value="#{pt.zona}"/>
+                </p:column>
+                <p:column headerText="SECTOR" style="text-align: center; width:4%" filterBy="#{pt.sector}" sortBy="#{pt.sector}" filterStyle="width: 50%">
+                    <h:outputText value="#{pt.sector}"/>
+                </p:column>
+                <p:column headerText="MZ" style="text-align: center; width: 3%" filterBy="#{pt.mz}" sortBy="#{pt.mz}" filterStyle="width: 50%">
+                    <h:outputText value="#{pt.mz}"/>
+                </p:column>
+                <p:column headerText="LOTE" style="text-align: center; width: 3%" filterBy="#{pt.solar}"  sortBy="#{pt.solar}" filterStyle="width: 50%">
+                    <h:outputText value="#{pt.solar}"/>
+                </p:column>
+                <p:column headerText="BLOQUE" style="text-align: center; width: 4%" filterBy="#{pt.bloque}"  sortBy="#{pt.bloque}" filterStyle="width: 50%">
+                    <h:outputText value="#{pt.bloque}"/>
+                </p:column>
+                <p:column headerText="PISO" style="text-align: center; width: 3%" filterBy="#{pt.piso}"  sortBy="#{pt.piso}" filterStyle="width: 50%">
+                    <h:outputText value="#{pt.piso}"/>
+                </p:column>
+                <p:column headerText="UNIDAD" style="text-align: center; width: 4%" filterBy="#{pt.unidad}"  sortBy="#{pt.unidad}" filterStyle="width: 50%">
+                    <h:outputText value="#{pt.unidad}"/>
+                </p:column>
+                <p:column headerText="Codigo Catastral" width="100" styleClass="vd-hidden-column">
+                    <h:outputText value="#{pt.claveCat}"/>
+                </p:column>
+                <p:column headerText="Clave Anterior 1" width="100" styleClass="vd-hidden-column">
+                    <h:outputText value="#{pt.predialant}"/>
+                </p:column>
+                <p:column headerText="Calle Princ." style="text-align: center; width: 10%" filterBy="#{pt.calle}" filterStyle="width: 90%">
+                    <p:outputLabel id="calle" value="#{pt.calle}"/>
+                </p:column>
+<!--                <p:column headerText="PROPIETARIOS" sortBy="#{pt.extras.nombrePropietario}" style="text-align: center; width: 20%"  >
+                    <p:outputLabel id="props" value="#{pt.extras.nombrePropietario}"/>
+                </p:column>-->
+                <p:column headerText="PROPIETARIOS" style="text-align: center; width: 20%"  >
+                    <p:outputLabel id="props" value="#{gestionPredios.nombresPropietarios(pt)}"/>
+                </p:column>
+                <p:column headerText="Barrio / Ciudadela" style="text-align: center;  width: 10%" >
+                    <h:outputText value="#{pt.ciudadela.nombre}"  style="font-size: 10px"/>
+                </p:column>
+                <p:column headerText="Area S./Alicuota" width="100" style="text-align: center;">
+                    <h:outputText value="#{pt.areaSolar}"/>
+                </p:column>
+                <p:column headerText="Estado" filterBy="#{pt.estado}" width="80" filterMatchMode="exact" filterStyle="width: 50%" style="text-align: center">
+                    <f:facet name="filter">
+                        <p:selectOneMenu value="" onchange="PF('preds').filter()" style="width: 70%">
+                            <f:selectItem itemLabel="Estado" itemValue="#{null}" noSelectionOption="true"/>
+                            <f:selectItem itemLabel="Activo" itemValue="A"/>
+                            <f:selectItem itemLabel="Inactivo" itemValue="I"/>
+                            <f:selectItem itemLabel="Historico" itemValue="H"/>
+                            <f:selectItem itemLabel="Migrado" itemValue="M"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+                    <h:outputText value="#{pt.estado}"/>
+                </p:column>
+
+                <p:column headerText="Calle Principal" width="100" styleClass="vd-hidden-column">
+                    <h:outputText value="#{pt.calle}"/>
+                </p:column>
+                <p:column headerText="Calle Secundaria" width="100" styleClass="vd-hidden-column">
+                    <h:outputText value="#{pt.calleS}"/>
+                </p:column>
+                <p:column headerText="Placa Domiciliaria" width="100" styleClass="vd-hidden-column">
+                    <h:outputText value="#{pt.numeroVivienda}"/>
+                </p:column>
+            </p:dataTable>
+            <div align="center">
+                <h:commandLink>
+                    <p:commandButton ajax="false" id = "btnReporte" value="Exportar" icon="ui-icon-print" type="button" style="height: 30px" update=":frmPredios:dtPredios" />
+                    <p:dataExporter type="xls" target="dtPredios" fileName="predios"  />
+                </h:commandLink>
+            </div>
+            <p:contextMenu for="dtPredios" id="contexMenuPredios"  widgetVar="ctxMenu" beforeShow="return true;" >
+                <p:menuitem value="Editar" icon="ui-icon-pencil" actionListener="#{gestionPredios.ver(true)}" rendered="#{acesosFicha.editar()}"/>
+                <p:menuitem value="Ver" icon="ui-icon-search" actionListener="#{gestionPredios.ver(false)}" rendered="#{acesosFicha.ver()}"/>
+                <p:menuitem value="Ver Avaluos" icon="ui-icon-search" actionListener="#{gestionPredios.verAvaluos()}" rendered="#{acesosFicha.verAvaluo()}"/>
+                <p:menuitem value="Eliminar" icon="ui-icon-trash" actionListener="#{gestionPredios.eliminarPredioSV}" rendered="#{acesosFicha.eliminar()  and !appConfig.mainConfig.fichaPredial.redenerFichaIb}">
+                    <p:confirm header="Confirmación de eliminación" message=" ¿ Esta seguto de realizar la eliminación de predio seleccionado ? " icon="ui-icon-info" />
+                </p:menuitem>
+                <p:menuitem value="Reactivar" icon="ui-icon-trash" actionListener="#{gestionPredios.activarPredioSV}" rendered="#{acesosFicha.eliminar()  and !appConfig.mainConfig.fichaPredial.redenerFichaIb}">
+                    <p:confirm header="Confirmación para Reactivar" message=" ¿ Esta seguto de realizar la activacion de predio seleccionado ? " icon="ui-icon-info" />
+                </p:menuitem>
+                <p:menuitem value="Fusionar" icon="ui-icon-shuffle" actionListener="#{gestionPredios.fusionar()}" rendered="#{acesosFicha.fusionar()  and !appConfig.mainConfig.fichaPredial.redenerFichaIb}" />
+
+                <p:menuitem value="Dividir" icon="ui-icon-arrow-4-diag" actionListener="#{gestionPredios.openDialogDividePredio()}"  update=":frmDivision" rendered="#{acesosFicha.dividir()  and !appConfig.mainConfig.fichaPredial.redenerFichaIb}" />
+                <!--<p:menuitem value="Actualizar construcciones" icon="ui-icon-arrow-4-diag" actionListener="#{gestionPredios.openDialogBPMActualizarConstrucciones()}"  rendered="#{acesosFicha.actualizarConstruccion()}" />-->
+                <p:menuitem value="Transferencia dominio" icon="ui-icon-transferthick-e-w" actionListener="#{gestionPredios.transferenciaDominio()}" rendered="#{acesosFicha.trasnferenciaDominio()}" />
+                <p:menuitem value="Imprimir" icon="ui-icon-print" actionListener="#{gestionPredios.imprimirFicha(false)}"  ajax="false" rendered="#{acesosFicha.imprimir() and !appConfig.mainConfig.fichaPredial.libertad}" update="@all"/>
+                <p:menuitem value="Imprimir PDF" icon="ui-icon-print" actionListener="#{gestionPredios.imprimirFicha(false)}"  ajax="false" rendered="#{appConfig.mainConfig.fichaPredial.libertad}"/>
+                <p:menuitem value="Imprimir EXCEL" icon="ui-icon-print" actionListener="#{gestionPredios.imprimirFicha(true)}"  ajax="false" rendered="#{appConfig.mainConfig.fichaPredial.libertad}"/>
+
+                <p:menuitem value="Imprimir Croquis" icon="ui-icon-print" actionListener="#{gestionPredios.imprimirFicha(true)}"  ajax="false" rendered="#{acesosFicha.imprimir()}"/>
+                <p:menuitem value="Historico" icon="ui-icon-refresh" actionListener="#{gestionPredios.verHistorial()}" oncomplete="PF('dlgHistorial').show()" update=":frmHistorico" rendered="#{acesosFicha.historico() and !appConfig.mainConfig.fichaPredial.libertad}"/>
+            </p:contextMenu>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+            </p:confirmDialog>
+        </h:form>
+
+        <p:dialog id="dlgHistorial" widgetVar="dlgHistorial" header="Historial de cambios" width="80%" appendTo="@(body)" modal="true" closable="true" closeOnEscape="true" responsive="true">
+            <h:form id="frmHistorico">
+                <p:dataTable id="dtHistorico" value="#{gestionPredios.historico}" var="p" lazy="true" reflow="true" paginator="true" rows="10" rowsPerPageTemplate="10,25"
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             paginatorPosition="top" emptyMessage="No existen cambios registrados para este predio">
+                    <p:column headerText="Num. Predio" width="100" style="text-align: center">
+                        <h:outputText value="#{p.predio}"/>
+                    </p:column>
+                    <p:column headerText="Actualizacion" width="200" style="text-align: center" sortBy="#{p.fecAct}">
+                        <h:outputText value="#{p.fecAct}"/>
+                    </p:column>
+                    <p:column headerText="Observacion"  width="350" style="text-align: center">
+                        <h:outputText value="#{p.observacion}"/>
+                    </p:column>
+                    <p:column headerText="Usuario" width="100" style="text-align: center">
+                        <h:outputText value="#{p.usuario}"/>
+                    </p:column>
+                    <!--                    <p:column headerText="Documento" width="100" style="text-align: center">
+                                            <p:commandLink actionListener="# {gestionPredios.descargarDocumento(p.geDocumento.tipoLegal)}">
+                                                            <p:graphicImage value="/css/homeIconsImages/down.png"/>
+                                            </p:commandLink>
+                                        </p:column>
+                    -->
+                    <p:column style="text-align: center" width="100">
+                        <p:commandButton id="btnVerHist" value="Ver" actionListener="#{gestionPredios.verFichaHistorico(p)}" />
+                    </p:column>
+
+                </p:dataTable>
+                <div align="center">
+                    <p:commandButton id="btnCerrarHist" value="Cerrar" onclick="PF('dlgHistorial').hide()" update="frmPredios"/>
+                </div>
+            </h:form>
+        </p:dialog>
+        <p:dialog id="dlgSolicitante" widgetVar="dlgSolicitante" header="Listado de contribuyentes" appendTo="@(body)" width="80%" height="500" responsive="true" closable="true" closeOnEscape="true" modal="true">
+            <h:form id="frmSolicitante">
+                <p:dataTable id="dtSolicitante" value="#{gestionPredios.propietarios}" var="s" selection="#{gestionPredios.propietario}"
+                             rowKey="#{s.id}" style="width: 100%" lazy="true" reflow="true" paginator="true" rows="20"
+                             filterEvent="enter" paginatorPosition="top" rowsPerPageTemplate="10, 20, 50" >
+                    <f:facet name="header">Seleccione Contribuyente</f:facet>
+                    <p:column selectionMode="single" style="width:30px;text-align:center" />
+                    <p:column headerText="No. Predio" filterBy="#{s.predio.numPredio}" filterMatchMode="equals" filterStyle="width: 95%;">
+                        <h:outputText value="#{s.predio.numPredio}"/>
+                    </p:column>
+                    <p:column headerText="Cod.Catastral">
+                        <h:outputText value="#{s.predio.claveCat}"/>
+                    </p:column>
+                    <p:column headerText="Cod.Urbanistico">
+                        <h:outputText value="SEC:#{s.predio.sector}-Mz:#{s.predio.mz}-Sl:#{s.predio.solar}"/>
+                    </p:column>
+
+                    <p:column headerText="No. Identificacion" filterBy="#{s.ente.ciRuc}" filterMatchMode="contains"  sortBy="#{s.ente.ciRuc}" filterStyle="width: 95%;">
+                        <h:outputText value="#{s.ente.ciRuc}"/>
+                    </p:column>
+                    <p:column headerText="Apellidos" filterBy="#{s.ente.apellidos}" filterMatchMode="contains" sortBy="#{s.ente.apellidos}" filterStyle="width: 95%;">
+                        <h:outputText value="#{s.ente.apellidos}" style="text-transform: uppercase"/>
+                    </p:column>
+                    <p:column headerText="Nombres" filterBy="#{s.ente.nombres}" filterMatchMode="contains"  sortBy="#{s.ente.nombres}" filterStyle="width: 95%;">
+                        <h:outputText value="#{s.ente.nombres}" style="text-transform: uppercase"/>
+                    </p:column>
+                    <p:column headerText="Razon Social" filterBy="#{s.ente.razonSocial}" filterMatchMode="contains"  sortBy="#{s.ente.razonSocial}"  filterStyle="width: 95%;">
+                        <h:outputText value="#{s.ente.razonSocial}" style="text-transform: uppercase"/>
+                    </p:column>
+                    <f:facet name="footer">
+                        <p:commandButton id="btnSeleccionar" value="Seleccionar" update=":frmPredios:tbConsultas:consulta" style="height: 30px" oncomplete="PF('dlgSolicitante').hide()" actionListener="#{gestionPredios.seleccionarContribuyente()}"/>
+                        <!--                        <f:facet name="{Exporters}">-->
+                        <h:commandLink>
+                            <p:commandButton ajax="false" id = "btnReporte" value="Reporte" icon="ui-icon-print" type="button" style="height: 30px" update=":frmPredios:tbConsultas:consulta" />
+                            <p:dataExporter type="xls" target="dtSolicitante" fileName="predioPropietario"   />
+                        </h:commandLink>
+                    </f:facet>
+
+                </p:dataTable>
+            </h:form>
+        </p:dialog>
+        <p:dialog id="dlgDivision" widgetVar="dlgDivision" header="Division de Predios" appendTo="@(body)" width="48%" height="450" responsive="true" closable="true" closeOnEscape="true" modal="true">
+            <h:form id="frmDivision">
+                <br/>
+                <p:outputLabel value=""/><h:outputLabel value="Propietario: " style="font-weight: bolder"/>
+                <h:outputText value="&#160;"/><h:outputText value="&#160;" />
+                <p:outputLabel value=""/><p:inputText value="#{gestionPredios.predio.nombrePropietarios}" readonly="true" style="width: 50%"/>
+                <h:outputText value="&#160;"/><h:outputText value="&#160;" />
+                <h:outputLabel value="Area de Solar: " style="font-weight: bolder"/>
+                <h:outputText value="&#160;"/><h:outputText value="&#160;" />
+                <p:outputLabel value=""/><p:inputText value="#{gestionPredios.predio.areaSolar}" readonly="true" style="width: 20%"/>
+                <p:panelGrid style="margin-top:20px" >
+
+                    <f:facet name="header">
+                        <p:row>
+                            <p:column>Parroquia :   </p:column>
+                            <p:column>Zona :        </p:column>
+                            <p:column>Sector :      </p:column>
+                            <p:column>Mz. :         </p:column>
+                            <p:column>Lote :        </p:column>
+                            <p:column rendered="#{gestionPredios.predio.propiedadHorizontal}">Bloque :      </p:column>
+                            <p:column rendered="#{gestionPredios.predio.propiedadHorizontal}">Piso :        </p:column>
+                            <p:column rendered="#{gestionPredios.predio.propiedadHorizontal}">Unidad :      </p:column>
+                        </p:row>
+                    </f:facet>
+                    <p:row>
+                        <p:column><p:inputText id="parrq" placeholder="Parroquia"  value="#{gestionPredios.predio.parroquia}" readonly="true" style="text-align: center; width: 89%" maxlength="2"/></p:column>
+                        <p:column><p:inputText id="zona" placeholder="Zona" value="#{gestionPredios.predio.zona}" readonly="true" style="text-align: center; width: 89%" maxlength="2"/></p:column>
+                        <p:column><p:inputText id="sect" placeholder="Sector"  value="#{gestionPredios.predio.sector}" readonly="true" style="text-align: center; width: 89%" maxlength="2"/></p:column>
+                        <p:column><p:inputText id="mz" placeholder="Manzana"  value="#{gestionPredios.predio.mz}" readonly="true" style="text-align: center; width: 89%" maxlength="3"/></p:column>
+                        <p:column><p:inputText id="lot" placeholder="Lote" value="#{gestionPredios.predio.solar}" readonly="true"  style="text-align: center; width: 89%" maxlength="3"/></p:column>
+                        <p:column rendered="#{gestionPredios.predio.propiedadHorizontal}"><p:inputText id="blo" placeholder="Bloque"  value="#{gestionPredios.predio.bloque}" readonly="true" style="text-align: center; width: 89%" maxlength="2"/></p:column>
+                        <p:column rendered="#{gestionPredios.predio.propiedadHorizontal}"><p:inputText id="piso" placeholder="Piso"  value="#{gestionPredios.predio.piso}" readonly="true" style="text-align: center; width: 89%" maxlength="3"/></p:column>
+                        <p:column rendered="#{gestionPredios.predio.propiedadHorizontal}"><p:inputText id="uni" placeholder="Unidad" value="#{gestionPredios.predio.unidad}" readonly="true"  style="text-align: center; width: 89%" maxlength="3"/></p:column>
+                    </p:row>
+
+                </p:panelGrid>
+                <br/>
+                <div align="center" >
+                    <p:commandButton value="Agregar" actionListener="#{gestionPredios.addDivisionPredio()}" update=":frmDivision:tblDivisionPredios" />
+                </div>
+                <br/>
+                <p:dataTable id="tblDivisionPredios" value="#{gestionPredios.predioDivision}"
+                             var="pd" editable="true" editMode="cell" widgetVar="prediosDivision">
+                    <p:ajax event="cellEdit" listener="#{gestionPredios.validateAreaSolarDivisionCellRow}" update="frmDivision:tblDivisionPredios" />
+                    <f:facet name="header">
+                        <h:outputText value="Predios Resultantes"/>
+                    </f:facet>
+                    <p:column headerText="Parroquia" style="text-align: center">
+                        <p:outputLabel value="#{pd.parroquia}"/>
+                    </p:column>
+                    <p:column headerText="Zona" style="text-align: center">
+                        <h:outputText value="#{pd.zona}" />
+                    </p:column>
+                    <p:column headerText="Sector" style="text-align: center">
+                        <h:outputText value="#{pd.sector}" />
+                    </p:column>
+                    <p:column headerText="Mz." style="text-align: center" >
+                        <h:outputText value="#{pd.mz}" />
+                    </p:column>
+                    <p:column headerText="Lote"  style="text-align: center" >
+                        <h:outputText value="#{pd.solar}"/>
+                    </p:column>
+                    <p:column rendered="#{gestionPredios.predio.propiedadHorizontal}" headerText="Bloque"  style="text-align: center" >
+                        <h:outputText value="#{pd.bloque}"/>
+                    </p:column>
+                    <p:column rendered="#{gestionPredios.predio.propiedadHorizontal}"  headerText="Piso"  style="text-align: center" >
+                        <h:outputText value="#{pd.piso}"/>
+                    </p:column>
+                    <p:column rendered="#{gestionPredios.predio.propiedadHorizontal}" headerText="Unidad"  style="text-align: center" >
+                        <h:outputText value="#{pd.unidad}"/>
+                    </p:column>
+                    <p:column headerText="Area S. Correspondiente" style="text-align: center" >
+                        <p:cellEditor>
+                            <f:facet name="output"><h:outputText  value="#{pd.areaSolar}" /></f:facet>
+                            <f:facet name="input">
+                                <pe:inputNumber  value="#{pd.areaSolar}" style="width: 70%"  minValue="0">
+                                    <!--<p:ajax update=":frmDivision:tblDivisionPredios" listener="#{gestionPredios.substractAreaSolar}"/>-->
+                                </pe:inputNumber>
+
+                            </f:facet>
+                        </p:cellEditor>
+                    </p:column>
+                    <p:column headerText="Opción" style="text-align: center" >
+                        <p:commandLink actionListener="#{gestionPredios.removePredioDivision(pd.solar)}" update=":frmDivision:tblDivisionPredios" >
+                            <p:graphicImage value="/css/homeIconsImages/delete.png"  height="20" width="20"/>
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+
+                <br/>
+                <div align="center" >
+                    <p:commandButton value="Aceptar" actionListener="#{gestionPredios.saveDivisionPredio()}" update="frmEstatus" />
+                    <p:spacer width="10"/>
+                    <p:commandButton value="Cancelar" actionListener="#{gestionPredios.clearDivisionPredio()}" update=":frmDivision:tblDivisionPredios" oncomplete="PF('dlgDivision').hide()" />
+                </div>
+                <br/>
+
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="dlgMatricula" widgetVar="dlgMatricula" header="Matriculas Inmobiliarias Generadas" width="350" height="150" closable="true" closeOnEscape="false" resizable="false" >
+            <h:form id="frmEstatus">
+
+                <div align="center">
+                    <p:dataTable value="#{gestionPredios.prediosResultantes}" var="pr" styleClass="borderless">
+                        <p:column headerText="Matriculas Inmobiliarias"  style="text-align: center" >
+                            <h:outputText value="#{pr.numPredio}"/>
+                        </p:column>
+                        <p:column headerText="Opcion"  style="text-align: center" >
+                            <p:commandButton value="Continuar" actionListener="#{gestionPredios.continuar(pr)}"/>
+                        </p:column>
+                    </p:dataTable>
+                </div>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog widgetVar="dlgSolicitanteCertificado" header="Contribuyentes" width="900" height="90%" resizable="false" closable="true" closeOnEscape="true" modal="true">
+            <h:form id="frmSolicitanteCertificado">
+
+                <div align="center">
+                    <p:selectOneRadio value="#{gestionPredios.isExcel}" >
+                        <f:selectItem itemLabel="EXCEL" itemValue="#{true}" />
+                        <f:selectItem itemLabel="PDF" itemValue="#{false}" />
+                    </p:selectOneRadio>
+                </div>
+
+                <p:dataTable var="s" value="#{gestionPredios.solicitantes}" style="width: 100%;text-align: center;" lazy="true" 
+                             paginator="true" rows="10" filterEvent="enter" paginatorPosition="top"
+                             selection="#{gestionPredios.contribuyenteList}" rowKey="#{s.id}">
+                    <p:column selectionMode="multiple" width="100" />
+                    <p:column headerText="CI/RUC" sortBy="#{s.ciRuc}" width="150" filterBy="#{s.ciRuc}" filterStyle="width: 90%;">
+                        <h:outputText value="#{s.ciRuc}"/>
+                    </p:column>
+                    <p:column headerText="Apellidos" filterBy="#{s.apellidos}" sortBy="#{s.apellidos}" filterStyle="width: 95%;">
+                        <h:outputText value="#{s.apellidos}" style="text-transform: uppercase"/>
+                    </p:column>
+                    <p:column headerText="Nombres" filterBy="#{s.nombres}" sortBy="#{s.nombres}" filterStyle="width: 95%;">
+                        <h:outputText value="#{s.nombres}" style="text-transform: uppercase"/>
+                    </p:column>
+                    <p:column headerText="Razon Social" filterBy="#{s.razonSocial}" sortBy="#{s.razonSocial}" filterStyle="width: 95%;">
+                        <h:outputText value="#{s.razonSocial}" style="text-transform: uppercase"/>
+                    </p:column>
+                    <f:facet name="footer">
+                        <p:commandButton value="Seleccionar" icon="ui-icon-plus" actionListener="#{gestionPredios.seleccionar()}" style="height: 30px"/>
+                    </f:facet>
+                </p:dataTable>         
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+</ui:composition>

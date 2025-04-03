@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition>
+
+        <p:dialog id="divisionDlg" widgetVar="divDialog"
+                  modal="true" resizable="false" appendTo="@(body)"
+                  header="Longitud y tipos de cerramientos" >
+            <h:form id="diviForm" prependId="false">
+                <p:panel id="pnlPredioMt">
+                    <h:panelGroup layout="block" >
+                        <h:outputLabel value="Clave Catastral" class="DispBlock Wid100 FontBold"/>
+                        <p:inputText value="#{iniciarDivision.predio.claveCat}" readonly="true"/>
+                    </h:panelGroup>
+                </p:panel>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

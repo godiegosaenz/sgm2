@@ -1,0 +1,734 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="fichaMiduvi" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="20e56fe9-e9d4-40e2-abb3-ef7cd1a78bf6">
+	<property name="ireport.zoom" value="0.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="145"/>
+	<parameter name="predio" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[java.lang.System.getProperty("user.home") + "\\Documents\\NetBeansProjects\\SanVicente\\src\\main\\webapp\\reportes\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[java.lang.System.getProperty("user.home") + "\\Desktop\\PROYECTO_SAN-MIGUEL\\sgm\\src\\main\\webapp\\css\\homeIconsImages\\logo.jpg"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FachadaFrontal" class="java.io.InputStream" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{FachadaFrontal}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FachadaIzquierda" class="java.io.InputStream" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{FachadaIzquierda}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FachadaDerecha" class="java.io.InputStream" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{FachadaDerecha}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FachadaPosterior" class="java.io.InputStream" isForPrompting="false">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[$P{FachadaPosterior}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO2" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[java.lang.System.getProperty("user.home") + "\\Desktop\\PROYECTO_SAN-MIGUEL\\sgm\\src\\main\\webapp\\css\\smb\\logomunicipal.png"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="IMAGEN_PREDIO" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="COLINDANTES" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="SUBREPORT_DIR_TITLE" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[java.lang.System.getProperty("user.home") + "\\Documents\\NetBeansProjects\\SanVicente\\src\\main\\webapp\\reportes\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CANTON" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+  CP.NUM_PREDIO, LPAD(CP.PROVINCIA::TEXT, 2, '0') AS PROVINCIA, LPAD(CP.CANTON::TEXT, 2, '0')
+  AS CANTON, LPAD(CP.PARROQUIA::TEXT, 2, '0') AS PARROQUIA, LPAD(CP.ZONA::TEXT, 2, '0')
+  AS ZONA, LPAD(CP.SECTOR::TEXT, 2, '0') AS SECTOR, LPAD(CP.MZ::TEXT, 3, '0') AS MZ, LPAD(CP.SOLAR::TEXT, 3, '0')
+   AS SOLAR, LPAD(CP.BLOQUE::TEXT, 3, '0') AS BLOQUE, LPAD(CP.PISO::TEXT, 2, '0') AS PISO, LPAD(CP.UNIDAD::TEXT, 3, '0')
+   AS UNIDAD, (CP.BLOQUE > 0 AND CP.PISO > 0 AND CP.UNIDAD > 0) ES_PH,
+  CP.CLAVE_CAT, CP.PREDIALANT, CP.TIPO_PREDIO,CP.CALLE, CP.CALLE_S,
+  TEN.NOMBRE AS TENENCIA, UPPER(USO.VALOR) AS USO_SOLAR,
+  prrq.descripcion AS nombre_parroquia,
+  CP.AREA_SOLAR, UPPER(tipovia.valor) AS tipovia, cp.avaluo_solar, cp.avaluo_construccion, cp.avaluo_municipal,
+  CP.NUMERO_VIVIENDA, cp.ZONA AS zona_num,
+/*Escritura*/
+  es.notaria, CCT.NOMBRE AS nombre_canton, ES.AREA_SOLAR AS area_escritura, ES.UNIDAD_AREA,ES.fec_inscripcion,
+  ES.fec_escritura, ES.folio_desde, ES.folio_hasta, es.alicuota,
+  es.num_repertorio, prv.descripcion AS nombre_provincia,
+  UPPER(does.nombre) AS dominio,
+  UPPER(LOC.VALOR) AS LOC_MZ, UPPER(COB_PRD.VALOR) AS COB_PRED, UPPER(EC_PRD.VALOR) AS ECOS_PRED,
+  cp.nombre_edificio AS nombre_predio, cp.requiere_perfeccionamiento, cp.anios_sin_perfeccionamiento, cp.anios_posesion, nombre_pueblo_etnia,
+/*S4*/
+  CP4.FRENTE1, CP4.FONDO1, otva.valor AS otro_tipo_via, material_mejora.valor AS material_mejora, tipo_obra_mejora.valor AS tipo_obra_mejora,
+/*S6*/
+  (select string_agg(UPPER(CI.VALOR), ', ' order by CI.ORDEN)
+  from sgm_app.cat_predio_s6_has_vias CT INNER JOIN sgm_app.ctlg_item CI ON CT.ctlg_item=CI.ID WHERE predio_s6=CP6.ID) AS RODADURA,
+  (SELECT string_agg(UPPER(ie.valor), ', ' ORDER BY ie.orden)
+   FROM sgm_app.cat_predio_s6_has_instalacion_especial pie INNER JOIN sgm_app.ctlg_item ie ON pie.ctlg_item=ie.ID WHERE pie.predio_s6=cp6.id) AS instalaciones_especiales, cp6.tiene_aceras, cp6.tiene_bordillo, cp6.tiene_agua_potable, UPPER(abast.valor) AS abastecimiento, UPPER(eva_ser.valor) AS evacuacion_agua_serv, cp6.tpublico, UPPER(cirb.valor) AS recoleccion_bas,
+  resp_fisc.ci_ruc AS resp_fisc_ci_ruc, (resp_fisc.apellidos || ' ' || resp_fisc.nombres) AS nombres_resp_fisc,
+  resp_act.ci_ruc AS resp_act_ci_ruc, (resp_act.apellidos || ' ' || resp_act.nombres) AS nombres_resp_act,
+  cc.nombre AS nombre_cdla, tc.nombre AS tipo_conjunto,
+tpp.valor as tipo_poseedor,
+afectl.valor as afectacion_lote,
+cp4.tiene_hipoteca as tiene_hipoteca,
+cp4.inst_financiera_hip as inst_financiera_hip,
+cp4.lote_en_conflicto as lote_en_conflicto,
+cp4.opbserv_lote_en_conflicto as opbserv_lote_en_conflicto,
+cp4.tiene_permiso_const as tiene_permiso_const,
+cp4.tiene_retiros as tiene_retiros,
+cp4.tiene_adosamiento as tiene_adosamiento,
+cp6.cobertura_celular as cobertura_celular,
+tipo_prot.valor as tipo_protocolizacion,
+es.precio_compra as precio_compra,
+sts.valor AS estado_solar,
+const.valor AS constructividad,
+es.lind_escr_norte AS lin_nor,
+es.lind_escr_norte_con AS lin_nor_con,
+es.lind_escr_este AS lin_este,
+es.lind_escr_este_con AS lin_este_con,
+es.lind_escr_sur AS lin_sur,
+es.lind_escr_sur_con AS lin_sur_con,
+es.lind_escr_oeste AS lin_oeste,
+es.lind_escr_oeste_con lind_oest_con,
+es.lind_inferior AS lin_inf,
+es.lind_inferior_con AS lin_inf_con,
+es.lind_superior AS lin_sup,
+es.lind_superior_con As lin_sup_con
+FROM
+  sgm_app.CAT_PREDIO CP
+  LEFT OUTER JOIN sgm_app.cat_parroquia prrq ON (prrq.codigo_parroquia=cP.parroquia AND prrq.id_canton =
+  (SELECT id FROM sgm_app.cat_canton WHERE codigo_nacional = cp.canton AND id_provincia = cp.provincia ))
+  LEFT OUTER JOIN sgm_app.cat_propiedad_item TEN ON (cp.propiedad=TEN.id)
+
+  LEFT OUTER JOIN sgm_app.ctlg_item uso ON uso.id=cp.uso_solar
+  LEFT OUTER JOIN sgm_app.ctlg_item tpp ON tpp.id=cp.tipo_poseedor
+  LEFT OUTER JOIN sgm_app.cat_escritura es ON es.predio=cp.id AND es.fec_cre = (SELECT max(fec_cre) FROM sgm_app.cat_escritura WHERE predio = $P{predio})
+  LEFT OUTER JOIN sgm_app.ctlg_item const ON cp.constructividad=const.id
+  LEFT OUTER JOIN sgm_app.ctlg_item tipo_prot ON tipo_prot.id=es.tipo_protocolizacion
+  LEFT OUTER JOIN sgm_app.CAT_CANTON CCT ON CCT.ID=ES.CANTON
+  LEFT OUTER JOIN sgm_app.cat_tipos_dominio does ON does.id=es.trasl_dom
+  LEFT OUTER JOIN sgm_app.cat_provincia prv ON prv.id = cct.id_provincia
+  LEFT OUTER JOIN sgm_app.cat_predio_s4 cp4 ON (cp.id=cp4.predio)
+  LEFT OUTER JOIN sgm_app.cat_predio_s6 cp6 on (cp.id=cp6.predio)
+
+  LEFT OUTER JOIN sgm_app.ctlg_item LOC on (cp4.loc_manzana=LOC.id)
+  LEFT OUTER JOIN sgm_app.ctlg_item afectl on (cp4.afectacion_lote=afectl.id)
+  LEFT OUTER JOIN sgm_app.ctlg_item COB_PRD on (cp4.cobertura_predominante=COB_PRD.id)
+  LEFT OUTER JOIN sgm_app.ctlg_item EC_PRD on (cp4.ecosistema_relevante=EC_PRD.id)
+  LEFT OUTER JOIN sgm_app.ctlg_item tipo_obra_mejora on (cp4.tipo_obra_mejora=tipo_obra_mejora.id)
+  LEFT OUTER JOIN sgm_app.ctlg_item material_mejora on (cp4.ecosistema_relevante=material_mejora.id)
+  left outer join sgm_app.ctlg_item sts ON cp4.estado_solar=sts.id
+
+  LEFT OUTER JOIN sgm_app.ctlg_item tipovia on (cp.tipo_via=tipovia.id)
+  LEFT OUTER JOIN sgm_app.ctlg_item abast on (cp6.abast_agua_proviene=abast.id)
+  LEFT OUTER JOIN sgm_app.ctlg_item eva_ser on (cp6.evac_aguas_serv=eva_ser.id)
+  LEFT OUTER JOIN sgm_app.ctlg_item cirb on (cp6.recol_basura=cirb.id)
+  LEFT OUTER JOIN sgm_app.ctlg_item otva ON otva.id=cp.otro_tipo_via
+
+  LEFT OUTER JOIN sgm_app.cat_ente resp_fisc ON resp_fisc.id=cp.responsable_fiscalizador_predial
+  LEFT OUTER JOIN sgm_app.cat_ente resp_act ON resp_act.id=cp.responsable_actualizador_predial
+
+  LEFT OUTER JOIN sgm_app.cat_tipo_conjunto tc ON tc.id=cp.tipo_conjunto
+  LEFT OUTER JOIN sgm_app.cat_ciudadela cc on cc.id = cp.ciudadela
+  WHERE
+  CP.ID=$P{predio};]]>
+	</queryString>
+	<field name="num_predio" class="java.lang.Long"/>
+	<field name="provincia" class="java.lang.String"/>
+	<field name="canton" class="java.lang.String"/>
+	<field name="parroquia" class="java.lang.String"/>
+	<field name="zona" class="java.lang.String"/>
+	<field name="sector" class="java.lang.String"/>
+	<field name="mz" class="java.lang.String"/>
+	<field name="solar" class="java.lang.String"/>
+	<field name="bloque" class="java.lang.String"/>
+	<field name="piso" class="java.lang.String"/>
+	<field name="unidad" class="java.lang.String"/>
+	<field name="es_ph" class="java.lang.Boolean"/>
+	<field name="clave_cat" class="java.lang.String"/>
+	<field name="predialant" class="java.lang.String"/>
+	<field name="tipo_predio" class="java.lang.String"/>
+	<field name="calle" class="java.lang.String"/>
+	<field name="calle_s" class="java.lang.String"/>
+	<field name="tenencia" class="java.lang.String"/>
+	<field name="uso_solar" class="java.lang.String"/>
+	<field name="nombre_parroquia" class="java.lang.String"/>
+	<field name="area_solar" class="java.math.BigDecimal"/>
+	<field name="tipovia" class="java.lang.String"/>
+	<field name="avaluo_solar" class="java.math.BigDecimal"/>
+	<field name="avaluo_construccion" class="java.math.BigDecimal"/>
+	<field name="avaluo_municipal" class="java.math.BigDecimal"/>
+	<field name="numero_vivienda" class="java.lang.String"/>
+	<field name="zona_num" class="java.lang.Integer"/>
+	<field name="notaria" class="java.lang.String"/>
+	<field name="nombre_canton" class="java.lang.String"/>
+	<field name="area_escritura" class="java.math.BigDecimal"/>
+	<field name="unidad_area" class="java.lang.String"/>
+	<field name="fec_inscripcion" class="java.sql.Date"/>
+	<field name="fec_escritura" class="java.sql.Date"/>
+	<field name="folio_desde" class="java.lang.String"/>
+	<field name="folio_hasta" class="java.lang.String"/>
+	<field name="alicuota" class="java.math.BigDecimal"/>
+	<field name="num_repertorio" class="java.lang.Integer"/>
+	<field name="nombre_provincia" class="java.lang.String"/>
+	<field name="dominio" class="java.lang.String"/>
+	<field name="loc_mz" class="java.lang.String"/>
+	<field name="cob_pred" class="java.lang.String"/>
+	<field name="ecos_pred" class="java.lang.String"/>
+	<field name="nombre_predio" class="java.lang.String"/>
+	<field name="requiere_perfeccionamiento" class="java.lang.Boolean"/>
+	<field name="anios_sin_perfeccionamiento" class="java.lang.Integer"/>
+	<field name="anios_posesion" class="java.lang.Integer"/>
+	<field name="nombre_pueblo_etnia" class="java.lang.String"/>
+	<field name="frente1" class="java.math.BigDecimal"/>
+	<field name="fondo1" class="java.math.BigDecimal"/>
+	<field name="otro_tipo_via" class="java.lang.String"/>
+	<field name="material_mejora" class="java.lang.String"/>
+	<field name="tipo_obra_mejora" class="java.lang.String"/>
+	<field name="rodadura" class="java.lang.String"/>
+	<field name="instalaciones_especiales" class="java.lang.String"/>
+	<field name="tiene_aceras" class="java.lang.Boolean"/>
+	<field name="tiene_bordillo" class="java.lang.Boolean"/>
+	<field name="tiene_agua_potable" class="java.lang.Boolean"/>
+	<field name="abastecimiento" class="java.lang.String"/>
+	<field name="evacuacion_agua_serv" class="java.lang.String"/>
+	<field name="tpublico" class="java.lang.Boolean"/>
+	<field name="recoleccion_bas" class="java.lang.String"/>
+	<field name="resp_fisc_ci_ruc" class="java.lang.String"/>
+	<field name="nombres_resp_fisc" class="java.lang.String"/>
+	<field name="resp_act_ci_ruc" class="java.lang.String"/>
+	<field name="nombres_resp_act" class="java.lang.String"/>
+	<field name="nombre_cdla" class="java.lang.String"/>
+	<field name="tipo_conjunto" class="java.lang.String"/>
+	<field name="tipo_poseedor" class="java.lang.String"/>
+	<field name="afectacion_lote" class="java.lang.String"/>
+	<field name="tiene_hipoteca" class="java.lang.Boolean"/>
+	<field name="inst_financiera_hip" class="java.lang.String"/>
+	<field name="lote_en_conflicto" class="java.lang.Boolean"/>
+	<field name="opbserv_lote_en_conflicto" class="java.lang.String"/>
+	<field name="tiene_permiso_const" class="java.lang.Boolean"/>
+	<field name="tiene_retiros" class="java.lang.Boolean"/>
+	<field name="tiene_adosamiento" class="java.lang.Boolean"/>
+	<field name="cobertura_celular" class="java.lang.Boolean"/>
+	<field name="tipo_protocolizacion" class="java.lang.String"/>
+	<field name="precio_compra" class="java.math.BigDecimal"/>
+	<field name="estado_solar" class="java.lang.String"/>
+	<field name="constructividad" class="java.lang.String"/>
+	<field name="lin_nor" class="java.lang.String"/>
+	<field name="lin_nor_con" class="java.math.BigDecimal"/>
+	<field name="lin_este" class="java.lang.String"/>
+	<field name="lin_este_con" class="java.math.BigDecimal"/>
+	<field name="lin_sur" class="java.lang.String"/>
+	<field name="lin_sur_con" class="java.math.BigDecimal"/>
+	<field name="lin_oeste" class="java.lang.String"/>
+	<field name="lind_oest_con" class="java.math.BigDecimal"/>
+	<field name="lin_inf" class="java.lang.String"/>
+	<field name="lin_inf_con" class="java.math.BigDecimal"/>
+	<field name="lin_sup" class="java.lang.String"/>
+	<field name="lin_sup_con" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="70" splitType="Immediate">
+			<subreport>
+				<reportElement x="0" y="-1" width="555" height="71" uuid="b2196f27-1b66-43e6-b857-824315443d78"/>
+				<subreportParameter name="LOGO">
+					<subreportParameterExpression><![CDATA[$P{LOGO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SUB_TITLE"/>
+				<subreportParameter name="LOGO2">
+					<subreportParameterExpression><![CDATA[$P{LOGO2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR_TITLE} + "titleReporte2.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<detail>
+		<band height="571" splitType="Immediate">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="555" height="20" forecolor="#FFFFFF" backcolor="#999999" uuid="5b0431c9-603b-49af-93ba-1534ab6669d5"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ 1.IDENTIFICACIÓN - UBICACIÓN]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="278" y="48" width="55" height="14" uuid="04176645-f59d-4a72-b1aa-303f3dd89ca5"/>
+				<box leftPadding="1">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{mz}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="113" y="34" width="55" height="14" uuid="efad5065-1ced-4f12-937c-32e5ac8110be"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Parroquia:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="402" y="34" width="50" height="14" uuid="976c54c9-2edf-4a87-b913-cf1ba066a273"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Bloque:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="58" y="34" width="55" height="14" uuid="d1574e50-aba0-4eb0-b042-0f857ec02bb4"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Catón:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="333" y="48" width="55" height="14" uuid="31f24278-5df2-41dd-b870-33053eefeca9"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{solar}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="113" y="48" width="55" height="14" uuid="eca15ef9-b978-4873-aca7-f8c27d7abd95"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{parroquia}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="3" y="100" width="110" height="14" uuid="92c0c937-470e-41e3-a41c-132a24169269"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Numero de Predio:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="402" y="20" width="150" height="14" uuid="55ca8c62-37e9-4b30-abfe-61db08b7a6bf"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Propiedad horizontal]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="402" y="48" width="50" height="14" uuid="f2362b73-3091-4c6d-a4ae-517fd135128f"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{bloque}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="502" y="34" width="50" height="14" uuid="21f7f632-e447-46a3-9fec-c0936e3cdc65"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Unidad:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="168" y="48" width="55" height="14" uuid="d099cc0a-52e8-46f7-8799-9f1b8e55bc4f"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{zona}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Transparent" x="3" y="48" width="55" height="14" forecolor="#000000" uuid="28200287-a535-4a7f-a0ae-6d73de88b14b"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{provincia}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="3" y="34" width="55" height="14" uuid="788b92f2-7320-47c2-a68c-8ed9a22054dd"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Provincia:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="223" y="34" width="55" height="14" uuid="1df9e790-a657-4191-82a7-ed6a04884e43"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sector:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="168" y="34" width="55" height="14" uuid="d86f1db5-0443-4cc0-9910-5ec7edd98b8f"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Zona:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="113" y="100" width="439" height="14" uuid="678b3d12-d418-4efc-b39a-ed8034338bbd"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{num_predio}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="452" y="34" width="50" height="14" uuid="b28dc544-7f7c-42bc-91c5-fb5de7ea6fca"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Piso:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="502" y="48" width="50" height="14" uuid="dfdf8506-d925-4fe1-b300-0f7dfc2e042e"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{unidad}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="452" y="48" width="50" height="14" uuid="32291586-5a9a-409a-adc9-da238fcaff76"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{piso}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="223" y="48" width="55" height="14" uuid="d44e85d4-a343-470f-bf12-a18e9886863d"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{sector}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="58" y="48" width="55" height="14" uuid="1ce847aa-93f2-45d0-bded-39a87aa4454a"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{canton}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="333" y="34" width="55" height="14" uuid="3e28fc10-2bf2-4e4e-90a7-03185daccfd6"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Lote:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="278" y="34" width="55" height="14" uuid="5b12b429-ca4b-4857-b3ed-bf362c00d213"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Manzana:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="20" width="385" height="14" uuid="7bc95946-dd2e-4c14-906b-bd86379940b8"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Código de Ubicación]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="86" width="110" height="14" uuid="9d8bf1ec-340a-476f-b7aa-e89ffadc8837"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ Clave Catastral:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="113" y="86" width="165" height="14" uuid="b3af4fbc-dbe4-4161-8c61-641e8e30ab98"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{clave_cat}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="388" y="86" width="164" height="14" uuid="c4743fa0-811e-4f72-bc85-ac6dabeb6c1c"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{predialant}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="278" y="86" width="110" height="14" uuid="897c3047-6919-4b0b-ad80-e3111d9d758a"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ Clave Catastral Ant.:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="72" width="110" height="14" uuid="df1961a1-ddda-4bc2-af1e-f2d7cebc86f0"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nombre Parroquia:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="113" y="72" width="439" height="14" uuid="1f3e14a0-dabb-442d-80cf-926dfe45e9f2"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_parroquia}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="0" y="121" width="552" height="17" forecolor="#FFFFFF" backcolor="#999999" uuid="e2edb202-a66f-4ce6-a412-e700ba0f7e10"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ 2 PLANO DEL PREDIO]]></text>
+			</staticText>
+			<image scaleImage="RealSize" hAlign="Center" vAlign="Middle" onErrorType="Blank">
+				<reportElement x="3" y="138" width="550" height="397" uuid="6209bd11-64b0-4f81-b8bf-b4741d17d138"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<imageExpression><![CDATA[$P{IMAGEN_PREDIO}]]></imageExpression>
+			</image>
+		</band>
+		<band height="184">
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="2" y="14" width="551" height="16" forecolor="#FFFFFF" backcolor="#999999" uuid="21c487a5-944d-497d-a961-7eea9a833d9d"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ 3. FOTOGRAFÍAS]]></text>
+			</staticText>
+			<image scaleImage="FillFrame" onErrorType="Blank">
+				<reportElement positionType="Float" x="6" y="36" width="134" height="108" uuid="c88d6139-5841-45df-b840-229460e05f2b"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<imageExpression><![CDATA[$P{FachadaFrontal}]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame" onErrorType="Blank">
+				<reportElement positionType="Float" x="141" y="36" width="134" height="108" uuid="53615b24-e5af-4186-b604-b3c6ef3efc42"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<imageExpression><![CDATA[$P{FachadaIzquierda}]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame" onErrorType="Blank">
+				<reportElement positionType="Float" x="279" y="36" width="134" height="108" uuid="2198f38c-9764-4389-8ea7-3a955894acb7"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<imageExpression><![CDATA[$P{FachadaDerecha}]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame" onErrorType="Blank">
+				<reportElement positionType="Float" x="417" y="36" width="134" height="108" uuid="c7984731-a3b5-4dde-9b02-e3132c8f1e1f"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<imageExpression><![CDATA[$P{FachadaPosterior}]]></imageExpression>
+			</image>
+		</band>
+	</detail>
+</jasperReport>

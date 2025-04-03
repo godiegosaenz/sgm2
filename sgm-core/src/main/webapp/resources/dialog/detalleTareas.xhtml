@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html" >
+
+    <!-- INTERFACE -->
+    <cc:interface componentType="detalleTareasCont" >
+        <cc:attribute name="archivos" required="true" type="java.util.List"/>
+        <cc:attribute name="observaciones" type="java.util.List" required="true"/>
+        <cc:attribute name="predios" type="java.util.List"  />
+        <cc:attribute name="mostraPredios" type="java.lang.Boolean" default="false"/>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <p:tabView id="tabCarDoc" orientation="top">
+            <p:tab id="tSubDoc" title="Documentos">
+                <p:dataTable id="dtdocs" value="#{cc.attrs.archivos}" var="doc" style="width: 100%" reflow="true" emptyMessage="No ha cargado documento alguno">
+                    <p:column headerText="Archivo" style="width: 50%">
+                        #{doc.name}
+                    </p:column>
+                    <p:column headerText="Tipo" style="width: 20%">
+                        #{doc.type}
+                    </p:column>
+                    <p:column style="width: 10%; text-align: center">
+                        <p:commandLink id="btnMostrar" actionListener="#{cc.showDocument1(doc.url, doc.type)}" >
+                            <p:tooltip for="btnMostrar" value="Visualizar Documento"/>
+                            <h:graphicImage value="/image/buscar.png" height="30"/>
+                        </p:commandLink>
+
+                        <p:commandLink id="btnDescargar" actionListener="#{cc.descargarDocumento(doc.url, 'pdf')}" >
+                            <p:tooltip for="btnDescargar" value="Descargar Documento"/>
+                            <h:graphicImage value="/image/download.png" height="30"/>
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+            </p:tab>
+            <p:tab id="tObs" title="Observaciones">
+                <p:dataTable id="dtObs" value="#{cc.attrs.observaciones}" var="obs" reflow="true" style="width: 100%" >
+                    <p:column headerText="Observacion" style="width: 50%">
+                        <p:outputLabel value="#{obs.observacion}" rendered="#{obs.estado}" style="text-transform: uppercase"/>
+                    </p:column>
+                    <p:column headerText="Responsable" style="width: 15%">
+                        <p:outputLabel value="#{obs.userCre}" rendered="#{obs.estado}" style="text-transform: uppercase"/>
+                    </p:column>
+                    <p:column headerText="Tarea" style="width: 25%">
+                        <p:outputLabel value="#{obs.tarea}" rendered="#{obs.estado}" style="text-transform: uppercase"/>
+                    </p:column>
+                    <p:column headerText="Fecha" style="width: 20%">
+                        <p:outputLabel value="#{obs.fecCre}" rendered="#{obs.estado}" style="text-transform: uppercase"/>
+                    </p:column>
+                </p:dataTable>
+            </p:tab>
+            <p:tab id="tPred" title="Predios" rendered="#{cc.attrs.mostraPredios}">
+                <p:dataTable id="tdPred" value="#{cc.attrs.predios}" var="pd1" reflow="true" style="width: 100%"
+                             paginator="true" paginatorPosition="top" paginatorAlwaysVisible="false" rows="5">
+                    <p:column headerText="Número Predio" style="width: 15%">
+                        <p:outputLabel value="#{pd1.numPredio}" style="text-transform: uppercase"/>
+                    </p:column>
+                    <p:column headerText="Código Predial" style="width: 28%">
+                        <p:outputLabel value="#{pd1.codigoPredial}" style="text-transform: uppercase"/>
+                    </p:column>
+                    <p:column headerText="Ciudadela" style="width: 50%">
+                        <p:outputLabel value="#{pd1.nombreUrb}" style="text-transform: uppercase"/>
+                    </p:column>
+                    <p:column headerText="Manzana" style="width: 20%">
+                        <p:outputLabel value="#{pd1.urbMz}" style="text-transform: uppercase"/>
+                    </p:column>
+                    <p:column headerText="Solar" style="width: 20%">
+                        <p:outputLabel value="#{pd1.urbSolarnew}" style="text-transform: uppercase"/>
+                    </p:column>
+                </p:dataTable>
+            </p:tab>
+
+        </p:tabView>
+
+    </cc:implementation>
+</html>

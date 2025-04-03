@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sMemoConvenioPagoFinal" language="groovy" pageWidth="595" pageHeight="842" columnWidth="541" leftMargin="34" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d9583ce7-5e26-4817-91a5-c0284cb571d5">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="DEUDA" uuid="9f03c0f8-1834-497e-a39e-d0218337e2e5">
+		<parameter name="ID_CONVENIO" class="java.lang.Long">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT D.MES AS NUMERO_CUOTA , D.DEUDA , D.FECHA_MAXIMA_PAGO,
+
+CASE WHEN L.ESTADO_LIQUIDACION = 1 THEN 'PAGADO'
+  ELSE
+      'PENDIENTE'
+   END AS ESTADO
+FROM SGM_FINANCIERO.FN_CONVENIO_PAGO_DETALLE D
+INNER JOIN SGM_FINANCIERO.REN_LIQUIDACION L  ON L.ID = D.LIQUIDACION
+WHERE D.CONVENIO = $P{ID_CONVENIO}]]>
+		</queryString>
+		<field name="numero_cuota" class="java.lang.Integer"/>
+		<field name="deuda" class="java.math.BigDecimal"/>
+		<field name="fecha_maxima_pago" class="java.sql.Timestamp"/>
+		<field name="estado" class="java.lang.String"/>
+	</subDataset>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\Juan Carlos\\Documents\\NetBeansProjects\\SGM-MT\\montecristi-sgm\\sgm-reportes\\src\\main\\resources\\reportes\\RentasMontecristi\\ConveniosdePago\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ID" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="Fondo" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="Fondo_Centrado" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DETALLE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FECHA_MEMO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TESORERO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ABOGADO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPRESENTANTE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="USUARIO_INGRESO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO_MUNICIPIO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CONTRIBUYENTE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+      CP.ID ,
+      CP.DESCRIPCION , CP.FECHA_INICIO , CP.FECHA_PRIMERA_CUOTA ,  CP.DEUDA_INICIAL , CP.PORCIENTO_INICIAL ,
+      CP.VALOR_PORCIENTO_INICIAL ,    CP.DIFERENCIA_FINANCIAR , CP.TASA_INTERES_MENSUAL ,
+      CP.CANTIDAD_MESES_DIFERIR ,     CP.INTERES_CAUSADO ,      CP.DEUDA_DIFERIR ,
+      CP.PAGO_INICIAL ,  CP.PAGO_FINAL , CP.ESTADO ,  CP.FECHA_INGRESO ,
+      CP.USUARIO_INGRESO,
+      ROUND(( CP.DEUDA_DIFERIR / CP.CANTIDAD_MESES_DIFERIR),2) AS CUOTA_MENSUAL,
+
+      CASE WHEN E.ES_PERSONA THEN E.APELLIDOS || ' ' ||E.NOMBRES ELSE E.RAZON_SOCIAL END AS PROPIETARIO,
+      E.CI_RUC    AS RUC
+
+       FROM SGM_FINANCIERO.FN_CONVENIO_PAGO CP
+       INNER JOIN SGM_APP.CAT_ENTE                     E  ON E.ID = CP.CONTRIBUYENTE
+     WHERE CP.ID = $P{ID}]]>
+	</queryString>
+	<field name="id" class="java.lang.Long"/>
+	<field name="descripcion" class="java.lang.String"/>
+	<field name="fecha_inicio" class="java.sql.Timestamp"/>
+	<field name="fecha_primera_cuota" class="java.sql.Timestamp"/>
+	<field name="deuda_inicial" class="java.math.BigDecimal"/>
+	<field name="porciento_inicial" class="java.math.BigDecimal"/>
+	<field name="valor_porciento_inicial" class="java.math.BigDecimal"/>
+	<field name="diferencia_financiar" class="java.math.BigDecimal"/>
+	<field name="tasa_interes_mensual" class="java.math.BigDecimal"/>
+	<field name="cantidad_meses_diferir" class="java.lang.Integer"/>
+	<field name="interes_causado" class="java.math.BigDecimal"/>
+	<field name="deuda_diferir" class="java.math.BigDecimal"/>
+	<field name="pago_inicial" class="java.lang.Long"/>
+	<field name="pago_final" class="java.lang.Long"/>
+	<field name="estado" class="java.lang.Integer"/>
+	<field name="fecha_ingreso" class="java.sql.Timestamp"/>
+	<field name="usuario_ingreso" class="java.lang.String"/>
+	<field name="cuota_mensual" class="java.math.BigDecimal"/>
+	<field name="propietario" class="java.lang.String"/>
+	<field name="ruc" class="java.lang.String"/>
+	<background>
+		<band height="802" splitType="Stretch">
+			<image scaleImage="FillFrame">
+				<reportElement uuid="715de5ba-8c62-4cde-a20f-7228b91fefb7" x="-34" y="0" width="34" height="802"/>
+			</image>
+			<image scaleImage="RealHeight" hAlign="Right" vAlign="Middle" isUsingCache="true">
+				<reportElement uuid="b6aaaf5f-153c-4d24-bfcd-f5a13513c371" x="0" y="0" width="541" height="802"/>
+			</image>
+		</band>
+	</background>
+	<title>
+		<band height="50" splitType="Stretch">
+			<image hAlign="Center">
+				<reportElement uuid="feb2910c-8474-473c-a031-c53edab26866" x="0" y="0" width="44" height="50"/>
+				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement uuid="18d4bdef-b6c7-46d8-b030-61427371967f" x="44" y="2" width="453" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[GOBIERNO AUTÓNOMO DESCENTRALIZADO DEL CANTÓN SAN VICENTE ]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="2da57b2a-f647-466a-9394-d32bfe0f28a3" x="245" y="34" width="32" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["00"+$F{id}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="683fdb0a-ddfb-4b7f-b0a1-2888a2f44717" x="276" y="34" width="9" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[-]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6c8b7922-ea28-4a53-87c4-db1fe646c8b2" x="236" y="34" width="9" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[#]]></text>
+			</staticText>
+			<textField pattern="yyyy" isBlankWhenNull="true">
+				<reportElement uuid="79c725b4-fcd6-4360-b9dd-b8ed6c900eda" x="285" y="34" width="30" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="2a2a607f-9cf0-4ed3-8896-7836437e542a" x="44" y="18" width="453" height="15"/>
+				<box>
+					<bottomPen lineWidth="0.25" lineStyle="Double"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[CONVENIO DE PAGO]]></text>
+			</staticText>
+			<image hAlign="Center">
+				<reportElement uuid="c6a3110d-840a-4e55-b113-5ef41e969364" x="497" y="0" width="44" height="50"/>
+				<imageExpression><![CDATA[$P{LOGO_MUNICIPIO}]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<detail>
+		<band height="631" splitType="Stretch">
+			<textField>
+				<reportElement uuid="01aa1532-0749-4933-b0ea-84fe422096bb" positionType="Float" x="23" y="13" width="497" height="615"/>
+				<box topPadding="8"/>
+				<textElement textAlignment="Justified" verticalAlignment="Top" markup="html">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{DETALLE}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="47">
+			<staticText>
+				<reportElement uuid="25632c40-fba1-44b8-8973-02bfa8b5370d" positionType="Float" x="23" y="1" width="251" height="15"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[TOTAL DE LA DEUDA :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="81b5c738-c99e-45c7-aa5c-b4aa7f1caf81" positionType="Float" x="23" y="16" width="251" height="15"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[CUOTA DEPOSITADA A TESORERIA MUNICIPAL (-)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="428a0338-0a94-4f82-ad29-c084143ec869" positionType="Float" x="23" y="31" width="251" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[SALDO A PAGAR]]></text>
+			</staticText>
+			<textField pattern="$ #,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="91f3e77e-57e2-4933-9e71-be74e621233c" positionType="Float" x="419" y="1" width="100" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{deuda_inicial}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ #,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="6cecb201-36fb-4e14-b46a-c07b7af537b6" positionType="Float" x="419" y="16" width="100" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_porciento_inicial}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ #,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="c9f78643-92a4-4801-b0c0-2046ab25394c" positionType="Float" x="419" y="31" width="100" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{diferencia_financiar}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="681">
+			<staticText>
+				<reportElement uuid="b9cbac84-c47f-4b6a-ba62-b039026d7bb7" positionType="Float" x="21" y="101" width="498" height="26"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[INTERÉS LEGAL ESTABLECIDO POR EL BCE POR 1.5 veces conforme el  Art. 21 del Código Tributario:(9,36%)(.1.5)= 14.00% ANUAL.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="95dc271f-3cdd-4286-8764-59246f0761e3" positionType="Float" x="21" y="138" width="112" height="15"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[SALDO MAS INTERÉS :]]></text>
+			</staticText>
+			<textField pattern="$ #,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="3a921f8f-ed03-4eac-ae19-10ad39e90091" positionType="Float" x="152" y="138" width="100" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{diferencia_financiar}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="5c1a7e9d-7986-4b31-9484-10756bce842a" positionType="Float" x="252" y="138" width="9" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[+]]></text>
+			</staticText>
+			<textField pattern="$ #,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="be1958ea-347b-4bf1-bea7-4bf1da699a42" positionType="Float" x="261" y="138" width="100" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{interes_causado}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ #,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="311d369f-74d1-48de-99d3-1806a36b4203" positionType="Float" x="415" y="138" width="100" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{deuda_diferir}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="57c6374c-529f-404f-9b26-bf8fc2f9eab2" positionType="Float" x="406" y="138" width="9" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[=]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement uuid="e448fbde-7674-405a-9885-6d6bf9c77e9f" key="table 1" positionType="Float" x="111" y="163" width="360" height="35"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="DEUDA" uuid="ef1fc4ba-8df7-40a2-aaaa-03616ba2f5a4">
+						<datasetParameter name="ID_CONVENIO">
+							<datasetParameterExpression><![CDATA[$P{ID}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="64" uuid="ff570f74-55bd-49cc-bc2e-70ecb5237479">
+						<jr:columnHeader height="16" rowSpan="1">
+							<staticText>
+								<reportElement uuid="44e6381d-a3d7-403b-b342-6b4c7e749f52" x="0" y="0" width="64" height="15"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[CUOTAS]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="20" rowSpan="1">
+							<textField>
+								<reportElement uuid="44c2e3ea-7ed2-4353-b829-bd8ed715938a" x="0" y="0" width="64" height="20"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$F{numero_cuota}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="117" uuid="f66d5512-32c9-41c7-ae65-514346b9922e">
+						<jr:columnHeader height="16" rowSpan="1">
+							<staticText>
+								<reportElement uuid="dba1bfa2-0b0f-45b4-907b-5823ecc591e4" x="0" y="0" width="117" height="15"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[DEUDA]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="20" rowSpan="1">
+							<textField pattern="$ #,##0.00">
+								<reportElement uuid="d8251fbb-9bf0-44e4-9c94-93e5fdf4eb90" x="0" y="0" width="117" height="20"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$F{deuda}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90" uuid="4d3bb768-44fe-4c07-81a2-f5efb675d3ce">
+						<jr:columnHeader height="16" rowSpan="1">
+							<staticText>
+								<reportElement uuid="17b14ba8-2490-48bc-83ba-f2ca45d6a6f0" x="0" y="0" width="90" height="15"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[FECHA]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="20" rowSpan="1">
+							<textField pattern="dd/MM/yyyy">
+								<reportElement uuid="5091b699-1906-4eaf-992c-749573bf61d9" x="0" y="0" width="90" height="20"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$F{fecha_maxima_pago}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90" uuid="e29d5755-1dfe-481f-bee5-070f82152a67">
+						<jr:columnHeader height="16" rowSpan="1">
+							<staticText>
+								<reportElement uuid="767a8575-83d6-44e2-af82-3fd57155843c" x="0" y="0" width="90" height="15"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[ESTADO]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="20" rowSpan="1">
+							<textField>
+								<reportElement uuid="70293881-128b-4d12-9522-7032bae70331" x="0" y="0" width="90" height="20"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$F{estado}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<textField>
+				<reportElement uuid="849dc550-bcca-463f-96d4-96f46d2d91f5" positionType="Float" x="30" y="292" width="272" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{FECHA_MEMO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="9d326e82-6c2a-4bb6-90ee-b628e3f101c4" positionType="Float" x="66" y="527" width="127" height="20"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Double"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[TESORERO MUNICIPAL]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="788e7f04-a439-465e-8589-4a494265cca1" positionType="Float" x="-1" y="507" width="260" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TESORERO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3c555017-f3c5-45bc-876f-2b8309b9834c" positionType="Float" x="273" y="526" width="266" height="32"/>
+				<box>
+					<topPen lineWidth="0.25" lineStyle="Double"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["REPRESENTANTE LEGAL "+
+$P{REPRESENTANTE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="8aeb9351-1a80-49e2-9178-30ef65c5dd28" positionType="Float" x="273" y="507" width="266" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{CONTRIBUYENTE}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="74">
+			<staticText>
+				<reportElement uuid="8166b57c-3836-47e6-8fdf-e6b4f20f5021" positionType="Float" x="6" y="53" width="73" height="20"/>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Elaborado Por:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="97a1cc08-d834-4620-b6a0-a0eeaf18d4b6" positionType="Float" x="79" y="53" width="252" height="20"/>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{USUARIO_INGRESO}.toUpperCase()]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="32">
+			<staticText>
+				<reportElement uuid="2ce837f5-7be1-4d89-a4dd-0dce02c132f3" x="0" y="1" width="541" height="31" forecolor="#009900"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[SAN VICENTE    MANABI    ECUADOR]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="22a7e034-30d0-47d6-ac2f-f6c4c0eb3b77" x="0" y="0" width="555" height="1"/>
+				<graphicElement>
+					<pen lineWidth="1.75"/>
+				</graphicElement>
+			</line>
+		</band>
+	</pageFooter>
+</jasperReport>

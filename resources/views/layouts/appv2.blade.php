@@ -15,6 +15,12 @@
     <link href="{{ asset('css/bootstrap53.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/bootstrap-icons.css') }}" rel="stylesheet">
     <script src="{{ asset('js/FontAwesomeKit.js') }}" crossorigin="anonymous"></script>
+
+     <!-- PNotify -->
+     <link href="{{asset('bower_components/pnotify/dist/pnotify.css')}}" rel="stylesheet">
+    <link href="{{asset('bower_components/pnotify/dist/pnotify.buttons.css')}}" rel="stylesheet">
+    <link href="{{asset('bower_components/pnotify/dist/pnotify.nonblock.css')}}" rel="stylesheet">
+
     <style>
       .bd-placeholder-img {
         font-size: 1.125rem;
@@ -363,6 +369,19 @@
                 'icon' => 'report-icon',
                 'active' => false // Puedes agregar más lógica si necesitas submenús
             ],
+            [
+                'name' => 'ANALITICA',
+                'icon' => 'gear-wide-connected',
+                'subMenu' => [
+                    [
+                        'name' => 'Analitica contribuyentes',
+                        'route' => 'analitica.contribuyente',
+                        'active' => request()->routeIs('analitica.contribuyente')
+                    ],
+
+                ],
+                'active' => request()->routeIs('analitica.contribuyente')
+            ],
         ];
     @endphp
 
@@ -427,5 +446,49 @@
 <script src="{{ asset('js/bootstrap53.bundle.min.js') }}" defer></script>
 <script src="{{ asset('js/axios.min.js') }}" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.2/dist/chart.umd.js" integrity="sha384-eI7PSr3L1XLISH8JdDII5YN/njoSsxfbrkCTnJrzXt+ENP5MOVBxD+l6sEG4zoLp" crossorigin="anonymous"></script>
+{{-- PNotify --}}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pnotify/3.2.1/pnotify.js"></script>
+
+  <script src="{{asset('bower_components/pnotify/dist/pnotify.js')}}"></script>
+  <script src="{{asset('bower_components/pnotify/dist/pnotify.buttons.js')}}"></script>
+<script>
+  function vistacargando(estado){
+    mostarOcultarVentanaCarga(estado,'');
+  }
+
+  function vistacargando(estado, mensaje){
+    mostarOcultarVentanaCarga(estado, mensaje);
+  }
+
+  function mostarOcultarVentanaCarga(estado, mensaje){
+    //estado --> M:mostrar, otra letra: Ocultamos la ventana
+    // mensaje --> el texto que se carga al mostrar la ventana de carga
+    if(estado=='M' || estado=='m'){
+        // console.log(mensaje);
+        $('#modal_cargando_title').html(mensaje);
+        $('#modal_cargando').show();
+        $('body').css('overflow', 'hidden');
+    }else{
+        $('#modal_cargando_title').html('Cargando');
+        $('#modal_cargando').hide();
+        $('body').css('overflow', '');
+    }
+  }
+
+  function alertNotificar(texto, tipo,time=3000){
+      PNotify.removeAll()
+      new PNotify({
+          title: 'Mensaje de Información',
+          text: texto,
+          type: tipo,
+          hide: true,
+          delay: time,
+          styling: 'bootstrap3',
+          addclass: ''
+      });
+  }
+</script>
 @stack('scripts')
+@include('divcargando')
 </html>

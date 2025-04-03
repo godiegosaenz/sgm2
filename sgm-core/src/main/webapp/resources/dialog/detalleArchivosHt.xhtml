@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html" >
+
+    <!-- INTERFACE -->
+    <cc:interface componentType="detalleTareasCont" >
+        <cc:attribute name="archivos" required="true" type="java.util.List"/>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <p:dataTable    id="dtDocHt" reflow="true"
+                        value="#{cc.attrs.archivos}" var="itemP"
+                        emptyMessage="No tiene datos" style="width: 70%">
+
+            <p:column headerText="Nombre del Reporte" style="width: 50%;">
+                <h:outputText value="#{itemP.nombreReporte}" style="text-transform: uppercase;"/>
+            </p:column>
+            <p:column headerText="Fecha" style="width: 20%;">
+                <h:outputText value="#{itemP.fecCre}" style="text-transform: uppercase;"/>
+            </p:column>
+            <p:column headerText="Estado" style="width: 10%;">
+                <h:outputText value="Activo" style="text-transform: uppercase;" rendered="#{itemP.estado}"/>
+                <h:outputText value="Inactivo" style="text-transform: uppercase;" rendered="#{!itemP.estado}"/>
+            </p:column>
+            <p:column headerText="Opci&#243;n" style="width: 30%;" >
+                <div>
+                    <p:commandLink id="btnMostrar" actionListener="#{cc.showDocument1(doc.url, 'pdf')}">
+                        <p:tooltip for="btnMostrar" value="Visualizar Documento"/>
+                        <h:graphicImage value="/image/buscar.png" height="30"/>
+                    </p:commandLink>
+
+                    <p:commandLink id="btnDescargar" actionListener="#{cc.descargarDocumento1(doc.url)}" >
+                        <p:tooltip for="btnDescargar" value="Descargar Documento"/>
+                        <h:graphicImage value="/image/download.png" height="30"/>
+                    </p:commandLink>
+                </div>
+            </p:column>
+        </p:dataTable>
+    </cc:implementation>
+</html>

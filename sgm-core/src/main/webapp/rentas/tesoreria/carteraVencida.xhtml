@@ -1,0 +1,213 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+    <ui:define name="head">
+
+    </ui:define>
+
+    <ui:define name="content">   
+        <center>
+            <h1>Cartera Vencida</h1>
+        </center>
+        <h:form id="mainForm">
+            <!-- SE UTILIZA EL MB DE INFORMES DE RESOLUCONES DEBIDO A SE GENERA UN REPORTE-->
+            <p:tabView>
+                <p:tab title="URBANO">
+                    <p:panelGrid styleClass="noBorder">
+<!--                        <p:row>
+                            <p:column><p:outputLabel value="URBANIZACION" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:outputLabel value="MANZANA" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:outputLabel value="SOLAR" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:outputLabel value="AÑO DESDE" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:outputLabel value="AÑO HASTA" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column rowspan="2"><p:commandButton value="Reporte" actionListener="#{informesResoluciones.reporteCarteraVencida(1)}" style="float: right; font-size: 15px; font-weight: bolder;" styleClass="btnStyle" icon="ui-icon-print"/></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:selectOneMenu  value="#{informesResoluciones.predioModel.ciudadela}" effect="fade" converter="entityConverter"  style="width:300px;">
+                                    <f:selectItem itemLabel="TODAS" itemValue="#{null}"/>
+                                    <f:selectItems value="#{prediosACoactivar.ciudadelas}" var="c" itemLabel="#{c.nombre}" itemValue="#{c}"/>  
+                                </p:selectOneMenu>
+                            </p:column>
+                            <p:column><p:inputText value="#{informesResoluciones.predioModel.mzUrb}" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:inputText value="#{informesResoluciones.predioModel.slUrb}" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:inputText value="#{informesResoluciones.predioModel.anioDesde}" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:inputText value="#{informesResoluciones.predioModel.anioHasta}" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        </p:row>-->
+
+                        <p:row>
+                            <p:column><p:outputLabel value="PARROQUIA" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:outputLabel value="AÑO DESDE " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:outputLabel value="AÑO HASTA" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column rowspan="2" colspan="3">
+                                <p:commandButton value="Reporte" 
+                                                 actionListener="#{informesResoluciones.reporteCarteraVencida(1)}" style="float: right; font-size: 15px; font-weight: bolder;" styleClass="btnStyle" icon="ui-icon-print"/></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:selectOneMenu value="#{informesResoluciones.predioModel.parroquia}" converter="entityConverter" converterMessage="Error al convertir tipo de datos">
+                                    <f:selectItem itemLabel="Todos las parroquias" itemValue="#{null}"/>
+                                    <f:selectItems value="#{informesResoluciones.parroquias}" var="p1" itemLabel="#{p1.descripcion}" itemValue="#{p1}" />
+                                </p:selectOneMenu>
+                            </p:column>
+                            <p:column><p:inputText value="#{informesResoluciones.predioModel.anioDesde}" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:inputText value="#{informesResoluciones.predioModel.anioHasta}" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        </p:row>
+
+
+                    </p:panelGrid>
+                </p:tab>
+                <p:tab title="RURAL" rendered="false">
+                    <p:panelGrid styleClass="noBorder">
+                        <p:row>
+                            <p:column><p:outputLabel value="REG. CATASTRAL: " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:outputLabel value="ID PREDIAL: " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:outputLabel value="PARROQUIA: " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column rowspan="2"><p:commandButton value="Reporte" actionListener="#{informesResoluciones.reporteCarteraVencida(2)}" style="float: right; font-size: 15px; font-weight: bolder;" styleClass="btnStyle" icon="ui-icon-print"/></p:column>                        
+                        </p:row>
+                        <p:row>
+                            <p:column><p:inputText value="#{informesResoluciones.predioModel.regCatastral}" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:inputText value="#{informesResoluciones.predioModel.idPredial}" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column>
+                                <p:selectOneMenu  value="#{informesResoluciones.predioModel.parroquia}" effect="fade" converter="entityConverter" style="width:300px;">
+                                    <f:selectItem itemLabel="TODAS" itemValue="#{null}"/>
+                                    <f:selectItems value="#{procesarLiquidaciones.parroquiasRurales}" var="p" itemLabel="#{p.descripcion}" itemValue="#{p}"/>  
+                                </p:selectOneMenu>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:tab>
+                <!--TAB GENERAL PARA LA CARTERA VENCIDA PREDIO-RURAL-->
+                <p:tab title="CARTERA- VENCIDA ">            
+                    <!--SEGUNDO DETALLE-->
+                    <p:fieldset legend="** REPORTE CARTERA VENCIDA  **" style="font-size: 14px; text-align: left;">
+                        <p:spacer width="35"/>
+
+                        <p:selectOneMenu value="#{informesResoluciones.predioModel.parroquia}" converter="entityConverter" converterMessage="Error al convertir tipo de datos">
+                            <f:selectItem itemLabel="Todos las parroquias" itemValue="#{null}"/>
+                            <f:selectItems value="#{informesResoluciones.parroquias}" var="p1" itemLabel="#{p1.descripcion}" itemValue="#{p1}" />
+                        </p:selectOneMenu>
+                        <br/><br/>
+                        <p:selectOneMenu value="#{informesResoluciones.tipoReporte}" style="width:270px;  font-weight: bold;">
+                            <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                            <f:selectItem itemLabel="1.-CARTERA RURAL DIAGRAMA-BARRA" itemValue="#{1}"/>
+                            <f:selectItem itemLabel="2.-CARTERA RURAL DIAGRAMA-PASTEL" itemValue="#{2}"/>  
+                            <f:selectItem itemLabel="3.-CARTERA URBANO DIAGRAMA-BARRA" itemValue="#{3}"/>
+                            <f:selectItem itemLabel="4.-CARTERA URBANO DIAGRAMA-PASTEL" itemValue="#{4}"/>
+                        </p:selectOneMenu>
+                        <p:spacer width="35"/>
+                        <p:commandButton value="Generar Excel" actionListener="#{informesResoluciones.generarPredioRural(true)}" styleClass="btnStyle" style="float: right; font-size: 15px;" icon="ui-icon-print"/>
+                        <p:spacer width="25"/>
+                        <p:commandButton value="Generar PDF"   actionListener="#{informesResoluciones.generarPredioRural(false)}" styleClass="btnStyle" style="float: right; font-size: 15px;" icon="ui-icon-print"/>
+                    </p:fieldset>
+                </p:tab>
+            </p:tabView>
+            <br/>
+<!--            
+            <p:dataTable value="#{informesResoluciones.cateraVencida}" var="c1"
+                         rows="7" rowsPerPageTemplate="7,14,21,28" paginator="true"
+                         paginatorPosition="top">
+                <p:column headerText="Mostrar Detalle" style="width: 80px;">
+                    <p:rowToggler />
+                </p:column>
+                <p:column headerText="Parroquia" style="text-align: right">
+                    <p:outputLabel value="#{c1.parroquia}"/>
+                </p:column>
+                <p:column headerText="Total Emitido" style="text-align: right">
+                    <p:outputLabel value="#{c1.totalEmitido}">
+                        <f:convertNumber pattern="$ #,##0.00" />
+                    </p:outputLabel>
+                </p:column>
+                <p:column headerText="Total Cobrado" style="text-align: right">
+                    <p:outputLabel value="#{c1.totalCobrado}">
+                        <f:convertNumber pattern="$ #,##0.00" />
+                    </p:outputLabel>
+                </p:column>
+                <p:column headerText="Total Cartera" style="text-align: right">
+                    <p:outputLabel value="#{c1.totalCartera}">
+                        <f:convertNumber pattern="$ #,##0.00" />
+                    </p:outputLabel>
+
+                </p:column>
+                <p:column headerText="Ver" style="text-align: center">
+                    <p:commandLink onclick="PF('dlg').show()" update="fromChartParroquia" 
+                                   action="#{informesResoluciones.setCarteraParroquia(c1)}"
+                                   title="Ver Graficos">
+                        <p:graphicImage value="/css/homeIconsImages/pie_chart.png" width="25" height="25" />
+                    </p:commandLink>
+                </p:column>
+                <p:rowExpansion >
+                    <p:dataTable id="carteraVencidaTable" reflow="true" paginator="true" rowsPerPageTemplate="10,15,20" paginatorPosition="top"
+                                 emptyMessage="No se encontró ningun Item" var="h1" value="#{c1.carteraVencidas}" 
+                                 rows="10" style="display: inline-block;" paginatorAlwaysVisible="false" >
+                        <p:column headerText="Año Emisión">
+                            <p:outputLabel value="#{h1.anio}"/>
+                        </p:column>
+                        <p:column headerText="Total Emitido" style="text-align: right">
+                            <p:outputLabel value="#{h1.totalEmitido}">
+                                <f:convertNumber pattern="$ #,##0.00" />
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column headerText="Total Cobrado" style="text-align: right">
+                            <p:outputLabel value="#{h1.totalCobrado}" >
+                                <f:convertNumber pattern="$ #,##0.00" />
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column headerText="Total Cartera" style="text-align: right">
+                            <p:outputLabel value="#{h1.totalCartera}">
+                                <f:convertNumber pattern="$ #,##0.00" />
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column headerText="Ver" style="text-align: center">
+                            <p:commandLink onclick="PF('dlgAnio').show()" update="frmChartAnio" 
+                                           action="#{informesResoluciones.setCarteraVencida(h1)}"
+                                           title="Ver Graficos">
+                                <p:graphicImage value="/css/homeIconsImages/pie_chart.png" width="25" height="25" />
+                            </p:commandLink>
+                        </p:column>
+                    </p:dataTable>
+                    <div align="center">
+                        <h:commandLink>
+                            <p:commandButton ajax="false" id = "btnReporte" value="Exportar" icon="ui-icon-print" type="button" style="height: 30px" update=":mainForm:carteraVencidaTable" />
+                            <p:dataExporter type="xls" target="carteraVencidaTable" fileName="carteraVencida"  />
+                        </h:commandLink>
+                    </div>
+                </p:rowExpansion>
+            </p:dataTable>
+            <br/>
+            <h:panelGrid columns="2" style="width: 100%" >
+                <p:chart type="pie" model="#{informesResoluciones.pieModel}" widgetVar="modelPie" style="width: 100%; height:450px" responsive="true" />
+                <p:chart type="bar" model="#{informesResoluciones.barModel}" widgetVar="modelBar" style="height: 850px; width: 100%" responsive="true" />
+            </h:panelGrid>-->
+        </h:form>
+        <p:dialog id="dglParr" widgetVar="dlg" showEffect="fade" modal="true" header="Graficos" resizable="false"
+                  width="80%" height="85%" position="center" appendTo="@(body)" 
+                  positionType="absolute">
+            <h:form id="fromChartParroquia">
+                <p:outputLabel value="#{informesResoluciones.carteraParroquia.parroquia}"/>
+                <h:panelGrid columns="2" style="width: 100%" rendered="#{informesResoluciones.carteraParroquia != null}" >
+                    <p:chart type="pie" model="#{informesResoluciones.carteraParroquia.pieModelTemp}" widgetVar="modelPieParr" style="width: 100%; height:450px" responsive="true" />
+                    <p:chart type="bar" model="#{informesResoluciones.carteraParroquia.barModelTemp}" widgetVar="modelBarParr" style="height: 450px; width: 100%" responsive="true" />
+                </h:panelGrid>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="dlgAnio" widgetVar="dlgAnio" showEffect="fade" modal="true" 
+                  header="Graficos" 
+                  resizable="false" position="center" width="80%" height="85%"
+                  appendTo="@(body)" positionType="absolute">
+            <h:form id="frmChartAnio">
+                <p:outputLabel value="#{informesResoluciones.carteraVencida.parroquia} - AÑO #{informesResoluciones.carteraVencida.anio}"/>
+                <h:panelGrid columns="2" style="width: 100%" rendered="#{informesResoluciones.carteraVencida != null}"  >
+                    <p:chart type="pie" model="#{informesResoluciones.carteraVencida.pieModelTemp}" widgetVar="modelPieAnio" style="width: 100%; height:450px" responsive="true" />
+                    <p:chart type="bar" model="#{informesResoluciones.carteraVencida.barModelTemp}" widgetVar="modelBarAnio" style="height: 100%; width: 100%" responsive="true" />
+                </h:panelGrid>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Listado Parámetros de flujos</title>
+        <style type="text/css">
+            .ui-widget {
+                /*text-align: center;*/
+                font-size: 80%;
+            }
+            .ui-inputfield, .ui-widget-content .ui-inputfield, .ui-widget-header .ui-inputfield{
+                width: 100%;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <h:form id="FormdisparadorParametros">
+            <p:growl id="growl" showDetail="true" sticky="true" />
+            <div align="right">
+                <p:commandButton value="Nuevo" icon="ui-icon-plus" actionListener="#{disparadorParametros.showDlgNew()}" styleClass="btnStyle"></p:commandButton>
+                <br/><br/>
+            </div>
+            <p:dataTable id="dtuser" reflow="true"
+                         paginator="true" lazy="true" rows="15" rowsPerPageTemplate="15,20,30"
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         value="#{disparadorParametros.parametrosDisparadorLazy}" var="disparador" emptyMessage="No se encontró ningun Item">
+                <p:column headerText="Tipo Trámite" style="text-align: center;"  filterStyle="width: 40%;" filterBy="#{disparador.tipoTramite.descripcion}" sortBy="#{disparador.tipoTramite.descripcion}">
+                    <h:outputText value="#{disparador.tipoTramite.descripcion}" style="text-align: center; font-size: 12px"/>
+                </p:column>
+                <p:column headerText="Variable Activity" style="text-align: center; font-size: 12px" filterBy="#{disparador.varResp}" sortBy="#{disparador.varResp}" filterStyle="width: 60%;">
+                    <h:outputText value="#{disparador.varResp}" style="text-align: center; font-size: 12px"/>
+                </p:column>
+                <p:column headerText="Valor de varible" style="text-align: center;"  filterStyle="width: 40%;" filterBy="#{disparador.responsable.usuario}" sortBy="#{disparador.responsable.usuario}">
+                    <h:outputText value="#{disparador.responsable.usuario}" style="text-align: center; font-size: 12px"/>
+                </p:column>
+                <p:column headerText="Estado" style="text-align: center; width:10%;"  filterStyle="width: 40%;" rendered="#{disparador.estado!=null}">
+                    <h:outputText value="A" rendered="#{disparador.estado}" style="text-align: center; font-size: 12px"/>
+                    <h:outputText value="I" rendered="#{!disparador.estado}" style="text-align: center; font-size: 12px"/>
+                </p:column>
+                <p:column headerText="Estado" style="text-align: center; width:10%;"  filterStyle="width: 40%;" rendered="#{disparador.estado==null}"></p:column>
+                <p:column headerText="Editar" style="text-align: center; width:10%; ">
+                    <p:commandLink value="Editar" style="color: #0033FF" actionListener="#{disparadorParametros.showDlgEdit(disparador)}" />
+                </p:column>
+
+            </p:dataTable>
+        </h:form>
+
+        <p:dialog id="dlgNParametrosDisparador" header="Agregar Parámetro" widgetVar="dlgAgrgParametrosDisparador" resizable="false" modal="true"
+                  position="center" closeOnEscape="true" width="550">
+            <h:form  id="formNewParametrosDisparador">
+                <p:panelGrid layout="grid" columns="2" columnClasses="ui-grid-col-4, ui-grid-col-9" style="width: 100%; padding: 0px 0px;">
+
+                    <h:outputText value="Tipo Trámite: " style="font-weight: bolder"/>
+                    <p:selectOneMenu id="traParametrosDisparador" value="#{disparadorParametros.nuevaParametrosDisparador.tipoTramite}"
+                                     effect="fade" converter="entityConverter" style="width: 200px" >
+                        <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                        <f:selectItems value="#{disparadorParametros.lisGeTipoTramite}" var="t1" itemLabel="#{t1.descripcion}" itemValue="#{t1}"/>
+                    </p:selectOneMenu>
+
+                    <h:outputText value="Variable Url Páguina: " style="font-weight: bolder"/>
+                    <p:inputText value="#{disparadorParametros.nuevaParametrosDisparador.varInterfaz}"/>
+                    <h:outputText value="URL Páguina: " style="font-weight: bolder"/>
+                    <p:inputText value="#{disparadorParametros.nuevaParametrosDisparador.interfaz}" />
+
+                    <h:outputText value="Variable Activity: " style="font-weight: bolder"/>
+                    <p:inputText value="#{disparadorParametros.nuevaParametrosDisparador.varResp}"/>
+                    <h:outputLabel value="Departamento: " style="font-weight: bolder"/>
+                    <p:selectOneMenu id="dep1" value="#{disparadorParametros.dep}" effect="fade" converter="entityConverter">
+                        <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                        <f:selectItems value="#{disparadorParametros.departamentos}" var="d1" itemLabel="#{d1.nombre}" itemValue="#{d1}"/>
+                        <p:ajax update="rolEdit"/>
+                    </p:selectOneMenu>
+                    <h:outputLabel value="Tipo Rol: " style="font-weight: bolder"/>
+                    <p:selectOneMenu id="rolEdit" value="#{disparadorParametros.rol}" effect="fade" converter="entityConverter">
+                        <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                        <f:selectItems value="#{disparadorParametros.rolesDepartamento}" var="r1" itemLabel="#{r1.nombre}" itemValue="#{r1}"/>
+                        <p:ajax update="resParametrosDisparador"/>
+                    </p:selectOneMenu>
+                    <h:outputText value="Valor de Varible: " style="font-weight: bolder"/>
+                    <p:selectOneMenu id="resParametrosDisparador" value="#{disparadorParametros.nuevaParametrosDisparador.responsable}"
+                                     effect="fade" converter="entityConverter" style="width: 200px">
+                        <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                        <f:selectItems value="#{disparadorParametros.users}" var="u1" itemLabel="#{u1.usuario}" itemValue="#{u1}"/>
+                    </p:selectOneMenu>
+
+                    <h:outputText value="Es parametro de inicio: " style="font-weight: bolder"/>
+                    <p:selectBooleanCheckbox value="#{disparadorParametros.nuevaParametrosDisparador.incial}" />
+                </p:panelGrid>
+                <br/><center><p:commandButton value="Grabar" actionListener="#{disparadorParametros.guardarParametrosDisparadorNuevo()}" styleClass="btnStyle"/></center>
+                <br/>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="dlgEditParametrosDisparador" header="Editar Accionador y Parámetros" widgetVar="dlgEditParametrosDisparador" resizable="false" modal="true"
+                  position="center" closeOnEscape="true">
+            <h:form id="frmEditarParametrosDisparador">
+                <p:panelGrid layout="grid" columns="2" columnClasses="ui-grid-col-4, ui-grid-col-9" style="width: 100%; padding: 0px 0px;">
+
+                    <h:outputText value="Tipo Trámite: " style="font-weight: bolder"/>
+                    <p:selectOneMenu id="traParametrosDisparador" value="#{disparadorParametros.editParametrosDisparador.tipoTramite}"
+                                     effect="fade" converter="entityConverter" style="width: 200px">
+                        <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                        <f:selectItems value="#{disparadorParametros.lisGeTipoTramite}" var="t1" itemLabel="#{t1.descripcion}" itemValue="#{t1}"/>
+                    </p:selectOneMenu>
+
+                    <h:outputText value="Variable Url Páguina: " style="font-weight: bolder"/>
+                    <p:inputText value="#{disparadorParametros.editParametrosDisparador.varInterfaz}"/>
+                    <h:outputText value="URL Páguina: " style="font-weight: bolder"/>
+                    <p:inputText value="#{disparadorParametros.editParametrosDisparador.interfaz}" />
+
+                    <h:outputText value="Variable Activity: " style="font-weight: bolder"/>
+                    <p:inputText value="#{disparadorParametros.editParametrosDisparador.varResp}"/>
+                    <h:outputLabel value="Departamento: " style="font-weight: bolder"/>
+                    <p:selectOneMenu id="dep11" value="#{disparadorParametros.dep}" effect="fade" converter="entityConverter">
+                        <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                        <f:selectItems value="#{disparadorParametros.departamentos}" var="d1" itemLabel="#{d1.nombre}" itemValue="#{d1}"/>
+                        <p:ajax update="rolEdit1"/>
+                    </p:selectOneMenu>
+                    <h:outputLabel value="Tipo Rol: " style="font-weight: bolder"/>
+                    <p:selectOneMenu id="rolEdit1" value="#{disparadorParametros.rol}" effect="fade" converter="entityConverter">
+                        <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                        <f:selectItems value="#{disparadorParametros.rolesDepartamento}" var="r1" itemLabel="#{r1.nombre}" itemValue="#{r1}"/>
+                        <p:ajax update="resParametrosDisparador"/>
+                    </p:selectOneMenu>
+                    <h:outputText value="Valor de Varible: " style="font-weight: bolder"/>
+                    <p:selectOneMenu id="resParametrosDisparador" value="#{disparadorParametros.editParametrosDisparador.responsable}"
+                                     effect="fade" converter="entityConverter" style="width: 200px">
+                        <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                        <f:selectItems value="#{disparadorParametros.users}" var="u1" itemLabel="#{u1.usuario}" itemValue="#{u1}"/>
+                    </p:selectOneMenu>
+
+                    <h:outputText value="Es parametro de inicio: " style="font-weight: bolder"/>
+                    <p:selectBooleanCheckbox value="#{disparadorParametros.editParametrosDisparador.incial}" />
+                </p:panelGrid>
+                <br/><center><p:selectBooleanCheckbox itemLabel="  Activo" value="#{disparadorParametros.editParametrosDisparador.estado}" /></center>
+
+                <br/><center><p:commandButton value="Grabar" actionListener="#{disparadorParametros.guardarParametrosDisparadorEditado()}" update="FormdisparadorParametros" /></center>
+                <br/>
+            </h:form>
+        </p:dialog>
+
+    </h:body>
+
+</html>

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <collaboration id="Collaboration">
+    <participant id="pool1" name="Juicio Coactiva" processRef="juicioCoactiva"></participant>
+  </collaboration>
+  <process id="juicioCoactiva" name="Juicio Coactiva" isExecutable="true">
+    <laneSet id="laneSet_juicioCoactiva">
+      <lane id="lane1" name="Juez Coactiva">
+        <flowNodeRef>startevent1</flowNodeRef>
+        <flowNodeRef>citacionInicialCoa</flowNodeRef>
+        <flowNodeRef>medidasCautelaresCoa</flowNodeRef>
+        <flowNodeRef>notificacionMedidasCoa</flowNodeRef>
+        <flowNodeRef>exclusivegateway1</flowNodeRef>
+        <flowNodeRef>archivoCausaCoa</flowNodeRef>
+        <flowNodeRef>notificacionFinalCoa</flowNodeRef>
+        <flowNodeRef>endevent1</flowNodeRef>
+      </lane>
+      <lane id="lane2" name="Director Coactiva">
+        <flowNodeRef>exclusivegateway2</flowNodeRef>
+        <flowNodeRef>reporteCitacionesCoa</flowNodeRef>
+        <flowNodeRef>notificacionCitacionesCoa</flowNodeRef>
+      </lane>
+    </laneSet>
+    <startEvent id="startevent1" name="Start"></startEvent>
+    <serviceTask id="citacionInicialCoa" name="Citacion Inicial" activiti:async="true" activiti:expression="${subirDocCorreoRegistro.execute(execution)}">
+      <documentation>Juicio Coactiva</documentation>
+    </serviceTask>
+    <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="citacionInicialCoa"></sequenceFlow>
+    <userTask id="reporteCitacionesCoa" name="Reporte de Citaciones" activiti:assignee="${abogado}" activiti:formKey="/vistaprocesos/coactiva/adjuntarOficioCoactiva.xhtml" activiti:priority="${prioridad}">
+      <documentation>Juicio Coactiva</documentation>
+    </userTask>
+    <sequenceFlow id="flow2" sourceRef="citacionInicialCoa" targetRef="reporteCitacionesCoa"></sequenceFlow>
+    <serviceTask id="notificacionCitacionesCoa" name="Notificacion Citaciones" activiti:async="true" activiti:expression="${subirDocCorreoRegistro.execute(execution)}">
+      <documentation>Juicio Coactiva</documentation>
+    </serviceTask>
+    <sequenceFlow id="flow4" sourceRef="exclusivegateway2" targetRef="medidasCautelaresCoa">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${citacion==2}]]></conditionExpression>
+    </sequenceFlow>
+    <exclusiveGateway id="exclusivegateway2" name="Exclusive Gateway"></exclusiveGateway>
+    <sequenceFlow id="flow11" sourceRef="notificacionCitacionesCoa" targetRef="exclusivegateway2"></sequenceFlow>
+    <sequenceFlow id="flow12" sourceRef="exclusivegateway2" targetRef="reporteCitacionesCoa">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${citacion==1}]]></conditionExpression>
+    </sequenceFlow>
+    <userTask id="medidasCautelaresCoa" name="Emision de Medidas Cautelares" activiti:assignee="${juezcoactiva}" activiti:formKey="/vistaprocesos/coactiva/adjuntarOficioCoactiva.xhtml" activiti:priority="${prioridad}">
+      <documentation>Juicio Coactiva</documentation>
+    </userTask>
+    <sequenceFlow id="flow5" sourceRef="medidasCautelaresCoa" targetRef="notificacionMedidasCoa"></sequenceFlow>
+    <serviceTask id="notificacionMedidasCoa" name="Notificacion de Medidas Cautelares" activiti:async="true" activiti:expression="${subirDocCorreoRegistro.execute(execution)}">
+      <documentation>Juicio Coactiva</documentation>
+    </serviceTask>
+    <sequenceFlow id="flow6" sourceRef="notificacionMedidasCoa" targetRef="exclusivegateway1"></sequenceFlow>
+    <exclusiveGateway id="exclusivegateway1" name="Exclusive Gateway"></exclusiveGateway>
+    <sequenceFlow id="flow7" sourceRef="exclusivegateway1" targetRef="medidasCautelaresCoa">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${medidas==1}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow8" sourceRef="exclusivegateway1" targetRef="archivoCausaCoa">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${medidas==2}]]></conditionExpression>
+    </sequenceFlow>
+    <userTask id="archivoCausaCoa" name="Baja y Archivo de la Causa  " activiti:assignee="${juezcoactiva}" activiti:formKey="/vistaprocesos/coactiva/adjuntarOficioCoactiva.xhtml" activiti:priority="${prioridad}">
+      <documentation>Juicio Coactiva</documentation>
+    </userTask>
+    <sequenceFlow id="flow9" sourceRef="archivoCausaCoa" targetRef="notificacionFinalCoa"></sequenceFlow>
+    <serviceTask id="notificacionFinalCoa" name="Notificacion Final" activiti:async="true" activiti:expression="${subirDocCorreoRegistro.execute(execution)}">
+      <documentation>Juicio Coactiva</documentation>
+    </serviceTask>
+    <sequenceFlow id="flow10" sourceRef="notificacionFinalCoa" targetRef="endevent1"></sequenceFlow>
+    <endEvent id="endevent1" name="End"></endEvent>
+    <sequenceFlow id="flow13" sourceRef="exclusivegateway2" targetRef="archivoCausaCoa">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${citacion==3}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow14" sourceRef="reporteCitacionesCoa" targetRef="notificacionCitacionesCoa"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_Collaboration">
+    <bpmndi:BPMNPlane bpmnElement="Collaboration" id="BPMNPlane_Collaboration">
+      <bpmndi:BPMNShape bpmnElement="pool1" id="BPMNShape_pool1">
+        <omgdc:Bounds height="300.0" width="1171.0" x="30.0" y="20.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lane1" id="BPMNShape_lane1">
+        <omgdc:Bounds height="150.0" width="1151.0" x="50.0" y="20.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lane2" id="BPMNShape_lane2">
+        <omgdc:Bounds height="150.0" width="1151.0" x="50.0" y="170.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="90.0" y="80.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="citacionInicialCoa" id="BPMNShape_citacionInicialCoa">
+        <omgdc:Bounds height="55.0" width="105.0" x="160.0" y="70.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="reporteCitacionesCoa" id="BPMNShape_reporteCitacionesCoa">
+        <omgdc:Bounds height="58.0" width="105.0" x="160.0" y="206.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="notificacionCitacionesCoa" id="BPMNShape_notificacionCitacionesCoa">
+        <omgdc:Bounds height="58.0" width="105.0" x="310.0" y="206.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway2" id="BPMNShape_exclusivegateway2">
+        <omgdc:Bounds height="40.0" width="40.0" x="460.0" y="214.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="medidasCautelaresCoa" id="BPMNShape_medidasCautelaresCoa">
+        <omgdc:Bounds height="67.0" width="121.0" x="420.0" y="80.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="notificacionMedidasCoa" id="BPMNShape_notificacionMedidasCoa">
+        <omgdc:Bounds height="65.0" width="111.0" x="590.0" y="81.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway1" id="BPMNShape_exclusivegateway1">
+        <omgdc:Bounds height="40.0" width="40.0" x="750.0" y="93.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="archivoCausaCoa" id="BPMNShape_archivoCausaCoa">
+        <omgdc:Bounds height="65.0" width="105.0" x="840.0" y="81.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="notificacionFinalCoa" id="BPMNShape_notificacionFinalCoa">
+        <omgdc:Bounds height="55.0" width="105.0" x="990.0" y="86.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="1140.0" y="96.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="125.0" y="97.0"></omgdi:waypoint>
+        <omgdi:waypoint x="160.0" y="97.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="212.0" y="125.0"></omgdi:waypoint>
+        <omgdi:waypoint x="212.0" y="206.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
+        <omgdi:waypoint x="480.0" y="214.0"></omgdi:waypoint>
+        <omgdi:waypoint x="480.0" y="147.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow11" id="BPMNEdge_flow11">
+        <omgdi:waypoint x="415.0" y="235.0"></omgdi:waypoint>
+        <omgdi:waypoint x="460.0" y="234.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow12" id="BPMNEdge_flow12">
+        <omgdi:waypoint x="480.0" y="254.0"></omgdi:waypoint>
+        <omgdi:waypoint x="479.0" y="293.0"></omgdi:waypoint>
+        <omgdi:waypoint x="211.0" y="293.0"></omgdi:waypoint>
+        <omgdi:waypoint x="212.0" y="264.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
+        <omgdi:waypoint x="541.0" y="113.0"></omgdi:waypoint>
+        <omgdi:waypoint x="590.0" y="113.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow6" id="BPMNEdge_flow6">
+        <omgdi:waypoint x="701.0" y="113.0"></omgdi:waypoint>
+        <omgdi:waypoint x="750.0" y="113.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow7" id="BPMNEdge_flow7">
+        <omgdi:waypoint x="770.0" y="93.0"></omgdi:waypoint>
+        <omgdi:waypoint x="770.0" y="50.0"></omgdi:waypoint>
+        <omgdi:waypoint x="481.0" y="50.0"></omgdi:waypoint>
+        <omgdi:waypoint x="480.0" y="80.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow8" id="BPMNEdge_flow8">
+        <omgdi:waypoint x="790.0" y="113.0"></omgdi:waypoint>
+        <omgdi:waypoint x="840.0" y="113.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow9" id="BPMNEdge_flow9">
+        <omgdi:waypoint x="945.0" y="113.0"></omgdi:waypoint>
+        <omgdi:waypoint x="990.0" y="113.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow10" id="BPMNEdge_flow10">
+        <omgdi:waypoint x="1095.0" y="113.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1140.0" y="113.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow13" id="BPMNEdge_flow13">
+        <omgdi:waypoint x="500.0" y="234.0"></omgdi:waypoint>
+        <omgdi:waypoint x="892.0" y="234.0"></omgdi:waypoint>
+        <omgdi:waypoint x="892.0" y="146.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow14" id="BPMNEdge_flow14">
+        <omgdi:waypoint x="265.0" y="235.0"></omgdi:waypoint>
+        <omgdi:waypoint x="310.0" y="235.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

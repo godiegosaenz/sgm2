@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+        <ui:composition template="/template/template.xhtml">
+            <ui:define name="page_title">
+                Capitales Ingresados
+            </ui:define>
+            <ui:define name="top">
+                <h1>Capitales Ingresados</h1>
+            </ui:define>
+            <ui:define name="content">
+                <h:form id="formCapital" >
+                    <center>
+                        <p:dataTable value="#{capitalesIngresados.capitalList}" var="cap" emptyMessage="No se encontraron Registros" paginator="true"
+                                     reflow="true" rows="15" rowsPerPageTemplate="15,50,100" style="width: 60%; margin: 0; text-align: center;">
+                            <f:facet name="header">
+                                <p:commandButton value="Nuevo" actionListener="#{capitalesIngresados.nuevoCapital()}" styleClass="btnStyle" style="float: right; height: 30px;"/>
+                            </f:facet>
+                            <p:column headerText="Nombre" style="width: 65%;">
+                                <p:outputLabel value="#{cap.nombre}"/>
+                            </p:column>
+                            <p:column headerText="Estado">
+                                <p:outputLabel value="Activo" rendered="#{cap.estado}"/>
+                                <p:outputLabel value="No Activo" rendered="#{!cap.estado}"/>
+                            </p:column>
+                            <p:column headerText="Editar">
+                                <p:commandLink value="::Editar" actionListener="#{capitalesIngresados.editarCapital(cap)}" style="color: #0033FF" />
+                            </p:column>
+                        </p:dataTable>
+                    </center>
+                </h:form>
+
+                <p:dialog id="capital" header="Nuevo Capital" widgetVar="nuevoCap" width="30%" height="120" modal="true" closable="true" resizable="false">
+                    <h:form id="fromCapitMod">
+                        <p:outputLabel value="Nombre"/>
+                        <p:spacer width="25"/>
+                        <p:inputText value="#{capitalesIngresados.capital.nombre}" style="width: 200px;"/>
+                        <br/><br/>
+                        <center>
+                            <p:selectBooleanCheckbox value="#{capitalesIngresados.capital.estado}" itemLabel="Activo" /> 
+                            <br/><br/>
+                            <p:commandButton value="Guardar" icon="ui-icon-disk" style="float: bottom; height: 30px" actionListener="#{capitalesIngresados.guardarCapital()}" styleClass="btnStyle" />
+                        </center>
+                    </h:form>
+                </p:dialog>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

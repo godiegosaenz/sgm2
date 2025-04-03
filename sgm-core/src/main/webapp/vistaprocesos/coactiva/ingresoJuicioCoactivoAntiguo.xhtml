@@ -1,0 +1,145 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:define name="head">
+        <script src="../../resources/pfJs/keyPress.js" type="text/javascript"></script>
+        <style type="text/css">
+            .ui-datepicker .ui-datepicker-title select {
+                font-size: 1em;
+                margin: 1px 0;
+                color: black;
+            }
+            .ui-selectoneradio label{
+                font-size: 1.2em;
+                font-weight: bold;
+            }
+        </style>
+    </ui:define>
+    <ui:define name="top">
+        <h3>Juicio Coactivo Antiguo</h3>
+    </ui:define>
+    <ui:define name="content">
+        <h:form id="mainForm">
+            <p:fieldset legend="Detalle del Juicio">
+                <p:panelGrid styleClass="noBorder" columns="10">
+                    No Juicio:      <p:inputText type="number" value="#{ingresoCoactivaAntiguo.juicioAntiguo.numeroJuicio}"/>
+                    Año Juicio:    <p:inputText type="number" value="#{ingresoCoactivaAntiguo.juicioAntiguo.anioJuicio}"/>
+                    Fecha Juicio:   <p:calendar value="#{ingresoCoactivaAntiguo.juicioAntiguo.fechaJuicio}" pattern="dd/MM/yyyy" maxdate="sysdate" navigator="true"/>
+                    Abogado:        <p:selectOneMenu value="#{ingresoCoactivaAntiguo.juicioAntiguo.abogadoJuicio}" converter="entityConverter">
+                                        <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}" />  
+                                        <f:selectItems value="#{ingresoCoactivaAntiguo.listAbogados}" var="ab" itemLabel="#{ab.detalle}" itemValue="#{ab}"/>  
+                                    </p:selectOneMenu>
+                    Estado:        <p:selectOneMenu value="#{ingresoCoactivaAntiguo.juicioAntiguo.estadoJuicio}" converter="entityConverter">
+                                        <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}" />  
+                                        <f:selectItems value="#{ingresoCoactivaAntiguo.listEstados}" var="estado" itemLabel="#{estado.descripcion}" itemValue="#{estado}"/>  
+                                    </p:selectOneMenu>
+                </p:panelGrid>
+            </p:fieldset><br/>
+            <p:panelGrid styleClass="noBorder" columns="3" style="width: 500px;margin: 0 auto;">
+                <p:outputLabel value="Total Juicio: $" style="font-weight: bolder;font-size: 15px;"/>
+                <p:outputLabel value="#{ingresoCoactivaAntiguo.totalJuicio}" style="font-weight: bolder;font-size: 15px;"/>
+            </p:panelGrid>
+            <br/>
+            <p:selectOneRadio value="#{ingresoCoactivaAntiguo.predioModel.tipoConsultaUrbano}">
+                <f:selectItem itemLabel="MATRICULA INMOBILIARIA" itemValue="1" />
+                <f:selectItem itemLabel="CODIGO PREDIAL" itemValue="3" />
+                <f:selectItem itemLabel="URBANIZACION-MZ/SL" itemValue="4" />
+                <p:ajax update="consulta"/>
+            </p:selectOneRadio>
+            <p:panel id="consulta">
+                <p:outputLabel value="MATRICULA INMOBILIARIA" style="font-size: 13px; font-weight: bolder;" rendered="#{ingresoCoactivaAntiguo.predioModel.tipoConsultaUrbano eq 1}"/>
+                <p:inputText value="#{ingresoCoactivaAntiguo.predioModel.numPredio}" style="font-size: 13px; font-weight: bolder;" rendered="#{ingresoCoactivaAntiguo.predioModel.tipoConsultaUrbano eq 1}"/>
+
+                <p:panelGrid style="width: 100%;" rendered="#{ingresoCoactivaAntiguo.predioModel.tipoConsultaUrbano eq 3}">
+                    <p:row>
+                        <p:column><p:outputLabel value="SECTOR" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="MZ" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="CDLA " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="MZ-DIV " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="SOLAR " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="DIV1 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="DIV2 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="DIV3 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="DIV4 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="DIV5 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="DIV6 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="DIV7 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="DIV8 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="DIV9 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="PHV " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="PHH " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column><p:inputText value="#{ingresoCoactivaAntiguo.predioModel.sector}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{ingresoCoactivaAntiguo.predioModel.mz}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{ingresoCoactivaAntiguo.predioModel.cdla}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{ingresoCoactivaAntiguo.predioModel.mzDiv}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{ingresoCoactivaAntiguo.predioModel.solar}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{ingresoCoactivaAntiguo.predioModel.div1}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{ingresoCoactivaAntiguo.predioModel.div2}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{ingresoCoactivaAntiguo.predioModel.div3}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{ingresoCoactivaAntiguo.predioModel.div4}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{ingresoCoactivaAntiguo.predioModel.div5}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{ingresoCoactivaAntiguo.predioModel.div6}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{ingresoCoactivaAntiguo.predioModel.div7}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{ingresoCoactivaAntiguo.predioModel.div8}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{ingresoCoactivaAntiguo.predioModel.div9}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{ingresoCoactivaAntiguo.predioModel.phv}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:inputText value="#{ingresoCoactivaAntiguo.predioModel.phh}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                    </p:row>
+                </p:panelGrid>
+
+                <p:panelGrid styleClass="noBorder" rendered="#{ingresoCoactivaAntiguo.predioModel.tipoConsultaUrbano eq 4}">
+                    <p:row>
+                        <p:column><p:outputLabel value="URBANIZACION" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="MANZANA" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        <p:column><p:outputLabel value="SOLAR" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:selectOneMenu  value="#{ingresoCoactivaAntiguo.predioModel.ciudadela}" effect="fade" converter="entityConverter"  style="width:300px;">
+                                <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+                                <f:selectItems value="#{ingresoCoactivaAntiguo.ciudadelasEntidad}" var="c" itemLabel="#{c.nombre}" itemValue="#{c}"/>  
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column><p:inputText value="#{ingresoCoactivaAntiguo.predioModel.mzUrb}"/></p:column>
+                        <p:column><p:inputText value="#{ingresoCoactivaAntiguo.predioModel.slUrb}"/></p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br/>
+                <center><p:commandButton value="CONSULTAR" actionListener="#{ingresoCoactivaAntiguo.consultarPredio()}" style="font-size: 15px; font-weight: bolder;" styleClass="btnStyle" icon="ui-icon-search" iconPos="right"/></center>
+                <br/>
+                <p:dataTable id="dtCoactiva" value="#{ingresoCoactivaAntiguo.emisiones}" var="emision" emptyMessage="Sin elementos..." scrollable="true" scrollHeight="250" style="text-align: center;" rowIndexVar="index">
+                    <f:facet name="header">Titulos de Credito Agregados al Juicio</f:facet>
+                    <p:column headerText="No" width="35"><p:outputLabel value="#{index+1}"/></p:column>
+                    <p:column headerText="Mat. Inmob." width="150"><p:outputLabel value="#{emision.predio.numPredio}"/></p:column>
+                    <p:column headerText="Cod. Predial"><p:outputLabel value="#{emision.predio.codigoPredialCompleto}"/></p:column>
+                    <p:column headerText="Anio Deuda" width="100"><p:outputLabel value="#{jui.anio}"/></p:column>
+                    <p:column headerText="Total Deuda" width="150"><p:outputLabel value="#{jui.totalPago}"/></p:column>
+                    <p:column headerText="Estado Pago" width="100"><p:outputLabel value="#{jui.estadoLiquidacion.descripcion}"/></p:column>
+                    <p:column headerText="Del." width="50">
+                        <p:commandLink actionListener="#{ingresoCoactivaAntiguo.eliminarEmision(emision)}">
+                            <p:graphicImage value="/css/homeIconsImages/delete.png" height="16"/>   
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+                <br/>
+                <center>
+                <p:commandButton value="Guardar Juicio Coactivo" icon="ui-icon-check" styleClass="btnStyle" actionListener="#{inicioCoactiva.guardarJuicioCoactivo()}" disabled="#{ingresoCoactivaAntiguo.juicioAntiguo.id ne null}">
+                    <p:confirm header="Confirmacion" message="Desea ingresar el Juicio Coactivo?" icon="ui-icon-alert"/>
+                </p:commandButton>
+                <p:spacer width="50"/>
+                <p:commandButton value="Nuevo Juicio" icon="ui-icon-plus" styleClass="btnStyle" actionListener="#{ingresoCoactivaAntiguo.redirectIngresoJuicio()}" disabled="#{ingresoCoactivaAntiguo.juicioAntiguo.id eq null}"/>
+                <p:confirmDialog global="true">
+                    <p:commandButton value="SI" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                    <p:commandButton value="NO" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                </p:confirmDialog>
+                </center>
+            </p:panel>
+        </h:form>
+    </ui:define>
+</ui:composition>

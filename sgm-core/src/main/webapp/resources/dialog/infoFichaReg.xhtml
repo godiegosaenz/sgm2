@@ -1,0 +1,128 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html" >
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="movimiento" type="com.origami.sgm.entities.RegMovimiento" />
+        <cc:attribute name="modelo" type="com.origami.sgm.bpm.models.ConsultaMovimientoModel"/>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <p:dialog id="dlgMovimientoRegistralSelec" header="Movimiento Registral Seleccionado" widgetVar="dlgMovRegistralSelec"  position="top"
+                  resizable="false"  modal="true" appendTo="@(body)" closeOnEscape="true" width="75%" height="100%"  >
+            <h:form id="formMovRegistralSelec">
+                <p:fieldset legend="Datos de la Inscripcion">
+                    <p:panelGrid styleClass="noBorder" style="width: 100%;font-size: 12px;font-weight: bolder;">
+                        <p:row>
+                            <p:column>
+                                Num.Inscrip.:
+                                <p:outputLabel value="#{cc.attrs.movimiento.numInscripcion}"/>
+                            </p:column>
+                            <p:column>
+                                Fecha Inscrip.:
+                                <p:outputLabel value="#{cc.attrs.movimiento.fechaInscripcion}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </p:outputLabel>
+                            </p:column>
+                            <p:column>
+                                Num.Rep.: 
+                                <p:outputLabel  value="#{cc.attrs.movimiento.numRepertorio}"/>
+                            </p:column>
+                            <p:column>
+                                Fecha Rep.: 
+                                <p:outputLabel value="#{cc.attrs.movimiento.fechaRepertorio}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </p:outputLabel>
+                            </p:column>
+                        </p:row>                  
+                        <p:row>
+                            <p:column colspan="2">
+                                Libro: 
+                                <p:outputLabel value="#{cc.attrs.movimiento.libro.nombre}"/>
+                            </p:column>
+                            <p:column colspan="2">
+                                Acto: 
+                                <p:outputLabel value="#{cc.attrs.movimiento.acto.nombre}"/>
+                            </p:column>
+                        </p:row>                  
+                        <p:row>
+                            <p:column>
+                                Tomo: 
+                                <p:outputLabel value="#{cc.attrs.movimiento.numTomo}"/>
+                            </p:column>
+                            <p:column>
+                                Folio Inicio: 
+                                <p:outputLabel value="#{cc.attrs.movimiento.folioInicio}"/>
+                            </p:column>
+                            <p:column>
+                                Folio Fin: 
+                                <p:outputLabel value="#{cc.attrs.movimiento.folioFin}"/>
+                            </p:column>
+                            <p:column>
+                                Estado/Mov: 
+                                <p:outputLabel value="#{cc.attrs.movimiento.estado}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                Canton: 
+                                <p:outputLabel value="#{cc.attrs.movimiento.codigoCan.nombre}"/>
+                            </p:column>
+                            <p:column>
+                                Fech/Otorg.:
+                                <p:outputLabel value="#{cc.attrs.movimiento.fechaOto}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </p:outputLabel>
+                            </p:column>
+                            <p:column colspan="2">
+                                Not./Juz.: 
+                                <p:outputLabel value="#{cc.attrs.movimiento.enteJudicial.nombre}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="3">
+                                Escri/Juicio/Resolu: 
+                                <p:outputLabel value="#{cc.attrs.movimiento.escritJuicProvResolucion}"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:fieldset>
+                <p:tabView>
+                    <p:tab title="Bienes">
+                        <p:dataTable value="#{cc.attrs.modelo.fichas}" var="fich" style="width: 100%; text-align: center"  
+                                     rowIndexVar="rowIndex" emptyMessage="No se encontraron elementos..." 
+                                     resizableColumns="true" rows="5"  paginator="true">
+                            <p:column headerText="No" width="50">
+                                #{rowIndex+1}
+                            </p:column>
+                            <p:column headerText="Num. Ficha" width="100">
+                                <p:outputLabel value="#{fich.numFicha}"/>
+                            </p:column>
+                            <p:column headerText="Codigo Predial" width="200">
+                                <p:outputLabel value="#{fich.codigoPredial}"/>
+                            </p:column>
+                            <!--<p:column headerText="Fec.Apertura" width="100">
+                                <p:outputLabel value="# {fich.fechaApe}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </p:outputLabel>
+                            </p:column>-->
+                            <p:column headerText="Linderos" width="50%" style="text-align: left;">
+                                <p:outputLabel value="#{fich.linderos}" title="#{fich.linderos}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                    <p:tab title="Observacion">
+                        <p:inputTextarea value="#{cc.attrs.movimiento.observacion}" readonly="true"
+                                         autoResize="false" scrollHeight="200" style="width: 100%; height: 250px"/>
+                    </p:tab>
+                </p:tabView>
+            </h:form>
+        </p:dialog>
+    </cc:implementation>
+</html>

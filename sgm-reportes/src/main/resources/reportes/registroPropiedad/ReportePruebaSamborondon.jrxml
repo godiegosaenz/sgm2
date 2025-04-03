@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReportePruebaSamborondon}" pageWidth="555" pageHeight="802" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="b336fcd4-4115-4a4a-8d99-e454887053ce">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="ID_CERTIFICADO" class="java.lang.Long"/>
+	<queryString>
+		<![CDATA[select t.nombre_certificado,t.plantilla from sgm_app.reg_tipo_certificado t
+where t.id=$P{ID_CERTIFICADO}]]>
+	</queryString>
+	<field name="nombre_certificado" class="java.lang.String"/>
+	<field name="plantilla" class="java.lang.String"/>
+	<background>
+		<band height="800" splitType="Prevent">
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="1" y="1" width="293" height="48" forecolor="#CCCCCC" uuid="7f4134f6-5c8d-4645-8a4b-6b1f02d4ab05"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="styled">
+					<font size="18" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE PRUEBA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="294" y="1" width="260" height="48" forecolor="#CCCCCC" uuid="340db7f3-b022-4177-9972-3576c6b5dad1"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font size="18" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE PRUEBA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="294" y="48" width="260" height="48" forecolor="#CCCCCC" uuid="ab9957aa-d446-4664-ace0-01ef2569c78c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font size="18" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE PRUEBA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="1" y="48" width="293" height="48" forecolor="#CCCCCC" uuid="005c2a82-317e-424d-8e78-9e15535aa565"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="styled">
+					<font size="18" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE PRUEBA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="295" y="96" width="260" height="48" forecolor="#CCCCCC" uuid="c608e909-38c7-401e-b074-33654361fefb"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font size="18" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE PRUEBA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="2" y="143" width="293" height="48" forecolor="#CCCCCC" uuid="44226a83-b949-4041-a347-6c7fec1dcc21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="styled">
+					<font size="18" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE PRUEBA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="295" y="143" width="260" height="48" forecolor="#CCCCCC" uuid="7cfc5982-3bf0-4dc0-909b-120eae5dc357"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font size="18" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE PRUEBA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="2" y="96" width="293" height="48" forecolor="#CCCCCC" uuid="db2a3dac-16da-406c-9896-e21b06198697"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="styled">
+					<font size="18" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE PRUEBA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="295" y="191" width="260" height="48" forecolor="#CCCCCC" uuid="91017a33-c7df-44ea-b0f4-77326ae2c5e3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font size="18" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE PRUEBA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="2" y="238" width="293" height="48" forecolor="#CCCCCC" uuid="97f0e692-2c50-421d-b56e-ac1efa9f113a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="styled">
+					<font size="18" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE PRUEBA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="295" y="238" width="260" height="48" forecolor="#CCCCCC" uuid="91080d5f-ab3c-4148-9b6f-5126cf4396d5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font size="18" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE PRUEBA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="2" y="191" width="293" height="48" forecolor="#CCCCCC" uuid="dac6f7bb-5e46-4e17-94f3-45d77be2bb4f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="styled">
+					<font size="18" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE PRUEBA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="294" y="286" width="260" height="48" forecolor="#CCCCCC" uuid="734ffca6-b35f-4d72-b8b1-d415fced64a3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font size="18" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE PRUEBA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="1" y="333" width="293" height="48" forecolor="#CCCCCC" uuid="e402d5ee-4dfa-4597-99a3-b98db05f0c33"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="styled">
+					<font size="18" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE PRUEBA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="294" y="333" width="260" height="48" forecolor="#CCCCCC" uuid="eaf146fa-2bf5-4f45-a4e0-75cb036143ca"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font size="18" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE PRUEBA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="1" y="286" width="293" height="48" forecolor="#CCCCCC" uuid="807ca4d6-04d1-4d6a-8ddf-d2d3d1fb2411"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="styled">
+					<font size="18" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE PRUEBA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="293" y="380" width="260" height="48" forecolor="#CCCCCC" uuid="3b950af2-adc2-46c0-b1bf-e03193577099"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font size="18" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE PRUEBA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="1" y="427" width="293" height="48" forecolor="#CCCCCC" uuid="b62ce6fe-5c48-4eed-83c8-991edaa9f8da"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="styled">
+					<font size="18" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE PRUEBA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="293" y="427" width="260" height="48" forecolor="#CCCCCC" uuid="a8630744-e4a4-4b49-91ff-6f717ac2a9e3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font size="18" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE PRUEBA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="1" y="380" width="293" height="48" forecolor="#CCCCCC" uuid="831b7a37-b28f-4500-b848-7ad0743a070d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="styled">
+					<font size="18" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE PRUEBA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="293" y="479" width="260" height="48" forecolor="#CCCCCC" uuid="6d7b3ab7-e638-432e-a4d4-7c46565ee171"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font size="18" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE PRUEBA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="1" y="526" width="293" height="48" forecolor="#CCCCCC" uuid="02d38d04-f7a6-4f2c-bf92-201857374ca4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="styled">
+					<font size="18" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE PRUEBA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="293" y="526" width="260" height="48" forecolor="#CCCCCC" uuid="b9ca20d9-01c6-4857-acda-af0d32b3c514"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font size="18" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE PRUEBA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="1" y="479" width="293" height="48" forecolor="#CCCCCC" uuid="e57c5b5b-2d15-4a6f-a213-b9c781104c8f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="styled">
+					<font size="18" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE PRUEBA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="295" y="577" width="260" height="48" forecolor="#CCCCCC" uuid="fd5149dd-d232-47db-9807-bf0965f5461c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font size="18" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE PRUEBA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="2" y="624" width="293" height="48" forecolor="#CCCCCC" uuid="0356e024-c761-4693-b9af-61211c727dc6"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="styled">
+					<font size="18" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE PRUEBA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="295" y="624" width="260" height="48" forecolor="#CCCCCC" uuid="0802ca13-18a1-41ef-b237-7c2afd8139cb"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font size="18" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE PRUEBA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="2" y="577" width="293" height="48" forecolor="#CCCCCC" uuid="9514f6a4-1ddd-421a-aa44-de2c9a17ddb4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="styled">
+					<font size="18" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE PRUEBA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="294" y="673" width="260" height="48" forecolor="#CCCCCC" uuid="7365515a-2013-466d-8886-9d7b77eecc77"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font size="18" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE PRUEBA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="1" y="720" width="293" height="48" forecolor="#CCCCCC" uuid="d41c740c-c974-405d-b0a6-82286283d174"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="styled">
+					<font size="18" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE PRUEBA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="294" y="720" width="260" height="48" forecolor="#CCCCCC" uuid="7a05860d-0d38-496b-ae45-0309d7291023"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font size="18" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE PRUEBA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="1" y="673" width="293" height="48" forecolor="#CCCCCC" uuid="04387841-ec20-4ba3-b42b-0fc17e813fab"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="styled">
+					<font size="18" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE PRUEBA]]></text>
+			</staticText>
+		</band>
+	</background>
+	<title>
+		<band height="276" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="46" y="134" width="456" height="129" uuid="5558f40c-5a28-4528-b831-002033bc18f2"/>
+				<textElement textAlignment="Justified" markup="html"/>
+				<textFieldExpression><![CDATA[$F{plantilla}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="40" y="45" width="182" height="14" forecolor="#666666" uuid="d8b12e33-98c8-4870-9428-4958d4ae36f5"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Calixto Romero y Malecón]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="40" y="31" width="399" height="14" forecolor="#666666" uuid="bd3d6733-2f64-4f87-b06b-06144fd82b9d"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Registro de la Propiedad del Cantón Samborondón]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="40" y="100" width="462" height="20" uuid="0ed789ef-e3ba-4eb0-8b39-26b079ada361"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_certificado}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="356" y="69" width="146" height="16" forecolor="#666666" uuid="b056174e-19ca-4bc0-ac64-909236963ab6"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Certificado: xxxx - xxx]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageFooter>
+		<band height="20">
+			<textField>
+				<reportElement x="440" y="0" width="80" height="20" uuid="b5dccdc9-f54b-4877-a1ed-6e12d0051b76"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="520" y="0" width="40" height="20" uuid="66cdfdce-97e0-4d5e-b8cf-4dcab7fb2f79"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<break>
+				<reportElement x="0" y="0" width="100" height="1" uuid="81fcf534-0c19-4464-808c-733f344aeb33"/>
+			</break>
+		</band>
+	</pageFooter>
+</jasperReport>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition>
+
+        <p:fieldset legend="5.3.1 Longitud y Tipos de Cerramientos" toggleable="true" class="MarBot10">
+            <h:panelGroup layout="block" class="Responsive Wid100 Container100" id="panel_cerramientos" >
+                <div class="ContainerIndent Container100">
+                    <h:panelGroup layout="block" class="actions" id="usos-suelo-update">
+                        <p:commandButton title="Adicionar uso" actionListener="#{fichaPredialExtras.initNuevoCerramiento()}"
+                                         id="nuevo-uso-btn"  styleClass="Fs16"
+                                         icon="fa fa-plus white"
+                                         process="@this,usos-suelo-update"
+                                         value="Adicionar"
+                                         oncomplete="PF('cerramientoDialog').show();"
+                                         class="Fleft"
+                                         style="margin-right: 10px; margin-bottom: 5px;"/>
+                    </h:panelGroup>
+                </div>
+                <h:panelGroup layout="block" class="Container100 Wid100">
+                    <div class="ContainerIndent Container100">
+                        <p:dataTable id="cerramiento_list" var="c" value="#{fichaPredialExtras.cerramientos}" rowIndexVar="pos"
+                                     emptyMessage="No existen cerramientos registrados.">
+                            <f:facet name="header">
+                                Cerramientos
+                            </f:facet>
+                            <p:column headerText="Longitud">
+                                <h:outputText value="#{c.longitud}" />
+                            </p:column>
+                            <p:column headerText="Altura">
+                                <h:outputText value="#{c.altura}" />
+                            </p:column>
+                            <p:column headerText="Área">
+                                <h:outputText value="#{c.area}" />
+                            </p:column>
+                            <p:column headerText="Descripción">
+                                <h:outputText value="#{c.descripcion.valor}" />
+                            </p:column>
+                            <p:column style="text-align: center;" headerText="Acciones">
+                                <p:commandButton icon="fa fa-trash-o white" title="Eliminar" action="#{fichaPredialExtras.deleteCerramiento(c)}" process="@this"
+                                                 update="tdatos:cerramiento-form,tdatos:frmEdificaciones:tvEdificaciones:cerramiento_list,tdatos:frmEdificaciones:tvEdificaciones:panel_cerramientos">
+                                    <p:confirm header="Confirmación" message="  Seguro que desea eliminar el Cerramiento #{c.descripcion.valor} ?  " icon="ui-icon-alert" />
+                                </p:commandButton>
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="fa fa-check white" />
+                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="fa fa-times white" />
+                                </p:confirmDialog>
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+                </h:panelGroup>
+            </h:panelGroup>
+        </p:fieldset>
+        
+        <p:fieldset legend="5.3.2 Adicionales al Cerramiento" toggleable="true" class="MarBot10">
+            <h:panelGrid columns="4" style="width: 100%">
+                <h:outputText value="Cubierta:" style="font-weight: bolder"/>
+                <p:selectBooleanCheckbox value="#{fichaPredial.caracteristicas.extras.cerramientoCubierta}" />
+                <h:outputText value="Sistema seguridad:" style="font-weight: bolder"/>
+                <p:selectBooleanCheckbox value="#{fichaPredial.caracteristicas.extras.cerramientoSistSeguridad}" />
+                <h:outputText value="Sistema automático:" style="font-weight: bolder"/>
+                <p:selectBooleanCheckbox value="#{fichaPredial.caracteristicas.extras.cerramientoSistAutomatico}" />
+                <h:outputText value="Sistema iluminación:" style="font-weight: bolder"/>
+                <p:selectBooleanCheckbox value="#{fichaPredial.caracteristicas.extras.cerramientoSistIluminacion}" />
+                <h:outputText value="Jardineria:" style="font-weight: bolder"/>
+                <p:selectBooleanCheckbox value="#{fichaPredial.caracteristicas.extras.cerramientoJardineria}" />
+            </h:panelGrid>
+        </p:fieldset>
+
+
+    </ui:composition>
+</html>
+

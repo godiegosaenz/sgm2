@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{plantillasCertificados.doPreRenderView()}"/>
+        </f:metadata>
+    </ui:define>
+    <ui:define name="top"><h3>Plantillas de Certificados</h3></ui:define>
+    <ui:define name="content">
+        <h:form id="mainForm">
+            <div align="right">
+                <p:commandButton value="Nuevo" icon="ui-icon-plus" styleClass="btnStyle" 
+                                 actionListener="#{plantillasCertificados.showDlgNew()}"/>
+                <br/><br/>
+            </div>
+            <center>
+                <p:dataTable id="dtCertificados" reflow="true" paginator="true" lazy="true" rows="20" rowsPerPageTemplate="20,50,100"
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             value="#{plantillasCertificados.lazyTipoCerts}" var="tipo" emptyMessage="Sin elementos..."
+                             style="text-align: center;width: 80%">
+                    <p:column headerText="Nombre" filterBy="#{tipo.nombreCertificado}" sortBy="#{tipo.nombreCertificado}" 
+                              filterStyle="width: 75%;">
+                        <h:outputText value="#{tipo.nombreCertificado}"/>
+                    </p:column>
+                    <p:column headerText="Estado" width="100">
+                        <h:outputText value="Activo" rendered="#{tipo.estado}" />
+                        <h:outputText value="Inactivo" rendered="#{!tipo.estado}"/>
+                    </p:column>
+                    <p:column headerText="Editar" width="100">
+                        <p:commandLink value="Editar" style="color: #0033FF;font-weight: bolder"
+                                       actionListener="#{plantillasCertificados.showDlgEdit(tipo)}"/>                        
+                    </p:column>
+                    <p:column headerText="Prueba" width="80">
+                        <p:commandLink value="Ver" style="color: #0033FF;font-weight: bolder"
+                                       actionListener="#{plantillasCertificados.pruebaCertificado(tipo)}"/>                        
+                    </p:column>
+                </p:dataTable>
+            </center>
+        </h:form>
+
+        <p:dialog id="dlgEditor" widgetVar="dlgEditCert" header="Informacion Certificado" modal="true" width="665" 
+                  resizable="false" position="center" height="400">
+            <h:form id="formEdit">
+                <p:panelGrid styleClass="noBorder">
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Titulo Certificado:" style="font-weight: bolder"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="#{plantillasCertificados.certificado.nombreCertificado}"
+                                         style="text-transform: uppercase" size="60"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="Estado:" style="font-weight: bolder"/>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu value="#{plantillasCertificados.certificado.estado}">
+                                <f:selectItem itemLabel="Activo" itemValue="#{true}" />
+                                <f:selectItem itemLabel="Inactivo" itemValue="#{false}" />
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="4">
+                            <p:editor widgetVar="obsEditor" height="300" value="#{plantillasCertificados.certificado.plantilla}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="4" style="text-align: center">
+                            <p:commandButton value="Guardar" styleClass="btnStyle" icon="ui-icon-check"
+                                             actionListener="#{plantillasCertificados.guardarCertificado()}"/>
+                        </p:column>
+                    </p:row>    
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+</ui:composition>

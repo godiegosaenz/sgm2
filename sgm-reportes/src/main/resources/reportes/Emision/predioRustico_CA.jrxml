@@ -1,0 +1,520 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="predioRustico" pageWidth="612" pageHeight="907" whenNoDataType="AllSectionsNoDetail" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="71ce4346-6055-411a-9f99-85c06767683d">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="ID_LIQUIDACION" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\supergold\\Documents\\NetBeansProjects\\sgm\\src\\main\\webapp\\reportes\\Emision\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ruta_firmas" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA["C:\\Users\\supergold\\Documents\\NetBeansProjects\\sgm\\src\\main\\webapp\\css\\firmas\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="NUM_COMPROBANTE" class="java.lang.Long"/>
+	<parameter name="cobros" class="java.util.List" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[SELECT
+     ren_pago.fecha_pago AS ren_pago_fecha_pago,
+     ren_pago.valor AS ren_pago_valor,
+     ren_pago.num_cajero AS ren_pago_cajero,
+     ren_pago.num_comprobante AS ren_pago_num_comprobante,
+     ren_pago.interes AS ren_pago_interes,
+     ren_pago.descuento AS ren_pago_descuento,
+     ren_pago.recargo AS ren_pago_recargo,
+     cat_ente."ci_ruc" AS cat_ente_ci_ruc,
+     cat_ente."nombres" AS cat_ente_nombres,
+     cat_ente."apellidos" AS cat_ente_apellidos,
+     cat_ente."es_persona" AS cat_ente_es_persona,
+     cat_ente."razon_social" AS cat_ente_razon_social,
+     cat_ente.id AS cat_ente_codigo_usuario,
+     cat_ente."direccion" AS cat_ente_direccion,
+     ren_liquidacion."num_comprobante" AS ren_liquidacion_num_comprobante,
+     ren_liquidacion."num_liquidacion" AS ren_liquidacion_num_liquidacion,
+     ren_liquidacion."id_liquidacion" AS ren_liquidacion_id_liquidacion,
+     ren_liquidacion."tipo_liquidacion" AS ren_liquidacion_tipo_liquidacion,
+     ren_liquidacion."total_pago" AS ren_liquidacion_total_pago,
+     ren_liquidacion."fecha_ingreso" AS ren_liquidacion_fecha_ingreso,
+     ren_liquidacion."comprador" AS ren_liquidacion_comprador,
+     ren_liquidacion."cuantia" AS ren_liquidacion_cuantia,
+     ren_liquidacion."saldo" AS ren_liquidacion_saldo,
+     ren_liquidacion."coactiva" AS ren_liquidacion_coactiva,
+     ren_liquidacion."codigo_local" AS ren_liquidacion_codigo_local,
+     ren_liquidacion."local_comercial" AS ren_liquidacion_local_comercial,
+     ren_liquidacion."observacion" AS ren_liquidacion_observacion,
+     ren_liquidacion."anio" AS ren_liquidacion_anio,
+     ren_liquidacion."valor_comercial" AS ren_liquidacion_valor_comercial,
+     ren_liquidacion."valor_catastral" AS ren_liquidacion_valor_catastral,
+     ren_liquidacion."valor_hipoteca" AS ren_liquidacion_valor_hipoteca,
+     ren_liquidacion."valor_nominal" AS ren_liquidacion_valor_nominal,
+     ren_liquidacion."valor_mora" AS ren_liquidacion_valor_mora,
+     ren_liquidacion."total_adicionales" AS ren_liquidacion_total_adicionales,
+     ren_liquidacion."otros" AS ren_liquidacion_otros,
+     ren_liquidacion."valor_compra" AS ren_liquidacion_valor_compra,
+     ren_liquidacion."valor_venta" AS ren_liquidacion_valor_venta,
+     ren_liquidacion."valor_mejoras" AS ren_liquidacion_valor_mejoras,
+     ren_liquidacion."area_total" AS ren_liquidacion_area_total,
+     ren_liquidacion."patrimonio" AS ren_liquidacion_patrimonio,
+     ren_tipo_liquidacion."nombre_titulo" AS ren_tipo_liquidacion_nombre_titulo,
+     ren_tipo_liquidacion."nombre_transaccion" AS ren_tipo_liquidacion_nombre_transaccion,
+     ren_tipo_liquidacion."codigo_titulo_reporte" AS ren_tipo_liquidacion_codigo_titulo_reporte,
+     cat_predio_rustico.avaluo_catastral AS  cat_predio_rustico_avaluo_catastral,
+     cat_predio_rustico.reg_catastral AS cat_predio_rustico_reg_castastral,
+     cat_predio_rustico.id_predial AS cat_predio_rustico_id_predial,
+     cat_predio_rustico.parroquia AS cat_predio_rustico_parroquia,
+     cat_predio_rustico.sitio AS cat_predio_rustico_sitio,
+     cat_predio_rustico.nombre_predio AS cat_predio_rustico_nombre_predio,
+     cat_predio_rustico.rebaja AS cat_predio_rustico_rebaja,
+     cat_predio_rustico.parroquia AS cat_predio_rustico_parroquia,
+     acl_user.usuario AS acl_user_usuario
+FROM
+     "financiero"."ren_tipo_liquidacion" ren_tipo_liquidacion RIGHT OUTER JOIN "financiero"."ren_liquidacion" ren_liquidacion ON ren_liquidacion."tipo_liquidacion" = ren_tipo_liquidacion."id"
+     LEFT OUTER JOIN "app1"."cat_predio_rustico" cat_predio_rustico ON ren_liquidacion.predio_Rustico = cat_predio_rustico.id
+     LEFT OUTER JOIN "app1"."cat_ente" cat_ente ON ren_liquidacion."comprador" = cat_ente.id
+LEFT OUTER JOIN financiero.ren_pago ren_pago ON ren_liquidacion.id = ren_pago.liquidacion
+ LEFT OUTER JOIN app1.acl_user acl_user ON ren_pago.cajero = acl_user.id
+WHERE
+     ren_liquidacion."id" = $P{ID_LIQUIDACION}
+ AND ren_liquidacion."estado_liquidacion" = 1
+ AND ren_pago.num_comprobante = $P{NUM_COMPROBANTE}
+LIMIT 1]]>
+	</queryString>
+	<field name="ren_pago_fecha_pago" class="java.sql.Timestamp"/>
+	<field name="ren_pago_valor" class="java.math.BigDecimal"/>
+	<field name="ren_pago_cajero" class="java.lang.String"/>
+	<field name="ren_pago_num_comprobante" class="java.lang.Long"/>
+	<field name="ren_pago_interes" class="java.math.BigDecimal"/>
+	<field name="ren_pago_descuento" class="java.math.BigDecimal"/>
+	<field name="ren_pago_recargo" class="java.math.BigDecimal"/>
+	<field name="cat_ente_ci_ruc" class="java.lang.String"/>
+	<field name="cat_ente_nombres" class="java.lang.String"/>
+	<field name="cat_ente_apellidos" class="java.lang.String"/>
+	<field name="cat_ente_es_persona" class="java.lang.Boolean"/>
+	<field name="cat_ente_razon_social" class="java.lang.String"/>
+	<field name="cat_ente_codigo_usuario" class="java.lang.Long"/>
+	<field name="cat_ente_direccion" class="java.lang.String"/>
+	<field name="ren_liquidacion_num_comprobante" class="java.lang.Long"/>
+	<field name="ren_liquidacion_num_liquidacion" class="java.lang.Long"/>
+	<field name="ren_liquidacion_id_liquidacion" class="java.lang.String"/>
+	<field name="ren_liquidacion_tipo_liquidacion" class="java.lang.Long"/>
+	<field name="ren_liquidacion_total_pago" class="java.math.BigDecimal"/>
+	<field name="ren_liquidacion_fecha_ingreso" class="java.sql.Timestamp"/>
+	<field name="ren_liquidacion_comprador" class="java.lang.Long"/>
+	<field name="ren_liquidacion_cuantia" class="java.math.BigDecimal"/>
+	<field name="ren_liquidacion_saldo" class="java.math.BigDecimal"/>
+	<field name="ren_liquidacion_coactiva" class="java.lang.Boolean"/>
+	<field name="ren_liquidacion_codigo_local" class="java.lang.String"/>
+	<field name="ren_liquidacion_local_comercial" class="java.lang.Long"/>
+	<field name="ren_liquidacion_observacion" class="java.lang.String"/>
+	<field name="ren_liquidacion_anio" class="java.lang.Integer"/>
+	<field name="ren_liquidacion_valor_comercial" class="java.math.BigDecimal"/>
+	<field name="ren_liquidacion_valor_catastral" class="java.math.BigDecimal"/>
+	<field name="ren_liquidacion_valor_hipoteca" class="java.math.BigDecimal"/>
+	<field name="ren_liquidacion_valor_nominal" class="java.math.BigDecimal"/>
+	<field name="ren_liquidacion_valor_mora" class="java.math.BigDecimal"/>
+	<field name="ren_liquidacion_total_adicionales" class="java.math.BigDecimal"/>
+	<field name="ren_liquidacion_otros" class="java.math.BigDecimal"/>
+	<field name="ren_liquidacion_valor_compra" class="java.math.BigDecimal"/>
+	<field name="ren_liquidacion_valor_venta" class="java.math.BigDecimal"/>
+	<field name="ren_liquidacion_valor_mejoras" class="java.math.BigDecimal"/>
+	<field name="ren_liquidacion_area_total" class="java.math.BigDecimal"/>
+	<field name="ren_liquidacion_patrimonio" class="java.math.BigDecimal"/>
+	<field name="ren_tipo_liquidacion_nombre_titulo" class="java.lang.String"/>
+	<field name="ren_tipo_liquidacion_nombre_transaccion" class="java.lang.String"/>
+	<field name="ren_tipo_liquidacion_codigo_titulo_reporte" class="java.lang.Long"/>
+	<field name="cat_predio_rustico_avaluo_catastral" class="java.math.BigDecimal"/>
+	<field name="cat_predio_rustico_reg_castastral" class="java.lang.String"/>
+	<field name="cat_predio_rustico_id_predial" class="java.lang.Long"/>
+	<field name="cat_predio_rustico_parroquia" class="java.lang.Long"/>
+	<field name="cat_predio_rustico_sitio" class="java.lang.String"/>
+	<field name="cat_predio_rustico_nombre_predio" class="java.lang.String"/>
+	<field name="cat_predio_rustico_rebaja" class="java.math.BigDecimal"/>
+	<field name="acl_user_usuario" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="251" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="37" width="328" height="12" uuid="4be6ac7a-eda5-4fe7-8f3e-f6103d98329e"/>
+				<textElement>
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cat_ente_es_persona}? ($F{cat_ente_apellidos} == null? "" : $F{cat_ente_apellidos}) + " " + ($F{cat_ente_nombres} == null? "" : $F{cat_ente_nombres}): ($F{cat_ente_razon_social} == null? "" : $F{cat_ente_razon_social})]]></textFieldExpression>
+			</textField>
+			<textField pattern="MMMM" isBlankWhenNull="true">
+				<reportElement x="192" y="4" width="45" height="15" uuid="1ef9c57a-58ed-47a3-8704-f366bfbe65ec"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_fecha_pago}== null? "": $F{ren_pago_fecha_pago}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd" isBlankWhenNull="true">
+				<reportElement x="240" y="4" width="50" height="15" uuid="fc07df83-d045-46ac-9372-cc255b14b8ce"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_fecha_pago}== null? "" :$F{ren_pago_fecha_pago}]]></textFieldExpression>
+			</textField>
+			<textField pattern="yyyy" isBlankWhenNull="true">
+				<reportElement x="293" y="4" width="56" height="15" uuid="890d00ee-a0c4-4393-afa7-7a71a32ea398"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_fecha_pago}== null? "" :$F{ren_pago_fecha_pago}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="444" y="4" width="92" height="15" uuid="973f4c7c-65b7-42ee-b5cb-4d4ddfb8360b"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{ren_liquidacion_num_comprobante} == null? "":$F{ren_liquidacion_num_comprobante})]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="444" y="37" width="110" height="12" uuid="d53fe6c4-c2d8-419c-a73e-9547fa121509"/>
+				<textElement textAlignment="Right">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_liquidacion_id_liquidacion}== null?"":$F{ren_liquidacion_id_liquidacion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="57" width="317" height="13" uuid="7cd55e2e-6cc3-4f00-9cf7-a46bad47a06b"/>
+				<textElement>
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_tipo_liquidacion_nombre_titulo}+" "+ $F{ren_liquidacion_anio}+ " TITULO # "+$F{ren_liquidacion_num_liquidacion}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="0" y="127" width="150" height="12" uuid="f9b17723-cbcd-4fbf-99d5-36ecaad89133"/>
+				<subreportParameter name="rubro_municipio">
+					<subreportParameterExpression><![CDATA[true]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="liquidacion">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "rp_urbano.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="168" y="127" width="150" height="12" uuid="b9cf9622-7c5d-4e8c-9fe9-8542050086d9"/>
+				<subreportParameter name="rubro_municipio">
+					<subreportParameterExpression><![CDATA[false]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="liquidacion">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "rp_urbano.jasper"]]></subreportExpression>
+			</subreport>
+			<image scaleImage="FillFrame" hAlign="Center">
+				<reportElement x="348" y="69" width="80" height="41" uuid="6dd96950-73e6-4890-ab4f-0e0cf03ae99f"/>
+				<imageExpression><![CDATA[$P{ruta_firmas}+"DirectorFinanciero.png"]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame" hAlign="Center">
+				<reportElement x="348" y="152" width="80" height="41" uuid="08ec54ea-f6ec-45eb-8781-1ef3a9c28493"/>
+				<imageExpression><![CDATA[$P{ruta_firmas}+ "TesoreroMunicipal.png"]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame" hAlign="Center">
+				<reportElement x="348" y="206" width="80" height="41" uuid="1ca21256-e3e2-4c13-b64b-5de9cf234550"/>
+				<imageExpression><![CDATA[$P{ruta_firmas}+"JefeRentas.png"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="327" y="37" width="117" height="12" uuid="ef7be70d-5500-4d49-b7a9-d2ffd1cd5648"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cat_ente_codigo_usuario}== null?"":$F{cat_ente_codigo_usuario}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="454" y="233" width="91" height="12" uuid="8791b96e-af79-4bf1-892c-82b5f6780ebc"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{acl_user_usuario}== null?"":$F{acl_user_usuario}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="115" width="150" height="10" backcolor="#CCCCCC" uuid="345661c5-553b-468a-9b23-b33adf0e4c19"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[IMPUESTOS MUNICIPALES ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="158" y="115" width="150" height="10" backcolor="#CCCCCC" uuid="27b52c5b-6a39-4e71-b858-ef1bf402a9d7"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FONDOS AJENOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="191" y="186" width="39" height="7" uuid="daefbe4d-0f24-4c58-85a4-aeadd0d7a41e"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL: ]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="258" y="187" width="42" height="6" uuid="f9ee2efd-3216-49fd-a2e6-f9655d3ef8c3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{ren_pago_interes} == null ? java.math.BigDecimal.ZERO :$F{ren_pago_interes}).subtract(($F{ren_pago_descuento}== null ? java.math.BigDecimal.ZERO :$F{ren_pago_descuento})).add(($F{ren_pago_recargo}== null ? java.math.BigDecimal.ZERO :$F{ren_pago_recargo}))]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement x="0" y="231" width="100" height="12" uuid="cfbb25b4-540b-44e3-9121-0baf16cee96a"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="76" width="58" height="9" uuid="9aa772e7-0ed2-428b-bb2c-c867365a30d3"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Código Predial:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="58" y="76" width="260" height="9" isRemoveLineWhenBlank="true" uuid="2e28af72-3eed-479f-b002-2276e66c973d"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cat_predio_rustico_reg_castastral}== null?"":$F{cat_predio_rustico_reg_castastral} +" - " + $F{cat_predio_rustico_id_predial} ==null?"":$F{cat_predio_rustico_id_predial}+ " - " + $F{cat_predio_rustico_parroquia}==null?"":$F{cat_predio_rustico_parroquia}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="92" width="18" height="9" uuid="9b7384e7-a09b-4606-8385-fe78be971b72"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sitio:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="19" y="92" width="299" height="9" isRemoveLineWhenBlank="true" uuid="55da2445-5ea3-42ad-b95e-19c9ca02d058"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cat_predio_rustico_sitio}==null?"":$F{cat_predio_rustico_sitio}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="84" width="70" height="9" uuid="74d4e62c-8457-4650-80ed-c0de62f24bb9"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nombre Propiedad:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="69" y="84" width="249" height="9" isRemoveLineWhenBlank="true" uuid="452515a8-2fad-4e76-ad99-c3d0dfebaf56"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cat_predio_rustico_nombre_predio}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="269" y="185" width="41" height="1" uuid="c8741568-b813-468a-8cff-4217f393ee55"/>
+			</line>
+			<textField>
+				<reportElement x="349" y="4" width="72" height="15" uuid="3afeb8f6-1519-475b-bdf7-3cf505dbd265"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CAJA-" + ($F{ren_pago_cajero} == null? "01" : $F{ren_pago_cajero})]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="444" y="156" width="128" height="28" isRemoveLineWhenBlank="true" uuid="5715ef23-bd6e-4771-a200-82fa19b9f975"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{ren_liquidacion_observacion}== null?"":$F{ren_liquidacion_observacion})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="100" width="48" height="10" uuid="8b1be040-8f5e-4b10-97df-ed07701bd995"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Av.Catastral:]]></text>
+			</staticText>
+			<textField pattern="$#,##0.00">
+				<reportElement x="48" y="100" width="53" height="9" uuid="1127456f-49eb-4571-afb3-8327a758e34a"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_liquidacion_valor_catastral}== null? "0.00" :$F{ren_liquidacion_valor_catastral}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="100" y="100" width="60" height="9" uuid="a2acd2d3-ca5b-4f4d-9c38-114a3760feef"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Base Imponible:]]></text>
+			</staticText>
+			<textField pattern="$#,##0.00">
+				<reportElement x="160" y="100" width="54" height="9" uuid="2fbd979d-5c60-440e-b210-e22ce27afdf8"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cat_predio_rustico_avaluo_catastral}==null?"0.00":$F{cat_predio_rustico_avaluo_catastral}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="214" y="100" width="51" height="9" uuid="3ef35a51-6743-4247-9795-5e76cfc6ffeb"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total Rebajas:]]></text>
+			</staticText>
+			<textField pattern="$#,##0.00" isBlankWhenNull="true">
+				<reportElement x="264" y="100" width="54" height="9" isRemoveLineWhenBlank="true" uuid="0948b5e1-2521-4620-ba46-0d4495b9ae1a"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_liquidacion_valor_catastral}==null?"0.00":$F{ren_liquidacion_valor_catastral}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="191" y="166" width="39" height="7" uuid="f396117a-6cbc-480b-8742-59663aecd8a4"/>
+				<textElement>
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descuento:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="258" y="166" width="42" height="7" uuid="7e1a05e2-f3a1-4e09-804e-10cb61cc3d40"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_descuento} == null? "0.00" : $F{ren_pago_descuento}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="191" y="172" width="39" height="7" uuid="d9f2b370-5f04-43fd-becf-64ec56a2a3b0"/>
+				<textElement>
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Recargo:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="258" y="172" width="42" height="7" uuid="7c2fbcdf-3068-4506-8cea-5d0ad9b6b3ea"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{ren_pago_recargo} == null? "0.00" : $F{ren_pago_recargo})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="191" y="178" width="39" height="7" uuid="9829badd-3a40-4b01-8513-1cf81b1ec6ed"/>
+				<textElement>
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Intereses:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="258" y="178" width="42" height="7" uuid="b458fc88-c686-435b-8388-12400e3266b4"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ren_pago_interes}== null? "0.00":  $F{ren_pago_interes}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="466" y="185" width="91" height="20" isRemoveLineWhenBlank="true" uuid="b2d60fc2-6b1d-4a2d-93b5-e675f7c9d1bb"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA["REBAJAS POR REMISION DE RECARGOS MULTAS E INTERESES $"]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="455" y="63" width="58" height="13" uuid="1416bc06-2376-452d-a948-48299a097f91"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$P{NUM_COMPROBANTE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PAGO">
+					<subreportParameterExpression><![CDATA[1]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalle_cobro.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="455" y="94" width="58" height="13" uuid="93db9a66-cc5a-4a84-bcfe-5f4395cde2ee"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$P{NUM_COMPROBANTE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PAGO">
+					<subreportParameterExpression><![CDATA[3]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalle_cobro.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="455" y="109" width="58" height="13" uuid="53916ae6-2856-48ca-878e-c4ca2f821224"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$P{NUM_COMPROBANTE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PAGO">
+					<subreportParameterExpression><![CDATA[2]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalle_cobro.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="455" y="79" width="58" height="13" uuid="32ce1d5d-ee2e-47a9-aed6-6066252f208a"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$P{NUM_COMPROBANTE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PAGO">
+					<subreportParameterExpression><![CDATA[4]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalle_cobro.jasper"]]></subreportExpression>
+			</subreport>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="455" y="142" width="100" height="13" uuid="5e4a0b28-9721-4758-9b30-a8e2cc025108"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{ren_pago_valor}== null? java.math.BigDecimal.ZERO:$F{ren_pago_valor}).add($F{ren_pago_interes} == null ? java.math.BigDecimal.ZERO :$F{ren_pago_interes}).subtract(($F{ren_pago_descuento}== null ? java.math.BigDecimal.ZERO :$F{ren_pago_descuento})).add(($F{ren_pago_recargo}== null ? java.math.BigDecimal.ZERO :$F{ren_pago_recargo})).setScale( 2, java.math.RoundingMode.HALF_EVEN)]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement stretchType="RelativeToTallestObject" x="175" y="226" width="130" height="17" uuid="604a15ad-826c-42f6-80d9-65e36f2dca69"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{cobros})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "CobroDs.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="455" y="124" width="58" height="13" uuid="aaf46a01-ef97-4c58-aba0-8103e91db84b"/>
+				<subreportParameter name="NUM_COMPROBANTE">
+					<subreportParameterExpression><![CDATA[$P{NUM_COMPROBANTE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_LIQUIDACION">
+					<subreportParameterExpression><![CDATA[$P{ID_LIQUIDACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PAGO">
+					<subreportParameterExpression><![CDATA[5]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "detalle_cobro.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement x="2" y="210" width="166" height="9" uuid="3433cc81-6909-4b90-aad2-81a4c5c0aa1b"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ESTE ABONO CANCELA EL TITULO DE CREDITO ]]></text>
+			</staticText>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="167" y="210" width="35" height="9" uuid="ae34957c-f93b-4797-a6bc-ce93fecffa6d"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{ren_pago_valor}== null? java.math.BigDecimal.ZERO:$F{ren_pago_valor}).add($F{ren_pago_interes} == null ? java.math.BigDecimal.ZERO :$F{ren_pago_interes}).subtract(($F{ren_pago_descuento}== null ? java.math.BigDecimal.ZERO :$F{ren_pago_descuento})).add(($F{ren_pago_recargo}== null ? java.math.BigDecimal.ZERO :$F{ren_pago_recargo})).setScale( 2, java.math.RoundingMode.HALF_EVEN)]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="localesActividadComercial" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6f12d7e9-291c-4af9-ac37-6b80908b5b32">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="LOGO" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\Users\\supergold\\Documents\\sgm\\src\\main\\webapp\\css\\homeIconsImages\\logo.jpg"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\Juan Carlos\\Documents\\NetBeansProjects\\SGM-SV\\Reportes\\trunk\\src\\main\\resources\\reportes\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+     CASE WHEN PROP.ES_PERSONA THEN COALESCE(PROP.NOMBRES)||' '||COALESCE(PROP.APELLIDOS)ELSE COALESCE(PROP.RAZON_SOCIAL)END AS REP_LEGAL,
+     LC.NOMBRE_LOCAL AS LC_NOMBRE_LOCAL,
+     LC.NUM_LOCAL AS LC_NUM_LOCAL,
+     AC.DESCRIPCION AS AC_DESCRIPCION,
+     U.DESCRIPCION AS U_DESCRIPCION,
+     LC.AREA AS LC_AREA,
+     CC.NOMBRE AS CC_NOMBRE,
+     PROP.CI_RUC AS PROP_CI_RUC
+FROM
+     SGM_APP.CAT_ENTE PROP
+     RIGHT OUTER JOIN SGM_FINANCIERO.REN_LOCAL_COMERCIAL LC ON PROP.ID = LC.PROPIETARIO
+     LEFT OUTER JOIN SGM_FINANCIERO.REN_LOCAL_UBICACION U ON LC.UBICACION = U.ID
+     LEFT OUTER JOIN SGM_FINANCIERO.REN_ACTIVIDAD_POR_LOCAL AXL ON LC.ID = AXL.LOCAL_COMERCIAL
+     LEFT OUTER JOIN SGM_FINANCIERO.REN_ACTIVIDAD_COMERCIAL AC ON AXL.ACTIVIDAD = AC.ID
+     LEFT OUTER JOIN SGM_APP.CAT_CIUDADELA CC ON U.CIUDADELA = CC.ID
+ORDER BY
+     AC.DESCRIPCION ASC
+]]>
+	</queryString>
+	<field name="rep_legal" class="java.lang.String"/>
+	<field name="lc_nombre_local" class="java.lang.String"/>
+	<field name="lc_num_local" class="java.lang.String"/>
+	<field name="ac_descripcion" class="java.lang.String"/>
+	<field name="u_descripcion" class="java.lang.String"/>
+	<field name="lc_area" class="java.math.BigDecimal"/>
+	<field name="cc_nombre" class="java.lang.String"/>
+	<field name="prop_ci_ruc" class="java.lang.String"/>
+	<group name="ACTIVIDAD">
+		<groupExpression><![CDATA[$F{ac_descripcion}]]></groupExpression>
+		<groupHeader>
+			<band height="25">
+				<textField>
+					<reportElement x="0" y="0" width="495" height="25" uuid="626da653-ad54-43c8-a5e4-245eec8bbe29"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="SansSerif" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ac_descripcion}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="5"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="82" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="44" width="802" height="25" uuid="70a3e6db-3de3-4d1d-af8c-ef0f101cb9a5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LOCALES COMERCIALES EXISTENTE]]></text>
+			</staticText>
+			<subreport>
+				<reportElement x="74" y="0" width="662" height="44" uuid="816fff5e-83a4-4428-9912-ecebe3d78f43"/>
+				<subreportParameter name="LOGO">
+					<subreportParameterExpression><![CDATA[$P{LOGO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "titleReporte5.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="51" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="1" width="802" height="1" uuid="c2ad91ef-69df-4e05-b7ce-a2f8a3e02265"/>
+			</line>
+			<line>
+				<reportElement x="0" y="4" width="802" height="1" uuid="a19c5caf-7282-4b71-a129-9697ffcc6db5"/>
+			</line>
+			<staticText>
+				<reportElement x="23" y="5" width="80" height="30" uuid="d4b06034-cef9-4a7a-8a32-083288ff5d63"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RUC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="105" y="5" width="157" height="29" uuid="b3773067-3f29-4474-976a-58b9bb3689cf"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOMBRE DEL LOCAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="468" y="5" width="180" height="29" uuid="719fb7b7-4c87-47de-a00e-b1238248b5b0"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[UBICACIÓN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="264" y="5" width="202" height="29" uuid="ae123aa9-c897-4fbb-ba1a-fdb1876795ba"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REPRESENTANTE LEGAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="650" y="5" width="100" height="29" uuid="4340a591-6356-4b48-bf50-bbb5549ec202"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NÚMERO DE LOCAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="752" y="5" width="50" height="29" uuid="3ef70edf-af67-4901-82c4-68ffb7f5fd5a"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ÁREA]]></text>
+			</staticText>
+			<line direction="BottomUp">
+				<reportElement x="0" y="34" width="802" height="1" uuid="d4d73534-1473-43c8-9a57-02671f082fff"/>
+				<graphicElement>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line direction="BottomUp">
+				<reportElement x="0" y="37" width="802" height="1" uuid="f2f007fd-7135-4e25-87f2-0450d2f3db6b"/>
+				<graphicElement>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="23" y="0" width="80" height="15" uuid="e2cd4bec-f29c-47e9-bfe5-e961a2a260f7"/>
+				<textElement>
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{prop_ci_ruc}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="105" y="0" width="157" height="15" uuid="6c83991e-68cf-4ff4-b605-6960f4019ff1"/>
+				<textElement>
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{lc_nombre_local}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="468" y="0" width="180" height="15" uuid="4bd383f4-11fb-4d9b-9ff8-bfeb96a12e9e"/>
+				<textElement>
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{u_descripcion}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="264" y="0" width="202" height="15" uuid="9e8f02a3-f9ae-4825-b90e-c76a00450e5c"/>
+				<textElement>
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{rep_legal}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="650" y="0" width="100" height="15" uuid="dd4d7a99-87db-4942-b00e-52701e5de528"/>
+				<textElement>
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{lc_num_local}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="752" y="0" width="50" height="15" uuid="2bfa684b-542f-4d7b-93c8-6e9742149268"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{lc_area}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="35" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="1" width="802" height="1" uuid="ee153575-4a60-446c-b18d-d5b4497b6f22"/>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement x="670" y="2" width="92" height="20" uuid="1510ae3c-f704-44fe-8b84-df4409e177c4"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pagina "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" isBlankWhenNull="true">
+				<reportElement x="762" y="2" width="40" height="20" uuid="d3ad56c4-19af-4853-9a1a-48146db2e466"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

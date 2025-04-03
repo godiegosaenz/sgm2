@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="carteraVancidaPredioRurales" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f504fa01-fe4a-4432-8cb2-90d2cffbf59f">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="LOGO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ANIO" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT L.ANIO , SUM(L.TOTAL_PAGO)AS TOTAL ,PA.DESCRIPCION AS PARROQUIA,
+  (SELECT RAZON_SOCIAL FROM SGM_APPLICATION.EMPRESA)AS RAZON_SOCIAL
+  FROM SGM_FINANCIERO.REN_LIQUIDACION L
+  INNER JOIN SGM_APP.CAT_PREDIO_RUSTICO P ON (L.PREDIO_RUSTICO = P.ID)
+  INNER JOIN SGM_APP.CAT_PARROQUIA PA ON (P.PARROQUIA = PA.ID)
+  WHERE  L.TIPO_LIQUIDACION = 7 AND L.ESTADO_LIQUIDACION = 2 AND L.ANIO < $P{ANIO}
+  GROUP BY L.ANIO, PA.DESCRIPCION
+  ORDER BY ANIO DESC;]]>
+	</queryString>
+	<field name="anio" class="java.lang.Integer"/>
+	<field name="total" class="java.math.BigDecimal"/>
+	<field name="parroquia" class="java.lang.String"/>
+	<field name="razon_social" class="java.lang.String"/>
+	<group name="ANIO">
+		<groupExpression><![CDATA[$F{anio}]]></groupExpression>
+		<groupHeader>
+			<band height="18">
+				<textField>
+					<reportElement x="0" y="0" width="63" height="18" uuid="0e9271bd-056e-4a63-807c-32eb70ae94e7"/>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["AÑO"+":"+$F{anio}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="21"/>
+		</groupFooter>
+	</group>
+	<title>
+		<band height="79" splitType="Stretch">
+			<image>
+				<reportElement x="0" y="0" width="83" height="79" uuid="7db7218c-0f78-48bd-9748-1a9c1adc37c5"/>
+				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="83" y="0" width="472" height="49" uuid="fa34c2f1-536e-4523-b8da-1dd9f6c1bdc8"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{razon_social}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="83" y="49" width="449" height="22" uuid="96c090d9-c893-4273-a2e9-ceea92a77528"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="2.0" lineStyle="Double"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[DETALLES DE LA CATERA VENCIDA  PREDIO-RURAL]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="233" splitType="Stretch">
+			<elementGroup>
+				<pieChart>
+					<chart>
+						<reportElement isPrintRepeatedValues="false" x="0" y="0" width="555" height="233" uuid="61335b44-215c-4475-96bb-cd6564180bcc"/>
+						<box>
+							<pen lineStyle="Double"/>
+							<topPen lineStyle="Double"/>
+							<leftPen lineStyle="Double"/>
+							<bottomPen lineStyle="Double"/>
+							<rightPen lineStyle="Double"/>
+						</box>
+						<chartTitle/>
+						<chartSubtitle/>
+						<chartLegend/>
+					</chart>
+					<pieDataset>
+						<dataset resetType="Group" resetGroup="ANIO"/>
+						<keyExpression><![CDATA[$F{parroquia}]]></keyExpression>
+						<valueExpression><![CDATA[$F{total}]]></valueExpression>
+						<labelExpression><![CDATA["PARROQUIA"+":"+$F{parroquia}+":"+$F{total}]]></labelExpression>
+					</pieDataset>
+					<piePlot>
+						<plot/>
+						<itemLabel/>
+					</piePlot>
+				</pieChart>
+			</elementGroup>
+		</band>
+	</detail>
+</jasperReport>

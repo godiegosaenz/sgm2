@@ -1,0 +1,566 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="bitacoraSgm" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f8dbd267-d8f0-4db4-88f7-ee6783f8beca">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="28"/>
+	<parameter name="numFicha" class="java.lang.Long"/>
+	<parameter name="codMovimiento" class="java.lang.Long"/>
+	<parameter name="titulo" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT 'Actividad : '||RB.ACTIVIDAD AS ACTIVIDAD, RB.FECHA AS FECHA,
+	RA.NOMBRE AS SERVICIO,
+	RB.FECHA_HORA,
+	(CASE WHEN RB.TIP_SERVICIO = 0 THEN NULL END) TIPO_SERVICIO,
+	RB.ANIO,
+	RB.COD_PROGRAMA,
+	RB.ID_MOVIMIENTO,
+	'Ficha Registral-Inmueble: '||RF.NUM_FICHA AS DATOS_FICHA,
+	RL.NOMBRE AS LIBRO,
+	RM.NUM_INSCRIPCION,
+	RM.FECHA_INSCRIPCION,
+	RM.NUM_REPERTORIO,
+	RM.INDICE AS N_SECUENCIA,
+	US.ID AS CODIGO_USUARIO,
+	'Funcionario : ['||US.ID||'] '||US.USUARIO AS FUNCIONARIO,
+	RB.REPERTORIO_ORDEN_TRAMITE AS ORDEN
+FROM sgm_bitacora.REG_BITACORA RB
+	LEFT OUTER JOIN sgm_app.REG_FICHA RF ON RF.ID = RB.ID_FICHA
+	LEFT OUTER JOIN sgm_flow.REGP_ACTO_TIPO_ACTO RA ON RA.ID = RB.TIP_SERVICIO
+	LEFT OUTER JOIN sgm_app.REG_MOVIMIENTO RM ON RM.ID = RB.ID_MOVIMIENTO
+	LEFT OUTER JOIN sgm_app.REG_LIBRO RL ON RL.ID = RM.LIBRO
+	LEFT OUTER JOIN sgm_app.ACL_USER US ON US.ID = RB.ID_USUARIO
+	LEFT OUTER JOIN sgm_app.CAT_ENTE CE ON CE.ID = US.ENTE
+WHERE RF.NUM_FICHA = $P{numFicha}
+	OR RB.ID_MOVIMIENTO = $P{codMovimiento}
+ORDER BY RB.FECHA DESC, RB.FECHA_HORA DESC]]>
+	</queryString>
+	<field name="actividad" class="java.lang.String"/>
+	<field name="fecha" class="java.sql.Date"/>
+	<field name="servicio" class="java.lang.String"/>
+	<field name="fecha_hora" class="java.sql.Timestamp"/>
+	<field name="tipo_servicio" class="java.lang.String"/>
+	<field name="anio" class="java.lang.Long"/>
+	<field name="cod_programa" class="java.lang.String"/>
+	<field name="id_movimiento" class="java.lang.Long"/>
+	<field name="datos_ficha" class="java.lang.String"/>
+	<field name="libro" class="java.lang.String"/>
+	<field name="num_inscripcion" class="java.lang.Integer"/>
+	<field name="fecha_inscripcion" class="java.sql.Timestamp"/>
+	<field name="num_repertorio" class="java.lang.Integer"/>
+	<field name="n_secuencia" class="java.lang.Integer"/>
+	<field name="codigo_usuario" class="java.lang.Long"/>
+	<field name="funcionario" class="java.lang.String"/>
+	<field name="orden" class="java.lang.Long"/>
+	<group name="fecha">
+		<groupExpression><![CDATA[$F{fecha}]]></groupExpression>
+		<groupHeader>
+			<band height="21">
+				<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+					<reportElement uuid="85c2f89a-80de-4b78-99ae-9cc4c89b8129" x="7" y="0" width="62" height="20" isRemoveLineWhenBlank="true" forecolor="#000000"/>
+					<textElement textAlignment="Center">
+						<font size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="21">
+				<textField>
+					<reportElement uuid="194b5e7f-567b-45c1-b76a-984830800be2" x="130" y="1" width="57" height="20"/>
+					<textElement>
+						<font size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{fecha_COUNT}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="1be84373-4dda-419b-bf44-7fa7f295a933" x="3" y="1" width="127" height="20" isRemoveLineWhenBlank="true"/>
+					<textElement>
+						<font size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total Movimientos :]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="23" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="a1d7ded8-efaf-4051-b0bd-56e381b29411" mode="Opaque" x="0" y="3" width="555" height="20" forecolor="#FFFFFF" backcolor="#000000"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REGISTRO MUNICIPAL DE LA PROPIEDAD - CANTON SAMBORONDON]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="104" splitType="Stretch">
+			<textField>
+				<reportElement uuid="eccac691-8ee7-4de7-b9e2-36768c616a0d" x="468" y="21" width="87" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="38c958ea-08ed-4d72-beaf-3507c9a6cdfa" x="361" y="21" width="107" height="20"/>
+				<textElement>
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Pagina ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c641f20a-ede8-4fe0-a4f1-c3c404c88e95" x="0" y="41" width="112" height="60"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descripción :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7491b75e-f56c-46a6-bd31-94d5afbc6ada" x="361" y="1" width="78" height="20"/>
+				<textElement>
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Fecha / Hora]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy h.mm a">
+				<reportElement uuid="ea97550b-d9d5-47a7-bcca-9b014bdd5461" x="439" y="1" width="116" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="78e14428-794e-4660-bb46-df7bb3d3a777" x="112" y="41" width="49" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$P{numFicha} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ficha :]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="22582a45-517d-4db5-96b9-efd9ce4579b7" x="112" y="61" width="279" height="28">
+					<printWhenExpression><![CDATA[$P{numFicha} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{datos_ficha}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="67866d76-b55f-43a2-935d-0687f0d67ddf" x="161" y="41" width="100" height="20">
+					<printWhenExpression><![CDATA[$P{numFicha} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{numFicha}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="d54bda62-4835-44f7-b622-0bc2d700bd22" x="0" y="1" width="361" height="40" isRemoveLineWhenBlank="true"/>
+				<textElement verticalAlignment="Middle">
+					<font size="14" isBold="true" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{titulo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="766870d5-c81a-40ab-9789-a44011748a80" x="112" y="41" width="49" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$P{codMovimiento} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Libro :]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="1c7a4445-8007-4369-a4c6-19be8175849a" x="161" y="41" width="230" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$P{codMovimiento} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{libro}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="79444c3c-cddd-4c35-8ae6-23b08fa926d8" x="112" y="61" width="98" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$P{codMovimiento} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Inscripcion :]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="9d1687a4-6f5e-495d-a6bd-b5bbb3734af8" x="209" y="61" width="70" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$P{codMovimiento} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{num_inscripcion}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="8a65799f-0a63-4732-b9de-dbf12cc00809" x="112" y="81" width="98" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$P{codMovimiento} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha :]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="1cf6832d-0597-4f65-8b73-e2495d8b33e3" x="210" y="81" width="99" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$P{codMovimiento} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha_inscripcion}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="3ca54661-687a-44cf-8ac3-7d3a7cf71dfe" x="309" y="81" width="82" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$P{codMovimiento} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Repertorio :]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="bf460899-06f2-4aca-bd75-b61970676a9d" x="391" y="81" width="48" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$P{codMovimiento} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{num_repertorio}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="0bb5b4a6-ee26-4899-945a-329a73d194c1" x="439" y="81" width="70" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$P{codMovimiento} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Secuencia :]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="b0e9103e-9a09-4c58-9881-4d81202a06c3" x="509" y="81" width="46" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$P{codMovimiento} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{n_secuencia}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="23" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="4c015161-be46-4261-ab2b-7795f7ca57d3" mode="Opaque" x="69" y="1" width="61" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[HORA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7c75cbac-ad7d-402b-9789-26b5ba1040d6" mode="Opaque" x="130" y="1" width="88" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PROGRAMA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d39298b3-c2ff-4d7c-8376-0b699dabb10c" mode="Opaque" x="218" y="1" width="61" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[COD.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="85750d32-a455-49c4-be98-e8c0ee45597a" mode="Opaque" x="279" y="1" width="276" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[OBSERVACION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d7630bdc-6a1f-4bd9-b15d-b5e18d76a80e" mode="Opaque" x="8" y="1" width="61" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="360" splitType="Stretch">
+			<textField pattern="h.mm.ss a">
+				<reportElement uuid="1475b878-05ae-4850-8127-2b57b50bfd6f" x="68" y="1" width="62" height="20" forecolor="#000000"/>
+				<textElement textAlignment="Center">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha_hora}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="83ffc3c4-6802-4d05-90f1-3a4fca013cf9" x="130" y="1" width="88" height="20" forecolor="#000000"/>
+				<textElement textAlignment="Center">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cod_programa}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="032da23b-298e-4db0-ad6e-677c82b107dc" positionType="Float" x="279" y="109" width="276" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[$F{orden}> 0 && $F{anio} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[==== Datos de la Orden ==== ]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement uuid="6a8fc931-b780-48da-b45d-3e44ccddd256" x="279" y="1" width="276" height="88" forecolor="#000000"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{actividad}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="3548f0c6-9314-41d4-a3ba-d7adae3267d6" positionType="Float" x="279" y="189" width="276" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[$F{id_movimiento}!= null]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[==== Datos Inscripcion ==== ]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="2f38a087-8865-4c0b-b2d7-20e80d727523" positionType="Float" x="378" y="209" width="177" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[$F{id_movimiento}!= null]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{libro}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="3af5aa5d-5c9c-4e8a-9824-9083831b5cc7" positionType="Float" x="378" y="229" width="177" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[$F{id_movimiento}!= null]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{num_inscripcion}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy">
+				<reportElement uuid="e72ead5f-eb3e-4b98-8f00-8383440b28be" positionType="Float" x="378" y="249" width="177" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[$F{id_movimiento}!= null]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha_inscripcion}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="318073fd-08b3-45d3-8632-e89d626df42c" positionType="Float" x="378" y="269" width="177" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[$F{id_movimiento}!= null]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{num_repertorio}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="9ab4168d-5c32-4774-aaea-e742fda51532" positionType="Float" x="378" y="289" width="177" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[$F{id_movimiento}!= null]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="10" isItalic="false" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{n_secuencia}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="a5ef2a33-7330-49b4-836e-99a5652594a1" positionType="Float" x="279" y="309" width="276" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[$F{datos_ficha} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[==== Datos de la Ficha ==== ]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="8a741d56-88d4-4b94-bd33-c27a0f687c44" positionType="Float" x="279" y="329" width="276" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[$F{datos_ficha} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{datos_ficha}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="f1c961e9-406c-4725-a4fb-d38dc7741bf0" positionType="Float" stretchType="RelativeToBandHeight" x="279" y="89" width="276" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[$F{codigo_usuario} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{funcionario}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="3a5069b0-ce93-464f-8391-2645c1a78f9d" x="218" y="1" width="61" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{codigo_usuario} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codigo_usuario}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="5c440836-dfef-4c49-b8ae-5416708fcb13" positionType="Float" x="348" y="129" width="207" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[$F{orden}> 0 && $F{anio} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{servicio}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="f86e9a0d-7075-4047-ab05-c27e3b069733" positionType="Float" x="348" y="149" width="207" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[$F{orden}> 0 && $F{anio} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{anio}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="98ff864c-1f2e-4ca1-8817-94eec6b182a6" positionType="Float" x="348" y="169" width="207" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[$F{orden}> 0 && $F{anio} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{orden}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="4e7d7b8d-6ed2-4fe8-a637-753573b9578c" positionType="Float" x="279" y="129" width="69" height="20" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[$F{orden}> 0 && $F{anio} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Servicio : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="58d321ad-96d4-4ea6-a419-b40b3d9e3cfa" positionType="Float" x="279" y="149" width="69" height="20" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[$F{orden}> 0 && $F{anio} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Año : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f2e2491f-242b-4c82-b456-c498d3486aa1" positionType="Float" x="279" y="169" width="69" height="20" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[$F{orden}> 0 && $F{anio} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Orden : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b9fb3fa4-66b1-4e55-9730-4c557114ff85" positionType="Float" x="279" y="209" width="99" height="20" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[$F{id_movimiento}!= null]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Libro : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="99965a0e-a99c-4f00-9c02-3edd313c1d4a" positionType="Float" x="279" y="229" width="99" height="20" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[$F{id_movimiento}!= null]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No Inscrip : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="25c0da1e-064e-4aa4-90da-c7cbae7a47ac" positionType="Float" x="279" y="249" width="99" height="20" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[$F{id_movimiento}!= null]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fec. Insc : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f129820a-3234-448a-849f-3d19067aece1" positionType="Float" x="279" y="269" width="99" height="20" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[$F{id_movimiento}!= null]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No. Rep : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="885b60a0-d409-4ca7-a9e7-ef89d122174e" positionType="Float" x="279" y="289" width="99" height="20" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[$F{id_movimiento}!= null]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No. Secuencia : ]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

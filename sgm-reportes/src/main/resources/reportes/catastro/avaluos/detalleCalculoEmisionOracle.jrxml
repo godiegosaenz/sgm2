@@ -1,0 +1,476 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="detalleCalculoEmisionOracle" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="10" uuid="fee01144-072c-411f-8984-85de0a5183c8">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="480"/>
+	<parameter name="LOGO" class="java.lang.String"/>
+	<parameter name="LOGO_FOOTER" class="java.lang.String"/>
+	<parameter name="ANIO" class="java.lang.Integer"/>
+	<parameter name="ID_AVAL_HISTORICO" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="USUARIO" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/opt/apache-tomee-plus-1.7.1/webapps/sgm/reportes/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO2" class="java.lang.String"/>
+	<parameter name="ANIO_INICIO" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ANIO_FIN" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+(SELECT SUM(SUMA_COEFICIENTES_CONSTRUCCION) FROM SGM_APP.CAT_PREDIO_AVAL_DET_HIST
+WHERE PREDIO_AVAL_HISTORICO = $P{ID_AVAL_HISTORICO}
+) SUMA_COEFICIENTES_CONSTRUCCION,
+
+(SELECT SUM(DEPRECIACION) FROM SGM_APP.CAT_PREDIO_AVAL_DET_HIST
+WHERE PREDIO_AVAL_HISTORICO = $P{ID_AVAL_HISTORICO}
+) DEPRECIACION,
+
+cp.clave_cat  codigo_predial, cp.predialant  codigo_anterior,  cp.num_predio, cp.solar, cp.mz,
+  cpah.avaluo_municipal, cpah.suma_coeficientes, cpah.area_solar, cpah.valor_base_m2  valor_m2,
+cpah.avaluo_solar, cpah.avaluo_construccion, cpah.area_construccion  area_declarada_const,
+sgm_app.propietarios_por_predio(cp.id)  propietarios
+
+from sgm_app.cat_predio cp
+INNER JOIN sgm_app.cat_predio_aval_historico cpah ON cp.id = cpah.predio
+WHERE cpah.id  = $P{ID_AVAL_HISTORICO}]]>
+	</queryString>
+	<field name="SUMA_COEFICIENTES_CONSTRUCCION" class="java.math.BigDecimal"/>
+	<field name="DEPRECIACION" class="java.math.BigDecimal"/>
+	<field name="CODIGO_PREDIAL" class="java.lang.String"/>
+	<field name="CODIGO_ANTERIOR" class="java.lang.String"/>
+	<field name="NUM_PREDIO" class="java.math.BigDecimal"/>
+	<field name="SOLAR" class="java.math.BigDecimal"/>
+	<field name="MZ" class="java.math.BigDecimal"/>
+	<field name="AVALUO_MUNICIPAL" class="java.math.BigDecimal"/>
+	<field name="SUMA_COEFICIENTES" class="java.math.BigDecimal"/>
+	<field name="AREA_SOLAR" class="java.math.BigDecimal"/>
+	<field name="VALOR_M2" class="java.math.BigDecimal"/>
+	<field name="AVALUO_SOLAR" class="java.math.BigDecimal"/>
+	<field name="AVALUO_CONSTRUCCION" class="java.math.BigDecimal"/>
+	<field name="AREA_DECLARADA_CONST" class="java.lang.String"/>
+	<field name="PROPIETARIOS" class="oracle.jdbc.OracleClob"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="80" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="0" width="555" height="53" uuid="61ebfbef-57a1-4a0a-bfcf-c853a523cd9f"/>
+				<subreportParameter name="LOGO2">
+					<subreportParameterExpression><![CDATA[$P{LOGO2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="LOGO">
+					<subreportParameterExpression><![CDATA[$P{LOGO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "titleReporteOracle.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement x="0" y="60" width="541" height="20" uuid="96ecc5b6-d4ab-4948-b370-aa4ea6469e9f"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="14" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[DETALLES DE CÁLCULOS DE AVALUOS]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="95" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="15" width="140" height="15" uuid="23523866-ebfa-4ba8-8935-88a201d8f17a"/>
+				<textElement verticalAlignment="Bottom" markup="styled">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<style isBold='true'>Mat. Inmobiliaria:</style> "+$F{NUM_PREDIO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="280" height="15" uuid="652fdf37-9446-4570-a1bb-86d115576a4f"/>
+				<textElement verticalAlignment="Bottom" markup="styled">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<style isBold='true'>Cod. Predial:</style> "+$F{CODIGO_PREDIAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="280" y="0" width="275" height="15" uuid="49cfd1dc-2903-4522-8190-4488562d2450"/>
+				<textElement verticalAlignment="Bottom" markup="styled">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<style isBold='true'>Cod. Predial Anterior: </style>"+($F{CODIGO_ANTERIOR}==null?"":$F{CODIGO_ANTERIOR})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="60" width="555" height="20" isPrintWhenDetailOverflows="true" uuid="e5dd9e6f-0148-4bef-a21a-035429e25237"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA[$F{PROPIETARIOS}.getSubString( 1l, ( new Long( $F{PROPIETARIOS}.length() ) ).intValue() )]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="37" width="85" height="15" uuid="fc6c7fbe-d253-433a-986b-73183bfb36e6"/>
+				<textElement verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Propietario(s):]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="140" y="15" width="140" height="15" uuid="ed87ee60-67a0-4965-b631-3bc4b4369ae2"/>
+				<textElement verticalAlignment="Bottom" markup="styled"/>
+				<textFieldExpression><![CDATA["<style isBold='true'>Mz:</style> "+$F{MZ}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="280" y="15" width="140" height="15" uuid="45a72bee-85cd-4fe6-9ff6-9c26ec96d7c7"/>
+				<textElement verticalAlignment="Bottom" markup="styled"/>
+				<textFieldExpression><![CDATA["<style isBold='true'>SL:</style> "+$F{SOLAR}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="206" splitType="Stretch">
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="0" y="1" width="555" height="20" forecolor="#1F1313" backcolor="#E8E8E8" uuid="fecba6c1-c056-4eba-90d1-5af0fc57b6fc"/>
+				<box>
+					<pen lineWidth="0.75" lineStyle="Solid"/>
+					<topPen lineWidth="0.75" lineStyle="Solid"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AVALÚO FÍSICO  ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="0" y="21" width="555" height="20" forecolor="#1F1313" backcolor="#E8E8E8" uuid="1b2abb5a-0c05-4c50-a9f6-b4cebb30c591"/>
+				<box>
+					<pen lineWidth="0.75" lineStyle="Solid"/>
+					<topPen lineWidth="0.75" lineStyle="Solid"/>
+					<leftPen lineWidth="0.75" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.75" lineStyle="Solid"/>
+					<rightPen lineWidth="0.75" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[1. AVALÚO DEL TERRENO ]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="0" y="41" width="555" height="74" uuid="6a428698-e1fc-47b4-a3cd-dbcbf278d9cc"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="45" y="60" width="102" height="13" uuid="b9a8b0bb-34fe-48db-96d9-e79ec98c15e2"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Área Solar:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="251" y="41" width="1" height="74" uuid="b67c9c60-9c7f-4af0-a3af-ab2dece35ba5"/>
+			</line>
+			<textField pattern="###0.0000">
+				<reportElement x="339" y="60" width="178" height="13" uuid="d69fb8fe-6bce-49d7-b753-d422dfc85ce9"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{AREA_SOLAR}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="45" y="83" width="141" height="13" uuid="2998193d-2c37-4458-9dbe-b9768168d6b4"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Área de Construcción:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="517" y="60" width="30" height="13" uuid="eea586b1-c14e-4af2-946b-87fe9c76abf4"/>
+				<box leftPadding="3"/>
+				<text><![CDATA[M2]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="517" y="83" width="30" height="13" uuid="e88e0e23-035b-40e7-8238-450545cfa372"/>
+				<box leftPadding="3"/>
+				<text><![CDATA[M2]]></text>
+			</staticText>
+			<textField pattern="###0.0000" isBlankWhenNull="true">
+				<reportElement x="339" y="83" width="178" height="14" uuid="5819ef4d-87ea-4e08-bb8f-9c3cc7a0a1dc"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{AREA_DECLARADA_CONST}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="0" y="135" width="555" height="50" uuid="d46443c8-a38d-42ca-b003-d24194367c09"/>
+			</rectangle>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="0" y="115" width="555" height="20" forecolor="#1F1313" backcolor="#FEFEFE" uuid="83ee2b80-dead-4d1e-82aa-d69b7c37888b"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[1.1 VALOR M2 DE TERRENO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="45" y="151" width="102" height="13" uuid="ce42c5a3-dd2c-4a85-9ea8-2bc24affc523"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valor por M2:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="252" y="135" width="1" height="50" uuid="ac7b5e93-0ebb-4a24-bbed-09d38609e901"/>
+			</line>
+			<textField pattern="¤ #,##0.000">
+				<reportElement x="339" y="151" width="178" height="13" uuid="ec152b50-b633-44ba-9488-35066d1db8d8"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{VALOR_M2}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="0" y="185" width="555" height="20" forecolor="#1F1313" backcolor="#FAFAFF" uuid="68c6f950-e89a-420a-bceb-6aabb35e86db"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[1.2 COEFICIENTES DEL SOLAR]]></text>
+			</staticText>
+		</band>
+		<band height="68">
+			<frame>
+				<reportElement x="0" y="-1" width="555" height="69" uuid="ba3501a5-f02b-4bdc-a4de-36becb9b5a96"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<subreport>
+					<reportElement x="1" y="0" width="554" height="68" uuid="dd00f144-6955-4dd3-82a9-cee843151dc4"/>
+					<subreportParameter name="ID_PREDIO_HISTORICO">
+						<subreportParameterExpression><![CDATA[$P{ID_AVAL_HISTORICO}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "catastro/avaluos/detalleCalculoEmisionSolar.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+		</band>
+		<band height="101">
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="0" y="0" width="555" height="20" forecolor="#1F1313" backcolor="#E8E8E8" uuid="e89463e5-ab53-4fea-965d-6ff47acd9748"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[2. AVALÚO DE LA CONSTRUCCIÓN]]></text>
+			</staticText>
+			<frame>
+				<reportElement x="0" y="20" width="555" height="80" uuid="d885e106-0e83-42c4-95ff-da32fb0f5cbd"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<subreport>
+					<reportElement x="0" y="19" width="555" height="60" uuid="0202138a-63e2-4d53-93cb-3a9716edd41f"/>
+					<subreportParameter name="ID_PREDIO_HISTORICO">
+						<subreportParameterExpression><![CDATA[$P{ID_AVAL_HISTORICO}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "catastro/avaluos/detalleCalculoEmisionEdificaciones.jasper"]]></subreportExpression>
+				</subreport>
+				<textField>
+					<reportElement x="7" y="3" width="260" height="16" uuid="fe58267c-8d2b-4d54-b3fd-ce3a7e544b62"/>
+					<textElement>
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["2.1 DETALLE DE LAS EDIFICACIONES"]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+		<band height="98">
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="25" backcolor="#E8E8E8" uuid="a2c25130-525b-4d21-9192-29744027f207"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[2.2 COEFICIENTES DE LA CONSTRUCCIÓN ]]></text>
+			</staticText>
+			<frame>
+				<reportElement x="0" y="25" width="555" height="72" uuid="cae415f5-f57d-47fa-bc3f-172d16418991"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<subreport>
+					<reportElement x="5" y="2" width="546" height="70" uuid="c621f22f-0741-4cb7-8c1a-1543bd6e2ad7"/>
+					<subreportParameter name="ID_PREDIO_HISTORICO">
+						<subreportParameterExpression><![CDATA[$P{ID_AVAL_HISTORICO}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "catastro/avaluos/detalleCalculoEmisionSumaCoeficientesConstruccion.jasper"]]></subreportExpression>
+				</subreport>
+			</frame>
+		</band>
+		<band height="142">
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="1" y="27" width="555" height="20" forecolor="#1F1313" backcolor="#E8E8E8" uuid="9c73a460-aab9-4946-bf19-5d9b6a67d7bf"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RESULTADO DEL AVALÚO]]></text>
+			</staticText>
+			<subreport>
+				<reportElement x="1" y="48" width="554" height="94" uuid="9713e6a2-809d-4a3b-9bd0-b86aa5212b95"/>
+				<subreportParameter name="ID_PREDIO_HISTORICO">
+					<subreportParameterExpression><![CDATA[$P{ID_AVAL_HISTORICO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "catastro/avaluos/resultadoCalculoEmision.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="95">
+			<staticText>
+				<reportElement x="0" y="10" width="353" height="26" uuid="063c6783-b3bb-4723-be36-045e0b5a475b"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VALOR TOTAL DEL AVALÚO]]></text>
+			</staticText>
+			<textField pattern="¤ #,##0.00">
+				<reportElement x="354" y="10" width="201" height="26" uuid="13f1c708-8a8c-4644-9ee6-6a41c10ee020"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AVALUO_MUNICIPAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00">
+				<reportElement x="1" y="55" width="279" height="26" uuid="1f669169-e281-48e1-91ad-6c060959fe60"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["AVALÚO COMERCIAL: "]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00">
+				<reportElement x="280" y="55" width="275" height="26" uuid="92cad31e-7141-4114-98be-522ad8dfdfa2"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AVALUO_MUNICIPAL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="53" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="0" width="555" height="1" uuid="9fad98ea-9fd8-4b77-a5d9-3ac1ef68b1ab"/>
+			</line>
+			<textField pattern="dd/MMMMM/yyyy h:mm a">
+				<reportElement x="215" y="1" width="124" height="12" uuid="b8896d24-a766-46ed-a2fb-25cca6125cf7"/>
+				<textElement textAlignment="Center">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="1" width="147" height="12" uuid="9ed5dafa-248d-4ac0-80f5-1098e77e6710"/>
+				<textElement>
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["USUARIO: "+$P{USUARIO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="435" y="1" width="80" height="12" uuid="5b977a0b-6e8f-4fcc-8e10-6d4dc7529e9b"/>
+				<textElement textAlignment="Right">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pag. "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="515" y="1" width="40" height="12" uuid="af1b9d42-ef01-4c8d-87bb-6a5910131b56"/>
+				<textElement>
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

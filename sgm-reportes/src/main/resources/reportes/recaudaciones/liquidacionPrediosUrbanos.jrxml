@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="liquidacionPrediosUrbanos" pageWidth="692" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="672" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20" uuid="32404184-0324-4aeb-8778-103ae05f194e">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="LOGO" class="java.lang.String"/>
+	<parameter name="FECHA" class="java.util.Date"/>
+	<parameter name="PREDIOS" class="java.util.Collection"/>
+	<parameter name="ANIO" class="java.lang.Long"/>
+	<parameter name="OPCION_REPORTE" class="java.lang.Long"/>
+	<queryString>
+		<![CDATA[SELECT P.NUM_PREDIO,
+P.PREDIALANT AS COD_ANTERIOR,
+ L.ANIO, L.SALDO,L.ESTADO_COACTIVA,
+P.CLAVE_CAT AS COD_PREDIAL,
+CASE WHEN L.COMPRADOR IS NULL THEN L.NOMBRE_COMPRADOR ELSE UPPER(CASE EN.ES_PERSONA WHEN TRUE THEN TRIM(COALESCE(EN.NOMBRES, '') || ' ' || COALESCE(EN.APELLIDOS, '')) ELSE TRIM(EN.RAZON_SOCIAL) END) END AS CONTRIBUYENTE,
+CASE WHEN ($P{OPCION_REPORTE}=2) THEN
+CASE WHEN (L.ANIO= EXTRACT(YEAR FROM NOW())) AND (EXTRACT(MONTH FROM NOW())<7) THEN ROUND( D.VALOR*(SELECT PORCENTAJE FROM SGM_APP.CTLG_DESCUENTO_EMISION WHERE NUM_MES=EXTRACT(MONTH FROM NOW()) AND NUM_QUINCENA=(CASE WHEN EXTRACT(DAY FROM NOW())>15 THEN 2 ELSE 1 END))/100,2)*(-1)
+WHEN (L.ANIO<EXTRACT(YEAR FROM NOW())) THEN (ROUND((D.VALOR*0.1),2) +
+ROUND( (L.SALDO)*(
+SELECT ROUND((PORCENTAJE / 100),2)
+FROM SGM_FINANCIERO.REN_INTERESES I
+WHERE I.ANIO = l.anio
+),2)
+)
+ELSE ROUND((D.VALOR*0.1),2) END
+ELSE 0.00 END
+AS VALOR_COMPLEMENTO,
+(SELECT RAZON_SOCIAL FROM SGM_APPLICATION.EMPRESA) AS NOMBRE_MUNICIPIO
+FROM SGM_FINANCIERO.REN_LIQUIDACION  L
+INNER JOIN SGM_FINANCIERO.REN_DET_LIQUIDACION D ON (L.ID=D.LIQUIDACION AND D.RUBRO=2)
+INNER JOIN SGM_APP.CAT_PREDIO P ON (L.PREDIO=P.ID)
+LEFT OUTER JOIN SGM_APP.CAT_ENTE AS EN ON (EN.ID = L.COMPRADOR)
+WHERE TIPO_LIQUIDACION=13 AND ESTADO_LIQUIDACION=2 AND $X{IN,L.PREDIO,PREDIOS} AND ANIO<=$P{ANIO}
+ORDER BY P.NUM_PREDIO, L.ANIO]]>
+	</queryString>
+	<field name="num_predio" class="java.lang.Long"/>
+	<field name="cod_anterior" class="java.lang.String"/>
+	<field name="anio" class="java.lang.Integer"/>
+	<field name="saldo" class="java.math.BigDecimal"/>
+	<field name="estado_coactiva" class="java.lang.Integer"/>
+	<field name="cod_predial" class="java.lang.String"/>
+	<field name="contribuyente" class="java.lang.String"/>
+	<field name="valor_complemento" class="java.math.BigDecimal"/>
+	<field name="nombre_municipio" class="java.lang.String"/>
+	<variable name="IMPUESTO" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[($F{saldo} == null? new BigDecimal("0.00") : $F{saldo}).add( ($F{valor_complemento} == null? new BigDecimal("0.00") : $F{valor_complemento}) )]]></variableExpression>
+	</variable>
+	<variable name="COACTIVA" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{estado_coactiva}==2?$V{IMPUESTO}.multiply( new BigDecimal("0.1") ):new BigDecimal("0.00")]]></variableExpression>
+	</variable>
+	<variable name="TOTAL" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[($V{IMPUESTO} == null? java.math.BigDecimal.ZERO : $V{IMPUESTO}).add( ($V{COACTIVA} == null? java.math.BigDecimal.ZERO :$V{COACTIVA}).setScale(2, RoundingMode.HALF_UP) )]]></variableExpression>
+	</variable>
+	<variable name="SUM_IMPUESTO" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$V{IMPUESTO}]]></variableExpression>
+	</variable>
+	<variable name="SUM_COACTIVA" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$V{COACTIVA}.setScale(2, RoundingMode.HALF_UP)]]></variableExpression>
+	</variable>
+	<variable name="SUM_TOTAL" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$V{TOTAL}]]></variableExpression>
+	</variable>
+	<variable name="PREDIO_IMPUESTO" class="java.math.BigDecimal" resetType="Group" resetGroup="predio" calculation="Sum">
+		<variableExpression><![CDATA[$V{IMPUESTO}]]></variableExpression>
+	</variable>
+	<variable name="PREDIO_COACTIVA" class="java.math.BigDecimal" resetType="Group" resetGroup="predio" calculation="Sum">
+		<variableExpression><![CDATA[$V{COACTIVA}.setScale(2, RoundingMode.HALF_UP)]]></variableExpression>
+	</variable>
+	<variable name="PREDIO_TOTAL" class="java.math.BigDecimal" resetType="Group" resetGroup="predio" calculation="Sum">
+		<variableExpression><![CDATA[$V{TOTAL}]]></variableExpression>
+	</variable>
+	<group name="predio">
+		<groupExpression><![CDATA[$F{num_predio}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="15">
+				<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+					<reportElement x="506" y="0" width="51" height="14" uuid="3a5efe45-0854-4656-a0da-1636cb6ce232"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{PREDIO_IMPUESTO}]]></textFieldExpression>
+				</textField>
+				<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+					<reportElement x="557" y="0" width="50" height="14" uuid="d60b7211-ec5a-4210-8af1-3d58a4992500"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{PREDIO_COACTIVA}]]></textFieldExpression>
+				</textField>
+				<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+					<reportElement x="607" y="0" width="66" height="14" uuid="0ba18345-a8b3-4d16-a4e5-325e0069cdd6"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{PREDIO_TOTAL}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<title>
+		<band height="120" splitType="Stretch">
+			<staticText>
+				<reportElement x="120" y="50" width="380" height="20" uuid="0702da25-497b-42de-b941-fbdb2c3d4555"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LIQUIDACIÓN DE PREDIOS URBANOS]]></text>
+			</staticText>
+			<textField isBlankWhenNull="false">
+				<reportElement x="120" y="70" width="209" height="20" uuid="56afd661-82f9-4c3c-8551-4dc547d33ab4"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["FECHA LIQUIDACIÓN: "]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="330" y="70" width="170" height="20" uuid="d9507ac8-df05-4015-bc3f-38e278cb41fc"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{FECHA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="120" y="90" width="380" height="20" isRemoveLineWhenBlank="true" uuid="97d56959-11f3-4cda-80a2-4028bdc0ce38"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="11" isBold="true" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{num_predio}==null?"EL PREDIO NO POSEE DEUDA":null]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="120" y="7" width="380" height="38" uuid="1dbdee34-2d5e-4e41-87de-5634fb8567ab"/>
+				<textElement textAlignment="Center">
+					<font size="13" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["G.A.D MUNICIPAL CANTÒN SAN VICENTE"]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="17" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="40" height="16" uuid="5a6917b9-7b56-4810-b6e0-b38b5b32549b"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nº Predio]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="40" y="0" width="30" height="16" uuid="0efe1e2d-aa4c-4e0c-b5f3-7a851f56698d"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Año]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="170" y="0" width="140" height="16" uuid="0fa5e30a-dcf0-45e0-9dcd-4665cda8be5d"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cod. Predial]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="310" y="0" width="196" height="16" uuid="fcded587-3f2f-47db-b97d-84d4c682dd29"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Contribuyente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="506" y="0" width="51" height="16" uuid="7170e8c5-1f26-4d4b-9ebb-1666ba69d750"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Impuesto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="557" y="0" width="50" height="16" uuid="8775df25-e017-4e90-98d2-d22a08dca171"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Coactiva]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="607" y="0" width="66" height="16" uuid="9f2eed17-0fa0-4271-97e0-05e6eed912d0"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="70" y="0" width="100" height="16" uuid="cf79db12-289d-43f1-a9f8-962f4603a7a6"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cod. Predial Anterior]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="40" height="15" uuid="38efa966-c752-4992-a25e-6f9695932781"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{num_predio}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="170" y="0" width="140" height="15" uuid="1b356c6f-da2b-4e24-aa45-ce53e62fac9b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cod_predial}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement x="506" y="0" width="51" height="15" uuid="101c679e-10f4-468b-b591-f5d14888f10e"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{IMPUESTO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement x="557" y="0" width="50" height="15" uuid="66cb9870-9803-486d-8efb-7119ccf5a657"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{COACTIVA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement x="607" y="0" width="66" height="15" uuid="2cca463f-8d4a-4397-81f2-32dd4c37fe10"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="70" y="0" width="100" height="15" uuid="4cc32fad-3641-4119-8a88-1ae4918c7e1a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cod_anterior}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="40" y="0" width="30" height="15" uuid="8b717295-92ae-43e8-880c-51a575cf771e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{anio}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="304" y="0" width="196" height="15" uuid="c28919a1-b6e2-4b86-9a86-d7cfb3eb70c7"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{contribuyente}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band height="10">
+			<textField isBlankWhenNull="true">
+				<reportElement x="555" y="0" width="80" height="10" uuid="41357cc6-5f9e-46b8-9c09-52a7cb80e68b"/>
+				<textElement textAlignment="Right">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pag "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" isBlankWhenNull="true">
+				<reportElement x="635" y="0" width="40" height="10" uuid="add4bf60-6418-48f7-a4cf-2374f0514f28"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="12">
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement x="506" y="0" width="51" height="12" uuid="7c919c9b-cb3c-4842-8b1c-bfdf76669003"/>
+				<textElement textAlignment="Right">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUM_IMPUESTO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement x="557" y="0" width="50" height="12" uuid="9f0a0e55-2ef3-4b7f-9282-4110ae2c404b"/>
+				<textElement textAlignment="Right">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUM_COACTIVA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement x="607" y="0" width="65" height="12" uuid="39e8afa6-503b-4282-9ec6-f03be2456cc1"/>
+				<textElement textAlignment="Right">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUM_TOTAL}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="413" y="0" width="93" height="12" uuid="c39068bb-b2a6-4bef-ab15-d41b264f8b52"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Totales >>>]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

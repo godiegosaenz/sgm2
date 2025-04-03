@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cobroMercadoCCSantaAna" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4c6517c4-6b3d-40b2-ae2b-f3a3dc3a88b7">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="DESDE" class="java.util.Date"/>
+	<parameter name="HASTA" class="java.util.Date"/>
+	<parameter name="LOGO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\origami\\Documents\\NetBeansProjects\\sgm\\src\\main\\webapp\\reportes\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TIPO_REPORTE" class="java.lang.Long"/>
+	<queryString>
+		<![CDATA[SELECT p.num_comprobante, p.fecha_pago, p.valor,
+CASE WHEN l.comprador IS NULL THEN l.nombre_comprador ELSE TRIM(COALESCE(e.apellidos,'')||' '||COALESCE(e.nombres,'')||' '||COALESCE(e.razon_social,'')) END contribuyente
+FROM sgm_financiero.ren_pago p
+INNER JOIN sgm_financiero.ren_liquidacion l ON (p.liquidacion=l.id)
+LEFT OUTER JOIN sgm_app.cat_ente e ON (l.comprador=e.id)
+WHERE p.estado=TRUE AND l.tipo_liquidacion=$P{TIPO_REPORTE} AND (p.fecha_pago::DATE BETWEEN $P{DESDE} AND $P{HASTA})
+ORDER BY p.fecha_pago]]>
+	</queryString>
+	<field name="num_comprobante" class="java.lang.Long"/>
+	<field name="fecha_pago" class="java.sql.Timestamp"/>
+	<field name="valor" class="java.math.BigDecimal"/>
+	<field name="contribuyente" class="java.lang.String"/>
+	<variable name="SUM_TOTAL" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="122" splitType="Stretch">
+			<textField>
+				<reportElement x="131" y="94" width="65" height="15" uuid="a81d9c20-3e54-461f-af7a-06433690ef7b"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["DESDE:  "]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="288" y="94" width="65" height="15" uuid="5ac4b6a9-5523-4a9d-98d1-f4f5b66d6b39"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["HASTA: "]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="0" y="0" width="555" height="70" uuid="54aeca5c-a0f1-413f-a830-37e91127f458"/>
+				<subreportParameter name="LOGO">
+					<subreportParameterExpression><![CDATA[$P{LOGO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "titleReporte.jasper"]]></subreportExpression>
+			</subreport>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="196" y="94" width="70" height="15" uuid="270eead2-e148-4bd0-8575-8a23b2b3474a"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{DESDE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="353" y="94" width="70" height="15" uuid="d062301b-d388-4031-a0ea-2f6bc82ab766"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{HASTA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="76" width="555" height="18" uuid="841be222-d769-4196-bf96-5868d01fa072"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TIPO_REPORTE}==114L?"REPORTE DE RECAUDACION EN LOS PUESTOS DEL MERCADO":$P{TIPO_REPORTE}==117L?"REPORTE DE RECAUDACION EN SECTOR C.C. SANTA ANA":""]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="14">
+			<staticText>
+				<reportElement x="11" y="0" width="74" height="14" uuid="6617aeb9-7ec4-4deb-bd07-2ec10f5fcbb9"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[N° INGRESO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="117" y="0" width="75" height="14" uuid="8a0920a0-fb23-4c6b-a6b5-54d28960f033"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="212" y="0" width="230" height="14" uuid="5092d5cb-3f30-4fa1-b3ec-5c2464c0a850"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CONTRIBUYENTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="442" y="0" width="87" height="14" uuid="d2b9fc41-99f3-41df-ad44-15ef69ee862c"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="11" y="0" width="74" height="14" uuid="29702332-1209-44d1-83b9-043d06173d1f"/>
+				<textElement textAlignment="Center">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{num_comprobante}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="117" y="0" width="75" height="14" uuid="f9afdd3a-0129-4623-a1e7-70eb09648d24"/>
+				<textElement textAlignment="Center">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha_pago}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="212" y="0" width="230" height="14" uuid="3584233f-bdd4-4a5a-97c9-fd1cf9e10b9f"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{contribuyente}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement x="442" y="0" width="87" height="14" uuid="f8fe128c-e731-4977-ab05-1fdfabffb3d2"/>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band/>
+	</pageFooter>
+	<summary>
+		<band height="24">
+			<staticText>
+				<reportElement x="366" y="6" width="76" height="18" uuid="41f9b01f-4eb6-4536-88dd-4ec5059f641f"/>
+				<textElement textAlignment="Right">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL>>>>>]]></text>
+			</staticText>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement x="442" y="6" width="87" height="18" uuid="da2c35d7-47f0-40c9-8ffb-ddedee248442"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUM_TOTAL}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="459" y="5" width="74" height="1" uuid="bd00b288-e3b2-4a79-a9ed-e413fd34209e"/>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

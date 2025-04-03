@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:comp="http://java.sun.com/jsf/composite/dialog">
+
+    <ui:composition>
+        <h:form id="frmDocumentos">
+            <p:growl id="msgsfrmDocumentos" showDetail="true" />
+            <div align="right" class="MarBot10 MarTop10">
+                <h:panelGroup layout="block" class="Wid100" style="margin-bottom: 15px;" >
+                    <p:commandButton id="btnaddDocumentos" value="Agregar Documentos" onclick="PF('dlgAdjDoc').show()" update=":frmAdjDocDialog"/>
+                </h:panelGroup>
+            </div>
+
+            <p:dataTable id="dtDocumentosAnexos"  value="#{fichaPredial.geDocumentosList}" var="pp" reflow="true" 
+                         paginator="true" rows="5" paginatorPosition="top" style="width: 100%"
+                         emptyMessage="No existen documentos Asociados">
+                <p:column headerText="Fecha Creacion">
+                    <h:outputText value="#{pp.fechaCreacion}"/>
+                </p:column>
+                <p:column headerText="Descripcion">
+                    <h:outputText value="#{pp.nombre}"/>
+                </p:column>
+                <p:column headerText="Tipo Archivo">
+                    <h:outputText value="#{pp.descripcion}" />
+
+                </p:column>
+                <p:column headerText="Accion" style="text-align: center" >
+                    <p:commandLink actionListener="#{fichaPredial.descargarDocumento(pp.tipoLegal)}">
+                        <p:graphicImage value="/css/homeIconsImages/down.png"/>
+                    </p:commandLink>
+                    <p:commandLink actionListener="#{fichaPredial.inactivarDocumento(pp)}" update="tdatos:frmDocumentos">
+                        <p:graphicImage value="/css/homeIconsImages/trash.png"/>
+                    </p:commandLink>
+                </p:column>
+
+            </p:dataTable>
+        </h:form>
+    </ui:composition>
+</html>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:form id="frmLinderos">
+        <div align="right">
+            <p:remoteCommand name="rc7" immediate="false" async="true" actionListener="#{fichaPredial.guardarLinderos()}" rendered="#{fichaPredial.editable}" />
+            <p:commandButton id="btnS7" value="Guardar" rendered="#{fichaPredial.editable}"  icon="ui-icon-disk" 
+                             actionListener="#{fichaPredial.openDialog}" action="#{fichaPredial.setRemotteCommand('rc7')}" update="frmSubirDocumentosDialog" />
+        </div>
+        <p:fieldset legend="Fotos" toggleable="true">
+            <p:commandButton id="btnaddFoto" value="Agregar foto" rendered="#{fichaPredial.editable}" onclick="PF('dlgSubida').show()" update=":frmSubFotos"/>
+            <p:dataGrid var="f" value="#{fichaPredial.fotos}" columns="3" layout="grid"
+                        rows="3" paginator="true" paginatorAlwaysVisible="false"
+                        paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        rowsPerPageTemplate="3,6,9">
+                <p:panel header="#{f.nombre}" style="text-align:center">
+                    <h:panelGrid columns="1" style="width:100%">
+                        <p:graphicImage url="/FotosServlet?fotoId=#{f.id}" style="width: 250px; height: 250px"/> 
+                        <h:outputText value="#{f.nombre}" />
+                        <p:commandLink update=":frmFotos" oncomplete="PF('dlgFoto').show()" title="Ver">
+                            <h:outputText styleClass="ui-icon ui-icon-search" style="margin:0 auto;" />
+                            <f:setPropertyActionListener value="#{f}" target="#{fichaPredial.foto}" />
+                        </p:commandLink>
+                    </h:panelGrid>
+                </p:panel>
+            </p:dataGrid>
+        </p:fieldset>
+        <p:fieldset legend="Colindantes" toggleable="true">
+            <!--<h:graphicImage  alt="Grafica de los colindantes" value="#{fichaPredial.colindantesPredio()}" width="100%" height="450"  />-->
+        </p:fieldset>
+        <p:fieldset legend="Linderos Prediales" toggleable="true">
+            <p:panelGrid id="pngLid" columns="3" layout="grid" rendered="#{fichaPredial.editable}">
+                <h:outputText value="Orientación"/>
+                <h:outputText value="Colindante"/>
+                <h:outputText value="Agregar"/>
+
+                <p:selectOneMenu id="selectLind" value="#{fichaPredial.orientacion}" effect="fade" converter="entityConverter">
+                    <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+                    <f:selectItems value="#{fichaPredial.getListado('predio.lindero_orientacion')}" var="or1" itemLabel="#{or1.valor}" itemValue="#{or1}"/>
+                </p:selectOneMenu> 
+                <h:panelGroup>
+                    <p:inputText id="lnore" value="#{fichaPredial.nombreLindero}"/>
+                    <p:commandButton id="lind" value="Buscar"  actionListener="#{fichaPredial.listarPredios(1)}" 
+                                     style="font-size: 15px; font-weight: bolder;" styleClass="btnStyle" title="Buscar Predio Colindante">
+                        <p:ajax event="dialogReturn" listener="#{fichaPredial.seleccionarPredio}" update=":tdatos:frmLinderos:pngLid, tdatos:frmLinderos:pLinderos" />
+                    </p:commandButton>
+                </h:panelGroup>
+                <p:commandButton id="agregar" value="Agregar"  actionListener="#{fichaPredial.agregarLindero()}"
+                                 update="tdatos:frmLinderos:pLinderos, tdatos:frmLinderos:pngLid" process="tdatos:frmLinderos:pLinderos, tdatos:frmLinderos:pngLid"/>
+            </p:panelGrid>
+            <p:dataTable id="pLinderos" value="#{fichaPredial.predio.predioCollection}" 
+                         var="lp1" reflow="true" paginator="true" rows="6" paginatorPosition="top" 
+                         style="width: 100%" paginatorAlwaysVisible="false"
+                         rowsPerPageTemplate="6, 12, 18" emptyMessage="No se encontraron registros">
+                <p:column headerText="Orientación">
+                    <h:outputText value="#{lp1.orientacion.valor}"/>
+                </p:column>
+                <p:column headerText="Con">
+                    <h:outputText value="#{lp1.predioColindante.claveCat}" rendered="#{lp1.predioColindante != null}"/>
+                    <h:outputText value="#{lp1.colindante}" rendered="#{lp1.predioColindante == null}"/>
+                </p:column>
+                <p:column headerText="En">
+                    <h:outputText value="#{lp1.predioColindante.areaSolar}"/>
+                </p:column>                           
+                <p:column headerText="Acción" style="text-align: center">
+                    <p:commandLink actionListener="#{fichaPredial.eliminarLindero(lp1)}" rendered="#{fichaPredial.editable}"
+                                   update=":tdatos:frmLinderos:pLinderos"  >
+                        <p:graphicImage value="/css/homeIconsImages/delete.png" width="25" height="25"/>
+                        <p:confirm icon="ui-icon-info" message="Esta seguro de quitar el lindero?"/>
+                    </p:commandLink>
+                </p:column>
+            </p:dataTable>
+        </p:fieldset>
+    </h:form>
+</html>

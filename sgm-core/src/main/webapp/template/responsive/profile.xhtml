@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html >
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"      
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" >
+    <ui:composition >
+
+        <!-- Mini Profile -->
+        <div class="mini-profile">
+            <div class="mini-profile-options">
+
+                <a href="javascript:void(0)" class="badge badge-info loading-on" data-toggle="tooltip" data-placement="right" title="Actualizar">
+                    <i class="fa fa-refresh"></i>
+                </a>
+                <a href="javascript:void(0)" class="badge badge-warning" data-toggle="tooltip" data-placement="right" title="Liquidaciones">
+                    <i class="gi gi-shopping_cart"></i>
+                </a>
+                <!-- Modal div is at the bottom of the page before including javascript code, we use .enable-tooltip class for the tooltip because data-toggle is used for modal -->
+                <a href="#{appConfig.urlbase}generic/datosUsuario.xhtml" class="badge badge-success enable-tooltip" role="button" data-toggle="modal" data-placement="right" title="Configuraciones">
+                    <i class="gi gi-cogwheel"></i>
+                </a>
+
+                <a href="javascript:void(0)" onclick="smbBpm_logout();" class="badge badge-danger" data-toggle="tooltip" data-placement="right" title="Salir">
+                    <i class="fa fa-sign-out"></i>
+                </a>
+
+            </div>
+
+            <h:panelGroup id="perfilId">
+                <a href="#{appConfig.urlbase}generic/datosUsuario.xhtml">
+                    <p:graphicImage value="#{userSession.perfil}" styleClass="img-circle"/>
+                </a>
+            </h:panelGroup>
+
+        </div>
+
+        <!-- END Mini Profile -->
+
+    </ui:composition>
+</html>
+

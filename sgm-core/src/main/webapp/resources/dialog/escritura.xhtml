@@ -1,0 +1,145 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:poue="http://primefaces.org/ui/extensions">
+    <f:metadata >
+        <f:event type="preRenderView" listener="#{escrituras.initView()}"/>
+        <f:viewParam name="idPredio" value="#{escrituras.idPredio}"/>
+        <f:viewParam name="idEscritura" value="#{escrituras.idEscritura}"/>
+        <f:viewParam name="nuevo" value="#{escrituras.esNuevo}"/>
+        <f:viewParam name="editar" value="#{escrituras.editar}"/>
+    </f:metadata>
+    <h:head>
+
+        <title>Propietarios</title>
+        <h:outputScript name="js/layout.js" library="sentinel-layout" />
+        <style type="text/css">
+            .ui-widget {
+                font-size: 100%;
+            }
+            .ui-column-title{
+                font-size: 11px;
+            }
+            .ui-selectonemenu .ui-selectonemenu-label {
+                height: 14px !important;
+                font-size: 11px;
+            }
+        </style>
+        <script src="#{appConfig.urlbase}resources/js/app.js"></script>
+    </h:head>
+
+    <h:body>
+        <h:outputStylesheet name="css/font-icon-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/sentinel-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/core-layout.css" library="sentinel-layout" />
+        <p:growl autoUpdate="true" showDetail="true"/>
+        <h:form id="frmDlgEscr">
+            <p:panelGrid id="pgPagre" style="width: 100%" columns="4" layout="grid" >
+
+                <h:outputText value="(*) No. Notaria:  " style="font-weight: bolder;"/>
+                <p:inputText onkeypress="return validateIntegerValueAndFocusNext(event,'frmDlgEscr:cmbProv')" id="notaria"  style="width: 90%" value="#{escrituras.escr.notaria}"/>
+                <h:outputText value="" style="font-weight: bolder;"/>
+                <h:outputText value="" style="font-weight: bolder;"/>
+                <h:outputText value="(*) Provincia:  " style="font-weight: bolder;"/>
+                <p:selectOneMenu id="cmbProv" value="#{escrituras.provincia}" effect="fade" converter="entityConverter" filter="true" filterMatchMode="contains" style="width: 97%; box-sizing: border-box;">
+                    <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+                    <p:ajax update="frmDlgEscr:cmbCanton" />
+                    <f:selectItems value="#{serviceLists.provincias}" var="px1" itemLabel="#{px1.descripcion}" itemValue="#{px1}"/>
+                </p:selectOneMenu>
+                <h:outputText value="(*) Canton:  " style="font-weight: bolder;"/>
+                <p:selectOneMenu id="cmbCanton" value="#{escrituras.canton}" effect="fade" converter="entityConverter" filter="true" filterMatchMode="contains" style="width: 97%; box-sizing: border-box;">
+                    <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+                    <f:selectItems value="#{serviceLists.getCantones(escrituras.provincia)}" var="cx" itemLabel="#{cx.nombre}" itemValue="#{cx}"/>
+                </p:selectOneMenu>
+                <h:outputText value="Fecha Escritura (Fecha Protocolizacion):  " style="font-weight: bolder;"/>
+                <p:calendar value="#{escrituras.escr.fecEscritura}" placeholder="DÍA-MES-AÑO" maxdate="sysdate"
+                            pattern="dd-MM-yyyy" mask="true" navigator="true" styleClass="calendarClass" />
+                <h:outputText value="Fecha Inscripcion:  " style="font-weight: bolder;"/>
+                <p:calendar value="#{escrituras.escr.fecInscripcion}" placeholder="DÍA-MES-AÑO" maxdate="sysdate"
+                            pattern="dd-MM-yyyy" mask="true" navigator="true" styleClass="calendarClass" />
+                <h:outputText value="(*) Protocolización Celebrado Ante:  " style="font-weight: bolder;"/>
+                <p:selectOneMenu id="tipoProtclz" value="#{escrituras.escr.tipoProtocolizacion}"  converter="entityConverter" label="Tipo de Protocolización Celebrado Ante"  style="width: 97%; box-sizing: border-box;">
+                    <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                    <f:selectItems value="#{serviceLists.getListado('predio.tipo_protocolizacion')}" var="tipt1" itemLabel="#{tipt1.valor}" itemValue="#{tipt1}"/>
+                </p:selectOneMenu>
+                <h:outputText value="No. Actualizacion:  " style="font-weight: bolder;"/>
+                <p:inputText onkeypress="return validateIntegerValueAndFocusNext(event,'')" id="repertorio"  style="width: 90%" value="#{escrituras.escr.numRepertorio}"/>
+                <h:outputText value="Fecha. Actualizacion:  " style="font-weight: bolder;"/>
+                <p:calendar value="#{escrituras.escr.extras.fechaAutorizacion}" placeholder="DÍA-MES-AÑO" maxdate="sysdate"
+                            pattern="dd-MM-yyyy" mask="true" navigator="true" styleClass="calendarClass" />
+                <h:outputText value="No. Registro (No. Partida):  " style="font-weight: bolder;"/>
+                <p:inputText onkeypress="return validateIntegerValueAndFocusNext(event,'')" id="numRegistro"  style="width: 90%" value="#{escrituras.escr.numRegistro}"/>
+                <h:outputText value="Area Terreno:  " style="font-weight: bolder;"/>
+                <poue:inputNumber  id="area" style="width: 90%" onkeypress="return validateIntegerValueAndFocusNext(event,'')" 
+                                 value="#{escrituras.escr.areaSolar}" decimalPlaces="2" symbol="m2" symbolPosition="r"/>
+                <!--                    <h:outputText value="(*) Unidad de medida de area: " style="font-weight: bolder; width: 90%"/>
+                                    <p:selectOneMenu id="tipoprototipo" value="#{escrituras.escr.unidadArea}"  converter="entityConverter" label="Tipo de prototipo"  style="width: 97%; box-sizing: border-box;">
+                                        <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                                        <f:selectItems value="#{serviceLists.getListado('edif.unidad_medida')}" var="econst" itemLabel="#{econst.valor}" itemValue="#{econst}"/>
+                                    </p:selectOneMenu>-->
+                <h:outputText value="Folio Desde:  " style="font-weight: bolder;"/>
+                <p:inputText type="number" id="folioDesde"  style="width: 90%" value="#{escrituras.escr.folioDesde}"/>
+                <h:outputText value="Folio Hasta:  " style="font-weight: bolder;"/>
+                <p:inputText type="number" id="folioHasta"  style="width: 90%" value="#{escrituras.escr.folioHasta}"/>
+                <!--  <h:outputText value="Tipo Dominio:  " style="font-weight: bolder;"/>
+                        <p:selectOneMenu value="#{escrituras.escr.traslDom}" effect="fade" converter="entityConverter"  style="width: 97%; box-sizing: border-box;" >
+                                                    <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                                                    <f:selectItems value="#{escrituras.dominios}" var="td1" itemLabel="#{td1.nombre}" itemValue="#{td1}"/>
+                                                </p:selectOneMenu>-->
+                <h:outputText value="Precio de Compra:  " style="font-weight: bolder;"/>
+                <p:inputText id="precioComp"  onkeypress="return validateIntegerValueAndFocusNext(event,'')"  style="width: 90%" value="#{escrituras.escr.precioCompra}"/>
+                <h:panelGroup>
+                    <h:outputText value="Coopropietario:  " style="font-weight: bolder;"/>
+                    <p:spacer width="5"/>
+                    <p:selectBooleanCheckbox value="#{escrituras.coopropietarios}">
+                        <p:ajax update="escrProp"/>
+                    </p:selectBooleanCheckbox>
+                </h:panelGroup>
+                <p:selectOneMenu id="escrProp" value="#{escrituras.escr.propietario}" converter="entityConverter" disabled="#{!escrituras.coopropietarios}"  style="width: 97%; box-sizing: border-box;">
+                    <f:selectItem itemValue="#{null}" itemLabel="Seleccione Propietario..."/>
+                    <f:selectItems value="#{fichPredial.propietarios}" var="pp1" itemLabel="#{pp1.ente.nombreCompleto}" itemValue="#{pp1}"/>
+                </p:selectOneMenu>
+                <h:outputText value="Estado:  " style="font-weight: bolder;" rendered="#{escrituras.escr.idEscritura != null}"/>
+                <p:selectOneMenu id="estadoEscritura" value="#{escrituras.escr.estado}" effect="fade" rendered="#{escrituras.escr.idEscritura != null}"  style="width: 97%; box-sizing: border-box;">
+                    <f:selectItem itemLabel="Activo" itemValue="A"/>
+                    <f:selectItem itemLabel="Inactivo..." itemValue="I"/>
+                </p:selectOneMenu> 
+            </p:panelGrid>
+            <div align="center">
+                <p:commandButton value="Guardar" actionListener="#{escrituras.saveEscritura()}" >
+                    <p:confirm icon="ui-icon-info" message="Esta seguro de Agregar una nueva escritura?"/>
+                </p:commandButton>
+                <!--<p:commandButton id="btnS5" value="Guardar"  actionListener="# {escrituras.openDialog}" oncomplete="PF('dlgEscritura').hide()" update=":tdatos:frmEscrituras" process="@form" />-->
+            </div>    
+        </h:form>
+        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+            <center>
+                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes btnStyle" icon="ui-icon-check" />
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no btnStyle" icon="ui-icon-close" />
+            </center>
+        </p:confirmDialog>
+        <p:dialog widgetVar="dlgSubirDocumento" header="Antes de Continuar debe de Subir Documentos" appendTo="@(body)" 
+                  height="250" width="500" responsive="true" closable="true" closeOnEscape="true" modal="true">
+            
+            <h:form id="frmSubirDocumentos">
+                <h:outputLabel value="# {escrituras.mensajeDoc}"/>
+                <br/>
+                <p:panelGrid columns="8">
+                    <p:fileUpload fileUploadListener="# {escrituras.handleFileDocumentBySave}" dragDropSupport="false"
+                                  multiple="false" mode="advanced" update="@all"
+                                  uploadLabel="Subir" cancelLabel="Cancelar" label="Seleccionar"  
+                                  skinSimple="true" sizeLimit="850000000" sequential="true" 
+                                  fileLimit="10" allowTypes="/(\.|\/)(pdf)$/" />
+                    
+                </p:panelGrid>
+                <p:commandButton value="Aceptar" oncomplete="PF('dlgSubirDocumento').hide()"  process="@form">
+                    
+                </p:commandButton>
+            </h:form>
+        </p:dialog>
+        
+    </h:body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Clientes</title>
+    </h:head>
+    <h:body>
+        <h:outputStylesheet name="css/font-icon-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/sentinel-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/core-layout.css" library="sentinel-layout" />
+        <h:form>
+            <center>
+                <h:panelGrid columns="4">
+                    <h:panelGrid columns="2">
+                        <p:inputText placeholder="# de cédula" value="#{dialogEnte.cedula}"/>
+                        <p:commandButton actionListener="#{dialogEnte.buscarEnteDatoSeguro(0)}" value="Buscar persona natural"/>
+                    </h:panelGrid>
+                    <p:outputLabel value="Tipo Persona:" style="font-weight: bolder; "/>
+                    <p:selectOneMenu value="#{dialogEnte.esPersona}" style="width: 160px; ">
+                        <f:selectItem itemLabel="Natural" itemValue="true" />
+                        <f:selectItem itemLabel="Jurídica" itemValue="false" />
+                        <p:ajax listener="#{dialogEnte.cambioTipoPersona()}" update="tdListEntes"/>
+                    </p:selectOneMenu>
+                    <p:commandButton actionListener="#{dialogEnte.agregar()}" value="Agregar Persona"/>
+                </h:panelGrid>
+            </center>
+            <br/>
+            <p:dataTable id="tdListEntes" paginator="true" lazy="true" rows="10"
+                         rowsPerPageTemplate="10,30,50,100" scrollable="true"
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         value="#{dialogEnte.entes}" var="user" style="width: 99%; height: 97%"
+                         filterEvent="enter"
+                         emptyMessage="No se encontr&#243; ningún Item">
+                <p:column headerText="C.I./R.U.C." style="text-align: center;"
+                          filterBy="#{user.ciRuc}" filterStyle="width: 80%;" width="20%">
+                    <h:outputText value="#{user.ciRuc}" style="text-align: center; font-size: 12px"/>
+                </p:column>
+                <p:column headerText="Nombres" style="text-align: center"
+                          filterBy="#{user.nombres}" filterStyle="width: 80%;" width="30%" >
+                    <h:outputText value="#{user.nombres}"/>
+                </p:column>
+                <p:column headerText="Apellidos" style="text-align: center"
+                          filterBy="#{user.apellidos}" filterStyle="width: 80%;" width="30%">
+                    <h:outputText value="#{user.apellidos}"/>
+                </p:column>
+                <p:column headerText="Razón Social" style="text-align: center"
+                          filterBy="#{user.razonSocial}" filterStyle="width: 80%;" width="30%" >
+                    <h:outputText value="#{user.razonSocial}"/>
+                </p:column>
+                <p:column headerText="Nombre Comercial" style="text-align: center"
+                          filterBy="#{user.nombreComercial}" filterStyle="width: 80%;" width="30%" >
+                    <h:outputText value="#{user.nombreComercial}"/>
+                </p:column>
+                <p:column headerText="Seleccionar" style="text-align: center;" width="20%">
+                    <p:commandLink title="Seleccionar"   actionListener="#{dialogEnte.selectEnte(user)}" >
+                        <p:graphicImage value="/css/homeIconsImages/ok.png"  height="20" width="20"/>
+                    </p:commandLink>
+                </p:column>
+
+            </p:dataTable>
+        </h:form>
+
+        <p:dialog id="dlgMsg" widgetVar="dlgMsg">
+            <h:form id="frmEnte">
+                <center>
+                    <h:outputText value="#{dialogEnte.msg}"/>
+                    <br/>
+                    <p:commandButton value="Aceptar" oncomplete="PF('dlgMsg').hide()" actionListener="#{dialogEnte.returnEnte()}"/>
+                </center>
+            </h:form>
+        </p:dialog>
+    </h:body>
+
+</html>

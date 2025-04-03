@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="recaudacionMejoras" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="241f3c17-e087-44a9-88b8-5c219369592d">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\origami\\Documents\\NetBeansProjects\\sgm\\src\\main\\webapp\\reportes\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FECHA_DESDE" class="java.util.Date"/>
+	<parameter name="FECHA_HASTA" class="java.util.Date"/>
+	<parameter name="LOGO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT l.anio,o.cuenta_contable,o.concepto, SUM(prm.valor) as valor_recaudado
+FROM sgm_financiero.ren_pago p
+INNER JOIN sgm_financiero.ren_liquidacion  l ON (p.liquidacion=l.id)
+INNER JOIN sgm_financiero.ren_pago_rubro pr ON (p.id=pr.pago)
+INNER JOIN sgm_mejoras.mej_pago_rubro_mejora prm ON (pr.id=prm.rubro_mejora_pago)
+INNER JOIN sgm_mejoras.mej_valores_obra_ubicacion  uo ON (prm.ubicacion_obra=uo.id)
+INNER JOIN sgm_mejoras.mej_obra o ON (uo.obra=o.id)
+WHERE p.fecha_pago::DATE BETWEEN $P{FECHA_DESDE} AND $P{FECHA_HASTA}
+AND l.tipo_liquidacion =13 AND p.estado AND pr.rubro=7
+GROUP BY l.anio,o.cuenta_contable,o.concepto
+ORDER BY l.anio DESC,o.cuenta_contable]]>
+	</queryString>
+	<field name="anio" class="java.lang.Integer"/>
+	<field name="cuenta_contable" class="java.lang.String"/>
+	<field name="concepto" class="java.lang.String"/>
+	<field name="valor_recaudado" class="java.math.BigDecimal"/>
+	<variable name="total_valor" class="java.math.BigDecimal" resetType="Group" resetGroup="anio" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_recaudado}]]></variableExpression>
+	</variable>
+	<group name="anio">
+		<groupExpression><![CDATA[$F{anio}]]></groupExpression>
+		<groupHeader>
+			<band height="33">
+				<textField isBlankWhenNull="true">
+					<reportElement x="59" y="0" width="100" height="18" uuid="d63f8d12-f54f-40cc-a477-a4cfb92e84e2"/>
+					<textElement verticalAlignment="Bottom">
+						<font size="14" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{anio}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="0" width="59" height="18" uuid="aa289b50-110a-4952-9c5a-e62aa9810430"/>
+					<textElement verticalAlignment="Bottom">
+						<font size="14" isBold="true"/>
+					</textElement>
+					<text><![CDATA[AÑO:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="18" width="116" height="15" uuid="44e27a36-9cc8-454d-982b-d6a959c1e156"/>
+					<textElement verticalAlignment="Bottom">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Codigo]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="116" y="18" width="358" height="15" uuid="e1ff17b9-731d-4c6a-bdc5-41493ef68c6a"/>
+					<textElement verticalAlignment="Bottom">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[CONCEPTO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="474" y="18" width="81" height="15" uuid="f62c5f6c-fd2e-4b2d-aaa1-7031966d587b"/>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Valor]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="15">
+				<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+					<reportElement x="474" y="0" width="81" height="15" uuid="c071a1fb-c086-48d3-896a-d987d4c32a0d"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{total_valor}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="374" y="0" width="100" height="15" uuid="19c8c337-ed27-49c7-9a06-b65d01e268d1"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[TOTAL>>>>]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="110" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="0" width="555" height="70" uuid="fd98a1bd-e804-4bbd-8312-fd3acf45e0fd"/>
+				<subreportParameter name="LOGO">
+					<subreportParameterExpression><![CDATA[$P{LOGO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "titleReporte.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement x="0" y="71" width="555" height="24" uuid="ee883953-326b-48cd-a2cb-5b36a02f5790"/>
+				<box>
+					<topPen lineWidth="2.0" lineStyle="Double"/>
+					<bottomPen lineWidth="2.0" lineStyle="Double"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16"/>
+				</textElement>
+				<text><![CDATA[DETALLE DE COBRO DE CONTRIBUCION ESPECIAL DE MEJORAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="44" y="95" width="56" height="15" uuid="a0510d76-60a3-4570-b378-9a7739f278a0"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DESDE:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="290" y="95" width="60" height="15" uuid="3f02c96d-2526-4024-9fe6-be5769e0be73"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[HASTA:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="100" y="95" width="100" height="15" uuid="67f3f8e4-3477-4a78-92ba-df9c25660cb9"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{FECHA_DESDE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="350" y="95" width="100" height="15" uuid="bad5c159-48da-4b31-8d74-3ed2dc5e5a17"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{FECHA_HASTA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="116" height="15" uuid="bca4edb8-9b31-47b3-95eb-b25647e9f9a6"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cuenta_contable}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="116" y="0" width="358" height="15" uuid="3e820710-b970-4e55-a397-99f093352b0e"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{concepto}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement x="474" y="0" width="81" height="15" uuid="2a1ef6d1-9dbe-4e83-9a03-01f0a91ee9f0"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_recaudado}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="4" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="5" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="3" splitType="Stretch"/>
+	</summary>
+</jasperReport>

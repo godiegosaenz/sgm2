@@ -1,0 +1,135 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    template="/template/template.xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pe="http://primefaces.org/ui/extensions"
+    xmlns:dialog="http://xmlns.jcp.org/jsf/composite/dialog">
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{revisionRegistralRp.doPreRenderView()}"/>
+        </f:metadata>
+    </ui:define>
+    <ui:define name="content">
+        <h:form id="mainForm">
+            <p:panelGrid styleClass="noBorder" columns="4" style="width: 100%;font-size: 14px;">
+                <p:outputLabel value="Tarea: #{revisionRegistralRp.taskDataByTaskID.name}" style="font-weight: bolder;color: #005f9c"/>
+                <p:outputLabel value="No Seguimiento: #{revisionRegistralRp.ht.id}" style="font-weight: bolder;color: #005f9c"/>
+                <p:outputLabel value="No Tramite: #{revisionRegistralRp.ht.numTramiteXDepartamento}" style="font-weight: bolder;color: #005f9c"/>
+                <p:outputLabel value="Responsable: #{revisionRegistralRp.taskDataByTaskID.assignee}" style="font-weight: bolder;color: #005f9c"/>
+            </p:panelGrid>
+            <p:tabView id="mainTab">
+                <p:tab title="Tarea">
+                    <p:commandButton value="Ver Observacion Legal" icon="ui-icon-comment" styleClass="btnStyle"
+                                     style="float: right" actionListener="#{revisionRegistralRp.showDlgObs()}"/>
+                    <br/><br/>
+                    <center>
+                        <p:dataTable id="dtInfo" value="#{revisionRegistralRp.liq.regpLiquidacionDetallesCollection}"
+                                     var="det" style="text-align: center; width: 75%" scrollable="true" scrollHeight="250">
+                            <f:facet name="header">
+                                Informacion del Tramite
+                            </f:facet>
+                            <p:column headerText="Acto">
+                                <p:outputLabel value="#{det.acto.nombre}"/>
+                            </p:column>
+                            <p:column headerText="Cantidad" width="75">
+                                <p:outputLabel value="#{det.cantidad}"/>
+                            </p:column>
+                        </p:dataTable>
+                        <br/>
+                        <p:panelGrid styleClass="noBorder" style="text-align: center;width: 50%" columns="2">
+                            <p:commandButton value="Tramite Aprobado" icon="ui-icon-check" styleClass="btnStyle"
+                                                     actionListener="#{revisionRegistralRp.showDlgAprobado()}"/>
+                            <p:commandButton value="Adjuntar Devolutiva" icon="ui-icon-alert" styleClass="btnStyle"
+                                                     actionListener="#{revisionRegistralRp.showDlgDevolutiva()}"/>
+                            <!--<p:commandButton value="Tramite con Negativa" icon="ui-icon-cancel" styleClass="btnStyle"
+                                                     actionListener="# {revisionRegistralRp.showDlgNegativa()}"/>-->
+                        </p:panelGrid>
+                    </center>
+                </p:tab>
+                <p:tab title="Documentos">
+                    <dialog:detalleArchivosAct archivos="#{revisionRegistralRp.processInstanceAllAttachmentsFiles}" />
+                </p:tab>
+                <p:tab title="Observaciones">
+                    <p:dataTable value="#{revisionRegistralRp.ht.observacionesCollection}" var="obs" reflow="true"
+                                 style="text-align: center" emptyMessage="Sin observaciones..."
+                                 scrollable="true" scrollHeight="300">
+                        <p:column headerText="Observacion">
+                            <h:outputText value="#{obs.observacion}"/>
+                        </p:column>
+                        <p:column headerText="Tarea" width="250">
+                            <h:outputText value="#{obs.tarea}"/>
+                        </p:column>
+                        <p:column headerText="Responsable" width="150">
+                            <h:outputText value="#{obs.userCre}"/>
+                        </p:column>
+                        <p:column headerText="Fecha" width="150">
+                            <h:outputText value="#{obs.fecCre}">
+                                <f:convertDateTime pattern="dd-MM-yyyy HH:mm"/>
+                            </h:outputText>
+                        </p:column>
+                    </p:dataTable>
+                </p:tab>
+            </p:tabView>
+        </h:form>
+
+        <p:dialog id="dlgEditor" widgetVar="dlgEditObs" header="Observacion" modal="true" width="700" 
+                  resizable="false" position="center" height="400">
+            <h:form id="formObsEdit">
+                <p:panelGrid styleClass="noBorder" columns="1" style="text-align: center">
+                    <p:outputLabel value="Observacion Legal:" style="font-weight: bolder;font-size: 16px;color: #0033FF"/>
+                    <p:editor id="editorObs" widgetVar="obsEditor" value="#{revisionRegistralRp.liq.observacion}" height="300"/>
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog id="dlgObervaciones" widgetVar="dlgObsvs" header="Confirmar Tarea" modal="true" width="400" 
+                  resizable="false" position="center">
+            <h:form id="formObs">
+                <p:outputLabel value="Ingrese Comentario:" style="font-weight: bolder;font-size: 16px"/>
+                <p:inputTextarea value="#{revisionRegistralRp.observacion}" rows="5" autoResize="false"
+                                 style="width: 100%" maxlength="900"/>
+                <br/><br/>
+                <center><p:commandButton value="Aceptar" styleClass="btnStyle" icon="ui-icon-check"
+                                         actionListener="#{revisionRegistralRp.completarTarea()}"/></center>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="dlgCargarDevolutiva" header="Adjuntar Documento" widgetVar="dlgDevolutiva" width="600" height="250"
+                  modal="true" resizable="false" position="center">
+            <h:form id="formDevolutiva">
+                <p:panelGrid columns="1" styleClass="noBorder" style="width: 100%;text-align: center">
+                    <p:fileUpload fileUploadListener="#{revisionRegistralRp.handleFileUpload}" update="dtDocumentos"
+                                  label="Seleccionar" uploadLabel="Subir" cancelLabel="Cancelar" multiple="false"
+                                  mode="advanced" dragDropSupport="false"  sizeLimit="1000000000"
+                                  allowTypes="#{revisionRegistralRp.formatoArchivos}" /> 
+                    <p:dataList id="dtDocumentos" value="#{revisionRegistralRp.files}" var="docs"
+                                emptyMessage="Sin documentos..." style="text-align: center">
+                        <f:facet name="header">Nombre</f:facet>
+                        <p:outputLabel value="#{docs.nombre}"/>
+                    </p:dataList>
+                    <br/>
+                    <p:commandButton value="Aceptar" icon="ui-icon-check" styleClass="btnStyle"
+                                     actionListener="#{revisionRegistralRp.enviarDevolutiva()}"/>
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
+
+        <!--<p:dialog id="dlgNegativa" widgetVar="dlgObsNegativa" header="Confirmar Tarea" modal="true" width="400" 
+                  resizable="false" position="center">
+            <h:form id="formNegativa">
+                <center><p:outputLabel value="Confirmacion de Negativa de Tramite" 
+                               style="font-weight: bolder;font-size: 16px;color: #0033FF"/></center>
+                <p:outputLabel value="Ingrese Comentario:" style="font-weight: bolder;font-size: 16px"/>
+                <p:inputTextarea value="# {revisionRegistralRp.observacion}" rows="5" autoResize="false"
+                                 style="width: 100%" maxlength="900"/>
+                <br/><br/>
+                <center><p:commandButton value="Aceptar" styleClass="btnStyle" icon="ui-icon-check"
+                                         actionListener="# {revisionRegistralRp.tramiteConNegativa()}"/></center>
+            </h:form>
+        </p:dialog>-->
+        
+    </ui:define>
+</ui:composition>

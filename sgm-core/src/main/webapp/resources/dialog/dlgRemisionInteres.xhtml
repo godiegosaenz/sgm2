@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+    <f:metadata >
+        <f:event type="preRenderView" listener="#{remisionIntereses.initView()}"/>
+        <f:viewParam name="fnRemisionSolicitudId" value="#{remisionIntereses.fnRemisionSolicitudId}"/>
+
+    </f:metadata>
+    <h:head>
+        <title>Formulario Remision de Interes</title>
+        <style type="text/css">
+            .ui-widget {
+                font-size: 100%;
+            }
+            .ui-column-title{
+                font-size: 11px;
+            }
+            .with20{
+                width: 20% !important;
+            }
+            .with25{
+                width: 25% !important;
+            }
+            .with80{
+                width: 80% !important;
+            }
+        </style>
+        <h:outputStylesheet name="css/font-icon-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/sentinel-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/core-layout.css" library="sentinel-layout" />
+        <script src="#{appConfig.urlbase}resources/js/app.js"></script>
+    </h:head>
+    <h:body>
+        <h:form id="formConvenio" prependId="false">
+            <p:growl autoUpdate="true" globalOnly="true" showDetail="true"/>
+            <center>
+                <p:panel id="basic" style="margin-bottom:20px">
+                    <h:panelGrid columns="2" cellspacing="5" cellpadding="2">
+
+
+                        <p:outputLabel value="Fecha Aprobacion: "/>
+                        <p:calendar  value="#{remisionIntereses.fnRemisionSolicitud.fechaAprobacion}" locale="es" mindate="sysdate" 
+                                     navigator="true" />
+                        <p:outputLabel value="# Resolucion "/>
+                        <p:inputText  value="#{remisionIntereses.fnRemisionSolicitud.numResolucion}"  />
+                        <p:outputLabel  value="Valor Intereses "/>
+                        <p:inputText  value="#{remisionIntereses.fnRemisionSolicitud.interes}" readonly="true" />
+
+                        <p:outputLabel value="Valor Recargo: "/>
+                        <p:inputText  value="#{remisionIntereses.fnRemisionSolicitud.recargo}" readonly="true" />
+                        <p:outputLabel  value="Valor Multas "/>
+                        <p:inputText  value="#{remisionIntereses.fnRemisionSolicitud.multas}" readonly="true" />
+                        <p:outputLabel  value="Valor Remision: "/>
+                        <p:inputText  value="#{remisionIntereses.fnRemisionSolicitud.totalRemision}" readonly="true" />
+                        <p:outputLabel  value="Valor a Pagar "/>
+                        <p:inputText  value="#{remisionIntereses.fnRemisionSolicitud.totalPago}" readonly="true" />
+
+
+                    </h:panelGrid>
+                    <p:dataTable value="#{remisionIntereses.fnRemisionSolicitud.fnRemisionLiquidacionCollection}" var="liq" 
+                                 scrollable="true" scrollHeight="350" >
+                        <p:column headerText="# Titulo">
+                            <p:outputLabel value="#{liq.liquidacion.idLiquidacion}" />
+                        </p:column>
+                        <p:column headerText="Total Emision">
+                            <h:outputText value="#{liq.liquidacion.totalPago}">
+                                <f:convertNumber pattern="$ #,##0.00" />
+                            </h:outputText>    
+                        </p:column>
+
+                    </p:dataTable>
+                </p:panel>
+            </center>
+            <center style="float: bottom; ">
+                <p:commandButton id="btn_save" actionListener="#{remisionIntereses.saveRemision()}" value="Registrar"  icon="fa fa-save"  style="height: 30px;" styleClass="btnStyle white" update="formConvenio">
+                    <p:confirm header="Confirmación" message="Estás seguro de continuar ?" icon="ui-icon-alert" />
+                </p:commandButton>
+                <p:commandButton  actionListener="#{remisionIntereses.cancelarRemision()}" value="Cancelar"  icon="fa fa-save"  style="height: 30px;" styleClass="btnStyle white" update="formConvenio">
+                    <p:confirm header="Confirmación" message="Estás seguro de continuar ?" icon="ui-icon-alert" />
+                </p:commandButton>
+            </center>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+            </p:confirmDialog>
+        </h:form>
+    </h:body>
+</html>
+

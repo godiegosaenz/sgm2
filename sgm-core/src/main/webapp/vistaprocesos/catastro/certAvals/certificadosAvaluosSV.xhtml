@@ -1,0 +1,635 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+
+
+    <ui:define name="content">
+        <center>
+            <h1>Emisión de certificados</h1>
+        </center>
+        <h:form id="frmMain">
+            <p:panel id="pCertificados" style="width: 99%">
+                <div align="right">
+                    <p:commandButton id="btnNuevo" value="Nuevo" actionListener="#{certAvaluos.nuevo()}" style="height: 30px" oncomplete="PF('dlgNuevo').show()" update=":frmNuevo"/>
+                </div>
+                <br></br>.
+                <p:dataTable id="dtCertificados" value="#{certAvaluos.certificados}" var="ca" lazy="true" paginator="true" rows="10" rowsPerPageTemplate="20,50,100" widgetVar="cavs"
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             emptyMessage="No tiene certificados registrados" paginatorPosition="top">
+                    <p:column headerText="# Comprobante" style="width: 15%" filterBy="#{ca.codComprobante}" filterMatchMode="exact" sortBy="#{ca.codComprobante}" filterStyle="width:80%">
+                        <h:outputText value="#{ca.codComprobante}"/>
+                    </p:column>
+                    <p:column headerText="Fecha" filterBy="#{ca.fecha}" filterMatchMode="exact" filterStyle="width:10%"> 
+                        <f:facet name="filter">
+                            <p:calendar pattern="dd/MM/yyyy" locale="es" style="width: 80%">
+                                <p:ajax event="dateSelect" oncomplete="PF('cavs').filter()"/>
+                            </p:calendar>
+                        </f:facet>
+                        <h:outputText value="#{ca.fecha}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column id="predio" headerText="Predio" sortBy="#{ca.predio.numPredio}" filterBy="#{ca.predio.numPredio}" filterMatchMode="exact" >
+                        <h:outputText value="#{ca.predio.numPredio}"/>
+                    </p:column>
+                    <p:column id="solicitante" headerText="Solicitante" >
+                        <h:outputText value="#{ca.solicitante.razonSocial}" rendered="#{!ca.solicitante.esPersona}" style="text-transform: uppercase"/>
+                        <h:outputText value="#{ca.solicitante.apellidos} #{ca.solicitante.nombres}" rendered="#{ca.solicitante.esPersona}" style="text-transform: uppercase"/>
+                    </p:column>
+                    <p:column headerText="Aval. Solar" style="text-align: right !important; padding-right: 5px">
+                        <h:outputText value="#{ca.avalSolar}" >
+                            <f:convertNumber pattern="$ #,##0.00" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Aval. Const." style="text-align: right !important;padding-right: 5px">
+                        <h:outputText value="#{ca.avalConstruccion}">
+                            <f:convertNumber pattern="$ #,##0.00" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Aval. Prop." style="text-align: right !important;padding-right: 5px">
+                        <h:outputText value="#{ca.avalPropiedad}" >
+                            <f:convertNumber pattern="$ #,##0.00" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column style="text-align: center;width: 10%" headerText="Acciones">
+                        <p:commandButton id="btnEditar" update="frmCertificadoEdit" icon="ui-icon-folder-open" onclick="PF('dlgEditCertificado').show()" actionListener="#{certAvaluos.setCert(ca)}"/>
+                        <p:commandButton id="btnImprimir" icon="ui-icon-print" actionListener="#{certAvaluos.imprimir(ca)}"/>
+                    </p:column>                    
+                </p:dataTable>
+            </p:panel>
+        </h:form>
+
+        <p:dialog id="dlgnuevo" widgetVar="dlgNuevo" header="Emision de certificados" 
+                  height="500" width="750"  
+                  responsive="true" resizable="true" 
+                  closable="true" closeOnEscape="true" 
+                  modal="true" position="center" >
+            <h:form id="frmNuevo" >
+
+                <p:panel id="pgCertifiado" header="Los campos marcados con * son obligatorios"  style="width: 99%; height: 100%" >
+                    <h:panelGrid style="width: 100%; height: 100% " columns="4">
+                        <h:panelGroup>
+                            <h:outputText value="* Comprobante"  /> <br></br>
+                            <p:inputText id="comprobante" value="#{certAvaluos.cert.codComprobante}" readonly="true" 
+                                         type="number" 
+                                         required="true" maxlength="20" requiredMessage="El numero de comprobante es obligatorio" 
+                                         label="Comprobante" />
+                        </h:panelGroup>                            
+                        <h:panelGroup>
+                            <h:outputText value="* Fecha" /> <br></br>
+                            <p:calendar id="fecha"  value="#{certAvaluos.cert.fecha}"  
+                                        pattern="dd-MM-yyyy"  maxdate="sysdate" mask="true"/>    
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <h:outputText value="* Solicitante" /> <br></br>
+                            <p:inputText id="solicitante" value="#{certAvaluos.cert.solicitante.ciRuc}" 
+                                         readonly="true" maxlength="20" placeholder="Solicitante" label="Solicitante"/>
+                            <p:commandButton id="btnBuscarEnte" icon="ui-icon-search"  title="Buscar " 
+                                             onclick="PF('dlgSolicitantes').show()" 
+                                             update=":formSelectCatEnte"/>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <h:outputText value="* Predio" /><br></br>
+                            <p:inputText id="predioRef" value="#{certAvaluos.cert.predio.numPredio}" readonly="true" maxlength="20" 
+                                         placeholder="Predio referenciado" label="Predio"/>
+                            <p:commandButton id="btnBuscarPredio" icon="ui-icon-search" 
+                                             title="Buscar Predio" onclick="PF('selPredio').show()" 
+                                             update=":formPredSel"/>
+                        </h:panelGroup>
+
+                    </h:panelGrid>
+
+                    <p:panel id="pgDatosCertificado" header="Información a imprimir" rendered="#{certAvaluos.contenido}">
+                        <h:panelGrid id="pgDetalleCertificado" columns="6" >                 
+                            <h:panelGroup>
+                                <h:outputText value="# Predio:" /> <br></br>
+                                <h:outputText value="#{certAvaluos.cert.predio.numPredio}" style="font-weight: bolder"/>    
+                            </h:panelGroup>
+                            <h:panelGroup>
+                                <h:outputText value="Barrio:" /> <br></br>
+                                <h:outputText value="#{certAvaluos.cert.predio.tipoConjunto.nombre}  #{certAvaluos.cert.predio.ciudadela.nombre}"  style="font-weight: bolder"/>
+                            </h:panelGroup>
+                            <h:panelGroup>
+                                <h:outputText value="Solar:" /> <br></br>
+                                <h:outputText value="#{certAvaluos.cert.predio.solar}"  style="font-weight: bolder"/>    
+                            </h:panelGroup>
+                            <h:panelGroup>
+                                <h:outputText value="Mz:" /> <br></br>
+                                <h:outputText value="#{certAvaluos.cert.predio.mz}"  style="font-weight: bolder"/>    
+                            </h:panelGroup>
+                            <h:panelGroup>
+                                <h:outputText value="Codigo Anterior:" /> <br></br>
+                                <h:outputText value="#{certAvaluos.cert.codigoAnterior}"  style="font-weight: bolder"/>
+                            </h:panelGroup>
+                            <h:panelGroup>
+                                <h:outputText value="Codigo Actual:" /> <br></br>
+                                <h:outputText value="#{certAvaluos.cert.codigoActual}"  style="font-weight: bolder"/>    
+                            </h:panelGroup>
+                            <h:panelGroup>
+                                <h:outputText value="Avaluo de Terreno: " /> <br></br>
+                                <h:outputText value="#{certAvaluos.cert.avalSolar}"  style="font-weight: bolder">
+                                    <f:convertNumber  pattern="$ #,##0.00"   />
+                                </h:outputText>    
+                            </h:panelGroup>
+                            <h:panelGroup>
+                                <h:outputText value="Avaluo de Construccion: " /> <br></br>
+                                <h:outputText value="#{certAvaluos.cert.avalConstruccion}"  style="font-weight: bolder">
+                                    <f:convertNumber  pattern="$ #,##0.00" />
+                                </h:outputText>        
+                            </h:panelGroup>
+                            <h:panelGroup>
+                                <h:outputText value="Avaluo de la Propiedad: " /> <br></br>
+                                <h:outputText value="#{certAvaluos.cert.avalPropiedad}"  style="font-weight: bolder">
+                                    <f:convertNumber  pattern="$ #,##0.00" />
+                                </h:outputText>    
+                            </h:panelGroup>
+                        </h:panelGrid>
+                        <br></br>
+                        <p:dataTable id="dtPropietarios" value="#{certAvaluos.cert.predio.catPredioPropietarioCollection}" var="pr" reflow="true" paginator="true" rows="5"
+                                     selection="#{certAvaluos.cppList}" rowKey="#{pr.id}">
+                            <f:facet name="header">
+                                Propietarios
+                            </f:facet>
+                            <p:column selectionMode="multiple" style="width: 5%; text-align: center"/>
+                            <p:column headerText="Identificacion" style="width: 30%">
+                                <h:outputText value="#{pr.ente.ciRuc}" style="text-transform: uppercase"/>
+                            </p:column>
+                            <p:column headerText="Propietarios">
+                                <h:outputText value="#{pr.ente.nombres} #{pr.ente.apellidos}" style="text-transform: uppercase" rendered="#{pr.ente.esPersona}"/>
+                                <h:outputText value="#{pr.ente.razonSocial}" style="text-transform: uppercase" rendered="#{!pr.ente.esPersona}"/>
+                            </p:column>
+                        </p:dataTable>
+                        <f:facet name="footer">
+                            <div align="center">
+                                <p:commandButton id="btnVer" value="Visualizar Certificado" style="height: 30px" actionListener="#{certAvaluos.ver()}" oncomplete="" update=":frmCertificado"/>
+                                <p:commandButton id="btnVerxDesmembracion" value="Certificado por Desmembracion" style="height: 30px" actionListener="#{certAvaluos.verDialogCalculo()}"  update=":frmCalculo"/>
+                                <p:commandButton id="btnVerxAcciones" value="Certificado segun Division de Acciones" style="height: 30px" actionListener="#{certAvaluos.openDialogPropietariosByAccion()}" update=":frmPropietariosByAccion"/>
+                            </div>
+                        </f:facet>
+                    </p:panel>
+                </p:panel>
+                <br></br><br></br>
+
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Ingrese el Área a Valorar" widgetVar="dlgCalculo"  width="30%" height="80%">
+            <h:form id="frmCalculo">
+                <h:panelGrid columns="2">
+                    <h:outputText value="Considera  Construcción?:" style="font-weight: bolder; font-size: 15px"/>
+                    <h:selectBooleanCheckbox value="#{certAvaluos.desmiembraConstruccion}" style="font-size: 15px">
+                        <p:ajax listener="#{certAvaluos.calculate()}" event="change" update="frmCalculo"/>
+                    </h:selectBooleanCheckbox>
+                    <h:outputText value="Area del Terreno:" style="font-weight: bolder; font-size: 15px"/>
+                    <h:outputText value="#{certAvaluos.cert.areaSolar}" style="font-size: 15px"/>
+                    <h:outputText value="Valor M2 del Terreno: $" style="font-weight: bolder; font-size: 15px"/>
+
+                    <h:outputText value="#{certAvaluos.cert.valorM2}" style="font-size: 15px">
+                        <f:convertNumber  parent="$ #,##0.00" />
+                    </h:outputText>
+                    <h:outputText value="Avalúo actual Terreno: $" style="font-weight: bolder; font-size: 15px"/>
+                    <h:outputText value="#{certAvaluos.cert.avalPropiedad}" style="font-size: 15px">
+                        <f:convertNumber parent="$ #,##0.00" />
+                    </h:outputText>
+                    <h:outputText value="Avalúo actual de la Construccion: $" style="font-weight: bolder; font-size: 15px" rendered="#{certAvaluos.desmiembraConstruccion}"/>
+                    <h:outputText value="#{certAvaluos.cert.avalConstruccion}" style="font-size: 15px" rendered="#{certAvaluos.desmiembraConstruccion}">
+                        <f:convertNumber pattern="$ #,##0.00" />
+                    </h:outputText>
+                    <h:outputText value="Área a Desmembrar: " style="font-weight: bolder; font-size: 15px"/>
+                    <p:inputText value="#{certAvaluos.areaSolarDesmembrar}" style="font-weight: bolder; font-size: 15px">
+                        <p:ajax listener="#{certAvaluos.calculate()}" event="change"/>
+                    </p:inputText>
+
+                    <h:outputText value="Avalúo de Terreno despues de Desmembrar: $" style="font-weight: bolder; font-size: 15px"/>
+                    <p:inputText value="#{certAvaluos.totalAvaluoTerreno}" style="font-size: 15px" readonly="true">
+                        <f:convertNumber pattern="$ #,##0.00" />
+                    </p:inputText>
+
+
+                </h:panelGrid>
+                <br></br><br></br>
+                <div align="center">
+                    <p:commandButton id="btnVerxDesmembracionAceptar" value="Aceptar" style="height: 30px" actionListener="#{certAvaluos.openDialogVisualizarReporteDesmembrazion()}" oncomplete="" update=":frmCertificado"/>
+                    <!--<p:spacer width=" 10"/>-->
+<!--                    <p:commandButton id="btnVerxDesmembracion" value="Calcular" style="height: 30px" actionListener="#{certAvaluos.calculate()}"  />-->
+                </div>
+            </h:form>
+
+        </p:dialog>
+
+
+        <p:dialog header="Referencie un Predio" widgetVar="selPredio"  width="85%" height="30%">
+            <h:form id="formPredSel">
+                <p:tabView id="tbvRefereciarPredios" >
+                    <p:tab title="Predio(s) del Solicitante">
+
+                        <p:dataTable id="dtSelPredByProp" paginator="true" style="text-align: center; font-size: 11px;" scrollHeight="300" scrollable="true"
+
+                                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rows="15" rowsPerPageTemplate="15,50,100" value="#{certAvaluos.getListPredioByPropietarios}" var="pl1" 
+                                     filterEvent="enter"                             emptyMessage="No se encontró Movimientos">
+                            <p:column headerText="Núm. Predio" filterBy="#{pl1.numPredio}" sortBy="#{pl1.numPredio}" filterMatchMode="contains" filterStyle="width: 40px" style="width: 100px;">
+                                <p:outputLabel value="#{pl1.numPredio}"/>
+                            </p:column>
+                            <p:column headerText="Parroquia" filterBy="#{pl1.parroquia}" sortBy="#{pl1.parroquia}" filterStyle="width: 30px" style="width: 80px;">
+                                <p:outputLabel value="#{pl1.parroquia}"/>
+                            </p:column>numPredio
+                            <p:column headerText="Zona" filterBy="#{pl1.zona}" sortBy="#{pl1.zona}" filterStyle="width: 30px" style="width: 80px;">
+                                <p:outputLabel value="#{pl1.zona}"/>
+                            </p:column>
+                            <p:column headerText="Sector" filterBy="#{pl1.sector}" sortBy="#{pl1.sector}" filterStyle="width: 30px" style="width: 80px;">
+                                <p:outputLabel value="#{pl1.sector}"/>
+                            </p:column>
+                            <p:column headerText="Mz." filterBy="#{pl1.mz}" sortBy="#{pl1.mz}" filterStyle="width: 30px" style="width: 60px;">
+                                <p:outputLabel value="#{pl1.mz}"/>
+                            </p:column>
+                            <p:column headerText="Solar" filterBy="#{pl1.solar}" sortBy="#{pl1.solar}" filterStyle="width: 30px" style="width: 70px;">
+                                <p:outputLabel value="#{pl1.solar}"/>
+                            </p:column>
+                            <p:column headerText="Avalúo Propiedad"  style="width: 60px;">
+                                <h:outputText value="#{pl1.avaluoMunicipal}">
+                                    <f:convertNumber pattern="$ #,##0.00" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Seleccionar" style="width: 75px;" >
+
+                                <p:commandLink title="Seleccionar"  actionListener="#{certAvaluos.selectPredio(pl1)}" oncomplete="PF('selPredio').hide()" update=":frmNuevo">
+                                    <p:graphicImage value="/css/homeIconsImages/ok.png"  height="20" width="20"/>
+                                </p:commandLink>
+
+                            </p:column>
+                        </p:dataTable>
+
+                    </p:tab>
+                    <p:tab title="Listado de Predios">
+                        <p:dataTable id="dtSelPred" paginator="true" lazy="true" style="text-align: center; font-size: 11px;" scrollHeight="300" scrollable="true" widgetVar="preds"
+                                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rows="15" rowsPerPageTemplate="15,50,100" value="#{certAvaluos.predios}" var="pl" 
+                                     filterEvent="enter"                             emptyMessage="No se encontró Movimientos">
+                            <p:column headerText="Núm. Predio" filterBy="#{pl.numPredio}" sortBy="#{pl.numPredio}" filterStyle="width: 40px" style="width: 100px;">
+                                <p:outputLabel value="#{pl.numPredio}"/>
+                            </p:column>
+                            <p:column headerText="Propietarios" style="text-align: center; width: 20%"  >
+                                <p:outputLabel id="props" value="#{pl.getNombrePropietarios()}"  style="font-size: 10px"  />
+                            </p:column>
+                            <p:column headerText="Parroquia" filterBy="#{pl.parroquia}" sortBy="#{pl.parroquia}" filterStyle="width: 25px" style="width: 60px;">
+                                <p:outputLabel value="#{pl.parroquia}"/>
+                            </p:column>
+                            <p:column headerText="Zona" filterBy="#{pl.zona}" sortBy="#{pl.zona}" filterStyle="width: 25px" style="width: 60px;">
+                                <p:outputLabel value="#{pl.zona}"/>
+                            </p:column>
+                            <p:column headerText="Sector" filterBy="#{pl.sector}" sortBy="#{pl.sector}" filterStyle="width: 25px" style="width: 60px;">
+                                <p:outputLabel value="#{pl.sector}"/>
+                            </p:column>
+                            <p:column headerText="Mz." filterBy="#{pl.mz}" sortBy="#{pl.mz}" filterStyle="width: 25px" style="width: 60px;">
+                                <p:outputLabel value="#{pl.mz}"/>
+                            </p:column>
+                            <p:column headerText="Solar" filterBy="#{pl.solar}" sortBy="#{pl.solar}" filterStyle="width: 25px" style="width: 60px;">
+                                <p:outputLabel value="#{pl.solar}"/>
+                            </p:column>
+                            <p:column headerText="Bloque"  sortBy="#{pl.bloque}"  style="width: 40px;">
+                                <p:outputLabel value="#{pl.bloque}"/>
+                            </p:column>
+                            <p:column headerText="Piso" sortBy="#{pl.piso}"  style="width: 40px;">
+                                <p:outputLabel value="#{pl.piso}"/>
+                            </p:column>
+                            <p:column headerText="Unidad"  sortBy="#{pl.unidad}"  style="width: 40px;">
+                                <p:outputLabel value="#{pl.unidad}"/>
+                            </p:column>
+                            <p:column headerText="Avalúo Propiedad"  sortBy="#{pl.avaluoMunicipal}" style="width: 80px;">
+                                <p:outputLabel value="#{pl.avaluoMunicipal}">
+                                    <f:convertNumber pattern="$ #,##0.00" />
+                                </p:outputLabel>
+                            </p:column>
+                            <p:column headerText="Seleccionar" style="width: 60px;" >
+
+                                <p:commandLink title="Seleccionar"  actionListener="#{certAvaluos.selectPredio(pl)}" oncomplete="PF('selPredio').hide()" update=":frmNuevo">
+                                    <p:graphicImage value="/css/homeIconsImages/ok.png"  height="20" width="20"/>
+                                </p:commandLink>
+
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                </p:tabView>
+
+            </h:form>
+        </p:dialog>
+        <p:dialog id="dlgSolicitantes" header="Listado de solicitantes" widgetVar="dlgSolicitantes" resizable="false" modal="true" style="z-index: 3" position="center" width="800">
+            <h:form id="formSelectCatEnte">
+                <p:dataTable id="dataCatEnte" style="margin: 0 auto;"
+                             paginator="true" lazy="true" filterEvent="enter"
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rows="10" rowsPerPageTemplate="10,20,50,100" 
+                             emptyMessage="No se encontró ningún solicitante" value="#{certAvaluos.solicitantes}" var="item">
+                    <f:facet name="header">
+                        <p:outputLabel value="Entes" style="font-weight: bold"/>
+                    </f:facet>
+                    <p:column headerText="CiRuc" style="text-align: center" filterBy="#{item.ciRuc}"
+                              sortBy="#{item.ciRuc}">
+                        <h:outputText value="#{item.ciRuc}"/>
+                    </p:column>
+                    <p:column headerText="Nombres" style="text-align: center" filterBy="#{item.nombres}"
+                              sortBy="#{item.nombres}">
+                        <h:outputText value="#{item.nombres}"/>
+                    </p:column>
+                    <p:column headerText="Apellidos" style="text-align: center" filterBy="#{item.apellidos}"
+                              sortBy="#{item.apellidos}">
+                        <h:outputText value="#{item.apellidos}"/>
+                    </p:column>
+                    <p:column headerText="Razon Social" style="text-align: center" filterBy="#{item.razonSocial}"
+                              sortBy="#{item.razonSocial}">
+                        <h:outputText value="#{item.razonSocial}"/>
+                    </p:column>
+                    <p:column headerText="Seleccionar" style="text-align: center; width:15%; ">
+                        <p:commandLink title="Seleccionar" actionListener="#{certAvaluos.selectSolicitante(item)}" update=":frmNuevo" oncomplete="PF('dlgSolicitantes').hide()">
+                            <p:graphicImage value="/css/homeIconsImages/ok.png"  height="20" width="20"/>
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </p:dialog>
+        <p:dialog id="dlgCertificado" widgetVar="dlgCertificado" header="Detalle del certificado" appendTo="@(body)" modal="true" resizable="true" width="520" closable="true" closeOnEscape="true">
+            <h:form id="frmCertificado">
+                <div align="center">
+                    <p:editor id="eCertificado" value="#{certAvaluos.cert.detalle}" style="text-align: justify" width="510"/>
+                    <p:panelGrid id="pgDatos" columns="2" layout="grid">
+                        <f:facet name="header">
+                            Consta con los siguientes Avalúos
+                        </f:facet>
+                        <h:outputText value="Codigo actual" style="font-weight: bolder"/>
+                        <h:outputText value="#{certAvaluos.cert.codigoActual}" />
+                        <h:outputText value="Area Desmembrada Solar" style="font-weight: bolder" rendered="#{certAvaluos.desmiembraTerreno}"/>
+                        <h:outputText value="#{certAvaluos.cert.areaDesmembrada}" rendered="#{certAvaluos.desmiembraTerreno}"/>
+                        <h:outputText value="Avalúo del Terreno $" style="font-weight: bolder"/>
+                        <h:outputText value="#{certAvaluos.cert.avalSolar}">
+                            <f:convertNumber parent="$ #,##0.00"/>
+                        </h:outputText>
+                        <h:outputText value="Avalúo Construccion $" style="font-weight: bolder"/>
+                        <h:outputText value="#{certAvaluos.cert.avalConstruccion}" >
+                            <f:convertNumber parent="$ #,##0.00" />
+                        </h:outputText>
+                        <h:outputText value="Avalúo de la propiedad $" style="font-weight: bolder"/>
+                        <h:outputText value="#{certAvaluos.cert.avalPropiedad}" >
+                            <f:convertNumber parent="$ #,##0.00" />
+                        </h:outputText>
+
+                    </p:panelGrid>
+                    <br/>
+                    <div align="center">
+                        <p:commandButton id="btnImprimir" value="Imprimir" style="height: 30px" actionListener="#{certAvaluos.guardar()}" update=":frmMain"/>
+                    </div>
+                </div>
+
+            </h:form>
+        </p:dialog>
+
+
+
+        <p:dialog id="dlgCertificadoPorcentual" widgetVar="dlgCertificadoPorcentual" 
+                  header="Detalle del certificado"  modal="true" 
+                  resizable="true" width="520" height="300" closable="true" closeOnEscape="true">
+            <h:form id="frmCertificadoPorcentual">
+                <div align="center">
+                    <p:editor id="eCertificadoPorcentual" value="#{certAvaluos.cert.detalle}" style="text-align: justify" width="510"/>
+                    <p:panelGrid id="pgDatosPorcentual" columns="2" layout="grid">
+                        <f:facet name="header">
+                            Consta con los siguientes Avalúos
+                        </f:facet>
+                        <h:outputText value="Codigo actual" style="font-weight: bolder"/>
+                        <h:outputText value="#{certAvaluos.cert.codigoActual}" />
+                        <h:outputText value="Avalúo del Terreno $" style="font-weight: bolder" rendered="#{!certAvaluos.tipoCalculo}" />
+                        <h:outputText value="#{certAvaluos.cert.avalSolar}" rendered="#{!certAvaluos.tipoCalculo}" >
+                            <f:convertNumber parent="$ #,##0.00"/>
+                        </h:outputText>
+                        <h:outputText value="Avalúo Construcción $" style="font-weight: bolder" rendered="#{certAvaluos.porcentajeAConstruccion}"/>
+                        <h:outputText value="#{certAvaluos.cert.avalConstruccion}" rendered="#{certAvaluos.porcentajeAConstruccion}">
+                            <f:convertNumber parent="$ #,##0.00" />
+                        </h:outputText>
+                        <h:outputText value="Avalúo de la propiedad $" style="font-weight: bolder"/>
+                        <h:outputText value="#{certAvaluos.cert.avalPropiedad}" >
+                            <f:convertNumber parent="$ #,##0.00" />
+                        </h:outputText>
+                        <h:outputText value="Total de Acciones" style="font-weight: bolder" 
+                                      rendered="#{certAvaluos.tipoCalculo}" />
+                        <h:outputText value="#{certAvaluos.cert.totalAccciones}" rendered="#{certAvaluos.tipoCalculo}" >
+                            <f:convertNumber parent="$ #,##0.00" />
+                        </h:outputText>
+                        <h:outputText value="Número de Acciones" style="font-weight: bolder" 
+                                      rendered="#{certAvaluos.tipoCalculo}" />
+                        <h:outputText value="#{certAvaluos.cert.numeroAccciones}" rendered="#{certAvaluos.tipoCalculo}" >
+                            <f:convertNumber parent="$ #,##0.00" />
+                        </h:outputText>
+                        <h:outputText value="Avalúo por Acción" style="font-weight: bolder" rendered="#{certAvaluos.tipoCalculo}" />
+                        <h:outputText value="#{certAvaluos.cert.avaluoPorAccion}" rendered="#{certAvaluos.tipoCalculo}" >
+                            <f:convertNumber parent="$ #,##0.00" />
+                        </h:outputText>
+
+
+                    </p:panelGrid>
+                    <br/>
+                    <div align="center">
+                        <p:commandButton id="btnImprimirPorcentual" value="Imprimir" style="height: 30px" actionListener="#{certAvaluos.guardar()}" update=":frmMain" oncomplete="PF('dlgCertificadoPorcentual').hide()"/>
+                    </div>
+                </div>
+
+            </h:form>
+        </p:dialog>
+
+
+        <!-- -->
+
+        <p:dialog id="dlgEditCertificado" widgetVar="dlgEditCertificado" 
+                  header="Detalle del certificado" appendTo="@(body)" 
+                  modal="true" resizable="true"  width="520" closable="true" closeOnEscape="true">
+            <h:form id="frmCertificadoEdit">
+                <p:editor id="eCertificado" value="#{certAvaluos.cert.detalle}"  width="510"/>
+                <div align="center">
+                    <p:commandButton id="btnImprimir" value="Imprimir" style="height: 30px" 
+                                     onclick="PF('dlgEditCertificado').hide()" actionListener="#{certAvaluos.guardar()}" update="@all" rendered="#{certAvaluos.visualizarCert}"/>
+                </div>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="dialogPropietariosByAccion" widgetVar="dlgPropietariosByAccion" header="Detalle de Acciones" appendTo="@(body)" modal="true" resizable="true" width="60%" closable="true" closeOnEscape="true">
+            <h:form id="frmPropietariosByAccion">
+                <p:fieldset legend="Tipo de Cálculo" toggleable="true">
+                    <div align="center">
+                        <p:selectOneRadio value="#{certAvaluos.tipoCalculo}" >
+                            <f:selectItem itemLabel="Porcentual" itemValue="#{false}" />
+                            <f:selectItem itemLabel="Número de Acciones" itemValue="#{true}" />
+                            <p:ajax  update="frmPropietariosByAccion"/>
+                        </p:selectOneRadio>
+
+                    </div>
+
+                </p:fieldset>
+                <p:fieldset legend="Valores" toggleable="true" rendered="#{certAvaluos.tipoCalculo}" >
+                    <!--                    <h:panelGrid   style="text-align: justify; width: 100%" columns="2">   -->
+                    <h:panelGrid columns="3" rendered="#{certAvaluos.tipoCalculo}" 
+                                 style="width: 49%; float: left;">
+                        <h:panelGroup>
+                            <h:outputText value="Avalúo Propiedad $: " /><br></br>
+                            <h:outputText value="#{certAvaluos.cert.avalPropiedad}" style="font-weight: bolder" >
+                                <f:convertNumber parent="$ #,##0.00" />
+                            </h:outputText>
+                        </h:panelGroup>   
+                        <h:panelGroup>
+                            <h:outputText value="Total  Acciones"  /><br></br>
+                            <p:inputText id="totalAccion"  value="#{certAvaluos.totalAccion}" size="10"/>
+                        </h:panelGroup>   
+                        <h:panelGroup>
+                            <h:outputText value="# Acciones: "/><br></br>
+                            <p:inputText id="numeroAccion" 
+                                         value="#{certAvaluos.numeroAccion}" 
+                                         size="10"/>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <p:outputLabel value="" />
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <h:outputText value="Avalúo de la Acción: " /><br></br>
+                            <h:outputText value="#{certAvaluos.cert.avaluoPorAccion}" style="font-weight: bolder;">
+                                <f:convertNumber parent="$ #,##0.00" />
+                            </h:outputText>
+                        </h:panelGroup>   
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" style="width: 49%; float: right; ">
+                        <p:dataTable id="dtPropietariosByNumeroAcciones" 
+                                     selection="#{certAvaluos.cpp}"
+                                     value="#{certAvaluos.cert.predio.catPredioPropietarioCollection}" var="pr" reflow="true" 
+                                     rowKey="#{pr.id}"
+                                     paginator="true" rows="5" editable="true" editMode="cell">
+                            <f:facet name="header">
+                                Propietarios
+                            </f:facet>
+                            <p:column selectionMode="single" style="width:30px;text-align:center" />
+                            <p:column headerText="Identificacion" style="width: 30%; font-size: 11px">
+                                <h:outputText value="#{pr.ente.ciRuc}" style="text-transform: uppercase"/>
+                            </p:column>
+                            <p:column headerText="Descripcion" style="font-size: 11px">
+                                <h:outputText value="#{pr.ente.nombres} #{pr.ente.apellidos}" 
+                                              style="text-transform: uppercase" 
+                                              rendered="#{pr.ente.esPersona}"/>
+                                <h:outputText value="#{pr.ente.razonSocial}" style="text-transform: uppercase" rendered="#{!pr.ente.esPersona}"/>
+                            </p:column>
+                        </p:dataTable> 
+                    </h:panelGrid>
+
+                    <div align="center">
+                        <p:commandButton id="btnPropietarioAccin"  
+                                         value="Cálculo x # Acciones" style="height: 30px; margin-top: 20 px"
+                                         actionListener="#{certAvaluos.openDialogVisualizarCertificadoByAcciones()}" 
+                                         process="totalAccion,  frmPropietariosByAccion:numeroAccion"
+                                         update="frmPropietariosByAccion"/>    
+                    </div>
+                    <br></br><br></br>
+
+                </p:fieldset>    
+                <h:panelGrid rendered="#{!certAvaluos.tipoCalculo}" >
+                    <p:dataTable id="dtPropietariosByAcciones" 
+                                 selection="#{certAvaluos.cpp}"
+                                 value="#{certAvaluos.cert.predio.catPredioPropietarioCollection}" var="pr" reflow="true" 
+                                 rowKey="#{pr.id}"
+                                 paginator="true" rows="5" editable="true" editMode="cell">
+                        <f:facet name="header">
+                            Propietarios
+                        </f:facet>
+                        <p:column selectionMode="single" style="width:30px;text-align:center" />
+                        <p:column headerText="Identificacion" style="width: 30%">
+                            <h:outputText value="#{pr.ente.ciRuc}" style="text-transform: uppercase"/>
+                        </p:column>
+                        <p:column headerText="Descripcion">
+                            <h:outputText value="#{pr.ente.nombres} #{pr.ente.apellidos}" style="text-transform: uppercase" rendered="#{pr.ente.esPersona}"/>
+                            <h:outputText value="#{pr.ente.razonSocial}" style="text-transform: uppercase" rendered="#{!pr.ente.esPersona}"/>
+                        </p:column>
+                        <p:column headerText="Porcentaje de División" style="width: 30%; text-align: center" >
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText  value="#{pr.porcentajeAvalDivision}" /></f:facet>
+                                <f:facet name="input"><p:inputText 
+                                        onkeypress="validateIntegerValueAndFocusNext(event, '')" 
+                                        value="#{pr.porcentajeAvalDivision}" style="width: 30%; text-align: center" /></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <f:facet name="footer">
+                            <h:panelGrid  columns="2">
+                                <h:panelGroup>
+                                    <h:outputText value="¿Considera Construcción?: " 
+                                                  style="font-size: 12px"/> <br></br>
+                                    <p:selectBooleanCheckbox value="#{certAvaluos.porcentajeAConstruccion}" >
+                                        <p:ajax  update="frmPropietariosByAccion"/>
+                                    </p:selectBooleanCheckbox>    
+                                </h:panelGroup>
+                                <h:panelGroup>
+                                    <p:commandButton id="btnPropietarioPorcentaje" value="Cálculo x Porcentaje"
+                                                     style="height: 30px" 
+                                                     actionListener="#{certAvaluos.openDialogVisualizarCertificadoByAcciones()}" 
+                                                     update=":frmPropietariosByAccion"/>
+                                </h:panelGroup>
+                            </h:panelGrid>   
+
+
+                        </f:facet>
+                    </p:dataTable> 
+                    <h:panelGrid  style="text-align: justify; width: 100%" columns="2">
+                        <p:fieldset legend="Valores en Base" toggleable="true" >
+
+                            <h:panelGrid columns="2" style="text-align: justify">
+                                <h:outputText value="Avalúo del Terreno $: " style="font-weight: bolder; font-size: 15px"/>
+                                <h:outputText value="#{certAvaluos.cert.avalSolar}" >
+                                    <f:convertNumber parent="$ #,##0.00" />
+                                </h:outputText>
+                                <h:outputText value="Avalúo de la Construcción $: " style="font-weight: bolder; font-size: 15px"/>
+                                <h:outputText value="#{certAvaluos.cert.avalConstruccion}" >
+                                    <f:convertNumber parent="$ #,##0.00" />
+                                </h:outputText>
+                                <h:outputText value="Avalúo de la Propiedad: $ " style="font-weight: bolder; font-size: 15px"/>
+                                <h:outputText value="#{certAvaluos.cert.avalPropiedad}" >
+                                    <f:convertNumber parent="$ #,##0.00" />
+                                </h:outputText>
+                            </h:panelGrid>
+
+
+                        </p:fieldset>    
+                        <p:fieldset legend="Valores Calculados" toggleable="true" >
+
+                            <h:panelGrid columns="2" style="text-align: justify">
+                                <h:outputText value="Avalúo Porcentual del Terreno (#{certAvaluos.cert.porcentajeAvalDivision}%)  $: " style="font-weight: bolder; font-size: 15px"/>
+                                <h:outputText value="#{certAvaluos.valorXAccion}" >
+                                    <f:convertNumber parent="$ #,##0.00" />
+                                </h:outputText>
+                                <h:outputText value="Avalúo Porcentual de la Construcción (#{certAvaluos.cert.porcentajeAvalDivision}%) $: " style="font-weight: bolder; font-size: 15px" rendered="#{certAvaluos.porcentajeAConstruccion}"/>
+                                <h:outputText value="#{certAvaluos.valorXAccionConstruccion}" rendered="#{certAvaluos.porcentajeAConstruccion}">
+                                    <f:convertNumber parent="$ #,##0.00" />
+                                </h:outputText>
+                                <h:outputText value="Avalúo Porcentual de la Propiedad: (#{certAvaluos.cert.porcentajeAvalDivision}%) $ " style="font-weight: bolder; font-size: 15px"/>
+                                <h:outputText value="#{certAvaluos.valorXAccionComercial}" >
+                                    <f:convertNumber parent="$ #,##0.00" />
+                                </h:outputText>
+                            </h:panelGrid>
+
+
+                        </p:fieldset>    
+                    </h:panelGrid>
+
+                </h:panelGrid>
+                <br></br>
+                <center>
+                    <p:commandButton id="btnPropietarioPorcentaje" value="Aceptar" 
+                                     style="height: 30px" 
+                                     actionListener="#{certAvaluos.acceptDivisionPorcentual()}"   update=":frmPropietariosByAccion, frmCertificadoPorcentual"/>
+                </center>
+                <br></br> 
+            </h:form>
+        </p:dialog>
+
+
+
+
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,590 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:dialog="http://xmlns.jcp.org/jsf/composite/dialog">
+    <ui:define name="top">
+        
+        <p:panelGrid styleClass="noBorder" columns="4" style="width: 100%;font-size: 14px;">
+            <p:outputLabel value="Trámite: #{permisoConstruccionAntiguo.ht.id}" style="font-weight: bolder;color: #005f9c"/>
+            <p:outputLabel value="Tarea: #{permisoConstruccionAntiguo.taskDataByTaskID.name}" style="font-weight: bolder;color: #005f9c"/>
+            <p:outputLabel value="Responsable: #{permisoConstruccionAntiguo.taskDataByTaskID.assignee}" style="font-weight: bolder;color: #005f9c"/>
+        </p:panelGrid>
+    </ui:define>
+    <ui:define name="content">
+        <h:form id="frmMain">
+            <p:growl id="growl" showDetail="true" sticky="true" />
+            <p:panel id="pnlDP" style="width: 100%;">
+                <p:tabView id="tdatos">
+                    <p:tab title="Confirmación del permiso antguo" rendered="#{permisoConstruccionAntiguo.ht != null and permisoConstruccionAntiguo.mostrarPanelInicial}">
+                        <center>
+                            <h:panelGroup>
+                                <p:column>
+                                    <h:outputText value="¿Desea proceder a realizar el permiso antiguo?"/>
+                                    <p:selectOneRadio id="console" value="#{permisoConstruccionAntiguo.confirmarPermiso}">
+                                        <f:selectItem itemLabel="Sí" itemValue="#{true}" />
+                                        <f:selectItem itemLabel="No" itemValue="#{false}" />
+                                    </p:selectOneRadio>
+                                    <p:commandButton value="Continuar" actionListener="#{permisoConstruccionAntiguo.validarIngresoDePermiso()}"/>
+                                </p:column>
+                            </h:panelGroup>
+                        </center>
+                    </p:tab>
+                    
+                    <!-- -->
+                    
+                    <p:tab id="tgen" title="Permiso de construcción antiguo" rendered="#{permisoConstruccionAntiguo.ht != null and !permisoConstruccionAntiguo.mostrarPanelInicial}">
+                        <center>
+                            <p:panelGrid columns="2" rendered="#{!permisoConstruccionAntiguo.continuarb}">
+                                <h:outputText value="Ingrese el número de reporte: "/>
+                                <p:inputText value="#{permisoConstruccionAntiguo.numReporte}"/>
+                                <h:outputText value="Ingrese el año del trámite: "/>
+                                <h:panelGroup>
+                                    <p:inputText value="#{permisoConstruccionAntiguo.anio}"/>
+                                    <p:commandButton actionListener="#{permisoConstruccionAntiguo.validarIngreso()}" update="frmMain" value="Continuar" styleClass="btnStyle"/>
+                                </h:panelGroup>
+                            </p:panelGrid>
+                            
+                            <p:panelGrid id="panelCons" rendered="#{permisoConstruccionAntiguo.continuarb}" style="width: 100%; margin: 0px; margin-bottom: 20px">
+                                
+                                <!-- Datos del Predio-->
+                                
+                                <f:facet name="header">  
+                                    <p:row>  
+                                        <p:column >Sector</p:column>  
+                                        <p:column >Mnz.</p:column>  
+                                        <p:column >Cdla.</p:column>  
+                                        <p:column >Mnz. Div</p:column>  
+                                        <p:column>Solar</p:column>  
+                                        <p:column>Div1</p:column>  
+                                        <p:column>Div2</p:column>  
+                                        <p:column>Div3</p:column>  
+                                        <p:column>Div4</p:column>  
+                                        <p:column>Div5</p:column>  
+                                        <p:column>Div6</p:column>  
+                                        <p:column>Div7</p:column>  
+                                        <p:column>Div8</p:column>  
+                                        <p:column>Div9</p:column>  
+                                        <p:column>Buscar</p:column>
+                                    </p:row>  
+                                </f:facet>
+                                <p:row >
+                                    <p:column><p:inputText style="width: 100%" value="#{permisoConstruccionAntiguo.predio.sector}"/></p:column>
+                                    <p:column><p:inputText style="width: 100%" value="#{permisoConstruccionAntiguo.predio.mz}"/></p:column>
+                                    <p:column><p:inputText style="width: 100%" value="#{permisoConstruccionAntiguo.predio.cdla}"/></p:column>
+                                    <p:column><p:inputText style="width: 100%" value="#{permisoConstruccionAntiguo.predio.mzdiv}"/></p:column>
+                                    <p:column><p:inputText style="width: 100%" value="#{permisoConstruccionAntiguo.predio.solar}"/></p:column>
+                                    <p:column><p:inputText style="width: 100%" value="#{permisoConstruccionAntiguo.predio.div1}"/></p:column>
+                                    <p:column><p:inputText style="width: 100%" value="#{permisoConstruccionAntiguo.predio.div2}"/></p:column>
+                                    <p:column><p:inputText style="width: 100%" value="#{permisoConstruccionAntiguo.predio.div3}"/></p:column>
+                                    <p:column><p:inputText style="width: 100%" value="#{permisoConstruccionAntiguo.predio.div4}"/></p:column>
+                                    <p:column><p:inputText style="width: 100%" value="#{permisoConstruccionAntiguo.predio.div5}"/></p:column>
+                                    <p:column><p:inputText style="width: 100%" value="#{permisoConstruccionAntiguo.predio.div6}"/></p:column>
+                                    <p:column><p:inputText style="width: 100%" value="#{permisoConstruccionAntiguo.predio.div7}"/></p:column>
+                                    <p:column><p:inputText style="width: 100%" value="#{permisoConstruccionAntiguo.predio.div8}"/></p:column>
+                                    <p:column><p:inputText style="width: 100%" value="#{permisoConstruccionAntiguo.predio.div9}"/></p:column>
+                                    <p:column><p:commandButton update="frmMain" style="color: #ffffff; background: #616161 !important; font-weight: bold; height: 30px; text-align: center;" value="Buscar Predio" onclick="PF('selPredio').show()" /></p:column>
+                                </p:row>
+                                
+                                <p:row>
+                                    <p:column colspan="4">
+                                        Tipo Permiso<br/>
+                                        <p:selectOneMenu id="tipConstruccion" value="#{permisoConstruccionAntiguo.nombreTipoPermiso}"  style="width: 160px;"  > 
+                                            <f:selectItems value="#{permisoConstruccionAntiguo.listRequisTra}" var="req1" itemValue="#{req1.descripcion}"  itemLabel="#{req1.descripcion}" itemDisabled="false"/>
+                                        </p:selectOneMenu>                                     
+                                    </p:column>
+                                    <p:column colspan="4">A&#241;o Tramite<br/>
+                                        <p:inputText value="#{permisoConstruccionAntiguo.permisoNuevo.anioTramite}" type="number"  /></p:column>
+                                    <p:column colspan="3">Número de Tramite<br/>
+                                        <p:inputText value="#{permisoConstruccionAntiguo.permisoNuevo.tramite.id}"  /></p:column>
+                                    <p:column colspan="3">Fecha Emisi&#243;n<br/>
+                                        <p:calendar value="#{permisoConstruccionAntiguo.permisoNuevo.fechaEmision}"  /></p:column>
+                                    <p:column colspan="3">Fecha Caducidad<br/>
+                                        <p:calendar value="#{permisoConstruccionAntiguo.permisoNuevo.fechaCaducidad}"  /></p:column>
+                                </p:row>
+                                <!-- Datos de Propietario-->
+                                <p:row>
+                                    <p:column colspan="17" styleClass="ui-widget-header" style="text-align: center">
+                                        Datos de Propietario
+                                        <p:commandLink id="btnAgrPro" value="Agregar Propietario" style="color: #0033FF; font-weight: bold; float: right; font-size: 14px; " disabled="true"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="17">
+                                        <p:dataTable id="dtProp" value="#{permisoConstruccionAntiguo.listaPropietarios}" var="prop" style="width: 100%" reflow="true" emptyMessage="No hay asignado Propietarios al Predio">
+                                            <p:column headerText="#C.I. O R.U.C" style="text-align: center;font-weight: bold">
+                                                <p:outputLabel value="#{prop.ente.ciRuc}"/>
+                                            </p:column>
+                                            <p:column headerText="Propietario" style="text-align: center;font-weight: bold">
+                                                <p:outputLabel value="#{prop.ente.nombres} #{prop.ente.apellidos}" rendered="#{prop.ente.esPersona}"/>
+                                                <p:outputLabel value="#{prop.ente.razonSocial}" rendered="#{!prop.ente.esPersona}"/>
+                                            </p:column>
+                                            <p:column headerText="Opci&#243;n" style="text-align: center;font-weight: bold">
+                                                <p:commandLink value="Eliminar" update="forGenLiq:dtProp" process="dtProp" disabled="true"/>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:column>
+                                </p:row>
+                                <!-- Responsable Tecnico-->
+                                <p:row id="responbTec" >
+                                    <p:column colspan="5">
+                                        Ced. Identidad <p:inputMask id="ciIde" mask="9999999999" value="#{permisoConstruccionAntiguo.respTec.ciRuc}" />
+                                        <p:commandLink actionListener="#{permisoConstruccionAntiguo.buscarTecnico()}" process="responbTec" >
+                                            <p:graphicImage value="/css/homeIconsImages/buscar.png" height="20"/>
+                                        </p:commandLink>
+                                    </p:column>
+                                    <p:column colspan="7">
+                                        Resp. Tecnico <p:inputText id="resT" value="#{permisoConstruccionAntiguo.nombreTec}" style="width: 75%;"/> 
+                                        <p:commandButton icon="ui-icon-pencil" onclick="PF('dlgEditRespTec').show()" update="formEditResp" iconPos="s" style=" height: 30px; color: #ffffff; background: #616161 !important; font-weight: bold;"/>
+                                    </p:column>
+                                    <p:column colspan="5">
+                                        Registro Profesional <p:inputText id="regP" value="#{permisoConstruccionAntiguo.respTec.regProf}" style="width: 50%"/>
+                                    </p:column>
+                                </p:row>
+                                <!-- Ubicaci&#243;n-->
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" colspan="17" style="text-align: center">Ubicaci&#243;n</p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="3">
+                                        Sector <p:inputText value="La Puntilla" style="width: 70%" readonly="true" />                                   
+                                    </p:column>
+                                    <!--                    <p:column colspan="5">Urbanizaci&#243;n <p:inputText value="# {permisoConstruccionAntiguo.permisoNuevo.nombUrbanizacionImpresa}"  style="width: 70%" readonly="true"/></p:column>-->
+                                    <p:column colspan="5">
+                                        Urbanizaci&#243;n
+                                        <p:selectOneMenu value="#{permisoConstruccionAntiguo.permisoNuevo.nombUrbanizacionImpresa}">
+                                            <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                                            <f:selectItems value="#{permisoConstruccionAntiguo.ciudadelas}" var="cdl" itemLabel="#{cdl.nombre}" itemValue="#{cdl.nombre}"/>
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                    <p:column colspan="3">Manzana <p:inputText value="#{permisoConstruccionAntiguo.permisoNuevo.urbmz}" style="width: 50%" readonly="false"/></p:column>
+                                    <p:column colspan="3">Solar <p:inputText value="#{permisoConstruccionAntiguo.permisoNuevo.urbsolar}" style="width: 50%" readonly="false"/></p:column>
+                                    <p:column colspan="3">Calle <p:inputText value="#{permisoConstruccionAntiguo.permisoNuevo.calle}" style="width: 70%" readonly="true"/></p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" colspan="17" style="text-align: center">Caracteristicas del Predio</p:column>
+                                </p:row>
+                                <p:row >
+                                    <p:column colspan="2">
+                                        Edificaci&#243;n<br/>
+                                        <p:selectOneMenu  id="lisedif" value="#{permisoConstruccionAntiguo.numEdificacion}"  style="width:100%;">  
+                                            <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}" />                                                        
+                                            <f:selectItem itemLabel="EDIFICACION PRINCIPAL" itemValue="0"/>  
+                                            <f:selectItem itemLabel="ANEXO 1" itemValue="1" />  
+                                            <f:selectItem itemLabel="ANEXO 2" itemValue="2" />  
+                                            <f:selectItem itemLabel="ANEXO 3" itemValue="3" />  
+                                            <f:selectItem itemLabel="ANEXO 4" itemValue="4" />  
+                                            <f:selectItem itemLabel="ANEXO 5" itemValue="5" />                                                         
+                                            <f:selectItem itemLabel="ANEXO 6" itemValue="6" />
+                                            <f:selectItem itemLabel="ANEXO 7" itemValue="7" />
+                                            <f:selectItem itemLabel="ANEXO 8" itemValue="8" />
+                                            <f:selectItem itemLabel="ANEXO 9" itemValue="9" />
+                                            <f:selectItem itemLabel="ANEXO 10" itemValue="10"/>
+                                        </p:selectOneMenu> 
+                                    </p:column>
+
+                                    <p:column colspan="2">
+                                        # Pisos<br/>
+                                        <p:inputText id="pis" value="#{permisoConstruccionAntiguo.nuevDetalleEdif.numeroPisos}" style="width: 80%"  />
+                                    </p:column>
+                                    <p:column colspan="2">
+                                        Descripci&#243;n<br/>
+                                        <p:inputText id="descp" value="#{permisoConstruccionAntiguo.nuevDetalleEdif.descEdificacion}"  style="width: 100%" />
+                                    </p:column>
+                                    <p:column colspan="2">
+                                        Area Construc<br/>
+                                        <pe:inputNumber id="areaConstrucc" value="#{permisoConstruccionAntiguo.nuevDetalleEdif.areaConstruccion}" style="width: 70%" />
+                                    </p:column>
+                                    <p:column colspan="1">
+                                        Acci&#243;n<br/>
+                                        <p:commandButton id="bAgrPro" value="Agregar" actionListener="#{permisoConstruccionAntiguo.agregarEdifi()}" update="lisedif, pis, descp, areaConstrucc, por" style="height: 20px;" styleClass="btnStyle"/>
+                                    </p:column>
+
+                                    <p:column colspan="8" rowspan="4"  > 
+                                        <h:panelGrid columns="4" >
+                                            <p:outputLabel value="Altura"/>
+                                            <pe:inputNumber value="#{permisoConstruccionAntiguo.permisoNuevo.altura}" style="width: 100%;" />
+
+                                            <p:outputLabel value="# Edifi. "/>
+                                            <p:inputText value="#{permisoConstruccionAntiguo.permisoNuevo.cantidadEdificaciones}" style="width: 100%;" type="number"/>
+
+                                            <p:outputLabel value="# Piso B.N.B "/>
+                                            <p:inputText value="#{permisoConstruccionAntiguo.permisoNuevo.pisosBnb}" style="width: 100%;" type="number"/>
+
+                                            <p:outputLabel value="# Piso S.N.B "/> 
+                                            <p:inputText value="#{permisoConstruccionAntiguo.permisoNuevo.pisosSnb}" style="width: 100%;" type="number"/>
+
+                                            <p:outputLabel value="Area. Edif. "/>
+                                            <pe:inputNumber id="ad" value="#{permisoConstruccionAntiguo.permisoNuevo.areaEdificaciones}" style="width: 100%;" readonly="true"/>
+
+                                            <p:outputLabel value="# Parqueo "/>
+                                            <p:inputText value="#{permisoConstruccionAntiguo.permisoNuevo.cantidadParqueos}" style="width: 100%;"/>
+
+                                            <p:outputLabel value="Area.Parqueo "/>
+                                            <pe:inputNumber value="#{permisoConstruccionAntiguo.permisoNuevo.areaParqueos}" style="width: 100% !important" >
+                                                <p:ajax event="change" listener="#{permisoConstruccionAntiguo.calculoAreaConstruccion()}" update="ac"/>
+                                            </pe:inputNumber> 
+
+                                            <p:outputLabel value="Ret. Frontal "/>
+                                            <pe:inputNumber value="#{permisoConstruccionAntiguo.permisoNuevo.retiroFrontal}" style="width: 100%;" />
+
+                                            <p:outputLabel value="Ret. Lateral1 "/>
+                                            <pe:inputNumber id="retLat1" value="#{permisoConstruccionAntiguo.permisoNuevo.retiroLateral1}"  style="width: 100%;" />
+
+                                            <p:outputLabel value="Ret. Lateral2 "/>
+                                            <pe:inputNumber id="retLat2" value="#{permisoConstruccionAntiguo.permisoNuevo.retiroLateral2}"  style="width: 100%;" />
+
+                                            <p:outputLabel value="Ret. Posterior "/>
+                                            <pe:inputNumber value="#{permisoConstruccionAntiguo.permisoNuevo.retiroPosterior}" style="width: 100%;"  />
+                                        </h:panelGrid>
+                                        Descripci&#243;n de la Edificaci&#243;n.<br/>
+                                        <p:inputText value="#{permisoConstruccionAntiguo.permisoNuevo.descFamiliar}" style="width: 100%;"/>
+
+                                    </p:column>
+                                </p:row>
+                                <p:row id="rowDtEdif">
+                                    <p:column colspan="9">
+                                        <p:dataTable id="dtEdif" var="edf" value="#{permisoConstruccionAntiguo.detallesEdific}" selectionMode="single" selection="#{permisoConstruccionAntiguo.permisoSelect}" rowKey="#{edf.descEdificacion}" emptyMessage="No ha ninguna edificaci&#243;n cargada" rowIndexVar="rowIndex" >
+                                            <p:ajax event="rowSelect" listener="#{permisoConstruccionAntiguo.onRowSelect}" /> 
+                                            <!--p:ajax event="rowUnselect" listener="# {permisoConstruccionAntiguo.onRowUnselect}" /-->
+                                            <p:column headerText="Edificaci&#243;n" style="text-align: center;font-weight: bold">
+                                                <p:outputLabel value="#{edf.descEdificacion}"/>
+                                            </p:column>
+                                            <p:column headerText="# Pisos" style="text-align: center;font-weight: bold">
+                                                <p:outputLabel value="#{edf.numeroPisos}"/>
+                                            </p:column>
+                                            <p:column headerText="Descripci&#243;n" style="text-align: center;font-weight: bold">
+                                                <p:outputLabel value="#{edf.descripcion}"/>
+                                            </p:column>
+                                            <p:column headerText="Area Construcc" style="text-align: center;font-weight: bold">
+                                                <p:outputLabel value="#{edf.areaConstruccion}">
+                                                    <f:convertNumber pattern="####,##0.00"/>
+                                                </p:outputLabel>
+                                            </p:column>
+                                            <p:column headerText="Acci&#243;n" style="text-align: center;font-weight: bold;  width: 80px;">
+                                                <p:commandButton value="Borrar" actionListener="#{permisoConstruccionAntiguo.eliminarEdif(edf)}" process="dtEdif" style="height: 20px; float: right; color: #ffffff; background: #616161 !important; font-weight: bold;" />
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:column>
+                                </p:row>
+
+                                <p:row style="border-bottom-color:#ffffff !important;" id="rowCarat">
+                                    <p:column colspan="3">
+                                        Categor&#237;a<br/>
+                                        <p:selectOneMenu  id="lisCartg" value="#{permisoConstruccionAntiguo.categoria}" converter="entityConverter" style="width:100%;" >  
+                                            <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>                                                        
+                                            <f:selectItems value="#{permisoConstruccionAntiguo.listCat}" var="c" itemLabel="#{c.nombre}" itemValue="#{c}" />
+                                            <p:ajax listener="#{permisoConstruccionAntiguo.actulizarLista()}" update="frmMain:tdatos:lisCaract"/>
+                                        </p:selectOneMenu> 
+                                    </p:column>
+
+                                    <p:column colspan="3" >
+                                        Caracter&#237;tica<br/>
+                                        <p:selectOneMenu id="lisCaract" value="#{permisoConstruccionAntiguo.carateristicas}" converter="entityConverter" style="width:100%;">  
+                                            <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}" />                                                        
+                                            <f:selectItems value="#{permisoConstruccionAntiguo.lisCatEdfProp}" var="ct" itemLabel="#{ct.nombre}" itemValue="#{ct}" />
+                                        </p:selectOneMenu> 
+                                    </p:column>
+
+                                    <p:column colspan="2" >
+                                        Porcentaje<br/>
+                                        <pe:inputNumber id="por" value="#{permisoConstruccionAntiguo.detallePermiso.porcentaje}"  style="width: 100%" readonly="true" />
+                                    </p:column>
+
+                                    <p:column colspan="1">
+                                        Acci&#243;n<br/>
+                                        <p:commandButton value="Agregar" actionListener="#{permisoConstruccionAntiguo.agregarDetalleEdif()}"  style="height: 20px;" styleClass="btnStyle"/>
+                                    </p:column>
+
+                                </p:row>
+                                <p:row id="rowEspEdfi">
+                                    <p:column colspan="9">
+                                        <p:dataTable id="dtCartEdif" value="#{permisoConstruccionAntiguo.permisoSelect.peDetallePermisoCollection}" var="dtp" style="width: 100%" emptyMessage="No ha cargado documento alguno">
+                                            <p:column headerText="Edificacion" style="text-align: center;" >
+                                                <h:outputText value="#{dtp.idPermisoEdificacion.descEdificacion}"/>  
+                                            </p:column>
+                                            <p:column headerText="Categor&#237;a" style="text-align: center;font-weight: bold">
+                                                <p:outputLabel value="#{dtp.idCatEdfProp.categoria.nombre}"/>
+                                            </p:column>
+                                            <p:column headerText="Caracter&#237;ticas" style="text-align: center;font-weight: bold">
+                                                <p:outputLabel value="#{dtp.idCatEdfProp.nombre}"/>
+                                            </p:column>
+                                            <p:column headerText="Porcentaje" style="text-align: center;font-weight: bold; width: 80px;">
+                                                <p:outputLabel value="#{dtp.porcentaje}" >
+                                                    <f:convertNumber pattern="####,##0.00"/>
+                                                </p:outputLabel>
+                                            </p:column>
+                                            <p:column headerText="Opci&#243;n" style="text-align: center;font-weight: bold; width: 80px;">
+                                                <p:commandButton value="Borrar" process="dtCartEdif" actionListener="#{permisoConstruccionAntiguo.eliminarDetalleEdif(dtp)}" update="frmMain:tdatos:dtCartEdif" style="height: 20px; float: right; color: #ffffff; background: #616161 !important; font-weight: bold;" />
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:column>
+                                </p:row>
+
+                                <p:row styleClass="ui-widget-header">
+                                    <p:column colspan="3" style="text-align: center">Retiro Frontal</p:column> 
+                                    <p:column colspan="4" style="text-align: center">Retiro Lateral 1</p:column> 
+                                    <p:column colspan="4" style="text-align: center">Retiro Lateral 2 </p:column> 
+                                    <p:column colspan="3" style="text-align: center">Retiro Posterior</p:column> 
+                                    <p:column colspan="3" style="text-align: center">Registro Vista </p:column> 
+                                </p:row>
+                                <p:row >
+                                    <p:column colspan="3">Carta/Ados 
+                                        <h:selectOneRadio styleClass="noBorder" id="carados1" value="#{permisoConstruccionAntiguo.permisoNuevo.caradosrf}" style="font-family: Arial;font-weight:lighter;font-size: 12px; width: 150px" >                                             
+                                            <f:selectItem itemLabel="S" itemValue="S" />  
+                                            <f:selectItem itemLabel="N" itemValue="N"  />  
+                                        </h:selectOneRadio>
+                                    </p:column> 
+                                    <p:column colspan="4">Carta/Ados 
+                                        <h:selectOneRadio styleClass="noBorder" id="carados2" value="#{permisoConstruccionAntiguo.permisoNuevo.caradosrl1}" style="font-family: Arial;font-weight:lighter;font-size: 12px; width: 150px"  >                                             
+                                            <f:selectItem itemLabel="S" itemValue="S" />  
+                                            <f:selectItem itemLabel="N" itemValue="N"  />  
+                                        </h:selectOneRadio>
+                                    </p:column> 
+                                    <p:column colspan="4">Carta/Ados 
+                                        <h:selectOneRadio styleClass="noBorder" id="carados3" value="#{permisoConstruccionAntiguo.permisoNuevo.caradosrl2}" style="font-family: Arial;font-weight:lighter;font-size: 12px; width: 150px" >                                             
+                                            <f:selectItem itemLabel="S" itemValue="S" />  
+                                            <f:selectItem itemLabel="N" itemValue="N"  />  
+                                        </h:selectOneRadio>
+                                    </p:column>  
+                                    <p:column colspan="3">Carta/Ados 
+                                        <h:selectOneRadio styleClass="noBorder" id="carados4" value="#{permisoConstruccionAntiguo.permisoNuevo.caradosrp}" style="font-family: Arial;font-weight:lighter;font-size: 12px; width: 150px" >                                             
+                                            <f:selectItem itemLabel="S" itemValue="S" />  
+                                            <f:selectItem itemLabel="N" itemValue="N"  />  
+                                        </h:selectOneRadio>
+                                    </p:column> 
+                                    <p:column colspan="3">Registro Vista 
+                                        <h:selectOneRadio styleClass="noBorder" id="carados5" value="#{permisoConstruccionAntiguo.permisoNuevo.registroVista}" style="font-family: Arial;font-weight:lighter;font-size: 12px; width: 150px" onkeyup="siguiente(this, event);" >                                             
+                                            <f:selectItem itemLabel="S" itemValue="S" />  
+                                            <f:selectItem itemLabel="N" itemValue="N"  />  
+                                        </h:selectOneRadio>
+                                    </p:column> 
+                                </p:row>
+                                <p:row >
+                                    <p:column colspan="3">Carta/Acer 
+                                        <h:selectOneRadio styleClass="noBorder" id="carAcer1" value="#{permisoConstruccionAntiguo.permisoNuevo.caracerrf}" style="font-family: Arial;font-weight:lighter;font-size: 12px; width: 150px" onkeyup="siguiente(this, event);" >                                             
+                                            <f:selectItem itemLabel="S" itemValue="S" />  
+                                            <f:selectItem itemLabel="N" itemValue="N"  />  
+                                        </h:selectOneRadio>
+                                    </p:column> 
+                                    <p:column colspan="4">Carta/Acer 
+                                        <h:selectOneRadio styleClass="noBorder" id="carAcer2" value="#{permisoConstruccionAntiguo.permisoNuevo.caracerrl1}" style="font-family: Arial;font-weight:lighter;font-size: 12px; width: 150px" onkeyup="siguiente(this, event);" >                                             
+                                            <f:selectItem itemLabel="S" itemValue="S" />  
+                                            <f:selectItem itemLabel="N" itemValue="N"  />  
+                                        </h:selectOneRadio>
+                                    </p:column> 
+                                    <p:column colspan="4">Carta/Acer 
+                                        <h:selectOneRadio styleClass="noBorder" id="carAcer3" value="#{permisoConstruccionAntiguo.permisoNuevo.caracerrl2}" style="font-family: Arial;font-weight:lighter;font-size: 12px; width: 150px" onkeyup="siguiente(this, event);" >                                             
+                                            <f:selectItem itemLabel="S" itemValue="S" />  
+                                            <f:selectItem itemLabel="N" itemValue="N"  />  
+                                        </h:selectOneRadio>
+                                    </p:column>  
+                                    <p:column colspan="3">Carta/Acer 
+                                        <h:selectOneRadio styleClass="noBorder" id="carAcer4" value="#{permisoConstruccionAntiguo.permisoNuevo.caracerrp}" style="font-family: Arial;font-weight:lighter;font-size: 12px; width: 150px" onkeyup="siguiente(this, event);" >                                             
+                                            <f:selectItem itemLabel="S" itemValue="S" />  
+                                            <f:selectItem itemLabel="N" itemValue="N"  />  
+                                        </h:selectOneRadio>
+                                    </p:column> 
+                                    <p:column colspan="3">Predio es Macro Lote
+                                        <h:selectOneRadio styleClass="noBorder" id="esMacroLt" value="#{permisoConstruccionAntiguo.permisoNuevo.esMacroLote}" style="font-family: Arial;font-weight:lighter;font-size: 12px; width: 150px" onkeyup="siguiente(this, event);" >                                             
+                                            <f:selectItem itemLabel="S" itemValue="#{true}" />  
+                                            <f:selectItem itemLabel="N" itemValue="#{false}"  />  
+                                        </h:selectOneRadio>
+                                    </p:column> 
+                                </p:row>
+
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" colspan="17" style="text-align: center">Materiales de Construcci&#243;n </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="3">Area/Construcci&#243;n<br/>
+                                        <pe:inputNumber id="ac" value="#{permisoConstruccionAntiguo.permisoNuevo.areaConstruccion}" readonly="true" />
+                                    </p:column> 
+                                    <p:column colspan="3">Area/Implantaci&#243;n<br/>
+                                        <pe:inputNumber value="#{permisoConstruccionAntiguo.permisoNuevo.areaImplantacion}"/>
+                                    </p:column> 
+                                    <p:column colspan="3">Area/Solar<br/>
+                                        <pe:inputNumber value="#{permisoConstruccionAntiguo.permisoNuevo.areaSolar}" />
+                                    </p:column>  
+                                    <p:column colspan="3">Linea/Fabrica<br/>
+                                        <pe:inputNumber value="#{permisoConstruccionAntiguo.permisoNuevo.lineaFabrica}"/>
+                                    </p:column> 
+                                    <p:column colspan="5">Observaci&#243;n<br/>
+                                        <p:inputTextarea value="#{permisoConstruccionAntiguo.permisoNuevo.observacion}" style="width: 80%" placeholder="Ingrese solamente de ser necesaria la observación en el Permiso."/>
+                                    </p:column> 
+                                </p:row>
+                                <p:row>
+                                    
+                                    <p:column colspan="15">
+                                        <center>
+                                            <p:commandButton value="Imprimir tasa" actionListener="#{permisoConstruccionAntiguo.validar()}" styleClass="btnStyle" icon="ui-icon-disk" />
+                                            <p:commandButton value="Bandeja de tareas" styleClass="btnStyle" actionListener="#{permisoConstruccionAntiguo.continuar()}"/>
+                                        </center>
+                                    </p:column>
+                                    
+                                </p:row>
+                            </p:panelGrid>
+                            
+                        </center>
+                    </p:tab>
+                    
+                    <!-- -->
+                    
+                    <p:tab title="Trámite no encontrado" rendered="#{permisoConstruccionAntiguo.ht == null}">
+                        <center>
+                            <p:commandButton value="Ir a la bandeja de tareas" actionListener="#{permisoConstruccionAntiguo.continuar()}" styleClass="btnStyle"/>
+                        </center>
+                    </p:tab>
+                    
+                    <!-- -->
+
+                    <p:tab id="tadicionales" title="Adicionales">
+                        <p:tabView id="tadic">
+                            <p:tab id="tdocs" title="Observaciones">
+                                <p:dataTable id="dtobs" value="#{permisoConstruccionAntiguo.ht.observacionesCollection}" var="obs" reflow="true" style="width: 100%">
+                                    <f:facet name="header">Observaciones</f:facet>
+                                    <p:column headerText="Descripcion" style="width: 40%">
+                                        #{obs.observacion}
+                                    </p:column>
+                                    <p:column headerText="tarea" style="width: 25%">
+                                        #{obs.tarea}
+                                    </p:column>
+                                    <p:column headerText="Responsable" style="width: 20%">
+                                        #{obs.userCre}
+                                    </p:column>
+                                    <p:column headerText="Fecha" style="width: 15%">
+                                        #{obs.fecCre}
+                                    </p:column>
+                                </p:dataTable>
+                            </p:tab>
+                            <p:tab id="tobs" title="Documentos">
+                                <dialog:detalleArchivosAct archivos="#{permisoConstruccionAntiguo.processInstanceAttachmentsFiles}" />
+                            </p:tab>
+                        </p:tabView>
+                    </p:tab>
+                </p:tabView>
+            </p:panel>
+        </h:form>
+        
+        <p:dialog id="dlgObs" widgetVar="dlgObs"  header="Observaciones" appendTo="@(body)" modal="true" width="500" resizable="false" closable="true" closeOnEscape="true">
+            <h:form id="frmObs">
+                <p:panel id="pobs" header="Ingrese sus observaciones" style="width: 100%" >
+                    <div align="center">
+                        <p:inputTextarea id="obsservacion" value="#{permisoConstruccionAntiguo.obs.observacion}" rows="4" style="width: 100%; text-transform: uppercase" required="true" placeholder="Las observaciones son obligatorias para continuar con el tramite"/>
+                        <br/>
+                        <p:commandButton id="btnValidar" actionListener="#{permisoConstruccionAntiguo.guardarPermiso()}" oncomplete="PF('dlgObs').hide()" value="Terminar Tarea"  style="color: #ffffff; background: #616161 !important; font-weight: bold; height: 30px"/>
+                    </div>
+                </p:panel>
+            </h:form>
+        </p:dialog>
+        
+        <!-- -->
+        
+        <p:dialog header="Ingreso de Informaci&#243;n Responsable Tecnico" id="nuevoDlgResp" widgetVar="dlgNuevRespTec" modal="true" height="300" width="500" >
+            <h:form id="formIngResp">
+                <p:panelGrid id="datosRespTec" layout="grid" columns="2">
+                    No. C&#233;dula 
+                    <p:inputMask mask="9999999999" value="#{permisoConstruccionAntiguo.respTecNuevo.ciRuc}"/>
+                    Nombres 
+                    <p:inputText value="#{permisoConstruccionAntiguo.respTecNuevo.nombres}"/>
+                    Apellidos 
+                    <p:inputText value="#{permisoConstruccionAntiguo.respTecNuevo.apellidos}"/>
+                    Titulo Profesional 
+                    <p:inputText value="#{permisoConstruccionAntiguo.respTecNuevo.tituloProf}"/>
+                    Registro Profesional 
+                    <p:inputText value="#{permisoConstruccionAntiguo.respTecNuevo.regProf}"/>
+                </p:panelGrid>
+                <br/>
+                <p:commandButton value="Aceptar" actionListener="#{permisoConstruccionAntiguo.guardarResTecn()}" styleClass="btnStyle" process="formIngResp" style="float: right"/>
+            </h:form>        
+        </p:dialog>
+        
+        <!-- -->
+        
+        <p:dialog header="Editar Informaci&#243;n Responsable Tecnico" id="editDlgResp" widgetVar="dlgEditRespTec" modal="true" height="300" width="500" >
+            <h:form id="formEditResp">
+                <p:panelGrid id="editRespTec" layout="grid" columns="2">
+                    No. C&#233;dula 
+                    <p:inputMask mask="9999999999" value="#{permisoConstruccionAntiguo.respTec.ciRuc}" readonly="true"/>
+                    Nombres 
+                    <p:inputText value="#{permisoConstruccionAntiguo.respTec.nombres}"/>
+                    Apellidos 
+                    <p:inputText value="#{permisoConstruccionAntiguo.respTec.apellidos}"/>
+                    Titulo Profesional 
+                    <p:inputText value="#{permisoConstruccionAntiguo.respTec.tituloProf}"/>
+                    Registro Profesional 
+                    <p:inputText value="#{permisoConstruccionAntiguo.respTec.regProf}"/>
+                </p:panelGrid>
+                <br/>
+                <p:commandButton value="Aceptar" actionListener="#{permisoConstruccionAntiguo.editarResTecn()}" process="formEditResp" style="float: right" styleClass="btnStyle"/>
+            </h:form>    
+        </p:dialog>
+        
+        <p:dialog header="Seleccione Predio" widgetVar="selPredio" modal="true" resizable="false" width="85%" height="80%">
+            <h:form id="formPredSel">
+                <center>
+                    <p:selectOneRadio id="optconsult" value="#{permisoConstruccionAntiguo.codUrban}" layout="custom">
+                        <f:selectItem itemLabel="Código Urbanistico" itemValue="#{true}" />
+                        <f:selectItem itemLabel="Código Predial" itemValue="#{false}" />
+                        <p:ajax update="formPredSel" event="change"/>
+                    </p:selectOneRadio>
+                    <h:panelGrid columns="4" style="margin: 0 auto">
+                        <p:radioButton id="opt1" for="optconsult" itemIndex="0"/>
+                        <h:outputLabel for="opt1" value="Código Urbanistico" />
+                        <p:radioButton id="opt2" for="optconsult" itemIndex="1"/>
+                        <h:outputLabel for="opt2" value="Código Predial" />
+                    </h:panelGrid>
+                </center>
+                <p:dataTable id="dtSelPred" paginator="true" lazy="true" style="text-align: center; font-size: 11px;" scrollHeight="400" scrollable="true"
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rows="15" rowsPerPageTemplate="15,50,100" value="#{permisoConstruccionAntiguo.predioLazy}" var="pl"
+                             emptyMessage="No se encontró Movimientos" filterEvent="enter">
+                    <p:column headerText="No.Predio" filterBy="#{pl.numPredio}" sortBy="#{pl.numPredio}" filterStyle="width: 40px" style="width: 100px;">
+                        <p:outputLabel value="#{pl.numPredio}"/>
+                    </p:column>
+                    <p:column headerText="Sector" rendered="#{!permisoConstruccionAntiguo.codUrban}" filterBy="#{pl.sector}" sortBy="#{pl.sector}" filterStyle="width: 30px" style="width: 80px;">
+                        <p:outputLabel value="#{pl.sector}"/>
+                    </p:column>
+                    <p:column headerText="Mz." rendered="#{!permisoConstruccionAntiguo.codUrban}" filterBy="#{pl.mz}" sortBy="#{pl.mz}" filterStyle="width: 30px" style="width: 60px;">
+                        <p:outputLabel value="#{pl.mz}"/>
+                    </p:column>
+                    <p:column headerText="Cdla." rendered="#{!permisoConstruccionAntiguo.codUrban}" filterBy="#{pl.cdla}" sortBy="#{pl.cdla}" filterStyle="width: 30px" style="width: 70px;">
+                        <p:outputLabel value="#{pl.cdla}"/>
+                    </p:column>
+                    <p:column headerText="Mz. Div." rendered="#{!permisoConstruccionAntiguo.codUrban}" filterBy="#{pl.mzdiv}" sortBy="#{pl.mzdiv}" filterStyle="width: 30px" style="width: 80px;">
+                        <p:outputLabel value="#{pl.mzdiv}"/>
+                    </p:column>
+                    <p:column headerText="Solar" rendered="#{!permisoConstruccionAntiguo.codUrban}" filterBy="#{pl.solar}" sortBy="#{pl.solar}" filterStyle="width: 30px" style="width: 70px;">
+                        <p:outputLabel value="#{pl.solar}"/>
+                    </p:column>
+                    <p:column headerText="Div. 1" rendered="#{!permisoConstruccionAntiguo.codUrban}" filterBy="#{pl.div1}" sortBy="#{pl.div1}" filterStyle="width: 30px" style="width: 130px;">
+                        <p:outputLabel value="#{pl.div1},#{pl.div2},#{pl.div3},#{pl.div4},#{pl.div5},#{pl.div6},#{pl.div7},#{pl.div8},#{pl.div9},#{pl.phv},#{pl.phh}"/>
+                    </p:column>
+                    <p:column style="width: 260px;" headerText="Urbanización" filterBy="#{pl.ciudadela.nombre}" rendered="#{permisoConstruccionAntiguo.codUrban}" filterOptions="#{fichaIngresoNuevo.lisUrbanizaciones}" filterMatchMode="exact" >
+                        <p:outputLabel value="#{pl.ciudadela.nombre}"/>
+                    </p:column>
+                    <p:column style="width: 70px;" headerText="Mz.Urb." rendered="#{permisoConstruccionAntiguo.codUrban}" filterBy="#{pl.urbMz}" sortBy="#{pl.urbMz}" filterStyle="width: 40px">
+                        <p:outputLabel value="#{pl.urbMz}"/>
+                    </p:column>
+                    <p:column style="width: 80px;" headerText="Sl. Urb" rendered="#{permisoConstruccionAntiguo.codUrban}" filterBy="#{pl.urbSolarnew}" sortBy="#{pl.urbSolarnew}" filterStyle="width: 40px">
+                        <p:outputLabel value="#{pl.urbSolarnew}"/>
+                    </p:column>
+                    <p:column headerText="Nombre Propietario" filterStyle="width: 300px">
+                        <p:outputLabel value="#{pl.getNombrePropietarios()}"/>
+                    </p:column>
+                    <p:column headerText="Dirección" rendered="#{!permisoConstruccionAntiguo.codUrban}" style="width: 80px;" >
+                        <p:outputLabel value="Mz. #{pl.urbMz} Sl. #{pl.urbSolarnew}"/>
+                    </p:column>
+                    <p:column headerText="Seleccionar" style="width: 75px;" >
+                        <p:commandButton  icon="ui-icon-circle-check" actionListener="#{permisoConstruccionAntiguo.setPredio(pl)}" style="color: #ffffff; background: #616161 !important; font-weight: bold; height: 15px;" oncomplete="PF('selPredio').hide()" update="frmMain"/>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </p:dialog>
+        
+    </ui:define>
+</ui:composition>

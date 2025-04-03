@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <collaboration id="Collaboration">
+    <participant id="divisionPredioPool" name="Division Predio" processRef="divisionPredio"></participant>
+  </collaboration>
+  <process id="divisionPredio" name="Division Predio" isExecutable="true">
+    <laneSet id="laneSet_divisionPredio">
+      <lane id="lane2" name="Director">
+        <flowNodeRef>revisionLiquidacionDP</flowNodeRef>
+        <flowNodeRef>exclusivegateway2</flowNodeRef>
+        <flowNodeRef>subirdocumentosAlfresco</flowNodeRef>
+        <flowNodeRef>startevent1</flowNodeRef>
+        <flowNodeRef>edicionLiquidacionDP</flowNodeRef>
+        <flowNodeRef>edicionLiquidacionDP</flowNodeRef>
+        <flowNodeRef>edicionLiquidacionDP</flowNodeRef>
+      </lane>
+      <lane id="lane3" name="Técnico">
+        <flowNodeRef>subirpdfliquidacionDP</flowNodeRef>
+        <flowNodeRef>servicetask3</flowNodeRef>
+        <flowNodeRef>cargarInformeTecnicoDP</flowNodeRef>
+        <flowNodeRef>cargarInformeLiquidacionDP</flowNodeRef>
+        <flowNodeRef>liquidacionDP</flowNodeRef>
+        <flowNodeRef>servicetask4</flowNodeRef>
+      </lane>
+      <lane id="lane4" name="Renta">
+        <flowNodeRef>exclusivegateway3</flowNodeRef>
+        <flowNodeRef>callRentas</flowNodeRef>
+      </lane>
+      <lane id="lane6" name="Director Jurídico">
+        <flowNodeRef>callJuridico</flowNodeRef>
+      </lane>
+      <lane id="lane7" name="Técnico Jurídico">
+        <flowNodeRef>exclusivegateway4</flowNodeRef>
+        <flowNodeRef>endevent2</flowNodeRef>
+      </lane>
+      <lane id="lane8" name="Técnico Secretaría General">
+        <flowNodeRef>redactarResolucionConsejoDP</flowNodeRef>
+        <flowNodeRef>subirResolucionConsejoDP</flowNodeRef>
+        <flowNodeRef>endevent1</flowNodeRef>
+        <flowNodeRef>asignacionTecnicoSecretariaGeneralDP</flowNodeRef>
+        <flowNodeRef>callactivity1</flowNodeRef>
+        <flowNodeRef>exclusivegateway5</flowNodeRef>
+      </lane>
+    </laneSet>
+    <userTask id="liquidacionDP" name="Generar Tasa de Liquidación" activiti:assignee="${tecnico}" activiti:formKey="/vistaprocesos/edificaciones/divisionPredio/generarTasaLiquidacionDP.xhtml" activiti:priority="${prioridad}">
+      <documentation>División Predio</documentation>
+    </userTask>
+    <serviceTask id="subirpdfliquidacionDP" name="Subir Pdf Liquidación" activiti:async="true" activiti:expression="${subirDocumentos.execute(execution)}">
+      <documentation>División Predio</documentation>
+    </serviceTask>
+    <userTask id="revisionLiquidacionDP" name="Revisión Tasa de Liquidación" activiti:assignee="${director}" activiti:formKey="/faces/vistaprocesos/edificaciones/revisionTramDir.xhtml" activiti:priority="${prioridad}">
+      <documentation>División Predio</documentation>
+    </userTask>
+    <exclusiveGateway id="exclusivegateway2" name="Exclusive Gateway"></exclusiveGateway>
+    <sequenceFlow id="flow17" sourceRef="revisionLiquidacionDP" targetRef="exclusivegateway2"></sequenceFlow>
+    <serviceTask id="servicetask3" name="Mail Revisión Director" activiti:async="true" activiti:expression="${messenger.execute(execution)}">
+      <documentation>División Predio</documentation>
+    </serviceTask>
+    <sequenceFlow id="flow20" sourceRef="subirpdfliquidacionDP" targetRef="servicetask3"></sequenceFlow>
+    <userTask id="cargarInformeLiquidacionDP" name="Cargar Informe Tasa Liquidación" activiti:assignee="${tecnico}" activiti:formKey="/vistaprocesos/edificaciones/cargarDocumentoGeneral.xhtml" activiti:priority="${prioridad}">
+      <documentation>División Predio</documentation>
+    </userTask>
+    <serviceTask id="cargarInformeTecnicoDP" name="Subir Informe" activiti:async="true" activiti:expression="${subirDocumentos.execute(execution)}">
+      <documentation>División Predio</documentation>
+    </serviceTask>
+    <userTask id="redactarResolucionConsejoDP" name="Resolución" activiti:assignee="${tecnico}" activiti:formKey="/vistaprocesos/edificaciones/divisionPredio/cargarResolucion.xhtml" activiti:priority="${prioridad}">
+      <documentation>División Predio</documentation>
+    </userTask>
+    <serviceTask id="subirResolucionConsejoDP" name="Subir Documento Resolución del Consejo" activiti:async="true" activiti:expression="${subirDocumentos.execute(execution)}">
+      <documentation>División Predio</documentation>
+    </serviceTask>
+    <sequenceFlow id="flow39" sourceRef="redactarResolucionConsejoDP" targetRef="subirResolucionConsejoDP"></sequenceFlow>
+    <sequenceFlow id="flow43" sourceRef="servicetask3" targetRef="revisionLiquidacionDP"></sequenceFlow>
+    <sequenceFlow id="flow70" sourceRef="liquidacionDP" targetRef="subirpdfliquidacionDP"></sequenceFlow>
+    <sequenceFlow id="flow78" sourceRef="cargarInformeLiquidacionDP" targetRef="cargarInformeTecnicoDP"></sequenceFlow>
+    <callActivity id="callRentas" name="Rentas" calledElement="rentas">
+      <documentation>División de Predios</documentation>
+      <extensionElements>
+        <activiti:in source="tramite" target="tramite"></activiti:in>
+        <activiti:in source="renta" target="renta"></activiti:in>
+        <activiti:in source="aprobado" target="aprobado"></activiti:in>
+        <activiti:in source="taskdef" target="taskdef"></activiti:in>
+        <activiti:in source="prioridad" target="prioridad"></activiti:in>
+        <activiti:in source="descripcion" target="descripcion"></activiti:in>
+        <activiti:in source="listaArchivosFinal" target="listaArchivosFinal"></activiti:in>
+        <activiti:in source="listaArchivos" target="listaArchivos"></activiti:in>
+        <activiti:out source="aprobado" target="aprobado"></activiti:out>
+      </extensionElements>
+    </callActivity>
+    <sequenceFlow id="flow79" sourceRef="exclusivegateway2" targetRef="callRentas">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${estatus==1}]]></conditionExpression>
+    </sequenceFlow>
+    <exclusiveGateway id="exclusivegateway3" name="Exclusive Gateway"></exclusiveGateway>
+    <sequenceFlow id="flow80" sourceRef="callRentas" targetRef="exclusivegateway3"></sequenceFlow>
+    <sequenceFlow id="flow82" sourceRef="exclusivegateway3" targetRef="revisionLiquidacionDP">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${aprobado==false}]]></conditionExpression>
+    </sequenceFlow>
+    <serviceTask id="subirdocumentosAlfresco" name="Cargar Documentos Alfresco" activiti:async="true" activiti:expression="${subirDocumentosCarpeta.execute(execution)}">
+      <documentation>División Predio</documentation>
+    </serviceTask>
+    <sequenceFlow id="flow77" sourceRef="subirdocumentosAlfresco" targetRef="liquidacionDP"></sequenceFlow>
+    <startEvent id="startevent1" name="Start" activiti:formKey="http://localhost:8084/sgm/faces/vistaprocesos/divisionPredio/iniciarTramite.xhtml"></startEvent>
+    <sequenceFlow id="flow76" sourceRef="startevent1" targetRef="subirdocumentosAlfresco"></sequenceFlow>
+    <sequenceFlow id="flow89" sourceRef="exclusivegateway3" targetRef="cargarInformeLiquidacionDP">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${aprobado==true}]]></conditionExpression>
+    </sequenceFlow>
+    <endEvent id="endevent1" name="End"></endEvent>
+    <userTask id="asignacionTecnicoSecretariaGeneralDP" name="Asignación Técnico" activiti:assignee="${secretariaGeneral}" activiti:formKey="/vistaprocesos/edificaciones/asignarTecnicoRolDir.xhtml" activiti:priority="${prioridad}">
+      <documentation>División Predio</documentation>
+    </userTask>
+    <sequenceFlow id="flow93" sourceRef="asignacionTecnicoSecretariaGeneralDP" targetRef="redactarResolucionConsejoDP"></sequenceFlow>
+    <callActivity id="callJuridico" name="Juridico" calledElement="juridico">
+      <documentation>División Predio</documentation>
+      <extensionElements>
+        <activiti:in source="directorJuridico" target="directorJuridico"></activiti:in>
+        <activiti:in source="tramite" target="tramite"></activiti:in>
+        <activiti:in source="prioridad" target="prioridad"></activiti:in>
+        <activiti:in source="descripcion" target="descripcion"></activiti:in>
+        <activiti:in source="carpeta" target="carpeta"></activiti:in>
+        <activiti:in source="listaArchivosFinal" target="listaArchivosFinal"></activiti:in>
+        <activiti:in source="listaArchivos" target="listaArchivos"></activiti:in>
+        <activiti:out source="aprobado" target="aprobado"></activiti:out>
+      </extensionElements>
+    </callActivity>
+    <sequenceFlow id="flow94" sourceRef="cargarInformeTecnicoDP" targetRef="callJuridico"></sequenceFlow>
+    <exclusiveGateway id="exclusivegateway4" name="Exclusive Gateway"></exclusiveGateway>
+    <sequenceFlow id="flow95" sourceRef="exclusivegateway4" targetRef="asignacionTecnicoSecretariaGeneralDP">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${aprobado==true}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow97" sourceRef="callJuridico" targetRef="exclusivegateway4"></sequenceFlow>
+    <userTask id="edicionLiquidacionDP" name="Editar Tasa de Liquidación" activiti:assignee="${tecnico}" activiti:formKey="/vistaprocesos/edificaciones/divisionPredio/generarTasaLiquidacionDP.xhtml" activiti:priority="${prioridad}">
+      <documentation>División Predio</documentation>
+    </userTask>
+    <sequenceFlow id="flow71" sourceRef="edicionLiquidacionDP" targetRef="subirpdfliquidacionDP"></sequenceFlow>
+    <serviceTask id="servicetask4" name="Mail Tasa rechazada" activiti:async="true" activiti:expression="${messenger.execute(execution)}"></serviceTask>
+    <sequenceFlow id="flow98" sourceRef="exclusivegateway2" targetRef="servicetask4">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${estatus==2}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow99" sourceRef="servicetask4" targetRef="edicionLiquidacionDP"></sequenceFlow>
+    <callActivity id="callactivity1" name="Catastro" calledElement="catastro">
+      <extensionElements>
+        <activiti:in source="tramite" target="tramite"></activiti:in>
+        <activiti:in source="descripcion" target="descripcion"></activiti:in>
+        <activiti:in source="prioridad" target="prioridad"></activiti:in>
+        <activiti:in source="directorCatastro" target="directorCatastro"></activiti:in>
+        <activiti:in source="urlTec" target="urlTec"></activiti:in>
+        <activiti:in source="carpeta" target="carpeta"></activiti:in>
+        <activiti:in source="listaArchivos" target="listaArchivos"></activiti:in>
+        <activiti:in source="listaArchivosFinal" target="listaArchivosFinal"></activiti:in>
+        <activiti:out source="aprobado" target="aprobado"></activiti:out>
+      </extensionElements>
+    </callActivity>
+    <sequenceFlow id="flow100" sourceRef="subirResolucionConsejoDP" targetRef="callactivity1"></sequenceFlow>
+    <exclusiveGateway id="exclusivegateway5" name="Exclusive Gateway"></exclusiveGateway>
+    <sequenceFlow id="flow101" sourceRef="callactivity1" targetRef="exclusivegateway5"></sequenceFlow>
+    <sequenceFlow id="flow102" sourceRef="exclusivegateway5" targetRef="endevent1">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${aprobado==true}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow103" sourceRef="exclusivegateway5" targetRef="revisionLiquidacionDP">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${aprobado==false}]]></conditionExpression>
+    </sequenceFlow>
+    <endEvent id="endevent2" name="End"></endEvent>
+    <sequenceFlow id="flow104" sourceRef="exclusivegateway4" targetRef="endevent2">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${aprobado==false}]]></conditionExpression>
+    </sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_Collaboration">
+    <bpmndi:BPMNPlane bpmnElement="Collaboration" id="BPMNPlane_Collaboration">
+      <bpmndi:BPMNShape bpmnElement="divisionPredioPool" id="BPMNShape_divisionPredioPool">
+        <omgdc:Bounds height="3066.0" width="1011.0" x="10.0" y="20.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lane2" id="BPMNShape_lane2">
+        <omgdc:Bounds height="631.0" width="991.0" x="30.0" y="19.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lane3" id="BPMNShape_lane3">
+        <omgdc:Bounds height="831.0" width="991.0" x="30.0" y="649.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lane4" id="BPMNShape_lane4">
+        <omgdc:Bounds height="289.0" width="991.0" x="30.0" y="1479.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lane6" id="BPMNShape_lane6">
+        <omgdc:Bounds height="219.0" width="991.0" x="30.0" y="1766.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lane7" id="BPMNShape_lane7">
+        <omgdc:Bounds height="452.0" width="991.0" x="30.0" y="1984.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lane8" id="BPMNShape_lane8">
+        <omgdc:Bounds height="235.0" width="991.0" x="30.0" y="2435.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="liquidacionDP" id="BPMNShape_liquidacionDP">
+        <omgdc:Bounds height="65.0" width="125.0" x="820.0" y="957.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="subirpdfliquidacionDP" id="BPMNShape_subirpdfliquidacionDP">
+        <omgdc:Bounds height="68.0" width="141.0" x="290.0" y="956.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="revisionLiquidacionDP" id="BPMNShape_revisionLiquidacionDP">
+        <omgdc:Bounds height="65.0" width="121.0" x="300.0" y="479.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway2" id="BPMNShape_exclusivegateway2">
+        <omgdc:Bounds height="40.0" width="40.0" x="340.0" y="369.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="servicetask3" id="BPMNShape_servicetask3">
+        <omgdc:Bounds height="71.0" width="141.0" x="290.0" y="779.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="cargarInformeLiquidacionDP" id="BPMNShape_cargarInformeLiquidacionDP">
+        <omgdc:Bounds height="78.0" width="122.0" x="220.0" y="1226.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="cargarInformeTecnicoDP" id="BPMNShape_cargarInformeTecnicoDP">
+        <omgdc:Bounds height="68.0" width="141.0" x="440.0" y="1231.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="redactarResolucionConsejoDP" id="BPMNShape_redactarResolucionConsejoDP">
+        <omgdc:Bounds height="71.0" width="105.0" x="580.0" y="2495.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="subirResolucionConsejoDP" id="BPMNShape_subirResolucionConsejoDP">
+        <omgdc:Bounds height="86.0" width="135.0" x="380.0" y="2488.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="callRentas" id="BPMNShape_callRentas">
+        <omgdc:Bounds height="91.0" width="201.0" x="180.0" y="1580.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway3" id="BPMNShape_exclusivegateway3">
+        <omgdc:Bounds height="40.0" width="40.0" x="430.0" y="1610.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="subirdocumentosAlfresco" id="BPMNShape_subirdocumentosAlfresco">
+        <omgdc:Bounds height="65.0" width="135.0" x="610.0" y="550.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="750.0" y="440.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="100.0" y="2513.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="asignacionTecnicoSecretariaGeneralDP" id="BPMNShape_asignacionTecnicoSecretariaGeneralDP">
+        <omgdc:Bounds height="65.0" width="121.0" x="780.0" y="2498.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="callJuridico" id="BPMNShape_callJuridico">
+        <omgdc:Bounds height="85.0" width="141.0" x="220.0" y="1840.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway4" id="BPMNShape_exclusivegateway4">
+        <omgdc:Bounds height="40.0" width="40.0" x="270.0" y="2190.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="edicionLiquidacionDP" id="BPMNShape_edicionLiquidacionDP">
+        <omgdc:Bounds height="65.0" width="115.0" x="140.0" y="892.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="servicetask4" id="BPMNShape_servicetask4">
+        <omgdc:Bounds height="75.0" width="116.0" x="140.0" y="730.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="callactivity1" id="BPMNShape_callactivity1">
+        <omgdc:Bounds height="55.0" width="105.0" x="240.0" y="2503.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway5" id="BPMNShape_exclusivegateway5">
+        <omgdc:Bounds height="40.0" width="40.0" x="160.0" y="2510.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent2" id="BPMNShape_endevent2">
+        <omgdc:Bounds height="35.0" width="35.0" x="120.0" y="2193.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow17" id="BPMNEdge_flow17">
+        <omgdi:waypoint x="360.0" y="479.0"></omgdi:waypoint>
+        <omgdi:waypoint x="360.0" y="409.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow20" id="BPMNEdge_flow20">
+        <omgdi:waypoint x="360.0" y="956.0"></omgdi:waypoint>
+        <omgdi:waypoint x="360.0" y="850.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow39" id="BPMNEdge_flow39">
+        <omgdi:waypoint x="580.0" y="2530.0"></omgdi:waypoint>
+        <omgdi:waypoint x="515.0" y="2531.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow43" id="BPMNEdge_flow43">
+        <omgdi:waypoint x="360.0" y="779.0"></omgdi:waypoint>
+        <omgdi:waypoint x="360.0" y="544.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow70" id="BPMNEdge_flow70">
+        <omgdi:waypoint x="820.0" y="989.0"></omgdi:waypoint>
+        <omgdi:waypoint x="431.0" y="990.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow78" id="BPMNEdge_flow78">
+        <omgdi:waypoint x="342.0" y="1265.0"></omgdi:waypoint>
+        <omgdi:waypoint x="440.0" y="1265.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow79" id="BPMNEdge_flow79">
+        <omgdi:waypoint x="360.0" y="369.0"></omgdi:waypoint>
+        <omgdi:waypoint x="330.0" y="330.0"></omgdi:waypoint>
+        <omgdi:waypoint x="111.0" y="330.0"></omgdi:waypoint>
+        <omgdi:waypoint x="111.0" y="806.0"></omgdi:waypoint>
+        <omgdi:waypoint x="111.0" y="1636.0"></omgdi:waypoint>
+        <omgdi:waypoint x="180.0" y="1625.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow80" id="BPMNEdge_flow80">
+        <omgdi:waypoint x="381.0" y="1625.0"></omgdi:waypoint>
+        <omgdi:waypoint x="430.0" y="1630.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow82" id="BPMNEdge_flow82">
+        <omgdi:waypoint x="450.0" y="1650.0"></omgdi:waypoint>
+        <omgdi:waypoint x="449.0" y="2007.0"></omgdi:waypoint>
+        <omgdi:waypoint x="91.0" y="2007.0"></omgdi:waypoint>
+        <omgdi:waypoint x="91.0" y="669.0"></omgdi:waypoint>
+        <omgdi:waypoint x="513.0" y="669.0"></omgdi:waypoint>
+        <omgdi:waypoint x="513.0" y="511.0"></omgdi:waypoint>
+        <omgdi:waypoint x="421.0" y="511.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow77" id="BPMNEdge_flow77">
+        <omgdi:waypoint x="677.0" y="615.0"></omgdi:waypoint>
+        <omgdi:waypoint x="677.0" y="857.0"></omgdi:waypoint>
+        <omgdi:waypoint x="881.0" y="929.0"></omgdi:waypoint>
+        <omgdi:waypoint x="882.0" y="957.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow76" id="BPMNEdge_flow76">
+        <omgdi:waypoint x="750.0" y="457.0"></omgdi:waypoint>
+        <omgdi:waypoint x="676.0" y="456.0"></omgdi:waypoint>
+        <omgdi:waypoint x="677.0" y="550.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow89" id="BPMNEdge_flow89">
+        <omgdi:waypoint x="450.0" y="1610.0"></omgdi:waypoint>
+        <omgdi:waypoint x="449.0" y="1442.0"></omgdi:waypoint>
+        <omgdi:waypoint x="281.0" y="1442.0"></omgdi:waypoint>
+        <omgdi:waypoint x="281.0" y="1304.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow93" id="BPMNEdge_flow93">
+        <omgdi:waypoint x="780.0" y="2530.0"></omgdi:waypoint>
+        <omgdi:waypoint x="685.0" y="2530.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow94" id="BPMNEdge_flow94">
+        <omgdi:waypoint x="510.0" y="1299.0"></omgdi:waypoint>
+        <omgdi:waypoint x="510.0" y="1877.0"></omgdi:waypoint>
+        <omgdi:waypoint x="361.0" y="1882.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow95" id="BPMNEdge_flow95">
+        <omgdi:waypoint x="310.0" y="2210.0"></omgdi:waypoint>
+        <omgdi:waypoint x="840.0" y="2210.0"></omgdi:waypoint>
+        <omgdi:waypoint x="840.0" y="2498.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow97" id="BPMNEdge_flow97">
+        <omgdi:waypoint x="290.0" y="1925.0"></omgdi:waypoint>
+        <omgdi:waypoint x="290.0" y="2190.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow71" id="BPMNEdge_flow71">
+        <omgdi:waypoint x="197.0" y="957.0"></omgdi:waypoint>
+        <omgdi:waypoint x="202.0" y="990.0"></omgdi:waypoint>
+        <omgdi:waypoint x="290.0" y="990.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow98" id="BPMNEdge_flow98">
+        <omgdi:waypoint x="340.0" y="389.0"></omgdi:waypoint>
+        <omgdi:waypoint x="198.0" y="389.0"></omgdi:waypoint>
+        <omgdi:waypoint x="198.0" y="730.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow99" id="BPMNEdge_flow99">
+        <omgdi:waypoint x="198.0" y="805.0"></omgdi:waypoint>
+        <omgdi:waypoint x="197.0" y="892.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow100" id="BPMNEdge_flow100">
+        <omgdi:waypoint x="380.0" y="2531.0"></omgdi:waypoint>
+        <omgdi:waypoint x="345.0" y="2530.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow101" id="BPMNEdge_flow101">
+        <omgdi:waypoint x="240.0" y="2530.0"></omgdi:waypoint>
+        <omgdi:waypoint x="200.0" y="2530.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow102" id="BPMNEdge_flow102">
+        <omgdi:waypoint x="160.0" y="2530.0"></omgdi:waypoint>
+        <omgdi:waypoint x="135.0" y="2530.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow103" id="BPMNEdge_flow103">
+        <omgdi:waypoint x="180.0" y="2550.0"></omgdi:waypoint>
+        <omgdi:waypoint x="180.0" y="2627.0"></omgdi:waypoint>
+        <omgdi:waypoint x="983.0" y="2627.0"></omgdi:waypoint>
+        <omgdi:waypoint x="983.0" y="1321.0"></omgdi:waypoint>
+        <omgdi:waypoint x="571.0" y="862.0"></omgdi:waypoint>
+        <omgdi:waypoint x="571.0" y="617.0"></omgdi:waypoint>
+        <omgdi:waypoint x="360.0" y="544.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow104" id="BPMNEdge_flow104">
+        <omgdi:waypoint x="270.0" y="2210.0"></omgdi:waypoint>
+        <omgdi:waypoint x="155.0" y="2210.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

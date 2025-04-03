@@ -1,0 +1,227 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{profesionalTecnico.doPreRenderView()}"/>
+        </f:metadata>
+    </ui:define>
+    <ui:define name="top"><h3>Listado de Profesionales Técnicos</h3></ui:define>
+    <ui:define name="content">
+        <h:form id="FormprofesionalTecnico">
+            <div align="right">
+                <p:commandButton value="Nuevo" icon="ui-icon-plus" actionListener="#{profesionalTecnico.showDlgNew()}" styleClass="btnStyle"></p:commandButton>
+                <br/><br/>
+            </div>
+            <p:dataTable id="dtuser" reflow="true"
+                         paginator="true" lazy="true" rows="20" rowsPerPageTemplate="20,50,100" 
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         value="#{profesionalTecnico.profesionalTecnicoLazy}" var="profesional" emptyMessage="No se encontró ningun Item">
+                <p:column headerText="Código Técnico" style="text-align: center; font-size: 12px" filterBy="#{profesional.codigoTecnico}" sortBy="#{profesional.codigoTecnico}" filterStyle="width: 60%;">
+                    <h:outputText value="#{profesional.codigoTecnico}" style="text-align: center; font-size: 12px"/>
+                </p:column>
+
+                <p:column headerText="# Identidad" style="text-align: center;" filterBy="#{profesional.ente.ciRuc}" sortBy="#{profesional.ente.ciRuc}">
+                    <h:outputText value="#{profesional.ente.ciRuc}" style="text-align: center; font-size: 12px"/>
+                </p:column>
+                
+                <p:column headerText="Nombres" style="text-align: center;" filterBy="#{profesional.ente.nombres}" sortBy="#{profesional.ente.nombres}">
+                    <h:outputText value="#{profesional.ente.nombres}" style="text-align: center; font-size: 12px"/>
+                </p:column>
+                
+                <p:column headerText="Apellidos" style="text-align: center;" filterBy="#{profesional.ente.apellidos}" sortBy="#{profesional.ente.apellidos}">
+                    <h:outputText value="#{profesional.ente.apellidos}" style="text-align: center; font-size: 12px"/>
+                </p:column>
+                
+                <p:column headerText="Estado" style="text-align: center; width:10%;" rendered="#{profesional.estado!=null}">
+                    <h:outputText value="A" rendered="#{profesional.estado}" style="text-align: center; font-size: 12px"/>
+                    <h:outputText value="I" rendered="#{!profesional.estado}" style="text-align: center; font-size: 12px"/>
+                </p:column>                
+                <p:column headerText="Estado" style="text-align: center; width:10%;" filterStyle="width: 10%;" rendered="#{profesional.estado==null}"></p:column>
+                
+                <p:column headerText="Editar" style="text-align: center; width:10%; " filterStyle="width: 10%;">
+                    <p:commandLink value="Editar" style="color: #0033FF" actionListener="#{profesionalTecnico.showDlgEdit(profesional)}" />                        
+                </p:column>
+            </p:dataTable>
+        </h:form>
+        
+        <p:dialog id="dlgNProfesionalTecnico" header="Agregar Profesional Técnico" widgetVar="dlgAgrgProfesionalTecnico" resizable="false" modal="true"
+                  position="center" closeOnEscape="true" width="600" height="270">
+            <h:form  id="formNewProfesionalTecnico">
+                <p:panelGrid styleClass="noBorder">
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="Código Técnico: " style="font-weight: bolder"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="#{profesionalTecnico.nuevoProfesionalTecnico.codigoTecnico}" style="width: 138px;"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="Fecha Caducidad: " style="font-weight: bolder"/>
+                        </p:column>
+                        <p:column>
+                            <p:calendar value="#{profesionalTecnico.nuevoProfesionalTecnico.fechaCaducidad}" style="width: 200px;"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <p:spacer height="20" /><br/>
+                        
+            <p:panel id="profesionalTecnicoPanel">
+                <p:panelGrid styleClass="noBorder" style="margin: 0 auto;width: 100%">
+                    <p:row>
+                        <p:column>
+                            <p:dataTable id="dtProfesionalTecnico" var="item"
+                                         emptyMessage="No agregó ningún elemento..." 
+                                         value="#{profesionalTecnico.lisCatEnte}"
+                                         style="width: 100%;margin: 0 auto;">
+                                <f:facet name="header">
+                                    <h:outputText value="Ente asociado al Registro Profesional"/>
+                                    <div style="float: right">
+                                        <p:commandButton value="Agregar" actionListener="#{profesionalTecnico.abrirDialogCatEnte()}"/>
+                                    </div>
+                                </f:facet>
+                                <p:column headerText="CiRuc" style="text-align: center">
+                                    <h:outputText value="#{item.ciRuc}"/>
+                                </p:column>
+                                <p:column headerText="Nombres" style="text-align: center">
+                                    <h:outputText value="#{item.nombres}"/>
+                                </p:column>
+                                <p:column headerText="Apellidos" style="text-align: center">
+                                    <h:outputText value="#{item.apellidos}"/>
+                                </p:column>
+                                
+                                <p:column headerText="Estado" style="text-align: center; width:10%; ">
+                                    <h:outputText value="#{item.estado}"/>
+                                </p:column>
+
+                                <p:column headerText="Eliminar" style="text-align: center; width:15%; ">
+                                    <center><p:commandLink value="::Eliminar" style="font-weight: bolder;color: #0033FF"
+                                                           actionListener="#{profesionalTecnico.eliminarCatEnte(item)}"/></center>
+                                </p:column>
+                            </p:dataTable>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:panel>    
+                <br/><center><p:commandButton value="Grabar" actionListener="#{profesionalTecnico.guardarProfesionalTecnicoNuevo()}"/></center>
+                <br/>
+            </h:form>
+        </p:dialog>
+        
+        
+        <p:dialog id="dlgEditProfesionalTecnico" header="Editar Profesional Técnico" widgetVar="dlgEditProfesionalTecnico" resizable="false" modal="true"
+                  position="center" closeOnEscape="true" width="600" height="300">
+            <h:form  id="frmEditarProfesionalTecnico">
+                <p:panelGrid styleClass="noBorder">
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="Código Técnico: " style="font-weight: bolder"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="#{profesionalTecnico.editProfesionalTecnico.codigoTecnico}" style="width: 138px;"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="Fecha Caducidad: " style="font-weight: bolder"/>
+                        </p:column>
+                        <p:column>
+                            <p:calendar value="#{profesionalTecnico.editProfesionalTecnico.fechaCaducidad}" style="width: 200px;"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <p:spacer height="20" /><br/>
+
+            <p:panel id="profesionalTecnicoPanelEdit">
+                <p:panelGrid styleClass="noBorder" style="margin: 0 auto;width: 100%">
+                    <p:row>
+                        <p:column>
+                            <p:dataTable id="dtProfesionalTecnicoEdit" var="item"
+                                         emptyMessage="No agregó ningún elemento..." 
+                                         value="#{profesionalTecnico.lisCatEnte}"
+                                         style="width: 100%;margin: 0 auto;">
+                                <f:facet name="header">
+                                    <h:outputText value="Ente asociado al Registro Profesional"/>
+                                    <div style="float: right">
+                                        <p:commandButton value="Agregar" actionListener="#{profesionalTecnico.abrirDialogCatEnteEdit()}"/>
+                                    </div>
+                                </f:facet>
+                                <p:column headerText="CiRuc" style="text-align: center">
+                                    <h:outputText value="#{item.ciRuc}"/>
+                                </p:column>
+                                <p:column headerText="Nombres" style="text-align: center">
+                                    <h:outputText value="#{item.nombres}"/>
+                                </p:column>
+                                <p:column headerText="Apellidos" style="text-align: center">
+                                    <h:outputText value="#{item.apellidos}"/>
+                                </p:column>
+                                
+                                <p:column headerText="Estado" style="text-align: center; width:10%; ">
+                                    <h:outputText value="#{item.estado}"/>
+                                </p:column>
+
+                                <p:column headerText="Eliminar" style="text-align: center; width:15%; ">
+                                    <center><p:commandLink value="::Eliminar" style="font-weight: bolder;color: #0033FF"
+                                                           actionListener="#{profesionalTecnico.eliminarCatEnte(item)}"/></center>
+                                </p:column>
+                            </p:dataTable>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:panel>
+                <br/><center><p:selectBooleanCheckbox itemLabel="  Activo" value="#{profesionalTecnico.editProfesionalTecnico.estado}" /></center>
+                <br/><center><p:commandButton value="Grabar" actionListener="#{profesionalTecnico.guardarProfesionalTecnicoEditado()}"/></center>
+                <br/>
+            </h:form>
+        </p:dialog>
+        
+        
+        <p:dialog id="dlgListaCatEnte" header="Seleccionar Ente Deseado" widgetVar="dlgCatEnteLazy"
+                  resizable="false" modal="true" style="z-index: 3" position="center" width="800">
+            <h:form id="formSelectCatEnte">
+                <p:panelGrid styleClass="noBorder">
+                    <p:row>
+                        <p:column>
+                            <p:dataTable id="dataCatEnte" style="margin: 0 auto;"
+                                         paginator="true" lazy="true" 
+                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rows="10" rowsPerPageTemplate="10,20,50,100"
+                                         emptyMessage="No se encontró ningún elemento..."
+                                         value="#{profesionalTecnico.catEnteLazy}" var="item">
+                                <f:facet name="header">
+                                    <p:outputLabel value="Entes" style="font-weight: bold"/>
+                                </f:facet>
+                                <p:column headerText="CiRuc" style="text-align: center" filterBy="#{item.ciRuc}"
+                                          sortBy="#{item.ciRuc}">
+                                    <h:outputText value="#{item.ciRuc}"/>
+                                </p:column>
+                                <p:column headerText="Nombres" style="text-align: center" filterBy="#{item.nombres}"
+                                          sortBy="#{item.nombres}">
+                                    <h:outputText value="#{item.nombres}"/>
+                                </p:column>
+                                <p:column headerText="Apellidos" style="text-align: center" filterBy="#{item.apellidos}"
+                                          sortBy="#{item.apellidos}">
+                                    <h:outputText value="#{item.apellidos}"/>
+                                </p:column>
+                                <p:column headerText="Estado" style="text-align: center; width:10%; ">
+                                    <h:outputText value="#{item.estado}"/>
+                                </p:column>
+                                <p:column headerText="Seleccionar" style="text-align: center; width:15%; ">
+                                    <center><p:commandLink value="::Seleccionar" style="font-weight: bolder;color: #0033FF"
+                                                           actionListener="#{profesionalTecnico.agregarCatEnte(item)}"/></center>
+                                </p:column>
+                            </p:dataTable>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+</ui:composition>

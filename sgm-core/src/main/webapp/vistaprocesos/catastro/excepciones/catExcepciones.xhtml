@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:define name="top">
+        <h1>Ajuste de predios</h1>
+    </ui:define>
+    <ui:define name="content">
+        <h:form id="frmMain">
+            <p:panel id="pCertificados" header="Listado de predios" style="width: 100%">
+                <div align="right">
+                    <p:commandButton id="btnNuevo" value="Nuevo" actionListener="#{excepcionesCat.selecc(null)}" style="height: 30px" oncomplete="PF('dlgNuevo').show()" update=":frmNuevo"/>
+                </div>
+            </p:panel>
+        </h:form>
+        <p:dialog id="dlgNuevo" widgetVar="dlgNuevo" header="Datos generales" appendTo="@(body)" modal="true" width="50%" closable="true" closeOnEscape="true">
+            <h:form id="frmNuevo">
+                <p:panelGrid columns="2" layout="grid">
+                    <h:outputText value="* Tipo de tramite :" style="font-weight: bolder"/>
+                    <p:selectOneMenu id="tipoTramite" value="#{excepcionesCat.exc.tipoTramite}" converter="entityConverter" style="width: 60%">
+                        <f:selectItems var="tt" value="#{excepcionesCat.tipoTramites}" itemLabel="#{tt.descripcion}" itemValue="#{tt}"/>
+                    </p:selectOneMenu>
+                    <h:outputText value="* Detalle de la excepcion o cambio :" style="font-weight: bolder"/>
+                    <p:inputTextarea id="detalle" value="#{excepcionesCat.exc.detalle}" rows="3" style="width: 60%" required="true" placeholder="Detalle del cambio a realizar" requiredMessage="El detalle del cambio es obligatorio"/>
+                    <f:facet name="footer">
+                        <div align="center">
+                            
+                        </div>
+                    </f:facet>
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

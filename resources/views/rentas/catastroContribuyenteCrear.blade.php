@@ -3,6 +3,7 @@
 @push('styles')
 <link href="{{ asset('css/dataTables.bootstrap5.min.css') }}" rel="stylesheet">
 <link href="{{ asset('css/rowReorder.bootstrap5.min.css') }}" rel="stylesheet">
+<link rel="stylesheet" href="{{asset('bower_components/sweetalert/sweetalert.css')}}">
 <style>
     tfoot input {
         width: 100%;
@@ -200,6 +201,12 @@
                 </div>
                 <div class="col-md-2 mb-3 mt-4">
                     <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="es_artesano" name="es_artesano" value="1" {{ old('es_artesano') ? 'checked' : '' }}>
+                        <label class="form-check-label" for="es_artesano">¿Es artesano?</label>
+                    </div>
+                </div> 
+                <!-- <div class="col-md-2 mb-3 mt-4">
+                    <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="es_matriz" name="es_matriz" value="1" {{ old('es_matriz') ? 'checked' : '' }}>
                         <label class="form-check-label" for="es_matriz">¿Es matriz?</label>
                     </div>
@@ -209,7 +216,7 @@
                         <input class="form-check-input" type="checkbox" id="es_turismo" name="es_turismo" value="1" {{ old('es_turismo') ? 'checked' : '' }}>
                         <label class="form-check-label" for="es_turismo">¿Es turismo?</label>
                     </div>
-                </div>
+                </div> -->
             </div>
         </fieldset>
         <!-- Actividad comercial -->
@@ -386,6 +393,49 @@
             </div>
         </fieldset>
 
+        <!-- Subir Documentos -->
+        <fieldset class="border p-3 mb-4">
+            <legend class="w-auto">Subir Documentos</legend>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="doc_cedula" class="form-label">Cedula/Certificado Votacion <span class="text-danger">*</span></label>
+                    <input type="file" class="form-control {{$errors->has('doc_cedula') ? 'is-invalid' : ''}}" id="doc_cedula" name="doc_cedula" value="{{old('doc_cedula')}}" required>
+                    <div class="invalid-feedback">
+                        @if($errors->has('doc_cedula'))
+                            {{$errors->first('doc_cedula')}}
+                        @else
+                            El campo es requerido
+                        @endif
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="doc_ruc" class="form-label">RUC</label>
+                    <input type="file" class="form-control {{$errors->has('doc_ruc') ? 'is-invalid' : ''}}" id="doc_ruc" name="doc_ruc" maxlength="50" value="{{old('doc_ruc')}}" required>
+                    <div class="invalid-feedback">
+                        @if($errors->has('doc_ruc'))
+                            {{$errors->first('doc_ruc')}}
+                        @else
+                            El campo  es requerido
+                        @endif
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="doc_artesano" class="form-label">Titulo Artesano</label>
+                    <input type="file" class="form-control {{$errors->has('doc_artesano') ? 'is-invalid' : ''}}" id="doc_artesano" name="doc_artesano" maxlength="50" value="{{old('doc_artesano')}}" required>
+                    <div class="invalid-feedback">
+                        @if($errors->has('doc_artesano'))
+                            {{$errors->first('doc_artesano')}}
+                        @else
+                            El campo  es requerido
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+
+        
         <!-- Contacto -->
         <fieldset class="border p-3 mb-4">
             <legend class="w-auto">Informacion de Contacto</legend>
@@ -524,7 +574,7 @@
 <!-- jQuery -->
 <script src="{{ asset('js/jquery-3.5.1.js') }}"></script>
 <!-- DataTables -->
-
+<script src="{{asset('bower_components/sweetalert/sweetalert.js')}}"></script>
 <script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('js/dataTables.bootstrap5.min.js') }}"></script>
 <script src="{{ asset('js/dataTables.rowReorder.min.js') }}"></script>
@@ -841,6 +891,8 @@
             }, false)
         })
     })()*/
+
+  
 </script>
 @endpush
 

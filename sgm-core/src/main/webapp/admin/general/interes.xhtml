@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+    <ui:define name="content">
+        <center><h1>Administración de Intereses</h1></center>
+        <h:form id="mainForm">
+            <div align="rigth">
+                <p:commandButton value="Nuevo" actionListener="#{intereses.seleccionarInteres(null)}" oncomplete="PF('dlgInteres').show();" update="formInteres" styleClass="btnStyle" icon="ui-icon-plus" style="float: right;"/>
+            </div>
+            <br></br><br></br>
+            <p:dataTable id="dtInteres" reflow="true" paginator="true" lazy="true" rows="15" rowsPerPageTemplate="15,50,100" paginatorPosition="top" style="text-align: center;"
+                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 value="#{intereses.intereses}" var="interes" emptyMessage="No se encontraron elementos..." rowKey="#{interes.id}" filterEvent="enter">                
+                <p:column headerText="Id" filterBy="#{interes.id}" filterStyle="width: 95%;"><p:outputLabel value="#{interes.id}"/></p:column>
+                <p:column headerText="Porcentaje"><p:outputLabel value="#{interes.porcentaje}"/></p:column>
+                <p:column headerText="Anio"><p:outputLabel value="#{interes.anio}"/></p:column>
+                <p:column headerText="Acción"><p:commandButton value="Editar" actionListener="#{intereses.seleccionarInteres(interes)}" oncomplete="PF('dlgInteres').show();" update="formInteres" styleClass="btnStyle" icon="ui-icon-gear"/></p:column>
+            </p:dataTable>
+        </h:form>
+        
+        <p:dialog header="INTERES" widgetVar="dlgInteres" modal="true" resizable="false" style="width: 50%" width="50%" closeOnEscape="true">
+            <h:form id="formInteres">
+                <p:fieldset legend="#{intereses.interes.id eq null?'INGRESO DE INTERES':'EDICION DE INTERES'}" style="width: 50%">
+                    <h:panelGrid styleClass="noBorder" columns="2">
+                        <p:outputLabel value="AÑO: "/><p:inputText type="number" value="#{intereses.interes.anio}"/>
+                        <p:outputLabel value="PORCENTAJE: "/><p:inputText type="number" value="#{intereses.interes.porcentaje}"/>
+                        
+                    </h:panelGrid>
+                </p:fieldset>
+                <br/>
+                <center>
+                    <p:commandButton value="Grabar" actionListener="#{intereses.guardarInteres()}" oncomplete="PF('dlgInteres').hide();" update="mainForm" styleClass="btnStyle" icon="ui-icon-disk">
+                        <p:confirm header="Confirmacion" message="Grabar Datos?" icon="ui-icon-alert" />
+                    </p:commandButton>
+                    <p:spacer width="20"/>
+                    <p:commandButton value="Cancelar" oncomplete="PF('dlgInteres').hide();" styleClass="btnStyle" icon="ui-icon-closethick"/>
+                </center>
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                </p:confirmDialog>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

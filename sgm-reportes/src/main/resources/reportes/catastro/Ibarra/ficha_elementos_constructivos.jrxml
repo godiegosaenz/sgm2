@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ficha_elementos_constructivos" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ea5e4aee-914d-4c7c-8bb0-4f071c8e7bf5">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<subDataset name="elementos" uuid="f02e93c9-b776-49d3-8aa5-328f2bb4c75c">
+		<queryString language="SQL">
+			<![CDATA[SELECT 'BLOQUE '||  cast(bloq.no_bloque as text)as bloque,caract.nombre as propiedad,cat.nombre as categoria
+FROM app1.cat_predio_bloque as bloq,app1.cat_bloque_caracteristica as bc,
+     app1.cat_edf_prop as caract,app1.cat_edf_categ_prop as cat
+WHERE bc.bloque = bloq.id
+AND bc.propiedad = caract.id
+AND caract.categoria = cat.id
+AND predio = 148789]]>
+		</queryString>
+		<field name="bloque" class="java.lang.String"/>
+		<field name="propiedad" class="java.lang.String"/>
+		<field name="categoria" class="java.lang.String"/>
+	</subDataset>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="228" splitType="Stretch">
+			<crosstab>
+				<reportElement x="0" y="0" width="555" height="228" uuid="932aab2a-fe57-4c29-8e37-a5f3b0952ffb"/>
+				<crosstabDataset>
+					<dataset>
+						<datasetRun subDataset="elementos" uuid="4a060de2-cd5a-4446-b33f-2263bab3b4a3">
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+					</dataset>
+				</crosstabDataset>
+				<rowGroup name="categoria" width="70">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{categoria}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#F0F8FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="70" height="25" uuid="33da91fb-7d18-44fc-a590-7756ff8274d6"/>
+								<textFieldExpression><![CDATA[$V{categoria}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<columnGroup name="bloque" height="30">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{bloque}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#F0F8FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="30" uuid="a601d3e7-2d5f-48fd-a414-23a1878aebd2"/>
+								<textFieldExpression><![CDATA[$V{bloque}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents/>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<measure name="propiedadMeasure" class="java.lang.String">
+					<measureExpression><![CDATA[$F{propiedad}]]></measureExpression>
+				</measure>
+				<crosstabCell width="50" height="25">
+					<cellContents>
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="e7daee1d-5e30-4289-978b-9cc63c69a178"/>
+							<textFieldExpression><![CDATA[$V{propiedadMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell height="25" rowTotalGroup="categoria">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="33e47b21-07a7-440e-ad2b-e45af9855e19"/>
+							<textFieldExpression><![CDATA[$V{propiedadMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="50" columnTotalGroup="bloque">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="581e202e-eb83-4ca6-b76a-2c5d40f7e255"/>
+							<textFieldExpression><![CDATA[$V{propiedadMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="categoria" columnTotalGroup="bloque">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="caa201eb-3d32-40e3-88d0-9b7c81054412"/>
+							<textFieldExpression><![CDATA[$V{propiedadMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+			</crosstab>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

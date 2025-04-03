@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <!-- INTERFACE -->
+    <cc:interface >
+        <cc:attribute name="liquidacion"/>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <p:fieldset legend="LIQUIDACION: #{cc.attrs.liquidacion.tipoLiquidacion.prefijo} - #{cc.attrs.liquidacion.tipoLiquidacion.nombreTitulo}" style="font-weight: bold; font-size: 13px;">
+            <p:dataTable value="#{cc.attrs.liquidacion.renPagoCollection}" var="pago" scrollable="true" scrollHeight="200" rowKey="#{pago.id}">
+                <p:column style="width:30px">
+                    <p:rowToggler />
+                </p:column>
+                <p:column headerText="N. Comprobante"><p:outputLabel value="#{pago.numComprobante}"/></p:column>
+                <p:column headerText="Fecha" style="text-align: center;"><p:outputLabel value="#{pago.fechaPago}"><f:convertDateTime pattern="dd/MM/YYYY HH:mm"/></p:outputLabel></p:column>
+                <p:column headerText="(-)Descuento" style="text-align: right;"><p:outputLabel value="#{pago.descuento}"/></p:column>
+                <p:column headerText="Recargo" style="text-align: right;"><p:outputLabel value="#{pago.recargo}"/></p:column>
+                <p:column headerText="Interes" style="text-align: right;"><p:outputLabel value="#{pago.interes}"/></p:column>
+                <p:column headerText="Valor" style="text-align: right;"><p:outputLabel value="#{pago.valor}"/></p:column>
+                <p:column headerText="Cajero" style="text-align: center;"><p:outputLabel value="#{pago.cajero.usuario}"/></p:column>
+                <p:rowExpansion>
+                    <p:dataTable var="detalle" value="#{pago.renPagoDetalles}" style="width: 90%; margin: 0 auto;">
+                        <p:column headerText="TIPO">
+                            <p:outputLabel value="#{detalle.tipoPago eq 1?'EFECTIVO': detalle.tipoPago eq 2?'TARJETA DE CREDITO': detalle.tipoPago eq 3?'NOTA DE CREDITO': detalle.tipoPago eq 4?'CHEQUE': detalle.tipoPago eq 5?'TRANSFERENCIA':''}" style="font-weight: bold;"/>
+                            <br/>
+                            <p:outputLabel value="BANCO: #{detalle.tcBanco.descripcion} - Nº:  #{detalle.tcNumTarjeta} - Titular: #{detalle.tcTitular}" rendered="#{detalle.tipoPago eq 2}"/>
+                            <p:outputLabel value="Nº: #{detalle.ncNumCredito} - Fecha:  #{detalle.ncFecha}" rendered="#{detalle.tipoPago eq 3}"/>
+                            <p:outputLabel value="BANCO: #{detalle.chBanco.descripcion} - Nº:  #{detalle.chNumCheque} - Cuenta: #{detalle.chNumCuenta}" rendered="#{detalle.tipoPago eq 4}"/>
+                            <p:outputLabel value="BANCO: #{detalle.trBanco.descripcion} - Nº:  #{detalle.trNumTransferencia} - Fecha: #{detalle.trFecha}" rendered="#{detalle.tipoPago eq 5}"/>
+                        </p:column>
+                        <p:column headerText="VALOR" style="width:150px; text-align: right;">
+                            <p:outputLabel value="#{detalle.valor}"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:rowExpansion>
+            </p:dataTable>
+        </p:fieldset>
+    </cc:implementation>
+</html>

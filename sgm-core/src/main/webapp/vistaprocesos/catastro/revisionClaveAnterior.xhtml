@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <center><h1>Listado de Claves Catastrales Anteriores A Revisar</h1></center>
+        <h:form id="mainForm">
+            <p:dataTable id="dtInteres" reflow="true" paginator="true" lazy="true" rows="15" rowsPerPageTemplate="15,50,100" paginatorPosition="top" style="text-align: center;"
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         value="#{claveAnteriorRevision.claveAnteriorRevisionLazy}" var="sal" emptyMessage="No se encontraron elementos..." rowKey="#{sal.id}" filterEvent="enter">                
+                <p:column headerText="Fecha de Ingreso"><p:outputLabel value="#{sal.fechaIngreso}"/></p:column>
+                <p:column headerText="Clave Catastral Anterior"><p:outputLabel value="#{sal.clave}"/></p:column>
+                <p:column headerText="Nombres "><p:outputLabel value="#{sal.nombresAme}"/></p:column>
+                <p:column headerText="Revisada">
+                    <p:selectBooleanCheckbox value="#{sal.revisada}">
+                        <p:ajax event="change" listener="#{claveAnteriorRevision.saveRevision(sal)}" />
+                    </p:selectBooleanCheckbox>    
+                    
+                </p:column>
+            </p:dataTable>
+        </h:form>
+    </ui:define>
+</ui:composition>

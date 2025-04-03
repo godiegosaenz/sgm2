@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:comp="http://java.sun.com/jsf/composite/dialog">
+
+    <h:form id="frmViviendaCensal">
+        <p:growl id="msgsfrmViviendaCensal" showDetail="true"  />
+        <div align="right">
+            <p:remoteCommand name="rc10" actionListener="#{fichaPredial.saveCensalService()}" rendered="#{fichaPredial.editable}" update="msgsfrmViviendaCensal"/>
+            <p:commandButton id="btnS10" value="Guardar"   icon="ui-icon-disk" actionListener="#{fichaPredial.openDialog}"
+                             process="@form" action="#{fichaPredial.setRemotteCommand('rc10')}" update="frmSubirDocumentosDialog" rendered="#{fichaPredial.editable}"/>
+        </div>
+        <p:fieldset legend="Propiedad horizontal" toggleable="true" rendered="#{fichaPredial.predio.propiedadHorizontal}" class="MarBot10">
+            <div align="center">
+
+            </div>
+        </p:fieldset>
+        <p:fieldset legend="Descripción Vivienda" toggleable="true">
+            <h:panelGrid columns="4" style="width: 100%">
+                <comp:compInputSelect id="tenVivienda" label="Tenencia de Vivienda:"
+                                      catalogo="predio-tenencia_vivienda" defaultValue="1"
+                                      bind="#{fichaPredial.predio.tenenciaVivienda}"
+                                      next="tdatos:frmViviendaCensal:numhabitantes:numhabitantes-form"/>
+                <comp:compInputSelect id="clasi_vivienda" label="Clasificacion de Vivienda:"
+                                      catalogo="predio-clasif_unidad_vivienda" defaultValue="1"
+                                      bind="#{fichaPredial.predio.clasificacionViviendaHorizontal}"
+                                      next="tdatos:frmCaracSolar:instHip:instHip-form"/>
+                <h:panelGroup layout="block">
+                    <h:outputLabel for="tipo_vivienda" value="Tipo de Vivienda :" class="DispBlock Wid100 FontBold"/>
+                    <p:selectOneMenu id="tipo_vivienda" value="#{fichaPredial.predio.tipoViviendaHorizontal}" styleClass="selectWidth170" >
+                        <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                        <f:selectItem itemLabel="Particular" itemValue="#{true}"/>
+                        <f:selectItem itemLabel="Colectiva" itemValue="#{false}"/>
+                    </p:selectOneMenu>
+                </h:panelGroup>
+                <h:panelGroup layout="block">
+                    <h:outputLabel for="condicion_vivienda" value="Condición de ocupación de la vivienda:" class="DispBlock Wid100 FontBold"/>
+                    <p:selectOneMenu id="condicion_vivienda" value="#{fichaPredial.predio.ocupacionViviendaHorizontal}" styleClass="selectWidth170">
+                        <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                        <f:selectItem itemLabel="Ocupada" itemValue="#{true}"/>
+                        <f:selectItem itemLabel="Desocupada" itemValue="#{false}"/>
+                    </p:selectOneMenu>
+                </h:panelGroup>
+                <comp:compInputSelect id="acabadoPiso" label="Acabado del Piso:"
+                                      catalogo="predio-acabado_piso" defaultValue="1"
+                                      bind="#{fichaPredial.predio.vivCencalAcabadoPiso}"/>
+                <comp:compInputSelect id="estadoAcabadoPiso" label="Estado Acabado del Piso:"
+                                      catalogo="predio-estado_acabado_piso" defaultValue="1"
+                                      bind="#{fichaPredial.predio.vivCencalEstadoAcabadoPiso}"/>
+            </h:panelGrid>
+
+
+        </p:fieldset>
+        <p:fieldset legend="Jefe del Hogar" toggleable="true" style="font-size: 13px;" class="MarBot10">
+            <div align="center">
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="CI/RUC:" class="FontBold"/>
+                    <h:panelGrid columns="2">
+                        <p:inputText value="#{fichaPredial.enteHorizontal.ciRuc}" readonly="true" style="width: 250px;"/>
+                        <p:commandLink id="btnEnteHorizontal" actionListener="#{fichaPredial.loadResponsablesPredio}" update="frmResponsableDialog" oncomplete="PF('dlgResponsables').show()" >
+                            <p:graphicImage value="/css/homeIconsImages/buscar.png" height="25" width="25"/>
+                        </p:commandLink>
+                    </h:panelGrid>
+                    <p:outputLabel value="Tipo de Documento:" class="FontBold"/>
+                    <p:inputText value="Cedula de Identidad" readonly="true" rendered="#{fichaPredial.enteHorizontal.esPersona}" style="width: 250px;"/>
+                    <p:inputText value="Ruc" readonly="true" rendered="#{!fichaPredial.enteHorizontal.esPersona}" style="width: 250px;"/>
+                    <p:outputLabel value="Nombres:" rendered="#{fichaPredial.enteHorizontal.esPersona}" class="FontBold"/>
+                    <p:inputText value="#{fichaPredial.enteHorizontal.nombres}" readonly="true" rendered="#{fichaPredial.enteHorizontal.esPersona}" style="width: 250px;"/>
+                    <p:outputLabel value="Razón Social:" rendered="#{!fichaPredial.enteHorizontal.esPersona}" class="FontBold"/>
+                    <p:inputText value="#{fichaPredial.enteHorizontal.razonSocial}" readonly="true" rendered="#{!fichaPredial.enteHorizontal.esPersona}" style="width: 250px;"/>
+                    <p:outputLabel value="Nombre Comercial:" rendered="#{!fichaPredial.enteHorizontal.esPersona}" class="FontBold"/>
+                    <p:inputText value="#{fichaPredial.enteHorizontal.nombreComercial}" rendered="#{!fichaPredial.enteHorizontal.esPersona}" readonly="true" style="width: 250px;"/>
+                    <p:outputLabel value="Apellidos:" rendered="#{fichaPredial.enteHorizontal.esPersona}" class="FontBold"/>
+                    <p:inputText value="#{fichaPredial.enteHorizontal.apellidos}" rendered="#{fichaPredial.enteHorizontal.esPersona}" readonly="true" style="width: 250px;"/>
+                </h:panelGrid>
+            </div>
+        </p:fieldset>
+        <p:fieldset legend="Instalaciones" toggleable="true" class="MarBot10">
+            <p:fieldset legend="Habitaciones" toggleable="true">
+                <h:panelGrid columns="2" style="width: 100%">
+
+                    <comp:decorateForm id="numhabitantes" label="Número de Habitantes:" integerValidate="true"
+                                       bind="#{fichaPredial.predio.habitantes}" />
+
+                    <comp:decorateForm id="numHabitaciones" label="Número de Habitaciones (Excluye: baño, cocina y negocio):" integerValidate="true"
+                                       bind="#{fichaPredial.predio.numHabitaciones}" />
+
+                    <comp:decorateForm id="numDormitorios" label="Número de Dormitorios:" integerValidate="true"
+                                       bind="#{fichaPredial.predio.numDormitorios}" />
+
+                    <comp:decorateForm id="numHogares" label="Número de Hogares:" integerValidate="true"
+                                       bind="#{fichaPredial.predio.numHogares}" />
+
+                    <comp:decorateForm id="numCelus" label="Número de Celulares:" integerValidate="true"
+                                       bind="#{fichaPredial.predio.numCelulares}" />
+
+                    <comp:decorateForm id="numEspaciosDuchas" label="Espacios Para Bañarse o Duchas:" integerValidate="true"
+                                       bind="#{fichaPredial.predio.numEspaciosBanios}" />
+                </h:panelGrid>
+            </p:fieldset>
+        </p:fieldset>
+        <p:fieldset legend="Servicios" toggleable="true" class="MarBot10">
+            <h:panelGrid columns="3" style="width: 100%">
+                <comp:compInputSelect id="abasteAgua" label="Abastecimiento de Agua:"
+                                      catalogo="predio-abastecimiento_agua" defaultValue="1"
+                                      bind="#{fichaPredial.servicios.abastAgua}"
+                                      next="tdatos:frmViviendaCensal:abasteAgua:predio-medio_abas_agua-form"/>
+
+                <comp:compInputSelect id="medioabasteAgua" label="Medio de Abastecimiento de Agua:"
+                                      catalogo="predio-medio_abas_agua" defaultValue="1"
+                                      bind="#{fichaPredial.servicios.abastAguaRecibe}"
+                                      next="tdatos:frmViviendaCensal:medioabasteAgua:predio-abaste_electrico-form"/>
+
+                <comp:compInputSelect id="abasteElectrico" label="Abaste electrico:"
+                                      catalogo="predio-abaste_electrico" defaultValue="1"
+                                      bind="#{fichaPredial.servicios.abasteElectrico}"
+                                      next="tdatos:frmViviendaCensal:abasteElectrico:predio-evac_aguas_serv-form"/>
+
+                <comp:compInputSelect id="excretas" label="Eliminacion Excretas:"
+                                      catalogo="predio-evac_aguas_serv" defaultValue="1"
+                                      bind="#{fichaPredial.servicios.evacAguasServ}"
+                                      next="tdatos:frmViviendaCensal:excretas:predio-recol_basura_medio-form"/>
+
+                <comp:compInputSelect id="elimina_basura" label="Eliminacion de basura:"
+                                      catalogo="predio-recol_basura_medio" defaultValue="1"
+                                      bind="#{fichaPredial.servicios.recolBasura}"
+                                      next="tdatos:frmViviendaCensal:elimina_basura:predio-recol_basura_medio"/>
+
+            </h:panelGrid>
+
+        </p:fieldset>
+
+    </h:form>
+</html>

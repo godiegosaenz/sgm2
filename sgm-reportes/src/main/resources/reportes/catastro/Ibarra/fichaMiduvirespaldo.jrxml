@@ -1,0 +1,4193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="fichaMiduvi" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="20e56fe9-e9d4-40e2-abb3-ef7cd1a78bf6">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="960"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3">
+		<pen lineWidth="0.25"/>
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TH" mode="Opaque" backcolor="#FFFFFF">
+		<pen lineWidth="0.25"/>
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_CH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<style name="table 4">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4_CH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 5">
+		<pen lineWidth="0.0"/>
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+			<topPen lineWidth="0.0"/>
+			<leftPen lineWidth="0.0"/>
+			<bottomPen lineWidth="0.0"/>
+			<rightPen lineWidth="0.0"/>
+		</box>
+	</style>
+	<style name="table 5_TH" mode="Opaque" backcolor="#FFFFFF" isBlankWhenNull="true">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5"/>
+			<leftPen lineWidth="0.5"/>
+			<bottomPen lineWidth="0.5"/>
+			<rightPen lineWidth="0.5"/>
+		</box>
+	</style>
+	<style name="table 5_CH" mode="Opaque" backcolor="#FFFFFF">
+		<pen lineWidth="0.0"/>
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+			<topPen lineWidth="0.0"/>
+			<leftPen lineWidth="0.0"/>
+			<bottomPen lineWidth="0.0"/>
+			<rightPen lineWidth="0.0"/>
+		</box>
+	</style>
+	<style name="table 5_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5"/>
+			<leftPen lineWidth="0.5"/>
+			<bottomPen lineWidth="0.5"/>
+			<rightPen lineWidth="0.5"/>
+		</box>
+	</style>
+	<style name="table 6">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 6_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 6_CH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 6_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="clasificacion_rural" uuid="0c913b46-7afb-4a47-b619-8c7bc0e0b6a2">
+		<parameter name="id_predio" class="java.lang.Long">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT  UPPER(sh.valor) as sector_h,
+	UPPER(cs.valor) as calidad_,
+	UPPER(up.valor) as uso,
+	cr.superficie
+
+
+
+FROM sgm_app.cat_predio_clasific_rural cr
+  LEFT OUTER JOIN sgm_app.ctlg_item sh on (cr.sector_homogeneo=sh.id)
+  LEFT OUTER JOIN sgm_app.ctlg_item cs on (cr.calidad_suelo=cs.id)
+  LEFT OUTER JOIN sgm_app.ctlg_item up on (cr.uso_predio=up.id)
+WHERE cr.predio = $P{id_predio}]]>
+		</queryString>
+		<field name="sector_h" class="java.lang.String"/>
+		<field name="calidad_" class="java.lang.String"/>
+		<field name="uso" class="java.lang.String"/>
+		<field name="superficie" class="java.math.BigDecimal"/>
+	</subDataset>
+	<subDataset name="cultivos" uuid="23c3c717-4b7b-4e8d-805a-8b368925eae8">
+		<parameter name="id_predio" class="java.lang.Long">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT plan.valor as plantacion,tipo.valor as tipo, cult.area, cult.cantidad, cult.edad, UPPER (ctl.valor) as conservacion
+  FROM sgm_app.cat_predio_cultivo cult
+  LEFT OUTER JOIN sgm_app.ctlg_item ctl ON (ctl.id = cult.conservacion)
+  LEFT OUTER JOIN sgm_app.ctlg_item plan ON (plan.id = cult.tipo)
+  LEFT OUTER JOIN sgm_app.ctlg_item tipo ON (tipo.id = plan.hijo)
+WHERE predio = $P{id_predio}]]>
+		</queryString>
+		<field name="plantacion" class="java.lang.String"/>
+		<field name="tipo" class="java.lang.String"/>
+		<field name="area" class="java.math.BigDecimal"/>
+		<field name="cantidad" class="java.lang.Integer"/>
+		<field name="edad" class="java.math.BigDecimal"/>
+		<field name="conservacion" class="java.lang.String"/>
+	</subDataset>
+	<subDataset name="niveles" uuid="7acb63d9-4edb-4fd5-ac79-8b4bda20b9ca">
+		<parameter name="id_predio" class="java.lang.Long">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT 'BLOQUE '||  cast(bloq.no_bloque as text)as bloque, it.valor as descripcion, area
+FROM sgm_app.cat_predio_bloque as bloq,sgm_app.cat_bloque_caracteristica as bc,
+     sgm_app.cat_predio_bloque_piso as pis,
+     sgm_app.ctlg_item as it
+WHERE it.id = pis.nivel
+AND bloq.id = pis.bloque
+AND bloq.predio = $P{id_predio}]]>
+		</queryString>
+		<field name="bloque" class="java.lang.String"/>
+		<field name="descripcion" class="java.lang.String"/>
+		<field name="area" class="java.math.BigDecimal"/>
+	</subDataset>
+	<subDataset name="elementos_constructivos" uuid="1859b38d-57b8-493d-bc17-eb1a6df2e137">
+		<parameter name="id_predio" class="java.lang.Long">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT 'BLOQUE '||  cast(bloq.no_bloque as text)as bloque,caract.nombre as propiedad,cat.nombre as categoria
+FROM sgm_app.cat_predio_bloque as bloq,sgm_app.cat_bloque_caracteristica as bc,
+     sgm_app.cat_edf_prop as caract,sgm_app.cat_edf_categ_prop as cat
+WHERE bc.bloque = bloq.id
+AND bc.propiedad = caract.id
+AND caract.categoria = cat.id
+AND bloq.predio = $P{id_predio}]]>
+		</queryString>
+		<field name="bloque" class="java.lang.String"/>
+		<field name="propiedad" class="java.lang.String"/>
+		<field name="categoria" class="java.lang.String"/>
+	</subDataset>
+	<subDataset name="Descripcion_piso" uuid="a9a6e95f-33f9-44fe-b7d6-dce7b0791dd5">
+		<parameter name="id_predio" class="java.lang.Long">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT ('NUMERO DE PISOS'||chr(10)||
+       'CONDICION FISICA'||chr(10)||
+       'VALOR CULTURAL'||chr(10)||
+       'E.CONSERVACION'||chr(10)||
+       'EDAD CONSTRUCCION'||chr(10)||
+       'AÑO RESTAURACION'||chr(10)||
+       'USO CONSTRUCTIVO') as categoria,
+       'BLOQUE '||  cast(no_bloque as text)as bloque,
+      ( COALESCE(num_pisos, 0)||chr(10)||
+       COALESCE(UPPER(cond.VALOR), '')||chr(10)||
+       COALESCE(UPPER(vlc.VALOR), '')||chr(10)||
+       COALESCE(UPPER(esc.VALOR), '')||chr(10)||
+       COALESCE(bloq.anio_cons, 0)||chr(10)||
+       COALESCE(anio_restaura, 0)||chr(10)||
+       COALESCE(UPPER(UC.VALOR), '')) as descripcion
+
+
+FROM sgm_app.cat_predio_bloque as bloq
+ LEFT OUTER JOIN sgm_app.ctlg_item cond on (bloq.condicion_fisica=cond.id)
+ LEFT OUTER JOIN sgm_app.ctlg_item vlc on (bloq.valor_cultural=vlc.id)
+ LEFT OUTER JOIN sgm_app.ctlg_item esc on (bloq.estado_conservacion=esc.id)
+ LEFT OUTER JOIN sgm_app.ctlg_item uc on (bloq.uso_constructivo=uc.id)
+WHERE predio = $P{id_predio}]]>
+		</queryString>
+		<field name="categoria" class="java.lang.String"/>
+		<field name="bloque" class="java.lang.String"/>
+		<field name="descripcion" class="java.lang.String"/>
+	</subDataset>
+	<subDataset name="obras_internas" uuid="28af921a-d233-4c11-a097-9d1b7758d759">
+		<parameter name="id_predio" class="java.lang.Long">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT UPPER(tip.valor) as tipo_obi,UPPER(mat.valor) as  material_obi, obi.cantidad, UPPER(cons.valor) as  conserv_obi, obi.area
+FROM sgm_app.cat_predio_obra_interna  obi
+   LEFT OUTER JOIN sgm_app.ctlg_item tip on (obi.tipo=tip.id)
+   LEFT OUTER JOIN sgm_app.ctlg_item mat on (obi.material=mat.id)
+   LEFT OUTER JOIN sgm_app.ctlg_item cons on (obi.conservacion=cons.id)
+WHERE obi.predio = $P{id_predio}]]>
+		</queryString>
+		<field name="tipo_obi" class="java.lang.String"/>
+		<field name="material_obi" class="java.lang.String"/>
+		<field name="cantidad" class="java.math.BigDecimal"/>
+		<field name="conserv_obi" class="java.lang.String"/>
+		<field name="area" class="java.math.BigDecimal"/>
+	</subDataset>
+	<subDataset name="colindantes" uuid="b916239c-bbc9-4c15-89f2-c910d49edbf3">
+		<parameter name="id_predio" class="java.lang.Long">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT UPPER(ori.valor) as orientacion_l,colindante,cp.area_solar
+FROM sgm_app.cat_predio_linderos as cpl
+ LEFT OUTER JOIN sgm_app.ctlg_item ori on (cpl.orientacion=ori.id)
+ LEFT OUTER JOIN sgm_app.cat_predio cp on (cpl.predio_colindante=cp.id)
+WHERE cpl.estado = 'A'
+AND predio = $P{id_predio}]]>
+		</queryString>
+		<field name="orientacion_l" class="java.lang.String"/>
+		<field name="colindante" class="java.lang.String"/>
+		<field name="area_solar" class="java.math.BigDecimal"/>
+	</subDataset>
+	<parameter name="predio" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["D:\\PROYECTOS_IBARRA\\sgm\\src\\main\\webapp\\reportes\\catastro\\San Miguel\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[java.lang.System.getProperty("user.home") + "\\Desktop\\PROYECTO_SAN-MIGUEL\\sgm\\src\\main\\webapp\\css\\homeIconsImages\\logo.jpg"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FachadaFrontal" class="java.io.InputStream" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{FachadaFrontal}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FachadaIzquierda" class="java.io.InputStream" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{FachadaIzquierda}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FachadaDerecha" class="java.io.InputStream" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{FachadaDerecha}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FachadaPosterior" class="java.io.InputStream" isForPrompting="false">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[$P{FachadaPosterior}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO2" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[java.lang.System.getProperty("user.home") + "\\Desktop\\PROYECTO_SAN-MIGUEL\\sgm\\src\\main\\webapp\\css\\smb\\logomunicipal.png"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="IMAGEN_PREDIO" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="COLINDANTES" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="SUBREPORT_DIR_TITLE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["D:\\PROYECTOS_IBARRA\\sgm\\src\\main\\webapp\\reportes\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+  CP.NUM_PREDIO, LPAD(CP.PROVINCIA::TEXT, 2, '0') AS PROVINCIA, LPAD(CP.CANTON::TEXT, 2, '0') AS CANTON, LPAD(CP.PARROQUIA::TEXT, 2, '0') AS PARROQUIA, LPAD(CP.ZONA::TEXT, 2, '0') AS ZONA, LPAD(CP.SECTOR::TEXT, 2, '0') AS SECTOR, LPAD(CP.MZ::TEXT, 3, '0') AS MZ, LPAD(CP.SOLAR::TEXT, 3, '0') AS SOLAR, LPAD(CP.BLOQUE::TEXT, 3, '0') AS BLOQUE, LPAD(CP.PISO::TEXT, 2, '0') AS PISO, LPAD(CP.UNIDAD::TEXT, 3, '0') AS UNIDAD, (CP.BLOQUE > 0 AND CP.PISO > 0 AND CP.UNIDAD > 0) ES_PH,
+  CP.CLAVE_CAT, CP.PREDIALANT, CP.TIPO_PREDIO,CP.CALLE, CP.CALLE_S,
+  TEN.NOMBRE AS TENENCIA, UPPER(USO.VALOR) AS USO_SOLAR, prrq.descripcion AS nombre_parroquia,
+  CP.AREA_SOLAR, UPPER(tipovia.valor) AS tipovia, cp.avaluo_solar, cp.avaluo_construccion, cp.avaluo_municipal,
+  CP.NUMERO_VIVIENDA, cp.ZONA AS zona_num,
+/*Escritura*/
+  es.notaria, CCT.NOMBRE AS nombre_canton, ES.AREA_SOLAR, ES.UNIDAD_AREA,ES.fec_inscripcion,
+  ES.fec_escritura, ES.folio_desde, ES.folio_hasta, es.alicuota,es.fecha_autorizacion,  es.num_repertorio, prv.descripcion AS nombre_provincia,ES.num_registro,
+  UPPER(does.nombre) AS dominio,
+  UPPER(LOC.VALOR) AS LOC_MZ, UPPER(COB_PRD.VALOR) AS COB_PRED, UPPER(EC_PRD.VALOR) AS ECOS_PRED,
+  cp.nombre_edificio AS nombre_predio, cp.requiere_perfeccionamiento, cp.anios_sin_perfeccionamiento, cp.anios_posesion, nombre_pueblo_etnia,
+/*S4*/
+  CP4.FRENTE1, CP4.FONDO1, otva.valor AS otro_tipo_via, material_mejora.valor AS material_mejora, tipo_obra_mejora.valor AS tipo_obra_mejora,
+/*S6*/
+  (select string_agg(UPPER(CI.VALOR), ', ' order by CI.ORDEN) from sgm_app.cat_predio_s6_has_vias CT INNER JOIN sgm_app.ctlg_item CI ON CT.ctlg_item=CI.ID WHERE predio_s6=CP6.ID) AS RODADURA,
+  (SELECT string_agg(UPPER(ie.valor), ', ' ORDER BY ie.orden) FROM sgm_app.cat_predio_s6_has_instalacion_especial pie INNER JOIN sgm_app.ctlg_item ie ON pie.ctlg_item=ie.ID WHERE pie.predio_s6=cp6.id) AS instalaciones_especiales, cp6.tiene_aceras, cp6.tiene_bordillo, cp6.tiene_agua_potable, UPPER(abast.valor) AS abastecimiento, UPPER(eva_ser.valor) AS evacuacion_agua_serv, cp6.tpublico, UPPER(cirb.valor) AS recoleccion_bas,
+  resp_fisc.ci_ruc AS resp_fisc_ci_ruc, (resp_fisc.apellidos || ' ' || resp_fisc.nombres) AS nombres_resp_fisc,
+  resp_act.ci_ruc AS resp_act_ci_ruc, (resp_act.apellidos || ' ' || resp_act.nombres) AS nombres_resp_act,
+  cc.nombre AS nombre_cdla, tc.nombre AS tipo_conjunto,
+tpp.valor as tipo_poseedor,
+afectl.valor as afectacion_lote,
+cp4.tiene_hipoteca as tiene_hipoteca,
+cp4.inst_financiera_hip as inst_financiera_hip,
+cp4.lote_en_conflicto as lote_en_conflicto,
+cp4.opbserv_lote_en_conflicto as opbserv_lote_en_conflicto,
+cp4.tiene_permiso_const as tiene_permiso_const,
+cp4.tiene_retiros as tiene_retiros,
+cp4.tiene_adosamiento as tiene_adosamiento,
+cp6.cobertura_celular as cobertura_celular,
+tipo_prot.valor as tipo_protocolizacion,
+es.precio_compra as precio_compra,
+sts.valor AS estado_solar,
+const.valor AS constructividad,
+es.lind_escr_norte AS lin_nor,
+es.lind_escr_norte_con AS lin_nor_con,
+es.lind_escr_este AS lin_este,
+es.lind_escr_este_con AS lin_este_con,
+es.lind_escr_sur AS lin_sur,
+es.lind_escr_sur_con AS lin_sur_con,
+es.lind_escr_oeste AS lin_oeste,
+es.lind_escr_oeste_con lind_oest_con,
+es.lind_inferior AS lin_inf,
+es.lind_inferior_con AS lin_inf_con,
+es.lind_superior AS lin_sup,
+es.lind_superior_con As lin_sup_con,
+UPPER(fa.valor) AS formaadquisicio4n,
+cp4.area_grafica,
+UPPER(tps.valor) AS tip_suelo,
+UPPER(topo.valor) AS topografia,
+UPPER(ries.valor) AS riesgo_p,
+UPPER(er.valor) AS erosion_p,
+UPPER(fp.valor) AS forma_p,
+UPPER(cs.valor) AS clasif_suelo,
+UPPER(dr.valor) AS drenaje_p,
+cp6.num_medidores_agua AS medidor_agua,
+UPPER(abastee.valor) AS abastecimiento_ee,
+cp6.medidor_electrico,
+UPPER(dpr.valor) AS dispo_riego,
+UPPER(mri.valor) AS metodo_riego,
+UPPER(cpo.valor) AS cercania_pob,
+cp6.recoleccion_basura AS tiene_rcbasura,
+cp6.aseo_calles AS tiene_aseocalle,
+cp6.tv_pag AS tiene_tvpag,
+cp6.tiene_telf_fijo AS tiene_telf,
+cp6.tiene_internet,
+cp6.alarmas_comunitarias AS tiene_alarma,
+cp.coordx,
+cp.coordy,
+UPPER(forma.valor) AS formaadquisicion,
+cp.alicuota_const,
+cp.area_declarada_const,
+cp.area_terreno_alicuota,
+cp.area_total_cons,
+cp.area_aumento_cons,
+cp.alicuota_terreno,
+cp.avaluo_solar as ava_solar,
+cp.avaluo_construccion as ava_const,
+cp.avaluo_Obra_Complement as ava_obcomps,
+cp.avaluo_cultivos as ava_cults,
+cp.base_imponible as base_imp
+
+
+
+FROM
+  sgm_app.CAT_PREDIO CP
+  LEFT OUTER JOIN sgm_app.cat_parroquia prrq ON (prrq.codigo_parroquia=cP.parroquia AND prrq.id_canton = 1)
+  LEFT OUTER JOIN sgm_app.cat_tenencia_item TEN ON (cp.tenencia=TEN.id)
+  LEFT OUTER JOIN sgm_app.ctlg_item uso ON uso.id=cp.uso_solar
+  LEFT OUTER JOIN sgm_app.ctlg_item tpp ON tpp.id=cp.tipo_poseedor
+  LEFT OUTER JOIN sgm_app.cat_escritura es ON es.predio=cp.id AND es.fec_cre = (SELECT max(fec_cre) FROM sgm_app.cat_escritura WHERE predio = $P{predio})
+  LEFT OUTER JOIN sgm_app.ctlg_item const ON cp.constructividad=const.id
+  LEFT OUTER JOIN sgm_app.ctlg_item tipo_prot ON tipo_prot.id=es.tipo_protocolizacion
+  LEFT OUTER JOIN sgm_app.CAT_CANTON CCT ON CCT.ID=ES.CANTON
+  LEFT OUTER JOIN sgm_app.cat_tipos_dominio does ON does.id=es.trasl_dom
+  LEFT OUTER JOIN sgm_app.cat_provincia prv ON prv.id = cct.id_provincia
+  LEFT OUTER JOIN sgm_app.cat_predio_s4 cp4 ON (cp.id=cp4.predio)
+  LEFT OUTER JOIN sgm_app.cat_predio_s6 cp6 on (cp.id=cp6.predio)
+
+  LEFT OUTER JOIN sgm_app.ctlg_item LOC on (cp4.loc_manzana=LOC.id)
+  LEFT OUTER JOIN sgm_app.ctlg_item afectl on (cp4.afectacion_lote=afectl.id)
+  LEFT OUTER JOIN sgm_app.ctlg_item COB_PRD on (cp4.cobertura_predominante=COB_PRD.id)
+  LEFT OUTER JOIN sgm_app.ctlg_item EC_PRD on (cp4.ecosistema_relevante=EC_PRD.id)
+  LEFT OUTER JOIN sgm_app.ctlg_item tipo_obra_mejora on (cp4.tipo_obra_mejora=tipo_obra_mejora.id)
+  LEFT OUTER JOIN sgm_app.ctlg_item material_mejora on (cp4.ecosistema_relevante=material_mejora.id)
+  left outer join sgm_app.ctlg_item sts ON cp4.estado_solar=sts.id
+
+  LEFT OUTER JOIN sgm_app.ctlg_item tipovia on (cp.tipo_via=tipovia.id)
+  LEFT OUTER JOIN sgm_app.ctlg_item abast on (cp6.abast_agua_proviene=abast.id)
+  LEFT OUTER JOIN sgm_app.ctlg_item eva_ser on (cp6.evac_aguas_serv=eva_ser.id)
+  LEFT OUTER JOIN sgm_app.ctlg_item cirb on (cp6.recol_basura=cirb.id)
+  LEFT OUTER JOIN sgm_app.ctlg_item otva ON otva.id=cp.otro_tipo_via
+
+  LEFT OUTER JOIN sgm_app.cat_ente resp_fisc ON resp_fisc.id=cp.responsable_fiscalizador_predial
+  LEFT OUTER JOIN sgm_app.cat_ente resp_act ON resp_act.id=cp.responsable_actualizador_predial
+
+  LEFT OUTER JOIN sgm_app.cat_tipo_conjunto tc ON tc.id=cp.tipo_conjunto
+  LEFT OUTER JOIN sgm_app.cat_ciudadela cc on cc.id = cp.ciudadela
+  LEFT OUTER JOIN sgm_app.ctlg_item fa on (cp.forma_adquisicion=fa.id)
+  LEFT OUTER JOIN sgm_app.ctlg_item tps ON tps.id=cp.tipo_suelo
+  LEFT OUTER JOIN sgm_app.ctlg_item topo ON topo.id=cp.topografia_solar
+  LEFT OUTER JOIN sgm_app.ctlg_item ries ON ries.id=cp4.riesgo
+  LEFT OUTER JOIN sgm_app.ctlg_item er ON er.id=cp4.erosion
+  LEFT OUTER JOIN sgm_app.ctlg_item fp ON fp.id=cp.forma_solar
+  LEFT OUTER JOIN sgm_app.ctlg_item cs ON cs.id=cp.clasificacion_suelo
+  LEFT OUTER JOIN sgm_app.ctlg_item dr ON dr.id=cp4.drenaje
+  LEFT OUTER JOIN sgm_app.ctlg_item abastee on (cp6.abast_energia_proviene=abastee.id)
+
+ LEFT OUTER JOIN sgm_app.ctlg_item dpr on (cp6.disponibilidad_riego=dpr.id)
+ LEFT OUTER JOIN sgm_app.ctlg_item mri on (cp6.metodo_riego=mri.id)
+ LEFT OUTER JOIN sgm_app.ctlg_item cpo on (cp6.cercania_poblado=cpo.id)
+ LEFT OUTER JOIN sgm_app.ctlg_item forma on (cp.forma_adquisicion=forma.id)
+
+WHERE
+  CP.ID=$P{predio};]]>
+	</queryString>
+	<field name="num_predio" class="java.lang.Long">
+		<fieldDescription><![CDATA[Campo para integrar (referncia) con la informacion de la culsultoria urbana]]></fieldDescription>
+	</field>
+	<field name="provincia" class="java.lang.String"/>
+	<field name="canton" class="java.lang.String"/>
+	<field name="parroquia" class="java.lang.String">
+		<fieldDescription><![CDATA[Parroquia a la cual pertenece el barrio.]]></fieldDescription>
+	</field>
+	<field name="zona" class="java.lang.String"/>
+	<field name="sector" class="java.lang.String"/>
+	<field name="mz" class="java.lang.String"/>
+	<field name="solar" class="java.lang.String"/>
+	<field name="bloque" class="java.lang.String"/>
+	<field name="piso" class="java.lang.String"/>
+	<field name="unidad" class="java.lang.String"/>
+	<field name="es_ph" class="java.lang.Boolean"/>
+	<field name="clave_cat" class="java.lang.String"/>
+	<field name="predialant" class="java.lang.String"/>
+	<field name="tipo_predio" class="java.lang.String"/>
+	<field name="calle" class="java.lang.String"/>
+	<field name="calle_s" class="java.lang.String"/>
+	<field name="tenencia" class="java.lang.String"/>
+	<field name="uso_solar" class="java.lang.String"/>
+	<field name="nombre_parroquia" class="java.lang.String"/>
+	<field name="area_solar" class="java.math.BigDecimal"/>
+	<field name="tipovia" class="java.lang.String"/>
+	<field name="avaluo_solar" class="java.math.BigDecimal"/>
+	<field name="avaluo_construccion" class="java.math.BigDecimal"/>
+	<field name="avaluo_municipal" class="java.math.BigDecimal"/>
+	<field name="numero_vivienda" class="java.lang.String"/>
+	<field name="zona_num" class="java.lang.Integer"/>
+	<field name="notaria" class="java.lang.String"/>
+	<field name="nombre_canton" class="java.lang.String"/>
+	<field name="unidad_area" class="java.lang.Long"/>
+	<field name="fec_inscripcion" class="java.sql.Date"/>
+	<field name="fec_escritura" class="java.sql.Date"/>
+	<field name="folio_desde" class="java.lang.String"/>
+	<field name="folio_hasta" class="java.lang.String"/>
+	<field name="alicuota" class="java.math.BigDecimal"/>
+	<field name="fecha_autorizacion" class="java.sql.Date"/>
+	<field name="num_repertorio" class="java.lang.Integer"/>
+	<field name="nombre_provincia" class="java.lang.String"/>
+	<field name="num_registro" class="java.lang.Long"/>
+	<field name="dominio" class="java.lang.String"/>
+	<field name="loc_mz" class="java.lang.String"/>
+	<field name="cob_pred" class="java.lang.String"/>
+	<field name="ecos_pred" class="java.lang.String"/>
+	<field name="nombre_predio" class="java.lang.String"/>
+	<field name="requiere_perfeccionamiento" class="java.lang.Boolean"/>
+	<field name="anios_sin_perfeccionamiento" class="java.lang.Integer"/>
+	<field name="anios_posesion" class="java.lang.Integer"/>
+	<field name="nombre_pueblo_etnia" class="java.lang.String"/>
+	<field name="frente1" class="java.math.BigDecimal"/>
+	<field name="fondo1" class="java.math.BigDecimal"/>
+	<field name="otro_tipo_via" class="java.lang.String"/>
+	<field name="material_mejora" class="java.lang.String"/>
+	<field name="tipo_obra_mejora" class="java.lang.String"/>
+	<field name="rodadura" class="java.lang.String"/>
+	<field name="instalaciones_especiales" class="java.lang.String"/>
+	<field name="tiene_aceras" class="java.lang.Boolean"/>
+	<field name="tiene_bordillo" class="java.lang.Boolean"/>
+	<field name="tiene_agua_potable" class="java.lang.Boolean"/>
+	<field name="abastecimiento" class="java.lang.String"/>
+	<field name="evacuacion_agua_serv" class="java.lang.String"/>
+	<field name="tpublico" class="java.lang.Boolean"/>
+	<field name="recoleccion_bas" class="java.lang.String"/>
+	<field name="resp_fisc_ci_ruc" class="java.lang.String"/>
+	<field name="nombres_resp_fisc" class="java.lang.String"/>
+	<field name="resp_act_ci_ruc" class="java.lang.String"/>
+	<field name="nombres_resp_act" class="java.lang.String"/>
+	<field name="nombre_cdla" class="java.lang.String"/>
+	<field name="tipo_conjunto" class="java.lang.String"/>
+	<field name="tipo_poseedor" class="java.lang.String"/>
+	<field name="afectacion_lote" class="java.lang.String"/>
+	<field name="tiene_hipoteca" class="java.lang.Boolean"/>
+	<field name="inst_financiera_hip" class="java.lang.String"/>
+	<field name="lote_en_conflicto" class="java.lang.Boolean"/>
+	<field name="opbserv_lote_en_conflicto" class="java.lang.String"/>
+	<field name="tiene_permiso_const" class="java.lang.Boolean"/>
+	<field name="tiene_retiros" class="java.lang.Boolean"/>
+	<field name="tiene_adosamiento" class="java.lang.Boolean"/>
+	<field name="cobertura_celular" class="java.lang.Boolean"/>
+	<field name="tipo_protocolizacion" class="java.lang.String"/>
+	<field name="precio_compra" class="java.math.BigDecimal"/>
+	<field name="estado_solar" class="java.lang.String"/>
+	<field name="constructividad" class="java.lang.String"/>
+	<field name="lin_nor" class="java.lang.String"/>
+	<field name="lin_nor_con" class="java.math.BigDecimal"/>
+	<field name="lin_este" class="java.lang.String"/>
+	<field name="lin_este_con" class="java.math.BigDecimal"/>
+	<field name="lin_sur" class="java.lang.String"/>
+	<field name="lin_sur_con" class="java.math.BigDecimal"/>
+	<field name="lin_oeste" class="java.lang.String"/>
+	<field name="lind_oest_con" class="java.math.BigDecimal"/>
+	<field name="lin_inf" class="java.lang.String"/>
+	<field name="lin_inf_con" class="java.math.BigDecimal"/>
+	<field name="lin_sup" class="java.lang.String"/>
+	<field name="lin_sup_con" class="java.math.BigDecimal"/>
+	<field name="formaadquisicio4n" class="java.lang.String"/>
+	<field name="area_grafica" class="java.math.BigDecimal"/>
+	<field name="tip_suelo" class="java.lang.String"/>
+	<field name="topografia" class="java.lang.String"/>
+	<field name="riesgo_p" class="java.lang.String"/>
+	<field name="erosion_p" class="java.lang.String"/>
+	<field name="forma_p" class="java.lang.String"/>
+	<field name="clasif_suelo" class="java.lang.String"/>
+	<field name="drenaje_p" class="java.lang.String"/>
+	<field name="medidor_agua" class="java.lang.Integer"/>
+	<field name="abastecimiento_ee" class="java.lang.String"/>
+	<field name="medidor_electrico" class="java.lang.String"/>
+	<field name="dispo_riego" class="java.lang.String"/>
+	<field name="metodo_riego" class="java.lang.String"/>
+	<field name="cercania_pob" class="java.lang.String"/>
+	<field name="tiene_rcbasura" class="java.lang.Boolean"/>
+	<field name="tiene_aseocalle" class="java.lang.Boolean"/>
+	<field name="tiene_tvpag" class="java.lang.Boolean"/>
+	<field name="tiene_telf" class="java.lang.Boolean"/>
+	<field name="tiene_internet" class="java.lang.Boolean"/>
+	<field name="tiene_alarma" class="java.lang.Boolean"/>
+	<field name="coordx" class="java.math.BigDecimal"/>
+	<field name="coordy" class="java.math.BigDecimal"/>
+	<field name="formaadquisicion" class="java.lang.String"/>
+	<field name="alicuota_const" class="java.math.BigDecimal"/>
+	<field name="area_declarada_const" class="java.math.BigDecimal"/>
+	<field name="area_terreno_alicuota" class="java.math.BigDecimal"/>
+	<field name="area_total_cons" class="java.math.BigDecimal"/>
+	<field name="area_aumento_cons" class="java.math.BigDecimal"/>
+	<field name="alicuota_terreno" class="java.math.BigDecimal"/>
+	<field name="ava_solar" class="java.math.BigDecimal"/>
+	<field name="ava_const" class="java.math.BigDecimal"/>
+	<field name="ava_obcomps" class="java.math.BigDecimal"/>
+	<field name="ava_cults" class="java.math.BigDecimal"/>
+	<field name="base_imp" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="70" splitType="Immediate">
+			<subreport>
+				<reportElement x="0" y="-1" width="555" height="71" uuid="b2196f27-1b66-43e6-b857-824315443d78"/>
+				<subreportParameter name="LOGO">
+					<subreportParameterExpression><![CDATA[$P{LOGO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SUB_TITLE"/>
+				<subreportParameter name="LOGO2">
+					<subreportParameterExpression><![CDATA[$P{LOGO2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR_TITLE} + "titleReporte2.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<detail>
+		<band height="762" splitType="Immediate">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="555" height="20" forecolor="#FFFFFF" backcolor="#999999" uuid="5b0431c9-603b-49af-93ba-1534ab6669d5"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[1.1 CLAVE CATASTRAL (CÓDIGO DE UBICACIÓN)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="0" y="393" width="555" height="16" forecolor="#FFFFFF" backcolor="#999999" uuid="0fc4b5ea-b42b-44b8-b5d6-6c192190f2f6"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ 3.1 CARACTERÍSTICAS DEL LOTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="0" y="202" width="555" height="20" forecolor="#FFFFFF" backcolor="#999999" uuid="0c10cce1-e081-45e1-8b7f-d5f2f9003256"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ 2.IDENTIFICACIÓN LEGAL]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="278" y="48" width="55" height="14" uuid="04176645-f59d-4a72-b1aa-303f3dd89ca5"/>
+				<box leftPadding="1">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{mz}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="113" y="34" width="55" height="14" uuid="efad5065-1ced-4f12-937c-32e5ac8110be"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Parroquia]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="388" y="34" width="57" height="14" uuid="976c54c9-2edf-4a87-b913-cf1ba066a273"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Bloque]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="58" y="34" width="55" height="14" uuid="d1574e50-aba0-4eb0-b042-0f857ec02bb4"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Catón]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="333" y="48" width="55" height="14" uuid="31f24278-5df2-41dd-b870-33053eefeca9"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{solar}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="113" y="48" width="55" height="14" uuid="eca15ef9-b978-4873-aca7-f8c27d7abd95"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{parroquia}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="388" y="20" width="167" height="14" uuid="55ca8c62-37e9-4b30-abfe-61db08b7a6bf"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Propiedad horizontal]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="388" y="48" width="57" height="14" uuid="f2362b73-3091-4c6d-a4ae-517fd135128f"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{bloque}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="495" y="34" width="60" height="14" uuid="21f7f632-e447-46a3-9fec-c0936e3cdc65"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Unidad]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="168" y="48" width="55" height="14" uuid="d099cc0a-52e8-46f7-8799-9f1b8e55bc4f"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{zona}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Transparent" x="1" y="48" width="57" height="14" forecolor="#000000" uuid="28200287-a535-4a7f-a0ae-6d73de88b14b"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{provincia}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="34" width="57" height="14" uuid="788b92f2-7320-47c2-a68c-8ed9a22054dd"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Provincia]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="223" y="34" width="55" height="14" uuid="1df9e790-a657-4191-82a7-ed6a04884e43"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sector]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="168" y="34" width="55" height="14" uuid="d86f1db5-0443-4cc0-9910-5ec7edd98b8f"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Zona]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1" y="76" width="167" height="14" forecolor="#FF0000" uuid="678b3d12-d418-4efc-b39a-ed8034338bbd"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{num_predio}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="445" y="34" width="50" height="14" uuid="b28dc544-7f7c-42bc-91c5-fb5de7ea6fca"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Piso]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="495" y="48" width="60" height="14" uuid="dfdf8506-d925-4fe1-b300-0f7dfc2e042e"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{unidad}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="445" y="48" width="50" height="14" uuid="32291586-5a9a-409a-adc9-da238fcaff76"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{piso}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="223" y="48" width="55" height="14" uuid="d44e85d4-a343-470f-bf12-a18e9886863d"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{sector}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="58" y="48" width="55" height="14" uuid="1ce847aa-93f2-45d0-bded-39a87aa4454a"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{canton}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="333" y="34" width="55" height="14" uuid="3e28fc10-2bf2-4e4e-90a7-03185daccfd6"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Lote]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="278" y="34" width="55" height="14" uuid="5b12b429-ca4b-4857-b3ed-bf362c00d213"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Manzana]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="20" width="167" height="14" uuid="7bc95946-dd2e-4c14-906b-bd86379940b8"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CÓDIGO NACIONAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="388" y="62" width="167" height="14" uuid="e985bbb0-02ff-4df7-863f-b0dde6521cf4"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="9" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[TIPO DE PREDIO]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="168" y="76" width="220" height="14" uuid="c4743fa0-811e-4f72-bc85-ac6dabeb6c1c"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{predialant}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="168" y="62" width="220" height="14" uuid="897c3047-6919-4b0b-ad80-e3111d9d758a"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CLAVE CATASTRAL ANTERIOR]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="388" y="76" width="167" height="14" uuid="199061e8-bfff-4c43-a055-28aab60358bc"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipo_predio}=="U"? "URBANO" :
+$F{tipo_predio}=="R"? "RURAL" : "URBANO"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="-1" y="89" width="557" height="20" forecolor="#FFFFFF" backcolor="#999999" uuid="41d90c12-789b-4fd9-87ff-b7c0f54c0c7d"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ 1.2 UBICACIÓN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="108" width="85" height="12" uuid="dff0d868-6902-45ee-92b3-42d4e4b14412"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[* CALLE PRINCIPAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="120" width="85" height="12" uuid="df4eef1d-b5f0-4f9b-96e3-10ebf0a3bb30"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[*CALLE SECUNDARIA]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="86" y="120" width="318" height="12" uuid="ec5be7e4-9fb5-4836-846d-8ea694373000"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{calle_s}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement positionType="Float" x="3" y="223" width="310" height="17" uuid="e93553e5-d985-4125-bfde-e100e1460939"/>
+				<subreportParameter name="perso">
+					<subreportParameterExpression><![CDATA[$P{predio}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "propietariosMiduvi.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="1" y="240" width="554" height="20" forecolor="#FFFFFF" backcolor="#999999" uuid="aab56f22-0e79-4a22-af14-b44ed66769a9"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ 2.6 DOCUMENTO TÍTULO DE PROPIEDAD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="2" y="297" width="551" height="20" forecolor="#FFFFFF" backcolor="#999999" uuid="e4f52f46-6c09-46d6-8db9-db16eb3181e4"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ 2.7 PREDIO SIN TÍTULO]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="73" y="261" width="64" height="12" uuid="a7c50045-68b4-4ef0-a300-7981ce3476fe"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{notaria}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="4" y="261" width="69" height="12" uuid="d3db8d27-792e-4f23-9f14-12fc5f2a8b99"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[NRO. NOTARIA]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="504" y="273" width="48" height="12" uuid="82ddd2b2-9059-412a-a12e-1edff62a4f90"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{unidad_area}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="313" y="261" width="75" height="12" uuid="eb53086d-99d5-482f-b3e3-b954c5d1814b"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_canton}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="275" y="261" width="38" height="12" uuid="874be61c-b76d-4def-b047-67a03da4c076"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[CANTÓN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="137" y="261" width="42" height="12" uuid="b596a19c-d527-4676-bc51-5da1ff65a27f"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[PROVINCIA]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="179" y="261" width="96" height="12" uuid="7fc92b09-f543-4268-89df-9f231956a643"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_provincia}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="474" y="261" width="78" height="12" uuid="be8f166a-97b8-45b4-9921-9bc8e7f4059b"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fec_escritura}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="388" y="261" width="86" height="12" uuid="15c797a2-d1cc-47b7-b6d5-1d7349589469"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="6" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[FECHA DE PROTOCOLIZ.]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="94" y="273" width="129" height="12" uuid="5cfff348-9a9b-442b-9bde-bcd67310afc1"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fec_inscripcion}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="4" y="273" width="90" height="12" uuid="c08c5dfc-2946-40b2-aa2f-6e207b6b25f2"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[FECHA DE INSCRIPC.]]></text>
+			</staticText>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="401" y="273" width="65" height="12" uuid="f336fe6c-a475-46db-8396-0a13b7bdc0e6"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{area_solar}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="3" y="316" width="121" height="14" uuid="cc8707e7-36f1-43be-b757-f2ea72cd1d33"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[PERFECCIONAMIENTO]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="412" y="316" width="139" height="14" uuid="ca02eaf5-621b-419b-af34-5f1fb63a96b1"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{anios_sin_perfeccionamiento}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="278" y="316" width="134" height="14" uuid="221ff79c-31f4-4e20-b8c9-1918263366b7"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[AÑOS SIN PERFECC.]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="412" y="330" width="139" height="14" uuid="03ab44c3-cad2-4588-9ba4-81715948066d"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_pueblo_etnia}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="124" y="330" width="154" height="14" uuid="b15b48e9-3c69-436d-a3bf-dc58814b7d31"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{anios_posesion}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="278" y="330" width="134" height="14" uuid="8149bff3-f65c-4dc1-a793-87471ce0b51e"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[NOMBRE PUEBLO/ETNIA]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="124" y="316" width="154" height="14" uuid="20adf7f1-85a1-4e42-8f76-213658db83e3"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{requiere_perfeccionamiento}? "SI" : "NO"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="3" y="330" width="121" height="14" uuid="51b21c7a-630e-48af-bf86-1fd5aba841e4"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[AÑOS EN POSESIÓN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="3" y="379" width="121" height="14" uuid="af484116-0f1c-4ff5-8808-63345e08eac9"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[*FORMA DE ADQUISICIÓN]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="124" y="379" width="427" height="14" uuid="6e3e33d3-8c4a-4290-abcc-b5cbbf638cd0"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{formaadquisicion}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="239" y="410" width="110" height="12" uuid="156a6617-cac7-4d98-851d-80cb4be63555"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{frente1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="176" y="410" width="63" height="12" uuid="04a33da6-769f-436f-b331-a64fff01d2e5"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[FRENTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="3" y="410" width="63" height="12" uuid="608af771-cade-4869-893c-19bedf7035d4"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[ÁREA GRÁFICA]]></text>
+			</staticText>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="66" y="410" width="110" height="12" uuid="308c5a2e-a22b-409d-b284-b072acebbf30"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{area_grafica}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="137" y="422" width="127" height="12" uuid="c857e87c-f5d4-4cef-9ffe-a0bca7b1b39d"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{loc_mz}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="3" y="422" width="134" height="12" uuid="3fdb1857-416d-4865-b627-5fba33ec5036"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[*LOCALIZACIÓN EN LA MANZANA]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="363" y="422" width="188" height="12" uuid="56777adf-319e-4862-9f7f-7cb61e12e0a1"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cob_pred}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="264" y="422" width="99" height="12" uuid="ff0ad9fc-1cee-4bdc-bd7d-3399e2b92892"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[*COBERTURA NATURAL PREDOMINANTE]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="153" y="434" width="176" height="12" uuid="4072423a-0140-4816-b507-045980352956"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ecos_pred}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="3" y="434" width="150" height="12" uuid="42cf1fbf-23a4-450b-b48e-5efcdc88d81d"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[*ECOSISTEMA RELEVANTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="1" y="566" width="554" height="16" forecolor="#FFFFFF" backcolor="#999999" uuid="0a86259e-ac3a-4e4e-9152-065068cb003e"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ 3.3 INFRAESTRUCTUTA E INSTALACIONES]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="123" y="666" width="60" height="12" uuid="931aa855-31f4-43f1-8ab0-f90a2683f9f1"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tiene_aceras}? "SI" :"NO"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="2" y="666" width="121" height="12" uuid="29720543-cc37-46a7-9388-13586d85c49a"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[ACERAS]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="125" y="582" width="143" height="12" uuid="d582127f-362e-4fbd-9756-2a8ecb963bf0"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipovia}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="2" y="582" width="123" height="12" uuid="d1aa12c4-d685-49c6-a5e0-81906b626f7f"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[*TIPO VÍA DE ACCESO]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="377" y="582" width="176" height="12" uuid="df82911a-1358-49f3-ba13-15e99c65c39d"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{rodadura}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="268" y="582" width="109" height="12" uuid="a3184034-945b-405c-b831-74a3457a4e2a"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[*MATERIAL DE RODADURA]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="304" y="666" width="60" height="12" uuid="df86a639-ba0b-4d8a-b2d9-5fcf091ac072"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tiene_bordillo}? "SI" : "NO"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="183" y="666" width="121" height="12" uuid="0bc221a1-a56d-46f4-bb6a-207af8eca4b7"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[BORDILLOS]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="484" y="666" width="69" height="12" uuid="28beed5a-4cae-41ba-8ab0-09e741c0d038"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tpublico}? "SI" : "NO"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="364" y="666" width="120" height="12" uuid="3d82b64e-0f7a-47e4-adfa-70a3977b4ac9"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[TRANSPORTE PÚBLICO]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="123" y="678" width="60" height="12" uuid="bcbdd108-9371-4c71-b25b-7300e3a562a0"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tiene_rcbasura}? "SI" :"NO"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="2" y="678" width="121" height="12" uuid="ce32e89c-cfd7-4b93-9ad5-54bfd3976cd9"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[RECOLECCIÓN BASURA]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="86" y="108" width="318" height="12" uuid="00512e43-6afa-4cde-8f28-a2dbeb4a4a4a"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{calle}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="404" y="120" width="81" height="12" uuid="42a3d519-441f-4099-ade6-a7d499669c55"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numero_vivienda}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="132" width="167" height="12" uuid="3e78b532-5540-45d5-a430-6e219924d643"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[*BARRIO/URBANIZACIÓN/LOTIZ/COMUNIDAD]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="168" y="132" width="236" height="12" uuid="a5cbfdbb-6482-44da-84af-48437a7a372f"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_cdla}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="124" y="344" width="427" height="14" uuid="f90b2bee-2681-4fac-b599-f2cbd797d67a"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipo_poseedor}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="3" y="344" width="121" height="14" uuid="9bb9d1bb-b1ca-4cf1-b4e8-d71887470ec5"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[TIPO POSEEDOR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="329" y="434" width="112" height="12" uuid="ad1572c6-5118-4f4b-9d75-9130fa1df837"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[*OCUPACIÓN]]></text>
+			</staticText>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="441" y="434" width="110" height="12" uuid="4c165aa1-c70b-4a96-a3b6-5baff404e453"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{estado_solar}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="299" y="470" width="252" height="12" uuid="9c4f3e95-53a5-4edc-ac39-1340f3105c26"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{constructividad}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="207" y="470" width="92" height="12" uuid="dae70bb3-f1f8-4a44-bf86-b4c575109b56"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[*CONSTRUCTIVIDAD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="168" y="20" width="220" height="14" uuid="089a5ea0-7226-4f09-91c0-3e391d10e830"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CÓDIGO LOCAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="62" width="167" height="14" uuid="96afde44-ed88-4c25-a86f-8d956b69ecd2"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CÓDIGO ÚNICO/NÚMERO PREDIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="404" y="108" width="81" height="12" uuid="e2f2c00d-f26d-46a7-a7c6-9b0ab9f1c1c7"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[PLACA DOMICIALIARIA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="144" width="167" height="12" uuid="324031b0-97c1-4d4a-b4f6-8f5ee114cad1"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[NOMBRE DE PREDIO ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="156" width="167" height="12" uuid="f59b2d36-8b60-424c-80e5-11e3e249ee72"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[COORDENADAS PLANAS DE REFERENCIA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="485" y="108" width="70" height="12" uuid="47b97b75-f2c1-43d3-b78c-2bdace603094"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[REGIMEN TENENCIA]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="168" y="144" width="236" height="12" uuid="79ef261c-c516-49b5-8a12-43e072da3a2d"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_predio}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="404" y="132" width="44" height="12" uuid="07ac855e-dbe6-4311-b263-7a858d19f7c3"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[LOTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="404" y="144" width="44" height="12" uuid="bb6c67e6-9487-4389-b3e5-16d5a0f6bedd"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[MANZANA]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="485" y="120" width="70" height="12" uuid="523a32f3-a132-4b7c-9eb3-50416d04ee87"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tenencia}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="448" y="132" width="107" height="12" uuid="ff25ff7b-7c03-4be6-8042-4ccf0f4d9cd5"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tenencia}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="448" y="144" width="107" height="12" uuid="0a4e1151-7d22-4ad5-8708-411dc822b699"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tenencia}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="168" y="156" width="11" height="12" uuid="ad1e75c0-6c28-4ec9-9514-dc40df981fe1"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[E]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="179" y="156" width="184" height="12" uuid="2d38cfca-c6b3-4bed-a287-a671e3542a01"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{coordx}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="363" y="156" width="11" height="12" uuid="feea7967-fd40-4880-be25-9e6de0f1027c"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[N]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="374" y="156" width="181" height="12" uuid="f442707b-aa80-4122-8625-b51c162b7948"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{coordy}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="1" y="168" width="554" height="12" forecolor="#FFFFFF" backcolor="#999999" uuid="6c6ac3fc-b7bb-44aa-b71f-434f35ed0ece"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[*USOS DEL PREDIO]]></text>
+			</staticText>
+			<subreport>
+				<reportElement positionType="Float" x="0" y="181" width="556" height="20" uuid="1ab74f7e-b48a-419e-9323-0c4eacc4448d"/>
+				<subreportParameter name="id_predio">
+					<subreportParameterExpression><![CDATA[$P{predio}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "fichaMiduvi_usu_predio.jasper"]]></subreportExpression>
+			</subreport>
+			<textField>
+				<reportElement positionType="Float" mode="Transparent" x="265" y="273" width="40" height="12" forecolor="#000000" uuid="fe6c0b56-d959-4868-bbff-eed79606ab6c"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{provincia}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="343" y="273" width="29" height="12" uuid="a33c56ca-432a-4429-943f-0bc207440b31"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{canton}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="223" y="273" width="42" height="12" uuid="20ecb754-0388-4eda-96e3-eb5b76fee115"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[PROVINCIA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="305" y="273" width="38" height="12" uuid="d6ba0b2e-2560-4a6e-b293-16a61e0ac16a"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[CANTÓN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="372" y="273" width="29" height="12" uuid="2d17c875-3af2-47b3-b32a-e23e0b24fbb2"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[ÁREA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="466" y="273" width="38" height="12" uuid="4fa445bf-270a-4476-94c7-96a711df9a16"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="false"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[*UNIDAD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="4" y="285" width="62" height="12" uuid="0f943af2-19c5-4b9b-bdee-606885283f3d"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[NRO. AUTORIZ.]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="66" y="285" width="157" height="12" uuid="a80cd950-3a21-470e-9eda-7a6d4450971e"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{num_repertorio}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="223" y="285" width="85" height="12" uuid="6a5d3aac-b24d-42c1-9610-af77b7734cc7"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[FECHA DE AUTORIZ.]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="308" y="285" width="96" height="12" uuid="62b47f27-89bb-479c-ac92-d51fdb3ee0dc"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha_autorizacion}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="404" y="285" width="62" height="12" uuid="e0b65d4d-2565-4a8d-be1d-7a145f0167bb"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[NRO.PARTIDA]]></text>
+			</staticText>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="466" y="285" width="86" height="12" uuid="cdf870c5-143c-411f-a42b-31c0acbcef13"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{num_registro}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="0" y="359" width="551" height="20" forecolor="#FFFFFF" backcolor="#999999" uuid="14c8f76a-ab74-424f-9dfd-9a0bca01be8c"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[2.8 FORMA DE ADQUISICIÓN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="349" y="410" width="80" height="12" uuid="ad12f8c5-229b-4029-b5a4-41c0f41542f4"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[FONDO RELATIVO]]></text>
+			</staticText>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="429" y="410" width="122" height="12" uuid="f02f3c8d-4e1e-4f1d-90cf-816f0f8108ed"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fondo1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="3" y="446" width="150" height="12" uuid="aa43788a-174f-4bd9-a7d9-f5c24d32fb75"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[*CARACT.SUELO]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="153" y="446" width="176" height="12" uuid="afcda5c6-f425-492a-adb9-528501099ff5"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tip_suelo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="329" y="446" width="63" height="12" uuid="9c3455b4-e299-49a9-b12d-89da3568e46c"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[*TOPOGRAFÍA]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="392" y="446" width="159" height="12" uuid="390beebb-0274-4560-b32b-b23b81da0771"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{topografia}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="3" y="458" width="83" height="12" uuid="ae453b48-9d56-46cb-ab58-68f86be3c204"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[*TIPO DE RIESGOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="178" y="458" width="44" height="12" uuid="50164ff1-4236-4e79-b56b-1cab70456850"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[*EROSIÓN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="314" y="458" width="98" height="12" uuid="83cc2e0b-9ba0-430e-bf91-051d1665322c"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[*FORMA DEL PREDIO]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="86" y="458" width="92" height="12" uuid="ddf49033-4787-4213-b9ae-5938538cebd3"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{riesgo_p}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="222" y="458" width="92" height="12" uuid="e25248b3-fa0d-4d00-9ad3-a61ff9444e92"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{erosion_p}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="412" y="458" width="139" height="12" uuid="3a78cde2-d0be-42c4-8858-610075a0088f"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{forma_p}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="3" y="470" width="83" height="12" uuid="9dfdeba0-e3bc-4258-8b73-8fdac36a42ff"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[*DRENAJE]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="86" y="470" width="121" height="12" uuid="5e36f5d2-226a-4956-afbf-cd8b7b72b832"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{drenaje_p}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="3" y="482" width="119" height="12" uuid="122a91bd-c54b-4d36-9f8d-821157c9d841"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[*CLASIFICACIÓN DEL SUELO]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="122" y="482" width="429" height="12" uuid="79cff16e-9711-48a8-b81e-612dcf2ba414"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{clasif_suelo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="3" y="543" width="548" height="12" isRemoveLineWhenBlank="true" forecolor="#FFFFFF" backcolor="#999999" uuid="e4ce8bc0-d003-4338-ac50-867cc8d881be">
+					<printWhenExpression><![CDATA[$F{tipo_predio}=="R"]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[CLASIFICACIÓN DEL SUELO RURAL]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement key="table 2" style="table 2" positionType="Float" x="3" y="554" width="547" height="13" isRemoveLineWhenBlank="true" uuid="28d22d64-7e40-4c00-af76-58480a837dfe">
+					<printWhenExpression><![CDATA[$F{tipo_predio}=="R"]]></printWhenExpression>
+				</reportElement>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="clasificacion_rural" uuid="76912538-a92c-4eab-9845-a491716542a0">
+						<datasetParameter name="id_predio">
+							<datasetParameterExpression><![CDATA[$P{predio}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="90" uuid="a87c3968-d3e1-4643-8eb4-588bc925e6e5">
+						<jr:tableFooter style="table 2_TH" height="0" rowSpan="1"/>
+						<jr:columnHeader style="table 2_CH" height="15" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="15" uuid="51fb2674-3155-4512-9c89-711e0c8d4c58"/>
+								<textElement textAlignment="Center">
+									<font size="8"/>
+								</textElement>
+								<text><![CDATA[SECTOR HOMOG.]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 2_TD" height="15" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="90" height="15" uuid="c4e89879-a145-401a-9e1d-31afbdbb5299"/>
+								<textElement>
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{sector_h}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90" uuid="5eb9f77e-c88d-4437-82f7-cdb6302e1355">
+						<jr:tableFooter style="table 2_TH" height="0" rowSpan="1"/>
+						<jr:columnHeader style="table 2_CH" height="15" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="15" uuid="27d07bde-ad74-460f-949e-6bd7e53cfce9"/>
+								<textElement textAlignment="Center">
+									<font size="8"/>
+								</textElement>
+								<text><![CDATA[CALIDAD SUELO]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 2_TD" height="15" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="90" height="15" uuid="91291427-701e-4838-a072-81f4ac123167"/>
+								<textElement>
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{calidad_}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90" uuid="7155db70-17c2-48c3-8342-256736a43f86">
+						<jr:tableFooter style="table 2_TH" height="0" rowSpan="1"/>
+						<jr:columnHeader style="table 2_CH" height="15" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="15" uuid="26e560fc-843a-426d-9d18-5b6b502cfccb"/>
+								<textElement textAlignment="Center">
+									<font size="8"/>
+								</textElement>
+								<text><![CDATA[USO]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 2_TD" height="15" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="90" height="15" uuid="ac812de5-39e8-4910-85fe-087da5d675de"/>
+								<textElement>
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{uso}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90" uuid="e619a89c-b368-4853-a88b-7d6034063f96">
+						<jr:tableFooter style="table 2_TH" height="0" rowSpan="1"/>
+						<jr:columnHeader style="table 2_CH" height="15" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="15" uuid="da99b522-5396-4566-9826-7e8affa91865"/>
+								<textElement textAlignment="Center">
+									<font size="8"/>
+								</textElement>
+								<text><![CDATA[SUPERFICIE]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 2_TD" height="15" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="90" height="15" uuid="7f26e8e2-4e5d-43c4-bf1c-3e5263891e98"/>
+								<textElement textAlignment="Right">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{superficie}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<staticText>
+				<reportElement positionType="Float" x="2" y="594" width="123" height="12" uuid="da5ed3c8-b8f4-4416-ae98-abcb93b75d95"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[ALCANTARILLADO SANITARIO]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="125" y="594" width="428" height="12" uuid="5c6b10ca-5767-47e2-adc2-85fbe311edca"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{evacuacion_agua_serv}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="2" y="606" width="123" height="12" uuid="e148e83f-d76f-4f5a-ad34-62ff2abecd73"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[AGUA POTABLE]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="125" y="606" width="143" height="12" uuid="9f5a8a4d-9d4e-4ad6-9fb3-4c6b6a839c1f"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{abastecimiento}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="268" y="606" width="109" height="12" uuid="3ca37ee5-4fb5-4ecb-a51e-a7719d900745"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[No. MEDIDOR AGUA]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="377" y="606" width="176" height="12" uuid="acfb0481-f454-49f8-9bf2-7acf1d0e55a5"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{medidor_agua}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="2" y="618" width="123" height="12" uuid="b84e45c9-c813-4e34-b75d-3738911630ac"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[ENERGÍA ELÉCTICA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="268" y="618" width="109" height="12" uuid="13df21a0-4337-45d5-a475-42e45e0ed486"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[No. MEDIDOR ENERGÍA]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="125" y="618" width="143" height="12" uuid="60a8c283-95ee-4c7d-88a5-dd4e71e49ca2"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{abastecimiento_ee}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="377" y="618" width="176" height="12" uuid="448db05c-57c8-49a4-8a8a-7fee1586c4bc"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{medidor_electrico}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="2" y="630" width="123" height="12" uuid="282c550e-84f7-46de-9523-e2871ec031f0"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[DISPONIBILIDAD RIEGO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="268" y="630" width="109" height="12" uuid="36fd25d6-409f-4be2-bec6-33739caa0488"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[MÉTODO RIEGO]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="125" y="630" width="143" height="12" uuid="023da51d-7701-4354-8d6f-797879d035cc"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dispo_riego}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="377" y="630" width="176" height="12" uuid="0f7584b9-7591-49f9-ba89-a903a01e8a40"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{metodo_riego}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="2" y="642" width="123" height="12" uuid="ecc5c273-e4b5-497d-9748-bb94ccc608fa"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[CERCANÍA POBLADO]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="125" y="642" width="428" height="12" uuid="dbea55b9-9872-414e-8626-72110e791897"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cercania_pob}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="2" y="654" width="551" height="12" forecolor="#FFFFFF" backcolor="#999999" uuid="d2fee72d-dc8f-4dd1-ba81-74d4e1bd94bd"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[FACTIBILIDAD SERVICIOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="183" y="678" width="121" height="12" uuid="0912cf38-dfb0-4489-9ee0-4b557de2a162"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[ASEO DE CALLES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="364" y="678" width="120" height="12" uuid="7f094b99-0225-4413-97b6-19d71d5456ad"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[TV PAGADA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="2" y="690" width="121" height="12" uuid="64d87cff-5d39-47f3-812a-c380f8166a27"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[RED TELEFÓNICA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="183" y="690" width="121" height="12" uuid="652acfe2-ed27-430f-acce-2d4463b250bc"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[TELEFONÍA SATELITAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="364" y="690" width="120" height="12" uuid="66952aa6-86d1-4c01-aff8-3aa1c3a01714"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[INTERNET]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="2" y="702" width="121" height="12" uuid="bf2a4465-ba38-456f-a536-8add5a9ef849"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[ALARMAS COMUNITARIAS]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="304" y="678" width="60" height="12" uuid="d10e26f4-745c-496a-b35a-d073a15650d4"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tiene_aseocalle}? "SI" :"NO"]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="484" y="678" width="69" height="12" uuid="f55e2019-5c8e-4208-b0d2-c8a3d4fab341"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tiene_tvpag}? "SI" : "NO"]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="123" y="690" width="60" height="12" uuid="0a27b82b-d591-4c25-b358-276c291383a0"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tiene_telf}? "SI" :"NO"]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="304" y="690" width="60" height="12" uuid="aa978842-cb45-461b-a934-03f17b229002"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cobertura_celular}? "SI" :"NO"]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="484" y="690" width="69" height="12" uuid="4ea0cbdf-d4d7-4122-8514-0b4c3f6309a1"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tiene_internet}? "SI" : "NO"]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="123" y="702" width="60" height="12" uuid="b88b907c-b608-4f5b-8559-d0f9b50ca58c"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tiene_alarma}? "SI" :"NO"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="3" y="494" width="548" height="12" uuid="26617bce-3339-4fc4-a191-dacc6a42c55a"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[PROPIEDAD HORIZONTAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="3" y="506" width="134" height="12" uuid="3acc5b1a-028d-434d-a4a9-a1ed15023a37"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[ALICUOTA CONSTRUCCIÓN(%)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="251" y="506" width="141" height="12" uuid="a4c7cee4-708b-4c0f-b104-c2fc58e632d3"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[AREA DECLARADA CONS(m2)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="3" y="518" width="134" height="12" uuid="3aa080f8-a7be-4940-bdd1-6a312324ed82"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[AREA DE AUMENTO CONS(m2)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="251" y="518" width="141" height="12" uuid="486e97da-a8de-4056-8100-491922b7de6c"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[AREA TOTAL CONS(m2)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="3" y="530" width="134" height="12" uuid="a38c5c61-d318-4533-825d-61c2f28e1a0b"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[ALICUOTA TERRENO(%)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="251" y="530" width="141" height="12" uuid="cb1f11e1-279d-492c-ac73-57289b8e8953"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[AREA TERRENO DE ALICUOTA(m2)]]></text>
+			</staticText>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="137" y="506" width="114" height="12" uuid="cf46505b-1067-4a01-a113-d1f9ecd32a87"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{alicuota_const}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="137" y="518" width="114" height="12" uuid="fc1bd69a-e496-4d15-ba0b-669e61b9d383"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{area_aumento_cons}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="137" y="530" width="114" height="12" uuid="46f5327b-2d09-4804-8925-ffdb8af17bc1"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{alicuota_terreno}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="392" y="506" width="159" height="12" uuid="b5e3f7ab-7980-4933-aa5b-f2e507f0c0c1"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{area_declarada_const}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="392" y="518" width="159" height="12" uuid="930d3ecc-1d29-4f08-b3b8-a18b6610b495"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{area_total_cons}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="392" y="530" width="159" height="12" uuid="17fd0027-2850-44a8-9e87-21054e9fd74c"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{area_terreno_alicuota}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="183" y="702" width="370" height="12" uuid="77f8dd31-2b79-41c3-961c-020bec6c72c3"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="802" splitType="Immediate">
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="1" y="-17" width="554" height="20" forecolor="#FFFFFF" backcolor="#999999" uuid="538c06b9-220d-4083-897a-cc2f2e9eff09"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[4. CARACTERIZACIÓN Y ELEMENTOS CONSTRUCTIVOS DE LA EDIFICACIÓN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="0" y="-48" width="554" height="16" forecolor="#FFFFFF" backcolor="#999999" uuid="aad17fe4-af94-459b-8522-cda42f217db1"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ 3.4 CULTIVOS]]></text>
+			</staticText>
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Middle" onErrorType="Blank">
+				<reportElement positionType="Float" x="1" y="215" width="551" height="60" uuid="6209bd11-64b0-4f81-b8bf-b4741d17d138"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<imageExpression><![CDATA[$P{IMAGEN_PREDIO}]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame" onErrorType="Blank">
+				<reportElement positionType="Float" x="281" y="275" width="134" height="33" uuid="2198f38c-9764-4389-8ea7-3a955894acb7"/>
+				<imageExpression><![CDATA[$P{FachadaDerecha}]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame" onErrorType="Blank">
+				<reportElement positionType="Float" x="5" y="275" width="134" height="33" uuid="c88d6139-5841-45df-b840-229460e05f2b"/>
+				<imageExpression><![CDATA[$P{FachadaFrontal}]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame" onErrorType="Blank">
+				<reportElement positionType="Float" x="419" y="275" width="134" height="33" uuid="c7984731-a3b5-4dde-9b02-e3132c8f1e1f"/>
+				<imageExpression><![CDATA[$P{FachadaPosterior}]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame" onErrorType="Blank">
+				<reportElement positionType="Float" x="143" y="275" width="134" height="33" uuid="53615b24-e5af-4186-b604-b3c6ef3efc42"/>
+				<imageExpression><![CDATA[$P{FachadaIzquierda}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="0" y="382" width="555" height="20" forecolor="#FFFFFF" backcolor="#999999" uuid="2978babc-8183-42e8-840e-83e313ba22b5"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[6. ECONÓMICO]]></text>
+			</staticText>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="124" y="402" width="115" height="14" uuid="a92b7cb9-a606-4507-85ac-085009f7abe0"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ava_solar}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="3" y="402" width="121" height="14" uuid="ae2680e3-543f-46ca-93ee-312dada4ba55"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[AVALÚO TERRENO]]></text>
+			</staticText>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="124" y="416" width="115" height="14" uuid="f9d877ba-8d07-4245-98ac-08fe769a5fac"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ava_const}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="3" y="416" width="121" height="14" uuid="8889fda5-0a10-4a70-8aa2-3003d442230e"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[AVALÚO CONSTRUCCIÓN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="3" y="430" width="121" height="14" uuid="b574c929-7014-40ac-8c93-b144b54b1daf"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[BASE IMPONIBLE]]></text>
+			</staticText>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="124" y="430" width="115" height="14" uuid="4c50a327-5cd5-4087-bf73-fa02aff345b9"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{base_imp}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement positionType="Float" x="1" y="444" width="551" height="13" isRemoveLineWhenBlank="true" uuid="382c69a0-dcec-4869-9532-58020b31aa1a"/>
+				<subreportParameter name="predio">
+					<subreportParameterExpression><![CDATA[$P{predio}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "viviendaCensal.jasper"]]></subreportExpression>
+			</subreport>
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Middle" onErrorType="Blank">
+				<reportElement positionType="Float" x="3" y="337" width="551" height="44" uuid="da635840-4d7c-464d-91a6-e2c0720e9803"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<imageExpression><![CDATA[$P{COLINDANTES}]]></imageExpression>
+			</image>
+			<componentElement>
+				<reportElement key="table 3" style="table 3" positionType="Float" x="2" y="-31" width="549" height="13" isRemoveLineWhenBlank="true" uuid="6347683d-c15f-4178-b96b-cd7dc326e79e"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="cultivos" uuid="d9782da5-90ff-4378-88b5-f50eedec5983">
+						<datasetParameter name="id_predio">
+							<datasetParameterExpression><![CDATA[$P{predio}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="104" uuid="1d786939-b447-4e4d-bd92-e576d26bb60f">
+						<jr:tableFooter style="table 3_TH" height="0" rowSpan="1"/>
+						<jr:columnHeader style="table 3_CH" height="15" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="104" height="15" uuid="536d72d4-fe59-4b54-af53-1f95bec13a7a"/>
+								<textElement textAlignment="Center">
+									<font size="8"/>
+								</textElement>
+								<text><![CDATA[TIPO]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 3_TD" height="15" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="104" height="15" uuid="bce995b4-7085-4297-9ff8-53dc03bcf028"/>
+								<textElement>
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{tipo}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="110" uuid="dec97012-83a1-4420-8631-69d076dea667">
+						<jr:tableFooter style="table 3_TH" height="0" rowSpan="1"/>
+						<jr:columnHeader style="table 3_CH" height="15" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="110" height="15" uuid="e43d0a56-9145-4fa0-9c9b-1c5aba549589"/>
+								<textElement textAlignment="Center">
+									<font size="8"/>
+								</textElement>
+								<text><![CDATA[PLANTACIÓN]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 3_TD" height="15" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="110" height="15" uuid="66f4295d-fe79-45c3-b550-603d64516f3b"/>
+								<textElement>
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{plantacion}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="70" uuid="415cbb53-e8e5-4af7-aa39-2e2d0da76112">
+						<jr:tableFooter style="table 3_TH" height="0" rowSpan="1"/>
+						<jr:columnHeader style="table 3_CH" height="15" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="70" height="15" uuid="2a201fbd-bb70-44d8-939d-25d3a29aa8de"/>
+								<textElement textAlignment="Center">
+									<font size="8"/>
+								</textElement>
+								<text><![CDATA[ÁREA]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 3_TD" height="15" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="70" height="15" uuid="74e16e17-6e2d-45be-901c-024673723d73"/>
+								<textElement textAlignment="Right">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{area}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="54" uuid="272c7053-0835-4b0a-b60d-47c376bbeb6e">
+						<jr:tableFooter style="table 3_TH" height="0" rowSpan="1"/>
+						<jr:columnHeader style="table 3_CH" height="15" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="54" height="15" uuid="3d4812a8-1d92-4914-aa96-87045a7cb950"/>
+								<textElement textAlignment="Center">
+									<font size="8"/>
+								</textElement>
+								<text><![CDATA[CANTIDAD]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 3_TD" height="15" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="54" height="15" uuid="33790a3d-3e36-44ff-aef4-9a4a1fd3a033"/>
+								<textElement textAlignment="Right">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{cantidad}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90" uuid="d93e9dc1-592a-426e-89c9-c20c9b6facc0">
+						<jr:tableFooter style="table 3_TH" height="0" rowSpan="1"/>
+						<jr:columnHeader style="table 3_CH" height="15" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="15" uuid="b699be1b-86a5-4eeb-a6e1-a96ae30b5d68"/>
+								<textElement textAlignment="Center">
+									<font size="8"/>
+								</textElement>
+								<text><![CDATA[EDAD]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 3_TD" height="15" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="90" height="15" uuid="ea25082b-a2b7-49a8-bb55-aa0d4dc24725"/>
+								<textElement textAlignment="Right">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{edad}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="119" uuid="b43e1c22-92e6-4884-8cb3-7df235ad133b">
+						<jr:tableFooter style="table 3_TH" height="0" rowSpan="1"/>
+						<jr:columnHeader style="table 3_CH" height="15" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="119" height="15" uuid="1ce47eeb-174d-4791-b9f1-baaa8a3b3894"/>
+								<textElement textAlignment="Center">
+									<font size="8"/>
+								</textElement>
+								<text><![CDATA[CONSERVACIÓN]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 3_TD" height="15" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="119" height="15" uuid="e1973e63-2ffd-4ec1-b3d3-0ab0a20e1348"/>
+								<textElement>
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{conservacion}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<crosstab>
+				<reportElement positionType="Float" x="3" y="3" width="544" height="33" uuid="9c3d3ee5-26bf-4ff2-b52d-c05de007a8ee"/>
+				<crosstabDataset>
+					<dataset>
+						<datasetRun subDataset="niveles" uuid="51fffca2-cacd-4315-a5f2-958d5a9087fd">
+							<datasetParameter name="id_predio">
+								<datasetParameterExpression><![CDATA[$P{predio}]]></datasetParameterExpression>
+							</datasetParameter>
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+					</dataset>
+				</crosstabDataset>
+				<rowGroup name="descripcion" width="114">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{descripcion}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#FFFFFF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField isStretchWithOverflow="true">
+								<reportElement style="Crosstab Data Text" x="0" y="1" width="114" height="15" uuid="8e92f9e1-c506-4aa1-be06-6b48027bcc13"/>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{descripcion}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<columnGroup name="bloque" height="14">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{bloque}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#FFFFFF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField isStretchWithOverflow="true">
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="98" height="14" uuid="5f22447f-69e8-46fe-8fdf-6f38640ef60c"/>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{bloque}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents/>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<measure name="areaMeasure" class="java.math.BigDecimal">
+					<measureExpression><![CDATA[$F{area}]]></measureExpression>
+				</measure>
+				<crosstabCell width="98" height="16">
+					<cellContents>
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField isStretchWithOverflow="true">
+							<reportElement style="Crosstab Data Text" x="0" y="1" width="98" height="15" uuid="e8f28a94-d1a5-4184-a22c-c19aa388ee13"/>
+							<textElement verticalAlignment="Middle">
+								<font size="8"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$V{areaMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell height="25" rowTotalGroup="descripcion">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="1a6f6fae-2bc8-40a2-b73a-9b7eca828e79"/>
+							<textFieldExpression><![CDATA[$V{areaMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="50" columnTotalGroup="bloque">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="c3d45d43-d1c4-4c48-94bb-29e34a2c8e55"/>
+							<textFieldExpression><![CDATA[$V{areaMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="descripcion" columnTotalGroup="bloque">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="87703d3d-ba1a-472f-8886-6a70c6639599"/>
+							<textFieldExpression><![CDATA[$V{areaMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+			</crosstab>
+			<crosstab>
+				<reportElement positionType="Float" x="3" y="104" width="546" height="64" uuid="b1470640-c23d-4f1a-97be-40976963125b"/>
+				<crosstabDataset>
+					<dataset>
+						<datasetRun subDataset="elementos_constructivos" uuid="bd09adb0-c06e-4c72-ba80-dcbdd380118d">
+							<datasetParameter name="id_predio">
+								<datasetParameterExpression><![CDATA[$P{predio}]]></datasetParameterExpression>
+							</datasetParameter>
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+					</dataset>
+				</crosstabDataset>
+				<rowGroup name="categoria" width="114">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{categoria}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#FFFFFF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField isStretchWithOverflow="true">
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="114" height="11" uuid="11291a2d-82ff-4044-bb29-2f832ea43bc0"/>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{categoria}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<columnGroup name="bloque" height="0">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{bloque}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#F0F8FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents/>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<measure name="propiedadMeasure" class="java.lang.String">
+					<measureExpression><![CDATA[$F{propiedad}]]></measureExpression>
+				</measure>
+				<crosstabCell width="98" height="11">
+					<cellContents>
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField isStretchWithOverflow="true">
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="98" height="11" uuid="56f53ab0-5121-4fe0-b7d4-0a26e4df302a"/>
+							<textElement verticalAlignment="Middle">
+								<font size="7"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$V{propiedadMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell height="25" rowTotalGroup="categoria">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="6b455481-493d-4f4d-ba1d-d4987c01dc55"/>
+							<textFieldExpression><![CDATA[$V{propiedadMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="50" columnTotalGroup="bloque">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="edd87c7c-91ec-4066-926e-2e598a874173"/>
+							<textFieldExpression><![CDATA[$V{propiedadMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="categoria" columnTotalGroup="bloque">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="cd76733d-d5f6-4ace-a596-1f29ee203118"/>
+							<textFieldExpression><![CDATA[$V{propiedadMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+			</crosstab>
+			<crosstab>
+				<reportElement positionType="Float" x="3" y="34" width="546" height="72" uuid="38c6eb1f-e58b-4811-a221-866d44dd15fe"/>
+				<crosstabDataset>
+					<dataset>
+						<datasetRun subDataset="Descripcion_piso" uuid="bf8da338-9312-4017-867f-09d4d2489fa1">
+							<datasetParameter name="id_predio">
+								<datasetParameterExpression><![CDATA[$P{predio}]]></datasetParameterExpression>
+							</datasetParameter>
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+					</dataset>
+				</crosstabDataset>
+				<rowGroup name="categoria" width="114">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{categoria}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#FFFFFF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField isStretchWithOverflow="true">
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="114" height="14" uuid="0f522399-aca2-4e85-9dc5-88778a98f8cd"/>
+								<textElement verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{categoria}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<columnGroup name="bloque" height="0">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{bloque}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#F0F8FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents/>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<measure name="descripcionMeasure" class="java.lang.String">
+					<measureExpression><![CDATA[$F{descripcion}]]></measureExpression>
+				</measure>
+				<crosstabCell width="98" height="14">
+					<cellContents>
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField isStretchWithOverflow="true">
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="98" height="14" uuid="5ad60e15-d4c0-4eb2-9af2-3391b73be232"/>
+							<textElement verticalAlignment="Middle">
+								<font size="8"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$V{descripcionMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell height="25" rowTotalGroup="categoria">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="d0a60642-c10b-4301-961e-3b39b26bab0e"/>
+							<textFieldExpression><![CDATA[$V{descripcionMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="50" columnTotalGroup="bloque">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="4021dd97-ec9d-4089-9722-7cb795bf7ee0"/>
+							<textFieldExpression><![CDATA[$V{descripcionMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="categoria" columnTotalGroup="bloque">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="719515eb-bcc3-46e5-925d-8424d4139625"/>
+							<textFieldExpression><![CDATA[$V{descripcionMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+			</crosstab>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="1" y="169" width="553" height="12" forecolor="#FFFFFF" backcolor="#999999" uuid="b2dccbb4-f48e-42df-b2d2-06b11215f448"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[OBRAS COMPLEMENTARIAS INTERNAS E INSTALACIONAS ESPECIALES]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement key="table 5" style="table 3" positionType="Float" x="1" y="181" width="553" height="13" uuid="03c2d59e-47b6-4512-8e0a-4a8b5531bae2"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="obras_internas" uuid="ea21e846-1605-4a9c-b5ea-5b0cbe61ebe5">
+						<datasetParameter name="id_predio">
+							<datasetParameterExpression><![CDATA[$P{predio}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="90" uuid="aba2e8e3-a8da-45c2-96dc-5313926a7a7c">
+						<jr:columnHeader style="table 5_CH" height="15" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="15" uuid="2f8285bc-b65f-45d5-9472-3ae5b90ff054"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<text><![CDATA[TIPO OBRA]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="table 5_CH" height="0" rowSpan="1"/>
+						<jr:detailCell style="table 5_TD" height="20" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="90" height="15" uuid="5ed93804-abb3-4c88-b5b7-a6deb74a8032"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{tipo_obi}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90" uuid="a0450392-b6f4-4d4b-96a7-52eebee975b6">
+						<jr:columnHeader style="table 5_CH" height="15" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="15" uuid="29ad69c8-c5b4-47e1-a729-de1f5abd2313"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<text><![CDATA[MATERIAL]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="table 5_CH" height="0" rowSpan="1"/>
+						<jr:detailCell style="table 5_TD" height="20" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="90" height="15" uuid="f4a040cf-3a33-479a-a6cc-9a6234be7d44"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{material_obi}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90" uuid="880a9117-7db3-4e3a-a8bc-8dcb7f778191">
+						<jr:columnHeader style="table 5_CH" height="15" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="15" uuid="3107dfac-d823-4917-9677-6de2fea6daec"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<text><![CDATA[AREA(m2)]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="table 5_CH" height="0" rowSpan="1"/>
+						<jr:detailCell style="table 5_TD" height="20" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="90" height="15" uuid="ce7799f9-04c9-405a-b0ac-d309a0fcb8aa"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{area}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90" uuid="f2d00644-dc59-4cfc-95b6-37bcf9dce04e">
+						<jr:columnHeader style="table 5_CH" height="15" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="15" uuid="a96ffa5d-25b3-4893-b973-f3addc65a25c"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<text><![CDATA[CANTIDAD]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="table 5_CH" height="0" rowSpan="1"/>
+						<jr:detailCell style="table 5_TD" height="20" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="90" height="15" uuid="bd0bcdd3-f941-4a75-8266-e8fb8f16cdcc"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{cantidad}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="191" uuid="1011e215-dfcb-43ff-a8b8-900e0226d0b2">
+						<jr:columnHeader style="table 5_CH" height="15" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="191" height="15" uuid="3aa9ac11-e799-444b-bd59-01cd48031303"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<text><![CDATA[CONSERVACIÓN]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="table 5_CH" height="0" rowSpan="1"/>
+						<jr:detailCell style="table 5_TD" height="20" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="191" height="15" uuid="87585c28-abed-4a2c-94d9-55c59e04c753"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{conserv_obi}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="1" y="195" width="554" height="20" forecolor="#FFFFFF" backcolor="#999999" uuid="646e4a85-9eb0-46bf-a022-71c3af9932e0"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[5. GRAFICO Y LINDEROS DEL PREDIO]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement key="table 6" style="table 6" positionType="Float" x="2" y="322" width="552" height="13" isRemoveLineWhenBlank="true" uuid="8a9a4b55-07fc-4352-be53-0e229da75928"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="colindantes" uuid="40719652-510b-458a-a34c-2674acb841c5">
+						<datasetParameter name="id_predio">
+							<datasetParameterExpression><![CDATA[$P{predio}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="152" uuid="c51c2beb-95bc-4daf-a65d-00a28c8ca433">
+						<jr:columnHeader style="table 6_CH" height="15" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="152" height="15" uuid="bcb49d85-a447-4d33-ace6-075776524dc6"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<text><![CDATA[ORIENTACIÓN]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="table 6_CH" height="0" rowSpan="1"/>
+						<jr:detailCell style="table 6_TD" height="15" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="152" height="15" uuid="aed92805-b88f-4a8b-9715-9c92886c220f"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{orientacion_l}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="306" uuid="44e701e5-8403-4b00-8e01-7ce361d98a9a">
+						<jr:columnHeader style="table 6_CH" height="15" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="306" height="15" uuid="dc630d94-735c-4a99-8f07-3052ed466bd7"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<text><![CDATA[CON]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="table 6_CH" height="0" rowSpan="1"/>
+						<jr:detailCell style="table 6_TD" height="15" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="306" height="15" uuid="638d5942-4931-4b51-831a-c66806dd3739"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{colindante}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90" uuid="05512873-f219-407e-bb72-ff750d63cf47">
+						<jr:columnHeader style="table 6_CH" height="15" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="15" uuid="ab6828a5-1707-4a46-aa3b-86eb7ec2a8a5"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<text><![CDATA[AREA]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="table 6_CH" height="0" rowSpan="1"/>
+						<jr:detailCell style="table 6_TD" height="15" rowSpan="1">
+							<textField pattern="" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="90" height="15" uuid="d5fa66fc-bf11-483a-80eb-be9acfa18a8c"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{area_solar}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="2" y="309" width="553" height="12" forecolor="#FFFFFF" backcolor="#999999" uuid="cb18e31d-7ec3-43f0-aa08-f3dda979e6fe"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[COLINDANTES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="239" y="402" width="153" height="14" uuid="30f4ca75-be16-4c64-a27c-48db43b12988"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[AVALÚO OBRAS COMPLEMENTARIAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="239" y="416" width="153" height="14" uuid="d2b25566-0f0b-42a5-bc09-c904fb3c10ed"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[AVALÚO CULTIVOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="239" y="430" width="153" height="14" uuid="4d2da828-951b-405c-864c-bfa15809731d"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[VALOR DE LA PROPIEDAD]]></text>
+			</staticText>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="392" y="402" width="158" height="14" uuid="cb633b5d-ad9c-4437-8988-ea111e48ede1"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ava_obcomps}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="392" y="416" width="158" height="14" uuid="dfba985c-5d6e-45a2-89e1-0baad4c95da1"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ava_cults}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="392" y="430" width="158" height="14" uuid="6c8d96e4-b699-4784-94d1-9803e2457d5c"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{base_imp}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

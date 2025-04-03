@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="plantilla" pageWidth="595" pageHeight="600" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="20" uuid="3e4f5d47-92ee-4e87-9c23-7a35779ae3a9">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_TITULO" class="java.lang.String"/>
+	<parameter name="P_SUBTITULO" class="java.lang.String"/>
+	<parameter name="P_NUMERO_TRAMITE" class="java.lang.String"/>
+	<parameter name="LOGO_URL" class="java.lang.String"/>
+	<parameter name="DIRECCION" class="java.lang.String"/>
+	<parameter name="NOM_SOLICITANTE" class="java.lang.String"/>
+	<parameter name="DETALLE" class="java.lang.String"/>
+	<parameter name="DESCRIPCION" class="java.lang.String"/>
+	<parameter name="FECHA" class="java.util.Date"/>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band/>
+	</pageHeader>
+	<columnHeader>
+		<band height="355" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="ce8e102e-5295-4592-b3c6-81648f51cba5" key="textField" x="0" y="190" width="555" height="44"/>
+				<textElement>
+					<font size="22" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_SUBTITULO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement uuid="83710dd0-69a7-40f9-b537-2725c8d3cde2" key="textField" x="145" y="90" width="410" height="32"/>
+				<textElement textAlignment="Center">
+					<font size="24" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{FECHA}==null?new java.util.Date():$P{FECHA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="7e05150d-c0b3-4f1e-8398-75462458c694" x="145" y="39" width="410" height="51"/>
+				<textElement textAlignment="Center">
+					<font size="36" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_NUMERO_TRAMITE}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement uuid="a5f450d9-2488-4744-96ef-4998caf3abe2" x="0" y="0" width="145" height="122"/>
+				<imageExpression><![CDATA[$P{LOGO_URL}]]></imageExpression>
+			</image>
+			<line>
+				<reportElement uuid="39d6f99b-07f1-4f25-817e-4c905468da44" key="line" x="0" y="190" width="555" height="1"/>
+			</line>
+			<textField>
+				<reportElement uuid="d75fe0c4-288b-470f-aa6a-a531232b7d0b" x="145" y="0" width="410" height="39"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="22" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_TITULO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="fd1e35b1-6d56-44bc-8d4b-647dcefcc0e0" x="0" y="164" width="555" height="26" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[!$P{DIRECCION}.equals( "null" )]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="20" isBold="true" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{DIRECCION}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="66616721-534b-46f3-ae10-ba440ded3ea7" x="0" y="122" width="555" height="42" isRemoveLineWhenBlank="true"/>
+				<textElement verticalAlignment="Middle">
+					<font size="24" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{NOM_SOLICITANTE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="2ff15cc4-4b9e-44ae-83ff-c37ee3d44e9e" x="0" y="234" width="555" height="33" isRemoveLineWhenBlank="true"/>
+				<textElement>
+					<font size="18" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{DETALLE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="b68b9c11-071d-48b8-a85d-241e4e8d2bc4" x="0" y="267" width="555" height="88"/>
+				<box leftPadding="8"/>
+				<textElement>
+					<font size="26"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{DESCRIPCION}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<pageFooter>
+		<band/>
+	</pageFooter>
+</jasperReport>

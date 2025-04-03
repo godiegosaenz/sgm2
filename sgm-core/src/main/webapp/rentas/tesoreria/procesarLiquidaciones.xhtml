@@ -1,0 +1,154 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:dialog="http://xmlns.jcp.org/jsf/composite/dialog">
+    <ui:define name="head">
+        <script src="../../resources/pfJs/keyPress.js" type="text/javascript"></script>
+        <style type="text/css">
+            .ui-selectoneradio label{
+                font-size: 1.2em;
+                font-weight: bold;
+            }
+            .ui-selectmanycheckbox label{
+                font-size: 1.3em;
+                font-weight: bold;
+            }
+        </style>
+    </ui:define>
+    <ui:define name="content">
+        <center>
+            <h1>Liquidaciones</h1>
+        </center>
+        <h:form id="mainForm">
+            <p:panel header="DATOS REPORTE" >
+                <p:selectOneRadio value="#{procesarLiquidaciones.opcionesReporte}">
+                    <f:selectItem itemLabel="Para Resolución" itemValue="1" />
+                    <f:selectItem itemLabel="Para Remisión" itemValue="2" />
+                </p:selectOneRadio>
+
+                <p:selectBooleanCheckbox value="#{procesarLiquidaciones.porAnio}" itemLabel="HASTA AÑO :" style="float: left; font-weight: bold; font-size: 13px;">
+                    <p:ajax update="datos" process="@this"/>
+                </p:selectBooleanCheckbox>
+                <h:panelGrid id="datos" style="float: left;">
+                    <p:inputText value="#{procesarLiquidaciones.anioReporte}" style="font-weight: bold; font-size: 13px;" size="8" rendered="#{procesarLiquidaciones.porAnio}"/>
+                </h:panelGrid>
+                <div style="clear: both;"/>
+            </p:panel>
+            <p:tabView id="tvProcesoLiquidacion">
+                <p:ajax event="tabChange" listener="#{procesarLiquidaciones.onChangeTab}" update="prediosUrbanos, prediosRurales, consulta"/>
+
+                <p:tab id="predioUrbano" title="PREDIO URBANO">
+                    <p:commandButton value="REPORTE" actionListener="#{procesarLiquidaciones.generarReporte(1)}" style="float: right; font-size: 15px; font-weight: bolder;" styleClass="btnStyle" icon="ui-icon-print"/>
+                    <dialog:consultaCodigoPredial id="consulta" tipoConsulta="#{procesarLiquidaciones.tipoConsultaUrbano}"
+                                                  changeRadio="#{procesarLiquidaciones.onChangeRadio}"
+                                                  updateConsulta="consulta, mainForm:tvProcesoLiquidacion:prediosUrbanos"
+                                                  predioModel="#{procesarLiquidaciones.predioModel}"
+                                                  contribuyenteConsulta="#{procesarLiquidaciones.contribuyenteConsulta}"
+                                                  dlgSolicitante="PF('dlgSolicitante').show()"
+                                                  ciudadelas="#{procesarLiquidaciones.ciudadelas}"
+                                                  consultarEmisiones="#{procesarLiquidaciones.consultarPredioUrbano()}"
+                                                  updateFrmSolicitante=":frmSolicitante"
+                                                  tipoPredio="true"
+                                                  renderConsultaDirecta="false"/>
+
+                    <br/>
+                    <p:dataTable id="prediosUrbanos" value="#{procesarLiquidaciones.prediosUrbanos}" var="urbano" rowKey="#{urbano.id}"  scrollHeight="350" lazy="true" reflow="true" rows="20" paginator="true" emptyMessage=""
+                                 rowsPerPageTemplate="20,50,100" paginatorPosition="top" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                        <p:column headerText="Matricula Inmobiliaria" width="100"><p:outputLabel value="#{urbano.numPredio}"/></p:column>
+                        <p:column headerText="Cod. Catastral Anterior"><p:outputLabel value="#{urbano.predialant}"/></p:column>
+                        <p:column headerText="Cod. Catastral"><p:outputLabel value="#{urbano.claveCat}"/></p:column>
+                        <p:column headerText="Dirección"><p:outputLabel value="#{urbano.ciudadela.nombre}-#{urbano.mz}/#{urbano.solar}"/></p:column>
+                        <p:column headerText="Propietario"><p:outputLabel value="#{urbano.nombrePropietarios}"/></p:column>
+                        <p:column headerText="Eliminar" style="text-align: center;" width="100"><p:commandLink update="prediosUrbanos" actionListener="#{procesarLiquidaciones.eliminarPredioUrbano(urbano)}"><p:graphicImage value="/css/homeIconsImages/delete.png" height="16"/></p:commandLink></p:column>
+                    </p:dataTable>
+                </p:tab>
+                <p:tab id="predioRural" title="PREDIO RURAL" rendered="false">
+                    <p:commandButton value="REPORTE" actionListener="#{procesarLiquidaciones.generarReporte(2)}" style="float: right; font-size: 15px; font-weight: bolder;" styleClass="btnStyle" icon="ui-icon-print"/>
+                    <dialog:consultaCodigoPredial id="consultaRural" tipoConsulta="#{procesarLiquidaciones.tipoConsultaRural}"
+                                                  updateConsulta="consultaRural, mainForm:tvProcesoLiquidacion:prediosRurales"
+                                                  predioModel="#{procesarLiquidaciones.predioModel}"
+                                                  contribuyenteConsulta="#{procesarLiquidaciones.contribuyenteConsulta}"
+                                                  dlgSolicitante="PF('dlgSolicitante').show()"
+                                                  ciudadelas="#{procesarLiquidaciones.parroquiasRurales}"
+                                                  consultarEmisiones="#{procesarLiquidaciones.consultarPredioRural()}"
+                                                  updateFrmSolicitante=":frmSolicitante"
+                                                  tipoPredio="false"
+                                                  renderConsultaDirecta="false"/>
+
+                    <p:dataTable id="prediosRurales" value="#{procesarLiquidaciones.prediosRurales}" var="rural" rowKey="#{rural.id}"  scrollHeight="350" lazy="true" reflow="true" rows="20" emptyMessage="" paginator="true"
+                                 rowsPerPageTemplate="20,50,100" paginatorPosition="top" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                        <p:column headerText="Reg. Catastral"><p:outputLabel value="#{rural.regCatastral}"/></p:column>
+                        <p:column headerText="Id Predial"><p:outputLabel value="#{rural.idPredial}"/></p:column>
+                        <p:column headerText="Parroquia"><p:outputLabel value="#{rural.parroquia.descripcion}"/></p:column>
+                        <p:column headerText="Propietario"><p:outputLabel value="#{rural.propietario.nombres} #{rural.propietario.apellidos} #{rural.propietario.razonSocial}"/></p:column>
+                        <p:column headerText="Sitio"><p:outputLabel value="#{rural.sitio}"/></p:column>
+                        <p:column headerText="Nombre"><p:outputLabel value="#{rural.nombrePredio}"/></p:column>
+                        <p:column headerText="Eliminar" style="text-align: center;" width="100"><p:commandLink update="prediosRurales" actionListener="#{procesarLiquidaciones.eliminarPredioRural(rural)}"><p:graphicImage value="/css/homeIconsImages/delete.png" height="16"/></p:commandLink></p:column>
+                    </p:dataTable>
+                </p:tab>
+
+            </p:tabView>
+        </h:form>
+
+        <p:dialog id="dlgSolicitante" widgetVar="dlgSolicitante" header="Listado de contribuyentes" appendTo="@(body)" width="70%" responsive="true" closable="true" closeOnEscape="true" modal="true" position="top">
+            <h:form id="frmSolicitante">
+                <p:dataTable id="dtSolicitante" value="#{procesarLiquidaciones.contribuyentes}" var="s" selection="#{procesarLiquidaciones.contribuyenteConsulta}" rowKey="#{s.id}" style="width: 100%" lazy="true" reflow="true" paginator="true" rows="10" selectionMode="single" filterEvent="enter" paginatorPosition="top">
+                    <f:facet name="header">Seleccione Contribuyente</f:facet>
+                    <p:column headerText="No. Identificacion" sortBy="#{s.ciRuc}" filterBy="#{s.ciRuc}" filterMatchMode="contains" filterStyle="width: 95%;">
+                        <h:outputText value="#{s.ciRuc}"/>
+                    </p:column>
+                    <p:column headerText="Apellidos" filterBy="#{s.apellidos}" sortBy="#{s.apellidos}" filterMatchMode="contains" filterStyle="width: 95%;">
+                        <h:outputText value="#{s.apellidos}" style="text-transform: uppercase"/>
+                    </p:column>
+                    <p:column headerText="Nombres" filterBy="#{s.nombres}" sortBy="#{s.nombres}" filterMatchMode="contains" filterStyle="width: 95%;">
+                        <h:outputText value="#{s.nombres}" style="text-transform: uppercase"/>
+                    </p:column>
+                    <p:column headerText="Razon Social" filterBy="#{s.razonSocial}" sortBy="#{s.razonSocial}"  filterMatchMode="contains" filterStyle="width: 95%;">
+                        <h:outputText value="#{s.razonSocial}" style="text-transform: uppercase"/>
+                    </p:column>
+                    <f:facet name="footer">
+                        <p:commandButton id="btnSeleccionar" value="Seleccionar" update="mainForm:tvProcesoLiquidacion:consulta,mainForm:tvProcesoLiquidacion:consultaRural" style="height: 30px" oncomplete="PF('dlgSolicitante').hide()"/>
+                    </f:facet>
+                </p:dataTable>         
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Listado de Predios - Seleccione Predio" widgetVar="dlgPrediosConsulta" appendTo="@(body)" width="90%" responsive="true" closable="true" closeOnEscape="true" modal="true" position="top">
+            <h:form id="frmPredios">
+                <p:dataTable value="#{procesarLiquidaciones.prediosUrbanosConsulta}" var="p" selection="#{procesarLiquidaciones.prediosUrbanosConsultaSeleccionados}" rowKey="#{p.id}" style="width: 90%; margin: 0 auto;" reflow="true" paginator="true" rows="15" filterEvent="enter" paginatorPosition="top">
+                    <p:column selectionMode="multiple" style="width:30px;text-align:center"/>
+                    <p:column headerText="No. Predio" sortBy="#{p.numPredio}" filterBy="#{p.numPredio}" filterMatchMode="exact" filterStyle="width: 95%;"><h:outputText value="#{p.numPredio}"/></p:column>
+                    <p:column headerText="Urbanizacion" filterBy="#{p.ciudadela.nombre}" filterMatchMode="contains" filterStyle="width: 95%;"><h:outputText value="#{p.ciudadela.nombre}"/></p:column>
+                    <p:column headerText="Mz" filterBy="#{p.urbMz}" filterMatchMode="contains" filterStyle="width: 95%;"><h:outputText value="#{p.urbMz}"/></p:column>
+                    <p:column headerText="Sl" filterBy="#{p.urbSolarnew}" filterMatchMode="contains" filterStyle="width: 95%;"><h:outputText value="#{p.urbSolarnew}"/></p:column>
+                    <p:column headerText="Cod. Predial"><h:outputText value="#{p.codigoPredialCompleto}"/></p:column>
+                    <f:facet name="footer">
+                        <p:commandButton value="Seleccionar" actionListener="#{procesarLiquidaciones.seleccionarPredio(1)}" update="mainForm:tvProcesoLiquidacion:prediosUrbanos"/>
+                        <p:spacer width="50"/>
+                        <p:commandButton value="Seleccionar Todos" actionListener="#{procesarLiquidaciones.seleccionarPredio(3)}" update="mainForm:tvProcesoLiquidacion:prediosUrbanos"/>
+                    </f:facet>
+                </p:dataTable>         
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Listado de Predios - Seleccione Predio" widgetVar="dlgPrediosRuralConsulta" appendTo="@(body)" width="90%" responsive="true" closable="true" closeOnEscape="true" modal="true" position="top">
+            <h:form id="frmPrediosRural">
+                <p:dataTable value="#{procesarLiquidaciones.prediosRuralesConsulta}" var="pr" selection="#{procesarLiquidaciones.prediosRuralesConsultaSeleccionados}" rowKey="#{pr.id}" style="width: 90%; margin: 0 auto;" reflow="true" paginator="true" rows="15" filterEvent="enter" paginatorPosition="top">
+                    <p:column selectionMode="multiple" style="width:30px;text-align:center"/>
+                    <p:column headerText="Reg. Catastral" sortBy="#{pr.regCatastral}" filterBy="#{pr.regCatastral}" filterMatchMode="contains" filterStyle="width: 95%;"><h:outputText value="#{pr.regCatastral}"/></p:column>
+                    <p:column headerText="Id Predial" filterBy="#{pr.idPredial}" filterMatchMode="contains" filterStyle="width: 95%;"><h:outputText value="#{pr.idPredial}"/></p:column>
+                    <p:column headerText="Parroquia" filterBy="#{pr.parroquia.descripcion}" filterMatchMode="contains" filterStyle="width: 95%;"><h:outputText value="#{pr.parroquia.descripcion}"/></p:column>
+                    <p:column headerText="Sitio" filterBy="#{pr.sitio}" filterMatchMode="contains" filterStyle="width: 95%;"><h:outputText value="#{pr.sitio}"/></p:column>
+                    <p:column headerText="Nombre" filterBy="#{pr.nombrePredio}" filterMatchMode="contains" filterStyle="width: 95%;"><h:outputText value="#{pr.nombrePredio}"/></p:column>
+                    <f:facet name="footer">
+                        <p:commandButton value="Seleccionar" actionListener="#{procesarLiquidaciones.seleccionarPredio(2)}" update="mainForm:tvProcesoLiquidacion:prediosRurales"/>
+                    </f:facet>
+                </p:dataTable>         
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

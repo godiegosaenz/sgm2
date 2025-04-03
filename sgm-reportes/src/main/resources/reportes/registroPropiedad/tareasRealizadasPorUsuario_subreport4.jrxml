@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="tareasRealizadasPorUsuario_subreport4" language="groovy" pageWidth="802" pageHeight="555" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="6c4a4057-9947-47f0-8037-67b5b9db7d73">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="USER_ID" class="java.lang.Long"/>
+	<parameter name="DESDE" class="java.lang.String"/>
+	<parameter name="HASTA" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select td.numero_solicitud, td.solicitante, td.institucion, ce.observacion,
+to_char(ce.fecha_fin, 'dd-mm-yyyy') as fecha
+from sgm_flow.regp_certificados_inscripciones as ce
+left join sgm_flow.regp_tareas_dinardap as td on (td.id = ce.tarea_dinardap)
+where (ce.tipo_tarea = 'DC' or ce.tipo_tarea = 'DW') and ce.estado = true
+and ce.acl_user = $P{USER_ID}
+and ce.fecha_fin between to_timestamp($P{DESDE}, 'dd-mm-yyyy')
+and to_timestamp($P{HASTA}, 'dd-mm-yyyy') order by ce.fecha_fin]]>
+	</queryString>
+	<field name="numero_solicitud" class="java.lang.String"/>
+	<field name="solicitante" class="java.lang.String"/>
+	<field name="institucion" class="java.lang.String"/>
+	<field name="observacion" class="java.lang.String"/>
+	<field name="fecha" class="java.lang.String"/>
+	<group name="group_fecha_cert_sine">
+		<groupExpression><![CDATA[$F{fecha}]]></groupExpression>
+		<groupHeader>
+			<band height="40">
+				<staticText>
+					<reportElement uuid="fde9b8eb-6b20-47ba-bbd0-644b2f007b15" x="0" y="0" width="58" height="20"/>
+					<box leftPadding="3"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Fecha:]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="4cbb8dc2-1a48-4926-a587-0e0e19ba879d" x="58" y="0" width="227" height="20"/>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="0464b074-b9d4-485b-a3ad-4a41aceb7c72" x="1" y="20" width="150" height="20"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Solicitud Sine]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="024a1d43-cbdc-4b68-a8b1-b0a7b62dbfd3" x="151" y="20" width="225" height="20"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Usuario Solicitante]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="bef3603a-d1a7-424d-9368-01662deb7043" x="376" y="20" width="225" height="20"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Institucion Solicitante]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="d80ecb5c-cb67-4743-bc21-24cabde5942b" x="601" y="20" width="200" height="20"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Observación]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="20">
+				<textField>
+					<reportElement uuid="dd5265ab-0e6d-48bf-93f2-b67efdc75745" x="702" y="0" width="100" height="20"/>
+					<box leftPadding="3" rightPadding="0"/>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{group_fecha_cert_sine_COUNT}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="b18815e7-7b6c-41f8-8bbe-28529513af26" x="602" y="0" width="100" height="20"/>
+					<box rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Cantidad:]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<title>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="95ba98e5-0e47-4cae-af12-dc2f57dcbe54" x="0" y="0" width="285" height="20"/>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[CERTIFICADOS SINE - DINARDAP:]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement uuid="4857c904-b2e4-4eee-8843-9681da68b4ad" x="1" y="0" width="150" height="20"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numero_solicitud}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="30ad409e-f2a2-4586-a64a-7df7cb8864b5" x="151" y="0" width="225" height="20"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{solicitante}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="9762300d-fb51-488c-9e64-df7ff355c4c9" x="376" y="0" width="225" height="20"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{institucion}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="112bfb5a-a4b4-4212-a820-ee32d293e3e2" x="601" y="0" width="200" height="20"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{observacion}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

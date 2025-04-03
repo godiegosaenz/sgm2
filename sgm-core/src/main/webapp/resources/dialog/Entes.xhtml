@@ -1,0 +1,200 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:dialog="http://xmlns.jcp.org/jsf/composite/dialog">
+    <f:metadata >
+        <f:event type="preRenderView" listener="#{entesBean.load()}"/>
+        <f:viewParam name="idEnte" value="#{entesBean.idEnte}"/>
+        <f:viewParam name="ver" value="#{entesBean.verTemp}"/>
+        <f:viewParam name="esPersona" value="#{entesBean.esPersona}"/>
+        <f:viewParam name="ciRuc" value="#{entesBean.ciRuc}"/>
+    </f:metadata>
+
+    <h:head>
+        <title>Mantenimiento de Clientes</title>
+    </h:head>
+    <h:body>
+        <h:outputStylesheet name="css/font-icon-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/sentinel-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/core-layout.css" library="sentinel-layout" />
+        <script src="#{appConfig.urlbase}resources/js/app.js" ></script>
+
+        <h:form id="frmEntes">
+            <p:growl autoUpdate="true" globalOnly="true" showDetail="true" showSummary="true"/>
+            <h:outputLabel value="NOTA: CAMPOS OBLIGATORIOS (*)" class="Wid100" />
+            <br/>
+            <center>
+                <h:panelGroup layout="block" >
+                    <p:outputLabel value="Tipo Persona:" class="DispBlock Wid100" />
+                    <p:selectOneMenu value="#{entesBean.tipoEnte}" style="width: 160px;">
+                        <f:selectItem itemLabel="Natural" itemValue="1"  />
+                        <f:selectItem itemLabel="Jurídica" itemValue="2" />
+                        <f:selectItem itemLabel="Excepcionales" itemValue="3" />
+                        <p:ajax update="frmEntes:excepcionalTipo, tabNewEnte" listener="#{entesBean.setPersona()}"/>
+                    </p:selectOneMenu>
+                </h:panelGroup>
+                <h:panelGroup id="excepcionalTipo" layout="block" rendered="#{entesBean.tipoEnte == 3}">
+                    <p:outputLabel value="Persona:" class="DispBlock Wid100"/>
+                    <p:selectOneMenu value="#{entesBean.ente.esPersona}" style="width: 160px;">
+                        <f:selectItem itemLabel="Natural" itemValue="#{true}" />
+                        <f:selectItem itemLabel="Jurídica" itemValue="#{false}" />
+                        <p:ajax update="tabNewEnte" process="@(this)"/>
+                    </p:selectOneMenu>
+                </h:panelGroup>
+            </center>
+            <p:tabView id="tabNewEnte" style="width:100%;height: 100%">
+                <p:tab title="Datos Principales">
+                    <h:panelGrid columns="2" style="width: 100%">
+                        <dialog:compInputSelect id="ente-tipo_documento" label="(*)Tipo de Documento" catalogo="ente-tipo_documento" 
+                                                bind="#{entesBean.ente.tipoDocumento}" defaultValue="1"/>
+                        <dialog:decorateForm id="tipoIdent" label="#{entesBean.tipoIdentificacionPersona}" 
+                                             bind="#{entesBean.ente.ciRuc}" integerValidate="true" 
+                                             readonly="#{entesBean.tipoEnte==3}" next="#{entesBean.ente.esPersona? 'nombres-from' : 'razonSocial-from'}" />
+                        <!-- PERSONA NATURAL -->
+                        <dialog:decorateForm id="nombres" label="(*)Nombres:" next="apellidos-from" 
+                                             bind="#{entesBean.ente.nombres}" rendered="#{entesBean.ente.esPersona}" />
+                        <dialog:decorateForm id="apellidos" label="(*)Apellidos:" next="nombres-from" 
+                                             bind="#{entesBean.ente.apellidos}" rendered="#{entesBean.ente.esPersona}" />
+
+                        <!-- PERSONA JURIDICA -->
+                        <!--                        <dialog:decorateForm id="razonSocial" label="(*)Razón Social:" next="nombreComercial-from" 
+                                                                     bind="# {entesBean.ente.razonSocial}" rendered="# {!entesBean.ente.esPersona}" />-->
+                        <h:panelGroup layout="block" rendered="#{!entesBean.ente.esPersona}" >
+                            <p:outputLabel value="Razon Social " for="autoEnte" class="DispBlock Wid100" style="font-weight: bolder !important; margin-bottom: 0px;" />
+                            <p:autoComplete id="autoEnte" readonly="#{bloques.esVer}" queryDelay="800" value="#{entesBean.entidadTemp}" 
+                                            completeMethod="#{entesBean.completarEntidades}" converter="entityConverter" 
+                                            var="en" itemLabel="#{en.razonSocial}" itemValue="#{en}" placeholder="Razon Social" scrollHeight="250" >
+                                <p:ajax event="itemSelect" listener="#{entesBean.onItemSelect}" update="autoEnte" />
+                            </p:autoComplete>
+                        </h:panelGroup>
+                        <dialog:decorateForm id="nombreComercial" label="Nombre Comercial:" 
+                                             bind="#{entesBean.ente.nombreComercial}" rendered="#{!entesBean.ente.esPersona}" />
+
+                        <h:panelGroup layout="block"  >
+                            <p:outputLabel value="Fec. Nacimiento:" rendered="#{entesBean.ente.esPersona}" class="DispBlock Wid100" style="font-weight: bolder !important; margin-bottom: 0px;"/>
+                            <p:outputLabel value="Fec. Constitución:" rendered="#{!entesBean.ente.esPersona}" class="DispBlock Wid100" style="font-weight: bolder !important; margin-bottom: 0px;"/>
+                            <p:calendar value="#{entesBean.ente.fechaNacimiento}" placeholder="DÍA-MES-AÑO" maxdate="sysdate" pattern="dd-MM-yyyy" mask="true" >
+                                <f:validator validatorId="dateValidator" />
+                            </p:calendar>
+                        </h:panelGroup>
+                        <!-- PERSONA NATURAL -->
+                        <dialog:decorateForm id="regProf" label="(*)Registro Profesional" next="tituProf-from" 
+                                             bind="#{entesBean.ente.regProf}" rendered="#{entesBean.ente.esPersona}" />
+                        <dialog:decorateForm id="tituProf" label="(*)Titulo Profesional" 
+                                             bind="#{entesBean.ente.tituloProf}" rendered="#{entesBean.ente.esPersona}" />
+                        <dialog:compInputSelect id="cliente-estado_civil" label="Estado Civil" catalogo="cliente-estado_civil" 
+                                                bind="#{entesBean.ente.estadoCivil}" rendered="#{entesBean.ente.esPersona}" defaultValue="1" />
+                        <dialog:compInputSelect id="ente-discapacidad" label="Discapacidad" catalogo="ente-discapacidad" 
+                                                bind="#{entesBean.ente.discapacidad}" rendered="#{entesBean.ente.esPersona}" defaultValue="1"/>
+                        <h:panelGroup layout="block" rendered="#{entesBean.ente.esPersona}">
+                            <p:outputLabel value="Es Tercera edad:" class="FontBold Wid100" style="font-weight: bolder !important; margin-bottom: 0px;"/>
+                            <p:selectBooleanCheckbox value="#{entesBean.ente.esTerceraEdad}" />
+                        </h:panelGroup>
+                    </h:panelGrid>
+                </p:tab>
+                <p:tab title="Información Adicional">
+                    <h:panelGroup layout="block" >
+                        <p:outputLabel value="Correo provicional:" class="DispBlock Wid100" style="font-weight: bolder;"/>
+                        <p:commandButton value="no_ingreso_correo@hotmail.com" icon="ui-icon-plus" update="frmEntes:tabNewEnte:dtCorr" styleClass="btnStyle" actionListener="#{entesBean.agregarCorreoProvicional()}" />
+                    </h:panelGroup>
+                    <br/>
+                    <p:panelGrid columns="2" layout="grid">
+                        <p:dataTable id="dtCorr" value="#{entesBean.ente.enteCorreoCollection}" scrollHeight="65" scrollable="true" var="c" emptyMessage="No se encontro ningún correo" style="width: 300px;" >
+                            <f:facet name="header">
+                                <p:inputText value="#{entesBean.ente.correo}" class="DispBlock Wid100" style="width: 160px"  />
+                                <p:commandButton value="Agregar" icon="ui-icon-plus" update="frmEntes:tabNewEnte:dtCorr" styleClass="btnStyle" actionListener="#{entesBean.agregarCorreo()}" />
+                            </f:facet>
+                            <p:column headerText="Correo" >
+                                <h:outputLabel value="#{c.email}"/>
+                            </p:column>
+                            <p:column headerText="Eliminar" width="60" >
+                                <p:commandLink value="eliminar" actionListener="#{entesBean.eliminarCorreo(c)}"/>
+                            </p:column>
+                        </p:dataTable>
+                        <p:dataTable id="dtTel" value="#{entesBean.ente.enteTelefonoCollection}" scrollHeight="65" scrollable="true" var="t" emptyMessage="No se encontro ningún Teléfono" style="width: 255px;">
+                            <f:facet name="header">
+                                <p:inputText value="#{entesBean.ente.telefono}" />
+                                <p:commandButton value="Agregar" icon="ui-icon-plus" actionListener="#{entesBean.agregarTelefono()}" update="dtTel" styleClass="btnStyle"/>
+                            </f:facet>
+                            <p:column headerText="Teléfono" >
+                                <h:outputLabel value="#{t.telefono}"/>
+                            </p:column>
+                            <p:column headerText="Eliminar"  width="60" >
+                                <p:commandLink value="eliminar" actionListener="#{entesBean.eliminarTelefono(t)}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:panelGrid>
+                </p:tab>
+                <p:tab title="Conyuge" rendered="#{entesBean.ente.esPersona}">
+                    <h:panelGrid columns="2" style="width: 100%;" >
+                        <dialog:compInputSelect id="ente-tipo_documento-cony" label="Tipo de Documento:" catalogo="ente-tipo_documento" 
+                                                bind="#{entesBean.conyuge.tipoDocumento}" defaultValue="1"/>
+                        <h:panelGroup layout="block" >
+                            <p:outputLabel value="Cédula/Pasaporte:"  class="DispBlock Wid100"/>
+                            <h:panelGroup >
+                                <p:inputText value="#{entesBean.conyuge.ciRuc}" style="width: 250px;" readonly="true"/>
+                                <p:commandButton value="Buscar" actionListener="#{entesBean.buscarRes(true)}" update="dlgEntes"/>
+                            </h:panelGroup>
+                        </h:panelGroup>
+                        <dialog:decorateForm  label="Nombres:" id="nombre-Cony"
+                                              bind="#{entesBean.conyuge.nombres}" readonly="true" />
+                        <dialog:decorateForm  label="Apellidos:" id="apellidos-Cony"
+                                              bind="#{entesBean.conyuge.apellidos}" readonly="true" />
+                    </h:panelGrid>
+                </p:tab>
+                <p:tab title="Representante Legal" rendered="#{!entesBean.ente.esPersona}">
+                    <h:panelGrid columns="2" style="width: 100%;" >
+                        <dialog:compInputSelect id="ente-tipo_documento-rep" label="Tipo de Documento:" catalogo="ente-tipo_documento" 
+                                                bind="#{entesBean.representanteLegal.tipoDocumento}" defaultValue="1"/>
+                        <h:panelGroup layout="block" >
+                            <p:outputLabel value="Cédula/Pasaporte:" class="DispBlock Wid100"/>
+                            <h:panelGroup >
+                                <p:inputText value="#{entesBean.representanteLegal.ciRuc}" style="width: 250px;" readonly="true"/>
+                                <p:commandButton value="Buscar" actionListener="#{entesBean.buscarRes(false)}" update="dlgEntes"/>
+                            </h:panelGroup>
+                        </h:panelGroup>
+                        <dialog:decorateForm  label="Nombres:" id="nombre-repL"
+                                              bind="#{entesBean.representanteLegal.nombres}" readonly="true" />
+                        <dialog:decorateForm  label="Apellidos:" id="apellidos-repL"
+                                              bind="#{entesBean.representanteLegal.apellidos}" readonly="true" />
+                    </h:panelGrid>
+                </p:tab>
+
+            </p:tabView>
+
+            <center>
+                <p:commandButton id="guardar" actionListener="#{entesBean.guardarEnte()}" value="Guardar" 
+                                 rendered="#{!bloques.esVer}" icon="ui-icon-disk" 
+                                 style="height: 30px;" styleClass="btnStyle" update="frmEntes">
+                </p:commandButton>
+                <p:commandButton id="cerrar" actionListener="#{entesBean.cerrar}" value="Cerrar" style="height: 30px;" styleClass="btnStyle"/>
+            </center>
+        </h:form>
+
+        <p:dialog id="dlgEntes" widgetVar="dlgEntes" header="Listado de Personas" appendTo="@(body)" width="700" responsive="true" closable="true" closeOnEscape="true" modal="true">
+            <h:form id="frmEnte">
+                <p:dataTable id="dtEntes" value="#{entesBan.entes}" var="s" style="width: 100%" lazy="true" reflow="true"
+                             paginator="true" rows="10" filterEvent="enter" paginatorPosition="top"
+                             >
+                    <f:facet name="header">Seleccione una Persona.</f:facet>
+                    <p:column headerText="No. Identificacion" sortBy="#{s.ciRuc}" filterBy="#{s.ciRuc}" filterMatchMode="contains" filterStyle="width: 95%;">
+                        <h:outputText value="#{s.ciRuc}"/>
+                    </p:column>
+                    <p:column headerText="Apellidos" filterBy="#{s.apellidos}" sortBy="#{s.apellidos}" filterMatchMode="contains" filterStyle="width: 95%;">
+                        <h:outputText value="#{s.apellidos}" style="text-transform: uppercase"/>
+                    </p:column>
+                    <p:column headerText="Nombres" filterBy="#{s.nombres}" sortBy="#{s.nombres}" filterMatchMode="contains" filterStyle="width: 95%;">
+                        <h:outputText value="#{s.nombres}" style="text-transform: uppercase"/>
+                    </p:column>
+                    <p:column headerText="Seleccionar">
+                        <p:commandLink id="btnSeleccionar" value=">>>" actionListener="#{entesBan.seleccionarComprador(s)}" update="frmEntes" style="height: 30px" oncomplete="PF('dlgEntes').hide()"/>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </p:dialog>
+    </h:body>
+</html>
+

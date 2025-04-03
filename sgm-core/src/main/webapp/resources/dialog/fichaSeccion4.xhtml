@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+    <!-- INTERFACE -->
+    <cc:interface componentType="seccionesFicha" >
+        <cc:attribute name="headerDialog"/>
+        <cc:attribute name="predio" type="com.origami.sgm.entities.CatPredio" required="true"/>  
+        <cc:attribute name="predioant" type="com.origami.sgm.entities.CatPredio" required="true"/>
+        <cc:attribute name="ver" type="java.lang.Boolean" default="false"/>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+
+        <!--<h:form id="frmSeccion4">-->
+        <!--<p:tab id="s9" title="4. Caracterizacion y elementos constructivos de la edificacion" >-->
+        <h:form id="frmEdificaciones" >
+            <p:tabView id="tvEdificaciones">
+                <p:tab id="edif" title="Caracteristicas de la construccion/Bloques">
+                    <p:dataTable value="#{cc.attrs.predio.catPredioEdificacionCollection}" var="bq1" paginator="true"
+                                 paginatorAlwaysVisible="false" paginatorPosition="top"  rows="10"
+                                 rowsPerPageTemplate="5, 10, 20, 30" id="dtBloques" emptyMessage="No se encontraron registros">
+                        <p:column headerText="Num. bloque" >
+                            <p:outputLabel value="#{bq1.noEdificacion}" styleClass="#{cc.buscarObjeto(bq1,cc.attrs.predioant.catPredioEdificacionCollection)}"/>
+                        </p:column>
+                        <p:column headerText="Num. pisos">
+                            <p:outputLabel value="#{bq1.numPisos}"/>
+                        </p:column>
+                        <p:column headerText="Condiición fisica">
+                            <p:outputLabel value="#{bq1.condicionFisica.valor}"/>
+                        </p:column>
+                        <p:column headerText="Valor Cultural">
+                            <p:outputLabel value="#{bq1.valorCultural.valor}"/>
+                        </p:column>
+                        <p:column headerText="Estado Conservación">
+                            <p:outputLabel value="#{bq1.estadoConservacion.valor}"/>
+                        </p:column>
+                        <p:column headerText="Uso Construc.">
+                            <p:outputLabel value="#{bq1.usoConstructivoPiso.valor}"/>
+                        </p:column>
+                        <p:column headerText="Área bloque.">
+                            <p:outputLabel value="#{bq1.areaBloque}"/>
+                        </p:column>
+                        <p:column headerText="Opciones" rendered="#{cc.attrs.ver}">
+                            <p:commandLink actionListener="#{cc.verBloque(bq1)}" process="@this">
+                                <p:graphicImage value="/css/homeIconsImages/abrir.png" width="20" height="20"/>
+                            </p:commandLink>
+                        </p:column>
+                    </p:dataTable>
+                </p:tab>
+                <p:tab title="Tipo de Obra o Inst. Especiales (Obras internas o complementarias)">                           
+                    <p:dataTable id="dtObrasInternas" value="#{cc.attrs.predio.catPredioObraInternaCollection}" var="obin" reflow="true" paginator="true" rows="5" paginatorPosition="top" style="width: 100%" emptyMessage="No se encontraron registros">
+                        <p:column headerText="Tipo Obra">
+                            <h:outputText value="#{obin.tipo.valor}" styleClass="#{cc.buscarObjeto(obin,cc.attrs.predioant.catPredioObraInternaCollection)}"/>
+                        </p:column>
+                        <p:column headerText="Material">
+                            <h:outputText value="#{obin.material.valor}"/>
+                        </p:column>
+                        <p:column headerText="Cantidad">
+                            <h:outputText value="#{obin.cantidad}"/>
+                        </p:column>
+                        <p:column headerText="Estado Conservación">
+                            <h:outputText value="#{obin.conservacion.valor}"/>
+                        </p:column>
+                        <p:column headerText="Edad">
+                            <h:outputText value="#{obin.edad.valor}"/>
+                        </p:column>
+                        <p:column headerText="Opciones" rendered="#{cc.attrs.ver}">
+                            <p:commandLink actionListener="#{cc.verObraInterna(obin)}" process="@this">
+                                <p:graphicImage value="/css/homeIconsImages/abrir.png" width="20" height="20"/>
+                            </p:commandLink>
+                        </p:column>
+                    </p:dataTable>
+                </p:tab>
+            </p:tabView>
+        </h:form>
+        <!--</p:tab>-->
+        <!--</h:form>-->
+
+
+
+    </cc:implementation>
+</html>

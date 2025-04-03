@@ -1,0 +1,87 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    template="/template/template.xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:dialog="http://xmlns.jcp.org/jsf/composite/dialog">
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{catastrarEscriturasRp.doPreRenderView()}"/>
+        </f:metadata>
+    </ui:define>
+    <ui:define name="content">
+        <h:form id="mainForm">
+            <p:panelGrid styleClass="noBorder" columns="4" style="width: 100%;font-size: 14px;">
+                <p:outputLabel value="Tarea: #{catastrarEscriturasRp.taskDataByTaskID.name}" style="font-weight: bolder;color: #005f9c"/>
+                <p:outputLabel value="No Seguimiento: #{catastrarEscriturasRp.ht.id}" style="font-weight: bolder;color: #005f9c"/>
+                <p:outputLabel value="No Tramite: #{catastrarEscriturasRp.ht.numTramiteXDepartamento}" style="font-weight: bolder;color: #005f9c"/>
+                <p:outputLabel value="Responsable: #{catastrarEscriturasRp.taskDataByTaskID.assignee}" style="font-weight: bolder;color: #005f9c"/>
+            </p:panelGrid>
+            <p:tabView id="mainTab">
+                <p:tab title="Tarea">
+                    <center>
+                        <p:dataTable id="dtTareas" value="#{catastrarEscriturasRp.lista}" emptyMessage="Sin elementos..." rowIndexVar="index"
+                                     var="det" style="text-align: center; width: 75%" scrollable="true" scrollHeight="250">
+                            <f:facet name="header">
+                                Tareas del Tramite
+                            </f:facet>
+                             <p:column headerText="No" style="width: 45px">
+                                #{index + 1}
+                            </p:column>
+                            <p:column headerText="Detalle">
+                                <p:outputLabel value="#{det.observacion}"/>
+                            </p:column>
+                            <p:column headerText="Realizado" width="75">
+                                <p:graphicImage value="/css/homeIconsImages/ok.png" height="16" rendered="#{det.realizado}"/>
+                                <p:graphicImage value="/css/homeIconsImages/delete.png" height="16" rendered="#{!det.realizado}"/> 
+                            </p:column>
+                            <p:column headerText="IR" width="75">
+                                <p:commandLink actionListener="#{catastrarEscriturasRp.realizarTarea(det)}" disabled="#{det.realizado}">
+                                    <p:graphicImage value="/css/homeIconsImages/ir.png" height="16"/>   
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                        <p:commandButton value="Completar Tarea" icon="ui-icon-check" styleClass="btnStyle" actionListener="#{catastrarEscriturasRp.showDlgCompletTask()}"/>
+                    </center>
+                </p:tab>
+                <p:tab title="Documentos">
+                    <dialog:detalleArchivosAct archivos="#{catastrarEscriturasRp.processInstanceAllAttachmentsFiles}" />
+                </p:tab>
+                <p:tab title="Observaciones">
+                    <p:dataTable value="#{catastrarEscriturasRp.ht.observacionesCollection}" var="obs" reflow="true"
+                                 style="text-align: center" emptyMessage="Sin observaciones..."
+                                 scrollable="true" scrollHeight="300">
+                        <p:column headerText="Observacion">
+                            <h:outputText value="#{obs.observacion}"/>
+                        </p:column>
+                        <p:column headerText="Tarea" width="250">
+                            <h:outputText value="#{obs.tarea}"/>
+                        </p:column>
+                        <p:column headerText="Responsable" width="150">
+                            <h:outputText value="#{obs.userCre}"/>
+                        </p:column>
+                        <p:column headerText="Fecha" width="150">
+                            <h:outputText value="#{obs.fecCre}">
+                                <f:convertDateTime pattern="dd-MM-yyyy HH:mm"/>
+                            </h:outputText>
+                        </p:column>
+                    </p:dataTable>
+                </p:tab>
+            </p:tabView>
+        </h:form>
+        
+        <p:dialog id="dlgObervaciones" widgetVar="dlgObsvs" header="Confirmar Tarea" modal="true" width="400" 
+                  resizable="false" position="center">
+            <h:form id="formObs">
+                <p:outputLabel value="Ingrese Observacion:" style="font-weight: bolder;font-size: 16px"/>
+                <p:inputTextarea value="#{catastrarEscriturasRp.observacion}" rows="5" autoResize="false"
+                                 style="width: 100%" maxlength="900"/>
+                <br/><br/>
+                <center><p:commandButton value="Aceptar" styleClass="btnStyle" icon="ui-icon-check"
+                                         actionListener="#{catastrarEscriturasRp.completarTarea()}"/></center>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

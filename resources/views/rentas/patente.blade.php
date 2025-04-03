@@ -39,7 +39,7 @@
                     <thead>
                         <tr>
                             <th scope="col">Accion</th>
-                            <th scope="col">RUC</th>
+                            <th scope="col">Contribuyente</th>
                             <th scope="col">Razon Social</th>
                             <th scope="col">Fecha declaracion</th>
                             <th scope="col">Contabilidad</th>
@@ -99,5 +99,10 @@
             "fixedColumns" : true
         });
     })
+
+    function verPatente(id){
+        alert(id)
+    }
+
 </script>
 @endpush

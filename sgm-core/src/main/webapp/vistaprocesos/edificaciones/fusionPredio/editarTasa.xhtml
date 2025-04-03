@@ -1,0 +1,175 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                template="/template/template.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:dialog="http://xmlns.jcp.org/jsf/composite/dialog">
+    <ui:define name="top">
+
+    </ui:define>
+    <ui:define name="content">
+        <h:form id="mainForm">
+            <p:panelGrid styleClass="noBorder" columns="4" style="width: 100%;font-size: 14px;">
+                <p:outputLabel value="Tarea: #{generarTasaLiquidacionFP.taskDataByTaskID.name}" style="font-weight: bolder;color: #005f9c"/>
+                <p:outputLabel value="No Tramite: #{generarTasaLiquidacionFP.tramite.id}" style="font-weight: bolder;color: #005f9c"/>
+                <p:outputLabel value="Responsable: #{generarTasaLiquidacionFP.taskDataByTaskID.assignee}" style="font-weight: bolder;color: #005f9c"/>
+            </p:panelGrid>
+            <p:tabView id="tdatos" style="width: 100%">
+                <p:tab id="tgenerales" title="Datos Generales">
+                    <p:panel id="pDatos" header="#{generarTasaLiquidacionFP.tramite.tipoTramite.descripcion}" style="width: 100%">
+                        <br/>
+                        <p:panelGrid id="pgSolicitante" columns="2" styleClass="noBorder">
+                            <h:outputText value="Solicitante " style="font-weight: bold; text-transform: uppercase"/>
+                            <h:outputText value="#{generarTasaLiquidacionFP.tramite.solicitante.apellidos} #{generarTasaLiquidacionFP.tramite.solicitante.nombres}" rendered="#{generarTasaLiquidacionFP.tramite.solicitante.esPersona}" style="text-transform: uppercase"/>
+                            <h:outputText value="#{generarTasaLiquidacionFP.tramite.solicitante.razonSocial}" rendered="#{!generarTasaLiquidacionFP.tramite.solicitante.esPersona}" style="text-transform: uppercase"/>
+                            <h:outputText value="No. Identificacion " style="font-weight: bold; text-transform: uppercase"/>
+                            <h:outputText value="#{generarTasaLiquidacionFP.tramite.solicitante.ciRuc}" style="font-weight: bold; text-transform: uppercase"/>
+                        </p:panelGrid>
+                        <br/>
+                        <p:panelGrid id="pgValores" columns="4" styleClass="noBorder">
+                            <h:outputText value="Base Calculo " style="font-weight: bold; text-transform: uppercase"/>
+                            <h:outputText value="#{generarTasaLiquidacionFP.baseCalculo}" style="font-weight: bold; text-transform: uppercase; color: #D20005"/>
+                            <h:outputText value="Valor actual " style="font-weight: bold; text-transform: uppercase"/>
+                            <h:outputText value="#{generarTasaLiquidacionFP.tramite.valorLiquidacion}" style="font-weight: bold; text-transform: uppercase; color: #D20005"/>
+                            <h:outputText value="Valor a pagar " style="font-weight: bold; text-transform: uppercase"/>
+                            <h:outputText value="#{generarTasaLiquidacionFP.total}" style="font-weight: bold; text-transform: uppercase; color: #D20005"/>
+                        </p:panelGrid>
+                        <br/>
+                        <p:inputTextarea id="observaciones" value="#{generarTasaLiquidacionFP.descripcionPredio}" rows="4" style="text-transform: uppercase; width: 30%; height: 200px" placeholder="La descripcion de la edificacion, es requerdia"/>
+                        <br/>
+                        <div align="right">
+                            <p:commandButton id="btnNuevo" value="Agregar predio" style="height: 30px" onclick="PF('dlgPredios').show()"/>
+                        </div>
+                        <br/>
+                        <p:dataTable id="dtDetAvaluo" value="#{generarTasaLiquidacionFP.avaluos}" var="aval" reflow="true" style="width: 100%">
+                            <f:facet name="header">Predios Fusionados</f:facet>
+                            <p:column headerText="Predio" style="text-align: center">
+                                <h:outputText value="#{aval.predio.numPredio}" style="text-align: center"/>
+                            </p:column>
+                            <p:column headerText="Mz" style="text-align: center">
+                                <h:outputText value="#{aval.predio.urbMz}" style="text-align: center"/>
+                            </p:column>
+                            <p:column headerText="Solar" style="text-align: center">
+                                <h:outputText value="#{aval.predio.urbSolarnew}" style="text-align: center"/>
+                            </p:column>
+                            <p:column headerText="Construccion" style="text-align: center">
+                                <h:outputText value="#{aval.avaluoConstruccion}" style="text-align: center"/>
+                            </p:column>
+                            <p:column headerText="Solar" style="text-align: center">
+                                <h:outputText value="#{aval.avaluoSolar}" style="text-align: center"/>
+                            </p:column>
+                            <p:column headerText="Propiedad" style="text-align: center">
+                                <h:outputText value="#{aval.avaluoEdificacion}" style="text-align: center"/>
+                            </p:column>
+                            <p:column style="text-align: center; width: 10%">
+                                <p:commandButton id="btnAct" icon="ui-icon-refresh" actionListener="#{generarTasaLiquidacionFP.mostrarAvaluo(aval)}" update=":frmAct" oncomplete="PF('dlgact').show()" title="Cambiar datos"/>
+                                <p:spacer width="5"/>
+                                <p:commandButton id="btnRemover" icon="ui-icon-close" actionListener="#{generarTasaLiquidacionFP.removerContenido(aval ,generarTasaLiquidacionFP.avaluos)}" update="dtDetAvaluo" title="Quitar elemento" rendered="#{aval.id==null}"/>
+                                <!--<p:commandButton id="btnEliminar" icon="ui-icon-close" actionListener="#{generarTasaLiquidacionFP.elimarItem(aval)}" title="Eliminar elemento" rendered="#{aval.id!=null}"/>-->
+                            </p:column>
+                            <f:facet name="footer">
+                                <p:commandButton id="btnValidar" value="Calcular avaluo(s)" style="height: 35px" actionListener="#{generarTasaLiquidacionFP.calcular(2)}" update="mainForm:tdatos" icon="ui-icon-calculator"/>
+                            </f:facet>
+                        </p:dataTable>
+                        <br/>
+                        <div align="center">
+                            <p:panelGrid id="pgOpciones" styleClass="noBorder" columns="3">
+                                <p:commandButton id="btnLiquidacion" value="Generar Liquidacion"  style="color: #ffffff; width: 150px; background: #616161 !important; font-weight: bold; height: 30px;" icon="ui-icon-document"  actionListener="#{generarTasaLiquidacionFP.generarLiquidacion()}" update="pgOpciones"  rendered="#{!generarTasaLiquidacionFP.cert}"/>
+                                <p:commandButton id="btnImp" ajax="false"  actionListener="#{generarTasaLiquidacionFP.imprimirLiq()}" icon="ui-icon-print" style="color: #ffffff; width: 150px;height: 40px; background: #616161 !important; font-weight: bold; height: 30px;" value="Imprimir Tasa"  />
+                                <p:commandButton id="btnFIn" value="Mis tareas" actionListener="#{generarTasaLiquidacionFP.continuar()}" style="color: #ffffff; width: 150px; background: #616161 !important; font-weight: bold; height: 30px;" icon="ui-icon-check"/>
+                            </p:panelGrid>
+                        </div>
+                    </p:panel>
+                </p:tab>
+                <p:tab id="tinfo" title="Informacion adicional">
+                    <p:tabView id="tadicionales">
+                        <p:tab id="tdocs" title="Documentacion">
+                            <dialog:detalleArchivosAct archivos="#{generarTasaLiquidacionFP.processInstanceAttachmentsFiles}"/>
+                        </p:tab>
+                        <p:tab id="tobs" title="Observaciones">
+                            <p:dataTable id="dtobs" value="#{generarTasaLiquidacionFP.tramite.observacionesCollection}" var="obs" reflow="true" style="width: 100%">
+                                <f:facet name="header">Observaciones</f:facet>
+                                <p:column headerText="Descripcion" style="width: 40%">
+                                    #{obs.observacion}
+                                </p:column>
+                                <p:column headerText="tarea" style="width: 25%">
+                                    #{obs.tarea}
+                                </p:column>
+                                <p:column headerText="Responsable" style="width: 20%">
+                                    #{obs.userCre}
+                                </p:column>
+                                <p:column headerText="Fecha" style="width: 15%">
+                                    #{obs.fecCre}
+                                </p:column>
+                            </p:dataTable>
+                        </p:tab>
+                    </p:tabView>
+                </p:tab>
+            </p:tabView>
+        </h:form>
+        <p:dialog id="dlgActAval" header="Actualizacion de valores" widgetVar="dlgact" appendTo="@(body)" modal="true" width="500" resizable="false" closable="true" closeOnEscape="true">
+            <h:form id="frmAct">
+                <p:messages autoUpdate="true" showDetail="true" closable="true"/>
+                <p:panel id="pAvaluo" header="Ingrese los datos del predio, para calcular el avaluo" style="width: 100%">
+                    <p:panelGrid id="pgAvaluo" columns="2" styleClass="noBorder" layout="grid">
+                        <h:outputLabel value="Predio"/>
+                        <p:inputText id="predio" value="#{generarTasaLiquidacionFP.avaluo.predio.numPredio}" readonly="true" style="width: 100%"/>
+                        <h:outputLabel value="(*) Avaluo del solar"/>
+                        <pe:inputNumber id="solar" value="#{generarTasaLiquidacionFP.avaluo.avaluoSolar}" style="width: 100%" required="true"/>
+                        <h:outputLabel value="(*) Avaluo de la construccion"/>
+                        <pe:inputNumber id="construccion" value="#{generarTasaLiquidacionFP.avaluo.avaluoConstruccion}" style="width: 100%" required="true"/>
+                        <h:outputLabel value="(*) Avaluo de la propiedad"/>
+                        <pe:inputNumber id="propiedad" value="#{generarTasaLiquidacionFP.avaluo.avaluoEdificacion}" style="width: 100%" disabled="true"/>
+                    </p:panelGrid>
+                    <div align = "center">
+                        <br/>
+                        <p:commandButton id="btnAct" value="Cambiar avaluo" actionListener="#{generarTasaLiquidacionFP.actualizarAvaluo()}" style="height: 30px" oncomplete="PF('dlgact').hide()" update="mainForm:tdatos"/>
+                    </div>
+                </p:panel>
+            </h:form>
+        </p:dialog>
+        <p:dialog id="dlgPredios" widgetVar="dlgPredios" header="Listado de predios" appendTo="@(body)" modal="true" responsive="true" closable="true" closeOnEscape="true" width="650">
+            <h:form id="frmPredios">
+                <p:panel id="pPredios" header="Elija el predio respectivo de la lista" toggleable="true" style="width: 100%">
+                    <p:dataTable id="dtPredios" value="#{generarTasaLiquidacionFP.predios}" var="p" style="width: 100%" selectionMode="single" 
+                                 selection="#{generarTasaLiquidacionFP.predio}" rowKey="#{p.id}" reflow="true" paginator="true" rows="10" emptyMessage="No tiene predios activos">
+                        <p:column headerText="Num. Predio" style="width: 20%" filterBy="#{p.numPredio}" sortBy="#{p.numPredio}">
+                            <h:outputText value="#{p.numPredio}"/>
+                        </p:column>
+                        <p:column headerText="Codigo Catastral" style="width: 30%"  filterBy="#{p.sector}-#{p.mz}-#{p.cdla}-#{p.mzdiv}-#{p.solar}" sortBy="#{p.sector}-#{p.mz}-#{p.cdla}-#{p.mzdiv}-#{p.solar}">
+                            <p:outputLabel value="#{p.sector}-#{p.mz}-#{p.cdla}-#{p.mzdiv}-#{p.solar}"/>
+                        </p:column>
+                        <p:column headerText="Ciudadela" style="width: 40%">
+                            <h:outputText value="#{p.ciudadela.nombre}"/>
+                        </p:column>
+                        <p:column style="width: 10%;; text-align: center">
+                            <p:commandButton id="btnDatos" style="text-align: center" icon="ui-icon-folder-open" actionListener="#{generarTasaLiquidacionFP.datosAvaluo(p)}" oncomplete="PF('dlgPredios').hide()" update=":frmAvaluo">
+                                <p:tooltip value="Seleccionar y agregar caracteristicas al predio" for="btnDatos"/>
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+                </p:panel>
+            </h:form>
+        </p:dialog>
+        <p:dialog id="dlgAvaluo" widgetVar="dlgAvaluo" header="Caracteristicas del predio" appendTo="@(body)" modal="true" closable="true" closeOnEscape="true" resizable="false" width="600">
+            <h:form id="frmAvaluo">
+                <p:panel id="pAvaluo" header="Ingrese los datos del predio, para calcular el avaluo" style="width: 100%">
+                    <p:panelGrid id="pgAvaluo" columns="2" styleClass="noBorder" layout="grid">
+                        <h:outputLabel value="Predio"/>
+                        <p:inputText id="predio" value="#{generarTasaLiquidacionFP.avaluo.predio.numPredio}" readonly="true" style="width: 100%"/>
+                        <h:outputLabel value="(*) Avaluo del solar"/>
+                        <pe:inputNumber id="solar" value="#{generarTasaLiquidacionFP.avaluo.avaluoSolar}" style="width: 100%" required="true"/>
+                        <h:outputLabel value="(*) Avaluo de la construccion"/>
+                        <pe:inputNumber id="construccion" value="#{generarTasaLiquidacionFP.avaluo.avaluoConstruccion}" style="width: 100%" required="true"/>
+                    </p:panelGrid>
+                    <div align = "center">
+                        <br/>
+                        <p:commandButton id="btnAgregar" value="Agregar caracteristicas" actionListener="#{generarTasaLiquidacionFP.agregarAvaluo()}" style="height: 30px" oncomplete="PF('dlgAvaluo').hide()" update=":mainForm"/>
+                    </div>
+                </p:panel>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

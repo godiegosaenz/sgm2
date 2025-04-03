@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <link href="#{appConfig.urlbase}resources/css/main.css" rel="stylesheet" type="text/css" />
+
+        <title>Predios Rústicos</title>
+        <style type="text/css">
+            .ui-widget {
+                /*text-align: center;*/
+                font-size: 100%;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <h:form>
+
+            <p:dataTable id="dtPredios" value="#{predioRusticoDLG.predios}" var="pt" paginator="true"
+                         emptyMessage="No se encontró ningun predio" rows="10" lazy="true" rowsPerPageTemplate="10,15,20, 50, 100"
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         selection="#{predioRusticoDLG.predioSelect}" rowKey="#{pt.id}">
+                <p:column selectionMode="multiple" style="width:20px; text-align:left; " />
+                <p:column headerText="Reg. Catastral" filterStyle="width: 90%" style="text-align: center; " filterBy="#{pt.regCatastral}" sortBy="#{pt.regCatastral}" filterMatchMode="contains">
+                    <h:outputText value="#{pt.regCatastral}"/>
+                </p:column>
+                <p:column headerText="Id. Predial" style="text-align: center;" filterBy="#{pt.idPredial}" sortBy="#{pt.idPredial}" filterStyle="width: 90%" >
+                    <h:outputText value="#{pt.idPredial}"  />
+                </p:column>
+                <p:column headerText="Parroquia" style="text-align: center; ">
+                    <h:outputText value="#{pt.parroquia.descripcion}"/>
+                </p:column>
+                <p:column headerText="Ubicaci&#243;n" style="text-align: center; " filterBy="#{pt.nombrePredio}"  sortBy="#{pt.nombrePredio}" filterStyle="width: 90%" >
+                    <h:outputText value="#{pt.nombrePredio}"/>
+                </p:column>
+                <p:column headerText="Sitio" style="text-align: center; " filterBy="#{pt.sitio}" sortBy="#{pt.sitio}" filterStyle="width: 90%" >
+                    <h:outputText value="#{pt.sitio}"/>
+                </p:column>
+                <p:column headerText="N&#250;mero Predio" style="text-align: center;" filterBy="#{pt.numPredioRustico}" sortBy="#{pt.numPredioRustico}" filterStyle="width: 90%" >
+                    <h:outputText value="#{pt.numPredioRustico}"/>
+                </p:column>
+
+            </p:dataTable>
+            <center>
+                <p:commandButton value="Seleccionar" actionListener="#{predioRusticoDLG.seleccionarPredios()}" styleClass="btnStyle"/>
+            </center>
+        </h:form>
+    </h:body>
+</html>
+

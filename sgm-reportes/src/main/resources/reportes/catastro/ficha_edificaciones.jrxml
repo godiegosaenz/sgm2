@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ficha_edificaciones" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="800c4153-b305-42ed-bf6a-c6395892a63f">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#A9A9A9">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<subDataset name="Edificaciones" uuid="e0bad158-5316-4d87-a2c9-c04a9ecd65b6">
+		<parameter name="predio" class="java.lang.Long"/>
+		<queryString>
+			<![CDATA[SELECT PE.PREDIO, PE.VIDAUTIL, PE.AREA_CONS_CENSO, PE.EN_CONSTRUCCION_PORC,
+       PE.ANIO_CONS, PE.ESTADO_CONSERVACION, PE.CATEGORIA, PE.ESTADO, PE.NUM_PISOS,
+       PE.PROTOTIPO
+  FROM sgm_app.CAT_PREDIO_EDIFICACION PE
+  INNER JOIN sgm_app.CAT_PREDIO P ON P.ID = PE.PREDIO
+  WHERE P.ID = $P{predio};]]>
+		</queryString>
+		<field name="predio" class="java.lang.Long"/>
+		<field name="vidautil" class="java.lang.Integer"/>
+		<field name="area_cons_censo" class="java.math.BigDecimal"/>
+		<field name="en_construccion_porc" class="java.lang.Integer"/>
+		<field name="anio_cons" class="java.lang.Integer"/>
+		<field name="estado_conservacion" class="java.lang.Long"/>
+		<field name="categoria" class="java.lang.Long"/>
+		<field name="estado" class="java.lang.Boolean"/>
+		<field name="num_pisos" class="java.lang.Integer"/>
+		<field name="prototipo" class="java.lang.Long"/>
+	</subDataset>
+	<parameter name="FachadaFrontal" class="java.lang.String"/>
+	<parameter name="FachadaIzquierda" class="java.lang.String"/>
+	<parameter name="FachadaDerecha" class="java.lang.String"/>
+	<parameter name="FachadaPosterior" class="java.lang.String"/>
+	<parameter name="predio" class="java.lang.Long"/>
+	<queryString>
+		<![CDATA[SELECT PE.PREDIO, PE.VIDAUTIL, PE.AREA_CONS_CENSO, PE.EN_CONSTRUCCION_PORC,
+       PE.ANIO_CONS, PE.CATEGORIA, PE.ESTADO, PE.NUM_PISOS,
+       IT.VALOR, EC.VALOR AS ESTADO_CONSERVACION,PE.FACTOR_DEPRECIACION
+  FROM sgm_app.CAT_PREDIO_EDIFICACION PE
+  INNER JOIN sgm_app.CAT_PREDIO P ON P.ID = PE.PREDIO
+  LEFT JOIN sgm_app.CTLG_ITEM IT ON (PE.PROTOTIPO = IT.ID)
+  LEFT JOIN sgm_app.CTLG_ITEM EC ON (EC.ID=PE.ESTADO_CONSERVACION)
+
+  WHERE PE.PREDIO = $P{predio};]]>
+	</queryString>
+	<field name="predio" class="java.lang.Long"/>
+	<field name="vidautil" class="java.lang.Integer"/>
+	<field name="area_cons_censo" class="java.math.BigDecimal"/>
+	<field name="en_construccion_porc" class="java.lang.Integer"/>
+	<field name="anio_cons" class="java.lang.Integer"/>
+	<field name="categoria" class="java.lang.Long"/>
+	<field name="estado" class="java.lang.Boolean"/>
+	<field name="num_pisos" class="java.lang.Integer"/>
+	<field name="valor" class="java.lang.String"/>
+	<field name="estado_conservacion" class="java.lang.String"/>
+	<field name="factor_depreciacion" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="215" splitType="Stretch">
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="1" y="2" width="554" height="20" forecolor="#FFFFFF" backcolor="#999999" uuid="caeef98b-28d5-4573-a6e6-53b993f78f41"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ 9.EDIFICACIONES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="6" y="89" width="128" height="20" forecolor="#FFFFFF" backcolor="#999999" uuid="1ce2b186-3571-4f09-8fbc-5c3469892fc2"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fachada Frontal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="140" y="89" width="132" height="20" forecolor="#FFFFFF" backcolor="#999999" uuid="827f4201-65f8-415d-8344-245c4b082552"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fachada Izquierda]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="416" y="89" width="131" height="20" forecolor="#FFFFFF" backcolor="#999999" uuid="b4c7914e-34a8-4581-ab89-19310aaeed33"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fachada Posterior]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="279" y="89" width="128" height="20" forecolor="#FFFFFF" backcolor="#999999" uuid="f03ee877-3f1f-42d2-bce3-853c0f804bb5"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fachada Derecha]]></text>
+			</staticText>
+			<line>
+				<reportElement x="6" y="114" width="541" height="1" uuid="836ca25a-531e-413b-9f23-6bba320f9382"/>
+			</line>
+			<line>
+				<reportElement x="6" y="81" width="541" height="1" uuid="16b4d9c5-b2b9-4b1d-a6d5-902d3ae6ad03"/>
+			</line>
+			<image scaleImage="FillFrame">
+				<reportElement x="6" y="128" width="128" height="77" uuid="cfc9aae4-033d-4915-ac0b-587fec84078e"/>
+				<imageExpression><![CDATA[$P{FachadaFrontal}]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame">
+				<reportElement x="140" y="128" width="132" height="77" uuid="58667f0b-219c-40b8-af69-22149f797ba0"/>
+				<imageExpression><![CDATA[$P{FachadaIzquierda}]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame">
+				<reportElement x="279" y="128" width="128" height="77" uuid="e8a274df-ea80-4a40-b5dc-fb99f4015da1"/>
+				<imageExpression><![CDATA[$P{FachadaDerecha}]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame">
+				<reportElement x="416" y="128" width="131" height="77" uuid="beb59e22-8c25-42e2-a79b-e9f7692a3b38"/>
+				<imageExpression><![CDATA[$P{FachadaPosterior}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="55" y="26" width="49" height="29" uuid="bbdcb9c1-71bd-4e4c-a89c-a3296d637619"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Vida Util]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="104" y="26" width="56" height="29" uuid="c549927d-7be6-4cf1-b9a8-411cf9fa21e5"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Area  Costrucciòn]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="436" y="26" width="107" height="29" uuid="59cc96c1-9417-4851-a162-abdcf0d7ea53"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Prototipo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="355" y="26" width="81" height="29" uuid="a910bdad-c556-4b25-8e78-416b63d11292"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Factor Depreciacion]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="232" y="26" width="123" height="29" uuid="9e4837bd-97cb-4aad-bfff-33eede95f17e"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Estado  Conservacion]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="6" y="26" width="49" height="29" uuid="c0397d45-41ab-48a7-9da7-302321650164"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Nº.Pisos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="160" y="26" width="72" height="29" uuid="7db7c64b-53f4-4c59-a9b4-956d426ba22e"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Año Construcción]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="55" y="55" width="49" height="20" uuid="d86dc61e-4884-495c-ab0c-2dc351a21ce3"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{vidautil}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="104" y="55" width="56" height="20" uuid="40d4de9e-24ba-4e25-ae97-8d7e4aaeae05"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{area_cons_censo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="160" y="55" width="72" height="20" uuid="54e69ae2-2e67-47ea-978f-891d38ef8d4c"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{anio_cons}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="232" y="55" width="123" height="20" uuid="6396d9fa-218a-450d-a234-c33c3e444865"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{estado_conservacion}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="6" y="55" width="49" height="20" uuid="e3e2297a-7efa-4731-8237-3039f7bf0ee6"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{num_pisos}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="436" y="55" width="107" height="20" uuid="9d5cf15f-a07c-4589-820d-6f08a3e450b5"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{valor}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="355" y="55" width="81" height="20" uuid="5db1e7b3-6caa-40bc-8ab5-1505521d3eaa"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{factor_depreciacion}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+</jasperReport>

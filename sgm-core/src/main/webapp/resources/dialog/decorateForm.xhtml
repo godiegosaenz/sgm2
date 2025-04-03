@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <cc:interface >
+        <cc:attribute name="id" required="true" shortDescription="Id del componente"/>
+        <cc:attribute name="label" required="true" shortDescription="Etiqueta a mostrar"/>
+        <cc:attribute name="required" required="false" default="false" shortDescription="true requerido, false no requerido"/>
+        <cc:attribute name="pattern" required="false" default="#" shortDescription="formato para mostrar el numero ##############.####"/>
+        <cc:attribute name="bind" required="true" shortDescription="Valor del campo# {bean.entity.property}"/>
+        <cc:attribute name="integerValidate" required="false" default="false" shortDescription="true si el campo es Entero"/>
+        <cc:attribute name="floatValidate" required="false" default="false" shortDescription="true si el campo es Decimal"/>
+        <cc:attribute name="readonly" required="false" default="false" shortDescription="true si el campo se es editable"/>
+        <cc:attribute name="next" required="false" default="" shortDescription="ID del proximo input en el onkeypress"/>
+        <cc:attribute name="type" required="false" default="currency"/>
+
+    </cc:interface>
+    <cc:implementation>
+        <h:panelGroup layout="block" class="Responsive100 Responsive">
+            <p:outputLabel for="#{cc.attrs.id}-form" value="#{cc.attrs.label}" class="DispBlock Wid100" style="font-weight: bolder !important; margin-bottom: 0px;" />
+            <p:inputText id="#{cc.attrs.id}-form" value="#{cc.attrs.bind}" styleClass="inputWidth190" readonly="#{cc.attrs.readonly}" required="#{cc.attrs.required}">
+                <c:choose>
+                    <c:when test="#{not empty cc.attrs.integerValidate and cc.attrs.integerValidate=='true'}">
+                        <f:attribute name="onkeypress" value="validateIntegerValueAndFocusNext(event,'#{cc.attrs.next}')" />
+                    </c:when>
+                    <c:when test="#{not empty cc.attrs.floatValidate and cc.attrs.floatValidate=='true'}">
+                        <f:attribute name="onkeypress" value="validateFloatValueAndFocusNext(event,'#{cc.attrs.next}')" />
+                    </c:when>
+                    <c:otherwise>
+                        <f:attribute name="onkeypress" value="focusNextOnEnter(event,'#{cc.attrs.next}')" />
+                    </c:otherwise>
+                </c:choose>
+                <c:if test="#{not empty cc.attrs.pattern and cc.attrs.pattern !='#'}" >
+                    <f:convertNumber pattern="#{cc.attrs.pattern}" locale="us"/>
+                </c:if>
+                <c:if test="#{not empty cc.attrs.pattern and cc.attrs.pattern eq '$'}" >
+                    <f:convertNumber type="currency" currencySymbol="" locale="en_US"/>
+                </c:if>
+            </p:inputText>
+
+        </h:panelGroup>
+    </cc:implementation>
+</html>

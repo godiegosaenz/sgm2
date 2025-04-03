@@ -1,0 +1,153 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:dlg="http://xmlns.jcp.org/jsf/composite/dialog">
+    <head>
+        <link href="#{appConfig.urlbase}resources/css/main.css" rel="stylesheet" type="text/css" />
+    </head>
+    <ui:define name="content">
+        <center>
+            <h1>Actualizacion de datos del predio</h1>
+        </center>
+        <h:panelGroup layout="block" class="Wid100 Responsive100">
+
+            <h:form id="registroPHForm" prependId="false" >
+                <div class="ContainerIndent">
+                    <p:panel header="Información general de la tarea"  style="margin-bottom:20px">
+                        <h:panelGrid columns="4" style="width: 100%;font-size: 14px;">
+                            <p:outputLabel value="Tarea: #{updateDataFlow.taskDataByTaskID.name}" class="FontBold"/>
+                            <p:outputLabel value="No Tramite: #{updateDataFlow.ht.id}" class="FontBold"/>
+                            <p:outputLabel value="Responsable: #{updateDataFlow.taskDataByTaskID.assignee}" class="FontBold"/>
+                        </h:panelGrid>
+                    </p:panel>
+                    <p:panel id="pnlPredioMt" style="margin-bottom: 15px;" header="Datos generales del predio">
+                        <p:panelGrid layout="grid" columns="3" >
+                            <h:panelGroup layout="block" >
+                                <h:outputLabel value="Clave Catastral" class="DispBlock Wid100 FontBold"/>
+                                <p:inputText value="#{updateDataFlow.claveCatastral(updateDataFlow.predio.claveCat)}" readonly="true" style="width: 95% !important;"/>
+                            </h:panelGroup>
+                            <h:panelGroup layout="block" >
+                                <h:outputLabel value="Tipo de Predio" class="DispBlock Wid100 FontBold"/>
+                                <p:inputText value="URBANO" rendered="#{updateDataFlow.predio.tipoPredio == 'U'}" readonly="true" style="width: 95% !important;"/>
+                                <p:inputText value="RURAL" rendered="#{updateDataFlow.predio.tipoPredio == 'R'}" readonly="true" style="width: 95% !important;"/>
+                            </h:panelGroup>
+                            <h:panelGroup layout="block" >
+                                <h:outputLabel value="Área Grafica Lote" class="DispBlock Wid100 FontBold"/>
+                                <p:inputText value="#{updateDataFlow.predio.catPredioS4.areaGraficaLote}" readonly="true" style="width: 95% !important;">
+                                    <f:convertNumber type="currency" currencySymbol="" />
+                                </p:inputText>
+                            </h:panelGroup>
+                        </p:panelGrid>
+                    </p:panel>
+                    <p:panel header="Observaciones generales de la actualizacion del predio"  style="margin-bottom:20px;">
+                        <p:dataTable id="obsr" value="#{updateDataFlow.observacionesGenerales}" var="ob" scrollable="true" style="width: 100%"
+                                     emptyMessage="No se encontraron observaciones" paginator="true" paginatorPosition="top" 
+                                     rows="5"   rowsPerPageTemplate="5,10,15,25,50" 
+                                     paginatorAlwaysVisible="false"
+                                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" >
+
+                            <p:column headerText="Observacion" style="text-transform: uppercase;">
+                                <h:outputText value="#{ob.observacion}"/>
+                            </p:column>    
+                            <p:column headerText="Tarea" style="text-transform: uppercase;">
+                                <h:outputText value="#{ob.tarea}"/>
+                            </p:column>
+                            <p:column headerText="Usuario" style="text-transform: uppercase;">
+                                <h:outputText value="#{ob.userCre}"/>
+                            </p:column>  
+                            <p:column headerText="Fecha">
+                                <h:outputText value="#{ob.fecCre}"><f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText>
+                            </p:column>              
+                        </p:dataTable>
+                    </p:panel>
+                    <p:panel header="Detalle del predio a Editar"  style="margin-bottom:20px" rendered="#{!updateDataFlow.edicionGrafica}">
+                        <p:dataTable var="pt" value="#{updateDataFlow.detallesTramite}" rows="10"
+                                     paginator="true" paginatorPosition="bottom" emptyMessage="No existen predios."
+                                     currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords}"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                            <p:column style="width:16px">
+                                <p:rowToggler />
+                            </p:column>
+                            <p:column headerText="#PREDIO" style="text-align: center; width: 5%;">
+                                <h:outputText value="#{pt.predio.numPredio}"/>
+                            </p:column>
+                            <p:column headerText="PARROQUIA" style="text-align: center; width: 6%">
+                                <h:outputText value="#{pt.predio.parroquia}"  />
+                            </p:column>
+                            <p:column headerText="ZONA" style="text-align: center; width: 3%">
+                                <h:outputText value="#{pt.predio.zona}"/>
+                            </p:column>
+                            <p:column headerText="SECTOR" style="text-align: center; width:4%">
+                                <h:outputText value="#{pt.predio.sector}"/>
+                            </p:column>
+                            <p:column headerText="MZ" style="text-align: center; width: 3%">
+                                <h:outputText value="#{pt.predio.mz}"/>
+                            </p:column>
+                            <p:column headerText="LOTE" style="text-align: center; width: 3%">
+                                <h:outputText value="#{pt.predio.solar}"/>
+                            </p:column>
+                            <p:column headerText="BLOQUE" style="text-align: center; width: 4%">
+                                <h:outputText value="#{pt.predio.bloque}"/>
+                            </p:column>
+                            <p:column headerText="PISO" style="text-align: center; width: 3%">
+                                <h:outputText value="#{pt.predio.piso}"/>
+                            </p:column>
+                            <p:column headerText="UNIDAD" style="text-align: center; width: 4%">
+                                <h:outputText value="#{pt.predio.unidad}"/>
+                            </p:column>
+                            <p:column headerText="CLAVE CATASTRAL" style="text-align: center;">
+                                <h:outputText value="#{updateDataFlow.claveCatastral(pt.predio.claveCat)}"/>
+                            </p:column>
+                            <p:column style="text-align: center; vertical-align: central;" headerText="Acciones">
+                                <p:commandButton icon="fa fa-edit white" title="Editar" action="#{updateDataFlow.editarPredio(pt.predio)}" process="@this" disabled="#{pt.estado and pt.numTasa eq 1}"/>
+                                <p:graphicImage value="/css/homeIconsImages/ok.png" width="25" height="25" rendered="#{pt.numTasa eq 1}" style="padding-left: 5px;"/>
+                                <p:graphicImage value="/css/homeIconsImages/delete.png" width="25" height="25" rendered="#{pt.numTasa eq 2}" style="padding-left: 5px;"/>
+                            </p:column>
+                            <p:rowExpansion>
+                                <p:dataTable id="obsr" value="#{pt.observaciones}" var="ob" scrollable="true" style="width: 100%"
+                                             emptyMessage="No se encontraron observaciones" paginator="true" paginatorPosition="top" 
+                                             rows="5"   rowsPerPageTemplate="5,10,15,25,50" 
+                                             paginatorAlwaysVisible="false"
+                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" >
+
+                                    <p:column headerText="Observacion" style="text-transform: uppercase;">
+                                        <h:outputText value="#{ob.observacion}"/>
+                                    </p:column>    
+                                    <p:column headerText="Tarea" style="text-transform: uppercase;">
+                                        <h:outputText value="#{ob.tarea}"/>
+                                    </p:column>
+                                    <p:column headerText="Usuario" style="text-transform: uppercase;">
+                                        <h:outputText value="#{ob.userCre}"/>
+                                    </p:column>  
+                                    <p:column headerText="Fecha">
+                                        <h:outputText value="#{ob.fecCre}"><f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText>
+                                    </p:column>              
+                                </p:dataTable>
+                            </p:rowExpansion>
+                        </p:dataTable>
+                    </p:panel>
+                    <center>
+                        <p:commandButton icon="fa fa-edit white" title="Completar tarea" value="Completar tarea"  process="@this" oncomplete="PF('obs').show();" disabled="#{!updateDataFlow.renderCompletar}" />
+                    </center>
+                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                        <h:panelGroup layout="block" class="Wid100" rendered="#{updateDataFlow.edicionGrafica}">
+                            <h:outputText value="#{updateDataFlow.mensajeGrafico}" style="display:block; text-align: center; padding-bottom: 3px;"/>
+                        </h:panelGroup>
+                        <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                    </p:confirmDialog>
+                </div>
+            </h:form>
+            <dlg:observaciones observaciones="#{updateDataFlow.observacion}" 
+                               actionButton="#{updateDataFlow.completar()}" 
+                               confirm="true" 
+                               confirmMessages=" ¿ Esta seguro de completar la tarea #{updateDataFlow.taskDataByTaskID.name} ? "
+                               titulo="Observaciones de la actualizacion"/>
+        </h:panelGroup>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:dialog="http://xmlns.jcp.org/jsf/composite/dialog">
+    <ui:define name="top">
+        <p:panelGrid styleClass="noBorder" columns="4" style="width: 100%;font-size: 14px;">
+            <p:outputLabel value="Tarea: #{generarCertificadoPA.taskDataByTaskID.name}" style="font-weight: bolder;color: #005f9c"/>
+            <p:outputLabel value="Trámite: #{generarCertificadoPA.ht.id}" style="font-weight: bolder;color: #005f9c"/>
+            <p:outputLabel value="Responsable: #{generarCertificadoPA.taskDataByTaskID.assignee}" style="font-weight: bolder;color: #005f9c"/>
+        </p:panelGrid>
+    </ui:define>
+    <ui:define name="content">
+        <h:form id="frmMain">
+
+            <p:panel id="pnlDP" style="width: 100%;">
+                <p:tabView id="tdatos">
+                    <p:tab id="tgen" title="Certificado de Permisos Adicionales">
+                        
+                        <h:panelGroup style="margin-top: 25px;">
+                            <center style="margin-top: 10px;">
+                                <p:panel header="Liquidación de Permisos Adicionales">
+                                    <dialog:detalleArchivosAct archivos="#{generarCertificadoPA.processInstanceAttachmentsFiles}"/>
+                                </p:panel>
+                            </center>
+                            <center style="margin-top: 15px;">
+                                <h:panelGroup style="margin-top: 15px; margin-bottom: 15px; ">
+                                    <h3><h:outputText value="Ingrese sus observaciones"/></h3>
+                                    <p:inputText style="width: 220px; height: 45px; margin-left: 10px;" value="#{generarCertificadoPA.obs.observacion}"/>
+                                </h:panelGroup>
+                                <h:panelGroup id="botonesGroup">
+                                    <center style="margin-top: 15px;">
+                                            <p:commandButton ajax="false"  actionListener="#{generarCertificadoPA.imprimirPDF()}" icon="ui-icon-document" style="color: #ffffff; width: 150px; background: #616161 !important; font-weight: bold; height: 30px;" value="Imprimir Certificado"  />
+                                            <p:commandButton id="btnFIn" value="Mis tareas" actionListener="#{generarCertificadoPA.continuar()}" style="color: #ffffff; width: 150px; background: #616161 !important; font-weight: bold; height: 30px;" icon="ui-icon-check"/></center>
+                                </h:panelGroup>
+                            </center>
+                        </h:panelGroup>
+                    </p:tab>
+                    
+                    <!-- -->
+                    <p:tab id="tdocs" title="Observaciones">
+                        <p:dataTable id="dtobs" value="#{generarCertificadoPA.ht.observacionesCollection}" var="obs" reflow="true" style="width: 100%">
+                            <f:facet name="header">Observaciones</f:facet>
+                            <p:column headerText="Descripcion" style="width: 40%">
+                                #{obs.observacion}
+                            </p:column>
+                            <p:column headerText="tarea" style="width: 25%">
+                                #{obs.tarea}
+                            </p:column>
+                            <p:column headerText="Responsable" style="width: 20%">
+                                #{obs.userCre}
+                            </p:column>
+                            <p:column headerText="Fecha" style="width: 15%">
+                                #{obs.fecCre}
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                </p:tabView>
+            </p:panel>
+        </h:form>
+        
+        <!-- -->
+        
+        
+        
+    </ui:define>
+</ui:composition>

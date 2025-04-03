@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:dlg="http://xmlns.jcp.org/jsf/composite/dialog">
+
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{fichaPredial.load()}"/>
+        <f:viewParam name="predio" value="#{fichaPredial.predioId}"/>
+        <f:viewParam name="claveCat" value="#{fichaPredial.claveCat}"/>
+    </f:metadata>
+
+
+    <ui:define name="content">
+        <center>
+            <h1>Ficha Predial</h1>
+        </center>
+        <div class="ContainerIndent">
+            <p:panel rendered="#{not empty fichaPredial.observacionRestricciones}">
+                <ui:repeat value="#{fichaPredial.observacionRestricciones}" var="d1" rendered="#{fichaPredial.observacionRestricciones ne null}">
+                    <p:outputLabel value="#{d1}" class="Fs18 FontBold icon-lock" style="color: darkred; text-transform: uppercase" escape="false"  /><br/>
+                </ui:repeat>
+            </p:panel>
+        </div>
+        <div align="left">
+            <p:panelGrid id="datosGenerales" layout="grid" columns="3" style="width: 100%">
+                <h:outputText value="No. Predio/Código Único : #{fichaPredial.predio.numPredio}" style="font-weight: bolder"/>
+                <h:outputText value="Clave Catastral: #{fichaPredial.claveCatastralCompleta()}" style="font-weight: bolder; font-size: 18px; "/>
+                <h:outputText value="Fecha de Creacion: #{fichaPredial.predio.instCreacion}" style="font-weight: bolder; font-size: 18px; "/>
+                <p:commandLink id="linkearFicha" value="No. Ficha registral : #{fichaPredial.ficha.numFicha}" actionListener="#{fichaPredial.linkearFicha()}" rendered="#{fichaPredial.ficha!=null}"/>
+                <h:panelGroup>
+                    <p:commandButton value="Completar Edición" action="#{fichaPredial.showDialogObservaciones(3)}"  rendered="#{fichaPredial.esTarea}"  update="compObsv:dlgObs,confirmId"/>
+
+                    <p:commandButton value="Aprobar" action="#{fichaPredial.showDialogObservaciones(2)}"  rendered="#{fichaPredial.esTareaAp}"  update="compObsv:dlgObs,confirmId" />
+
+                    <p:commandButton value="Rechazar" action="#{fichaPredial.showDialogObservaciones(1)}"  rendered="#{fichaPredial.esTareaAp}" update="compObsv:dlgObs,confirmId"  />
+                </h:panelGroup>
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" id="confirmId">
+                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                </p:confirmDialog>
+
+                 <dlg:observaciones observaciones="#{fichaPredial.observaciones}" id="compObsv"
+                                   actionButton="#{fichaPredial.guardarObservaciones()}"
+                                   confirm="true"
+                                   confirmMessages=" Esta seguro de #{fichaPredial.tipoTarea eq 3 ? 'COMPLETAR LA EDICION ALFANUMERICA DEL PREDIO ?' : (fichaPredial.tipoTarea eq 1 ? 'RECHAZAR LA REVISION ? ':'APROBAR LA REVISION ?' ) }"
+                                   titulo="Observaciones DE #{fichaPredial.tipoTarea eq 3 ? 'LA EDICION ALFANUMERICA' : 'LA REVISION' }"
+                                   requerido="#{fichaPredial.tipoTarea eq 1 ? true : false }"/>
+                
+            </p:panelGrid>
+        </div>
+        <p:accordionPanel id="tdatos" style="width: 100%">
+            <p:tab id="s1" title="#{fichaDefaultView.seccion1Title}" rendered="#{fichaDefaultView.seccion1Render}">
+                <ui:include src="#{fichaDefaultView.seccion1}" />
+            </p:tab>
+            <p:tab id="s2" title="#{fichaDefaultView.seccion2Title}" rendered="#{fichaDefaultView.seccion2Render}">
+                <ui:include src="#{fichaDefaultView.seccion2}" />
+            </p:tab>
+            <p:tab id="s3" title="#{fichaDefaultView.seccion3Title}" rendered="#{fichaDefaultView.seccion3Render}">
+                <ui:include  src="#{fichaDefaultView.seccion3}" />
+            </p:tab>
+            <p:tab id="s4" title="#{fichaDefaultView.seccion4Title}" rendered="#{fichaDefaultView.seccion4Render}">
+                <ui:include src="#{fichaDefaultView.seccion4}" />
+            </p:tab>
+            <p:tab id="s5" title="#{fichaDefaultView.seccion5Title}" rendered="#{fichaDefaultView.seccion5Render}">
+                <ui:include src="#{fichaDefaultView.seccion5}" />
+            </p:tab>
+            <p:tab id="s6" title="#{fichaDefaultView.seccion6Title}" rendered="#{fichaDefaultView.seccion6Render}">
+                <ui:include src="#{fichaDefaultView.seccion6}" />
+            </p:tab>
+            <p:tab id="s7" title="#{fichaDefaultView.seccion7Title}" rendered="#{fichaDefaultView.seccion7Render}">
+                <ui:include src="#{fichaDefaultView.seccion7}" />
+            </p:tab>
+            <p:tab id="s8" title="#{fichaDefaultView.seccion8Title}" rendered="#{fichaDefaultView.seccion8Render}">
+                <ui:include src="#{fichaDefaultView.seccion8}" />
+            </p:tab>
+            <p:tab id="s9" title="#{fichaDefaultView.seccion9Title}" rendered="#{fichaDefaultView.seccion9Render}">
+                <ui:include src="#{fichaDefaultView.seccion9}" />
+            </p:tab>
+            <p:tab id="s10" title="#{fichaDefaultView.seccion10Title}" rendered="#{fichaDefaultView.seccion10Render}">
+                <ui:include src="#{fichaDefaultView.seccion10}" />
+            </p:tab>
+            <p:tab id="s11" title="11.- Anexos / Documentos Relacionados" >
+                <ui:include src="_seccion11.xhtml" />
+            </p:tab>
+
+        </p:accordionPanel>
+
+        <ui:include src="_dialogs.xhtml" />
+
+        
+
+    </ui:define>
+</ui:composition>

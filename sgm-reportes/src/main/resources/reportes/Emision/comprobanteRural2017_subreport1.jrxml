@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="comprobanteRural2017_subreport1" pageWidth="100" pageHeight="13" whenNoDataType="AllSectionsNoDetail" columnWidth="100" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="d530e3aa-17fd-41c1-8560-7c686628a2b8">
+	<property name="ireport.zoom" value="4.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="PAGO" class="java.lang.Long"/>
+	<parameter name="TIPO" class="java.lang.Long"/>
+	<queryString>
+		<![CDATA[SELECT SUM(valor) as valor_tipo
+FROM sgm_financiero.ren_pago_detalle
+WHERE pago =$P{PAGO} AND tipo_pago=$P{TIPO}]]>
+	</queryString>
+	<field name="valor_tipo" class="java.math.BigDecimal"/>
+	<summary>
+		<band height="13" splitType="Stretch">
+			<textField pattern="¤ #,##0.00">
+				<reportElement uuid="1aee049c-1f45-457a-8376-5130aa4e6e92" x="0" y="0" width="100" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_tipo}== null? new BigDecimal("0.00") : $F{valor_tipo}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

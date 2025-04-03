@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Listado de Tipos Trámite</title>
+        <style type="text/css">
+            .ui-widget {
+                /*text-align: center;*/
+                /*font-size: 80%;*/
+            }
+            .ui-inputfield, .ui-widget-content .ui-inputfield, .ui-widget-header .ui-inputfield{
+                width: 100%;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <h:form id="FormtramiteTipos">
+            <p:growl id="growl" showDetail="true" sticky="true" />
+            <div align="right">
+                <p:commandButton value="Nuevo" icon="ui-icon-plus" actionListener="#{tramiteTipos.showDlgNew()}" styleClass="btnStyle"></p:commandButton>
+                <br/><br/>
+            </div>
+            <p:dataTable id="dtuser" reflow="true"
+                         paginator="true" lazy="true" rows="10" rowsPerPageTemplate="10,20,100"
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         value="#{tramiteTipos.tipoTramiteLazy}" var="tramite" emptyMessage="No se encontró ningun Item">
+                <p:column headerText="Descripción" style="text-align: center; font-size: 12px" filterBy="#{tramite.descripcion}" sortBy="#{tramite.descripcion}" filterStyle="width: 60%;">
+                    <h:outputText value="#{tramite.descripcion}" style="text-align: center; font-size: 12px"/>
+                </p:column>
+
+                <p:column headerText="Carpeta" style="text-align: center;"  filterStyle="width: 40%;" filterBy="#{tramite.carpeta}" sortBy="#{tramite.carpeta}">
+                    <h:outputText value="#{tramite.carpeta}" style="text-align: center; font-size: 12px"/>
+                </p:column>
+
+                <p:column headerText="Rol" style="text-align: center;"  filterStyle="width: 40%;" filterBy="#{tramite.rol.nombre}" sortBy="#{tramite.rol.nombre}">
+                    <h:outputText value="#{tramite.rol.nombre}" style="text-align: center; font-size: 12px"/>
+                </p:column>
+
+                <p:column  id="tracate"  filterBy="#{tramite.categoria.nombre}"
+                           headerText="Categoria"
+                           filterOptions="#{tramiteTipos.lisCategoriasEnLineaSlt}"
+                           filterMatchMode="exact"
+                           style="text-align: center;padding-left: 1px; padding-right: 1px" >
+                    <h:outputText value="#{tramite.categoria.nombre}"/>
+                </p:column>
+
+                <p:column  id="traproc"  filterBy="#{tramite.tipoProceso.descripcion}"
+                           headerText="Tipo Proceso"
+                           filterOptions="#{tramiteTipos.lisTipoProcesosSlt}"
+                           filterMatchMode="exact"
+                           style="text-align: center; padding-left: 1px; padding-right: 1px" >
+                    <h:outputText value="#{tramite.tipoProceso.descripcion}"/>
+                </p:column>
+
+                <p:column headerText="Estado" style="text-align: center; width:10%;"  filterStyle="width: 40%;" rendered="#{tramite.estado!=null}">
+                    <h:outputText value="A" rendered="#{tramite.estado}" style="text-align: center; font-size: 12px"/>
+                    <h:outputText value="I" rendered="#{!tramite.estado}" style="text-align: center; font-size: 12px"/>
+                </p:column>
+                <p:column headerText="Estado" style="text-align: center; width:10%;"  filterStyle="width: 40%;" rendered="#{tramite.estado==null}"></p:column>
+
+                <p:column headerText="Editar" style="text-align: center; width:10%; ">
+                    <p:commandLink value="Editar" style="color: #0033FF" actionListener="#{tramiteTipos.showDlgEdit(tramite)}" update="frmEditarTipoTramite" />
+                </p:column>
+
+            </p:dataTable>
+        </h:form>
+
+        <p:dialog id="dlgNTipoTramite" header="Agregar Tipo Trámite" widgetVar="dlgAgrgTipoTramite" resizable="false" modal="true"
+                  position="center" closeOnEscape="true" width="80%" height="450">
+            <h:form  id="formNewTipoTramite">
+                <p:tabView style="width: 100%">
+                    <p:tab title="Descripcion del Tramite">
+                        <p:panelGrid layout="grid" columns="4" columnClasses="ui-grid-col-3, ui-grid-col-6, ui-grid-col-3, ui-grid-col-6 " style="width: 100%; padding: 0px 0px;">
+                            <h:outputText value="Descripción: " style="font-weight: bolder"/>
+                            <p:inputText value="#{tramiteTipos.nuevoTipoTramite.descripcion}"/>
+                            <h:outputText value="Ingrese Carpeta: " style="font-weight: bolder"/>
+                            <p:inputText value="#{tramiteTipos.nuevoTipoTramite.carpeta}"/>
+
+                            <h:outputText value="Clave Activiti: " style="font-weight: bolder"/>
+                            <p:inputText value="#{tramiteTipos.nuevoTipoTramite.activitykey}"/>
+                            <h:outputText value="Archivo BPMN: " style="font-weight: bolder"/>
+                            <p:inputText value="#{tramiteTipos.nuevoTipoTramite.archivoBpmn}"/>
+
+                            <h:outputText value="Descp Trámite: " style="font-weight: bolder"/>
+                            <p:inputText value="#{tramiteTipos.nuevoTipoTramite.descripcionTramite}"/>
+                            <h:outputText value="Abreviatura: " style="font-weight: bolder"/>
+                            <p:inputText value="#{tramiteTipos.nuevoTipoTramite.abreviatura}"/>
+
+                            <h:outputText value="Identificador repositorio: " style="font-weight: bolder"/>
+                            <p:inputText value="#{tramiteTipos.nuevoTipoTramite.documentIdAlfresco}"/>
+                            <h:outputText value="Forma Cálculo: " style="font-weight: bolder"/>
+                            <p:inputText value="#{tramiteTipos.nuevoTipoTramite.formaCalculo}"/>
+
+                            <h:outputText value="Doc Ficha Téc: " style="font-weight: bolder"/>
+                            <p:inputText value="#{tramiteTipos.nuevoTipoTramite.documentoFichaTecnica}"/>
+                            <h:outputText value="Facelet Inic: " style="font-weight: bolder"/>
+                            <p:inputText value="#{tramiteTipos.nuevoTipoTramite.faceletInicial}"/>
+
+                            <!--                            <p:outputLabel/>
+                                                        <p:outputLabel/>-->
+
+                        </p:panelGrid>
+                    </p:tab>
+                    <p:tab  title="Departamento">
+                        <p:panelGrid  layout="grid" columns="4" columnClasses="ui-grid-col-3, ui-grid-col-6, ui-grid-col-3, ui-grid-col-6 " style="width: 100%; padding: 0px 0px;">
+                            <h:outputLabel value="Departamento: " style="font-weight: bolder"/>
+                            <p:selectOneMenu id="dep" value="#{tramiteTipos.nuevoTipoTramite.departamento}" effect="fade" converter="entityConverter">
+                                <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                                <f:selectItems value="#{tramiteTipos.departamentos}" var="d1" itemLabel="#{d1.nombre}" itemValue="#{d1}"/>
+                                <p:ajax listener="#{tramiteTipos.actualizarRoles(1)}" update="rol"/>
+                            </p:selectOneMenu>
+                            <h:outputText value="Correo Departamento: " style="font-weight: bolder"/>
+                            <p:inputText value="#{tramiteTipos.nuevoTipoTramite.mailDepartamentoResponsable}"/>
+
+                            <h:outputLabel value="Rol: " style="font-weight: bolder"/>
+                            <p:selectOneMenu id="rol" value="#{tramiteTipos.nuevoTipoTramite.rol}" effect="fade" converter="entityConverter">
+                                <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                                <f:selectItems value="#{tramiteTipos.lisAclRol}" var="lr1" itemLabel="#{lr1.nombre}" itemValue="#{lr1}"/>
+                                <p:ajax listener="#{tramiteTipos.actualizarUsuario(1)}" update="rol"/>
+                            </p:selectOneMenu>
+                            <h:outputText value="Usuario Director: " style="font-weight: bolder"/>
+                            <p:selectOneMenu id="user" value="#{tramiteTipos.nuevoTipoTramite.userDireccion}" effect="fade" >
+                                <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                                <f:selectItems value="#{tramiteTipos.lisUsers}" var="u1" itemLabel="#{u1.usuario}" itemValue="#{u1.usuario}"/>
+                            </p:selectOneMenu>
+                            <!--<p:inputText value="#{tramiteTipos.nuevoTipoTramite.userDireccion}"/>-->
+
+                            <h:outputLabel value="Categoria: " style="font-weight: bolder"/>
+                            <p:selectOneMenu id="cate" value="#{tramiteTipos.nuevoTipoTramite.categoria}" effect="fade" converter="entityConverter">
+                                <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                                <f:selectItems value="#{tramiteTipos.lisCategoriasEnLinea}" var="ol1" itemLabel="#{ol1.nombre}" itemValue="#{ol1}"/>
+                            </p:selectOneMenu>
+                            <h:outputLabel value="Tipo Proceso: " style="font-weight: bolder"/>
+                            <p:selectOneMenu id="proc" value="#{tramiteTipos.nuevoTipoTramite.tipoProceso}" effect="fade" converter="entityConverter">
+                                <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                                <f:selectItems value="#{tramiteTipos.lisTipoProcesos}" var="g1" itemLabel="#{g1.descripcion}" itemValue="#{g1}"/>
+                            </p:selectOneMenu>
+
+                            <h:outputLabel value="Disparador Trá: " style="font-weight: bolder"/>
+                            <p:selectOneMenu id="disp" value="#{tramiteTipos.nuevoTipoTramite.disparador}" effect="fade" converter="entityConverter">
+                                <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                                <f:selectItems value="#{tramiteTipos.lisDisparadorTramites}" var="g2" itemLabel="#{g2.descripcion}" itemValue="#{g2}"/>
+                            </p:selectOneMenu>
+                            <h:outputText value="Asignacion Manual" style="font-weight: bolder"/>
+                            <p:selectBooleanCheckbox value="#{tramiteTipos.nuevoTipoTramite.asignacionManual}" />
+
+                            <h:outputText value="Necesita Predio" style="font-weight: bolder"/>
+                            <p:selectBooleanCheckbox value="#{tramiteTipos.nuevoTipoTramite.datosPredio}" />
+                            <h:outputText value="Digitaliza" style="font-weight: bolder"/>
+                            <p:selectBooleanCheckbox value="#{tramiteTipos.nuevoTipoTramite.tieneDigitalizacion}" />
+
+                            <h:outputText value="Flag One" style="font-weight: bolder"/>
+                            <p:selectBooleanCheckbox value="#{tramiteTipos.nuevoTipoTramite.flagOne}" />
+                            <h:outputText value="Tiene Valija" style="font-weight: bolder"/>
+                            <p:selectBooleanCheckbox value="#{tramiteTipos.editTipoTramite.tieneValija}" />
+                        </p:panelGrid>
+                    </p:tab>
+                    <p:tab title="Informacion de Pagina Web">
+                        <p:panelGrid  layout="grid" columns="4" columnClasses="ui-grid-col-3, ui-grid-col-6, ui-grid-col-3, ui-grid-col-6 " style="width: 100%; padding: 0px 0px;">
+                            <h:outputText value="Enlace a Video: " style="font-weight: bolder"/>
+                            <p:inputText value="#{tramiteTipos.nuevoTipoTramite.urlEnlaceVideo}"/>
+                            <h:outputText value="Página Servicio Publico: " style="font-weight: bolder"/>
+                            <p:inputText value="#{tramiteTipos.nuevoTipoTramite.paginaSolicitada}"/>
+
+                        </p:panelGrid>
+                    </p:tab>
+                </p:tabView>
+                <br/><center><p:commandButton value="Grabar" actionListener="#{tramiteTipos.guardarTipoTramiteNuevo()}"/></center>
+                <br/>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="dlgEditTipoTramite" header="Editar Tipo Trámite" widgetVar="dlgEditTipoTramite" resizable="false" modal="true"
+                  position="center" closeOnEscape="true"  width="90%" height="450">
+            <h:form id="frmEditarTipoTramite">
+                <p:tabView style="width: 100%">
+                    <p:tab title="Descripcion del Tramite">
+                        <p:panelGrid layout="grid" columns="4" columnClasses="ui-grid-col-3, ui-grid-col-8, ui-grid-col-3, ui-grid-col-8 " style="width: 100%; padding: 0px 0px;">
+
+                            <h:outputText value="Descripción: " style="font-weight: bolder"/>
+                            <p:inputText value="#{tramiteTipos.editTipoTramite.descripcion}"/>
+                            <h:outputText value="Carpeta Repositorio: " style="font-weight: bolder"/>
+                            <p:inputText value="#{tramiteTipos.editTipoTramite.carpeta}"/>
+
+                            <h:outputText value="Id de Proceso: " style="font-weight: bolder"/>
+                            <p:inputText value="#{tramiteTipos.editTipoTramite.activitykey}"/>
+                            <h:outputText value="Archivo BPMN: " style="font-weight: bolder"/>
+                            <p:inputText value="#{tramiteTipos.editTipoTramite.archivoBpmn}"/>
+
+                            <!--                            <h:outputText value="Forma Cálculo: " style="font-weight: bolder"/>
+                                                        <p:inputText value="#{tramiteTipos.editTipoTramite.formaCalculo}"/>-->
+
+                            <h:outputText value="Descp Trámite: " style="font-weight: bolder"/>
+                            <p:inputText value="#{tramiteTipos.editTipoTramite.descripcionTramite}"/>
+                            <h:outputText value=" Abreviatura: " style="font-weight: bolder"/>
+                            <p:inputText value="#{tramiteTipos.editTipoTramite.abreviatura}"/>
+
+                            <h:outputText value="Identificador Alfresco: " style="font-weight: bolder"/>
+                            <p:inputText value="#{tramiteTipos.editTipoTramite.documentIdAlfresco}"/>
+                            <h:outputText value="Doc Ficha Téc: " style="font-weight: bolder"/>
+                            <p:inputText value="#{tramiteTipos.editTipoTramite.documentoFichaTecnica}"/>
+
+                            <h:outputText value="Estado: " style="font-weight: bolder"/>
+                            <p:selectBooleanCheckbox itemLabel="Activo" value="#{tramiteTipos.editTipoTramite.estado}" />
+                            <h:outputText value="Facelet Inic: " style="font-weight: bolder"/>
+                            <p:inputText value="#{tramiteTipos.editTipoTramite.faceletInicial}"/>
+                        </p:panelGrid>
+
+                    </p:tab>
+                    <p:tab  title="Departamento">
+                        <p:panelGrid layout="grid" columns="4" columnClasses="ui-grid-col-3, ui-grid-col-6, ui-grid-col-3, ui-grid-col-6 " style="width: 100%; padding: 0px 0px;">
+                            <h:outputLabel value="Departamento: " style="font-weight: bolder"/>
+                            <p:selectOneMenu id="dep1" value="#{tramiteTipos.editTipoTramite.departamento}" effect="fade" converter="entityConverter">
+                                <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                                <f:selectItems value="#{tramiteTipos.departamentos}" var="d1" itemLabel="#{d1.nombre}" itemValue="#{d1}"/>
+                                <p:ajax listener="#{tramiteTipos.actualizarRoles(2)}" update="rolEdit"/>
+                            </p:selectOneMenu>
+                            <h:outputText value="Correo Departamento: " style="font-weight: bolder"/>
+                            <p:inputText value="#{tramiteTipos.editTipoTramite.mailDepartamentoResponsable}"/>
+
+                            <h:outputLabel value="Tipo Rol: " style="font-weight: bolder"/>
+                            <p:selectOneMenu id="rolEdit" value="#{tramiteTipos.editTipoTramite.rol}" effect="fade" converter="entityConverter">
+                                <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                                <f:selectItems value="#{tramiteTipos.lisAclRol}" var="r1" itemLabel="#{r1.nombre}" itemValue="#{r1}"/>
+                                <p:ajax listener="#{tramiteTipos.actualizarUsuario(2)}" update="userEdit"/>
+                            </p:selectOneMenu>
+                            <h:outputText value="Usuario Director: " style="font-weight: bolder"/>
+                            <p:selectOneMenu id="userEdit" value="#{tramiteTipos.editTipoTramite.userDireccion}" effect="fade">
+                                <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                                <f:selectItems value="#{tramiteTipos.lisUsers}" var="u1" itemLabel="#{u1.usuario}" itemValue="#{u1.usuario}"/>
+                            </p:selectOneMenu>
+                            <!--<p:inputText value="#{tramiteTipos.editTipoTramite.userDireccion}"/>-->
+
+                            <h:outputLabel value="Categoria publico: " style="font-weight: bolder"/>
+                            <p:selectOneMenu id="cateEdit" value="#{tramiteTipos.editTipoTramite.categoria}" effect="fade" converter="entityConverter">
+                                <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                                <f:selectItems value="#{tramiteTipos.lisCategoriasEnLinea}" var="c1" itemLabel="#{c1.nombre}" itemValue="#{c1}"/>
+                            </p:selectOneMenu>
+                            <h:outputLabel value="Tipo Proceso: " style="font-weight: bolder"/>
+                            <p:selectOneMenu id="procEdit" value="#{tramiteTipos.editTipoTramite.tipoProceso}" effect="fade" converter="entityConverter">
+                                <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                                <f:selectItems value="#{tramiteTipos.lisTipoProcesos}" var="tp1" itemLabel="#{tp1.descripcion}" itemValue="#{tp1}"/>
+                            </p:selectOneMenu>
+
+                            <h:outputLabel value="Tramite de inicio: " style="font-weight: bolder"/>
+                            <p:selectOneMenu id="dispEdit" value="#{tramiteTipos.editTipoTramite.disparador}" effect="fade" converter="entityConverter">
+                                <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                                <f:selectItems value="#{tramiteTipos.lisDisparadorTramites}" var="q1" itemLabel="#{q1.descripcion}" itemValue="#{q1}"/>
+                            </p:selectOneMenu>
+                            <h:outputText value="Asignacion Manual" style="font-weight: bolder"/>
+                            <p:selectBooleanCheckbox value="#{tramiteTipos.editTipoTramite.asignacionManual}" />
+
+                            <h:outputText value="Necesita Predio" style="font-weight: bolder"/>
+                            <p:selectBooleanCheckbox value="#{tramiteTipos.editTipoTramite.datosPredio}" />
+                            <h:outputText value="Digitalización de documentos" style="font-weight: bolder"/>
+                            <p:selectBooleanCheckbox value="#{tramiteTipos.editTipoTramite.tieneDigitalizacion}" />
+
+                            <h:outputText value="Flag One" style="font-weight: bolder"/>
+                            <p:selectBooleanCheckbox value="#{tramiteTipos.editTipoTramite.flagOne}" />
+                            <h:outputText value="Tiene Valija" style="font-weight: bolder"/>
+                            <p:selectBooleanCheckbox value="#{tramiteTipos.editTipoTramite.tieneValija}" />
+                        </p:panelGrid>
+                    </p:tab>
+                    <p:tab title="Informacion de Pagina Web">
+                        <p:panelGrid layout="grid" columns="4" columnClasses="ui-grid-col-3, ui-grid-col-6, ui-grid-col-3, ui-grid-col-6 " style="width: 100%; padding: 0px 0px;">
+                            <h:outputText value="Enlace a Video: " style="font-weight: bolder"/>
+                            <p:inputText value="#{tramiteTipos.editTipoTramite.urlEnlaceVideo}"/>
+
+                            <h:outputText value="Página Servicio Publico: " style="font-weight: bolder"/>
+                            <p:inputText value="#{tramiteTipos.editTipoTramite.paginaSolicitada}"/>
+                        </p:panelGrid>
+                    </p:tab>
+                </p:tabView>
+                <br/><center><p:commandButton value="Grabar" actionListener="#{tramiteTipos.guardarTipoTramiteEditado()}" update="FormtramiteTipos" /></center>
+                <br/>
+            </h:form>
+        </p:dialog>
+    </h:body>
+
+</html>

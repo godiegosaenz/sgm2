@@ -1,0 +1,173 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html" >
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="sac" required="true"/>
+    </cc:interface>
+    <cc:implementation>
+        <h:form id="formMovRegistralSelec">
+            <p:tabView id="tdatos">
+                <p:tab id="tvDatosCatastrales" title="Datos Catastrales">
+                    <p:fieldset legend="1.- Datos catastrales" toggleable="true">
+                        <p:panelGrid layout="grid" columns="2" style="width: 100%">
+                            <h:outputText value="No. Predio" style="font-weight: bolder"/>
+                            <h:outputText value="#{cc.attrs.sac.numPredio}" style="font-weight: bolder"/>
+                            <h:outputText value="Ubicacion" style="font-weight: bolder"/>
+                            <h:outputText value="" style="font-weight: bolder"/>
+                            <h:outputText value="Codigo Catastral" style="font-weight: bolder"/>
+                            <h:outputText value="#{cc.attrs.sac.sector} - #{cc.attrs.sac.manzana} - #{cc.attrs.sac.cd} - #{cc.attrs.sac.manzanaDiv}
+                                          - #{cc.attrs.sac.solar} - #{cc.attrs.sac.d1} -  #{cc.attrs.sac.d2} - #{cc.attrs.sac.d3}
+                                          - #{cc.attrs.sac.d4} - #{cc.attrs.sac.d5} - #{cc.attrs.sac.d6} - #{cc.attrs.sac.d7}
+                                          - #{cc.attrs.sac.d8} - #{cc.attrs.sac.d9} - #{cc.attrs.sac.phv} - #{cc.attrs.sac.phh}"/>
+                            <h:outputText value="Codigo Urbanistico" style="font-weight: bolder"/>
+                            <h:outputText value="Sector : #{cc.attrs.sac.sectorUrb} - Mz : #{cc.attrs.sac.mzUrb} - Solar : #{cc.attrs.sac.solarUrb}
+                                          - DPH : #{cc.attrs.sac.divph} DPTPH : #{cc.attrs.sac.dptoph}"/>
+                            <h:outputText value="Codigo Anterior" style="font-weight: bolder"/>
+                            <h:outputText value="#{cc.attrs.sac.codAnt}"/>
+                            <h:outputText value="Codigo 97" style="font-weight: bolder"/>
+                            <h:outputText value="#{cc.attrs.sac.cod97}"/>
+                        </p:panelGrid>
+                    </p:fieldset>
+                    <p:fieldset legend="2. Escritura" toggleable="true" rendered="#{cc.attrs.sac.escritura!=null}">
+                        <p:panelGrid columns="4" layout="grid" style="width: 100%">
+                            <h:outputText value="Secuencia" style="font-weight: bolder"/>
+                            <h:outputText value="#{cc.attrs.sac.escritura.secuencia}"/>
+                            <h:outputText value="Registro propiedad" style="font-weight: bolder"/>
+                            <h:outputText value="#{cc.attrs.sac.escritura.registroPropiedad}"/>
+                            <h:outputText value="Notaria" style="font-weight: bolder"/>
+                            <h:outputText value="#{cc.attrs.sac.escritura.notaria}"/>
+                            <h:outputText value="Fecha Escritura" style="font-weight: bolder"/>
+                            <h:outputText value="#{cc.attrs.sac.escritura.fechaEscritura}"/>
+                            <h:outputText value="Folios" style="font-weight: bolder"/>
+                            <h:outputText value="#{cc.attrs.sac.escritura.fdesde} - #{cc.attrs.sac.escritura.fhasta}"/>
+                            <h:outputText value="Repertorio" style="font-weight: bolder"/>
+                            <h:outputText value="#{cc.attrs.sac.escritura.repertorio}"/>
+                            <h:outputText value="Fecha Inscripcion" style="font-weight: bolder"/>
+                            <h:outputText value="#{cc.attrs.sac.escritura.fechaInscripcion}"/>
+                            <h:outputText value="Area solar" style="font-weight: bolder"/>
+                            <h:outputText value="#{cc.attrs.sac.escritura.areaSolar}"/>
+                            <h:outputText value="Area Construccion" style="font-weight: bolder"/>
+                            <h:outputText value="#{cc.attrs.sac.escritura.areaConst}"/>
+                            <h:outputText value="Alicuota" style="font-weight: bolder"/>
+                            <h:outputText value="#{cc.attrs.sac.escritura.alicuotaPh}"/>
+                            <h:outputText value="Otros Propietarios" style="font-weight: bolder"/>
+                            <h:outputText value="#{cc.attrs.sac.escritura.otrosPropietarios}"/>
+                            <h:outputText value="Estado" style="font-weight: bolder"/>
+                            <h:outputText value="#{cc.attrs.sac.escritura.estadoEscritura}"/>
+                            <h:outputText value="Codigo Transf. dom." style="font-weight: bolder"/>
+                            <h:outputText value="#{cc.attrs.sac.escritura.codigoDomTransf}"/>
+                        </p:panelGrid>
+                    </p:fieldset>
+                    <p:fieldset legend="3. Linderos" toggleable="true">
+                        <p:panelGrid layout="grid" columns="4">
+                            <h:outputText value="Norte" style="font-weight: bolder"/>
+                            <h:outputText value="#{cc.attrs.sac.lindNorte}"/>
+                            <h:outputText value="Con" style="font-weight: bolder"/>
+                            <h:outputText value="#{cc.attrs.sac.longNorte}"/>
+                            <h:outputText value="Sur" style="font-weight: bolder"/>
+                            <h:outputText value="#{cc.attrs.sac.lindSur}"/>
+                            <h:outputText value="Con" style="font-weight: bolder"/>
+                            <h:outputText value="#{cc.attrs.sac.longSur}"/>
+                            <h:outputText value="Este" style="font-weight: bolder"/>
+                            <h:outputText value="#{cc.attrs.sac.lindEste}"/>
+                            <h:outputText value="Con" style="font-weight: bolder"/>
+                            <h:outputText value="#{cc.attrs.sac.longEste}"/>
+                            <h:outputText value="Oeste" style="font-weight: bolder"/>
+                            <h:outputText value="#{cc.attrs.sac.lindOeste}"/>
+                            <h:outputText value="Con" style="font-weight: bolder"/>
+                            <h:outputText value="#{cc.attrs.sac.longOeste}"/>
+                        </p:panelGrid>
+                    </p:fieldset>
+                    <p:fieldset legend="4. Frentes / Fondos" toggleable="true">
+                        <p:panelGrid layout="grid" columns="4">
+                            <h:outputText value="Frente 1" style="font-weight: bolder"/>
+                            <h:outputText value="#{cc.attrs.sac.frente1}"/>
+                            <h:outputText value="Frente 2" style="font-weight: bolder"/>
+                            <h:outputText value="#{cc.attrs.sac.frente2}"/>
+                            <h:outputText value="Frente 3" style="font-weight: bolder"/>
+                            <h:outputText value="#{cc.attrs.sac.frente3}"/>
+                            <h:outputText value="Frente 4" style="font-weight: bolder"/>
+                            <h:outputText value="#{cc.attrs.sac.frente4}"/>
+                            <h:outputText value="Fondo 1" style="font-weight: bolder"/>
+                            <h:outputText value="#{cc.attrs.sac.fondo1}"/>
+                            <h:outputText value="Fondo 2" style="font-weight: bolder"/>
+                            <h:outputText value="#{cc.attrs.sac.fondo2}"/>
+                            <h:outputText value="AMRI" style="font-weight: bolder"/>
+                            <h:outputText value="#{cc.attrs.sac.amri}"/>
+                        </p:panelGrid>
+                    </p:fieldset>
+                </p:tab>
+                <p:tab id="tvPropietario" title="Propietarios">
+                    <p:panelGrid layout="grid" columns="4" style="width: 100%">
+                        <h:outputText value="No. Identitifacion" style="font-weight: bolder"/>
+                        <h:outputText value="#{cc.attrs.sac.propietario.numIdent}"/>
+                        <h:outputText value="Apellidos" style="font-weight: bolder"/>
+                        <h:outputText value="#{cc.attrs.sac.propietario.apellidoPat} #{cc.attrs.sac.propietario.apellidoMat}"/>
+                        <h:outputText value="Nombres" style="font-weight: bolder"/>
+                        <h:outputText value="#{cc.attrs.sac.propietario.primerNombre} #{cc.attrs.sac.propietario.segundoNombre}"/>
+                        <h:outputText value="Razon Social" style="font-weight: bolder"/>
+                        <h:outputText value="#{cc.attrs.sac.propietario.razonSocial}"/>
+                        <h:outputText value="F. Nacto" style="font-weight: bolder"/>
+                        <h:outputText value="#{cc.attrs.sac.propietario.fechaNacto}"/>
+                        <h:outputText value="Telefono" style="font-weight: bolder"/>
+                        <h:outputText value="#{cc.attrs.sac.propietario.telefonos}"/>
+                        <h:outputText value="Email" style="font-weight: bolder"/>
+                        <h:outputText value="#{cc.attrs.sac.propietario.correo}"/>
+                        <h:outputText value="% Discapacidad" style="font-weight: bolder"/>
+                        <h:outputText value="#{cc.attrs.sac.propietario.porcDiscapacidad}"/>
+                    </p:panelGrid>
+                </p:tab>
+                <p:tab id="tvServicios" title="Servicios">
+                    <p:panelGrid layout="grid" columns="4" style="width: 100%">
+                        <h:outputText value="Cerramiento" style="font-weight: bolder"/>
+                        <p:selectBooleanCheckbox value="#{cc.attrs.sac.cerramiento}"/>
+                        <h:outputText value="Alcantarillado" style="font-weight: bolder"/>
+                        <p:selectBooleanCheckbox value="#{cc.attrs.sac.alcantarillado}"/>
+                        <h:outputText value="Agua Potable" style="font-weight: bolder"/>
+                        <p:selectBooleanCheckbox value="#{cc.attrs.sac.aguaPotable}"/>
+                        <h:outputText value="Aceras" style="font-weight: bolder"/>
+                        <p:selectBooleanCheckbox value="#{cc.attrs.sac.acera}"/>
+                        <h:outputText value="Cunetas" style="font-weight: bolder"/>
+                        <p:selectBooleanCheckbox value="#{cc.attrs.sac.cuneta}"/>
+                        <h:outputText value="Rec. Basura" style="font-weight: bolder"/>
+                        <p:selectBooleanCheckbox value="#{cc.attrs.sac.recBasura}"/>
+                        <h:outputText value="Eneriga Electrica" style="font-weight: bolder"/>
+                        <p:selectBooleanCheckbox value="#{cc.attrs.sac.energiaElectrica}"/>
+                        <h:outputText value="No. Telefono" style="font-weight: bolder"/>
+                        <h:outputText value="#{cc.attrs.sac.numTelf}"/>
+                    </p:panelGrid>
+                </p:tab>
+                <p:tab id="tvedificaciones" title="Edificaciones">
+                    <p:dataTable value="#{cc.attrs.sac.edificaciones}" var="ed" reflow="true" style="width: 100%">
+                        <p:column headerText="Secuencia">
+                            <h:outputText value="#{ed.numEdif}"/>
+                        </p:column>
+                        <p:column headerText="Pisos">
+                            <h:outputText value="#{ed.pisos}"/>
+                        </p:column>
+                        <p:column headerText="Area const.">
+                            <h:outputText value="#{ed.areaConstruccion}"/>
+                        </p:column>
+                        <p:column headerText="Vida util">
+                            <h:outputText value="#{ed.vidaUtil}"/>
+                        </p:column>
+                        <p:column headerText="Anos const.">
+                            <h:outputText value="#{ed.aniosConst}"/>
+                        </p:column>
+                        <p:column headerText="Estado">
+                            <h:outputText value="#{ed.estadoConst}"/>
+                        </p:column>
+                        <p:column headerText="Rentado">
+                            <p:selectBooleanCheckbox value="#{ed.renta}"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:tab>
+            </p:tabView>
+        </h:form>
+    </cc:implementation>
+</html>

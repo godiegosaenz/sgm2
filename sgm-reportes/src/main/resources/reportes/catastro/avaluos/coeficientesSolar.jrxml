@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="detalleCalculoEmision2017_edificaciones" language="groovy" pageWidth="517" pageHeight="802" columnWidth="517" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="6ecea97a-ab04-41f9-990b-5da330dc27c5">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="ANIO_INICIAL" class="java.lang.Integer"/>
+	<parameter name="ANIO_FIN" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[select  CATALOGO_INIT.VALOR CATALOGO,  COEFSOLAR.VALOR FACTOR,
+COEF.VALOR_COEFICIENTE COEFICIENTE, COEF.VALOR_COEF_SUPERIOR COEF_SUPERIOR,  COEF.VALOR_COEF_INFERIOR COEF_INFERIOR
+FROM SGM_APP.AVAL_COEFICIENTES_SUELO COEF
+INNER JOIN SGM_APP.CTLG_ITEM COEFSOLAR ON COEFSOLAR.ID = COEF.CATEGORIA_SOLAR
+INNER JOIN SGM_APP.CTLG_ITEM CATALOGO_INIT ON CATALOGO_INIT.ID = COEFSOLAR.REFERENCIA AND CATALOGO_INIT.ID = COEFSOLAR.PADRE
+WHERE COEF.ANIO_INICIO = $P{ANIO_INICIAL} AND COEF.ANIO_FIN = $P{ANIO_FIN}
+ORDER BY 1, 3 DESC]]>
+	</queryString>
+	<field name="CATALOGO" class="java.lang.String"/>
+	<field name="FACTOR" class="java.lang.String"/>
+	<field name="COEFICIENTE" class="java.math.BigDecimal"/>
+	<field name="COEF_SUPERIOR" class="java.math.BigDecimal"/>
+	<field name="COEF_INFERIOR" class="java.math.BigDecimal"/>
+	<variable name="SUM_AVALUOS" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<variable name="SUM_AREAS" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<group name="coeficientesSolar">
+		<groupExpression><![CDATA[$F{CATALOGO}]]></groupExpression>
+		<groupHeader>
+			<band height="27">
+				<staticText>
+					<reportElement x="187" y="13" width="113" height="14" uuid="a52376b2-9c88-4d46-8aab-c84c6386b1c9"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true" isUnderline="true"/>
+					</textElement>
+					<text><![CDATA[VALOR DE COEFICIENTE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="13" width="187" height="14" uuid="27b06d03-9ae2-4984-b143-615926535f74"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true" isUnderline="true"/>
+					</textElement>
+					<text><![CDATA[FACTOR CONDICIONANTE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="300" y="13" width="104" height="14" uuid="75b06dbf-98e7-497d-832e-b1ba66de2010"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true" isUnderline="true"/>
+					</textElement>
+					<text><![CDATA[SUPERIOR]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="404" y="13" width="113" height="14" uuid="a9036efb-6c9f-44d1-86cd-6007788bd4ff"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true" isUnderline="true"/>
+					</textElement>
+					<text><![CDATA[INFERIOR]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="300" y="-1" width="217" height="14" uuid="ecf3cd04-360b-442a-a85f-de4b7b7ac0cb"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true" isUnderline="true"/>
+					</textElement>
+					<text><![CDATA[RANGO FACTORIAL]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="14" y="0" width="286" height="15" uuid="7a72f390-cd08-4ae3-b183-7d1050b136ce"/>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CATALOGO}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="15"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<detail>
+		<band height="13">
+			<textField>
+				<reportElement x="14" y="0" width="173" height="13" uuid="1c749c4a-8220-42e4-9aaa-9a99083c9c78"/>
+				<textFieldExpression><![CDATA[$F{FACTOR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="187" y="0" width="113" height="13" uuid="47c0241b-c9d2-460e-99cf-ced18ffcfda5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{COEFICIENTE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="300" y="0" width="104" height="13" uuid="aa72881c-1406-4391-897f-1c47db17b565"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{COEF_SUPERIOR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="404" y="0" width="113" height="13" uuid="72b9a483-76eb-47dc-9a6b-99b42a7e4d12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{COEF_INFERIOR}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="12" splitType="Stretch"/>
+	</summary>
+</jasperReport>

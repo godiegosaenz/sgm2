@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="comprobanteCoactiva" language="groovy" printOrder="Horizontal" pageWidth="684" pageHeight="396" orientation="Landscape" columnWidth="684" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="e32bcbe7-38b1-48c8-b71c-ef2bf341c014">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+			<topPen lineWidth="0.0"/>
+			<leftPen lineWidth="0.0"/>
+			<bottomPen lineWidth="0.0"/>
+			<rightPen lineWidth="0.0"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<pen lineWidth="0.0"/>
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="SUBREPORT_DIR_COACTIVA" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\Juan Carlos\\Documents\\NetBeansProjects\\SGM-SV\\Reportes\\trunk\\src\\main\\resources\\reportes\\Emision\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ID_LIQUIDACION" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="COPIA" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\Users\\Juan Carlos\\Documents\\NetBeansProjects\\SGM-SV\\Reportes\\trunk\\src\\main\\resources\\reportes\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT LIQUIDACION.ID AS PK_LIQUIDACION, PAGO.FECHA_PAGO, PAGO.NUM_COMPROBANTE, PAGO.NUM_CAJERO, LIQUIDACION.ID_LIQUIDACION, TIPO.NOMBRE_TITULO, USUARIO.USUARIO,
+       PRE.NUM_PREDIO, EN.CI_RUC, RUBRO.DESCRIPCION, CASE EN.ES_PERSONA WHEN TRUE THEN COALESCE(EN.NOMBRES,'')||' '||COALESCE(EN.APELLIDOS,'')
+       ELSE EN.RAZON_SOCIAL END AS NOMBRES,LIQUIDACION.NOMBRE_COMPRADOR,
+       CDLA.NOMBRE || ' MZ: ' || PRE.URB_MZ || ' SL: ' || PRE.URB_SOLARNEW AS DIRECCION,
+       PREDIALANT, LIQUIDACION.OBSERVACION, PAGO.VALOR AS VALOR_PAGO , PAGO.INTERES, PAGO.DESCUENTO,PAGO.RECARGO
+FROM SGM_FINANCIERO.REN_PAGO AS PAGO
+LEFT JOIN SGM_FINANCIERO.REN_LIQUIDACION AS LIQUIDACION ON (LIQUIDACION.ID = PAGO.LIQUIDACION)
+LEFT JOIN SGM_FINANCIERO.REN_TIPO_LIQUIDACION AS TIPO ON (LIQUIDACION.TIPO_LIQUIDACION = TIPO.ID)
+LEFT JOIN SGM_FINANCIERO.REN_RUBROS_LIQUIDACION AS RUBRO ON (TIPO.ID = RUBRO.TIPO_LIQUIDACION AND RUBRO.CODIGO_RUBRO = 1)
+LEFT JOIN SGM_APP.CAT_ENTE AS EN ON (EN.ID = PAGO.CONTRIBUYENTE)
+LEFT JOIN SGM_APP.CAT_PREDIO AS PRE ON (PRE.ID = LIQUIDACION.PREDIO)
+LEFT JOIN SGM_APP.CAT_CIUDADELA AS CDLA ON (CDLA.ID = PRE.CIUDADELA)
+LEFT JOIN SGM_APP.ACL_USER AS USUARIO ON (USUARIO.ID = PAGO.CAJERO)
+WHERE PAGO.ID = $P{ID_LIQUIDACION} AND LIQUIDACION.ESTADO_LIQUIDACION = 1 LIMIT 1]]>
+	</queryString>
+	<field name="pk_liquidacion" class="java.lang.Long"/>
+	<field name="fecha_pago" class="java.sql.Timestamp"/>
+	<field name="num_comprobante" class="java.lang.Long"/>
+	<field name="num_cajero" class="java.lang.String"/>
+	<field name="id_liquidacion" class="java.lang.String"/>
+	<field name="nombre_titulo" class="java.lang.String"/>
+	<field name="usuario" class="java.lang.String"/>
+	<field name="num_predio" class="java.lang.Long"/>
+	<field name="ci_ruc" class="java.lang.String"/>
+	<field name="descripcion" class="java.lang.String"/>
+	<field name="nombres" class="java.lang.String"/>
+	<field name="nombre_comprador" class="java.lang.String"/>
+	<field name="direccion" class="java.lang.String"/>
+	<field name="predialant" class="java.lang.String"/>
+	<field name="observacion" class="java.lang.String"/>
+	<field name="valor_pago" class="java.math.BigDecimal"/>
+	<field name="interes" class="java.math.BigDecimal"/>
+	<field name="descuento" class="java.math.BigDecimal"/>
+	<field name="recargo" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="22" splitType="Stretch">
+			<subreport>
+				<reportElement x="26" y="0" width="632" height="22" uuid="674659e2-5ed9-4471-85e5-aa92dbb6a6e7"/>
+				<subreportParameter name="LOGO">
+					<subreportParameterExpression><![CDATA[$P{LOGO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SUB_TITLE">
+					<subreportParameterExpression><![CDATA["DEPARTAMENTO FINANCIERO"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="LEGENDA">
+					<subreportParameterExpression><![CDATA["IMPUESTO PREDIAL URBANO         TITULO DE CREDITO No.: " + $F{id_liquidacion}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "titleReporte4.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<detail>
+		<band height="336" splitType="Stretch">
+			<staticText>
+				<reportElement x="2" y="19" width="105" height="15" uuid="1c103911-3de0-439a-83ce-af485fa6e992"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[CONTRIBUYENTE:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="33" width="105" height="15" uuid="9d90d434-a541-45a0-abbc-35531e785b2d"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<text><![CDATA[RUC / CC:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="47" width="105" height="15" uuid="008b7390-bfb6-43de-af8b-d3eafcd12a61"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Domicilio Dirección:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="502" y="225" width="68" height="13" uuid="3b3aa981-25e5-46c6-94ae-96d64341ffbe"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DESCUENTO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="502" y="237" width="68" height="13" uuid="138fe3ce-8787-45ba-b8fd-6056324dc839"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[RECARGO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="503" y="249" width="67" height="13" uuid="f13cb8af-3a7e-4258-9750-438492dbabed"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[INTERES:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="475" y="270" width="95" height="13" uuid="3d66e9ce-8fcc-429b-94d9-8fb74d75d141"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL A PAGAR:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="3" y="79" width="677" height="1" uuid="6b2a95f6-480e-4b72-bc50-2fdebb54d999"/>
+			</line>
+			<line>
+				<reportElement x="281" y="207" width="399" height="1" uuid="f1aa9866-1561-424c-b8a1-f42486a8d84e"/>
+			</line>
+			<line>
+				<reportElement x="3" y="284" width="677" height="1" uuid="03173fc4-8f5a-40d0-b894-4d274d87d16d"/>
+			</line>
+			<line>
+				<reportElement x="3" y="332" width="677" height="1" uuid="84f7f42c-9fa5-4f1d-94f4-deaa3b308223"/>
+			</line>
+			<staticText>
+				<reportElement x="20" y="309" width="119" height="12" uuid="3062e218-3981-4259-a752-8e4cabd195b3"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DIRECTOR FINANCIERO]]></text>
+			</staticText>
+			<line>
+				<reportElement x="20" y="305" width="120" height="1" uuid="935e0581-4023-4801-99b9-24cf0305c198"/>
+			</line>
+			<staticText>
+				<reportElement x="2" y="5" width="105" height="15" uuid="49256f3b-2774-4de4-ac28-fb38c12cfdea"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[COMPROBANTE No.:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="680" y="80" width="1" height="205" uuid="0d5284d6-4e36-45fc-a809-e0f36996a294"/>
+			</line>
+			<line>
+				<reportElement x="2" y="79" width="1" height="206" uuid="85698af6-bc87-4d58-930f-a3e693f0d098"/>
+			</line>
+			<staticText>
+				<reportElement x="20" y="115" width="126" height="13" uuid="10987a99-f1a4-44aa-a506-0fb9eca3e7e2"/>
+				<text><![CDATA[Fecha Recaudacion:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="196" y="304" width="120" height="1" uuid="61ec4490-62f6-40bf-8293-8af068898ef2"/>
+			</line>
+			<staticText>
+				<reportElement x="196" y="308" width="119" height="12" uuid="93cdf504-6620-4b82-81b5-a099c4e45340"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[JEFE DE RENTAS]]></text>
+			</staticText>
+			<line>
+				<reportElement x="377" y="305" width="120" height="1" uuid="b73f9045-0322-40bd-aa06-ff87abec7f88"/>
+			</line>
+			<staticText>
+				<reportElement x="377" y="309" width="119" height="12" uuid="b9529bf9-8044-4c49-a60c-6f23dc204981"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TESORERO]]></text>
+			</staticText>
+			<line>
+				<reportElement x="546" y="305" width="120" height="1" uuid="73e94634-c2a8-41ca-a6b8-4b25dbed4799"/>
+			</line>
+			<staticText>
+				<reportElement x="546" y="309" width="119" height="12" uuid="da1aeed9-3e4b-419c-9838-f4be539d7461"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RECAUDADOR]]></text>
+			</staticText>
+			<line>
+				<reportElement x="280" y="80" width="1" height="205" uuid="f58a96c2-bde5-449a-97e9-9a9920377555"/>
+			</line>
+			<staticText>
+				<reportElement x="486" y="212" width="84" height="13" uuid="7a309bad-39cc-4aae-8519-6372cb6609b1"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VALOR EMITIDO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="337" y="5" width="105" height="15" uuid="8d908d13-9dc7-4d4f-9d04-8a50eb0ac2b0"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[  CLAVE CATASTRAL:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="20" y="231" width="37" height="13" uuid="635662e8-f426-4d4f-b95b-41f5717de68c"/>
+				<text><![CDATA[Cajero:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="26" y="263" width="206" height="18" uuid="8574a076-edaa-4fb9-8ea6-6dcc7c8f5317">
+					<printWhenExpression><![CDATA[$P{COPIA}]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" FIEL COPIA  DEL TITULO  ORIGINAL "]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="107" y="5" width="125" height="15" uuid="8531a130-32cb-47fc-9846-16a350575949"/>
+				<textFieldExpression><![CDATA[$F{num_comprobante}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="107" y="20" width="225" height="14" uuid="cd0f4aa7-50f0-4471-a5b6-4e4f7dfbf7e8"/>
+				<textFieldExpression><![CDATA[$F{nombres}==null?$F{nombre_comprador}:$F{nombres}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="107" y="34" width="215" height="14" uuid="cc256f67-8036-4eb9-ba1d-61fd9f04411c"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ci_ruc} == null? "SIN REGISTROS" : $F{ci_ruc}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="107" y="47" width="215" height="15" uuid="2283c59e-5f3c-4d16-92bd-448d83df02d3"/>
+				<textFieldExpression><![CDATA[$F{direccion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="444" y="5" width="214" height="15" uuid="2c8b41db-b4ab-4992-805d-6b36ffb93802"/>
+				<textFieldExpression><![CDATA[$F{predialant}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="156" y="115" width="103" height="13" uuid="da1e6cbf-ce67-496e-b694-05d6d7326c81"/>
+				<textFieldExpression><![CDATA[$F{fecha_pago}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="285" y="91" width="392" height="15" backcolor="#CCCCCC" uuid="8ffc645c-b07c-45c5-ae18-82c46ae9da0f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{descripcion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="57" y="231" width="100" height="14" uuid="ceda22c6-7c30-4a3e-bda4-c3b30a54ccaa"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{usuario}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="511" y="106" width="22" height="13" uuid="9d837664-e051-4b5f-bbb1-a3fb7e9b1f3f"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[AÑO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="643" y="106" width="34" height="13" uuid="cd4f2bdc-a11c-441b-85d0-8cd11d87880d"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[VALOR]]></text>
+			</staticText>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="570" y="210" width="100" height="15" uuid="d3f68a13-16db-4c78-8a52-b29dcf0ff513"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{valor_pago}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="570" y="270" width="100" height="13" uuid="f480fb39-2557-4fc3-94b7-5c085cb5b267"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{valor_pago}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="570" y="249" width="100" height="13" uuid="f1a5fb02-2f1f-47ce-b0fa-152b84957e97"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{interes} == null? "0.00" : $F{interes}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="570" y="225" width="100" height="13" uuid="57e36ed4-6511-4e12-bcf0-97120640a418"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{descuento}== null? "0.00" :$F{descuento}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="570" y="237" width="100" height="13" uuid="bec72fa6-25b8-4fd3-9bfa-dabf9187a1f1"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{recargo}== null? "0.00" :$F{recargo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="21" y="91" width="238" height="15" backcolor="#CCCCCC" uuid="8cdf2423-7655-4874-a4c4-d245f81dc9f1"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA DE PAGO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="19" y="213" width="240" height="15" backcolor="#CCCCCC" uuid="60e557ab-9b1b-4dca-a617-c761c9fae3db"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CAJERO/RECAUDADOR]]></text>
+			</staticText>
+			<subreport>
+				<reportElement x="511" y="119" width="166" height="88" uuid="fd31d1f5-287f-43a6-b0c4-61d9581b53fc"/>
+				<subreportParameter name="liquidacion">
+					<subreportParameterExpression><![CDATA[$F{pk_liquidacion}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="rubro_municipio">
+					<subreportParameterExpression><![CDATA[true]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR_COACTIVA} + "reciboCoactiva_subReport1.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>

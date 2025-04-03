@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sTotalEmitido" language="groovy" pageWidth="802" pageHeight="555" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="87ee2bbf-a12b-4ed0-b021-108eba5bbc35">
+	<property name="ireport.zoom" value="2.357947691000002"/>
+	<property name="ireport.x" value="815"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="ANIO" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="USUARIO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TIPO_LIQUIDACION" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT A.descripcion , a.valor_inicial, COALESCE(C.bajas,0.00) AS bajas, ((COALESCE(a.valor_inicial,0.00)::numeric) - (COALESCE(C.bajas,0.00)::numeric) ) AS valor_actual,  COALESCE(B.valor_recaudado,0.00) AS valor_recaudado
+FROM (	SELECT r.id, r.descripcion, COALESCE(vi.valor_inicial,0.00) AS valor_inicial
+	FROM  sgm_financiero.ren_rubros_liquidacion r
+	LEFT OUTER JOIN sgm_financiero.ren_valor_inicial_emision vi ON (r.id=vi.rubro_liquidacion AND vi.anio=$P{ANIO} AND vi.estado=TRUE)
+	WHERE r.tipo_liquidacion=$P{TIPO_LIQUIDACION} AND r.id not in (651,5,653,654,652,648,650,649,9)
+) AS A
+LEFT OUTER JOIN
+  (SELECT pr.rubro, SUM(COALESCE(pr.valor,0.00)) AS valor_recaudado
+   FROM sgm_financiero.ren_liquidacion l
+   INNER JOIN sgm_financiero.ren_pago p ON (l.id=p.liquidacion)
+   INNER JOIN sgm_financiero.ren_pago_rubro pr ON (p.id=pr.pago)
+   WHERE l.tipo_liquidacion=$P{TIPO_LIQUIDACION} AND (l.estado_liquidacion=1 )
+   AND l.anio=$P{ANIO} AND p.estado=TRUE
+   GROUP BY pr.rubro) AS B ON (A.id=B.rubro)
+
+LEFT OUTER JOIN
+  (
+
+	SELECT dl.rubro, NULLIF(SUM(dl.valor-COALESCE(dlp.valor,0.00)),0.00) AS bajas
+	FROM sgm_financiero.ren_liquidacion liq
+	INNER JOIN sgm_financiero.ren_det_liquidacion dl ON (liq.id=dl.liquidacion)
+	INNER JOIN sgm_app.cat_predio cp ON cp.id = liq.predio
+	INNER JOIN sgm_financiero.fn_exoneracion_liquidacion exo_liq ON exo_liq.liquidacion = liq.id
+	INNER JOIN sgm_financiero.fn_solicitud_exoneracion exo_predio ON exo_liq.exoneracion = exo_predio.id
+	INNER JOIN sgm_financiero.fn_exoneracion_tipo exo_tipo ON exo_tipo.id = exo_predio.exoneracion_tipo
+	LEFT OUTER JOIN sgm_financiero.ren_liquidacion liq_post ON liq_post.id = exo_liq.liquidacion_posterior AND liq_post.tipo_liquidacion=$P{TIPO_LIQUIDACION}
+	 LEFT OUTER JOIN sgm_financiero.ren_det_liquidacion dlp ON (liq_post.id=dlp.liquidacion AND dl.rubro=dlp.rubro)
+	WHERE exo_tipo.id = 40 AND liq.estado_liquidacion = 4  AND  liq.anio=$P{ANIO}
+	AND liq.tipo_liquidacion = $P{TIPO_LIQUIDACION}
+	GROUP BY dl.rubro
+
+   ) AS C ON (A.id=C.rubro)
+
+
+
+LEFT OUTER JOIN
+  (
+  SELECT dlp.rubro, COALESCE(SUM(dlp.valor),0.00) AS emision
+   FROM sgm_financiero.fn_exoneracion_liquidacion el
+   INNER JOIN sgm_financiero.ren_liquidacion lp ON (el.liquidacion_posterior=lp.id)
+   LEFT OUTER JOIN sgm_financiero.ren_det_liquidacion dlp ON (lp.id=dlp.liquidacion)
+   WHERE lp.anio=$P{ANIO} AND lp.tipo_liquidacion=$P{TIPO_LIQUIDACION} AND el.liquidacion IS NULL
+   GROUP BY dlp.rubro
+) AS D ON (A.id=D.rubro)
+ORDER BY A.id]]>
+	</queryString>
+	<field name="descripcion" class="java.lang.String"/>
+	<field name="valor_inicial" class="java.math.BigDecimal"/>
+	<field name="bajas" class="java.math.BigDecimal"/>
+	<field name="valor_actual" class="java.math.BigDecimal"/>
+	<field name="valor_recaudado" class="java.math.BigDecimal"/>
+	<variable name="SALDO" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{valor_inicial}.subtract( $F{valor_recaudado})]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_EMISION" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_inicial}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_RECAUDACION" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_recaudado}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_SALDO" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$V{SALDO}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_EMISIONES" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_actual}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_BAJAS" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{bajas}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="665" y="0" width="100" height="20" uuid="7f3907b7-00df-4584-8087-d70dbc2e8d95"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VALOR RECAUDADO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="319" y="0" width="119" height="20" uuid="09bd830f-cd81-46a6-a96e-907bc90fe4e3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VALOR EMISION INICIAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="66" y="0" width="253" height="20" uuid="1acd0885-1063-4035-9a1a-18e2fff3b314"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DESCRIPCION DEL RUBRO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="438" y="0" width="100" height="20" uuid="55de6ad4-5e18-4baa-81b5-0a58c7a98112"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[BAJAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="538" y="0" width="127" height="20" uuid="412b8b0a-e8ed-4137-b878-5ef85c43c3ec"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VALOR EMISION ACTUAL]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<textField pattern="¤ #,##0.00">
+				<reportElement x="332" y="0" width="106" height="15" uuid="02b4c763-a6e4-4ec1-906f-fc9a6ac812d5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_inicial}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00">
+				<reportElement x="665" y="0" width="100" height="15" uuid="3b112cb8-f3fe-4882-bdc7-fe12cfad91d1"/>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_recaudado}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="66" y="1" width="253" height="15" uuid="f31a34c3-d939-4d49-9186-0be5061e1c06"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{descripcion}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00">
+				<reportElement x="438" y="1" width="100" height="15" uuid="01c219be-9907-475d-9e07-3569d495ea2d"/>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{bajas}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00">
+				<reportElement x="538" y="0" width="127" height="15" uuid="eef064cc-1b6b-4777-aacf-35164db64e7a"/>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_actual}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="16" splitType="Stretch">
+			<textField pattern="¤ #,##0.00">
+				<reportElement x="332" y="0" width="106" height="15" uuid="ee32dd8a-3229-4488-be42-0b4131428517"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_EMISION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00">
+				<reportElement x="665" y="1" width="100" height="15" uuid="617402f3-8c81-4d43-90be-756877728c3f"/>
+				<textElement textAlignment="Right">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_RECAUDACION}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="213" y="1" width="106" height="15" uuid="8e8ad7eb-f115-4058-8373-cf158877338b"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTALES>>>]]></text>
+			</staticText>
+			<textField pattern="¤ #,##0.00">
+				<reportElement x="438" y="0" width="100" height="15" uuid="f2cb89a0-58c0-4a8f-bf78-12e4d709d201"/>
+				<textElement textAlignment="Right">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_BAJAS}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00">
+				<reportElement x="538" y="1" width="127" height="15" uuid="53f00f73-f45f-45f6-ba0c-ef309cf951d0"/>
+				<textElement textAlignment="Right">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_EMISIONES}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

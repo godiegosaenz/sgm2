@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="page_title">
+        ReporteRecaudaciones
+    </ui:define>
+
+    <ui:define name="top">
+        <h1>ReportesRecaudaciones</h1>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="frmRep">
+            <center>
+                <p:selectOneMenu value="#{reporteRecaudaciones.tipoReporte}">
+                    <f:selectItem itemLabel="Seleccione..." itemValue="#{0}"/>
+                    <f:selectItem itemLabel="Liquidaciones no pagadas" itemValue="#{1}"/>
+                </p:selectOneMenu>
+            </center>
+            <br>
+            </br>
+            <center>
+                <p:panel style="width: 80%; resize: horizontal">
+                    <h:panelGrid cellpadding="5" cellspacing="10" columns="4"/>
+                    <p:outputLabel value="Fecha Desde"/>
+                    <p:calendar value="#{reporteRecaudaciones.desde}" pattern="dd/MM/yyyy"/>
+                    <p:outputLabel value="Fecha Hasta"/>
+                    <p:calendar value="#{reporteRecaudaciones.hasta}" pattern="dd/MM/yyyy"/>
+                </p:panel>
+            </center>
+            
+            <br>
+            </br>
+            <center>
+                <p:commandButton value="Imprimir" styleClass="btnStyle" 
+                                 actionListener="#{reporteRecaudaciones.imprimir()}" />
+            </center>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

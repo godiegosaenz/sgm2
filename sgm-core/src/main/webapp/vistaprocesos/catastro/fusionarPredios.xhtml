@@ -1,0 +1,169 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:dlg="http://xmlns.jcp.org/jsf/composite/dialog">
+
+    <ui:define name="content">
+        <center>
+            <h1>Fusionar predios</h1>
+        </center>
+        <h:panelGroup layout="block" class="Wid100 Responsive100">
+            <h:form id="fusionForm" prependId="false">
+
+                <h:panelGroup layout="block" class="Container Wid100 MarTop20">
+
+                    <p:fieldset legend="Código catastral" toggleable="false" toggleSpeed="500" style="margin-bottom: 10px;">
+                        <p:panelGrid style="margin-top:5px; float: left;">
+                            <f:facet name="header">
+                                <p:row>
+                                    <p:column>Provincia:    </p:column>
+                                    <p:column>Cantón :      </p:column>
+                                    <p:column>Parroquia :   </p:column>
+                                    <p:column>Zona :        </p:column>
+                                    <p:column>Sector :      </p:column>
+                                    <p:column>Mz. :         </p:column>
+                                    <p:column>Lote :        </p:column>
+                                    <p:column>Bloque :      </p:column>
+                                    <p:column>Piso :        </p:column>
+                                    <p:column>Unidad :      </p:column>
+                                </p:row>
+                            </f:facet>
+                            <p:row>
+                                <p:column><p:inputText id="prov"  placeholder="Provincia" title="Provincia : #{fusionarPredioView.predio.provincia}" value="#{fusionarPredioView.predio.provincia}" readonly="true" style=" text-align: center; width: 89%" maxlength="2"  /></p:column>
+                                <p:column><p:inputText id="cant" placeholder="Canton" title="Canton : #{fusionarPredioView.predio.canton}" value="#{fusionarPredioView.predio.canton}" readonly="true" style="text-align: center; width: 89%"  maxlength="2"/></p:column>
+                                <p:column><p:inputText id="parrq" placeholder="Parroquia" title="Parroquia :#{fusionarPredioView.predio.parroquia}" value="#{fusionarPredioView.predio.parroquia}" readonly="true" style="text-align: center; width: 89%" maxlength="2"/></p:column>
+                                <p:column><p:inputText id="zona" placeholder="Zona" title="Zona : #{fusionarPredioView.predio.zona}" value="#{fusionarPredioView.predio.zona}" readonly="true" style="text-align: center; width: 89%" maxlength="2"/></p:column>
+                                <p:column><p:inputText id="sect" placeholder="Sector" title="Sector : #{fusionarPredioView.predio.sector}" value="#{fusionarPredioView.predio.sector}" readonly="true" style="text-align: center; width: 89%" maxlength="2"/></p:column>
+                                <p:column><p:inputText id="mz" placeholder="Manzana" title="Manzana : #{fusionarPredioView.predio.mz}" value="#{fusionarPredioView.predio.mz}" readonly="true" style="text-align: center; width: 89%" maxlength="3"/></p:column>
+                                <p:column><p:inputText id="lot" placeholder="Lote" title="Lote : #{fusionarPredioView.predio.solar}" value="#{fusionarPredioView.predio.solar}" readonly="true"  style="text-align: center; width: 89%" maxlength="3"/></p:column>
+                                <p:column><p:inputText id="bloq" placeholder="Bloque" title="Bloque : #{fusionarPredioView.predio.bloque}" value="#{fusionarPredioView.predio.bloque}" readonly="true" style="text-align: center; width: 89%" maxlength="3"/></p:column>
+                                <p:column><p:inputText id="piso" placeholder="Piso" title="Piso : #{fusionarPredioView.predio.piso}" value="#{fusionarPredioView.predio.piso}" readonly="true" style="text-align: center; width: 89%" maxlength="2"/></p:column>
+                                <p:column><p:inputText id="unid" placeholder="Unidad" title="Unidad : #{fusionarPredioView.predio.unidad}" value="#{fusionarPredioView.predio.unidad}" readonly="true" style="text-align: center; width: 89%" maxlength="3"/></p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        <h:outputText value="Nuevo codigo LOTE: #{fusionarPredioView.nuevoCodigo}" style="float: right; margin-right: 20px; padding-top: 10px;" styleClass="FontBold"/>
+                    </p:fieldset>
+                </h:panelGroup>
+                <h:panelGroup layout="block" class="Container Wid100 MarTop20">
+                    <h:panelGroup layout="block" class="Container70">
+                        <p:dataTable id="prediosManzanasList" var="p" value="#{fusionarPredioView.prediosEnManzana}" selection="#{fusionarPredioView.prediosSeleccionados}"
+                                     rowKey="#{p.id}" style="margin-bottom:0"
+                                     emptyMessage="No existen predios en la manzana."
+                                     paginator="true"
+                                     rows="10"
+                                     paginatorPosition="bottom"
+                                     rowsPerPageTemplate="5,10,15,20,30,50"
+                                     currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords}"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                            <p:ajax event="rowSelectCheckbox" listener="#{fusionarPredioView.onRowSelect}" update="infoResumen" />
+                            <p:ajax event="rowUnselectCheckbox" listener="#{fusionarPredioView.onRowUnselect}" update="infoResumen" />
+                            <p:ajax event="rowSelect" listener="#{fusionarPredioView.onRowSelect}" update="infoResumen" />
+                            <p:ajax event="rowUnselect" listener="#{fusionarPredioView.onRowUnselect}" update="infoResumen" />
+                            <f:facet name="header">
+                                Listado de predios
+                            </f:facet>
+                            <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+                            <p:column headerText="#PREDIO" filterBy="#{p.numPredio}" filterMatchMode="contains" style="text-align: center; width: 5%" >
+                                <h:outputText value="#{p.numPredio}" />
+                            </p:column>
+                            <p:column headerText="PARROQUIA" style="text-align: center; width: 7%" >
+                                <h:outputText value="#{p.parroquia}" />
+                            </p:column>
+                            <p:column headerText="ZONA" style="text-align: center; width: 4%" >
+                                <h:outputText value="#{p.zona}" />
+                            </p:column>
+                            <p:column headerText="SECTOR" style="text-align: center; width: 5%" >
+                                <h:outputText value="#{p.sector}" />
+                            </p:column>
+                            <p:column headerText="MZ" style="text-align: center; width: 4%" >
+                                <h:outputText value="#{p.mz}" />
+                            </p:column>
+                            <p:column headerText="LOTE" style="text-align: center; width: 4%" >
+                                <h:outputText value="#{p.solar}" />
+                            </p:column>
+<!--                            <p:column headerText="BLOQUE" style="text-align: center; width: 5%" >
+                                <h:outputText value="#{p.bloque}" />
+                            </p:column>
+                            <p:column headerText="PISO" style="text-align: center; width: 4%" >
+                                <h:outputText value="#{p.piso}" />
+                            </p:column>
+                            <p:column headerText="UNIDAD" style="text-align: center; width: 5%" >
+                                <h:outputText value="#{p.unidad}" />
+                            </p:column>-->
+                            <p:column headerText="AREA SOLAR" style="text-align: right;  width: 30px;">
+                                <h:outputText value="#{p.areaSolar}" styleClass="TexAlRight">
+                                    <f:convertNumber type="currency" currencySymbol="" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="# EDIFICACIONES" style="text-align: center; width: 7%">
+                                <h:outputText value="#{fusionarPredioView.cantidadEdificaciones(p)}" />
+                            </p:column>
+                            <p:column headerText="AREA EDIFICACION" style="text-align: right; width: 7%">
+                                <h:outputText value="#{fusionarPredioView.areaTotalEdificacion(p)}" >
+                                    <f:convertNumber type="currency" currencySymbol="" />
+                                </h:outputText>
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGroup>
+                    <h:panelGroup layout="block" class="Container30" id="infoResumen">
+                        <div class="ContainerIndent">
+                            <h:panelGroup layout="block" >
+                                <p:commandButton process="prediosManzanasList" icon="ui-icon-arrow-4-diag" value="Fusionar predios" disabled="#{fusionarPredioView.prediosSeleccionados.size() == 0}" actionListener="#{fusionarPredioView.fusionar()}">
+                                    <p:confirm header="Confirmación" message="Está seguro de realizar la acción ?" icon="ui-icon-alert" />
+                                </p:commandButton>
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                    <h:panelGroup layout="block" class="Wid100">
+                                        <h:outputText value="Se van a fusionar los predios" style="display:block; text-align: center; padding-bottom: 5px;" styleClass="FontBold"/>
+                                        <hr></hr>
+                                        <ui:repeat value="#{fusionarPredioView.prediosSeleccionados}" var="p">
+                                            <h:outputText value="Código del LOTE: #{p.solar}" style="display:block; text-align: center; padding-bottom: 3px;"/>
+                                        </ui:repeat>
+                                        <hr></hr>
+                                        <h:outputText value="El nuevo predio se le asignara el codigo del lote: #{fusionarPredioView.nuevoCodigo}" style="display:block; padding-bottom: 10px;" styleClass="FontBold"/>
+                                    </h:panelGroup>
+
+                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                </p:confirmDialog>
+                            </h:panelGroup>
+                            <p:panelGrid  columns="2" style="width: 100%">
+                                <f:facet name="header">
+                                    <h:outputText value="Predio #{fusionarPredioView.predio.claveCat}" />
+                                </f:facet>
+                                <h:outputText value="Área inicial Terreno:" styleClass="FontBold"/>
+                                <h:outputText value="#{fusionarPredioView.predio.areaSolar}" styleClass="TexAlRight">
+                                    <f:convertNumber type="currency" currencySymbol="" />
+                                </h:outputText>
+                                <h:outputText value="Área nueva Terreno a incorporar:" styleClass="FontBold"/>
+                                <h:outputText value="#{fusionarPredioView.areaTotalTerrenoNueva()}" styleClass="TexAlRight">
+                                    <f:convertNumber type="currency" currencySymbol="" />
+                                </h:outputText>
+                                <h:outputText value="Área total Terreno:" styleClass="FontBold"/>
+                                <h:outputText value="#{fusionarPredioView.areaTotalTerrenoNueva().add(fusionarPredioView.predio.areaSolar)}" styleClass="TexAlRight">
+                                    <f:convertNumber type="currency" currencySymbol="" />
+                                </h:outputText>
+                                <h:outputText value="Área inicial Cosntrucción:" styleClass="FontBold"/>
+                                <h:outputText value="#{fusionarPredioView.areaTotalEdificacionInicial()}" styleClass="TexAlRight" >
+                                    <f:convertNumber type="currency" currencySymbol="" class="TexAlRight"/>
+                                </h:outputText>
+                                <h:outputText value="Área nueva Cosntrucción:" styleClass="FontBold"/>
+                                <h:outputText value="#{fusionarPredioView.areaTotalConstruccionNueva()}" styleClass="TexAlRight">
+                                    <f:convertNumber type="currency" currencySymbol="" />
+                                </h:outputText>
+                                <h:outputText value="Área total Cosntrucción" styleClass="FontBold"/>
+                                <h:outputText value="#{fusionarPredioView.areaTotalConstruccionNueva().add(fusionarPredioView.areaTotalEdificacionInicial())}" styleClass="TexAlRight">
+                                    <f:convertNumber type="currency" currencySymbol="" />
+                                </h:outputText>
+                            </p:panelGrid>
+                        </div>
+                    </h:panelGroup>
+                </h:panelGroup>
+            </h:form>
+        </h:panelGroup>
+    </ui:define>
+</ui:composition>

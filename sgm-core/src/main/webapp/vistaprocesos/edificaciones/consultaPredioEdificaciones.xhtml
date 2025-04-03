@@ -1,0 +1,143 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:define name="top"><h3>Consulta de predios</h3></ui:define>
+    
+    <ui:define name="content">
+        <script src="../../resources/pfJs/keyPress.js" type="text/javascript"></script>
+        <h:form id="mainForm">
+        <br/>
+        <p:outputLabel value="TIPO DE CONSULTA: " style="font-size: 15px; font-weight: bolder;"/>
+            <p:selectOneRadio value="#{consultaPrediosEdifView.tipoConsulta}">
+                <f:selectItem itemLabel="MATRICULA INMOBILIARIA" itemValue="1" />
+                <f:selectItem itemLabel="CODIGO PREDIAL" itemValue="3" />
+                <f:selectItem itemLabel="URBANIZACION-MZ/SL" itemValue="4" />
+                <p:ajax update="consulta"/>
+            </p:selectOneRadio>
+            <p:panel id="consulta">
+                <p:fieldset legend="MATRICULA INMOBILIARIA" style="font-size: 13px;" rendered="#{consultaPrediosEdifView.tipoConsulta eq 1}">
+                    <p:outputLabel value="MATRICULA INMOBILIARIA: " style="font-size: 13px; font-weight: bolder;"/>
+                    <p:inputText value="#{consultaPrediosEdifView.predioModel.numPredio}" style="font-size: 13px; font-weight: bolder;"/>
+                </p:fieldset>
+                <p:fieldset legend="CODIGO PREDIAL" style="font-size: 13px;" rendered="#{consultaPrediosEdifView.tipoConsulta eq 3}">
+                    <p:panelGrid style="width: 100%;">
+                        <p:row>
+                            <p:column><p:outputLabel value="SECTOR" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:outputLabel value="MZ" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:outputLabel value="CDLA " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:outputLabel value="MZ-DIV " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:outputLabel value="SOLAR " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:outputLabel value="DIV1 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:outputLabel value="DIV2 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:outputLabel value="DIV3 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:outputLabel value="DIV4 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:outputLabel value="DIV5 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:outputLabel value="DIV6 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:outputLabel value="DIV7 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:outputLabel value="DIV8 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:outputLabel value="DIV9 " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:outputLabel value="PHV " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:outputLabel value="PHH " style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column><p:inputText value="#{consultaPrediosEdifView.predioModel.sector}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:inputText value="#{consultaPrediosEdifView.predioModel.mz}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:inputText value="#{consultaPrediosEdifView.predioModel.cdla}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:inputText value="#{consultaPrediosEdifView.predioModel.mzDiv}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:inputText value="#{consultaPrediosEdifView.predioModel.solar}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:inputText value="#{consultaPrediosEdifView.predioModel.div1}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:inputText value="#{consultaPrediosEdifView.predioModel.div2}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:inputText value="#{consultaPrediosEdifView.predioModel.div3}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:inputText value="#{consultaPrediosEdifView.predioModel.div4}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:inputText value="#{consultaPrediosEdifView.predioModel.div5}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:inputText value="#{consultaPrediosEdifView.predioModel.div6}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:inputText value="#{consultaPrediosEdifView.predioModel.div7}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:inputText value="#{consultaPrediosEdifView.predioModel.div8}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:inputText value="#{consultaPrediosEdifView.predioModel.div9}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:inputText value="#{consultaPrediosEdifView.predioModel.phv}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:inputText value="#{consultaPrediosEdifView.predioModel.phh}" size="3" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:fieldset>
+                <p:fieldset legend="URBANIZACION-MZ/SL" style="font-size: 13px;" rendered="#{consultaPrediosEdifView.tipoConsulta eq 4}">
+                    <p:panelGrid styleClass="noBorder">
+                        <p:row>
+                            <p:column><p:outputLabel value="URBANIZACION" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:outputLabel value="MANZANA" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                            <p:column><p:outputLabel value="SOLAR" style="font-size: 13px; font-weight: bolder;"/></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:selectOneMenu  value="#{consultaPrediosEdifView.predioModel.ciudadela}" effect="fade" converter="entityConverter"  style="width:200px;">
+                                    <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+                                    <f:selectItems value="#{consultaPrediosEdifView.ciudadelas}" var="c" itemLabel="#{c.nombre}" itemValue="#{c}"/>  
+                                </p:selectOneMenu>
+                            </p:column>
+                            <p:column><p:inputText value="#{consultaPrediosEdifView.predioModel.mzUrb}"/></p:column>
+                            <p:column><p:inputText value="#{consultaPrediosEdifView.predioModel.slUrb}"/></p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:fieldset>
+                <br/>
+                <center>
+                    <p:commandButton value="CONSULTAR" actionListener="#{consultaPrediosEdifView.consultarEmisiones()}" update="datos, frmPredios" style="font-size: 15px; font-weight: bolder;" styleClass="btnStyle" icon="ui-icon-search" iconPos="right"/>
+                </center>
+
+                <p:panel id="datos">
+                    <p:outputLabel value="MATRICULA INMOBILIARIA: #{consultaPrediosEdifView.predioConsulta.numPredio}" style="font-size: 16px; font-weight: bolder;"/>
+                    <p:spacer width="25"/>
+                    <p:outputLabel value="CODIGO: #{consultaPrediosEdifView.predioConsulta.getCodigoPredialCompleto()}" style="font-size: 16px; font-weight: bolder;"/>
+                    <p:spacer width="25"/>
+                    <br/>
+                    <p:outputLabel value="Cdla: #{consultaPrediosEdifView.predioConsulta.ciudadela.nombre}" style="font-size: 16px; font-weight: bolder;"/>
+                    <p:spacer width="25"/>
+                    <p:outputLabel value="Mz: #{consultaPrediosEdifView.predioConsulta.urbMz}" style="font-size: 16px; font-weight: bolder;"/>
+                    <p:spacer width="25"/>
+                    <p:outputLabel value="Solar: #{consultaPrediosEdifView.predioConsulta.urbSolarnew}" style="font-size: 16px; font-weight: bolder;"/>
+                    <p:spacer width="25"/>
+                    <br/>
+                    <center>
+                        <p:dataTable    id="dtpropietarios"
+                                        rows="5"
+                                        paginator="true"
+                                        paginatorPosition="top"
+                                        value="#{consultaPrediosEdifView.lisPropietarios}" var="itemP"
+                                        emptyMessage="No tiene datos" style="width: 75%">
+
+                            <p:column headerText="#C.I. o R.U.C." style="width: 75%;">
+                                <h:outputText value="#{itemP.ciRuc}" style="text-transform: uppercase;"/>
+                            </p:column>
+                            <p:column headerText="Propietario" style="width: 75%;">
+                                <h:outputText value="#{itemP.nombreComercial}" rendered="#{!itemP.esPersona}" style="text-transform: uppercase;"/>
+                                <h:outputText value="#{itemP.nombres} #{itemP.apellidos}" rendered="#{itemP.esPersona}" style="text-transform: uppercase;"/>
+                            </p:column>
+
+                        </p:dataTable>
+                    </center>
+                </p:panel>
+            </p:panel>
+        </h:form>
+        
+        <!-- -->
+        
+        <p:dialog header="Listado de Predios - Seleccione Predio" widgetVar="dlgPrediosConsulta" appendTo="@(body)" width="90%" responsive="true" closable="true" closeOnEscape="true" modal="true">
+            <h:form id="frmPredios">
+                <p:dataTable value="#{consultaPrediosEdifView.prediosConsulta}" var="p" selectionMode="single" selection="#{consultaPrediosEdifView.predioConsulta}" rowKey="#{p.id}" style="width: 90%; margin: 0 auto;" reflow="true" paginator="true" rows="10" filterEvent="enter" paginatorPosition="top">
+                    <p:column headerText="No. Predio" sortBy="#{p.numPredio}" filterBy="#{p.numPredio}" filterMatchMode="exact" filterStyle="width: 95%;"><h:outputText value="#{p.numPredio}"/></p:column>
+                    <p:column headerText="Urbanizacion"><h:outputText value="#{p.ciudadela.nombre}"/></p:column>
+                    <p:column headerText="Mz"><h:outputText value="#{p.urbMz}"/></p:column>
+                    <p:column headerText="Sl"><h:outputText value="#{p.urbSolarnew}"/></p:column>
+                    <p:column headerText="Cod. Predial"><h:outputText value="#{p.codigoPredialCompleto}"/></p:column>
+                    <f:facet name="footer">
+                        <p:commandButton value="Seleccionar" onclick="PF('dlgPrediosConsulta').hide()" update="mainForm"/>
+                    </f:facet>
+                </p:dataTable>         
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>
+

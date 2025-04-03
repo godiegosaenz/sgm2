@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub_report_retiro_aumeto_altura_detalle" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="d491c0d7-1bf8-4a3b-a057-11ad5aa551f2">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<subDataset name="dataset1" uuid="ccfba0f5-6f40-43e8-9c25-5e10205d91ae"/>
+	<parameter name="CODIGO" class="java.lang.Integer"/>
+	<parameter name="TIPO_NOMBRE" class="java.lang.String"/>
+	<parameter name="ID_SOLICITUD_NORMASCONST" class="java.lang.Long"/>
+	<queryString>
+		<![CDATA[select ra.descripcion, ra.estado from sgm_app.cat_normas_construccion_has_retiros_aumento as ra where ra.norma_construccion=$P{ID_SOLICITUD_NORMASCONST}
+ and ra.estado='A'
+ and codigo=$P{CODIGO}
+--codigo=1 retiro frontal]]>
+	</queryString>
+	<field name="descripcion" class="java.lang.String"/>
+	<field name="estado" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement uuid="79325379-21c0-46c0-a30e-4f4eeec5932c" x="0" y="0" width="502" height="20"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["  "+$P{TIPO_NOMBRE}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band/>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="122523be-8e95-4a22-85cd-8ae2cd3bbf40" key="&quot;textField&quot;" mode="Transparent" x="0" y="0" width="502" height="15"/>
+				<box leftPadding="5">
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement markup="none">
+					<font size="9"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" • "+$F{descripcion}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<lastPageFooter>
+		<band/>
+	</lastPageFooter>
+	<summary>
+		<band height="1" splitType="Stretch">
+			<line>
+				<reportElement uuid="ee4f9dc2-fe81-4f39-bf57-74c9059ef994" x="0" y="0" width="502" height="1"/>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

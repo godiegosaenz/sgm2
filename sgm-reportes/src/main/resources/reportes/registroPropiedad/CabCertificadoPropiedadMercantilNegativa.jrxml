@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Razon" pageWidth="555" pageHeight="802" whenNoDataType="AllSectionsNoDetail" columnWidth="475" leftMargin="40" rightMargin="40" topMargin="20" bottomMargin="20" uuid="b0616992-c4f9-44e8-b8e6-4e352538c377">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="209"/>
+	<parameter name="P_REGISTRO" class="java.lang.Integer"/>
+	<parameter name="P_FECREGISTRO" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\supergold\\Documents\\sgm\\src\\main\\webapp\\reportes\\registroPropiedad\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_ANIO" class="java.lang.String"/>
+	<parameter name="codigoQR" class="java.lang.String"/>
+	<parameter name="validador" class="java.lang.String"/>
+	<parameter name="ID_MOV" class="java.lang.Long"/>
+	<queryString>
+		<![CDATA[select m.id,to_char(m.fecha_inscripcion,'yyyy'),m.num_repertorio,m.num_tomo,m.folio_inicio,m.folio_fin,
+m.num_inscripcion,a.nombre acto,l.nombre libro,a.abreviatura,m.num_paginas_contabilizada,
+m.num_pagina_inscripcion,m.num_pagina_razon, m.es_negativa, u.usuario as inscriptor, m.anexo_negativa, reg.nombre_completo, reg.titulo_completo
+from sgm_app.reg_movimiento m
+left join sgm_app.reg_acto a on (m.acto=a.id)
+left join sgm_app.reg_libro l on (m.libro=l.id)
+left join sgm_app.acl_user u on (m.user_creador=u.id)
+left join sgm_app.reg_registrador reg on (m.registrador=reg.id)
+where m.id=$P{ID_MOV};]]>
+	</queryString>
+	<field name="id" class="java.lang.Long"/>
+	<field name="to_char" class="java.lang.String"/>
+	<field name="num_repertorio" class="java.lang.Integer"/>
+	<field name="num_tomo" class="java.lang.String"/>
+	<field name="folio_inicio" class="java.lang.Integer"/>
+	<field name="folio_fin" class="java.lang.Integer"/>
+	<field name="num_inscripcion" class="java.lang.Integer"/>
+	<field name="acto" class="java.lang.String"/>
+	<field name="libro" class="java.lang.String"/>
+	<field name="abreviatura" class="java.lang.String"/>
+	<field name="num_paginas_contabilizada" class="java.lang.Integer"/>
+	<field name="num_pagina_inscripcion" class="java.lang.Integer"/>
+	<field name="num_pagina_razon" class="java.lang.Integer"/>
+	<field name="es_negativa" class="java.lang.Boolean"/>
+	<field name="inscriptor" class="java.lang.String"/>
+	<field name="anexo_negativa" class="java.lang.String"/>
+	<field name="nombre_completo" class="java.lang.String"/>
+	<field name="titulo_completo" class="java.lang.String"/>
+	<variable name="FOLIOFINAL_SUMNUMPAG" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$V{PAGE_NUMBER}+$F{folio_inicio}+$F{num_paginas_contabilizada}+$F{num_pagina_inscripcion}]]></variableExpression>
+	</variable>
+	<title>
+		<band height="103" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="88cb6c85-ef29-4732-9c2f-b4f51fd93e84" x="1" y="1" width="418" height="16"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Registro Municipal de la Propiedad del Cantón Samborondón]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="aea73a5d-a9f9-46fd-84f1-5ccbf028466b" x="1" y="17" width="138" height="14"/>
+				<textElement/>
+				<text><![CDATA[Calixto Romero y Malecón]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1960d4b1-d76e-4f81-908a-c8f94b50047d" x="1" y="61" width="474" height="28"/>
+				<textElement textAlignment="Justified" verticalAlignment="Top"/>
+				<text><![CDATA[EL REGISTRO MUNICIPAL DE LA PROPIEDAD DEL CANTÓN SAMBORONDÓN, certifica que en esta fecha se inscribió (eron) el (los) siguiente(s) actos(s):]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="267a54b4-909d-4811-b78f-74f8bd28ac2f" x="1" y="50" width="474" height="1"/>
+			</line>
+			<textField>
+				<reportElement uuid="d59e84c1-914f-4d1b-889e-64cab230a5b0" x="189" y="30" width="286" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Número de Repertorio: " + $F{to_char} + " - " + $F{num_repertorio}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="dc647cda-fcfd-4db3-844f-2dbc998915fa" x="1" y="89" width="474" height="14" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Justified">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["1.- Con fecha "+$P{P_FECREGISTRO}+" queda inscrito el acto o contrato " + $F{acto}.toUpperCase() +" en el Registro de " + $F{libro}.toUpperCase() + " de tomo " + $F{num_tomo} + ", de fojas " + $F{folio_inicio} + " a "+($F{folio_fin})+", con el número de inscripción  " + $F{num_inscripcion} + " celebrado entre: "]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<subreport>
+				<reportElement uuid="48c70337-c2d2-43a0-953b-6d971333e640" positionType="Float" x="1" y="4" width="474" height="13"/>
+				<subreportParameter name="P_REPERTORIO">
+					<subreportParameterExpression><![CDATA[$P{P_REGISTRO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_ANIO">
+					<subreportParameterExpression><![CDATA[$P{P_ANIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_MOVIMIENTO">
+					<subreportParameterExpression><![CDATA[$P{ID_MOV}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "DetalleCertificado.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="20" splitType="Stretch">
+			<subreport>
+				<reportElement uuid="ae5accf3-38ff-4e77-9e9c-c5aa2616b6f5" positionType="Float" x="1" y="4" width="474" height="13"/>
+				<subreportParameter name="P_REPERTORIO">
+					<subreportParameterExpression><![CDATA[$P{P_REGISTRO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P_ANIO">
+					<subreportParameterExpression><![CDATA[$P{P_ANIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_MOVIMIENTO">
+					<subreportParameterExpression><![CDATA[$P{ID_MOV}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "TipoBien.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="265" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="7ee98df4-95c5-472f-a51f-868a2d584e8e" positionType="Float" x="1" y="5" width="75" height="14"/>
+				<textElement/>
+				<text><![CDATA[DESCRIPCIÓN:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="906c706d-c8c6-4b5b-934e-f2d8a7e946a1" positionType="Float" x="76" y="22" width="11" height="14"/>
+				<textElement/>
+				<text><![CDATA[=]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="1ab42774-1646-492b-a2e2-7d410aec3d8d" positionType="Float" x="87" y="22" width="388" height="14"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{acto}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="8c0b112b-4631-4440-98a2-8b2efef5ac8f" positionType="Float" isPrintRepeatedValues="false" x="133" y="173" width="212" height="20"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{titulo_completo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="ade66a2b-641e-4982-825f-98ff3ebbd7d1" positionType="Float" x="1" y="22" width="75" height="14"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{abreviatura}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="bedb69d4-edbf-4aab-bb5a-702a12da768b" x="1" y="236" width="86" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Realizado por:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d0164612-d562-4650-a8be-29feb5fe2dfb" x="1" y="250" width="138" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Revisado y Aprobado por:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="a64d84bb-49b8-43e7-91c5-9d5bd77d8e8b" x="87" y="236" width="214" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{inscriptor}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="5a1a7148-1798-4fa0-8f74-0870ec22d2d7" positionType="Float" x="1" y="57" width="474" height="15" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[$F{es_negativa}]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Justified" markup="html"/>
+				<textFieldExpression><![CDATA[$F{anexo_negativa}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="d5f001d6-11ae-4f2c-8624-5eb0918df17f" positionType="Float" isPrintRepeatedValues="false" x="133" y="153" width="212" height="20"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_completo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="c6e9fdb0-e76e-450f-9b7d-3bbb2ab6933a" x="139" y="250" width="335" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_completo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="43a52c4c-b5f1-4787-833d-8d7a48f27b75" x="1" y="222" width="86" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Fecha emisión:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement uuid="2e24c460-45b8-43a4-9da2-bc8eb94da92e" x="87" y="222" width="214" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="22" splitType="Stretch">
+			<textField>
+				<reportElement uuid="3cf6d0cc-4a60-4aa4-96e1-6fe575a8bc19" x="354" y="1" width="80" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement uuid="6edb0fb7-b9be-4194-86ec-70dc568b0d93" x="434" y="1" width="40" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="22" splitType="Stretch">
+			<textField>
+				<reportElement uuid="0420d13a-2e24-4938-8680-eecbb4d3710d" x="354" y="1" width="80" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement uuid="2596324c-e87c-4721-beee-7aee90879dfc" x="434" y="1" width="40" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>

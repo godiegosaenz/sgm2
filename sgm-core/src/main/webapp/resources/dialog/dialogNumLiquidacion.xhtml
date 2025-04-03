@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="idLiq"/>
+        <cc:attribute name="desc" default="Número de Liquidacion: "/>
+        <cc:attribute name="headerDialog"/>
+        <cc:attribute name="actionButton" />
+        <cc:attribute name="update" />
+    </cc:interface>
+
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+
+        <p:dialog id="dlgIdLiquidacion" widgetVar="dlgIdLiquidacion" header="#{cc.attrs.headerDialog}"
+                  height="150" width="375" modal="true" closeOnEscape="true"
+                  closable="true" position="center" positionType="absolute"
+                  resizable="false" responsive="true" appendTo="@(body)">
+
+            <h:form id="dlgDilLiq">
+                <br/>
+                <center>
+                    <p:outputLabel value="#{cc.attrs.desc}" style="font-size: 14px; font-weight: bold;"/>
+                    <p:spacer height="10"/>
+                    <h:outputLabel value="#{cc.attrs.idLiq}"  escape="false"
+                                   style="font-size: 13px; font-weight: bold;"/>
+                    <br/>
+                    <br/>
+                </center>
+
+            </h:form>
+            <f:facet name="footer" >
+                <center>
+                    <p:commandButton value="Aceptar" oncomplete="PF('dlgIdLiquidacion').hide()" styleClass="btnStyle"
+                                     actionListener="#{cc.attrs.actionButton}" update="#{cc.attrs.update}"/>
+                </center>
+            </f:facet>
+        </p:dialog>
+    </cc:implementation>
+</html>

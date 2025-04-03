@@ -1,0 +1,371 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:poue="http://primefaces.org/ui/extensions">
+
+    <ui:define name="page_title">
+        Depuración Clientes
+    </ui:define>
+
+    <ui:define name="top">
+        <h1>Depuración de Clientes</h1>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="frmCorCli">
+            <p:fieldset legend="Busqueda de clientes." toggleable="true" toggleSpeed="500" >
+                <center>
+                    <p:panelGrid columns="2" style="margin-bottom: 15px;">
+                        <h:panelGroup>
+                            <p:selectOneRadio value="#{edicionEntes.tipoBusqueda}" label="Tipo de Busqueda." >
+                                <f:selectItem itemLabel="Por nombres o apellidos." itemValue="1" />
+                                <f:selectItem itemLabel="Todos los clientes." itemValue="2" />
+                                <f:selectItem itemLabel="Propietarios Rusticos." itemValue="3" />
+                                <f:selectItem itemLabel="Propietarios Urbanos." itemValue="4" />
+                                <p:ajax update="frmCorCli" listener="#{edicionEntes.cambioBusqueda()}"/>
+                            </p:selectOneRadio>
+                        </h:panelGroup>
+                        <h:panelGroup style="text-align: center;" >
+                            <p:outputLabel value="Tipo Persona:" style="font-weight: bolder; " rendered="#{edicionEntes.tipoBusqueda eq 1 or edicionEntes.tipoBusqueda eq 2}"/>
+                            <p:selectOneMenu value="#{edicionEntes.esPersona}" style="width: 160px; " rendered="#{edicionEntes.tipoBusqueda eq 1 or edicionEntes.tipoBusqueda eq 2}">
+                                <f:selectItem itemLabel="Natural" itemValue="true" />
+                                <f:selectItem itemLabel="Jurídica" itemValue="false" />
+                                <p:ajax listener="#{edicionEntes.cambioTipoPersona()}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Excepcional:" style="font-weight: bolder; " rendered="#{edicionEntes.tipoBusqueda ne 1}"/>
+                            <p:selectOneMenu value="#{edicionEntes.entesLazy.excepcionales}" rendered="#{edicionEntes.tipoBusqueda ne 1}" style="width: 160px; ">
+                                <f:selectItem itemLabel="Si" itemValue="#{null}" />
+                                <f:selectItem itemLabel="Si" itemValue="true" />
+                                <f:selectItem itemLabel="No" itemValue="false" />
+                                <p:ajax update="frmCorCli" />
+                            </p:selectOneMenu>
+                        </h:panelGroup>
+                    </p:panelGrid>
+
+                    <p:panel id="pnlBusqNomb" rendered="#{edicionEntes.tipoBusqueda eq 1}" header="Busqueda" style="width: 50%;">
+                        <p:outputLabel value="Ingrese datos de busqueda:" />
+                        <p:spacer width="10"/>
+                        <p:inputText value="#{edicionEntes.entry}" placeholder="Nombres o apellidos." rendered="#{edicionEntes.esPersona}" style="width: 45%" />
+                        <p:inputText value="#{edicionEntes.entry}" placeholder="Razon Social." rendered="#{!edicionEntes.esPersona}" style="width: 55%" />
+                        <p:commandButton value="Buscar" actionListener="#{edicionEntes.buscarEntes()}" styleClass="btnStyle" />
+                    </p:panel> 
+                </center>
+                <p:contextMenu for="dtuser">
+                    <p:menuitem value="Agregar" icon="ui-icon-plusthick" actionListener="#{edicionEntes.agregarEntes()}" style="color: #006699" title="Agrega todos los elementos seleccionados" />
+                    <p:menuitem value="Procesar" icon="ui-icon-gear" actionListener="#{edicionEntes.buscarCoincidencias()}" update="dtuser" style="color: #006699" title="Envia a procesar la lista Seleccionada" />
+                </p:contextMenu>
+
+                <p:dataTable id="dtuser" reflow="true" paginator="true" lazy="true" rows="20" rowsPerPageTemplate="20,50,100, 200, 500, 1000" filterEvent="enter"
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             value="#{edicionEntes.entesLazy}" var="user" emptyMessage="No se encontró ningún item" 
+                             selection="#{edicionEntes.listEntes}" rowKey="#{user.id}" style="margin-bottom:0" rendered="#{edicionEntes.tipoBusqueda ne 1}" >
+                    <p:column selectionMode="multiple" style="width:5%; text-align:center"/>
+                    <p:column headerText="Identificador" style="text-align: center; width: 15%" >
+                        <h:outputText value="#{user.id}" style="text-align: center; font-size: 12px"/>
+                    </p:column>
+                    <p:column headerText="C.I./R.U.C." style="text-align: center; width: 15%" filterBy="#{user.ciRuc}" filterStyle="width: 80%;" sortBy="#{user.ciRuc}">
+                        <h:outputText value="#{user.ciRuc}" style="text-align: center; font-size: 12px"/>
+                    </p:column>
+                    <p:column headerText="Nombres" style="text-align: center" filterBy="#{user.nombres}" filterStyle="width: 80%;"
+                              sortBy="#{user.nombres}" >
+                        <h:outputText value="#{user.nombres}"/>
+                    </p:column>
+                    <p:column headerText="Apellidos" style="text-align: center" filterBy="#{user.apellidos}" filterStyle="width: 80%;"
+                              sortBy="#{user.apellidos}">
+                        <h:outputText value="#{user.apellidos}"/>
+                    </p:column>
+                    <p:column headerText="Razón Social" style="text-align: center" filterBy="#{user.razonSocial}" filterStyle="width: 80%;"
+                              sortBy="#{user.razonSocial}" >
+                        <h:outputText value="#{user.razonSocial}"/>
+                    </p:column>    
+                    <p:column headerText="Nombre Comercial" style="text-align: center" filterBy="#{user.nombreComercial}" filterStyle="width: 80%;"
+                              rendered="#{!edicionEntes.esPersona}" sortBy="#{user.nombreComercial}">
+                        <h:outputText value="#{user.nombreComercial}"/>
+                    </p:column>
+                    <p:column headerText="Opciones" style="width: 10%; text-align: center" >
+                        <p:commandLink actionListener="#{edicionEntes.edicion(user)}" title="Editar datos del cliente" >
+                            <p:graphicImage value="/css/homeIconsImages/edit.png"/>
+                        </p:commandLink>  
+                        <p:spacer width="15"/>
+                        <p:commandLink actionListener="#{edicionEntes.detallePredios(user)}" title="Detalle de los predios asociados.">
+                            <p:graphicImage value="/css/homeIconsImages/detalle.png"/>
+                        </p:commandLink>
+                    </p:column>
+                    <p:column headerText="Invalidar" style="width: 10%; text-align: center"  >
+                        <p:commandLink actionListener="#{edicionEntes.inactivar(user)}" update="frmCorCli:dtuser" title="Marcar como cliente invalido." disabled="#{user.estadoCorrecion == 'X'}">
+                            <p:graphicImage value="/css/homeIconsImages/delete.png"/>
+                            <p:confirm header="Advertencia" icon="ui-icon-alert" message="Va a cambiar el estado del cliente como Invalido"/>
+                        </p:commandLink>
+                        <p:spacer width="15"/>
+                        <p:commandLink actionListener="#{edicionEntes.eliminarEnte(user)}" title="Eliminar Cliente." update="frmCorCli:dtuser">
+                            <p:graphicImage value="/css/homeIconsImages/trash.png"/>
+                            <p:confirm header="Advertencia" icon="ui-icon-alert" message="Esta seguro de eliminar el cliente"/>
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+
+            </p:fieldset>
+
+            <p:fieldset id="cliSeleccionados" legend="Clientes Seleccionados" toggleable="true" >
+                <p:contextMenu id="menuSel" for="dtSel">
+                    <p:menuitem value="Unificar" icon="ui-icon-newwin" actionListener="#{edicionEntes.unificar()}" 
+                                style="color: #006699" disabled="#{edicionEntes.unificado}" title="Muestra el cliente Seleccionado que quedará como registro único"/>
+                    <p:menuitem value="Eliminar repetidos" ajax="false" icon="ui-icon-trash" actionListener="#{edicionEntes.eliminarRepetidos()}" 
+                                style="color: #006699" disabled="#{!edicionEntes.unificado}" title="Elimina los registros que estan en esta tabla y actualiza todos los registros asociados a cada persona.">
+                        <p:confirm header="Advertencia: Todos los elementos de esta lista seran eliminados" icon="ui-icon-info" message="Solo quedará la persona que fue seleccionada. ¿Esta seguro de continuar?" />
+                    </p:menuitem>
+                </p:contextMenu>
+
+                <center>
+                    <p:outputLabel value="Seleccione la persona que quedará valida." style="font-size: 16px; font-weight: bold;" rendered="#{!edicionEntes.unificado}" />
+                    <p:commandButton value="Limpiar Datos" actionListener="#{edicionEntes.limpiarDatos()}" styleClass="btnStyle" update="frmCorCli"
+                                     title="Borra todos los datos de esta sección"/>
+                    <p:panelGrid id="pnlDatosEnte" rendered="#{edicionEntes.unificado}" columns="4" styleClass="noBorder" >
+                        <f:facet name="header">
+                            <p:outputLabel value="Un cliente a sido seleccionado, esté reemplazará a todos los que estan en la lista de esta sección." style="font-size: 16px; font-weight: bold; color: #005f9c"/>
+                        </f:facet>
+                        <p:outputLabel value="Céduala/RUC: "/>
+                        <h:panelGroup>
+                            <p:inputText value="#{edicionEntes.valido.ciRuc}" readonly="true"/>
+                            <p:commandLink style="height: 25px;" actionListener="#{edicionEntes.editar()}" title="Permite editar los datos del cliente" >
+                                <p:graphicImage value="/css/homeIconsImages/edicion.png"/>
+                            </p:commandLink>
+                        </h:panelGroup>
+                        <p:outputLabel value=""/>
+                        <p:outputLabel value=""/>
+
+                        <p:outputLabel value="Nombres: " rendered="#{edicionEntes.valido.esPersona}" />
+                        <p:inputText value="#{edicionEntes.valido.nombres}" rendered="#{edicionEntes.valido.esPersona}" readonly="true" size="45"/>
+                        <p:outputLabel value="Apellidos: " rendered="#{edicionEntes.valido.esPersona}" />
+                        <p:inputText value="#{edicionEntes.valido.apellidos}" rendered="#{edicionEntes.valido.esPersona}" readonly="true" size="45"/>
+
+                        <p:outputLabel value="Razón Social: " rendered="#{!edicionEntes.valido.esPersona}"/>
+                        <p:inputText value="#{edicionEntes.valido.razonSocial}" rendered="#{!edicionEntes.valido.esPersona}" size="60" readonly="true" />
+
+                    </p:panelGrid>
+                </center>
+
+                <p:dataTable id="dtSel" reflow="true" paginator="true" lazy="true" rows="20" rowsPerPageTemplate="20,50,100" filterEvent="enter"
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             value="#{edicionEntes.listEntesSel}" var="userSel" emptyMessage="No se encontró ningún item"
+                             selection="#{edicionEntes.enteValido}" rowKey="#{userSel.id}" style="margin-bottom:0" paginatorPosition="top" >
+                    <p:column headerText="Select" selectionMode="single" style="width:5%; text-align:center"/>
+                    <p:column headerText="C.I./R.U.C." style="text-align: center; width: 20%" >
+                        <h:outputText value="#{userSel.ciRuc}" style="text-align: center; font-size: 12px"/>
+                    </p:column>
+                    <p:column headerText="Nombres" style="text-align: center" rendered="#{edicionEntes.esPersona}" >
+                        <h:outputText value="#{userSel.nombres}"/>
+                    </p:column>
+                    <p:column headerText="Apellidos" style="text-align: center" rendered="#{edicionEntes.esPersona}">
+                        <h:outputText value="#{userSel.apellidos}"/>
+                    </p:column>
+                    <p:column headerText="Razón Social" style="text-align: center" rendered="#{!edicionEntes.esPersona}">
+                        <h:outputText value="#{userSel.razonSocial}"/>
+                    </p:column>    
+                    <p:column headerText="Nombre Comercial" style="text-align: center" rendered="#{!edicionEntes.esPersona}">
+                        <h:outputText value="#{userSel.nombreComercial}"/>
+                    </p:column>
+                    <p:column headerText="Opción" style="text-align: center; width:12%">
+                        <p:commandLink value="Eliminar" style="font-weight: bolder;color: #0033FF" actionListener="#{edicionEntes.eliminar(userSel)}" /> 
+                        <!--                        <p:spacer width="10"/>
+                                                <p:commandLink actionListener="#{edicionEntes.edicion(userSel)}" title="Editar datos del cliente" >
+                                                    <p:graphicImage value="/css/homeIconsImages/edit.png"/>
+                                                </p:commandLink>  -->
+                        <p:spacer width="10"/>
+                        <p:commandLink actionListener="#{edicionEntes.detallePredios(userSel)}" title="Detalle de los predios asociados.">
+                            <p:graphicImage value="/css/homeIconsImages/detalle.png"/>
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+            </p:fieldset>
+
+        </h:form>
+
+        <p:dialog id="ediEnt" widgetVar="edicionEnte" modal="true" width="50%" height="60%" positionType="absolute"
+                  header="Edición datos de clientes" resizable="false" position="center" >
+
+            <h:form id="frmEdicionEnte"  >
+                <h:panelGrid id="edic" columns="2">
+                    <p:outputLabel value="Es persona: "/>
+                    <p:selectBooleanCheckbox value="#{edicionEntes.valido.esPersona}" >
+                        <p:ajax update="edic" />
+                    </p:selectBooleanCheckbox>
+
+                    <p:outputLabel value="Cédula/RUC.: "/>
+                    <p:inputText value="#{edicionEntes.valido.ciRuc}">
+                        <poue:keyFilter mask="num"/>
+                        <p:ajax event="blur" listener="#{edicionEntes.existeCedula()}"/>
+                    </p:inputText>
+
+                    <p:outputLabel value="Nombres: " rendered="#{edicionEntes.valido.esPersona}" />
+                    <p:inputText value="#{edicionEntes.valido.nombres}" rendered="#{edicionEntes.valido.esPersona}" size="45" />
+                    <p:outputLabel value="Apellidos: " rendered="#{edicionEntes.valido.esPersona}" />
+                    <p:inputText value="#{edicionEntes.valido.apellidos}" rendered="#{edicionEntes.valido.esPersona}" size="45" />
+
+                    <p:outputLabel value="Razón social: " rendered="#{!edicionEntes.valido.esPersona}" />
+                    <p:inputText value="#{edicionEntes.valido.razonSocial}" rendered="#{!edicionEntes.valido.esPersona}" size="60" />
+                    <p:outputLabel value="Nombre Comercial: " rendered="#{!edicionEntes.valido.esPersona}" />
+                    <p:inputText value="#{edicionEntes.valido.nombreComercial}" rendered="#{!edicionEntes.valido.esPersona}" size="60" />
+
+                    <p:outputLabel value="Dirección: "/>
+                    <p:inputText value="#{edicionEntes.valido.direccion}" size="60" />
+
+                    <p:outputLabel value="Fecha de nacimiento: " rendered="#{edicionEntes.valido.esPersona}" />
+                    <p:calendar value="#{edicionEntes.valido.fechaNacimiento}" rendered="#{edicionEntes.valido.esPersona}" pattern="dd/MM/yyyy" />
+
+                    <p:outputLabel value="Título profesional: " rendered="#{edicionEntes.valido.esPersona}"/>
+                    <p:inputText value="#{edicionEntes.valido.tituloProf}" rendered="#{edicionEntes.valido.esPersona}" />
+
+                </h:panelGrid>
+                <br/>
+                <p:contextMenu id="menuRep" for="dtRep">
+                    <p:menuitem value="Unificar" icon="ui-icon-newwin" actionListener="#{edicionEntes.unificar()}" 
+                                style="color: #006699" disabled="#{edicionEntes.unificado}" title="Muestra el cliente Seleccionado que quedará como registro único"/>
+                    <p:menuitem value="Eliminar repetidos" icon="ui-icon-trash" actionListener="#{edicionEntes.eliminarRepetidos()}" 
+                                style="color: #006699" disabled="#{!edicionEntes.unificado}" title="Elimina los registros que estan en esta tabla y actualiza todos los registros asociados a cada persona.">
+                        <p:confirm header="Advertencia: Todos los elementos de esta lista seran eliminados" icon="ui-icon-info" message="Solo quedará la persona que fue seleccionada. ¿Esta seguro de continuar?" />
+                    </p:menuitem>
+                </p:contextMenu>
+
+                <p:dataTable id="dtRep" reflow="true" paginator="true" lazy="true" filterEvent="enter" rendered="#{edicionEntes.listEntesSel.size() > 0}"
+                             value="#{edicionEntes.listEntesSel}" var="userRep" emptyMessage="No se encontró ningún item"
+                             selection="#{edicionEntes.enteValido}" rowKey="#{userRep.id}" style="margin-bottom:0" paginatorPosition="top" >
+                    <p:column headerText="Select" selectionMode="single" style="width:5%; text-align:center"/>
+                    <p:column headerText="C.I./R.U.C." style="text-align: center; width: 20%" >
+                        <h:outputText value="#{userRep.ciRuc}" style="text-align: center; font-size: 12px"/>
+                    </p:column>
+                    <p:column headerText="Nombres" style="text-align: center" rendered="#{userRep.esPersona}" >
+                        <h:outputText value="#{userRep.nombres}"/>
+                    </p:column>
+                    <p:column headerText="Apellidos" style="text-align: center" rendered="#{userRep.esPersona}">
+                        <h:outputText value="#{userRep.apellidos}"/>
+                    </p:column>
+                    <p:column headerText="Razón Social" style="text-align: center" rendered="#{!userRep.esPersona}">
+                        <h:outputText value="#{userRep.razonSocial}"/>
+                    </p:column>    
+                    <p:column headerText="Nombre Comercial" style="text-align: center" rendered="#{!userRep.esPersona}">
+                        <h:outputText value="#{userRep.nombreComercial}"/>
+                    </p:column>
+                </p:dataTable>
+                <br/>
+
+                <center>
+                    <p:commandButton value="Guardar" actionListener="#{edicionEntes.modificar()}" update="frmCorCli:pnlDatosEnte" styleClass="btnStyle" style="height: 25px; "  />
+                    <p:spacer width="5"/>
+                    <p:commandButton value="Salir" actionListener="#{edicionEntes.salir()}" styleClass="btnStyle" style="height: 25px; "  >
+                        <p:confirm rendered="#{edicionEntes.unificado}" header="Advertencia." 
+                                   icon="ui-icon-info" message="No ha terminado de unificar los cliente repetidos. ¿Esta seguro de salir?" />
+                    </p:commandButton>
+                </center>
+
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="detPredios" widgetVar="detallePredios" modal="true" width="50%" height="60%" 
+                  header="Detalle datos de clientes" resizable="false" position="center" appendTo="@(body)"
+                  closeOnEscape="true">
+            <h:form id="frmdet">
+                <h2>Detalle de Predios asociados a cliente seleccionado.</h2>
+                <h2>Registros encontrados: #{edicionEntes.predios.size()}.</h2>
+                <br/>
+                <p:tabView id="tbDatos">
+                    <p:tab title="Predios">
+                        <p:dataTable value="#{edicionEntes.predios}" var="pred" reflow="true" 
+                                     emptyMessage="No se encontro predios asociados" paginator="true" 
+                                     paginatorPosition="top" rows="5">
+                            <p:column headerText="Número de Predio" style="text-align: center; width: 20%" >
+                                <h:outputText value="#{pred.numPredio}" style="text-align: center; "/>
+                            </p:column>
+                            <p:column headerText="Número de Ficha" style="text-align: center; width: 20%" >
+                                <h:outputText value="#{pred.regFicha.numFicha}" style="text-align: center; "/>
+                            </p:column>
+                            <p:column headerText="Código Predial" style="text-align: center; width: 30%" >
+                                <h:outputText value="#{pred.codigoPredial}" style="text-align: center; "/>
+                            </p:column>
+                            <p:column headerText="Manzana" style="text-align: center; width: 15%" >
+                                <h:outputText value="#{pred.urbMz}" style="text-align: center; "/>
+                            </p:column>
+                            <p:column headerText="Solar" style="text-align: center; width: 15%" >
+                                <h:outputText value="#{pred.urbSolarnew}" style="text-align: center; "/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                    <p:tab title="Liquidaciones">
+                       <p:dataTable value="#{edicionEntes.datos.compradoresRenLiquidacionCollection}" var="rl1" reflow="true" 
+                                     emptyMessage="No se encontro predios asociados" paginator="true" 
+                                     paginatorPosition="top" rows="5">
+                           <p:column headerText="Tipo Liquidacion" style="text-align: center; width: 20%" >
+                               <h:outputText value="#{rl1.tipoLiquidacion.nombreTitulo}" style="text-align: center; "/>
+                            </p:column> 
+                           <p:column headerText="Número de Liquidacion" style="text-align: center; width: 20%" >
+                                <h:outputText value="#{rl1.idLiquidacion}" style="text-align: center; "/>
+                            </p:column>
+                            <p:column headerText="Año" style="text-align: center; width: 20%" >
+                                <h:outputText value="#{rl1.anio}" style="text-align: center; "/>
+                            </p:column>
+                            <p:column headerText="Fecha" style="text-align: center; width: 30%" >
+                                <h:outputText value="#{rl1.fechaIngreso}" style="text-align: center; "/>
+                            </p:column>
+                            <p:column headerText="Estado" style="text-align: center; width: 15%" >
+                                <h:outputText value="#{rl1.estadoLiquidacion.descripcion}" style="text-align: center; "/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                    <p:tab title="Predios Rusticos">
+                       <p:dataTable value="#{edicionEntes.datos.catPredioRusticos}" var="pr1" reflow="true" 
+                                     emptyMessage="No se encontro predios asociados" paginator="true" 
+                                     paginatorPosition="top" rows="5">
+                            <p:column headerText="Registro Catastral" style="text-align: center; width: 20%" >
+                                <h:outputText value="#{pr1.regCatastral}" style="text-align: center; "/>
+                            </p:column>
+                            <p:column headerText="Id Predial" style="text-align: center; width: 20%" >
+                                <h:outputText value="#{pr1.idPredial}" style="text-align: center; "/>
+                            </p:column>
+                            <p:column headerText="Nombre Predio" style="text-align: center; width: 30%" >
+                                <h:outputText value="#{pr1.nombrePredio}" style="text-align: center; "/>
+                            </p:column>
+                            <p:column headerText="Parroquia" style="text-align: center; width: 15%" >
+                                <h:outputText value="#{pr1.parroquia.descripcion}" style="text-align: center; "/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                    <p:tab title="Locales Comerciales">
+                        <p:dataTable value="#{edicionEntes.datos.localesComercialesCollection}" var="lc1" reflow="true" 
+                                     emptyMessage="No se encontro predios asociados" paginator="true" 
+                                     paginatorPosition="top" rows="5">
+                            <p:column headerText="Nombre Local" style="text-align: center; width: 20%" >
+                                <h:outputText value="#{lc1.nombreLocal}" style="text-align: center; "/>
+                            </p:column>
+                            <p:column headerText="Num. Local" style="text-align: center; width: 20%" >
+                                <h:outputText value="#{lc1.numLocal}" style="text-align: center; "/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                    <p:tab title="Locales Comerciales">
+                        <p:dataTable value="#{edicionEntes.datos.localesComercialesCollection2}" var="lc2" reflow="true" 
+                                     emptyMessage="No se encontro predios asociados" paginator="true" 
+                                     paginatorPosition="top" rows="5">
+                            <p:column headerText="Nombre Local" style="text-align: center; width: 20%" >
+                                <h:outputText value="#{lc2.nombreLocal}" style="text-align: center; "/>
+                            </p:column>
+                            <p:column headerText="Num. Local" style="text-align: center; width: 20%" >
+                                <h:outputText value="#{cl2.numLocal}" style="text-align: center; "/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                </p:tabView>
+
+                <br/>
+                <center>
+                    <p:commandButton value="Salir" icon="ui-icon-circle-close" onclick="PF('detallePredios').hide()" style="btnStyle"/>
+                </center>
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="patenteAnual" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="47a4f0d6-cf9f-450d-8cd4-e865b08b1345">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="7"/>
+	<parameter name="LIQUIDACION" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\Users\\supergold\\Documents\\sgm\\src\\main\\webapp\\css\\homeIconsImages\\logo.jpg"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    EL.descripcion AS estado_liquidacion,
+    l.num_comprobante AS NUM_COMPROBANTE,
+    l.num_liquidacion AS NUM_LIQUIDACION,
+    L.fecha_ingreso AS fecha_ingreso,
+    L.OBSERVACION AS OBSERVACION,
+    L.TOTAL_PAGO AS TOTAL,
+    b.capital AS capital,
+    b.anio_balance AS anio_balance,
+    b.fecha_balance AS fecha_balance,
+    LU.DESCRIPCION AS UBICACION,
+    LC.NUM_LOCAL AS NUM_LOCAL,
+    LC.NOMBRE_LOCAL AS NOMBRE_LOCAL,
+    CASE WHEN E.ES_PERSONA THEN E.APELLIDOS || ' ' ||E.NOMBRES ELSE E.RAZON_SOCIAL END,
+    E.CI_RUC AS RUC,
+    CASE WHEN rz.ES_PERSONA THEN rz.APELLIDOS || ' ' ||rz.NOMBRES ELSE rz.RAZON_SOCIAL END AS razon_social_local,
+    rz.CI_RUC AS RUC_razon_social
+FROM
+     sgm_financiero.ren_liquidacion L LEFT OUTER JOIN sgm_financiero.ren_local_comercial LC ON LC.id = L.local_comercial
+     LEFT OUTER JOIN sgm_financiero.ren_tipo_liquidacion TL ON L.tipo_liquidacion = TL.id
+     LEFT OUTER JOIN sgm_app.cat_ente E ON E.id = L.comprador
+     LEFT OUTER JOIN sgm_financiero.ren_local_ubicacion LU ON LC.ubicacion = LU.id
+     LEFT OUTER JOIN sgm_financiero.ren_balance_local_comercial b ON L.id = b.num_liquidacion
+     LEFT OUTER JOIN sgm_app.cat_ente rz ON rz.id = LC.razon_social
+     LEFt OUTER JOIN sgm_financiero.ren_estado_liquidacion El ON EL.ID =L.ESTADO_LIQUIDACION
+
+
+WHERE
+     L.ID = $P{LIQUIDACION}
+ AND b.estado = true]]>
+	</queryString>
+	<field name="estado_liquidacion" class="java.lang.String"/>
+	<field name="num_comprobante" class="java.lang.Long"/>
+	<field name="num_liquidacion" class="java.lang.Long"/>
+	<field name="fecha_ingreso" class="java.sql.Timestamp"/>
+	<field name="observacion" class="java.lang.String"/>
+	<field name="total" class="java.math.BigDecimal"/>
+	<field name="capital" class="java.math.BigDecimal"/>
+	<field name="anio_balance" class="java.lang.Integer"/>
+	<field name="fecha_balance" class="java.sql.Date"/>
+	<field name="ubicacion" class="java.lang.String"/>
+	<field name="num_local" class="java.lang.String"/>
+	<field name="nombre_local" class="java.lang.String"/>
+	<field name="razon_social" class="java.lang.String"/>
+	<field name="ruc" class="java.lang.String"/>
+	<field name="razon_social_local" class="java.lang.String"/>
+	<field name="ruc_razon_social" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="67" splitType="Stretch">
+			<image onErrorType="Blank">
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="0" y="0" width="57" height="67" uuid="6e2b2781-bedd-4213-a3ec-f5e25fb77f5d"/>
+				<imageExpression><![CDATA[$P{LOGO} == null? null: $P{LOGO}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="67" y="44" width="456" height="18" uuid="d4694052-3622-4387-9290-7f1846e48a62"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="13" isBold="true" isUnderline="false" isStrikeThrough="false"/>
+				</textElement>
+				<text><![CDATA[DECLARACION PARA EL PAGO DE PATENTE ANUAL MUNICIPAL]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="543" splitType="Stretch">
+			<frame>
+				<reportElement x="0" y="415" width="555" height="127" uuid="a0b32c02-b819-4ac0-a921-c40965ab8293"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<staticText>
+					<reportElement x="10" y="14" width="74" height="17" uuid="4082f654-b599-40d8-bc97-85d2880e2c91"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Observacion:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="10" y="31" width="484" height="17" uuid="8c0f5503-3862-447a-ac46-3add9f25a3f8"/>
+					<textElement>
+						<font fontName="Arial" size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{observacion}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="199" y="100" width="160" height="1" uuid="4bb2585b-38e5-411c-93cd-571bc10131ad"/>
+				</line>
+				<staticText>
+					<reportElement x="199" y="107" width="160" height="20" uuid="f0e11dd9-61f2-4ffb-9398-cea5460ae299"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[JEFE DE RENTAS]]></text>
+				</staticText>
+			</frame>
+			<textField pattern="#,##0.00" isBlankWhenNull="false">
+				<reportElement x="438" y="295" width="115" height="18" uuid="e21e9687-3a2d-4210-84aa-050b327736d6"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{capital} == null? "0.00" : $F{capital}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="438" y="313" width="115" height="18" uuid="a2e18a41-4415-415b-8c43-ea043a221687"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{total}==null?"$ 0.00":$F{total}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="313" width="438" height="18" uuid="7bb240ef-ca48-4861-ace7-61d6885638d6"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="12" isBold="true"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<text><![CDATA[TOTAL A PAGAR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="295" width="438" height="18" uuid="6066b985-bc07-479b-9345-7b4dfd8b02c2"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Capital o Patrimonio]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="68" y="0" width="455" height="16" uuid="27472b18-dd4c-401c-a252-3e7fa9d0b2b0"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["FECHA: " + new java.text.SimpleDateFormat("dd/MM/yyyy").format($F{fecha_ingreso}) + "   NUMERO LIQUIDACIÓN: " + ($F{num_liquidacion} == null? "" : $F{num_liquidacion})]]></textFieldExpression>
+			</textField>
+			<frame>
+				<reportElement x="0" y="103" width="553" height="35" uuid="ca181029-a547-44bb-81d4-d92f50a6780b"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<staticText>
+					<reportElement x="0" y="0" width="119" height="18" uuid="2a6635f0-126c-47a6-82fb-cb52d39f12f1"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Contribuyente:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="0" y="18" width="402" height="17" uuid="b44e1106-039a-468c-9fe4-bc70736840d3"/>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{razon_social}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="402" y="18" width="151" height="17" uuid="7bd8db43-3cd9-40ce-8dc5-e41d94501431"/>
+					<box>
+						<leftPen lineWidth="1.0"/>
+					</box>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ruc}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement x="0" y="138" width="553" height="35" uuid="fe3706ce-a0cb-40a2-86c8-b18224c70edd"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textField isBlankWhenNull="true">
+					<reportElement x="0" y="17" width="402" height="17" uuid="0d70d268-6585-457c-88eb-77d70cdf9b1d"/>
+					<textElement>
+						<font fontName="Arial"/>
+						<paragraph leftIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{nombre_local}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="0" width="119" height="17" uuid="7be298e4-c931-4d7e-aa87-3979287235cc"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Nombre Local:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="402" y="17" width="151" height="17" uuid="f283c270-a737-4bc9-8368-f1a577d10c58"/>
+					<box>
+						<leftPen lineWidth="1.0"/>
+					</box>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{num_local}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="402" y="0" width="119" height="17" uuid="35c1d8da-bd99-48c7-960d-9385a42bc790"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Número de Local:]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement x="0" y="207" width="553" height="35" uuid="5c11642f-dcc3-403c-b89a-2403bbf273c7"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textField isBlankWhenNull="true">
+					<reportElement x="0" y="17" width="551" height="18" uuid="61637213-09e9-4215-a096-9eea29185ade"/>
+					<textElement>
+						<font fontName="Arial"/>
+						<paragraph leftIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ubicacion}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="0" width="119" height="17" uuid="9f95b7c0-be55-4146-baec-f71355ab9c39"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Direccion:]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement x="0" y="171" width="553" height="35" uuid="7fc629f8-2445-4c88-a7be-73b0619e1bbf"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<staticText>
+					<reportElement x="0" y="1" width="119" height="18" uuid="ca313568-5648-40fc-be35-450c0d07f814"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Razón social:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="0" y="18" width="402" height="17" uuid="99615565-7798-45aa-97a0-be60dd1e11fe"/>
+					<textElement>
+						<font fontName="Arial"/>
+						<paragraph leftIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{razon_social_local}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="402" y="18" width="151" height="17" uuid="e4b670e5-179a-496b-a796-f4947cb42ee8"/>
+					<box>
+						<leftPen lineWidth="1.0"/>
+					</box>
+					<textElement>
+						<font fontName="Arial"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ruc}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="2" y="28" width="258" height="14" uuid="9403ca1d-30c4-475f-9090-2cd255c9c2d7"/>
+				<textElement>
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Fecha de Balance:" +($F{fecha_balance}==null?"":$F{fecha_balance})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="275" y="28" width="278" height="14" uuid="b46ef8d3-3607-41b8-b25c-e904572ed209"/>
+				<textElement>
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Num. Comprobante:"+($F{num_comprobante}== null? "" :$F{num_comprobante})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2" y="43" width="258" height="14" uuid="911d3f7a-edbf-4aa4-b463-9431ba8bd6c6"/>
+				<textElement>
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Estado:"+ ($F{estado_liquidacion}==null?"":$F{estado_liquidacion})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="275" y="43" width="232" height="14" uuid="65929a41-8c8b-49a6-b2ec-48c26f994bc9"/>
+				<textElement>
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Año de Cobro:"+ ($F{anio_balance}==null?"":$F{anio_balance})]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="20" splitType="Stretch">
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement x="2" y="0" width="186" height="20" uuid="127788af-1e72-4487-9631-f1b2d3c5d7df"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

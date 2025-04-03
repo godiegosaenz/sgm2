@@ -1,0 +1,611 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition>
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="content">
+
+        <h:form id="forGenLiq">
+            <p:panelGrid styleClass="noBorder" columns="4" style="width: 100%;font-size: 14px;">
+                <p:outputLabel value="Tarea: #{generarLiquidacionPC.taskDataByTaskID.name}" style="font-weight: bolder;color: #005f9c"/>
+                <p:outputLabel value="No Trámite: #{generarLiquidacionPC.histTramite.id}" style="font-weight: bolder;color: #005f9c"/>
+                <p:outputLabel value="Responsable: #{generarLiquidacionPC.taskDataByTaskID.assignee}" style="font-weight: bolder;color: #005f9c"/>
+            </p:panelGrid>
+            <br/>
+            <p:panelGrid id="pnlgCartaAdosamiento" columns="2" >
+                <h:panelGroup>
+                    <p:outputLabel value="Entrego Carta de adosamiento" />
+                    <p:selectOneRadio   styleClass="noBorder" id="catRet" value="#{generarLiquidacionPC.permisoNuevo.cartaAdosamiento}" style="width: 150px" >                                             
+                        <f:selectItem itemLabel="Si" itemValue="#{true}" />  
+                        <f:selectItem itemLabel="No" itemValue="#{false}"  /> 
+                        <p:ajax update="forGenLiq:pnlgCartaAdosamiento, forGenLiq:dtCartaAdos" />
+                    </p:selectOneRadio>
+                </h:panelGroup>
+                <p:dataTable id="dtCartaAdos" value="#{generarLiquidacionPC.cartaAdosamiento}" var="cart" style="width: 60%" reflow="true"
+                             emptyMessage="No ha cargado documento alguno" rendered="#{generarLiquidacionPC.permisoNuevo.cartaAdosamiento}" >
+                    <f:facet name="header">
+                        Carta de adosamiento
+                        <p:commandLink value="Adjuntar Carta" onclick="PF('dlgDocCarta').show();" style="float: right" update="frmSelectCarta" />
+                    </f:facet>
+                    <p:column headerText="Archivo" style="width: 60%">
+                        #{cart.nombre}
+                    </p:column>
+                    <p:column headerText="Tipo" style="width: 20%">
+                        #{cart.tipo}
+                    </p:column>
+                    <p:column headerText="Opci&#243;n" style="width: 20%">
+                        <p:commandLink value="Eliminar" actionListener="#{generarLiquidacionPC.eliminarCartaAdosamiento(cart)}" update="forGenLiq:dtCartaAdos" />
+                    </p:column>
+                </p:dataTable>
+            </p:panelGrid>
+
+            <p:panelGrid id="panelCons" style="width: 100%; margin: 0px; margin-bottom: 20px">
+                <f:facet name="header" >
+                    <p:column colspan="17" style="color: #006699" styleClass="headerWhite">PERMISO DE CONSTRUCCIÓN</p:column>
+                </f:facet>
+                <p:row style="margin-top: 10px;">
+                    <p:column colspan="17">
+                        <p:dataTable id="dtSubirPla" value="#{generarLiquidacionPC.files}" var="doc" style="width: 60%" reflow="true" emptyMessage="No ha cargado documento alguno">
+                            <f:facet name="header">
+                                Subir el plano del Permiso de Contrucci&#243;n
+                                <p:commandLink id="btnAgrPla" value="Cargar documentos" onclick="PF('dlgDocPl').show()" style="font-size: 14px; font-weight: bold; color: #0033FF; float: right" />
+                            </f:facet>
+                            <p:column headerText="Archivo" style="width: 60%">
+                                #{doc.nombre}
+                            </p:column>
+                            <p:column headerText="Tipo" style="width: 20%">
+                                #{doc.tipo}
+                            </p:column>
+                            <p:column headerText="Opci&#243;n" style="width: 20%">
+                                <p:commandLink value="Eliminar" actionListener="#{generarLiquidacionPC.eliminarFile(doc)}" update="forGenLiq:dtSubirPla" />
+                            </p:column>
+                        </p:dataTable>
+                        <br/>
+                    </p:column>
+                </p:row>
+                <!-- Busqueda Cod Predio -->
+                <p:row styleClass="ui-widget-header" style="margin-top: 10px;" >   
+                    <p:column colspan="17">
+                        <center>
+                            Número Predio <p:inputText id="numPre" value="#{generarLiquidacionPC.predio.numPredio}" type="number"/><p:spacer width="5"/>
+                            <p:commandLink update="panelCons" action="#{generarLiquidacionPC.consultarNumPredio()}" >
+                                <p:graphicImage value="/css/homeIconsImages/buscar.png" height="20"/>
+                            </p:commandLink>
+                        </center>
+                    </p:column>
+                </p:row> 
+                <p:row >
+                    <p:column colspan="17">
+                        <h:panelGrid columns="17" >
+                            <p:outputLabel value="Sector"/>
+                            <p:outputLabel value="Mnz."/>
+                            <p:outputLabel value="Cdla."/>
+                            <p:outputLabel value="Mz. Div "/>
+                            <p:outputLabel value="Solar"/>
+                            <p:outputLabel value="Div1"/>
+                            <p:outputLabel value="Div2"/>
+                            <p:outputLabel value="Div3"/>
+                            <p:outputLabel value="Div4"/>
+                            <p:outputLabel value="Div5"/>
+                            <p:outputLabel value="Div6"/>
+                            <p:outputLabel value="Div7"/>
+                            <p:outputLabel value="Div8"/>
+                            <p:outputLabel value="Div9"/>
+                            <p:outputLabel value="Phv"/>
+                            <p:outputLabel value="Phh"/>
+                            <p:outputLabel value=""/>
+
+                            <p:inputText value="#{generarLiquidacionPC.predio.sector}" type="number" maxlength="4" style="width: 50px;"/>
+                            <p:inputText value="#{generarLiquidacionPC.predio.mz}" type="number" maxlength="4" style="width: 80%;"/>
+                            <p:inputText value="#{generarLiquidacionPC.predio.cdla}" type="number" maxlength="4" style="width: 80%;"/>
+                            <p:inputText value="#{generarLiquidacionPC.predio.mzdiv}" type="number" maxlength="4" style="width: 70%;"/>
+                            <p:inputText value="#{generarLiquidacionPC.predio.solar}" type="number" maxlength="4" style="width: 80%;"/>
+                            <p:inputText value="#{generarLiquidacionPC.predio.div1}" type="number" maxlength="1"  style="width: 80%;"/>
+                            <p:inputText value="#{generarLiquidacionPC.predio.div2}" type="number" maxlength="1"  style="width: 80%;"/>
+                            <p:inputText value="#{generarLiquidacionPC.predio.div3}" type="number" maxlength="1"  style="width: 80%;"/>
+                            <p:inputText value="#{generarLiquidacionPC.predio.div4}" type="number" maxlength="1"  style="width: 80%;"/>
+                            <p:inputText value="#{generarLiquidacionPC.predio.div5}" type="number" maxlength="1"  style="width: 80%;"/>
+                            <p:inputText value="#{generarLiquidacionPC.predio.div6}" type="number" maxlength="1"  style="width: 80%;"/>
+                            <p:inputText value="#{generarLiquidacionPC.predio.div7}" type="number" maxlength="1"  style="width: 80%;"/>
+                            <p:inputText value="#{generarLiquidacionPC.predio.div8}" type="number" maxlength="1"  style="width: 80%;"/>
+                            <p:inputText value="#{generarLiquidacionPC.predio.div9}" type="number" maxlength="1"  style="width: 80%;"/>
+                            <p:inputText value="#{generarLiquidacionPC.predio.phv}" type="number" maxlength="2" style="width: 80%;"/>
+                            <p:inputText value="#{generarLiquidacionPC.predio.phh}" type="number" maxlength="2" style="width: 80%;"/>
+                            <p:commandLink actionListener="#{generarLiquidacionPC.consultarCodPredio()}" update="panelCons" >
+                                <p:graphicImage value="/css/homeIconsImages/buscar.png" height="20"/>
+                            </p:commandLink>
+                        </h:panelGrid>
+                    </p:column>
+                </p:row>
+                <!-- Datos de Permiso -->
+                <p:row>
+                    <p:column colspan="17" styleClass="ui-widget-header" style="text-align: center">Datos de Permiso</p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="4">
+                        Tipo Permiso<br/>
+                        <p:selectOneMenu id="tipConstruccion" value="#{generarLiquidacionPC.histTramite.tipoTramiteNombre}"  style="width: 160px;"  >  
+                            <f:selectItem value="#{null}" itemLabel="Seleccion..." itemValue="#{null}"/>
+                            <f:selectItems value="#{generarLiquidacionPC.listRequisTra}" var="req1" itemValue="#{req1.descripcion}"  itemLabel="#{req1.descripcion}" itemDisabled="false"/>
+                            <p:ajax update="forGenLiq" listener="#{generarLiquidacionPC.actualizarTipoPermiso()}"/>
+                        </p:selectOneMenu>                                     
+                    </p:column>
+                    <p:column colspan="4">A&#241;o Tramite<br/>
+                        <p:inputText value="#{generarLiquidacionPC.permisoNuevo.anioTramite}" type="number"  /></p:column>
+                    <p:column colspan="3">Número de Tramite<br/>
+                        <p:inputText value="#{generarLiquidacionPC.permisoNuevo.tramite.id}"  /></p:column>
+                    <p:column colspan="3">Fecha Emisi&#243;n<br/>
+                        <p:calendar value="#{generarLiquidacionPC.permisoNuevo.fechaEmision}"  /></p:column>
+                    <p:column colspan="3">Fecha Caducidad<br/>
+                        <p:calendar value="#{generarLiquidacionPC.permisoNuevo.fechaCaducidad}"  /></p:column>
+                </p:row>
+                <!-- Datos de Propietario-->
+                <p:row>
+                    <p:column colspan="17" styleClass="ui-widget-header" style="text-align: center">
+                        Datos de Propietario
+                        <p:commandLink id="btnAgrPro" value="Agregar Propietario" actionListener="#{generarLiquidacionPC.renderPersNat()}" style="color: #0033FF; font-weight: bold; float: right; font-size: 14px; " disabled="false"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="17">
+                        <p:dataTable id="dtProp" value="#{generarLiquidacionPC.listaPropietarios}" var="prop" style="width: 100%" reflow="true" emptyMessage="No hay asignado Propietarios al Predio">
+                            <p:column headerText="#C.I. O R.U.C" style="text-align: center;font-weight: bold">
+                                <p:outputLabel value="#{prop.ente.ciRuc}"/>
+                            </p:column>
+                            <p:column headerText="Propietario" style="text-align: center;font-weight: bold">
+                                <p:outputLabel value="#{prop.ente.nombres} #{prop.ente.apellidos}" rendered="#{prop.ente.esPersona}"/>
+                                <p:outputLabel value="#{prop.ente.razonSocial}" rendered="#{!prop.ente.esPersona}"/>
+                            </p:column>
+                            <p:column headerText="Opci&#243;n" style="text-align: center;font-weight: bold">
+                                <p:commandLink value="Eliminar" actionListener="#{generarLiquidacionPC.eliminarProp(prop)}" update="forGenLiq:dtProp" process="dtProp"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:column>
+                </p:row>
+                <!-- Responsable Tecnico-->
+                <p:row id="responbTec" >
+                    <p:column colspan="5">
+                        Ced. Identidad <p:inputMask id="ciIde" mask="9999999999" value="#{generarLiquidacionPC.respTec.ciRuc}" />
+                        <p:commandLink actionListener="#{generarLiquidacionPC.buscarTecnico()}" process="responbTec" >
+                            <p:graphicImage value="/css/homeIconsImages/buscar.png" height="20"/>
+                        </p:commandLink>
+                    </p:column>
+                    <p:column colspan="7">
+                        Resp. Tecnico <p:inputText id="resT" value="#{generarLiquidacionPC.nombreTec}" style="width: 75%;"/> 
+                        <p:commandButton icon="ui-icon-pencil" onclick="PF('dlgEditRespTec').show()" update="formEditResp" iconPos="s" style=" height: 30px; color: #ffffff; background: #616161 !important; font-weight: bold;"/>
+                    </p:column>
+                    <p:column colspan="5">
+                        Registro Profesional <p:inputText id="regP" value="#{generarLiquidacionPC.respTec.regProf}" style="width: 50%"/>
+                    </p:column>
+                </p:row>
+                <!-- Ubicaci&#243;n-->
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="17" style="text-align: center">Ubicaci&#243;n</p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="3">
+                        Sector <p:inputText value="La Puntilla" style="width: 70%" readonly="true" />                                   
+                    </p:column>
+                    <!--                    <p:column colspan="5">Urbanizaci&#243;n <p:inputText value="# {generarLiquidacionPC.permisoNuevo.nombUrbanizacionImpresa}"  style="width: 70%" readonly="true"/></p:column>-->
+                    <p:column colspan="5">
+                        Urbanizaci&#243;n
+                        <p:selectOneMenu value="#{generarLiquidacionPC.permisoNuevo.nombUrbanizacionImpresa}">
+                            <f:selectItem itemLabel="Seleccione..." itemValue="#{null}"/>
+                            <f:selectItems value="#{generarLiquidacionPC.ciudadelas}" var="cdl" itemLabel="#{cdl.nombre}" itemValue="#{cdl.nombre}"/>
+                        </p:selectOneMenu>
+                    </p:column>
+                    <p:column colspan="3">Manzana <p:inputText value="#{generarLiquidacionPC.permisoNuevo.urbmz}" style="width: 50%" readonly="false"/></p:column>
+                    <p:column colspan="3">Solar <p:inputText value="#{generarLiquidacionPC.permisoNuevo.urbsolar}" style="width: 50%" readonly="false"/></p:column>
+                    <p:column colspan="3">Calle <p:inputText value="#{generarLiquidacionPC.permisoNuevo.calle}" style="width: 70%" readonly="true"/></p:column>
+                </p:row>
+                <!-- edificaci&#243;n-->
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="17" style="text-align: center">Caracteristicas del Predio</p:column>
+                </p:row>
+                <p:row >
+                    <p:column colspan="2">
+                        Edificaci&#243;n<br/>
+                        <p:selectOneMenu  id="lisedif" value="#{generarLiquidacionPC.numEdificacion}"  style="width:100%;">  
+                            <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}" />                                                        
+                            <f:selectItem itemLabel="EDIFICACION PRINCIPAL" itemValue="0"/>  
+                            <f:selectItem itemLabel="ANEXO 1" itemValue="1" />  
+                            <f:selectItem itemLabel="ANEXO 2" itemValue="2" />  
+                            <f:selectItem itemLabel="ANEXO 3" itemValue="3" />  
+                            <f:selectItem itemLabel="ANEXO 4" itemValue="4" />  
+                            <f:selectItem itemLabel="ANEXO 5" itemValue="5" />                                                         
+                            <f:selectItem itemLabel="ANEXO 6" itemValue="6" />
+                            <f:selectItem itemLabel="ANEXO 7" itemValue="7" />
+                            <f:selectItem itemLabel="ANEXO 8" itemValue="8" />
+                            <f:selectItem itemLabel="ANEXO 9" itemValue="9" />
+                            <f:selectItem itemLabel="ANEXO 10" itemValue="10"/>
+                        </p:selectOneMenu> 
+                    </p:column>
+
+                    <p:column colspan="2">
+                        # Pisos<br/>
+                        <p:inputText id="pis" value="#{generarLiquidacionPC.nuevDetalleEdif.numeroPisos}" style="width: 80%"  />
+                    </p:column>
+                    <p:column colspan="2">
+                        Descripci&#243;n<br/>
+                        <p:inputText id="descp" value="#{generarLiquidacionPC.nuevDetalleEdif.descEdificacion}"  style="width: 100%" />
+                    </p:column>
+                    <p:column colspan="2">
+                        Area Construc<br/>
+                        <pe:inputNumber id="areaConstrucc" value="#{generarLiquidacionPC.nuevDetalleEdif.areaConstruccion}" style="width: 70%" />
+                    </p:column>
+                    <p:column colspan="1">
+                        Acci&#243;n<br/>
+                        <p:commandButton id="bAgrPro" value="Agregar" actionListener="#{generarLiquidacionPC.agregarEdifi()}" update="lisedif, pis, descp, areaConstrucc, por" style="height: 20px;" styleClass="btnStyle"/>
+                    </p:column>
+
+                    <p:column colspan="8" rowspan="4"  > 
+                        <h:panelGrid columns="4" >
+                            <p:outputLabel value="Altura"/>
+                            <pe:inputNumber value="#{generarLiquidacionPC.permisoNuevo.altura}" style="width: 100%;" />
+                            
+                            <p:outputLabel value="# Edifi. "/>
+                            <p:inputText value="#{generarLiquidacionPC.permisoNuevo.cantidadEdificaciones}" style="width: 100%;" type="number"/>
+
+                            <p:outputLabel value="# Piso B.N.B "/>
+                            <p:inputText value="#{generarLiquidacionPC.permisoNuevo.pisosBnb}" style="width: 100%;" type="number"/>
+                            
+                            <p:outputLabel value="# Piso S.N.B "/> 
+                            <p:inputText value="#{generarLiquidacionPC.permisoNuevo.pisosSnb}" style="width: 100%;" type="number"/>
+
+                            <p:outputLabel value="Area. Edif. "/>
+                            <pe:inputNumber id="ad" value="#{generarLiquidacionPC.permisoNuevo.areaEdificaciones}" style="width: 100%;" readonly="true"/>
+                            
+                            <p:outputLabel value="# Parqueo "/>
+                            <p:inputText value="#{generarLiquidacionPC.permisoNuevo.cantidadParqueos}" style="width: 100%;"/>
+
+                            <p:outputLabel value="Area.Parqueo "/>
+                            <pe:inputNumber value="#{generarLiquidacionPC.permisoNuevo.areaParqueos}" style="width: 100% !important" >
+                                <p:ajax event="change" listener="#{generarLiquidacionPC.calculoAreaConstruccion()}" update="ac"/>
+                            </pe:inputNumber> 
+                            
+                            <p:outputLabel value="Ret. Frontal "/>
+                            <pe:inputNumber value="#{generarLiquidacionPC.permisoNuevo.retiroFrontal}" style="width: 100%;" />
+
+                            <p:outputLabel value="Ret. Lateral1 "/>
+                            <pe:inputNumber id="retLat1" value="#{generarLiquidacionPC.permisoNuevo.retiroLateral1}"  style="width: 100%;" />
+                            
+                            <p:outputLabel value="Ret. Lateral2 "/>
+                            <pe:inputNumber id="retLat2" value="#{generarLiquidacionPC.permisoNuevo.retiroLateral2}"  style="width: 100%;" />
+
+                            <p:outputLabel value="Ret. Posterior "/>
+                            <pe:inputNumber value="#{generarLiquidacionPC.permisoNuevo.retiroPosterior}" style="width: 100%;"  />
+                        </h:panelGrid>
+                        Descripci&#243;n de la Edificaci&#243;n.<br/>
+                        <p:inputText value="#{generarLiquidacionPC.permisoNuevo.descFamiliar}" style="width: 100%;"/>
+
+                    </p:column>
+                </p:row>
+                <p:row id="rowDtEdif">
+                    <p:column colspan="9">
+                        <p:dataTable id="dtEdif" var="edf" value="#{generarLiquidacionPC.detallesEdific}" selectionMode="single" selection="#{generarLiquidacionPC.permisoSelect}" rowKey="#{edf.descEdificacion}" emptyMessage="No ha ninguna edificaci&#243;n cargada" rowIndexVar="rowIndex" >
+                            <p:ajax event="rowSelect" listener="#{generarLiquidacionPC.onRowSelect}" /> 
+                            <!--p:ajax event="rowUnselect" listener="# {generarLiquidacionPC.onRowUnselect}" /-->
+                            <p:column headerText="Edificaci&#243;n" style="text-align: center;font-weight: bold">
+                                <p:outputLabel value="#{edf.descEdificacion}"/>
+                            </p:column>
+                            <p:column headerText="# Pisos" style="text-align: center;font-weight: bold">
+                                <p:outputLabel value="#{edf.numeroPisos}"/>
+                            </p:column>
+                            <p:column headerText="Descripci&#243;n" style="text-align: center;font-weight: bold">
+                                <p:outputLabel value="#{edf.descripcion}"/>
+                            </p:column>
+                            <p:column headerText="Area Construcc" style="text-align: center;font-weight: bold">
+                                <p:outputLabel value="#{edf.areaConstruccion}">
+                                    <f:convertNumber pattern="####,##0.00"/>
+                                </p:outputLabel>
+                            </p:column>
+                            <p:column headerText="Acci&#243;n" style="text-align: center;font-weight: bold;  width: 80px;">
+                                <p:commandButton value="Borrar" actionListener="#{generarLiquidacionPC.eliminarEdif(edf)}" process="dtEdif" style="height: 20px; float: right; color: #ffffff; background: #616161 !important; font-weight: bold;" />
+                            </p:column>
+                        </p:dataTable>
+                    </p:column>
+                </p:row>
+
+                <p:row style="border-bottom-color:#ffffff !important;" id="rowCarat">
+                    <p:column colspan="3">
+                        Categor&#237;a<br/>
+                        <p:selectOneMenu  id="lisCartg" value="#{generarLiquidacionPC.categoria}" converter="entityConverter" style="width:100%;" >  
+                            <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>                                                        
+                            <f:selectItems value="#{generarLiquidacionPC.listCat}" var="c" itemLabel="#{c.nombre}" itemValue="#{c}" />
+                            <p:ajax listener="#{generarLiquidacionPC.actulizarLista()}" update="forGenLiq:lisCaract"/>
+                        </p:selectOneMenu> 
+                    </p:column>
+
+                    <p:column colspan="3" >
+                        Caracter&#237;tica<br/>
+                        <p:selectOneMenu id="lisCaract" value="#{generarLiquidacionPC.carateristicas}" converter="entityConverter" style="width:100%;">  
+                            <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}" />                                                        
+                            <f:selectItems value="#{generarLiquidacionPC.lisCatEdfProp}" var="ct" itemLabel="#{ct.nombre}" itemValue="#{ct}" />
+                        </p:selectOneMenu> 
+                    </p:column>
+
+                    <p:column colspan="2" >
+                        Porcentaje<br/>
+                        <pe:inputNumber id="por" value="#{generarLiquidacionPC.detallePermiso.porcentaje}"  style="width: 100%" readonly="true" />
+                    </p:column>
+
+                    <p:column colspan="1">
+                        Acci&#243;n<br/>
+                        <p:commandButton value="Agregar" actionListener="#{generarLiquidacionPC.agregarDetalleEdif()}"  style="height: 20px;" styleClass="btnStyle"/>
+                    </p:column>
+
+                </p:row>
+                <p:row id="rowEspEdfi">
+                    <p:column colspan="9">
+                        <p:dataTable id="dtCartEdif" value="#{generarLiquidacionPC.permisoSelect.peDetallePermisoCollection}" var="dtp" style="width: 100%" emptyMessage="No ha cargado documento alguno">
+                            <p:column headerText="Edificacion" style="text-align: center;" >
+                                <h:outputText value="#{dtp.idPermisoEdificacion.descEdificacion}"/>  
+                            </p:column>
+                            <p:column headerText="Categor&#237;a" style="text-align: center;font-weight: bold">
+                                <p:outputLabel value="#{dtp.idCatEdfProp.categoria.nombre}"/>
+                            </p:column>
+                            <p:column headerText="Caracter&#237;ticas" style="text-align: center;font-weight: bold">
+                                <p:outputLabel value="#{dtp.idCatEdfProp.nombre}"/>
+                            </p:column>
+                            <p:column headerText="Porcentaje" style="text-align: center;font-weight: bold; width: 80px;">
+                                <p:outputLabel value="#{dtp.porcentaje}" >
+                                    <f:convertNumber pattern="####,##0.00"/>
+                                </p:outputLabel>
+                            </p:column>
+                            <p:column headerText="Opci&#243;n" style="text-align: center;font-weight: bold; width: 80px;">
+                                <p:commandButton value="Borrar" process="dtCartEdif" actionListener="#{generarLiquidacionPC.eliminarDetalleEdif(dtp)}" update="forGenLiq:dtCartEdif" style="height: 20px; float: right; color: #ffffff; background: #616161 !important; font-weight: bold;" />
+                            </p:column>
+                        </p:dataTable>
+                    </p:column>
+                </p:row>
+
+                <p:row styleClass="ui-widget-header">
+                    <p:column colspan="3" style="text-align: center">Retiro Frontal</p:column> 
+                    <p:column colspan="4" style="text-align: center">Retiro Lateral 1</p:column> 
+                    <p:column colspan="4" style="text-align: center">Retiro Lateral 2 </p:column> 
+                    <p:column colspan="3" style="text-align: center">Retiro Posterior</p:column> 
+                    <p:column colspan="3" style="text-align: center">Registro Vista </p:column> 
+                </p:row>
+                <p:row >
+                    <p:column colspan="3">Carta/Ados 
+                        <h:selectOneRadio styleClass="noBorder" id="carados1" value="#{generarLiquidacionPC.permisoNuevo.caradosrf}" style="font-family: Arial;font-weight:lighter;font-size: 12px; width: 150px" >                                             
+                            <f:selectItem itemLabel="S" itemValue="S" />  
+                            <f:selectItem itemLabel="N" itemValue="N"  />  
+                        </h:selectOneRadio>
+                    </p:column> 
+                    <p:column colspan="4">Carta/Ados 
+                        <h:selectOneRadio styleClass="noBorder" id="carados2" value="#{generarLiquidacionPC.permisoNuevo.caradosrl1}" style="font-family: Arial;font-weight:lighter;font-size: 12px; width: 150px"  >                                             
+                            <f:selectItem itemLabel="S" itemValue="S" />  
+                            <f:selectItem itemLabel="N" itemValue="N"  />  
+                        </h:selectOneRadio>
+                    </p:column> 
+                    <p:column colspan="4">Carta/Ados 
+                        <h:selectOneRadio styleClass="noBorder" id="carados3" value="#{generarLiquidacionPC.permisoNuevo.caradosrl2}" style="font-family: Arial;font-weight:lighter;font-size: 12px; width: 150px" >                                             
+                            <f:selectItem itemLabel="S" itemValue="S" />  
+                            <f:selectItem itemLabel="N" itemValue="N"  />  
+                        </h:selectOneRadio>
+                    </p:column>  
+                    <p:column colspan="3">Carta/Ados 
+                        <h:selectOneRadio styleClass="noBorder" id="carados4" value="#{generarLiquidacionPC.permisoNuevo.caradosrp}" style="font-family: Arial;font-weight:lighter;font-size: 12px; width: 150px" >                                             
+                            <f:selectItem itemLabel="S" itemValue="S" />  
+                            <f:selectItem itemLabel="N" itemValue="N"  />  
+                        </h:selectOneRadio>
+                    </p:column> 
+                    <p:column colspan="3">Registro Vista 
+                        <h:selectOneRadio styleClass="noBorder" id="carados5" value="#{generarLiquidacionPC.permisoNuevo.registroVista}" style="font-family: Arial;font-weight:lighter;font-size: 12px; width: 150px" onkeyup="siguiente(this, event);" >                                             
+                            <f:selectItem itemLabel="S" itemValue="S" />  
+                            <f:selectItem itemLabel="N" itemValue="N"  />  
+                        </h:selectOneRadio>
+                    </p:column> 
+                </p:row>
+                <p:row >
+                    <p:column colspan="3">Carta/Acer 
+                        <h:selectOneRadio styleClass="noBorder" id="carAcer1" value="#{generarLiquidacionPC.permisoNuevo.caracerrf}" style="font-family: Arial;font-weight:lighter;font-size: 12px; width: 150px" onkeyup="siguiente(this, event);" >                                             
+                            <f:selectItem itemLabel="S" itemValue="S" />  
+                            <f:selectItem itemLabel="N" itemValue="N"  />  
+                        </h:selectOneRadio>
+                    </p:column> 
+                    <p:column colspan="4">Carta/Acer 
+                        <h:selectOneRadio styleClass="noBorder" id="carAcer2" value="#{generarLiquidacionPC.permisoNuevo.caracerrl1}" style="font-family: Arial;font-weight:lighter;font-size: 12px; width: 150px" onkeyup="siguiente(this, event);" >                                             
+                            <f:selectItem itemLabel="S" itemValue="S" />  
+                            <f:selectItem itemLabel="N" itemValue="N"  />  
+                        </h:selectOneRadio>
+                    </p:column> 
+                    <p:column colspan="4">Carta/Acer 
+                        <h:selectOneRadio styleClass="noBorder" id="carAcer3" value="#{generarLiquidacionPC.permisoNuevo.caracerrl2}" style="font-family: Arial;font-weight:lighter;font-size: 12px; width: 150px" onkeyup="siguiente(this, event);" >                                             
+                            <f:selectItem itemLabel="S" itemValue="S" />  
+                            <f:selectItem itemLabel="N" itemValue="N"  />  
+                        </h:selectOneRadio>
+                    </p:column>  
+                    <p:column colspan="3">Carta/Acer 
+                        <h:selectOneRadio styleClass="noBorder" id="carAcer4" value="#{generarLiquidacionPC.permisoNuevo.caracerrp}" style="font-family: Arial;font-weight:lighter;font-size: 12px; width: 150px" onkeyup="siguiente(this, event);" >                                             
+                            <f:selectItem itemLabel="S" itemValue="S" />  
+                            <f:selectItem itemLabel="N" itemValue="N"  />  
+                        </h:selectOneRadio>
+                    </p:column> 
+                    <p:column colspan="3">Predio es Macro Lote
+                        <h:selectOneRadio styleClass="noBorder" id="esMacroLt" value="#{generarLiquidacionPC.permisoNuevo.esMacroLote}" style="font-family: Arial;font-weight:lighter;font-size: 12px; width: 150px" onkeyup="siguiente(this, event);" >                                             
+                            <f:selectItem itemLabel="S" itemValue="#{true}" />  
+                            <f:selectItem itemLabel="N" itemValue="#{false}"  />  
+                        </h:selectOneRadio>
+                    </p:column> 
+                </p:row>
+
+                <p:row>
+                    <p:column styleClass="ui-widget-header" colspan="17" style="text-align: center">Materiales de Construcci&#243;n </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="3">Area/Construcci&#243;n<br/>
+                        <pe:inputNumber id="ac" value="#{generarLiquidacionPC.permisoNuevo.areaConstruccion}" readonly="true" />
+                    </p:column> 
+                    <p:column colspan="3">Area/Implantaci&#243;n<br/>
+                        <pe:inputNumber value="#{generarLiquidacionPC.permisoNuevo.areaImplantacion}"/>
+                    </p:column> 
+                    <p:column colspan="3">Area/Solar<br/>
+                        <pe:inputNumber value="#{generarLiquidacionPC.permisoNuevo.areaSolar}" />
+                    </p:column>  
+                    <p:column colspan="3">Linea/Fabrica<br/>
+                        <pe:inputNumber value="#{generarLiquidacionPC.permisoNuevo.lineaFabrica}"/>
+                    </p:column> 
+                    <p:column colspan="5">Observaci&#243;n<br/>
+                        <p:inputTextarea value="#{generarLiquidacionPC.permisoNuevo.observacion}" style="width: 80%" placeholder="Ingrese solamente de ser necesaria la observación en el Permiso."/>
+                    </p:column> 
+                </p:row>
+
+            </p:panelGrid>
+            <div align="center">
+                <p:commandButton id="btnGuarCamb" rendered="#{generarLiquidacionPC.guardado}" value="Guardar" style="height: 30px;" 
+                                 styleClass="btnStyle" icon="ui-icon-disk" actionListener="#{generarLiquidacionPC.validar()}" />
+                <p:commandButton id="btnImpLiq" rendered="#{generarLiquidacionPC.imprimir}" actionListener="#{generarLiquidacionPC.imprimirLiquidacion()}" 
+                                 value="Imprimir Liquidaci&#243;n" style="height: 30px;" styleClass="btnStyle" icon="ui-icon-print" />
+                <p:commandButton id="btnBandTar" rendered="#{generarLiquidacionPC.banTarea}" actionListener="#{generarLiquidacionPC.continuar()}" 
+                                 value="Bandeja de Tareas" style="height: 30px;" styleClass="btnStyle"/>
+            </div>
+        </h:form>
+
+        <p:dialog widgetVar="dlgDocPl" modal="true">
+            <h:form>
+                <p:fileUpload id="docsPlano"  fileUploadListener="#{generarLiquidacionPC.handleFileUpload}" multiple="true" mode="advanced"
+                              label="Seleccionar" uploadLabel="Subir" cancelLabel="Cancelar" 
+                              skinSimple="true" sizeLimit="35000000" update="forGenLiq:dtSubirPla"
+                              allowTypes="/(\.|\/)(dwg|pdf)$/" oncomplete="PF('dlgDocPl').hide()"/>
+
+                <div align="center">
+                    <p:commandButton id="AgrPla" value="Aceptar" onclick="PF('dlgDocPl').hide()" styleClass="btnStyle" style="height: 30px;"/>
+                </div>
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog id="docDlg" widgetVar="dlgDocCarta" modal="true" responsive="true" resizable="false" height="40%">
+            <h:form id="frmSelectCarta">
+                <p:fileUpload  fileUploadListener="#{generarLiquidacionPC.handleFileUploadCarta}" multiple="true" mode="advanced"
+                               label="Seleccionar" uploadLabel="Subir" cancelLabel="Cancelar" 
+                               skinSimple="true" sizeLimit="35000000" update="forGenLiq:dtCartaAdos, frmConf"
+                               allowTypes="/(\.|\/)(png|jpg)$/" oncomplete="PF('dlgDocCarta').hide()" />
+
+                <div align="center">
+                    <p:commandButton id="AgrCarta" value="Aceptar" onclick="PF('dlgDocCarta').hide()" styleClass="btnStyle" style="height: 30px;"/>
+                </div>
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog id="confSave" widgetVar="confCartaAdo" modal="true" height="250" closeOnEscape="true" 
+                  width="450" position="center" resizable="false" header="Guardar Permiso de Construcción">
+            <h:form id="frmConf">
+                <p:outputLabel value="#{generarLiquidacionPC.mensaje}" style="font-weight: bold; font-size: 14px;" />
+                <br/>
+                <p:commandLink value="Adjuntar Carta" onclick="PF('dlgDocCarta').show();" style="font-size: 14px;" />
+                <br/><br/><br/>
+                <p:outputLabel value="Observación de Tarea: " style="font-weight: bold; font-size: 14px;" />
+                <p:inputTextarea value="#{generarLiquidacionPC.observacion}" style="width: 80%" placeholder="Ingrese Observación de la Tarea."/>
+                <br/>
+                <center>
+                    <p:outputLabel value="¿Desea Continuar?" style="font-weight: bold; font-size: 14px;"/>
+                    <br/>
+                    <p:commandButton value="Si" icon="ui-icon-check" oncomplete="PF('confCartaAdo').hide()" actionListener="#{generarLiquidacionPC.guardarPermiso()}" style="height: 30px; " styleClass="btnStyle"/>
+                    <p:commandButton value="No" icon="ui-icon-closethick" onclick="PF('confCartaAdo').hide()" style="height: 30px;" styleClass="btnStyle" type="button"/>
+                </center>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Ingreso de Informaci&#243;n Responsable Tecnico" id="nuevoDlgResp" widgetVar="dlgNuevRespTec" modal="true" height="300" width="500" >
+            <h:form id="formIngResp">
+                <p:panelGrid id="datosRespTec" layout="grid" columns="2">
+                    No. C&#233;dula 
+                    <p:inputMask mask="9999999999" value="#{generarLiquidacionPC.respTecNuevo.ciRuc}"/>
+                    Nombres 
+                    <p:inputText value="#{generarLiquidacionPC.respTecNuevo.nombres}"/>
+                    Apellidos 
+                    <p:inputText value="#{generarLiquidacionPC.respTecNuevo.apellidos}"/>
+                    Titulo Profesional 
+                    <p:inputText value="#{generarLiquidacionPC.respTecNuevo.tituloProf}"/>
+                    Registro Profesional 
+                    <p:inputText value="#{generarLiquidacionPC.respTecNuevo.regProf}"/>
+                </p:panelGrid>
+                <br/>
+                <p:commandButton value="Aceptar" actionListener="#{generarLiquidacionPC.guardarResTecn()}" styleClass="btnStyle" process="formIngResp" style="float: right"/>
+            </h:form>        
+        </p:dialog>
+
+        <p:dialog header="Editar Informaci&#243;n Responsable Tecnico" id="editDlgResp" widgetVar="dlgEditRespTec" modal="true" height="300" width="500" >
+            <h:form id="formEditResp">
+                <p:panelGrid id="editRespTec" layout="grid" columns="2">
+                    No. C&#233;dula 
+                    <p:inputMask mask="9999999999" value="#{generarLiquidacionPC.respTec.ciRuc}" readonly="true"/>
+                    Nombres 
+                    <p:inputText value="#{generarLiquidacionPC.respTec.nombres}"/>
+                    Apellidos 
+                    <p:inputText value="#{generarLiquidacionPC.respTec.apellidos}"/>
+                    Titulo Profesional 
+                    <p:inputText value="#{generarLiquidacionPC.respTec.tituloProf}"/>
+                    Registro Profesional 
+                    <p:inputText value="#{generarLiquidacionPC.respTec.regProf}"/>
+                </p:panelGrid>
+                <br/>
+                <p:commandButton value="Aceptar" actionListener="#{generarLiquidacionPC.editarResTecn()}" process="formEditResp" style="float: right" styleClass="btnStyle"/>
+            </h:form>    
+        </p:dialog>
+
+        <p:dialog header="Agregar Propietario" id="dlgNuevPro" widgetVar="dlgNuevPro" modal="true" height="250" 
+                  width="450" resizable="false" >
+            <h:form id="formNuProp">
+                Es Perona Natural 
+                <p:selectBooleanCheckbox value="#{generarLiquidacionPC.propietarioNuevo.esPersona}" >
+                    <p:ajax update="formNuProp" />
+                </p:selectBooleanCheckbox>
+                <br/>
+                <p:panelGrid id="pngProp" layout="grid" columns="3" >
+                    <p:outputLabel value="C&#233;dula: " rendered="#{generarLiquidacionPC.propietarioNuevo.esPersona}"/>
+                    <p:inputMask mask="9999999999" value="#{generarLiquidacionPC.propietarioNuevo.ciRuc}" rendered="#{generarLiquidacionPC.propietarioNuevo.esPersona}" />
+                    <p:outputLabel value="RUC: " rendered="#{!generarLiquidacionPC.propietarioNuevo.esPersona}"/>
+                    <p:inputMask mask="9999999999999" value="#{generarLiquidacionPC.propietarioNuevo.ciRuc}" rendered="#{!generarLiquidacionPC.propietarioNuevo.esPersona}"/>
+                    <p:commandLink actionListener="#{generarLiquidacionPC.buscarPropietario()}">
+                        <p:graphicImage value="/css/homeIconsImages/buscar.png" height="20" width="20"/>
+                    </p:commandLink>
+
+                    <p:outputLabel value="Nombres: " />
+                    <p:inputText value="#{generarLiquidacionPC.propietarioNuevo.nombres}" style="width: 180px" rendered="#{generarLiquidacionPC.propietarioNuevo.esPersona}"/>
+                    <p:inputText value="#{generarLiquidacionPC.propietarioNuevo.razonSocial}" style="width: 180px" rendered="#{!generarLiquidacionPC.propietarioNuevo.esPersona}"/>
+                    <p:outputLabel/>
+
+                    <p:outputLabel value="Apellidos: " rendered="#{generarLiquidacionPC.propietarioNuevo.esPersona}"/>
+                    <p:inputText value="#{generarLiquidacionPC.propietarioNuevo.apellidos}" style="width: 180px" rendered="#{generarLiquidacionPC.propietarioNuevo.esPersona}"/>
+                    <p:outputLabel value="Representante Legal: " rendered="#{!generarLiquidacionPC.propietarioNuevo.esPersona}"/>
+                    <p:inputText value="#{generarLiquidacionPC.representanteLegal}" readonly="true"  rendered="#{!generarLiquidacionPC.propietarioNuevo.esPersona}"/>
+                    <p:commandButton id="busReprestL" actionListener="#{generarLiquidacionPC.seleccionarReprest()}"  rendered="#{!generarLiquidacionPC.propietarioNuevo.esPersona}" >
+                        <p:graphicImage value="/css/homeIconsImages/buscar.png" height="20" width="20"/>
+                    </p:commandButton>
+                </p:panelGrid>
+                <br/>
+                <p:commandButton value="Agregar" type="button" actionListener="#{generarLiquidacionPC.agregarPropietario()}" style="float: right" styleClass="btnStyle"/>
+            </h:form>    
+        </p:dialog>
+
+        <p:dialog id="dlgSelectReprest" header="Representantes" widgetVar="dlgSelectReprest" resizable="false" modal="false" position="center" closable="true" width="800">
+            <h:form id="formSelectInterv">
+                <p:dataTable id="dtIntervLazy" paginator="true" lazy="true" rows="10" rowsPerPageTemplate="10,30,50" scrollHeight="350" scrollable="true"
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             value="#{generarLiquidacionPC.enteLazy}" var="user" emptyMessage="No se encontr&#243; ningún Item">
+                    <p:column headerText="C.I./R.U.C." style="text-align: center;" filterBy="#{user.ciRuc}" filterStyle="width: 80%;" width="120">
+                        <h:outputText value="#{user.ciRuc}" style="text-align: center; font-size: 12px"/>
+                    </p:column>
+                    <p:column headerText="Nombres" style="text-align: center" filterBy="#{user.nombres}" filterStyle="width: 80%;" >
+                        <h:outputText value="#{user.nombres}"/>
+                    </p:column>
+                    <p:column headerText="Apellidos" style="text-align: center" filterBy="#{user.apellidos}" filterStyle="width: 80%;" >
+                        <h:outputText value="#{user.apellidos}"/>
+                    </p:column>   
+                    <p:column headerText="Selecc." style="text-align: center;" width="60">
+                        <p:commandButton icon="ui-icon-plusthick" style="height: 20px;" styleClass="btnStyle" actionListener="#{generarLiquidacionPC.agregarRepresentante(user)}" />                           
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+
+</ui:composition>

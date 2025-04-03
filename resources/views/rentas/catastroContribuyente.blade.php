@@ -97,6 +97,7 @@
             </div>
         </div>
     </div>
+    @include('rentas.modal_locales')
 @endsection
 @push('scripts')
 <!-- jQuery -->
@@ -138,5 +139,11 @@
             "fixedColumns" : true
         });
     })
+
+    function abrirModal(id){
+        $('#modal_local').modal('show')
+        $('#idcont').val(id)
+        llenar_tabla_locales(id)
+    }
 </script>
 @endpush

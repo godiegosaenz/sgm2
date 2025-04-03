@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Listado de Ciudadanos</title>
+    </h:head>
+    <h:body>
+        <h:outputStylesheet name="css/font-icon-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/sentinel-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/core-layout.css" library="sentinel-layout" />
+
+        <h:form id="frmResponsableDialog">
+
+            <p:dataTable id="dtresponsable" reflow="true" paginator="true" lazy="true" rows="20" rowsPerPageTemplate="20,50,100" filterEvent="enter" widgetVar="pts"
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         value="#{ciudadanos.ciudadanosLazy}" var="user" emptyMessage="No se encontró ningún Item">
+                <p:column headerText="C.I./R.U.C." style="text-align: center;width: 20%" filterBy="#{user.ciuCedRuc}" filterStyle="width: 80%;">
+                    <h:outputText value="#{user.ciuCedRuc}" style="text-align: center; font-size: 12px"/>
+                </p:column>
+
+                <p:column headerText="Apellido Paterno" style="text-align: center" filterBy="#{user.ciuApellidoPat}" filterStyle="width: 80%;">
+                    <h:outputText value="#{user.ciuApellidoPat}"/>
+                </p:column>
+                <p:column headerText="Apellido Materno" style="text-align: center" filterBy="#{user.ciuApellidoMat}" filterStyle="width: 80%;">
+                    <h:outputText value="#{user.ciuApellidoMat}"/>
+                </p:column>
+                <p:column headerText="Primer Nombre" style="text-align: center" filterBy="#{user.ciuPrimerNombre}" filterStyle="width: 80%;" >
+                    <h:outputText value="#{user.ciuPrimerNombre}"/>
+                </p:column>
+                <p:column headerText="Segundo Nombre" style="text-align: center" filterBy="#{user.ciuSegundoNombre}"  filterStyle="width: 80%;" >
+                    <h:outputText value="#{user.ciuSegundoNombre}"/>
+                </p:column>
+                <p:column headerText="Opciones" style="text-align: center;width: 10%">
+                    <p:commandButton icon="ui-icon-plus" actionListener="#{ciudadanos.onItemSelect(user)}"/>
+                </p:column>
+            </p:dataTable>
+            <center>
+                <p:commandButton icon="ui-icon-closet" actionListener="#{ciudadanos.cerrar}"/>
+            </center>
+        </h:form>
+        
+        <p:ajaxStatus id="status" onstart="PF('dlgStatus').show()" oncomplete="PF('dlgStatus').hide()"/>
+        <p:dialog id="dlgStatus" widgetVar="dlgStatus" modal="true" draggable="false"  closable="false" resizable="false" showHeader="false">
+            <p:graphicImage name="images/preloader.gif" library="sentinel-layout"/>
+        </p:dialog>
+    </h:body>
+</html>
+

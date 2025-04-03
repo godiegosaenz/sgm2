@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:comp="http://java.sun.com/jsf/composite/dialog">
+
+    <h:panelGrid columns="2" style="width: 100%" >
+        <h:panelGroup layout="block">
+            <h:outputLabel for="tipoPredio_m" value="Tipo de predio :" class="DispBlock Wid100 FontBold" />
+            <p:selectOneMenu id="tipoPredio_m" value="#{fichaPredial.catPredioFusionDivision.predioRaiz.tipoPredio}" styleClass="selectWidth170" editable="false">
+                <f:selectItem itemLabel="Urbano" itemValue="U"/>
+                <f:selectItem itemLabel="Rural" itemValue="R"/>
+            </p:selectOneMenu>
+        </h:panelGroup>
+        <h:panelGroup layout="block">
+            <h:outputLabel for="estadoPredio_m" value="Estado Predio :" class="DispBlock Wid100 FontBold"/>
+            <p:selectOneMenu id="estadoPredio_m" value="#{fichaPredial.catPredioFusionDivision.predioRaiz.estado}" effect="fade" styleClass="selectWidth170" editable="false">
+                <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+                <f:selectItem itemLabel="Activo" itemValue="A"/>
+                <f:selectItem itemLabel="Inactivo..." itemValue="I"/>
+                <f:selectItem itemLabel="Historico" itemValue="H"/>
+            </p:selectOneMenu>
+        </h:panelGroup>
+    </h:panelGrid>
+    <p:panelGrid style="margin-top:20px">
+        <f:facet name="header">
+            <p:row>
+                <p:column>Provincia:    </p:column>
+                <p:column>Cantón :      </p:column>
+                <p:column>Parroquia :   </p:column>
+                <p:column>Zona :        </p:column>
+                <p:column>Sector :      </p:column>
+                <p:column>Mz. :         </p:column>
+                <p:column>Lote :        </p:column>
+                <p:column>Bloque :      </p:column>
+                <p:column>Piso :        </p:column>
+                <p:column>Unidad :      </p:column>
+            </p:row>
+        </f:facet>
+        <p:row>
+            <p:column><p:inputText  placeholder="Provincia" title="Provincia : #{fichaPredial.catPredioFusionDivision.predioRaiz.provincia}" value="#{fichaPredial.catPredioFusionDivision.predioRaiz.provincia}" readonly="true" style=" text-align: center; width: 89%" maxlength="2"  /></p:column>
+            <p:column><p:inputText  placeholder="Canton" title="Canton : #{fichaPredial.catPredioFusionDivision.predioRaiz.canton}" value="#{fichaPredial.catPredioFusionDivision.predioRaiz.canton}" readonly="true" style="text-align: center; width: 89%"  maxlength="2"/></p:column>
+            <p:column><p:inputText  placeholder="Parroquia" title="Parroquia :#{fichaPredial.catPredioFusionDivision.predioRaiz.parroquia}" value="#{fichaPredial.catPredioFusionDivision.predioRaiz.parroquia}" readonly="true" style="text-align: center; width: 89%" maxlength="2"/></p:column>
+            <p:column><p:inputText  placeholder="Zona" title="Zona : #{fichaPredial.catPredioFusionDivision.predioRaiz.zona}" value="#{fichaPredial.catPredioFusionDivision.predioRaiz.zona}" readonly="true" style="text-align: center; width: 89%" maxlength="2"/></p:column>
+            <p:column><p:inputText placeholder="Sector" title="Sector : #{fichaPredial.catPredioFusionDivision.predioRaiz.sector}" value="#{fichaPredial.catPredioFusionDivision.predioRaiz.sector}" readonly="true" style="text-align: center; width: 89%" maxlength="2"/></p:column>
+            <p:column><p:inputText  placeholder="Manzana" title="Manzana : #{fichaPredial.catPredioFusionDivision.predioRaiz.mz}" value="#{fichaPredial.catPredioFusionDivision.predioRaiz.mz}" readonly="true" style="text-align: center; width: 89%" maxlength="3"/></p:column>
+            <p:column><p:inputText  placeholder="Lote" title="Lote : #{fichaPredial.catPredioFusionDivision.predioRaiz.solar}" value="#{fichaPredial.catPredioFusionDivision.predioRaiz.solar}" readonly="true"  style="text-align: center; width: 89%" maxlength="3"/></p:column>
+            <p:column><p:inputText  placeholder="Bloque" title="Bloque : #{fichaPredial.catPredioFusionDivision.predioRaiz.bloque}" value="#{fichaPredial.catPredioFusionDivision.predioRaiz.bloque}" readonly="true" style="text-align: center; width: 89%" maxlength="3"/></p:column>
+            <p:column><p:inputText  placeholder="Piso" title="Piso : #{fichaPredial.catPredioFusionDivision.predioRaiz.piso}" value="#{fichaPredial.catPredioFusionDivision.predioRaiz.piso}" readonly="true" style="text-align: center; width: 89%" maxlength="2"/></p:column>
+            <p:column><p:inputText  placeholder="Unidad" title="Unidad : #{fichaPredial.catPredioFusionDivision.predioRaiz.unidad}" value="#{fichaPredial.catPredioFusionDivision.predioRaiz.unidad}" readonly="true" style="text-align: center; width: 89%" maxlength="3"/></p:column>
+        </p:row>
+    </p:panelGrid>
+    <br></br>
+    <p:fieldset legend="Codigos Catastrales" toggleable="true">
+        <h:panelGrid  columns="2" style="width: 100%" >
+
+            <comp:decorateForm id="clave_cat" label="Clave Catastral :"
+                               bind="#{fichaPredial.catPredioFusionDivision.predioRaiz.claveCat}"   readonly="true"/>
+
+            <comp:decorateForm id="clave_cat_a" label="Clave Catastral Anterior :"
+                               bind="#{fichaPredial.catPredioFusionDivision.predioRaiz.predialant}"  readonly="true"/>
+
+            <comp:decorateForm id="cod_uni" label="Codigo Unico :"
+                               bind="#{fichaPredial.catPredioFusionDivision.predioRaiz.numPredio}"  readonly="true"/>
+
+            <comp:decorateForm id="f_regis" label="Ficha Registral :"
+                               bind="#{fichaPredial.catPredioFusionDivision.predioRaiz.numeroFicha}"  readonly="true"/>
+
+        </h:panelGrid>
+    </p:fieldset>
+</html>

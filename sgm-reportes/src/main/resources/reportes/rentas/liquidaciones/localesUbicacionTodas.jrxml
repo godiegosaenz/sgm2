@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="localesUbicacion" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="c61ad871-39c0-4e84-9572-ee6272b86b4d">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="LOGO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ESTADO_LOCAL" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\Juan Carlos\\Documents\\NetBeansProjects\\SGM-SV\\Reportes\\trunk\\src\\main\\resources\\reportes\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+     CASE WHEN PROP.ES_PERSONA THEN COALESCE(PROP.NOMBRES)||' '||COALESCE(PROP.APELLIDOS)ELSE COALESCE(PROP.RAZON_SOCIAL)END AS REP_LEGAL,
+     LC.NOMBRE_LOCAL AS LC_NOMBRE_LOCAL,
+     LC.NUM_LOCAL AS LC_NUM_LOCAL,
+     AC.DESCRIPCION AS AC_DESCRIPCION,
+     U.DESCRIPCION AS U_DESCRIPCION,
+     CC.NOMBRE AS CC_NOMBRE,
+     PROP.CI_RUC AS PROP_CI_RUC,
+     LC.ESTADO_LOCAL AS ESTADO,
+     CP.DESCRIPCION AS PARROQUIA
+FROM
+     SGM_APP.CAT_ENTE PROP RIGHT OUTER JOIN SGM_FINANCIERO.REN_LOCAL_COMERCIAL LC ON PROP.ID = LC.PROPIETARIO
+     LEFT OUTER JOIN SGM_FINANCIERO.REN_LOCAL_UBICACION U ON LC.UBICACION = U.ID
+     LEFT OUTER JOIN SGM_FINANCIERO.REN_ACTIVIDAD_POR_LOCAL AXL ON LC.ID = AXL.LOCAL_COMERCIAL
+     LEFT OUTER JOIN SGM_FINANCIERO.REN_ACTIVIDAD_COMERCIAL AC ON AXL.ACTIVIDAD = AC.ID
+     LEFT OUTER JOIN SGM_APP.CAT_CIUDADELA CC ON U.CIUDADELA = CC.ID
+     LEFT OUTER JOIN SGM_APP.CAT_PARROQUIA CP ON CP.ID = CC.COD_PARROQUIA
+WHERE
+     CASE WHEN $P{ESTADO_LOCAL} IS NULL THEN TRUE ELSE LC.ESTADO_LOCAL = $P{ESTADO_LOCAL} END
+GROUP BY
+     CP.DESCRIPCION, LC.ESTADO_LOCAL, PROP.ES_PERSONA, PROP.NOMBRES, PROP.APELLIDOS, PROP.RAZON_SOCIAL, LC.NOMBRE_LOCAL,
+     LC.NUM_LOCAL, AC.DESCRIPCION, U.DESCRIPCION, CC.NOMBRE, PROP.CI_RUC
+ORDER BY
+     CP.DESCRIPCION ASC , U.DESCRIPCION ASC]]>
+	</queryString>
+	<field name="rep_legal" class="java.lang.String"/>
+	<field name="lc_nombre_local" class="java.lang.String"/>
+	<field name="lc_num_local" class="java.lang.String"/>
+	<field name="ac_descripcion" class="java.lang.String"/>
+	<field name="u_descripcion" class="java.lang.String"/>
+	<field name="cc_nombre" class="java.lang.String"/>
+	<field name="prop_ci_ruc" class="java.lang.String"/>
+	<field name="estado" class="java.lang.Long"/>
+	<field name="parroquia" class="java.lang.String"/>
+	<field name="nombre_empresa" class="java.lang.String"/>
+	<group name="PARROQUIA">
+		<groupExpression><![CDATA[$F{parroquia}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<textField>
+					<reportElement x="0" y="0" width="802" height="20" uuid="05387ee2-ca44-4c11-a594-61855ba2033d"/>
+					<textElement>
+						<font size="14" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{parroquia}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="28"/>
+		</groupFooter>
+	</group>
+	<group name="CIUDADELA">
+		<groupExpression><![CDATA[$F{u_descripcion}]]></groupExpression>
+		<groupHeader>
+			<band height="18">
+				<textField>
+					<reportElement x="12" y="0" width="790" height="18" uuid="52b39246-147e-4d6c-b5db-eac67367811e"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{u_descripcion} == null? "Sin Ubicación" : $F{u_descripcion}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="13"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="82" splitType="Stretch">
+			<staticText>
+				<reportElement x="90" y="43" width="712" height="25" uuid="1c0737ec-cc05-4066-8dbe-5c688a408997"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LOCALES COMERCIALES EXISTENTE]]></text>
+			</staticText>
+			<subreport>
+				<reportElement x="59" y="0" width="701" height="43" uuid="91111543-3928-43bc-b211-a41f11cba6a2"/>
+				<subreportParameter name="LOGO">
+					<subreportParameterExpression><![CDATA[$P{LOGO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "titleReporte5.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="29" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="100" height="29" uuid="2936c3b0-6a50-4794-bddd-e2eda83b7c61"/>
+				<textElement>
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RUC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="100" y="0" width="159" height="29" uuid="fe4ab312-511e-44be-a77c-9d0fae19c83e"/>
+				<textElement>
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOMBRE DEL LOCAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="259" y="0" width="181" height="29" uuid="41f9147f-6f84-4d68-a5d6-b63b14a30b50"/>
+				<textElement>
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REPRESENTANTE LEGAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="440" y="0" width="189" height="29" uuid="0e2e8eb1-0e78-46a8-a543-9aeed1f23b30"/>
+				<textElement>
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ACTIVIDAD COMERCIAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="629" y="0" width="55" height="29" uuid="654a368f-b6e6-496a-82d6-6dad789f4056"/>
+				<textElement>
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ESTADO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="684" y="0" width="118" height="29" uuid="df2d2c71-0910-419a-85f4-56c5d9250fa7"/>
+				<textElement>
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LOCAL]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="13">
+			<textField isBlankWhenNull="true">
+				<reportElement x="21" y="0" width="80" height="13" uuid="c474ae1f-37c2-4cb7-baf2-7f46ee941450"/>
+				<textElement>
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{prop_ci_ruc}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="100" y="0" width="159" height="13" uuid="9d6322a6-faac-4360-9099-5adc7c1ef4a7"/>
+				<textElement>
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{lc_nombre_local}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="259" y="0" width="181" height="13" uuid="598306cf-0e41-4155-a287-8cc6cc21ddd3"/>
+				<textElement>
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{rep_legal}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="440" y="0" width="189" height="13" uuid="b76400aa-2afa-4b29-98c7-724a3ce3f977"/>
+				<textElement>
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ac_descripcion}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="684" y="0" width="118" height="13" uuid="0ddcb699-f98a-4c70-bfdc-d747be0d8272"/>
+				<textElement>
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{lc_num_local}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="629" y="0" width="55" height="13" uuid="f2338271-6daf-4523-bcff-f4114e4d54ff"/>
+				<textElement>
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{estado} == 1? "ACTIVO" : "INACTIVO"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="24" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="1" width="802" height="1" uuid="8f7afe55-0b5a-436a-97f3-3984afbc5a63"/>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement x="665" y="2" width="95" height="20" uuid="77f5c56c-60b1-444c-b5b2-5e0b7022f33f"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pagina "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" isBlankWhenNull="true">
+				<reportElement x="762" y="2" width="40" height="20" uuid="834701d8-3fa8-4ce0-a5a8-8b8f00ce9fae"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

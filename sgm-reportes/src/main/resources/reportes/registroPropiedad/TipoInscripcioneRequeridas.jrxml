@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="TipoInscripcioneRequeridas" pageWidth="555" pageHeight="802" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="5f700741-cf35-49a6-85f1-2b0a0ed53e5b">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="p_idtramite" class="java.lang.Long"/>
+	<queryString>
+		<![CDATA[select tr.nombre
+from sgm_flow.historico_tramites t
+left join sgm_flow.regp_liquidacion_derechos_aranceles ta on (t.id_tramite=ta.historic_tramite)
+left join sgm_flow.regp_liquidacion_detalles ht on (ht.liquidacion=ta.id)
+left join sgm_flow.regp_actos_ingreso tr on (ht.acto= tr.id)
+where t.id=$P{p_idtramite}
+group by tr.nombre
+order by tr.nombre asc]]>
+	</queryString>
+	<field name="nombre" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement uuid="c996ceab-e136-4b70-b672-f148e944a1a1" x="22" y="0" width="393" height="16"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="87f5d838-da96-4a67-9d52-20335643d06a" x="0" y="0" width="22" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[*]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

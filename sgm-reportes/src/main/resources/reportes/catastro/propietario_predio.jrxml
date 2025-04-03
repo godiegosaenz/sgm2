@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="propietario_predio" pageWidth="203" pageHeight="15" whenNoDataType="BlankPage" columnWidth="203" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="db55604a-3314-4f04-847b-199a5f91680a">
+	<property name="ireport.zoom" value="1.9487171000000014"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="id_predio" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+
+CASE ente.es_persona when TRUE THEN
+coalesce(ente.apellidos,'')||' '||coalesce(ente.nombres,'')
+else
+ente.razon_social
+end AS nombre_prop
+
+FROM sgm_app.cat_predio as p
+INNER JOIN sgm_app.cat_predio_propietario as prop
+ON (prop.predio = p.id)
+INNER JOIN sgm_app.cat_ente as ente
+ON ente.id = prop.ente
+WHERE p.id = $P{id_predio}
+LIMIT 1]]>
+	</queryString>
+	<field name="nombre_prop" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="203" height="15" uuid="b69d4cb4-b1a1-43b1-ae7a-5d543d165bc2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_prop}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

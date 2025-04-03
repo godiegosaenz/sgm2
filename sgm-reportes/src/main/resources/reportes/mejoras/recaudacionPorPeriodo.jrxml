@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="recaudacionPorPeriodo" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="10" uuid="f3216719-b506-48d7-95a2-182aab81c0c6">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="39"/>
+	<property name="ireport.y" value="37"/>
+	<parameter name="LOGO" class="java.lang.String"/>
+	<parameter name="DESDE" class="java.util.Date"/>
+	<parameter name="HASTA" class="java.util.Date"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\origami\\Documents\\NetBeansProjects\\sgm\\src\\main\\webapp\\reportes\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="USUARIO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT CASE WHEN l.anio=EXTRACT(YEAR FROM now()) THEN 1 ELSE 0 END AS tipo_mejora,
+EXTRACT(YEAR FROM p.fecha_pago)::BIGINT AS anio_pago,
+EXTRACT(MONTH FROM p.fecha_pago)::BIGINT AS mes,
+SUM(pr.valor) AS valor_recaudado
+FROM sgm_financiero.ren_pago p
+INNER JOIN sgm_financiero.ren_pago_rubro pr ON (p.id=pr.pago)
+INNER JOIN sgm_financiero.ren_liquidacion l ON (p.liquidacion=l.id)
+WHERE l.tipo_liquidacion=13 AND p.estado=TRUE AND pr.rubro=7
+AND p.fecha_pago::DATE BETWEEN $P{DESDE} AND $P{HASTA}
+GROUP BY tipo_mejora, anio_pago, mes
+ORDER BY tipo_mejora DESC, anio_pago ASC, mes ASC]]>
+	</queryString>
+	<field name="tipo_mejora" class="java.lang.Integer"/>
+	<field name="anio_pago" class="java.lang.Long"/>
+	<field name="mes" class="java.lang.Long"/>
+	<field name="valor_recaudado" class="java.math.BigDecimal"/>
+	<variable name="SUM_MEJORAS" class="java.math.BigDecimal" resetType="Group" resetGroup="TIPO_MEJORA" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_recaudado}]]></variableExpression>
+	</variable>
+	<group name="TIPO_MEJORA">
+		<groupExpression><![CDATA[$F{tipo_mejora}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<textField>
+					<reportElement x="39" y="0" width="516" height="20" uuid="3400a348-5bb8-4219-b60e-149323996157"/>
+					<textElement>
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{tipo_mejora}==1?"RESUMEN DE MEJORAS DE AÑO ACTUAL":"RESUMEN DE MEJORAS DE AÑOS ANTERIORES"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="39">
+				<staticText>
+					<reportElement x="38" y="0" width="100" height="20" uuid="5c93f3cb-7e79-480b-b09f-9881f8fda0bb"/>
+					<textElement textAlignment="Right">
+						<font size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[TOTAL>>>]]></text>
+				</staticText>
+				<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+					<reportElement x="138" y="0" width="89" height="20" uuid="234bf005-dc32-4318-b4f2-19be7bfc1e7e"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_MEJORAS}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="102" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="0" width="555" height="70" uuid="f2c8b94a-e718-4154-8854-3005afca7ef9"/>
+				<subreportParameter name="LOGO">
+					<subreportParameterExpression><![CDATA[$P{LOGO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "titleReporte.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement x="74" y="88" width="167" height="14" uuid="9b196c0f-d8c1-4407-8f0c-81134eca221f"/>
+				<box>
+					<topPen lineWidth="1.5" lineStyle="Double"/>
+					<bottomPen lineWidth="1.5" lineStyle="Double"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA DE RECAUDACION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="241" y="88" width="50" height="14" uuid="15ac7cc9-e8d5-4203-adc2-83e0f2df34cf"/>
+				<box rightPadding="5">
+					<topPen lineWidth="1.5" lineStyle="Double"/>
+					<bottomPen lineWidth="1.5" lineStyle="Double"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DESDE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="361" y="88" width="50" height="14" uuid="060a9868-8d3c-4a1f-8d8c-359fbf766223"/>
+				<box rightPadding="5">
+					<topPen lineWidth="1.5" lineStyle="Double"/>
+					<bottomPen lineWidth="1.5" lineStyle="Double"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[HASTA]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="291" y="88" width="70" height="14" uuid="e9f5c70a-1235-42a4-a3f5-e299e0932366"/>
+				<box>
+					<topPen lineWidth="1.5" lineStyle="Double"/>
+					<bottomPen lineWidth="1.5" lineStyle="Double"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{DESDE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="411" y="88" width="70" height="14" uuid="4624452f-044d-4a00-8e2d-be94947a2cd7"/>
+				<box>
+					<topPen lineWidth="1.5" lineStyle="Double"/>
+					<bottomPen lineWidth="1.5" lineStyle="Double"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{HASTA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="74" y="70" width="407" height="18" uuid="21c368ad-b538-4c36-ab2c-37dffc112427"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[RECAUDACION POR PERIODOS]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="13" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement x="138" y="0" width="89" height="14" uuid="4567e3b3-2077-41be-a1e6-deda138e4a1b"/>
+				<textElement textAlignment="Right">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_recaudado}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="39" y="0" width="99" height="14" uuid="ac9b9ea9-6cc9-45fe-9b18-dc07aca4f85e"/>
+				<box>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{mes}==1L?"ENERO":$F{mes}==2L?"FEBRERO":$F{mes}==3L?"MARZO":$F{mes}==4L?"ABRIL":
+$F{mes}==5L?"MAYO":$F{mes}==6L?"JUNIO":$F{mes}==7L?"JULIO":$F{mes}==8L?"AGOSTO":
+$F{mes}==9L?"SEPTIEMBRE":$F{mes}==10L?"OCTUBRE":$F{mes}==11L?"NOVIEMBRE":"DICIEMBRE")+
+"/"+$F{anio_pago}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="31" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="16" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="0" width="555" height="1" uuid="0b44f641-0cf3-4839-b39b-5256f367c4f2"/>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="1" width="150" height="15" uuid="74d5e8cd-e456-4559-8105-8a25d0ec727c"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["USUARIO: "+$P{USUARIO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy h:mm a" isBlankWhenNull="true">
+				<reportElement x="202" y="1" width="150" height="15" uuid="4fa97a7a-b4ca-4e80-9470-c932d8fccf23"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="435" y="1" width="80" height="15" uuid="c006c5eb-33a7-4f28-981c-1066db9c0f4a"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pag "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="515" y="1" width="40" height="15" uuid="5d2fc1c6-cc8e-4912-a3c3-e6fc6489ca04"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

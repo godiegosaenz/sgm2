@@ -1,0 +1,9 @@
+DELETE FROM sgm_mejoras.mej_tipo_obra ;
+INSERT INTO   sgm_mejoras.mej_tipo_obra  ( id ,  descripcion ,  estado ,  usuario ,  fecha_ingreso ) VALUES (1, 'APERTURA, PAVIMENTACIÓN, ENSANCHE Y CONSTRUCCIÓN DE VÍAS DE TODA CLASE', 't', 9, '2017-9-13 00:11:35.297284');
+INSERT INTO   sgm_mejoras.mej_tipo_obra  ( id ,  descripcion ,  estado ,  usuario ,  fecha_ingreso ) VALUES (2, 'OBRAS DE ALCANTARILLADO', 't', 9, '2017-9-13 00:11:56.479325');
+INSERT INTO   sgm_mejoras.mej_tipo_obra  ( id ,  descripcion ,  estado ,  usuario ,  fecha_ingreso ) VALUES (3, 'OTRAS OBRAS QUE LAS MUNICIPALIDADES O DISTRICTOS DETERMINEN  MEDIANTE ORDENANZAS', 't', 9, '2017-9-13 00:13:17.323647');
+INSERT INTO   sgm_mejoras.mej_tipo_obra  ( id ,  descripcion ,  estado ,  usuario ,  fecha_ingreso ) VALUES (4, 'REPAVIMENTACIÓN URBANA', 't', 9, '2017-9-21 16:51:10.61252');
+INSERT INTO   sgm_mejoras.mej_tipo_obra  ( id ,  descripcion ,  estado ,  usuario ,  fecha_ingreso ) VALUES (5, 'ACERAS Y CERCAS; OBRAS DE SOTERRAMIENTO Y ADOSAMIENTO DE LAS REDES PARA LA PRESTACIÓN DE SERVICIOS DE TELECOMUNICACIONES (AUDIO Y VIDEO) POR SUSCRIPCIÓN Y SIMILARES, ASÍ COMO DE REDES ELÉCTRICAS', 't', 9, '2017-9-21 16:56:20.878483');
+INSERT INTO   sgm_mejoras.mej_tipo_obra  ( id ,  descripcion ,  estado ,  usuario ,  fecha_ingreso ) VALUES (6, 'CONSTRUCCIÓN Y AMPLIACIÓN DE OBRAS Y SISTEMAS DE AGUA POTABLE', 't', 9, '2017-9-21 16:57:12.43964');
+INSERT INTO   sgm_mejoras.mej_tipo_obra  ( id ,  descripcion ,  estado ,  usuario ,  fecha_ingreso ) VALUES (7, 'DESECACIÓN DE PANTANOS Y RELLENO DE QUEBRADAS', 't', 9, '2017-9-21 16:59:40.057953');
+INSERT INTO   sgm_mejoras.mej_tipo_obra  ( id ,  descripcion ,  estado ,  usuario ,  fecha_ingreso ) VALUES (8, 'PLAZAS, PARQUES Y JARDINES', 't', 9, '2017-9-21 17:00:08.123427');

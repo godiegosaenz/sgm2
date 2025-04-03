@@ -1,0 +1,59 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    template="/template/template.xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{subirDocumentoRp.doPreRenderView()}"/>
+            <f:viewParam name="code" value="#{subirDocumentoRp.idTarea}"/>
+        </f:metadata>
+    </ui:define>
+    <ui:define name="content">
+        <h:form id="mainForm">
+            <p:panelGrid styleClass="noBorder" columns="4" style="width: 100%;font-size: 14px;">
+                <p:outputLabel value="Tarea: #{subirDocumentoRp.taskDataByTaskID.name}" style="font-weight: bolder;color: #005f9c"/>
+                <p:outputLabel value="No Seguimiento: #{subirDocumentoRp.ht.id}" style="font-weight: bolder;color: #005f9c"/>
+                <p:outputLabel value="No Tramite: #{subirDocumentoRp.ht.numTramiteXDepartamento}" style="font-weight: bolder;color: #005f9c"/>
+                <p:outputLabel value="Responsable: #{subirDocumentoRp.taskDataByTaskID.assignee}" style="font-weight: bolder;color: #005f9c"/>
+            </p:panelGrid>
+            <p:panelGrid styleClass="noBorder" columns="1" style="text-align: center">
+                <p:dataTable id="dtArchivos" value="#{subirDocumentoRp.files}" emptyMessage="Sin elementos..."
+                             style="text-align: center" scrollable="true" scrollHeight="150" var="docs">
+                    <p:column headerText="Nombre">
+                        <p:outputLabel value="#{docs.nombre}"/>
+                    </p:column>
+                    <p:column headerText="Tipo">
+                        <p:outputLabel value="#{docs.tipo}"/>
+                    </p:column>
+                </p:dataTable>
+                <p:panel>
+                    <p:fileUpload fileUploadListener="#{subirDocumentoRp.handleFileUpload}"
+                                  label="Seleccionar" uploadLabel="Subir" cancelLabel="Cancelar" 
+                                  update="messages,mainForm"
+                                  mode="advanced" dragDropSupport="false" multiple="true" sizeLimit="1000000000"
+                                  allowTypes="#{subirDocumentoRp.formatoArchivos}"   /> 
+                    <p:growl id="messages" showDetail="true"/>
+                </p:panel>
+                <p:commandButton value="Completar Tarea" icon="ui-icon-check" styleClass="btnStyle"
+                                 actionListener="#{subirDocumentoRp.showDlg()}"/>
+
+            </p:panelGrid>
+        </h:form>
+        
+        <p:dialog id="dlgConfirmacion" widgetVar="dlgConfirma" header="Confirmacion" modal="true"
+                  resizable="false" position="center" >
+            <h:form id="formConfirma">
+                <p:panelGrid styleClass="noBorder" style="text-align: center;font-size: 12px" columns="1">
+                    <p:outputLabel value="Seguro de Completar la Tarea?" style="font-weight: bolder"/>
+                    <p:commandButton value="Aceptar" icon="ui-icon-check" styleClass="btnStyle"
+                                     actionListener='#{subirDocumentoRp.completarTarea()}'/>
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
+        
+    </ui:define>
+</ui:composition>
+

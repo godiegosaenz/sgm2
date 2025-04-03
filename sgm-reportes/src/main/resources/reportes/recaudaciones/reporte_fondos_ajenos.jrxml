@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reporte_fondos_ajenos" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="bd6fec6f-928d-4f1f-a344-a59db7faa441">
+	<property name="ireport.zoom" value="1.771561000000001"/>
+	<property name="ireport.x" value="125"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[java.lang.System.getProperty("user.home") + "\\Documents\\NetBeansProjects\\sgm_new\\src\\main\\webapp\\reportes\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO" class="java.lang.String"/>
+	<parameter name="DESDE" class="java.util.Date"/>
+	<parameter name="HASTA" class="java.util.Date"/>
+	<parameter name="ID_TIPO_LIQUIDACION" class="java.lang.Long"/>
+	<parameter name="DEL_MUNICIPIO" class="java.lang.Boolean"/>
+	<parameter name="NOMBRE_TIPO_LIQUIDACION" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT pago.num_comprobante,pago.fecha_pago::DATE as fecha, pago.valor as valor_rubro,
+CASE WHEN l.comprador IS NULL THEN l.nombre_comprador ELSE CASE e.es_persona WHEN true THEN e.nombres || ' ' || e.apellidos ELSE e.razon_social end end as contribuyente,p.sector||'.'||p.mz||'.'||p.cdla||'.'||p.mzdiv||'.'||p.solar||'.'||p.div1||'.'||p.div2||'.'||p.div3||'.'||
+p.div4||'.'||p.div5||'.'||p.div6||'.'||p.div7||'.'||p.div8||'.'||p.div9||'.'||p.phv||'.'||p.phh as cod_predial,
+p.predialant, p.num_predio, (SELECT  string_agg(cantidad::text, ','  ORDER BY cantidad) FROM sgm_financiero.ren_det_liquidacion WHERE liquidacion = l.id ORDER BY 1) as anio
+FROM sgm_financiero.ren_pago pago
+INNER JOIN sgm_financiero.ren_pago_rubro rrl ON rrl.pago = pago.id
+LEFT OUTER JOIN sgm_financiero.ren_rubros_liquidacion rrq ON rrl.rubro = rrq.id
+LEFT OUTER JOIN sgm_financiero.ren_liquidacion l ON l.id = pago.liquidacion
+LEFT OUTER JOIN sgm_financiero.ren_det_liquidacion d ON (l.id=d.liquidacion)
+LEFT OUTER JOIN sgm_app.cat_predio p ON (l.predio=p.id)
+LEFT OUTER JOIN sgm_financiero.ren_tipo_liquidacion tl ON l.tipo_liquidacion = tl.id
+LEFT OUTER JOIN sgm_app.cat_ente e ON e.id = l.comprador
+WHERE tl.id = $P{ID_TIPO_LIQUIDACION} AND pago.fecha_pago::DATE BETWEEN $P{DESDE} AND $P{HASTA}
+AND pago.estado AND rrq.rubro_del_municipio = $P{DEL_MUNICIPIO}
+GROUP BY pago.num_comprobante,pago.fecha_pago,pago.valor,
+l.comprador,l.nombre_comprador,e.es_persona,e.nombres,e.apellidos,e.razon_social,p.sector,p.mz,p.cdla,
+p.mzdiv,p.solar,p.div1,p.div2,p.div3,p.div4,p.div5,p.div6,p.div7,p.div8,p.div9,p.phv,p.phh,
+p.predialant, p.num_predio, l.id
+ORDER BY pago.fecha_pago, 2]]>
+	</queryString>
+	<field name="num_comprobante" class="java.lang.Long"/>
+	<field name="fecha" class="java.sql.Date"/>
+	<field name="valor_rubro" class="java.math.BigDecimal"/>
+	<field name="contribuyente" class="java.lang.String"/>
+	<field name="cod_predial" class="java.lang.String"/>
+	<field name="predialant" class="java.lang.String"/>
+	<field name="num_predio" class="java.lang.Long"/>
+	<field name="anio" class="java.lang.String"/>
+	<variable name="suma" class="java.math.BigDecimal" resetType="Group" resetGroup="my_group" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_rubro}]]></variableExpression>
+	</variable>
+	<variable name="total" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_rubro}]]></variableExpression>
+	</variable>
+	<group name="my_group">
+		<groupExpression><![CDATA[$F{fecha}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="16">
+				<textField isBlankWhenNull="true">
+					<reportElement x="502" y="0" width="53" height="16" uuid="e299d7e4-62fc-4783-9766-5603788f6a99"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{suma}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="119" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="0" width="555" height="70" uuid="c4a5220e-6288-4432-a620-b51eb1e19604"/>
+				<subreportParameter name="LOGO">
+					<subreportParameterExpression><![CDATA[$P{LOGO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "titleReporte.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement x="90" y="99" width="48" height="20" uuid="b09e0f8c-1e30-4140-afad-909e34f145ef"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[Desde:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="306" y="99" width="50" height="20" uuid="3a2ee683-c762-40ed-8acb-ad75b40d2f70"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hasta:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="139" y="99" width="140" height="20" uuid="20ec921f-5948-44fe-92a7-47831cd477c5"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd'/'MM'/'yyyy").format($P{DESDE})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="357" y="99" width="135" height="20" uuid="772598d9-064e-411b-89b6-31d035363325"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd'/'MM'/'yyyy").format($P{HASTA})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="63" y="70" width="429" height="28" uuid="3c4f7640-97cb-45bd-936a-38e6433083f0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["REPORTE DE FONDOS AJENOS: - "+$P{NOMBRE_TIPO_LIQUIDACION}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="-5" y="0" width="78" height="20" uuid="5360d350-04c6-494a-94e3-b01d474b6416"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Nº Comprobante]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="73" y="0" width="51" height="20" uuid="085a4098-e09b-4068-b78e-cd0f9c0034a0"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Fecha]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="240" y="0" width="89" height="20" uuid="d086641a-bf4a-4a85-9675-5e7e6c8f9e00"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Año(s)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="329" y="0" width="174" height="20" uuid="482b4776-5f3e-4259-b907-e71b0a132036"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Contribuyente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="503" y="0" width="52" height="20" uuid="08d95439-5eb0-428c-8226-0124ca6e8c0a"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Valor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="124" y="0" width="116" height="20" uuid="eb560fae-a6b9-45e2-bf02-e4aac30295b5"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Cod. Predial]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="13" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="73" height="13" uuid="8735b693-5bf7-4f0c-8a2c-fb3ae3487ebf"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{num_comprobante}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="240" y="0" width="89" height="13" uuid="ba12b825-b305-434e-b76b-f8acb3fb0fb9"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{anio}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="73" y="0" width="51" height="13" uuid="863c3bda-73de-48ef-aa60-ebe8cd5dcb49"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="329" y="0" width="174" height="13" uuid="2cc6bfa0-8f8a-403a-9836-28d2eb41a26a"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{contribuyente}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="503" y="0" width="52" height="13" uuid="4752b120-70a8-438a-ad1b-c08e17570651"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_rubro}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="124" y="0" width="116" height="13" uuid="4a6dfd96-bac6-42b1-8a8e-104fc1cfc0bb"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cod_predial} == null? ($F{predialant} == null? ($F{num_predio} == null? "" : $F{num_predio}) : $F{predialant}) : $F{cod_predial}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="18" splitType="Stretch">
+			<line>
+				<reportElement x="15" y="0" width="540" height="1" uuid="29322340-0ad4-48b7-a81d-efc8dfc8b0ea"/>
+			</line>
+			<textField>
+				<reportElement x="386" y="1" width="169" height="17" uuid="a3c6e702-5cae-4e04-bed2-03065a75c118"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["Página: "+$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="386" y="0" width="91" height="20" uuid="33a70fa3-2d15-4787-a54a-f3eaebec950a"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font size="10" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL >>>>>]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="477" y="0" width="78" height="20" uuid="9c22a86a-0b45-419b-982a-978b10b1fc57"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{total}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

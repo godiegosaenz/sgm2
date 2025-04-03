@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sLocalComercial" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cd6f358d-a56c-430d-a686-c0bded0bb052">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="LIQUIDACION_LOCALES" uuid="7add75b2-d56d-42e5-9862-f023a4ed677a">
+		<parameter name="ID" class="java.lang.Long">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT
+    ANIO ,
+      CASE
+       WHEN MES = 1
+   THEN 'ENERO'
+       WHEN MES = 2
+   THEN 'FEBRERO'
+       WHEN MES = 3
+   THEN 'MARZO'
+       WHEN MES = 4
+   THEN 'ABRIL'
+       WHEN MES = 5
+   THEN 'MAYO'
+       WHEN MES = 6
+   THEN 'JUNIO'
+       WHEN MES = 7
+   THEN 'JULIO'
+       WHEN MES = 8
+   THEN 'AGOSTO'
+       WHEN MES = 9
+   THEN 'SEPTIEMBRE'
+       WHEN MES = 10
+   THEN 'OCTUBRE'
+       WHEN MES = 11
+   THEN 'NOVIEMBRE'
+       WHEN MES = 12
+   THEN 'DICIEMBRE'
+  END AS MES,
+    TOTAL_PAGO ,
+  CASE
+       WHEN ESTADO_LIQUIDACION = 1
+   THEN 'PAGADO'
+       WHEN ESTADO_LIQUIDACION = 2
+   THEN 'POR PAGAR'
+  END AS ESTADO_LIQUIDACION
+FROM SGM_FINANCIERO.REN_LIQUIDACION
+WHERE LOCAL_COMERCIAL = $P{ID}
+ORDER BY ESTADO_LIQUIDACION ASC  LIMIT 4]]>
+		</queryString>
+		<field name="anio" class="java.lang.Integer"/>
+		<field name="mes" class="java.lang.String"/>
+		<field name="total_pago" class="java.math.BigDecimal"/>
+		<field name="estado_liquidacion" class="java.lang.String"/>
+	</subDataset>
+	<parameter name="LOGO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ID" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+     CASE WHEN CE.ES_PERSONA THEN COALESCE(CE.NOMBRES)||' '||COALESCE(CE.APELLIDOS)ELSE
+	 COALESCE(CE.RAZON_SOCIAL)END AS REP_LEGAL,
+     LC.NOMBRE_LOCAL AS LC_NOMBRE_LOCAL,
+     LC.NUM_LOCAL    AS LC_NUM_LOCAL,
+     LC.AREA         AS LC_AREA,
+     CC.NOMBRE       AS CC_NOMBRE,
+     CE.CI_RUC     AS PROP_CI_RUC,
+     (SELECT STRING_AGG(UPPER(ACT.DESCRIPCION), ', ' ORDER BY ACT.ID)
+      FROM SGM_FINANCIERO.REN_ACTIVIDAD_POR_LOCAL RAPL
+      INNER JOIN SGM_FINANCIERO.REN_ACTIVIDAD_COMERCIAL ACT ON ACT.ID = RAPL.ACTIVIDAD
+      WHERE RAPL.LOCAL_COMERCIAL = LC.ID) AS ACTIVIDADES
+FROM
+     SGM_APP.CAT_ENTE  CE
+	 RIGHT OUTER JOIN SGM_FINANCIERO.REN_LOCAL_COMERCIAL      LC  ON CE.ID         = LC.PROPIETARIO
+     LEFT OUTER JOIN  SGM_FINANCIERO.REN_LOCAL_UBICACION      U   ON LC.UBICACION  = U.ID
+     LEFT OUTER JOIN  SGM_APP.CAT_CIUDADELA                   CC  ON U.CIUDADELA   = CC.ID
+WHERE LC.ID = $P{ID}]]>
+	</queryString>
+	<field name="rep_legal" class="java.lang.String"/>
+	<field name="lc_nombre_local" class="java.lang.String"/>
+	<field name="lc_num_local" class="java.lang.String"/>
+	<field name="lc_area" class="java.math.BigDecimal"/>
+	<field name="cc_nombre" class="java.lang.String"/>
+	<field name="prop_ci_ruc" class="java.lang.String"/>
+	<field name="actividades" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="58" splitType="Stretch">
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="59" y="0" width="496" height="32" uuid="4f0508e2-b877-42ab-b194-477908f5a999"/>
+				<box>
+					<topPen lineWidth="1.25"/>
+					<bottomPen lineWidth="1.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12" isBold="true" isUnderline="false" isStrikeThrough="false"/>
+				</textElement>
+				<text><![CDATA[Gobierno Autonomo Descentralizado Municipal del Canton San Vicente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="59" y="32" width="496" height="25" uuid="dd486110-d5f1-4f9f-be03-db71f1335fd6"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LOCALES COMERCIALES EXISTENTE]]></text>
+			</staticText>
+			<image hAlign="Center">
+				<reportElement x="0" y="0" width="56" height="57" uuid="dbbe98ac-9543-4781-85a3-6419842ece73"/>
+				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="49" splitType="Stretch">
+			<staticText>
+				<reportElement x="187" y="11" width="122" height="29" uuid="ecee4330-6dde-43a1-ab96-e982b6f013dd"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REPRESENTANTE LEGAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="11" width="68" height="29" uuid="17d94b75-f9a1-4652-8dd3-d46dba4ffaa0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RUC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="492" y="11" width="63" height="29" uuid="d5de74d1-4cf3-4c27-a182-9e2e8cc6a064"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LOCAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="436" y="11" width="55" height="29" uuid="1f10a898-ad41-450a-9397-00c9c315d8bc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ÁREA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="69" y="11" width="117" height="29" uuid="f306ff2f-7284-484e-84af-1d486576ca1d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOMBRE DEL LOCAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="310" y="11" width="125" height="29" uuid="29df0b44-9390-404c-b449-b2dd72df8d69"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ACTIVIDAD COMERCIAL]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="3" width="555" height="1" uuid="d9c86802-0eae-475c-b97a-ae3535a54044"/>
+			</line>
+			<line>
+				<reportElement x="0" y="9" width="555" height="1" uuid="cfc5e117-e334-4406-9863-f679893db328"/>
+			</line>
+			<line>
+				<reportElement x="0" y="47" width="555" height="1" uuid="40a9c529-978c-48c3-a136-6db7da38b953"/>
+			</line>
+			<line>
+				<reportElement x="0" y="41" width="555" height="1" uuid="b1498c1c-c4af-4432-bbeb-411d18f99281"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="21" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="68" height="20" uuid="da011f2b-7193-4a2d-9bbd-dfbdb27222da"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{prop_ci_ruc}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="69" y="0" width="117" height="20" uuid="acbcf747-0714-42c4-a98c-fed22d587bec"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{lc_nombre_local}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="187" y="0" width="122" height="20" uuid="5f9f1fa4-864a-4652-a7b5-6eed177b842a"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{rep_legal}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="310" y="0" width="125" height="20" uuid="f40bd873-6075-4175-94da-e6ac9ad96d1c"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{actividades}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="436" y="0" width="55" height="20" uuid="ed1697b6-a232-4d10-8339-c9a28bbda6c4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{lc_area}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="492" y="0" width="63" height="20" uuid="79190f43-33e8-43b7-876b-1d48abedc4b0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{lc_num_local}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="79">
+			<componentElement>
+				<reportElement key="table" x="118" y="25" width="298" height="50" uuid="8bfc1f20-14e3-46bf-a6ce-ef8775732de4"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="LIQUIDACION_LOCALES" uuid="3de53b4f-1aba-4c14-aa8b-8ea9543c4962">
+						<datasetParameter name="ID">
+							<datasetParameterExpression><![CDATA[$P{ID}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="90" uuid="5a1c44ea-28fc-4c80-85c2-e899ea9fac3a">
+						<jr:columnHeader height="16" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="16" uuid="20f58d65-e066-4de4-8b61-d1836e6304c7"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[AÑO]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="20" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="90" height="20" uuid="d1a8d248-e87d-48ff-877f-ec23afc9bee7"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$F{anio}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90" uuid="9b45d563-58e5-4767-9c47-f68152e1c9a2">
+						<jr:columnHeader height="16" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="90" height="16" uuid="57d6f051-1e50-46d7-8841-432b5d98ec43"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[MES]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="20" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="90" height="20" uuid="f52d1b1d-ef9d-46cc-bd66-11d9739d488c"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$F{mes}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="67" uuid="e8676c61-bc4c-44e2-95de-e5eab7747837">
+						<jr:columnHeader height="16" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="67" height="16" uuid="65999cf3-9091-4cf2-83f1-6745bab84209"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[TOTAL ]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="20" rowSpan="1">
+							<textField pattern="$ #,##0.00" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="67" height="20" uuid="d414b62d-239a-4a65-ad42-b6c463f906b8"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$F{total_pago}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="96" uuid="bd16ef9b-e0d6-4de2-99e3-14c049b758af">
+						<jr:columnHeader height="16" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="96" height="16" uuid="2f552bfc-ef0d-4579-96ce-f934e2d0fc82"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[ESTADO]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell height="20" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="96" height="20" uuid="f37349bb-791f-4beb-8373-1f91601f4563"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$F{estado_liquidacion}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="25" uuid="8e46129d-ff84-41e3-acb9-7fc6fe92d01e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RESUMEN DE VALORES]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="22" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="416" y="2" width="95" height="20" uuid="6fceaae8-bda9-4d1e-9ce1-79a3f321b81c"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pagina "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="1" width="553" height="1" uuid="34ff98ea-36f5-447e-93e2-889c5d1fc8e0"/>
+			</line>
+			<textField evaluationTime="Report" isBlankWhenNull="true">
+				<reportElement x="513" y="2" width="40" height="20" uuid="8e7def10-a67c-4519-80b3-8db5710d738b"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

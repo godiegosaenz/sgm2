@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://java.sun.com/jsf/html">
+    <!-- INTERFACE -->
+    <cc:interface componentType="seccionesFicha" >
+        <cc:attribute name="headerDialog"/>
+        <cc:attribute name="predio" type="com.origami.sgm.entities.CatPredio" required="true"/>
+        <cc:attribute name="predioant" type="com.origami.sgm.entities.CatPredio" required="true"/>
+    </cc:interface>
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <h:form id="frmSeccion8">
+            <p:tab id="s8" title="8. Responsables ">
+                <h:form id="frmResponsables">
+                    <div align="center">
+                        <h:panelGrid columns="2" styleClass="dataGridBorderNone">
+                            <p:fieldset legend="ACTUALIZADOR PREDIAL" style="font-size: 13px;" id="actPredial">
+                                <h:panelGrid columns="1" styleClass="dataGridBorderNone">
+                                    <h:panelGroup layout="block">
+                                        <h:outputText value="CI/RUC:" styleClass="DispBlock Wid100"/>
+                                        <p:inputText value="#{cc.attrs.predio.responsableActualizadorPredial.ciRuc}" styleClass="#{cc.comparar(cc.attrs.predio.responsableActualizadorPredial.ciRuc, cc.attrs.predioant.responsableActualizadorPredial.ciRuc)}" readonly="true"/>
+                                    </h:panelGroup>
+                                    <h:panelGroup layout="block">
+                                        <h:outputText value="Nombres:" styleClass="DispBlock Wid100" rendered="#{cc.attrs.predio.responsableActualizadorPredial.esPersona}"/>
+                                        <p:inputText value="#{cc.attrs.predio.responsableActualizadorPredial.nombres}" rendered="#{cc.attrs.predio.responsableActualizadorPredial.esPersona}" styleClass="#{cc.comparar(cc.attrs.predio.responsableActualizadorPredial.nombres, cc.attrs.predioant.responsableActualizadorPredial.nombres)}" readonly="true"/>
+                                        <h:outputText value="Razón Social:" styleClass="DispBlock Wid100" rendered="#{!cc.attrs.predio.responsableActualizadorPredial.esPersona}"/>
+                                        <p:inputText value="#{cc.attrs.predio.responsableActualizadorPredial.razonSocial}" rendered="#{!cc.attrs.predio.responsableActualizadorPredial.esPersona}" styleClass="#{cc.comparar(cc.attrs.predio.responsableActualizadorPredial.razonSocial, cc.attrs.predioant.responsableActualizadorPredial.razonSocial)}" readonly="true"/>
+                                    </h:panelGroup>
+                                    <h:panelGroup layout="block">
+                                        <h:outputText value="Apellidos:" styleClass="DispBlock Wid100" rendered="#{cc.attrs.predio.responsableActualizadorPredial.esPersona}"/>
+                                        <p:inputText value="#{cc.attrs.predio.responsableActualizadorPredial.apellidos}" rendered="#{cc.attrs.predio.responsableActualizadorPredial.esPersona}" styleClass="#{cc.comparar(cc.attrs.predio.responsableActualizadorPredial.apellidos, cc.attrs.predioant.responsableActualizadorPredial.apellidos)}" readonly="true"/>
+                                        <h:outputText value="Nombre Comercial:" styleClass="DispBlock Wid100" rendered="#{!cc.attrs.predio.responsableActualizadorPredial.esPersona}"/>
+                                        <p:inputText value="#{cc.attrs.predio.responsableActualizadorPredial.nombreComercial}" rendered="#{!cc.attrs.predio.responsableActualizadorPredial.esPersona}" styleClass="#{cc.comparar(cc.attrs.predio.responsableActualizadorPredial.nombreComercial, cc.attrs.predioant.responsableActualizadorPredial.nombreComercial)}" readonly="true"/>
+                                    </h:panelGroup>
+                                </h:panelGrid>
+                            </p:fieldset>
+                            <p:fieldset legend="FISCALIZADOR PREDIAL" style="font-size: 13px;" id="actFisc">
+                                <h:panelGrid columns="1" styleClass="dataGridBorderNone">
+                                    <h:panelGroup layout="block">
+                                        <h:outputText value="CI/RUC:" styleClass="DispBlock Wid100"/>
+                                        <p:inputText value="#{cc.attrs.predio.responsableFiscalizadorPredial.ciRuc}" styleClass="#{cc.comparar(cc.attrs.predio.responsableFiscalizadorPredial.ciRuc, cc.attrs.predioant.responsableFiscalizadorPredial.ciRuc)}" readonly="true"/>
+                                    </h:panelGroup>
+                                    <h:panelGroup layout="block">
+                                        <h:outputText value="Nombres:" styleClass="DispBlock Wid100" rendered="#{cc.attrs.predio.responsableFiscalizadorPredial.esPersona}"/>
+                                        <p:inputText value="#{cc.attrs.predio.responsableFiscalizadorPredial.nombres}" rendered="#{cc.attrs.predio.responsableFiscalizadorPredial.esPersona}" styleClass="#{cc.comparar(cc.attrs.predio.responsableFiscalizadorPredial.nombres, cc.attrs.predioant.responsableFiscalizadorPredial.nombres)}" readonly="true"/>
+                                        <h:outputText value="Razón Social:" styleClass="DispBlock Wid100" rendered="#{!cc.attrs.predio.responsableFiscalizadorPredial.esPersona}"/>
+                                        <p:inputText value="#{cc.attrs.predio.responsableFiscalizadorPredial.razonSocial}" rendered="#{!cc.attrs.predio.responsableFiscalizadorPredial.esPersona}" styleClass="#{cc.comparar(cc.attrs.predio.responsableFiscalizadorPredial.razonSocial, cc.attrs.predioant.responsableFiscalizadorPredial.razonSocial)}" readonly="true"/>
+                                    </h:panelGroup>
+                                    <h:panelGroup layout="block">
+                                        <h:outputText value="Apellidos:" styleClass="DispBlock Wid100" rendered="#{cc.attrs.predio.responsableFiscalizadorPredial.esPersona}"/>
+                                        <p:inputText value="#{cc.attrs.predio.responsableFiscalizadorPredial.apellidos}" rendered="#{cc.attrs.predio.responsableFiscalizadorPredial.esPersona}" styleClass="#{cc.comparar(cc.attrs.predio.responsableFiscalizadorPredial.apellidos, cc.attrs.predioant.responsableFiscalizadorPredial.apellidos)}" readonly="true"/>
+                                        <h:outputText value="Nombre Comercial:" styleClass="DispBlock Wid100" rendered="#{!cc.attrs.predio.responsableFiscalizadorPredial.esPersona}"/>
+                                        <p:inputText value="#{cc.attrs.predio.responsableFiscalizadorPredial.nombreComercial}" rendered="#{!cc.attrs.predio.responsableFiscalizadorPredial.esPersona}" styleClass="#{cc.comparar(cc.attrs.predio.responsableFiscalizadorPredial.nombreComercial, cc.attrs.predioant.responsableFiscalizadorPredial.nombreComercial)}" readonly="true"/>
+                                    </h:panelGroup>
+                                </h:panelGrid>
+                            </p:fieldset>
+                        </h:panelGrid>
+                    </div>
+                </h:form>
+            </p:tab>
+        </h:form>
+    </cc:implementation>
+</html>

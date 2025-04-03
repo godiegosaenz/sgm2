@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="head">
+
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="frmDescuento">
+
+            <div align="right">
+                <p:commandButton value="Agregar Nuevo" actionListener="#{descuento.nuevo()}" oncomplete="PF('dlgGuardar').show()"/>
+            </div>
+            <p:dataTable id="dtDescuentos" value="#{descuento.descuentos}" var="d1" style="width: 100%"
+                         emptyMessage="No se encontraron registro" paginator="true" paginatorPosition="top"
+                         rows="20" lazy="true" rowsPerPageTemplate="20,50,100">
+                <p:column headerText="Mes">
+                    <p:outputLabel value="#{d1.numMes}"/>
+                </p:column>
+                <p:column headerText="Quincena">
+                    <p:outputLabel value="#{d1.numQuincena}"/>
+                </p:column>
+                <p:column headerText="Porcentaje">
+                    <p:outputLabel value="#{d1.porcentaje}"/>
+                </p:column>
+                <p:column headerText=" Action">
+                    <p:commandButton value=" Editar" actionListener="#{descuento.editar(d1)}"
+                                     oncomplete=" PF('dlgGuardar').show()" update="frmguardar"/>
+                    <p:commandButton value="Eliminar" actionListener="#{descuento.eliminar(d1)}"
+                                     update="frmDescuento"/>
+
+                </p:column>
+            </p:dataTable>
+        </h:form >
+
+        <p:dialog id="dlgGuadar" header="Descuento" widgetVar="dlgGuardar" closable="true" width="30%" resizable="false" modal="true" >
+
+            <h:form id="frmguardar">
+                <div align="center">
+                    <p:commandButton value="Guardar" actionListener="#{descuento.guardar()}"
+                                     oncomplete="PF('dlgGuardar').hide()"
+                                     update="frmDescuento"/>
+                </div>
+                <p:panelGrid columns="2" layout="grid">
+
+                    <p:outputLabel value="Mes"/>
+                    <p:selectOneMenu value="#{descuento.descuento.numMes}" style="width: 70%" >
+                        <f:selectItem itemLabel="Enero" itemValue="1"/>
+                        <f:selectItem itemLabel="Febrero" itemValue="2"/>
+                        <f:selectItem itemLabel="Marzo" itemValue="3"/>
+                        <f:selectItem itemLabel="Abril" itemValue="4"/>
+                        <f:selectItem itemLabel="Mayo" itemValue="5"/>
+                        <f:selectItem itemLabel="Junio" itemValue="6"/>
+                        <f:selectItem itemLabel="Julio" itemValue="7"/>
+                        <f:selectItem itemLabel="Agosto" itemValue="8"/>
+                        <f:selectItem itemLabel="Septiembre" itemValue="9"/>
+                        <f:selectItem itemLabel="Octubre" itemValue="10"/>
+                        <f:selectItem itemLabel="Noviembre" itemValue="11"/>
+                        <f:selectItem itemLabel="Diciembre" itemValue="12"/>
+                    </p:selectOneMenu>
+
+                    <p:outputLabel value="Quincena"/>
+                    <p:selectOneMenu value="#{descuento.descuento.numQuincena}" >
+                        <f:selectItem itemLabel="Primera Quincena" itemValue="1"/>
+                        <f:selectItem itemLabel="Segunda Quincena" itemValue="2"/>
+                    </p:selectOneMenu>
+
+                    <p:outputLabel value="Porcentaje"/>
+                    <p:spinner min="0" max="100" maxlength="4" stepFactor="0.01"
+                               value="#{descuento.descuento.porcentaje}"/> 
+                </p:panelGrid>
+
+            </h:form>
+        </p:dialog>
+    </ui:define>
+
+</ui:composition>

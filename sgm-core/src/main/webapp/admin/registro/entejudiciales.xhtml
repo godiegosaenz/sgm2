@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{entesJudiciales.doPreRenderView()}"/>
+        </f:metadata>
+    </ui:define>
+    <ui:define name="top"><h3>Entes Judiciales</h3></ui:define>
+    <ui:define name="content">
+        <h:form id="mainForm">
+            <div align="right">
+                <p:commandButton value="Nuevo Ente Judicial" icon="ui-icon-plus" 
+                                 actionListener="#{entesJudiciales.showDlgNew()}" styleClass="btnStyle"/>
+            </div><br/>
+            <center>
+                <p:dataTable reflow="true" paginator="true" lazy="true" rows="20" rowsPerPageTemplate="20,50,100" 
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             value="#{entesJudiciales.lazyJudiciales}" var="ente" emptyMessage="No se encontró ningun Item"
+                             style="text-align: center;width: 80%">
+                    <p:column headerText="Nombre" filterBy="#{ente.nombre}" sortBy="#{ente.nombre}" 
+                              filterStyle="width: 60%;">
+                        <h:outputText value="#{ente.nombre}"/>
+                    </p:column>
+                    <p:column headerText="Abreviatura" filterBy="#{ente.abreviatura}" sortBy="#{ente.abreviatura}" 
+                              filterStyle="width: 80%;" width="200">
+                        <h:outputText value="#{ente.abreviatura}" style="text-align: center; font-size: 12px"/>
+                    </p:column>
+                    <p:column headerText="Estado" width="75">
+                        <h:outputText value="Activo" rendered="#{ente.estado}"/>
+                        <h:outputText value="Inactivo" rendered="#{!ente.estado}"/>
+                    </p:column>
+                    <p:column headerText="Editar" width="75">
+                        <p:commandLink actionListener="#{entesJudiciales.showDlgEdit(ente)}" >
+                            <p:graphicImage value="/css/homeIconsImages/edit.png"/>   
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+            </center>
+        </h:form>
+
+        <p:dialog id="dlgNewEnte" header="Datos Ente Judicial" widgetVar="dlgEnteJudicial" resizable="false" modal="true"
+                  position="center" width="500">
+            <h:form id="formEnteJu">
+                <p:panelGrid styleClass="noBorder" style="width: 100%">
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Nombre:" style="font-size: 14px;font-weight: bolder"/>
+                        </p:column>
+                        <p:column colspan="3">
+                            <p:inputText value="#{entesJudiciales.ente.nombre}" style="width: 100%"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Abreviatura:" style="font-size: 14px;font-weight: bolder"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="#{entesJudiciales.ente.abreviatura}" maxlength="15"/>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="Estado:" style="font-size: 14px;font-weight: bolder"/>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu value="#{entesJudiciales.ente.estado}">
+                                <f:selectItem itemLabel="Activo" itemValue="#{true}" />
+                                <f:selectItem itemLabel="Inactivo" itemValue="#{false}" />
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="4" style="text-align: center">
+                            <p:commandButton value="Guardar" icon="ui-icon-check" styleClass="btnStyle"
+                                             actionListener="#{entesJudiciales.guardar()}"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+</ui:composition>

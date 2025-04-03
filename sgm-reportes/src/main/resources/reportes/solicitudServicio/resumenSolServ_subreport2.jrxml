@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="resumenSolServ_subreport2" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="b354c2c6-872b-4609-b66b-1c9c6bb7fd93">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="estadotram" class="java.lang.String"/>
+	<parameter name="inicio" class="java.util.Date"/>
+	<parameter name="fin" class="java.util.Date"/>
+	<queryString>
+		<![CDATA[select *
+from sgm_flow.sv_solicitud_servicios s
+inner join sgm_flow.historico_tramites h on(s.tramite=h.id_tramite)
+where h.estado=$P{estadotram} AND s.asignado AND s.fecha_creacion>=$P{inicio} AND s.fecha_creacion<$P{fin}
+order by h.estado]]>
+	</queryString>
+	<field name="id" class="java.lang.Long"/>
+	<field name="tipo_servicio" class="java.lang.Long"/>
+	<field name="fecha_inconveniente" class="java.sql.Timestamp"/>
+	<field name="descripcion_inconveniente" class="java.lang.String"/>
+	<field name="tramite" class="java.lang.Long"/>
+	<field name="solicitante" class="java.lang.Long"/>
+	<field name="notificacion_dep" class="java.lang.String"/>
+	<field name="parroquia" class="java.lang.Long"/>
+	<field name="cdla" class="java.lang.Long"/>
+	<field name="solicitud_interna" class="java.lang.Boolean"/>
+	<field name="ente_solicitante" class="java.lang.Long"/>
+	<field name="informe" class="java.lang.String"/>
+	<field name="fecha_creacion" class="java.sql.Timestamp"/>
+	<field name="lugar_audiencia" class="java.lang.Long"/>
+	<field name="asignado" class="java.lang.Boolean"/>
+	<field name="asignados" class="java.lang.String"/>
+	<field name="status" class="java.lang.String"/>
+	<field name="representante" class="java.lang.String"/>
+	<field name="archivar" class="java.lang.Boolean"/>
+	<field name="notificar" class="java.lang.Boolean"/>
+	<field name="notificacion" class="java.lang.String"/>
+	<field name="id_tramite" class="java.lang.Long"/>
+	<field name="id_proceso" class="java.lang.String"/>
+	<field name="num_predio" class="java.lang.Long"/>
+	<field name="estado" class="java.lang.String"/>
+	<field name="tipo_tramite" class="java.lang.Long"/>
+	<field name="fecha" class="java.sql.Timestamp"/>
+	<field name="urbanizacion" class="java.lang.String"/>
+	<field name="nombre_propietario" class="java.lang.String"/>
+	<field name="urbmz" class="java.lang.String"/>
+	<field name="urbsolar" class="java.lang.String"/>
+	<field name="sub_tipo_tramite" class="java.lang.Long"/>
+	<field name="tipo_tramite_nombre" class="java.lang.String"/>
+	<field name="correos" class="java.lang.String"/>
+	<field name="telefonos" class="java.lang.String"/>
+	<field name="num_liquidacion" class="java.lang.Long"/>
+	<field name="valor_liquidacion" class="java.math.BigDecimal"/>
+	<field name="observacion" class="java.lang.String"/>
+	<field name="user_creador" class="java.lang.Long"/>
+	<field name="num_tramite_x_departamento" class="java.lang.Long"/>
+	<field name="carpeta_rep" class="java.lang.String"/>
+	<field name="id_proceso_temp" class="java.lang.String"/>
+	<group name="estadotramite">
+		<groupExpression><![CDATA[$F{estado}]]></groupExpression>
+		<groupHeader>
+			<band height="5"/>
+		</groupHeader>
+		<groupFooter>
+			<band height="20">
+				<textField>
+					<reportElement uuid="6d67bf67-92cd-48e1-8f17-3c5a54e0c223" x="0" y="0" width="177" height="20"/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{estado}.equalsIgnoreCase("pendiente")?"TOTAL PENDIENTES: ":""]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="b641f10c-1dfc-43fa-b431-9c061c7e7be8" x="177" y="0" width="140" height="20"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{estadotramite_COUNT}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

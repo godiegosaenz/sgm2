@@ -1,0 +1,300 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.origami.sgm.bpm.managedbeans.edifications.propiedadHorizontal;
+
+import com.origami.config.SisVars;
+import com.origami.session.ServletSession;
+import com.origami.session.UserSession;
+import com.origami.sgm.entities.AclUser;
+import com.origami.sgm.entities.HistoricoReporteTramite;
+import com.origami.sgm.entities.HistoricoTramiteDet;
+import com.origami.sgm.entities.HistoricoTramites;
+import com.origami.sgm.lazymodels.HistoricoTramiteDetLazy;
+import com.origami.sgm.services.interfaces.edificaciones.PermisoConstruccionServices;
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.faces.view.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+import util.EntityBeanCopy;
+import util.JsfUti;
+import util.Utils;
+
+/**
+ *
+ * @author Angel Navarro
+ */
+@Named
+@ViewScoped
+@SuppressWarnings("serial")
+public class PropiedadHorizontalConsulta implements Serializable {
+
+    private static final Logger LOG = Logger.getLogger(PropiedadHorizontalConsulta.class.getName());
+
+    @javax.inject.Inject
+    protected PermisoConstruccionServices permisoServices;
+
+    @Inject
+    private ServletSession ss;
+    @Inject
+    private UserSession sess;
+
+    protected HistoricoTramiteDetLazy lazy;
+    protected AclUser firmaDir, firmaDirector;
+    protected String path;
+
+    protected int anioDesde;
+    protected String memorandum;
+    protected String memorandum2 = " LPC-DPU-";
+    protected String dirigioA;
+    protected String cargo;
+    protected String permisoDesde;
+    protected String permisoHasta;
+
+    public PropiedadHorizontalConsulta() {
+    }
+
+    @PostConstruct
+    public void initView() {
+        lazy = new HistoricoTramiteDetLazy(9L);
+
+        path = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/");
+        firmaDir = new AclUser();
+    }
+
+    public void imprimirLiquidación(HistoricoTramiteDet liquidacion) {
+        Calendar cl = Calendar.getInstance();
+        HistoricoTramites ht = permisoServices.getHistoricoTramiteById(liquidacion.getTramite().getId());
+        
+        firmaDirector = permisoServices.getAclUserByUser(ht.getTipoTramite().getUserDireccion());
+        firmaDir = (AclUser) EntityBeanCopy.clone(firmaDirector);
+        AclUser tecnico = permisoServices.getAclUserByUser(sess.getName_user());
+
+        HistoricoReporteTramite reporteAnterior = null;
+        Collection<HistoricoReporteTramite> deshabilitar = ht.getHistoricoReporteTramiteCollection();
+        
+        if(ht.getObservacion() != null && ht.getObservacion().equals("Trámite migrado")){
+            this.imprimirLiquidaciónMigrado(liquidacion);
+            return;
+        }
+        
+        for (HistoricoReporteTramite ra : deshabilitar) {
+            if (ra.getNombreReporte().contains("PropiedadHorizontal")) {
+                if (ra.getEstado()) {
+                    reporteAnterior = ra;
+                    break;
+                }
+            }
+        }
+        
+        try {
+            if (reporteAnterior != null) {
+                ss.instanciarParametros();
+                String codigoQR = SisVars.urlServidorCompleta + "/DescargarDocsRepositorio?id=" + reporteAnterior.getCodValidacion();
+                ss.setNombreReporte("PropiedadHorizontal");
+                ss.setNombreSubCarpeta("propiedadHorizontal");
+                ss.setTieneDatasource(true);
+                ss.agregarParametro("idimprimir", liquidacion.getId());
+                ss.agregarParametro("firmaDirec", path + "/css/firmas/" + firmaDirector.getRutaImagen() + ".jpg");
+                ss.agregarParametro("numrepor", reporteAnterior.getSecuencia() + "-" + cl.get(Calendar.YEAR));
+                ss.agregarParametro("logo", path + SisVars.logoReportes);
+                ss.agregarParametro("seleccionado", path + "/css/homeIconsImages/selecc.png");
+                ss.agregarParametro("validador", reporteAnterior.getId().toString() + "" + ht.getIdProceso());
+                ss.agregarParametro("codigoQR", codigoQR);
+                if (tecnico.getEnte() != null) {
+                    ss.agregarParametro("realizadoPor", Utils.isEmpty(tecnico.getEnte().getNombres()) + " " + Utils.isEmpty(tecnico.getEnte().getApellidos()));
+                } else {
+                    ss.agregarParametro("realizadoPor", tecnico.getUsuario());
+                }
+                ss.agregarParametro("anio", cl.get(Calendar.YEAR));
+
+            }
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "Error al generar Liquidación PH.", e);
+        }
+
+        JsfUti.redirectNewTab(com.origami.config.SisVars.urlbase + "Documento");
+    }
+    
+    public void imprimirLiquidaciónMigrado(HistoricoTramiteDet liquidacion){
+        Calendar cl = Calendar.getInstance();
+        try {
+            ss.instanciarParametros();
+            String codigoQR = SisVars.urlServidorCompleta + "Trámite migrado";
+            ss.setNombreReporte("PropiedadHorizontal");
+            ss.setNombreSubCarpeta("propiedadHorizontal");
+            ss.setTieneDatasource(true);
+            ss.agregarParametro("idimprimir", liquidacion.getId());
+            ss.agregarParametro("firmaDirec", path + "/css/firmas/" + firmaDirector.getRutaImagen() + ".jpg");
+            ss.agregarParametro("numrepor", liquidacion.getNumTasa() + "-" + new SimpleDateFormat("yyyy").format(liquidacion.getFecCre()));
+            ss.agregarParametro("logo", path + SisVars.logoReportes);
+            ss.agregarParametro("seleccionado", path + "/css/homeIconsImages/selecc.png");
+            ss.agregarParametro("validador", "");
+            ss.agregarParametro("codigoQR", codigoQR);
+            ss.agregarParametro("realizadoPor", liquidacion.getResponsable());
+            
+            ss.agregarParametro("anio", cl.get(Calendar.YEAR));
+
+            
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "Error al generar Liquidación PH.", e);
+        }
+
+        JsfUti.redirectNewTab(com.origami.config.SisVars.urlbase + "Documento");
+    }
+
+    public void imprimirCertificado(HistoricoTramiteDet liquidacion) {
+        ss.instanciarParametros();
+        ss.agregarParametro("idpermiso", liquidacion.getId());
+        ss.agregarParametro("logo", path + SisVars.logoReportes);
+        ss.agregarParametro("SUBREPORT_DIR", path + "reportes/permisoConstruccion/");
+//        ss.agregarParametro("NUMTRAMITEPC", liquidacion.getNumReporte().toString() + "-" + liquidacion.getAnioTramite().toString());
+        ss.agregarParametro("firmaDirec", path + "css/firmas/" + firmaDir.getRutaImagen() + ".jpg");
+        ss.setNombreReporte("PermisoConstruccion");
+        ss.setNombreSubCarpeta("permisoConstruccion");
+        ss.setTieneDatasource(true);
+        JsfUti.redirectNewTab(com.origami.config.SisVars.urlbase + "Documento");
+    }
+
+    public void redirectVistaPermiso(HistoricoTramiteDet liquidacion) {
+        try {
+            ss.instanciarParametros();
+//            if (liquidacion.getObservacion().contentEquals("Trámite migrado")) {
+//
+//            } else {
+            ss.agregarParametro("tramite", liquidacion.getId());
+//            }
+            JsfUti.redirectFaces("/faces/vistaprocesos/edificaciones/verLiquidacionHTD.xhtml");
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "ERROR AL REDIRECCIONAR A LA VISUALIZACION", e);
+        }
+    }
+
+    public void redirectEditarPermiso(HistoricoTramiteDet liquidacion) {
+        try {
+            ss.instanciarParametros();
+//            if (liquidacion.getObservacion().contentEquals("Trámite migrado")) {
+//
+//            } else {
+            ss.agregarParametro("tramite", liquidacion.getId());
+//            }
+            JsfUti.redirectFaces("/faces/vistaprocesos/edificaciones/editarLiquidacionHTD.xhtml");
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "ERROR AL REDIRECCIONAR A LA EDICION", e);
+        }
+    }
+
+    public void mostrar() {
+        Calendar cl = Calendar.getInstance();
+        anioDesde = (cl.get(Calendar.YEAR));
+        memorandum2 = memorandum2 + "" + anioDesde;
+        JsfUti.update("frmConsulta");
+        JsfUti.executeJS("PF('dlgConsulta').show()");
+    }
+
+    public void reporteSemanalPC() {
+        ss.instanciarParametros();
+        ss.setNombreReporte("listado_permiso_construccion");
+        ss.setNombreSubCarpeta("permisoConstruccion");
+        ss.setTieneDatasource(Boolean.TRUE);
+        ss.agregarParametro("MEMO", memorandum + " " + memorandum2);
+        ss.agregarParametro("DE", new Long(permisoDesde));
+        ss.agregarParametro("HASTA", new Long(permisoHasta));
+        ss.agregarParametro("DESDE_ANIO", new Long(anioDesde));
+        ss.agregarParametro("DIRIGIDO_A", dirigioA);
+        ss.agregarParametro("CARGO", cargo);
+
+        JsfUti.redirectNewTab(com.origami.config.SisVars.urlbase + "Documento");
+    }
+
+    public HistoricoTramiteDetLazy getLazy() {
+        return lazy;
+    }
+
+    public void setLazy(HistoricoTramiteDetLazy lazy) {
+        this.lazy = lazy;
+    }
+
+    public ServletSession getSs() {
+        return ss;
+    }
+
+    public void setSs(ServletSession ss) {
+        this.ss = ss;
+    }
+
+    public UserSession getSess() {
+        return sess;
+    }
+
+    public void setSess(UserSession sess) {
+        this.sess = sess;
+    }
+
+    public String getMemorandum() {
+        return memorandum;
+    }
+
+    public void setMemorandum(String memorandum) {
+        this.memorandum = memorandum;
+    }
+
+    public String getMemorandum2() {
+        return memorandum2;
+    }
+
+    public void setMemorandum2(String memorandum2) {
+        this.memorandum2 = memorandum2;
+    }
+
+    public String getDirigioA() {
+        return dirigioA;
+    }
+
+    public void setDirigioA(String dirigioA) {
+        this.dirigioA = dirigioA;
+    }
+
+    public String getCargo() {
+        return cargo;
+    }
+
+    public void setCargo(String cargo) {
+        this.cargo = cargo;
+    }
+
+    public String getPermisoDesde() {
+        return permisoDesde;
+    }
+
+    public void setPermisoDesde(String permisoDesde) {
+        this.permisoDesde = permisoDesde;
+    }
+
+    public String getPermisoHasta() {
+        return permisoHasta;
+    }
+
+    public void setPermisoHasta(String permisoHasta) {
+        this.permisoHasta = permisoHasta;
+    }
+
+    public int getAnioDesde() {
+        return anioDesde;
+    }
+
+    public void setAnioDesde(int anioDesde) {
+        this.anioDesde = anioDesde;
+    }
+
+}

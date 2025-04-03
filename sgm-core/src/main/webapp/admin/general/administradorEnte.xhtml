@@ -1,0 +1,186 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    template="/template/template.xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{administradorEnte.doPreRenderView()}"/>
+        </f:metadata>
+    </ui:define>
+    <ui:define name="content">
+        <h:form id="mainForm">
+            <p:panelGrid styleClass="noBorder" style="width: 100%">
+                <p:outputLabel value="Personas / Empresas" style="font-size: 24px;"/>
+                <p:commandButton value="Nuevo Ente" icon="ui-icon-plus" style="float: right" styleClass="btnStyle" actionListener="#{administradorEnte.showDlgNewEnte()}"/>
+            </p:panelGrid>
+            <p:dataTable id="dtentes" reflow="true" paginator="true" lazy="true" rows="20" rowsPerPageTemplate="20,50,100" filterEvent="enter"
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         value="#{administradorEnte.cel}" var="user" emptyMessage="No se encontró ningún Item" style="text-align: center;">
+                <p:column headerText="C.I./R.U.C." width="150" filterBy="#{user.ciRuc}" filterStyle="width: 95%;">
+                    <h:outputText value="#{user.ciRuc}"/>
+                </p:column>
+                <p:column headerText="Nombres" filterBy="#{user.nombres}" filterStyle="width: 95%;">
+                    <h:outputText value="#{user.nombres}"/>
+                </p:column>
+                <p:column headerText="Apellidos" filterBy="#{user.apellidos}" filterStyle="width: 95%;">
+                    <h:outputText value="#{user.apellidos}"/>
+                </p:column>
+                <p:column headerText="Razon Social" filterBy="#{user.razonSocial}" filterStyle="width: 95%;">
+                    <h:outputText value="#{user.razonSocial}"/>
+                </p:column>
+                <p:column headerText="Nombre Comercial" filterBy="#{user.nombreComercial}" filterStyle="width: 95%;">
+                    <h:outputText value="#{user.nombreComercial}"/>
+                </p:column>
+                <p:column headerText="Tipo" width="40">
+                    <h:outputText value="N" rendered="#{user.esPersona}"/>
+                    <h:outputText value="J" rendered="#{!user.esPersona}"/>
+                </p:column>
+                <p:column headerText="Exc" width="40">
+                    <h:outputText value="Si" rendered="#{user.excepcionales}"/>
+                    <h:outputText value="No" rendered="#{!user.excepcionales}"/>
+                </p:column>
+                <p:column headerText="Edit" width="40">
+                    <p:commandLink actionListener="#{administradorEnte.showDlgEditEnte(user)}">
+                        <p:graphicImage value="/css/homeIconsImages/edit.png"/>
+                    </p:commandLink>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+
+        <p:dialog header="Datos de Cliente" widgetVar="dlgEditEnte" modal="true" resizable="false" closeOnEscape="true" position="center">
+            <h:form id="formEditEnte">
+                <p:panelGrid styleClass="noBorder" style="font-weight: bolder;">
+                    <p:row>
+                        <p:column>C.I./Ruc/Ident.:</p:column>
+                        <p:column><p:inputText value="#{administradorEnte.ente.ciRuc}" readonly="true"/></p:column>
+                        <p:column>Fecha Nac.:</p:column>
+                        <p:column><p:calendar value="#{administradorEnte.ente.fechaNacimiento}" pattern="dd/MM/yyyy"/></p:column>
+                    </p:row>
+                    <p:row rendered="#{administradorEnte.ente.esPersona}">
+                        <p:column>Nombres:</p:column>
+                        <p:column colspan="3">
+                            <p:inputText value="#{administradorEnte.ente.nombres}" style="width: 99%;"/>
+                        </p:column>
+                    </p:row>
+                    <p:row rendered="#{administradorEnte.ente.esPersona}">
+                        <p:column>Apellidos:</p:column>
+                        <p:column colspan="3">
+                            <p:inputText value="#{administradorEnte.ente.apellidos}" style="width: 99%;"/>
+                        </p:column>
+                    </p:row>
+                    <p:row rendered="#{!administradorEnte.ente.esPersona}">
+                        <p:column>Razon Social:</p:column>
+                        <p:column colspan="3">
+                            <p:inputText value="#{administradorEnte.ente.razonSocial}" style="width: 99%;"/>
+                        </p:column>
+                    </p:row>
+                    <p:row rendered="#{!administradorEnte.ente.esPersona}">
+                        <p:column>Nombre Comercial:</p:column>
+                        <p:column colspan="3">
+                            <p:inputText value="#{administradorEnte.ente.nombreComercial}" style="width: 99%;"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>Direccion:</p:column>
+                        <p:column colspan="3">
+                            <p:inputText value="#{administradorEnte.ente.direccion}" style="width: 99%;"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="4">
+                            <center>
+                                <p:commandButton value="Guardar" styleClass="btnStyle" actionListener="#{administradorEnte.editEnte()}">
+                                    <p:confirm header="Confirmacion" message="Esta Seguro de Guardar?" icon="ui-icon-alert" />
+                                </p:commandButton>
+                            </center>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="SI" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                    <p:commandButton value="NO" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                </p:confirmDialog>
+
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Datos de Cliente" widgetVar="dlgNewCliente" modal="true" resizable="false" closeOnEscape="true" position="center">
+            <h:form id="formNewEnte">
+                <p:panelGrid styleClass="noBorder" style="font-weight: bolder;">
+                    <p:row>
+                        <p:column>Tipo:</p:column>
+                        <p:column colspan="3">
+                            <p:selectOneMenu value="#{administradorEnte.ente.esPersona}">
+                                <f:selectItem itemLabel="Natural" itemValue="#{true}" />
+                                <f:selectItem itemLabel="Juridica" itemValue="#{false}" />
+                                <p:ajax update="formNewEnte"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>C.I./Ruc/Ident.:</p:column>
+                        <p:column>
+                            <p:inputText value="#{administradorEnte.ente.ciRuc}">
+                                <p:ajax event="blur" update="formNewEnte" listener="#{administradorEnte.validacionCedula()}"/>
+                            </p:inputText>
+                        </p:column>
+                        <p:column>Fecha Nac.:</p:column>
+                        <p:column><p:calendar value="#{administradorEnte.ente.fechaNacimiento}" pattern="dd/MM/yyyy"/></p:column>
+                    </p:row>
+                    <p:row rendered="#{administradorEnte.ente.esPersona}">
+                        <p:column>Nombres:</p:column>
+                        <p:column colspan="3">
+                            <p:inputText value="#{administradorEnte.ente.nombres}" style="width: 99%;"/>
+                        </p:column>
+                    </p:row>
+                    <p:row rendered="#{administradorEnte.ente.esPersona}">
+                        <p:column>Apellidos:</p:column>
+                        <p:column colspan="3">
+                            <p:inputText value="#{administradorEnte.ente.apellidos}" style="width: 99%;"/>
+                        </p:column>
+                    </p:row>
+                    <p:row rendered="#{!administradorEnte.ente.esPersona}">
+                        <p:column>Razon Social:</p:column>
+                        <p:column colspan="3">
+                            <p:inputText value="#{administradorEnte.ente.razonSocial}" style="width: 99%;"/>
+                        </p:column>
+                    </p:row>
+                    <p:row rendered="#{!administradorEnte.ente.esPersona}">
+                        <p:column>Nombre Comercial:</p:column>
+                        <p:column colspan="3">
+                            <p:inputText value="#{administradorEnte.ente.nombreComercial}" style="width: 99%;"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>Direccion:</p:column>
+                        <p:column colspan="3">
+                            <p:inputText value="#{administradorEnte.ente.direccion}" style="width: 99%;"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="4">
+                            <center>
+                                <p:commandButton value="Guardar" styleClass="btnStyle" actionListener="#{administradorEnte.saveEnte()}">
+                                    <p:confirm header="Confirmacion" message="Esta Seguro de Guardar?" icon="ui-icon-alert" />
+                                </p:commandButton>
+                            </center>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <center>
+                        <p:commandButton value="SI" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                        <p:commandButton value="NO" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                    </center>
+                </p:confirmDialog>
+
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+</ui:composition>

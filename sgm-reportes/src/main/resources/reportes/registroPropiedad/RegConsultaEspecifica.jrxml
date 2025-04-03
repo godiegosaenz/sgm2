@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RegConsultaEspecifica" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="40" bottomMargin="20" uuid="d47d2ec4-18e8-4d48-a098-c1b7c1793790">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="USERNAME" class="java.lang.String"/>
+	<parameter name="DESDE" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="HASTA" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LIBRO" class="java.lang.Long"/>
+	<parameter name="ACTO" class="java.lang.Long"/>
+	<parameter name="INSCRIPCION" class="java.lang.Long"/>
+	<parameter name="REPERTORIO" class="java.lang.Long"/>
+	<parameter name="LIBRO_NAME" class="java.lang.String"/>
+	<parameter name="ACTO_NAME" class="java.lang.String"/>
+	<parameter name="HASTA2016" class="java.util.Date"/>
+	<queryString>
+		<![CDATA[select l.nombre as libroname, mov.num_inscripcion as numins, mov.fecha_inscripcion as fecins, mov.num_repertorio as numrep,
+a.nombre as actoname, mov.folio_inicio as folioini
+from sgm_app.reg_movimiento as mov
+left outer join sgm_app.reg_libro as l on (l.id=mov.libro)
+left outer join sgm_app.reg_acto as a on (a.id=mov.acto)
+where TRUE
+AND (CASE WHEN $P{LIBRO}>0 THEN mov.libro=$P{LIBRO} ELSE mov.libro>0 END)
+AND (CASE WHEN $P{ACTO}>0 THEN mov.acto=$P{ACTO} ELSE mov.acto>0 END)
+AND (CASE WHEN $P{REPERTORIO}>0 THEN mov.num_repertorio=$P{REPERTORIO} ELSE mov.num_repertorio>0 END)
+AND (CASE WHEN $P{INSCRIPCION}>0 THEN mov.num_inscripcion=$P{INSCRIPCION} ELSE mov.num_inscripcion>0 END)
+AND mov.fecha_inscripcion BETWEEN $P{DESDE} AND $P{HASTA}
+order by mov.fecha_inscripcion asc,l.id asc, mov.num_inscripcion asc]]>
+	</queryString>
+	<field name="libroname" class="java.lang.String"/>
+	<field name="numins" class="java.lang.Integer"/>
+	<field name="fecins" class="java.sql.Timestamp"/>
+	<field name="numrep" class="java.lang.Integer"/>
+	<field name="actoname" class="java.lang.String"/>
+	<field name="folioini" class="java.lang.Integer"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="176" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="9b8bbc37-a89c-41b0-b11b-2b1870a58d52" x="0" y="0" width="555" height="16"/>
+				<textElement>
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Registro Municipal de la Propiedad del Cantón Samborondón]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a52f020f-295c-4f9a-832d-8bbb3be97292" x="0" y="16" width="181" height="14"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Calixto Romero y Malecón]]></text>
+			</staticText>
+			<textField pattern="dd/MMMMM/yyyy">
+				<reportElement uuid="c1b3c42f-04b6-4117-91fb-7d1b831cbda2" x="436" y="16" width="119" height="14"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="ea7cf832-ee4f-4a84-9fde-e93d2a503dd5" x="385" y="16" width="51" height="14"/>
+				<textElement/>
+				<text><![CDATA[Fecha :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6671d988-7ca2-41f1-9af8-83e9c75015c1" x="385" y="30" width="51" height="14"/>
+				<textElement/>
+				<text><![CDATA[Hora   :]]></text>
+			</staticText>
+			<textField pattern="HH:mm:ss">
+				<reportElement uuid="5ed8d6e7-4808-4945-98bb-1eec3afe8693" x="436" y="30" width="119" height="14"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="87996f43-58ca-4d82-bce8-30ea58213c01" x="0" y="60" width="555" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Consultas Específicas]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c449b3ee-c777-41ff-80c0-4feea7592281" x="0" y="76" width="200" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Criterio de busqueda:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d7c67578-b77d-41e9-93bc-068193fb897e" x="1" y="156" width="70" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Desde:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e1c1d651-0559-4242-b41d-7234144fa0e7" x="158" y="156" width="70" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hasta:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="a5be1b8f-3313-4ddd-afc1-7c98b335303d" x="71" y="156" width="87" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{DESDE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="00c914e8-09c1-4c69-ad99-4be49bb95caf" x="1" y="96" width="61" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Libro:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a6ce6475-c786-4863-a4ee-ab5ba2308eb9" x="1" y="116" width="61" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Acto:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="404b525b-3e7f-4b9e-a611-f3d67a083903" x="0" y="136" width="62" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Inscripcion:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="800a639a-5289-4cd9-b637-bf876034a671" x="158" y="136" width="70" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Repertorio:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="414b6562-75c8-4dca-b7d4-2016a8032147" x="62" y="136" width="96" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{INSCRIPCION}>0?$P{INSCRIPCION}:"TODAS"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="33631493-e096-4169-8af1-c0a120722d72" x="228" y="136" width="99" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{REPERTORIO}>0?$P{REPERTORIO}:"TODOS"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="3b0eb42c-f4ab-433e-8cbb-365aa130170f" x="62" y="96" width="493" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{LIBRO_NAME}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="93f7de42-90a8-4c21-a273-0b7767496292" x="62" y="116" width="493" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{ACTO_NAME}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="f52484f3-e93e-4eb8-89c0-ac59032d2075" x="228" y="156" width="100" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{HASTA}.before( new Date("01/01/2016"))?$P{HASTA}:$P{HASTA2016}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="22" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="7cbcd155-0106-4946-bc2e-e2d80dca123e" x="0" y="0" width="149" height="22"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Libro.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8202b17a-16b0-45c6-be06-56faf3383b6b" x="149" y="0" width="51" height="22"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ins.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f24d4af5-e620-4031-b991-0e7cba3ca354" x="504" y="0" width="51" height="22"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[F.Inicial]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5660f61f-5629-4077-8f03-c8cd520b9a61" x="326" y="0" width="178" height="22"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Acto.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f579765e-7a68-4eef-8abc-baeb63d2a171" x="200" y="0" width="70" height="22"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha/Ins.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7c2be2cf-7a30-46a6-a926-b2c2aec6f838" x="270" y="0" width="56" height="22"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Rep.]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="13" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="d5d30393-7ac9-4e00-8246-6c48a1cf9e6c" x="0" y="0" width="149" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{libroname}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="c70ed7f8-c01b-45cc-880d-bfea197a2b3c" x="149" y="0" width="51" height="12" isRemoveLineWhenBlank="true"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numins}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MMM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="27a3051a-2cc9-46e4-8967-b4828b8fef65" x="200" y="0" width="70" height="12" isRemoveLineWhenBlank="true"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecins}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="79ec5680-746a-4eb4-b3bb-bf8e17bc3b39" x="270" y="0" width="56" height="12" isRemoveLineWhenBlank="true"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numrep}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="dedd677a-194a-403b-a802-ba9f04a79d67" x="326" y="0" width="178" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{actoname}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="8ba63132-04f1-4338-bccd-efab0808b193" x="504" y="0" width="51" height="12" isRemoveLineWhenBlank="true"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{folioini}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="196c3386-00f8-4aff-9d9d-1f1711d9f896" positionType="Float" x="0" y="12" width="555" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="23" splitType="Stretch">
+			<textField evaluationTime="Report">
+				<reportElement uuid="1e62ed27-4371-4d26-ad33-84ec0f52588d" x="517" y="2" width="39" height="14"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="773c4ca3-bb82-43c6-a842-d53916e961bc" x="437" y="2" width="79" height="14"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pag "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="07340299-0747-4fe4-9673-a42a019fbd1e" x="0" y="2" width="555" height="1"/>
+			</line>
+			<textField>
+				<reportElement uuid="bb607f2d-8a77-4bc7-aea1-0f200d3a403d" x="244" y="3" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{USERNAME}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="21">
+			<textField>
+				<reportElement uuid="ef903a30-ad3a-48f9-8f6e-bfc71443bad0" x="437" y="1" width="79" height="14"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pag "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement uuid="e6f60537-2796-4e3e-bcd6-9bd99dc63e1b" x="517" y="1" width="39" height="14"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="e0f9a001-37bf-47b1-beb6-2eb9ca312e4d" x="0" y="0" width="556" height="1"/>
+			</line>
+			<textField>
+				<reportElement uuid="0aa39e0d-b19e-4cbb-a2c7-5cafd2a2bf86" x="244" y="1" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{USERNAME}]]></textFieldExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
+	<summary>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement uuid="1a9052e7-38ed-4018-8ba1-f15ab43debe8" x="46" y="0" width="55" height="20"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="c6d78811-bb6c-4dc1-91b9-e606e612b9dc" x="12" y="0" width="34" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="82f6b4e3-d934-42f9-8118-b298ff4def6c" x="110" y="0" width="100" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Movimientos]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

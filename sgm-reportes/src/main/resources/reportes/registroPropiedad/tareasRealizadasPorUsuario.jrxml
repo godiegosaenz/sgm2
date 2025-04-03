@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="tareasRealizadasPorUsuario" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7042896f-5870-4145-bc55-699c51ec4e48">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="USER_ID" class="java.lang.Long"/>
+	<parameter name="USER_NAME" class="java.lang.String"/>
+	<parameter name="LOGO_URL" class="java.lang.String"/>
+	<parameter name="DESDE" class="java.lang.String"/>
+	<parameter name="HASTA" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\Anyelo\\Desktop\\NetBeansProjects\\sgm\\src\\main\\webapp\\reportes\\registroPropiedad\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FECHA_HASTA" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select u.usuario,
+case en.es_persona when true then en.nombres || ' ' || en.apellidos else en.razon_social end as nombre_usuario
+from sgm_app.acl_user as u
+left join sgm_app.cat_ente as en on (en.id = u.ente)
+where u.id = $P{USER_ID}]]>
+	</queryString>
+	<field name="usuario" class="java.lang.String"/>
+	<field name="nombre_usuario" class="java.lang.String"/>
+	<title>
+		<band height="76" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="07c5fed0-4be5-4eba-9666-e07751c59cf1" x="294" y="0" width="297" height="35"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[GOBIERNO AUTÓNOMO DESCENTRALIZADO MUNICIPAL DEL CANTÓN SAMBORONDÓN]]></text>
+			</staticText>
+			<image>
+				<reportElement uuid="9f13db17-6f05-41cd-9d2a-69b743910b5d" x="221" y="0" width="73" height="55"/>
+				<imageExpression><![CDATA[$P{LOGO_URL}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement uuid="1079f121-d899-4498-847b-1078fc52fe66" x="294" y="35" width="297" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REGISTRO DE LA PROPIEDAD]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="6b36f3e5-08f1-4002-9665-30ee360947c8" x="0" y="55" width="802" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Tareas de Usuario: " + $F{nombre_usuario}.toUpperCase() + " - Desde: " + $P{DESDE} + " Hasta: " + $P{FECHA_HASTA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="180">
+			<subreport>
+				<reportElement uuid="dec1b188-7d4f-4e9c-9398-9584918c6926" positionType="Float" x="0" y="10" width="802" height="30"/>
+				<subreportParameter name="HASTA">
+					<subreportParameterExpression><![CDATA[$P{HASTA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="USER_ID">
+					<subreportParameterExpression><![CDATA[$P{USER_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DESDE">
+					<subreportParameterExpression><![CDATA[$P{DESDE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "tareasRealizadasPorUsuario_subreport1.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement uuid="8ecc1259-de8a-4e55-a713-fa41e73eb431" positionType="Float" x="0" y="51" width="802" height="30"/>
+				<subreportParameter name="HASTA">
+					<subreportParameterExpression><![CDATA[$P{HASTA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="USER_ID">
+					<subreportParameterExpression><![CDATA[$P{USER_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DESDE">
+					<subreportParameterExpression><![CDATA[$P{DESDE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "tareasRealizadasPorUsuario_subreport2.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement uuid="229ec141-9cdc-44d5-b318-5f21cc25f083" positionType="Float" x="0" y="94" width="802" height="30"/>
+				<subreportParameter name="HASTA">
+					<subreportParameterExpression><![CDATA[$P{HASTA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="USER_ID">
+					<subreportParameterExpression><![CDATA[$P{USER_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DESDE">
+					<subreportParameterExpression><![CDATA[$P{DESDE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "tareasRealizadasPorUsuario_subreport3.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement uuid="8a6b3799-9552-4b13-a47b-5a61edabe6fe" positionType="Float" x="0" y="136" width="802" height="30"/>
+				<subreportParameter name="HASTA">
+					<subreportParameterExpression><![CDATA[$P{HASTA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="USER_ID">
+					<subreportParameterExpression><![CDATA[$P{USER_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DESDE">
+					<subreportParameterExpression><![CDATA[$P{DESDE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "tareasRealizadasPorUsuario_subreport4.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="20">
+			<textField>
+				<reportElement uuid="f8ee0121-2f74-4924-b49a-cf800d3423f2" x="682" y="0" width="80" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA["Pág. "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement uuid="35cada38-b01d-41f3-8cf8-0ed9a3221577" x="762" y="0" width="40" height="20"/>
+				<textElement verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="0df675d3-5be3-401c-8213-c566bc6429bf" x="0" y="0" width="184" height="20"/>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Impreso por: " + $P{USER_NAME}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

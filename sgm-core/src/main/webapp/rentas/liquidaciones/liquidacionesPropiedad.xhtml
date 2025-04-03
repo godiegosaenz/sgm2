@@ -1,0 +1,357 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:poue="http://primefaces.org/ui/extensions">
+
+    <ui:define name="events">
+        <script src="../../resources/pfJs/keyPress.js" type="text/javascript"></script>
+    </ui:define>
+
+    <ui:define name="head">
+        
+    </ui:define>
+    <ui:define name="content">
+        <center>
+            <h1>Liquidaciones a la Propiedad</h1>
+        </center>
+        <h:form id="frmLiquidaciones">
+            <p:tabView id="tbLiq">
+                <p:tab title="Recientes y pagadas">
+                    <p:dataTable id="dtLiq" value="#{liquidacionesPropiedad.lazy}" reflow="true"
+                                 filterEvent="enter" rows="20" rowsPerPageTemplate="20,50,100"
+                                 emptyMessage="No se encontraron registros" lazy="true" paginator="true"
+                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 var="lc1" nullSortOrder="-1" widgetVar="dtLiqProp">
+                        <p:column headerText="Tipo Liquidacion" filterStyle="width: 95%" width="15%" 
+                                  filterBy="#{lc1.tipoLiquidacion.nombreTitulo}">
+                            <f:facet name="filter">
+                                <p:selectOneMenu id="fTipo" onchange="PF('dtLiqProp').filter()" >
+                                    <f:selectItem itemLabel="Tipo Liquidacion" itemValue="#{null}" noSelectionOption="true"/>
+                                    <f:selectItem itemLabel="ALCABALAS" itemValue="COBRO DE ALCABALAS"/>
+                                    <f:selectItem itemLabel="PLUSVALIA" itemValue="P L U S V A L I A"/>
+                                </p:selectOneMenu>
+                            </f:facet>
+                            <p:outputLabel value="#{lc1.tipoLiquidacion.nombreTitulo}"/>
+                        </p:column>
+                        <p:column headerText="Matricula Inmobiliaria" width="10%" filterStyle="width: 95%" filterBy="#{lc1.predio.numPredio}">
+                            <p:outputLabel value="#{lc1.predio.numPredio}"/>
+                        </p:column>
+                        <p:column headerText="Num. Liquidacion" filterStyle="width: 95%" filterBy="#{lc1.numLiquidacion}" width="10%">
+                            <p:outputLabel value="#{lc1.numLiquidacion}"/>
+                        </p:column>
+                        <p:column headerText="Año" filterStyle="width: 95%" filterBy="#{lc1.anio}" width="7%"  >
+                            <p:outputLabel value="#{lc1.anio}"/>
+                        </p:column>
+                        <p:column headerText="Fecha" width="8%"  >
+                            <p:outputLabel value="#{lc1.fechaIngreso}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column headerText="Identificación" filterStyle="width: 95%" filterBy="#{lc1.comprador.ciRuc}" width="12%">
+                            <p:outputLabel value="#{lc1.comprador.ciRuc}"/>
+                        </p:column>
+                        <p:column headerText="Vendedor" filterStyle="width: 95%" filterBy="#{lc1.comprador.nombreCompleto}">
+                            <p:outputLabel value="#{lc1.comprador.nombreCompleto}"/>
+                        </p:column>
+                        <p:column headerText="Estado" filterStyle="width: 95%" width="8%" filterBy="#{lc1.estadoLiquidacion.descripcion}" >
+                            <f:facet name="filter">
+                                <p:selectOneMenu id="fStados" onchange="PF('dtLiqProp').filter()" >
+                                    <f:selectItem itemLabel="Estado" itemValue="#{null}" noSelectionOption="true"/>
+                                    <f:selectItem itemLabel="Por pagar" itemValue="Por pagar"/>
+                                    <f:selectItem itemLabel="Pagado" itemValue="Pagado"/>
+                                </p:selectOneMenu>
+                            </f:facet>
+                            <p:outputLabel value="#{lc1.estadoLiquidacion.descripcion}" style="font-size: 10px;"/>
+                        </p:column>
+                        <p:column headerText="Opciones" width="8%" style="text-align: center; ">
+                            <p:commandButton id="info" icon="ui-icon-info" styleClass="btnStyle" style="width: 20px;"
+                                             actionListener="#{liquidacionesPropiedad.detalle(lc1)}"/>
+                            <p:spacer width="3"/>
+                            <p:commandButton id="print" icon="ui-icon-print"  styleClass="btnStyle" style="width: 20px;"
+                                             actionListener="#{liquidacionesPropiedad.imprimir(lc1)}"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:tab>
+                <p:tab title="Antiguas">
+                    <center>
+                        <p:commandButton value="Inactivar Lista" styleClass="btnStyle" update="frmLiquidaciones"
+                                         actionListener="#{liquidacionesPropiedad.inactivarLiquidaciones()}"/>
+                    </center>
+                    <p:dataTable id="dtLiqAnt" value="#{liquidacionesPropiedad.antiguas}" reflow="true"
+                                 filterEvent="enter" rows="20" rowsPerPageTemplate="20,50,100, 200" widgetVar="dtLiqPropAnt"
+                                 emptyMessage="No se encontraron registros" lazy="true" paginator="true"
+                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 var="lc2" nullSortOrder="-1" selection="#{liquidacionesPropiedad.liquidaciones}" rowKey="#{lc2.id}" >
+                        <p:column selectionMode="multiple" style="width:5%; text-align:left; " />
+                        <p:column headerText="Tipo Liquidacion" filterStyle="width: 95%" width="15%" 
+                                  filterBy="#{lc2.tipoLiquidacion.nombreTitulo}">
+                            <f:facet name="filter">
+                                <p:selectOneMenu id="fTipo1" onchange="PF('dtLiqPropAnt').filter()" >
+                                    <f:selectItem itemLabel="Tipo Liquidacion" itemValue="#{null}" noSelectionOption="true"/>
+                                    <f:selectItem itemLabel="ALCABALAS" itemValue="COBRO DE ALCABALAS"/>
+                                    <f:selectItem itemLabel="PLUSVALIA" itemValue="P L U S V A L I A"/>
+                                </p:selectOneMenu>
+                            </f:facet>
+                            <p:outputLabel value="#{lc2.tipoLiquidacion.nombreTitulo}"/>
+                        </p:column>
+                        <p:column headerText="Matricula Inmobiliaria" width="10%" filterStyle="width: 95%" filterBy="#{lc2.predio.numPredio}">
+                            <p:outputLabel value="#{lc2.predio.numPredio}"/>
+                        </p:column>
+                        <p:column headerText="Num. Liquidacion" filterStyle="width: 95%" filterBy="#{lc2.numLiquidacion}" width="10%">
+                            <p:outputLabel value="#{lc2.numLiquidacion}"/>
+                        </p:column>
+                        <p:column headerText="Año" filterStyle="width: 95%" filterBy="#{lc2.anio}" width="8%"  >
+                            <p:outputLabel value="#{lc2.anio}"/>
+                        </p:column>
+                        <p:column headerText="Fecha" filterStyle="width: 95%" filterBy="#{lc2.anio}" width="8%"  >
+                            <p:outputLabel value="#{lc2.fechaIngreso}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column headerText="Identificación" filterStyle="width: 95%" filterBy="#{lc2.comprador.ciRuc}" width="12%">
+                            <p:outputLabel value="#{lc2.comprador.ciRuc}"/>
+                        </p:column>
+                        <p:column headerText="Vendedor" filterStyle="width: 95%" filterBy="#{lc2.comprador.nombreCompleto}">
+                            <p:outputLabel value="#{lc2.comprador.nombreCompleto}"/>
+                        </p:column>
+                        <p:column headerText="Estado" filterStyle="width: 95%" width="6%" style="font-size: 10px;"  >
+                            <p:outputLabel value="#{lc2.estadoLiquidacion.descripcion}"/>
+                        </p:column>
+                        <p:column headerText="Opciones" width="11%" style="text-align: center; margin-left: 0px; margin-right: 0px; ">
+                            <p:commandButton icon="ui-icon-info" styleClass="btnStyle"
+                                             actionListener="#{liquidacionesPropiedad.detalle(lc2)}"/>
+                            <p:spacer width="2"/>
+                            <p:commandButton icon="ui-icon-print" styleClass="btnStyle"
+                                             actionListener="#{liquidacionesPropiedad.imprimir(lc2)}"/>
+                            <p:spacer width="2"/>
+                            <p:commandButton icon="ui-icon-close" styleClass="btnStyle"
+                                             actionListener="#{liquidacionesPropiedad.anular(lc2)}" update="frmLiquidaciones" />
+                        </p:column>
+                    </p:dataTable>
+                </p:tab>
+                <p:tab title="Anuladas">
+                    <p:dataTable id="dtLiqAnl" value="#{liquidacionesPropiedad.inactivas}" reflow="true"
+                                 filterEvent="enter" rows="20" rowsPerPageTemplate="20,50,100"
+                                 emptyMessage="No se encontraron registros" lazy="true" paginator="true"
+                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 var="lc3" nullSortOrder="-1" widgetVar="dtLiqPropInac">
+                        <p:column headerText="Tipo Liquidacion" filterStyle="width: 95%" width="15%" 
+                                  filterBy="#{lc3.tipoLiquidacion.nombreTitulo}">
+                            <f:facet name="filter">
+                                <p:selectOneMenu id="fTipo" onchange="PF('dtLiqPropInac').filter()" >
+                                    <f:selectItem itemLabel="Tipo Liquidacion" itemValue="#{null}" noSelectionOption="true"/>
+                                    <f:selectItem itemLabel="ALCABALAS" itemValue="COBRO DE ALCABALAS"/>
+                                    <f:selectItem itemLabel="PLUSVALIA" itemValue="P L U S V A L I A"/>
+                                </p:selectOneMenu>
+                            </f:facet>
+                            <p:outputLabel value="#{lc3.tipoLiquidacion.nombreTitulo}"/>
+                        </p:column>
+                        <p:column headerText="Matricula Inmobiliaria" width="10%" filterStyle="width: 95%" filterBy="#{lc3.predio.numPredio}">
+                            <p:outputLabel value="#{lc3.predio.numPredio}"/>
+                        </p:column>
+                        <p:column headerText="Num. Liquidacion" filterStyle="width: 95%" filterBy="#{lc3.numLiquidacion}" width="10%">
+                            <p:outputLabel value="#{lc3.numLiquidacion}"/>
+                        </p:column>
+                        <p:column headerText="Fecha" filterStyle="width: 95%" width="8%"  >
+                            <p:outputLabel value="#{lc3.fechaIngreso}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column headerText="Año" filterStyle="width: 95%" filterBy="#{lc3.anio}" width="8%"  >
+                            <p:outputLabel value="#{lc3.anio}"/>
+                        </p:column>
+                        <p:column headerText="Identificación" filterStyle="width: 95%" filterBy="#{lc3.comprador.ciRuc}" width="12%">
+                            <p:outputLabel value="#{lc3.comprador.ciRuc}"/>
+                        </p:column>
+                        <p:column headerText="Vendedor" filterStyle="width: 95%" filterBy="#{lc3.comprador.nombreCompleto}">
+                            <p:outputLabel value="#{lc3.comprador.nombreCompleto}"/>
+                        </p:column>
+                        <p:column headerText="Estado" filterStyle="width: 95%" width="6%"  >
+                            <p:outputLabel value="#{lc3.estadoLiquidacion.descripcion}" style="font-size: 10px;"/>
+                        </p:column>
+                        <p:column headerText="Opciones" width="10%" style="text-align: center; ">
+                            <p:commandButton icon="ui-icon-info" styleClass="btnStyle"
+                                             actionListener="#{liquidacionesPropiedad.detalle(lc3)}"/>
+                            <p:spacer width="3"/>
+                            <p:commandButton icon="ui-icon-print" styleClass="btnStyle"
+                                             actionListener="#{liquidacionesPropiedad.imprimir(lc3)}"/>
+                            <p:spacer width="3"/>
+                            <p:commandButton icon="ui-icon-close" styleClass="btnStyle"
+                                             actionListener="#{liquidacionesPropiedad.anular(lc3)}" update="frmLiquidaciones" />
+                        </p:column>
+                    </p:dataTable>
+                </p:tab>
+            </p:tabView>
+        </h:form>
+
+        <p:dialog widgetVar="detalle" width="70%" height="550" modal="true" closeOnEscape="true" 
+                  closable="true" appendTo="@(body)" position="center" resizable="false" 
+                  header="Detalle Liquidación" >
+            <h:form id="detalle">
+                <p:tabView id="tabDetalle">
+                    <p:tab title="Información">
+                        <p:panelGrid columns="4" columnClasses="ui-grid-col-2, ui-grid-col-4, ui-grid-col-2, ui-grid-col-4" layout="grid">
+                            <p:outputLabel value="Número de liquidación"/> 
+                            <p:inputText value="#{liquidacionesPropiedad.liquidacion.numLiquidacion}" readonly="true" />
+                            <p:outputLabel value="Número de Comprobante "/> 
+                            <p:inputText value="#{liquidacionesPropiedad.liquidacion.numComprobante}" readonly="true"  />
+                            <p:outputLabel value="Año de liquidación"/> 
+                            <p:inputText value="#{liquidacionesPropiedad.liquidacion.anio}" readonly="true"  />
+                            <p:outputLabel value="Fecha de Ingreso "/> 
+                            <p:inputText value="#{liquidacionesPropiedad.liquidacion.fechaIngreso}" readonly="true"  >
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                            </p:inputText>
+                            <p:outputLabel value="Total a pagar"/> 
+                            <p:inputText value="#{liquidacionesPropiedad.liquidacion.totalPago}" readonly="true"  />
+                            <p:outputLabel value="Número de predio"/> 
+                            <h:panelGroup>
+                                <p:inputText value="#{liquidacionesPropiedad.liquidacion.predio.numPredio}" rendered="#{liquidacionesPropiedad.liquidacion.predio != null}" readonly="true"  />
+                                <p:inputText value="#{liquidacionesPropiedad.liquidacion.predioRustico.idPredial} - #{liquidacionesPropiedad.liquidacion.predioRustico.regCatastral} - #{liquidacionesPropiedad.liquidacion.predioRustico.parroquia.codigoParroquia}" rendered="#{liquidacionesPropiedad.liquidacion.predioRustico != null}" readonly="true"  />
+                            </h:panelGroup>
+                            <p:outputLabel value="Código Predio"/> 
+                            <p:inputText value="#{liquidacionesPropiedad.liquidacion.predio.codigoPredialCompleto}" readonly="true"  />
+                            <p:outputLabel value="Estado Liquidación"/> 
+                            <p:outputLabel value="#{liquidacionesPropiedad.liquidacion.estadoLiquidacion.descripcion}" />
+                        </p:panelGrid>
+                        <h:panelGrid columns="2"  style="width: 100%;" >
+                            <p:panelGrid columns="2" columnClasses="ui-grid-col-3, ui-grid-col-8" layout="grid" style="width: 100%;" >
+                                <f:facet name="header">
+                                    Datos del Comprador
+                                </f:facet>
+                                <p:outputLabel value="Cédula/RUC"/> 
+                                <h:panelGroup>
+                                    <p:inputText value="#{liquidacionesPropiedad.liquidacion.vendedor.ciRuc}" readonly="true" style="width: 80%" />
+                                    <p:commandLink actionListener="#{liquidacionesPropiedad.buscarEnte()}" rendered="#{liquidacionesPropiedad.habilitar()}"  >
+                                        <p:ajax event="dialogReturn" listener="#{liquidacionesPropiedad.seleccionarVendedor}" update="detalle" />
+                                        <p:graphicImage value="/css/homeIconsImages/buscar.png" width="20" height="20"/>
+                                    </p:commandLink>
+                                </h:panelGroup>
+                                <p:outputLabel value="Nombres "/> 
+                                <p:inputText value="#{liquidacionesPropiedad.liquidacion.vendedor.nombreCompleto}" style="width: 100%" readonly="true" />
+                                <p:outputLabel value="Dirección "/> 
+                                <p:inputText value="#{liquidacionesPropiedad.liquidacion.vendedor.direccion}" style="width: 100%" readonly="true" />
+                            </p:panelGrid>
+                            <p:panelGrid columns="2" columnClasses="ui-grid-col-3, ui-grid-col-8" layout="grid" style="width: 100%;">
+                                <f:facet name="header">
+                                    Datos del Vendedor
+                                </f:facet>
+                                <p:outputLabel value="Cédula/RUC"/> 
+                                <h:panelGroup>
+                                    <p:inputText value="#{liquidacionesPropiedad.liquidacion.comprador.ciRuc}" readonly="true" style="width: 80%" />
+                                    <p:commandLink actionListener="#{liquidacionesPropiedad.buscarEnte()}" rendered="#{liquidacionesPropiedad.habilitar()}"  >
+                                        <p:ajax event="dialogReturn" listener="#{liquidacionesPropiedad.seleccionarComprador}" update="detalle" />
+                                        <p:graphicImage value="/css/homeIconsImages/buscar.png" width="20" height="20"/>
+                                    </p:commandLink>
+                                </h:panelGroup>
+                                <p:outputLabel value="Nombres "/> 
+                                <p:inputText value="#{liquidacionesPropiedad.liquidacion.comprador.nombreCompleto}" style="width: 100%" readonly="true" />
+                                <p:outputLabel value="Dirección "/> 
+                                <p:inputText value="#{liquidacionesPropiedad.liquidacion.comprador.direccion}" style="width: 100%" readonly="true" />
+                            </p:panelGrid>
+                        </h:panelGrid>
+                        
+                        <!--                PLUSVALIA -->
+                        <p:panelGrid style="width: 100%" id="pnlPlus" columns="4" layout="grid" 
+                                     columnClasses="ui-grid-col-2, ui-grid-col-4, ui-grid-col-2, ui-grid-col-4"
+                                     rendered="#{liquidacionesPropiedad.liquidacion.tipoLiquidacion.codigoTituloReporte == 95}" >
+                            <p:outputLabel for="l1" value="Fecha de Inscripción: "/>
+                            <p:inputText id="l1" value="#{liquidacionesPropiedad.liquidacion.fechaContratoAnt}" readonly="true" >
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </p:inputText>
+                            <p:outputLabel for="l2" value="Precio de Venta: "/>
+                            <p:inputText id="l2" value="#{liquidacionesPropiedad.liquidacion.cuantia}" />
+
+                            <p:outputLabel value="Costo Adquisición: " for="l3"/>
+                            <p:inputText id="l3" value="#{liquidacionesPropiedad.liquidacion.costoAdq}" readonly="true" />
+                            <p:outputLabel value="Diferencia Neta: " for="l4"/>
+                            <p:inputText id="l4" value="#{liquidacionesPropiedad.valores.diferenciaNeta}" readonly="true" />
+
+                            <p:outputLabel value="Mejoras CEM/Construcción: " for="l5"/>
+                            <p:inputText id="l5" value="#{liquidacionesPropiedad.valores.mejorasCemConst}" readonly="true" />
+                            <p:outputLabel value="Mejoras Urbanización: " for="l6"/>
+                            <p:inputText id="l6" value="#{liquidacionesPropiedad.valores.mejorasUrb}" readonly="true"/>
+
+                            <p:outputLabel value="Diferencia Neta 2: " for="l7"/>
+                            <p:inputText id="l7" value="#{liquidacionesPropiedad.valores.diferenciaNeta2}" readonly="true"  />
+                            <p:outputLabel value="Rebajas General: " for="l8"/>
+                            <h:panelGroup>
+                                <p:inputText value="#{liquidacionesPropiedad.valores.porcentajeRebaja}" readonly="true" style="width: 30px;"/>%
+                                <p:inputText id="l8" value="#{liquidacionesPropiedad.valores.rebajaGen}" readonly="true" style="width: 95px;" />
+                            </h:panelGroup>
+
+                            <p:outputLabel value="Base Desvalorización: " for="l9"/>
+                            <p:inputText id="l9" value="#{liquidacionesPropiedad.valores.baseDesvalorizacion}" readonly="true" />
+                            <p:outputLabel value="Desvalorización Monetaria: " for="l10"/>
+                            <h:panelGroup>
+                                <p:inputText value="#{liquidacionesPropiedad.valores.desvalorizacion.valor}" readonly="true" style="width: 40px;"/>% 
+                                <p:inputText id="l10" value="#{liquidacionesPropiedad.valores.desvalorizacionMonet}" readonly="true" style="width: 85px;" />
+                            </h:panelGroup>
+
+                            <p:outputLabel value="Utilidad Imponible: " for="l11"/>
+                            <p:inputText id="l11" value="#{liquidacionesPropiedad.valores.utilidadImponib}" readonly="true"  />
+                            <p:outputLabel value=""/>
+                            <p:outputLabel value=""/>
+                        </p:panelGrid>
+
+                        <!--                ALCABALAS -->
+                        <p:panelGrid style="width: 100%;" columns="4" layout="grid" 
+                                     columnClasses="ui-grid-col-2, ui-grid-col-4, ui-grid-col-2, ui-grid-col-4"
+                                     rendered="#{liquidacionesPropiedad.liquidacion.tipoLiquidacion.codigoTituloReporte == 93}" >
+                            <p:outputLabel for="A1" value="Fecha de Contrato Anterior "/>
+                            <p:inputText id="A1" value="#{liquidacionesPropiedad.liquidacion.fechaContratoAnt}" readonly="true" >
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </p:inputText>
+                            <p:outputLabel value="Costo Adquisición: " for="a2"/>
+                            <p:inputText id="a2" value="#{liquidacionesPropiedad.liquidacion.costoAdq}" readonly="true" />
+
+                            <p:outputLabel value="Cuantia: " for="a3"/>
+                            <p:inputText id="a3" value="#{liquidacionesPropiedad.liquidacion.cuantia}" readonly="true"/>
+                            <p:outputLabel value="Descuento: " for="a4"/>
+                            <p:inputText id="a4" value="#{liquidacionesPropiedad.valores.baseDesvalorizacion}" readonly="true"/>
+                        </p:panelGrid>
+
+                    </p:tab>
+                    <p:tab title="Detalle">
+                        <p:dataTable value="#{liquidacionesPropiedad.valores.renDetallePlusvaliaCollection}" 
+                                     var="d1" style="width: 100%; "
+                                     paginator="true" paginatorAlwaysVisible="false" emptyMessage="No se encontraron Registros..."
+                                     rows="20" rowsPerPageTemplate="20,50" reflow="true"  >
+                            <f:facet name="header">
+                                Predio Asociados
+                            </f:facet>
+                            <p:column headerText="Num. Predio" width="15%" >
+                                <p:outputLabel value="#{d1.prediosAsociados.numPredio}"/>
+                            </p:column>
+                            <p:column headerText="Urbanización">
+                                <p:outputLabel value="#{d1.prediosAsociados.ciudadela.nombre}"/>
+                            </p:column>
+                            <p:column headerText="Calle"  >
+                                <p:outputLabel value="#{d1.prediosAsociados.calle}"/>
+                            </p:column>
+                            <p:column headerText="Manzana"  width="10%">
+                                <p:outputLabel value="#{d1.prediosAsociados.urbSolarnew}"/>
+                            </p:column>
+                            <p:column headerText="Solar"  width="10%">
+                                <p:outputLabel value="#{d1.prediosAsociados.urbMz}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                </p:tabView>
+                <center>
+                    <p:commandButton value="Salir" onclick="PF('detalle').hide()" styleClass="btnStyle"/>
+                    <p:spacer width="10"/>
+                    <p:commandButton value="Anular" actionListener="#{liquidacionesPropiedad.anular()}" styleClass="btnStyle" rendered="#{liquidacionesPropiedad.liquidacion.estadoLiquidacion.id eq 2}"/>
+                    <p:spacer width="10"/>
+                    <p:commandButton value="Activar" actionListener="#{liquidacionesPropiedad.activar()}" styleClass="btnStyle" rendered="#{liquidacionesPropiedad.liquidacion.estadoLiquidacion.id eq 3}"/>
+                    <p:spacer width="10"/>
+                    <p:commandButton value="Guardar Cambios" actionListener="#{liquidacionesPropiedad.modificar()}" styleClass="btnStyle" rendered="#{liquidacionesPropiedad.modificar}"/>
+                </center>
+            </h:form>
+        </p:dialog>    
+    </ui:define>
+
+</ui:composition>

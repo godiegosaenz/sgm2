@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="./../../../template/template.xhtml">
+    <ui:define name="metadata">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    </ui:define>
+    <ui:define name="head">
+        <title>Revisión Detalle Orden</title>
+        <script type="text/javascript">
+            //<![CDATA[
+                window.onload = function (e) {
+                var width = $("#layout-menubar-resize").parent().width();
+                if (width < 100) {
+                    $("#layout-menubar-resize").click();
+                }
+            };
+            //]]>
+        </script>
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="ContainerIndent">
+            <h:form id="frmOrdenes">
+                <p:panel id="pOrdenes">
+                    <div align="center">
+                        <h3 class="hardblue">Seleccione la orden de trabajo respectiva para revisar el detalle del trabajo.</h3>
+                    </div>
+                    <p:growl autoUpdate="true" showDetail="true"/>
+                    <!--<p:commandButton value="Validar" actionListener="# {revisionOts.reprocesarPropietarios()}"/>-->
+                    <p:dataTable id="dtDetOrdenes" value="#{revisionOts.ordenes}" var="d" widgetVar="ots" paginator="true" rows="10" reflow="true" lazy="true" paginatorPosition="top" rowsPerPageTemplate="20,50,100"
+                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                                 emptyMessage="No tiene ordenes pendientes" style="width: 100%" filterEvent="enter">
+                        <p:column headerText="#Orden" filterBy="#{d.orden.numOrden}" filterMatchMode="exact" width="8%">
+                            <h:outputText value="#{d.orden.numOrden}"/>
+                        </p:column>
+                        <p:column headerText="Predio" filterBy="#{d.numPredio}" width="8%">
+                            <h:outputText value="#{d.numPredio}"/>
+                        </p:column>
+                        <p:column headerText="Código Catastral" filterBy="#{d.predio.claveCat}" width="15%" >
+                            <h:outputText value="#{d.predio.claveCat}"/>
+                        </p:column>
+                        <p:column headerText="Responsable" filterBy="#{d.orden.responsable.usuario}" filterMatchMode="exact">
+                            <h:outputText value="#{d.orden.responsable.usuario}"/>
+                        </p:column>
+                        <p:column headerText="Fecha" sortBy="#{d.orden.fecIni}" filterBy="#{d.orden.fecIni}"  >
+                            <f:facet name="filter">
+                                <p:calendar id="fecha" pattern="dd/MM/yyyy">
+                                    <p:ajax event="dateSelect" oncomplete="PF('ots').filter()"/>
+                                </p:calendar>
+                            </f:facet>
+                            <h:outputText value="#{d.orden.fecIni}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Finaliza" style="width: 10%; text-align: center">
+                            <h:outputText value="#{d.orden.fecIni}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Observaciones">
+                            <h:outputText value="#{d.observaciones}"/>
+                        </p:column>
+                        <p:column headerText="Estado">
+                            <h:outputText value="#{d.estadoDet}"/>
+                        </p:column>
+                        <p:column style="width: 6%; text-align: center" headerText="Opciones">
+                            <p:commandButton id="btnVer" icon="fa fa-external-link" actionListener="#{revisionOts.revisar(d)}"/>
+                            <p:spacer width="5"/>
+                            <p:commandButton id="btnQuitar" icon="ui-icon-trash" actionListener="#{revisionOts.removerDetalle(d)}" update="dtDetOrdenes" >
+                                <p:confirm header="Advertencia" icon="ui-icon-info" message="Esta seguro de Eliminar la orden # #{d.orden.numOrden}?"/>
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+                </p:panel>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

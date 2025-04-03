@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:poue="http://primefaces.org/ui/extensions">
+
+    <ui:define name="content">
+        <center>
+            <h1>
+                Turismo de Servicios
+            </h1>
+        </center>
+        <h:form id="frmTasaTur">
+            <div align="right">
+                <p:commandButton value="Agregar Servicios" accesskey="I" actionListener="#{turismoServicios.nuevo()}" 
+                                 styleClass="btnStyle" style="font-weight: bold; font-size: 13px;" />
+            </div>
+            <p:dataTable id="servicioss" value="#{turismoServicios.lazy}" var="tt1" reflow="true" rows="10"
+                         lazy="true" emptyMessage="No se encontraron registros..." widgetVar="servicioss"
+                         rowsPerPageTemplate="10,20,50,100" paginator="true" filterEvent="enter" >
+
+                <p:column headerText="Descripción" filterBy="#{tt1.descripcion}" 
+                          sortBy="#{tt1.descripcion}" width="60%" filterStyle="width: 65%;" >
+                    <p:outputLabel value="#{tt1.descripcion}" />
+                </p:column>
+                <p:column headerText="Tipo" filterBy="#{tt1.tipo}" 
+                          sortBy="#{tt1.tipo}" width="15%" filterStyle="width: 65%;" >
+                    <f:facet name="filter">
+                        <p:selectOneMenu value="#{turismoServicios.servicios.tipo}" onchange="PF('servicioss').filter()">
+                            <f:selectItem itemLabel="Tipos" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="#{turismoServicios.tipos}" var="tv1" itemLabel="#{tv1.descripcion}" itemValue="#{tv1.idb}"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+                    <p:outputLabel value="#{turismoServicios.getTipoDescripcion(tt1.tipo)}" />
+                </p:column>
+
+                <p:column headerText="Opciones" width="10%" style="text-align: center; " >
+                    <p:commandLink actionListener="#{turismoServicios.editar(tt1)}" shape="circle" style="height: 25px" >
+                        <p:graphicImage value="/css/homeIconsImages/edicion.png" height="20" width="20" style="text-align: center;" />
+                    </p:commandLink>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+
+        <p:dialog id="dlgTasa" widgetVar="dlgTasa" width="45%" header="Ingreso y edicion de catalogo de servicios de turismo" height="60%" modal="true"
+                  closeOnEscape="true" appendTo="@(body)" responsive="true" resizable="false">
+            <h:form id="frmtt">
+                <p:panelGrid columns="2" columnClasses="ui-grid-col-2, ui-grid-col-4" layout="grid">
+                    <p:outputLabel value="Actividades Turisticas"/>
+                    <p:inputText value="#{turismoServicios.servicios.descripcion}" style="width: 75%"/>
+                    <p:outputLabel value="Tipo"/>
+                    <p:selectOneMenu value="#{turismoServicios.servicios.tipo}" >
+                        <f:selectItem itemLabel="Seleccione..." itemValue="#{null}" />
+                        <f:selectItems value="#{turismoServicios.tipos}" var="tv1" itemLabel="#{tv1.descripcion}" itemValue="#{tv1.idb}"/>
+                    </p:selectOneMenu>
+
+                    <p:outputLabel value="Estado" rendered="#{!turismoServicios.esNuevo}"/>
+                    <p:selectBooleanCheckbox value="#{turismoServicios.servicios.estado}" rendered="#{!turismoServicios.esNuevo}"/>
+                </p:panelGrid>
+                <br/>
+                <center>
+                    <p:commandButton icon="ui-icon-disk" value="Guardar" styleClass="btnStyle"
+                                     actionListener="#{turismoServicios.guardar()}"  />
+                </center>
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+
+</ui:composition>

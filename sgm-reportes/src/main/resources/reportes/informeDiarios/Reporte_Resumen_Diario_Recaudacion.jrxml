@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Reporte_Resumen_Diario_Recaudacion" pageWidth="654" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="614" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d7c4eb53-42df-4fd3-a262-76606e67640c">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="59"/>
+	<parameter name="DESDE" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="HASTA" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[java.lang.System.getProperty("user.home") + "\\Documents\\NetBeansProjects\\sgm\\src\\main\\webapp\\css\\homeIconsImages\\logo.jpg"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="Usuario" class="java.lang.String"/>
+	<parameter name="ILUSTRE_MUNICIPIO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+     acl_user.usuario AS acl_user_usuario,
+     SUM(ren_pago.valor) AS ren_pago_valor,
+     COUNT(ren_pago.num_comprobante) AS num_transacciones,
+     (SELECT SUM(ren_pago_detalle.valor) FROM sgm_financiero.ren_pago ren_pago INNER JOIN sgm_financiero.ren_pago_detalle ren_pago_detalle ON ren_pago_detalle.pago = ren_pago.id WHERE ren_pago.estado AND ren_pago.cajero = acl_user.id AND ren_pago_detalle.tipo_pago = 1 AND ren_pago.fecha_pago::DATE BETWEEN $P{DESDE} AND $P{HASTA}) AS valor_efectivo,
+     (SELECT SUM(ren_pago_detalle.valor) FROM sgm_financiero.ren_pago ren_pago INNER JOIN sgm_financiero.ren_pago_detalle ren_pago_detalle ON ren_pago_detalle.pago = ren_pago.id WHERE ren_pago.estado AND ren_pago.cajero = acl_user.id AND ren_pago_detalle.tipo_pago = 2 AND ren_pago.fecha_pago::DATE BETWEEN $P{DESDE} AND $P{HASTA}) AS valor_tarjeta,
+     (SELECT SUM(ren_pago_detalle.valor) FROM sgm_financiero.ren_pago ren_pago INNER JOIN sgm_financiero.ren_pago_detalle ren_pago_detalle ON ren_pago_detalle.pago = ren_pago.id WHERE ren_pago.estado AND ren_pago.cajero = acl_user.id AND ren_pago_detalle.tipo_pago = 3 AND ren_pago.fecha_pago::DATE BETWEEN $P{DESDE} AND $P{HASTA}) AS valor_nota_credito,
+     (SELECT SUM(ren_pago_detalle.valor) FROM sgm_financiero.ren_pago ren_pago INNER JOIN sgm_financiero.ren_pago_detalle ren_pago_detalle ON ren_pago_detalle.pago = ren_pago.id WHERE ren_pago.estado AND ren_pago.cajero = acl_user.id AND ren_pago_detalle.tipo_pago = 4 AND ren_pago.fecha_pago::DATE BETWEEN $P{DESDE} AND $P{HASTA}) AS valor_cheque,
+     (SELECT SUM(ren_pago_detalle.valor) FROM sgm_financiero.ren_pago ren_pago INNER JOIN sgm_financiero.ren_pago_detalle ren_pago_detalle ON ren_pago_detalle.pago = ren_pago.id WHERE ren_pago.estado AND ren_pago.cajero = acl_user.id AND ren_pago_detalle.tipo_pago = 5 AND ren_pago.fecha_pago::DATE BETWEEN $P{DESDE} AND $P{HASTA}) AS valor_tranferencia,
+(SELECT SUM(ren_pago_detalle.valor) FROM sgm_financiero.ren_pago ren_pago INNER JOIN sgm_financiero.ren_pago_detalle ren_pago_detalle ON ren_pago_detalle.pago = ren_pago.id WHERE ren_pago.estado AND ren_pago.cajero = acl_user.id AND ren_pago_detalle.tipo_pago = 6 AND ren_pago.fecha_pago::DATE BETWEEN $P{DESDE} AND $P{HASTA}) AS valor_compensacion,
+    (SELECT razon_social from sgm_application.empresa) AS nombre_empresa
+
+FROM
+     sgm_financiero.ren_pago ren_pago
+     INNER JOIN sgm_app.acl_user acl_user ON ren_pago.cajero = acl_user.id
+WHERE
+     ren_pago.estado = true
+ AND ren_pago.fecha_pago::DATE BETWEEN $P{DESDE} AND $P{HASTA}
+GROUP BY
+     acl_user.usuario,
+     acl_user.id
+ORDER BY
+     acl_user.usuario]]>
+	</queryString>
+	<field name="acl_user_usuario" class="java.lang.String"/>
+	<field name="ren_pago_valor" class="java.math.BigDecimal"/>
+	<field name="num_transacciones" class="java.lang.Long"/>
+	<field name="valor_efectivo" class="java.math.BigDecimal"/>
+	<field name="valor_tarjeta" class="java.math.BigDecimal"/>
+	<field name="valor_nota_credito" class="java.math.BigDecimal"/>
+	<field name="valor_cheque" class="java.math.BigDecimal"/>
+	<field name="valor_tranferencia" class="java.math.BigDecimal"/>
+	<field name="valor_compensacion" class="java.math.BigDecimal"/>
+	<field name="nombre_empresa" class="java.lang.String"/>
+	<variable name="SUB_TOTAL" class="java.math.BigDecimal" resetType="Column">
+		<variableExpression><![CDATA[($F{valor_efectivo} == null? java.math.BigDecimal.ZERO : $F{valor_efectivo})
+.add(($F{valor_tarjeta} == null? java.math.BigDecimal.ZERO : $F{valor_tarjeta}))
+.add(($F{valor_cheque} == null? java.math.BigDecimal.ZERO : $F{valor_cheque}))
+.add(($F{valor_tranferencia} == null? java.math.BigDecimal.ZERO : $F{valor_tranferencia}))]]></variableExpression>
+	</variable>
+	<variable name="valor_efectivo_1" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_efectivo} == null? java.math.BigDecimal.ZERO :$F{valor_efectivo}]]></variableExpression>
+	</variable>
+	<variable name="valor_tranferencia_1" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_tranferencia} == null? java.math.BigDecimal.ZERO :$F{valor_tranferencia}]]></variableExpression>
+	</variable>
+	<variable name="valor_cheque_1" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_cheque} == null? java.math.BigDecimal.ZERO : $F{valor_cheque}]]></variableExpression>
+	</variable>
+	<variable name="valor_tarjeta_1" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_tarjeta} == null? java.math.BigDecimal.ZERO : $F{valor_tarjeta}]]></variableExpression>
+	</variable>
+	<variable name="SUN_SUBTOTAL" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$V{SUB_TOTAL} == null? java.math.BigDecimal.ZERO : $V{SUB_TOTAL}]]></variableExpression>
+	</variable>
+	<variable name="valor_nota_credito_1" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_nota_credito} == null? java.math.BigDecimal.ZERO : $F{valor_nota_credito}]]></variableExpression>
+	</variable>
+	<variable name="ren_pago_valor_1" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{ren_pago_valor}]]></variableExpression>
+	</variable>
+	<variable name="num_transacciones_1" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{num_transacciones} == null ? java.math.BigDecimal.ZERO : $F{num_transacciones}]]></variableExpression>
+	</variable>
+	<variable name="valor_compensacion_1" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{valor_compensacion} == null? java.math.BigDecimal.ZERO : $F{valor_compensacion}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="82" splitType="Stretch">
+			<staticText>
+				<reportElement x="58" y="36" width="556" height="18" uuid="e100b2cc-ddfb-4980-8e88-f6d690a5ea4a"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="SansSerif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RESUMEN DIARIO DE VALORES RECAUDADOS POR RECAUDADOR]]></text>
+			</staticText>
+			<image>
+				<reportElement x="0" y="0" width="58" height="54" uuid="8f9ea5a3-11f6-4642-92cf-8113cb00fa69"/>
+				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
+			</image>
+			<line>
+				<reportElement x="0" y="54" width="549" height="1" uuid="a6195fca-9df9-4a1f-83c0-86d381cad3fe"/>
+			</line>
+			<line>
+				<reportElement x="0" y="55" width="614" height="1" uuid="67d2b3e5-890d-425a-941e-ab127638fca3"/>
+			</line>
+			<frame>
+				<reportElement x="0" y="62" width="614" height="17" uuid="e86d6e0c-76ce-4c8e-80eb-6c38b4c28d95"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textField isBlankWhenNull="true">
+					<reportElement x="382" y="0" width="120" height="17" uuid="957b31a5-adde-42c6-bcba-b9f5fd388d74"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["HASTA: "+ new java.text.SimpleDateFormat("dd/MM/yyyy").format($P{HASTA})]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="103" y="0" width="111" height="17" uuid="b343f5ad-dd11-4e01-9faa-f428035c9820"/>
+					<textElement verticalAlignment="Middle">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["DESDE:"+ new java.text.SimpleDateFormat("dd/MM/yyyy").format($P{DESDE})]]></textFieldExpression>
+				</textField>
+			</frame>
+			<textField isBlankWhenNull="true">
+				<reportElement x="69" y="0" width="480" height="33" uuid="a15a4bd1-3f7d-47fd-ba3e-ecaf79cc3ddf"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="13" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_empresa}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="21">
+			<textField>
+				<reportElement x="199" y="6" width="64" height="15" uuid="02bc88e8-f644-4b0f-813d-cf90835b9aa4"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["# TRANSF."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="553" y="6" width="61" height="15" uuid="9bbbdd4e-3337-4d2c-b8cd-6d580dc3f54f"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["TOTAL"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="138" y="6" width="55" height="15" uuid="032b9c80-e12c-4a2b-a7b9-edb7702d9f31"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["EFECTIVO"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="266" y="6" width="50" height="15" uuid="ca57aa67-fdaa-4db9-96ca-1ad645a09826"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CHEQUES"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="320" y="6" width="50" height="15" uuid="2b2f0654-06d4-4858-80ac-9d486480d036"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["TARJETAS"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="6" width="55" height="15" uuid="47db8d6d-1556-4c20-a2fe-1872710a054e"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["USUARIO"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="432" y="6" width="57" height="15" uuid="d3e7008c-2e1c-4568-b35e-b95f4f4190c3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["SUB TOTAL"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="495" y="6" width="51" height="15" uuid="c8686b34-5a46-455e-a0cd-598a8e5a67de"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["NOTAS"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="55" y="6" width="77" height="15" uuid="171eaa1c-8aeb-4755-af3d-1bcacf31c537"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["NUM TRANSAC."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="375" y="6" width="50" height="15" uuid="2bbc0fa9-7ca3-43c8-98ae-d116d333ccb4"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["COMPEN."]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="16" splitType="Immediate">
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="432" y="0" width="57" height="14" uuid="f76f9288-9047-43ac-9770-76fde479dada"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUB_TOTAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="319" y="0" width="50" height="14" uuid="88bd6a03-13aa-42da-8ea6-fbcf196c7727"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_tarjeta} != null? $F{valor_tarjeta} : java.math.BigDecimal.ZERO]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="495" y="0" width="51" height="14" uuid="ed0007be-051f-4d89-838c-eecba6b82271"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_nota_credito} != null? $F{valor_nota_credito} : java.math.BigDecimal.ZERO]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="553" y="0" width="61" height="14" uuid="2d47a093-b3d8-4dea-8319-7d0128627848"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[//$F{ren_pago_valor}==null?"0.00":$F{ren_pago_valor}
+$V{SUB_TOTAL}.add( $F{valor_nota_credito} != null? $F{valor_nota_credito} : java.math.BigDecimal.ZERO)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="55" height="14" uuid="cca8329f-81cc-486a-ac28-5cc5286697df"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{acl_user_usuario}==null?"":$F{acl_user_usuario}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="138" y="0" width="55" height="14" uuid="687e4108-c877-4640-aaa2-d3562f46a2eb"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_efectivo} != null? $F{valor_efectivo} : java.math.BigDecimal.ZERO]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="199" y="0" width="64" height="14" uuid="36874648-e8b2-4590-beec-c8edb6c1341c"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_tranferencia} != null? $F{valor_tranferencia} : java.math.BigDecimal.ZERO]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="266" y="0" width="50" height="14" uuid="e93ea7ef-6d9c-4a6f-943c-0b5545ac25a4"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_cheque} != null? $F{valor_cheque} : java.math.BigDecimal.ZERO]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="55" y="0" width="77" height="14" uuid="bfa618a1-df83-4618-bc04-6b7b3fd19b0d"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{num_transacciones}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="375" y="0" width="50" height="14" uuid="9435ab62-d00c-4bad-83c7-2178ed640fe2"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor_compensacion} != null? $F{valor_compensacion} : java.math.BigDecimal.ZERO]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="16" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="66" y="0" width="71" height="15" uuid="d6cfdc11-6de3-49c6-bfd9-486290c67a7b"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Usuario}==null?"":$P{Usuario}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="14" y="0" width="52" height="15" uuid="9bc1e882-1cb4-4506-a2af-5cf55537df2c"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[USUARIO:]]></text>
+			</staticText>
+			<textField pattern="dd MMMMM yyyy" isBlankWhenNull="true">
+				<reportElement x="183" y="0" width="83" height="15" uuid="a24d7d68-dee4-47a4-9206-e7e83f06eade"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="146" y="0" width="37" height="15" uuid="86859e1b-da35-452b-879b-944a0775e0d3"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="365" y="0" width="68" height="15" uuid="99f8fc19-d21b-4f9e-85ff-fd5369ec4601"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pagina "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" isBlankWhenNull="true">
+				<reportElement x="470" y="0" width="35" height="15" uuid="63fa1e86-4ab0-45cf-9497-d492e02f7982"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="HH:mm:ss" isBlankWhenNull="true">
+				<reportElement x="546" y="0" width="64" height="15" uuid="66334cf2-e827-42b4-b7bd-0d22c8bbea32"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="507" y="0" width="37" height="15" uuid="5065b66a-574e-44e8-ad23-e00d788664a2"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[HORA:]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="39">
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="138" y="5" width="55" height="13" uuid="d8cf107b-5b67-43af-aacc-4e65a7972f8e"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_efectivo_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="198" y="5" width="65" height="13" uuid="e070a2b6-f1ea-487f-b96a-8ba997ab9153"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_tranferencia_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="263" y="5" width="56" height="13" uuid="67e02c7c-9efc-491e-a7c0-99ba3c9a78eb"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_cheque_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="320" y="5" width="49" height="13" uuid="78e39894-8a46-4ec8-91f2-cd0cc6a937d5"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_tarjeta_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="433" y="5" width="56" height="13" uuid="04fb1426-471a-4e92-a213-ca59524feb0e"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUN_SUBTOTAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="495" y="6" width="51" height="13" uuid="a795dbf4-b535-4c91-820a-69e87a2e9a19"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_nota_credito_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="553" y="5" width="61" height="13" uuid="b04d19ee-4896-4d9a-aa34-8a11d117ddee"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[//$V{ren_pago_valor_1}
+$V{SUN_SUBTOTAL}.add($V{valor_nota_credito_1})]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="66" y="5" width="548" height="1" uuid="c4eaea54-8590-4872-8ea8-4d896a2175ac"/>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement x="69" y="6" width="63" height="12" uuid="921c7498-808e-4770-8420-502451e6de59"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{num_transacciones_1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="6" width="69" height="12" uuid="53af4b57-7cfb-41fc-8306-2d8275f18a67"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL GENERAL]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="375" y="6" width="50" height="13" uuid="c2edac5c-2a2c-4f58-90fa-005830e30a5c"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{valor_compensacion_1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:dlg="http://xmlns.jcp.org/jsf/composite/dialog">
+    <ui:define name="head">
+        <!--<script src="../../resources/pfJs/keyPress.js" type="text/javascript"></script>-->
+    </ui:define>
+    <ui:define name="content">
+        <div align="center">
+            <h2>Iniciar transacciones al predio</h2>
+        </div>
+        <h:form id="frmMain" prependId="false">
+            <p:growl id="growl" sticky="true" showDetail="true" autoUpdate="true" life="200"/>
+            <div class="ContainerIndent">
+                <h:panelGroup layout="block" class="MarRight10 MarLeft10" id="wizarContainer">
+                    <p:wizard id="wizardFlow" flowListener="#{iniciarTransaccionFlow.onFlowProcessWizard}" nextLabel="Siguiente" backLabel="Anterior">
+                        <p:tab id="responsables" title="Responsables de la transaccion">
+                            <ui:include src="_responsables.xhtml" />      
+                        </p:tab>
+                        <p:tab id="predio" title="Seleccionar predio">
+                            <ui:include src="_seleccionarPredio.xhtml" /> 
+                            <h:panelGroup layout="block" class="Wid100" id="btn_iniciarTramite">
+                                <p:commandButton id="btn_init" class="Fright" value="Iniciar Trámite" actionListener="#{iniciarTransaccionFlow.iniciarTramite()}" style="margin-top: 15px;" update="frmMain" disabled="#{iniciarTransaccionFlow.disabledIniciar}"/>
+                            </h:panelGroup>
+
+                        </p:tab>
+                    </p:wizard>
+                    <script type="text/javascript">
+                        wizardTransform();
+                    </script>
+                </h:panelGroup>
+
+            </div>
+        </h:form>
+
+    </ui:define>
+</ui:composition>

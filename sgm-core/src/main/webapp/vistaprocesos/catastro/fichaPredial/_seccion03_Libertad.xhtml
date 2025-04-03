@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:comp="http://xmlns.jcp.org/jsf/composite/dialog"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+
+
+
+    <p:tabView id="tvCaracteristicas">
+        <p:tab title="4.1 Localización, Topografía Y Obras">
+            <h:form id="frmCaracSolar">
+                <p:growl id="msgsfrmCaracSolar" showDetail="true"  />
+                <div align="right">
+                    <p:remoteCommand name="rc3" actionListener="#{fichaPredial.guardarCaracteristicas(fichaPredial.caracteristicas)}"  rendered="#{fichaPredial.editable}" update="msgsfrmCaracSolar,tdatos:frmDatosPredio:tvUbicacion"/>
+                    <p:commandButton id="btnS3" value="Guardar"  icon="ui-icon-disk" update="frmSubirDocumentosDialog"
+                                     actionListener="#{fichaPredial.openDialog}" process="@form" action="#{fichaPredial.setRemotteCommand('rc3')}" rendered="#{fichaPredial.editable}"/>
+                </div>
+                <p:fieldset legend="Localización, Topografía Y Obras De Infraestructura" toggleable="true" class="MarBot10">
+                    <h:panelGrid columns="3" style="width: 100%">
+                        <comp:compInputSelect id="localizacion" label="Localización:"
+                                              catalogo="predio-loc_manzana" defaultValue="1"
+                                              bind="#{fichaPredial.caracteristicas.locManzana}"
+                                              next="tdatos:tvCaracteristicas:frmCaracSolar:topografia:predio-topografia-input"/>
+
+                        <comp:compInputSelect id="topografia" label="Topografía:"
+                                              catalogo="predio-topografia" defaultValue="1"
+                                              bind="#{fichaPredial.predio.topografiaSolar}"
+                                              next="tdatos:tvCaracteristicas:frmCaracSolar:tipo_suelo:predio-tipo_suelo-input"/>
+
+                        <comp:compInputSelect id="tipo_suelo" label="Caract. Suelo:"
+                                              catalogo="predio-tipo_suelo" defaultValue="1"
+                                              bind="#{fichaPredial.predio.tipoSuelo}"
+                                              next="tdatos:tvCaracteristicas:frmCaracSolar:constructividad:predio-constructividad_suelo-input"/>
+
+                        <comp:compInputSelect id="constructividad" label="Constructividad del Suelo:"
+                                              catalogo="predio-constructividad_suelo" defaultValue="1"
+                                              bind="#{fichaPredial.predio.constructividad}"
+                                              next="tdatos:tvCaracteristicas:frmCaracSolar:ocupacion:predio-etapas_edif_solar-input"/>
+
+                        <comp:compInputSelect id="ocupacion" label="Ocupación:"
+                                              catalogo="predio-etapas_edif_solar" defaultValue="1"
+                                              bind="#{fichaPredial.caracteristicas.estadoSolar}"
+                                              next="tdatos:tvCaracteristicas:frmCaracSolar:formaSolar:predio-forma_solar-input"/>
+
+                        <comp:compInputSelect id="formaSolar" label="Forma Poligonal del predio:"
+                                              catalogo="predio-forma_solar" defaultValue="1"
+                                              bind="#{fichaPredial.predio.formaSolar}"
+                                              next="tdatos:tvCaracteristicas:frmCaracSolar:coberturaPredominante:predio-cobertura_predominante-input"/>
+
+                        <comp:compInputSelect id="coberturaPredominante" label="Cobertura predominante:"
+                                              catalogo="predio-cobertura_predominante" defaultValue="1"
+                                              bind="#{fichaPredial.caracteristicas.coberturaPredominante}"
+                                              next="tdatos:tvCaracteristicas:frmCaracSolar:ecoRelevante:predio-ecosistema_relevante-input"/>
+
+                        <comp:compInputSelect id="ecoRelevante" label="Ecosistema Relevante:"
+                                              catalogo="predio-ecosistema_relevante" defaultValue="1"
+                                              bind="#{fichaPredial.caracteristicas.ecosistemaRelevante}"
+                                              next="tdatos:tvCaracteristicas:frmCaracSolar:clasifSuelo:predio-clasificacion_suelo-input"/>
+
+                        <comp:compInputSelect id="clasifSuelo" label="Clasificación del suelo:"
+                                              catalogo="predio-clasificacion_suelo" defaultValue="1"
+                                              bind="#{fichaPredial.predio.clasificacionSuelo}"
+                                              next="tdatos:tvCaracteristicas:frmCaracSolar:afectaLote:predio-afectacion_lote-input"/>
+
+                        <comp:compInputSelect id="afectaLote" label="Afectación:"
+                                              catalogo="predio-afectacion_lote" defaultValue="1"
+                                              bind="#{fichaPredial.caracteristicas.afectacionLote}"
+                                              next="tdatos:tvCaracteristicas:frmCaracSolar:lbinstHip_input"
+                                              />
+
+                        <h:panelGroup layout="block">
+                            <h:outputLabel for="lbinstHip" value="Tiene Hipoteca :" class="DispBlock Wid100"/>
+                            <p:selectOneMenu id="lbinstHip" value="#{fichaPredial.caracteristicas.tieneHipoteca}" effect="fade" style="width: 170px;">
+                                <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+                                <f:selectItem itemLabel="Si" itemValue="#{true}"/>
+                                <f:selectItem itemLabel="No" itemValue="#{false}"/>
+                            </p:selectOneMenu>
+                        </h:panelGroup>
+
+                        <comp:decorateForm id="instHip" label="Institución Hipoteca :"
+                                           bind="#{fichaPredial.caracteristicas.instFinancieraHip}"
+                                           next="tdatos:frmCaracSolar:usoSolar:predio-uso_solar-input"/>
+
+                    </h:panelGrid>
+                    <p:fieldset legend="Conflicto" toggleable="true"  class="MarBot10">
+                        <h:panelGrid columns="2" style="width: 100%">
+                            <h:panelGroup layout="block">
+                                <h:outputLabel value="Lote en Conflicto :" for="loteConflic" class="DispBlock Wid100 FontBold"/>
+                                <p:selectOneMenu id="loteConflic" value="#{fichaPredial.caracteristicas.loteEnConflicto}" effect="fade" styleClass="selectWidth170">
+                                    <f:selectItem itemLabel="Seleccionar..." itemValue="#{null}"/>
+                                    <f:selectItem itemLabel="Si" itemValue="#{true}"/>
+                                    <f:selectItem itemLabel="No" itemValue="#{false}"/>
+                                </p:selectOneMenu>
+                            </h:panelGroup>
+                            <h:panelGroup layout="block">
+                                <h:outputLabel value="Observaciones de Lote en Conflicto :" for="loteConflicOb" class="DispBlock Wid100 FontBold"/>
+                                <p:inputTextarea id="loteConflicOb" value="#{fichaPredial.caracteristicas.opbservLoteEnConflicto}" autoResize="false" style="width: 97%"/>
+                            </h:panelGroup>
+
+                        </h:panelGrid>
+                    </p:fieldset>
+                    <p:fieldset legend="Permiso Construcción y Adosamiento"  toggleable="true" class="MarBot10">
+                        <h:panelGrid columns="4"  style="width: 100%">
+                            <h:outputText value="Tiene Permiso Construcción :" style="font-weight: bolder"/>
+                            <p:selectBooleanCheckbox value="#{fichaPredial.caracteristicas.tienePermisoConst}" />
+                            <h:outputText value="Tiene Adosamiento :" style="font-weight: bolder"/>
+                            <p:selectBooleanCheckbox value="#{fichaPredial.caracteristicas.tieneAdosamiento}" />
+                            <h:outputText value="Tiene Retiros :" style="font-weight: bolder"/>
+                            <p:selectBooleanCheckbox value="#{fichaPredial.caracteristicas.tieneRetiros}" />
+                        </h:panelGrid>
+                    </p:fieldset>
+                    <p:fieldset legend="Relación Frente - Fondo" toggleable="true">
+                    <p:panelGrid columns="4" layout="grid" style="width: 100%">
+                        <comp:decorateForm id="frt1" label="Frente :" bind="#{fichaPredial.caracteristicas.frente1}"
+                                           floatValidate="true" pattern="##############.##"
+                                           next="tdatos:frmCaracSolar:ft1:ft1-form"/>
+                        <comp:decorateForm id="ft1" label="Fondo :" bind="#{fichaPredial.caracteristicas.fondo1}"
+                                           floatValidate="true" pattern="##############.##"/>
+                    </p:panelGrid>
+                </p:fieldset>
+                </p:fieldset>
+            </h:form>
+        </p:tab>
+        <p:tab title="4.2 Servicios Urbanos">
+            <ui:include src="_seccion04_Libertad.xhtml" />
+        </p:tab>
+        <p:tab title="4.3 Uso del Suelo">
+            <h:form id="frmCaracSolar_1">
+                <div align="right">
+                    <p:commandButton id="btnS3_1" value="Guardar"  icon="ui-icon-disk" update="frmSubirDocumentosDialog"
+                                     actionListener="#{fichaPredial.openDialog}" process="@form" action="#{fichaPredial.setRemotteCommand('rc3')}" rendered="#{fichaPredial.editable}"/>
+                </div>
+                <p:fieldset legend="Uso del Suelo" toggleable="true" class="MarBot10" style="text-align: center">
+                    <h:panelGrid columns="2" style="width: 100%">
+                        <comp:compInputSelect id="usoSolar" label="Uso del predio:" 
+                                              catalogo="predio-uso_solar" defaultValue="1"
+                                              bind="#{fichaPredial.predio.usoSolar}"
+                                              next="tdatos:frmCaracSolar:afectaLote:predio-afectacion_lote-input"/>
+
+                    </h:panelGrid>
+                </p:fieldset>
+            </h:form>
+
+        </p:tab>
+        <p:tab title="4.4 Dimensiones del Terreno">
+
+            <p:fieldset legend="4.4.1 Dimensión del Terreno" toggleable="true">
+                
+
+                <ui:include src="_seccion07_Libertad.xhtml" />
+
+                
+                <p:fieldset legend="4.4.2 Propiedad Horizontal" toggleable="true" style="margin-top: 15px;">
+                    <h:panelGroup layout="block" class="Responsive Wid100 Container100" >
+                        <p:dataTable id="componentes" var="c" value="#{fichaPredial.predio.alicuotaComponentes}" >
+                            <f:facet name="header">
+                                Componentes de Alicuota
+                            </f:facet>
+                            <p:columnGroup type="header">
+                                <p:row>
+                                    <p:column headerText="NOMBRE" rowspan="2"/>
+                                    <p:column headerText="NUMERO" rowspan="2"/>
+                                    <p:column headerText="UBICACION" rowspan="2"/>
+                                    <p:column headerText="ALICUOTA" rowspan="1" colspan="2"/>
+                                    <p:column headerText="AREA" rowspan="1" colspan="2"/>
+                                </p:row>
+                                <p:row>
+                                    <p:column headerText="UTIL" />
+                                    <p:column headerText="COMUNAL" />
+                                    <p:column headerText="DECLARADA" />
+                                    <p:column headerText="CONSTRUIDA" />
+                                </p:row>
+                            </p:columnGroup>
+                            <p:column><h:outputText value="#{c.nombre}" /></p:column>
+                            <p:column><h:outputText value="#{c.numero}" /></p:column>
+                            <p:column><h:outputText value="#{c.descripcionUbicacion}" /></p:column>
+                            <p:column><h:outputText value="#{c.alicuotaUtil}" /></p:column>
+                            <p:column><h:outputText value="#{c.alicuotaComunal}" /></p:column>
+                            <p:column><h:outputText value="#{c.areaDeclarada}" /></p:column>
+                            <p:column><h:outputText value="#{c.areaConstruccion}" /></p:column>
+                        </p:dataTable>
+                    </h:panelGroup>
+                </p:fieldset>
+
+            </p:fieldset>
+
+
+
+        </p:tab>
+
+        <p:tab title="4.5 Areas y Avaluos">
+            <ui:include src="_seccion01-3_Libertad.xhtml" />
+        </p:tab>
+    </p:tabView>
+
+
+
+
+
+
+
+
+
+
+
+
+    <!--    <div align="center">
+            <p:commandButton id="btnS3_1" value="Guardar"  icon="ui-icon-disk" update="frmSubirDocumentosDialog"
+                             actionListener="#{fichaPredial.openDialog}" process="@form" action="#{fichaPredial.setRemotteCommand('rc3')}" rendered="#{fichaPredial.editable}"/>
+        </div>-->
+
+
+</html>
