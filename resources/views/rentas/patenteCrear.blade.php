@@ -1,6 +1,7 @@
 @extends('layouts.appv2')
 @section('title', 'Declaracion de patente')
 @push('styles')
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
 <style>
 .checkbox-grande {
     transform: scale(1.5); /* Ajusta el número para el tamaño deseado */
@@ -13,6 +14,11 @@
     pointer-events: none; /* Evita la interacción */
     opacity: 0.5; /* Visualmente deshabilitado */
 }
+
+.select2-container .select2-selection--single {
+    height: 36px !important;
+}
+
 
 </style>
 
@@ -45,7 +51,7 @@
 <form id="formPatente" method="POST"  action=""  enctype="multipart/form-data">
     @csrf
         <!-- Información General -->
-    <fieldset class="border p-3 mb-4">
+    <!-- <fieldset class="border p-3 mb-4">
         <legend class="float-none w-auto px-3 fs-5">Seleccione contribuyente</legend>
         <div class="row">
             <div class="col-md-6 mb-3">
@@ -57,18 +63,24 @@
                             {{$errors->first('catastro_id')}}
                         @endif
                     </div>
+                  
                 </div>
             </div>
         </div>
-    </fieldset>
+    </fieldset> -->
     <input type="hidden" id="catastro_id" name="catastro_id" value="{{old('catastro_id')}}">
     <fieldset class="border p-3 mb-4">
         <legend class="float-none w-auto px-3 fs-5">Informacion de contribuyente</legend>
         <div class="container">
             <div class="row">
+
+                <div class="d-flex justify-content-end" style="margin-bottom:20px">
+                    <button type="button" class="btn btn-success btn-sm" onclick="NuevoContribuyente()">Nuevo</button>
+                </div>
+
                 <!-- Columna izquierda -->
                 <div class="col-md-6 mb-3">
-                    <div class="row mb-3">
+                    <!-- <div class="row mb-3">
                         <label for="propietario_cedula" class="col-md-4 col-form-label fw-bold">Propietario cédula</label>
                         <div class="col-md-8">
                             <input type="text" class="form-control form-control-sm" id="propietario_cedula" maxlength="255" disabled>
@@ -79,13 +91,16 @@
                         <div class="col-md-8">
                             <input type="text" class="form-control form-control-sm" id="propietario_nombre" maxlength="13" disabled>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="row mb-3">
-                        <label for="num_establecimientos" class="col-md-4 col-form-label fw-bold">Numero de establecimientos</label>
+                        <label for="propietario_nombre" class="col-md-4 col-form-label fw-bold">Propietario</label>
                         <div class="col-md-8">
-                            <input type="text" class="form-control form-control-sm" id="num_establecimientos"  disabled>
+                            <select id="cmb_propietario" name="cmb_propietario" class="col-md-4 col-form-label fw-bold form-control" style="width: 100%;" data-bs-theme="dark" onchange="cargaInfoContribuyente()">
+                                <option value=""></option>
+                            </select>
                         </div>
                     </div>
+                  
                     <div class="row mb-3">
                         <label for="ruc_cedula" class="col-md-4 col-form-label fw-bold">RUC</label>
                         <div class="col-md-8">
@@ -93,11 +108,26 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label for="razon_social" class="col-md-4 col-form-label fw-bold">Razon Social</label>
+                        <label for="razon_social" class="col-md-4 col-form-label fw-bold">Contribuyente/Razon Social</label>
                         <div class="col-md-8">
                             <input type="text" class="form-control form-control-sm" id="razon_social" maxlength="255" disabled>
                         </div>
                     </div>
+
+                    <div class="row mb-3">
+                        <label for="propietario_nombre" class="col-md-4 col-form-label fw-bold">N° de Establecimientos</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control form-control-sm" id="num_establecimientos"  disabled>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label for="tipo_contribuyente" class="col-md-4 col-form-label fw-bold">Tipo de contribuyente</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control form-control-sm" id="tipo_contribuyente"  disabled>
+                        </div>
+                    </div>
+
                     <!-- <div class="row mb-3">
                         <label for="nombre_contribuyente" class="col-md-4 col-form-label fw-bold">Fantasia comercial</label>
                         <div class="col-md-8">
@@ -161,12 +191,7 @@
                             <input type="text" class="form-control form-control-sm" id="clase_contribuyente"  disabled>
                         </div>
                     </div>
-                    <div class="row mb-3">
-                        <label for="tipo_contribuyente" class="col-md-4 col-form-label fw-bold">Tipo de contribuyente</label>
-                        <div class="col-md-8">
-                            <input type="text" class="form-control form-control-sm" id="tipo_contribuyente"  disabled>
-                        </div>
-                    </div>
+                    
                     <!-- <div class="row mb-3">
                         <label for="local_propio" class="col-md-4 col-form-label fw-bold">Establecimiento Propio/Arrendado</label>
                         <div class="col-md-8">
@@ -216,13 +241,19 @@
         @endif
         <div class="row">
             <div class="col-md-12 mb-3 mt-3">
-                <table class="table table-striped" id="tablaLocales">
+                <div class="d-flex justify-content-end">
+                    <button type="button" class="btn btn-success btn-sm" onclick="NuevoLocal()">Nuevo</button>
+                </div>
+
+                <table class="table table-striped" id="tablaLocales" style="margin-top:12px">
                     <thead>
                         <tr>
                             <th scope="col">Seleccione</th>
                             <th scope="col">Nombre Comercial</th>
                             <th scope="col">Ubicacion</th>
                             <th scope="col">Local</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -239,6 +270,14 @@
                                 <td>
                                     <input type="hidden" name="locales[{{$key}}][direccion]" value="{{ $local['direccion'] }}">
                                     {{ $local['direccion'] }}
+                                </td>
+                                <td>
+                                    <input type="hidden" name="locales[{{$key}}][local_propio]" value="{{ $local['local_propio'] }}">
+                                    {{ $local['local_propio'] }}
+                                </td>
+                                <td>
+                                    <input type="hidden" name="locales[{{$key}}][local_propio]" value="{{ $local['local_propio'] }}">
+                                    {{ $local['local_propio'] }}
                                 </td>
                                 <td>
                                     <input type="hidden" name="locales[{{$key}}][local_propio]" value="{{ $local['local_propio'] }}">
@@ -268,6 +307,9 @@
         </div>
         @endif
         <div class="row">
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-success btn-sm" onclick="NuevoActividad()">Nuevo</button>
+            </div>
             <div class="col-md-12 mb-3 mt-3">
                 <table class="table table-striped" id="tablaActividades">
                     <thead>
@@ -275,10 +317,11 @@
                             <th scope="col">Seleccione</th>
                             <th scope="col">CIIU</th>
                             <th scope="col">Actividad</th>
+                            <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>
-                        @if(old('actividades'))
+                        <!-- @if(old('actividades'))
                             @foreach(old('actividades') as $key => $actividad)
                                 <td>
                                     <input class="form-check-input checkbox-grande" type="checkbox" name="actividades[{{$key}}][id]" value="{{ $key }}" {{ old("actividades.$key.id") ? 'checked' : '' }}>
@@ -293,7 +336,7 @@
                                 </td>
 
                             @endforeach
-                        @endif
+                        @endif -->
                     </tbody>
                 </table>
             </div>
@@ -561,6 +604,14 @@
                             </div>
                         </div>
 
+                        <div class="col-sm-9">
+                            <div class="form-check">
+                                <input class="form-check-input checkbox-grande" type="checkbox" id="calcula_patente" name="calcula_patente" value="1" {{ old('calcula_patente') ? 'checked' : '' }}>
+                                <label class="form-check-label" for="calcula_patente">Patente</label>
+
+                            </div>
+                        </div>
+
                     </fieldset>
                 </div>
                 <div class="col-md-6 mb-3">
@@ -592,7 +643,7 @@
                             <div class="col-sm-6">
                                 <div class="input-group">
                                     <span class="input-group-text">$</span>
-                                    <input type="number" class="desabilita_txt form-control {{$errors->has('cont_total_pasivos_corriente') ? 'is-invalid' : ''}} input-decimales cont_pasivos_activos" name="cont_total_pasivos_corriente" id="cont_total_pasivos_corriente" value="{{old('cont_total_pasivos_corriente')}}" onblur="calcularBI()">
+                                    <input type="number" class="desabilita_txt form-control {{$errors->has('cont_total_pasivos_corriente') ? 'is-invalid' : ''}} input-decimales cont_total_pasivos_corriente" name="cont_total_pasivos_corriente" id="cont_total_pasivos_corriente" value="{{old('cont_total_pasivos_corriente')}}" onblur="calcularBI()">
                                 </div>
                             </div>
                         </div>
@@ -687,6 +738,8 @@
                                     <option value="1" {{ old('cont_original') == '1' ? 'selected' : '' }}>Original</option>
                                     <option value="2" {{ old('cont_original') == '2' ? 'selected' : '' }}>Sustitutiva</option>
                                 </select>
+                              
+
                             </div>
                         </div>
                         
@@ -961,6 +1014,316 @@
         </div>
     </div> -->
 
+    <div class="modal fade" id="modalLocal" tabindex="-1" aria-labelledby="LocalModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLocalLabel">Nuevo Local</h5>
+                    <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+                </div>
+                @csrf
+                <div class="modal-body">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                
+                                <div class="mb-3 row">
+                                    <label for="provincia_local" class="col-sm-3 col-form-label" style="text-align: end;">Provincia</label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group">                                            
+                                            <input type="text" class="desabilita_txt form-control" name="provincia_local" id="provincia_local" value="{{old('provincia_local')}}" value="Manabi">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3 row">
+                                    <label for="canton_local" class="col-sm-3 col-form-label" style="text-align: end;">Canton</label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group">
+                                            <input type="text" class="desabilita_txt form-control" name="canton_local" id="canton_local" value="{{old('canton_local')}}" value="San Vicente">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3 row">
+                                    <label for="parroquia_local" class="col-sm-3 col-form-label" style="text-align: end;">Parroquia</label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group">
+                                            <select class="form-select {{$errors->has('parroquia_id') ? 'is-invalid' : ''}}" id="parroquia_id" name="parroquia_id" required>
+                                                <option value="" id="optionSelectParroquia">Seleccione una parroquia</option>
+                                                @if(old('canton_id'))
+                                                    @foreach (session('parroquia') as $p)
+                                                        <option value="{{$p->id}}" {{ old('parroquia_id') == $p->id ? 'selected' : '' }}>{{$p->descripcion}}</option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3 row">
+                                    <label for="callep_local" class="col-sm-3 col-form-label" style="text-align: end;">Calle Principal</label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group">
+                                            <input type="text" class="desabilita_txt form-control" name="callep_local" id="callep_local" value="{{old('callep_local')}}">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3 row">
+                                    <label for="calles_local" class="col-sm-3 col-form-label" style="text-align: end;">Calle Secundaria</label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group">
+                                            <input type="text" class="desabilita_txt form-control" name="calles_local" id="calles_local" value="{{old('calles_local')}}">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3 row">
+                                    <label for="referencia_local" class="col-sm-3 col-form-label" style="text-align: end;">Referencia Ubicacion</label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group">
+                                            <input type="text" class="desabilita_txt form-control" name="referencia_local" id="referencia_local" value="{{old('referencia_local')}}">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3 row">
+                                    <label for="ncomercial_local" class="col-sm-3 col-form-label" style="text-align: end;">Nombre Comercial</label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group">
+                                            <input type="text" class="desabilita_txt form-control" name="ncomercial_local" id="ncomercial_local" value="{{old('ncomercial_local')}}">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3 row">
+                                    <label for="estado_local" class="col-sm-3 col-form-label" style="text-align: end;">Estado</label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group">
+                                            <select class="form-select {{$errors->has('estado_establecimiento_id') ? 'is-invalid' : ''}}" id="estado_establecimiento_id" name="estado_establecimiento_id" required>
+                                                <option value="">Seleccione un estado</option>
+                                                <option value="1" {{ old('estado_establecimiento_id') == '1' ? 'selected' : '' }}>Abierto</option>
+                                                <option value="2" {{ old('estado_establecimiento_id') == '2' ? 'selected' : '' }}>Cerrado</option>
+                                        </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3 row">
+                                    <label for="tipo_local" class="col-sm-3 col-form-label" style="text-align: end;">Local</label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group">
+                                            <select class="form-select {{$errors->has('estado_establecimiento_id') ? 'is-invalid' : ''}}" id="tipo_local" name="tipo_local" required>
+                                                <option value="">Seleccione un tipo</option>
+                                                <option value="1" {{ old('tipo_local') == '1' ? 'selected' : '' }}>Propio</option>
+                                                <option value="2" {{ old('tipo_local') == '2' ? 'selected' : '' }}>Arrendado</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            
+                            </div>
+                    
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" onclick="guardaLocal()">
+                        <span id="label_btn_local"></span>
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="actividadLocal" tabindex="-1" aria-labelledby="ActividadModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalActividadLabel">Nueva Actividad</h5>
+                    <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+                </div>
+                @csrf
+                <div class="modal-body">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                
+                                <div class="mb-3 row">
+                                    <label for="cmb_actividad" class="col-sm-3 col-form-label" style="text-align: end;">Actividad</label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group">
+                                            <select id="cmb_actividad" name="cmb_actividad" class="col-md-4 col-form-label fw-bold form-control" style="width: 100%;" data-bs-theme="dark" onchange="cargaInfoActividad()">
+                                                <option value=""></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3 row">
+                                    <label for="codigo_act" class="col-sm-3 col-form-label" style="text-align: end;">Codigo</label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group">
+                                            <input type="text" class="desabilita_txt form-control" name="codigo_act" id="codigo_act" value="{{old('codigo_act')}}">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3 row">
+                                    <label for="descripcion_act" class="col-sm-3 col-form-label" style="text-align: end;">Descripcion</label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group">
+                                            <textarea class="desabilita_txt form-control" name="descripcion_act" id="descripcion_act" value="{{old('descripcion_act')}}" rows="6"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                
+                            </div>
+                    
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" onclick="guardaActividad()">
+                        <span id="label_btn_actividad"></span>
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="modalContri" tabindex="-1" aria-labelledby="ContribuyenteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalContribuyenteLabel">Nuevo Contribuyente</h5>
+                    <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+                </div>
+                @csrf
+                <div class="modal-body">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <!-- Columna izquierda -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="tipo_persona_new" class="form-label">Tipo Persona</label>
+                                    <select class="form-select" id="tipo_persona_new" name="tipo_persona_new" required>
+                                        <option value="">Seleccione un tipo</option>
+                                        <option value="1" {{ old('tipo_contribuyente_id') == '1' ? 'selected' : '' }}>Persona natural</option>
+                                        <option value="2" {{ old('tipo_contribuyente_id') == '2' ? 'selected' : '' }}>Sociedades</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="cmb_ruc" class="form-label">RUC-Contribuyente</label>
+                                    <select id="cmb_ruc" name="cmb_ruc" class="form-control">
+                                        <option value=""></option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="contribuyente" class="form-label">Contribuyente</label>
+                                    <input type="text" class="form-control" name="contribuyente" id="contribuyente" value="{{old('contribuyente')}}">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="cmb_ruc_rep" class="form-label">RUC-Repres. Legal</label>
+                                    <select id="cmb_ruc_rep" name="cmb_ruc_rep" class="form-control">
+                                        <option value=""></option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="representante" class="form-label">Repres. Legal</label>
+                                    <input type="text" class="form-control" name="representante" id="representante" value="{{old('representante')}}">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="provincia" class="form-label">Provincia</label>
+                                    <select class="form-select" id="provincia" name="provincia" required>
+                                        <option value="">Seleccione una</option>
+                                        <option value="1" {{ old('tipo_local') == '1' ? 'selected' : '' }}>Propio</option>
+                                        <option value="2" {{ old('tipo_local') == '2' ? 'selected' : '' }}>Arrendado</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="canton" class="form-label">Cantón</label>
+                                    <select class="form-select" id="canton" name="canton" required>
+                                        <option value="">Seleccione una</option>
+                                        <option value="1" {{ old('tipo_local') == '1' ? 'selected' : '' }}>Propio</option>
+                                        <option value="2" {{ old('tipo_local') == '2' ? 'selected' : '' }}>Arrendado</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Columna derecha -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="parroquia" class="form-label">Parroquia</label>
+                                    <select class="form-select" id="parroquia" name="parroquia" required>
+                                        <option value="">Seleccione una</option>
+                                        <option value="1" {{ old('tipo_local') == '1' ? 'selected' : '' }}>Propio</option>
+                                        <option value="2" {{ old('tipo_local') == '2' ? 'selected' : '' }}>Arrendado</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="direccion" class="form-label">Dirección</label>
+                                    <input type="text" class="form-control" name="direccion" id="direccion">{{ old('descripcion_act') }}
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="correo" class="form-label">Correo Electrónico</label>
+                                    <input type="email" class="form-control" name="correo" id="correo" value="{{old('correo')}}">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="telefono" class="form-label">Teléfono</label>
+                                    <input type="text" class="form-control" name="telefono" id="telefono" value="{{old('telefono')}}">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Otros</label><br>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="obligado_contabilidad" name="obligado_contabilidad" value="1" {{ old('obligado_contabilidad') ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="obligado_contabilidad">Obligado a llevar contabilidad</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="es_artesano" name="es_artesano" value="1" {{ old('es_artesano') ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="es_artesano">¿Es artesano?</label>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="doc_ruc" class="form-label">Cargar Documento RUC</label>
+                                    <input type="file" class="form-control" name="doc_ruc" id="doc_ruc">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="doc_artesano" class="form-label">Cargar Documento Artesano</label>
+                                    <input type="file" class="form-control" name="doc_artesano" id="doc_artesano">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" onclick="guardaContribuyente()">
+                        <span id="label_btn_contribuyente"></span>
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 @push('scripts')
 <!-- jQuery -->
@@ -970,6 +1333,10 @@
 <script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('js/dataTables.bootstrap5.min.js') }}"></script>
 <script src="{{ asset('js/dataTables.rowReorder.min.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+<script src="{{ asset('js/patente/crear.js?v='.rand())}}"></script>
+
 <script>
     $(document).ready(function(){
         tablaContribuyente = $("#tablaContribuyente").DataTable({
@@ -997,1158 +1364,15 @@
             "fixedColumns" : true
         });
     })
+
 </script>
 <script>
     let token = "{{csrf_token()}}";
+// alert(token)
 
-    let inputs = document.querySelectorAll(".desabilita_txt"); // Selecciona todos los inputs con la clase "miClase"
-    inputs.forEach(input => input.disabled = true); // Bloquea cada input
+let tk=$('meta[name="csrf-token"]').attr('content')
+// alert(tk)
 
-   
-    
-    function limpiarCampos() {
-        document.getElementById("propietario_nombre").value = "";
-        document.getElementById("propietario_cedula").value = "";
-        document.getElementById("ruc_cedula").value = "";
-        // document.getElementById("nombre_contribuyente").value = "";
-        document.getElementById("razon_social").value = "";
-        // document.getElementById("domicilio").value = "";
-        // document.getElementById("Telefono_domicilio").value = "";
-        // document.getElementById("correo_electronico").value = "";
-        document.getElementById("representante_legal").value = "";
-        document.getElementById("cedula_representante").value = "";
-        document.getElementById("inicio_actividades").value = "";
-        document.getElementById("estado_contribuyente").value = "";
-        document.getElementById("clase_contribuyente").value = "";
-        document.getElementById("tipo_contribuyente").value = "";
-        document.getElementById("num_establecimientos").value = "";
-        // document.getElementById("estado_establecimiento").value = "";
-        // document.getElementById("local_propio").value = "";
-        document.getElementById("catastro_id").value = "";
-        // document.getElementById("lleva_cont").value = "";
-        
-    }
-    globalThis.Emitir=0
-    function enviarFormulario() {        
-        Emitir=1    
-        $('#emision').val(1)
-        $("#formPatente").trigger("submit");
-        // $("#formPatente").submit();
-    }
-
-    function simular() { 
-        // $('#documentopdf').modal('show')
-        // verpdf("c.pdf");
-        // return
-        Emitir=0   
-        $('#emision').val(2)        
-        $("#formPatente").trigger("submit");
-    }
-
-    function verpdf(ruta){
-        var iframe=$('#iframePdf');
-        iframe.attr("src", "patente/documento/"+ruta);   
-        $("#vinculo").attr("href", 'patente/descargar-documento/'+ruta);
-        $("#documentopdf").modal("show");
-    }
-
-    $('#documentopdf').on('hidden.bs.modal', function () {
-        if(Emitir==1){
-            location.reload();
-        }
-    });
-    // funcion para seleccionar contribuyente y cargar los datos
-    function seleccionarcontribuyente(id){
-        limpiarCampos();
-        axios.post("{{route('get.catastro')}}", {
-            _token: token,
-            id:id
-        }).then(function(res) {
-            console.log(res)
-            if(res.status==200) {
-
-
-                let inputs = document.querySelectorAll(".desabilita_txt");
-                inputs.forEach(input => input.disabled = false); // Desbloquea cada input
-               
-                               
-              
-                const data = res.data.contribuyente; // Los datos del contribuyente
-                const datapropietario = res.data.propietarios; // Los datos del contribuyente
-                const dataclase = res.data.clase_contribuyente; // Los datos del contribuyente
-                const actividadesComerciales = res.data.actividades; // Los datos del contribuyente
-                const locales=res.data.locales
-                console.log(locales)
-                let estadoContribuyente;
-                let tipoContribuyente;
-                let estadoEstablecimiento;
-                let localPropio;
-
-                if (data.estado_contribuyente_id === 1) {
-                    estadoContribuyente = "Activo";
-                } else if (estado_contribuyente_id === 2) {
-                    estadoContribuyente = "Inactivo";
-                } else if (estado_contribuyente_id === 3) {
-                    estadoContribuyente = "Suspendido";
-                } else {
-                    estadoContribuyente = "Desconocido"; // Opcional: texto si el estado no coincide
-                }
-                if (data.tipo_contribuyente === 1) {
-                    tipoContribuyente = "Persona natural";
-                } else if (tipo_contribuyente === 2) {
-                    tipoContribuyente = "Sociedades";
-                } else {
-                    tipoContribuyente = "Desconocido"; // Opcional: texto si el estado no coincide
-                }
-                if (data.estado_establecimiento === 1) {
-                    estadoEstablecimiento = "Abierto";
-                } else if (tipo_contribuyente === 2) {
-                    estadoEstablecimiento = "Cerrado";
-                } else {
-                    estadoEstablecimiento = "Desconocido"; // Opcional: texto si el estado no coincide
-                }
-                // if (data.local_propio === "1") {
-                //     localPropio = "Propio";
-                // } else if (tipo_contribuyente === "2") {
-                //     localPropio = "Arrendado";
-                // } else {
-                //     localPropio = "Desconocido"; // Opcional: texto si el estado no coincide
-                // }
-
-                let checkbox = document.getElementById("lleva_contabilidad");    
-                const noObligadosFieldset1 = document.getElementById('no_obligados_fieldset');
-                const obligadosFieldset1 = document.getElementById('obligados_fieldset');
-
-                // if(data.obligado_contabilidad!=true){ 
-                   
-                //     checkbox.checked =  true; 
-                //     checkbox.classList.add("readonly-checkbox");
-                //     obligadosFieldset1.style.display = 'block';
-                //     // Ocultar el fieldset para "No obligados a llevar contabilidad"
-                //     noObligadosFieldset1.style.display = 'none';
-
-                // }else{
-                   
-                //     checkbox.checked =  false; 
-                //     checkbox.classList.add("readonly-checkbox");
-                //     // Mostrar el fieldset para "No obligados a llevar contabilidad"
-                //     noObligadosFieldset1.style.display = 'block';
-                //     // Ocultar el fieldset para "Obligados a llevar contabilidad"
-                //     obligadosFieldset1.style.display = 'none';
-                    
-                // }              
-                
-
-                // Asigna los datos a los campos del formulario
-                document.getElementById("catastro_id").value = data.id;
-                document.getElementById("buscar_contribuyente").value = data.ruc;
-                document.getElementById("propietario_nombre").value = datapropietario.nombres ?? ""+" "+datapropietario.apellidos ?? "";
-                document.getElementById("propietario_cedula").value = datapropietario.ci_ruc ?? "";
-                document.getElementById("ruc_cedula").value = data.ruc ?? "";
-                // document.getElementById("nombre_contribuyente").value = data.nombre_fantasia_comercial ?? "" // Nombre de fantasía comercial
-                document.getElementById("razon_social").value = data.razon_social ?? "";
-                // document.getElementById("domicilio").value = `${data.calle_principal ?? ""} ${data.calle_secundaria ?? ""} ${data.referencia_ubicacion ?? ""}`.trim();
-                // document.getElementById("Telefono_domicilio").value = data.telefono ?? "";
-                // document.getElementById("correo_electronico").value = data.correo_1 ?? "";
-                document.getElementById("representante_legal").value = data.representante_legal_id ?? "";
-                document.getElementById("cedula_representante").value = data.representante_legal_id ?? ""; // Ajustar si tienes datos separados para la cédula
-                document.getElementById("inicio_actividades").value = data.fecha_inicio_actividades ?? "";
-                document.getElementById("estado_contribuyente").value = estadoContribuyente;
-                document.getElementById("clase_contribuyente").value = dataclase.nombre ?? "";
-                document.getElementById("tipo_contribuyente").value = tipoContribuyente ?? "";
-                document.getElementById("num_establecimientos").value = data.id ?? "";
-                // document.getElementById("estado_establecimiento").value = estadoEstablecimiento ?? "";
-                // document.getElementById("local_propio").value = localPropio ?? "";
-                limpiarTabla();
-                // document.getElementById("lleva_cont").value = LocalPropio ?? "";
-                actividadesComerciales.forEach((actividad) => {
-                    console.log(actividad)
-                    seleccionarActividad(actividad.id,actividad.descripcion,actividad.ciiu);
-                });
-                limpiarTablaLocal();
-                locales.forEach((local) => {
-                    console.log("qqqqqqqqqqqqq")
-                    console.log(local)
-                    let direccion=local.provincia.descripcion+"-"+local.canton.nombre+"-"+local.parroquia.descripcion+", Calle "+local.calle_principal+" y "+local.calle_secundaria
-                    seleccionarLocales(local.id,local.actividad_descripcion,direccion,local.local_propio);
-                });
-
-                
-                 // Cerrar el modal
-                // Selecciona el elemento modal
-
-              
-                
-
-            }else{
-                alert(res.status);
-            }
-        }).catch(function(err) {
-            console.log(err)
-        }).then(function() {
-
-        });
-        var modalElement = document.getElementById('modalContribuyente');
-        // Crea una instancia del modal o toma la instancia existente
-        var modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
-        // Oculta el modal
-        modal.hide();
-    }
-    globalThis.LocalComercial=""
-    function seleccionarcontribuyentesinactividad(id){
-        limpiarCampos();
-        axios.post("{{route('get.catastro')}}", {
-            _token: token,
-            id:id
-        }).then(function(res) {
-            
-            if(res.status==200) {
-
-                const data = res.data.contribuyente; // Los datos del contribuyente
-                const datapropietario = res.data.propietarios; // Los datos del contribuyente
-                const dataclase = res.data.clase_contribuyente; // Los datos del contribuyente
-                const actividadesComerciales = res.data.actividades; // Los datos del contribuyente
-                const locales=res.data.locales
-                let estadoContribuyente;
-                let tipoContribuyente;
-                let estadoEstablecimiento;
-                let localPropio;
-
-                if (data.estado_contribuyente_id === 1) {
-                    estadoContribuyente = "Activo";
-                } else if (estado_contribuyente_id === 2) {
-                    estadoContribuyente = "Inactivo";
-                } else if (estado_contribuyente_id === 3) {
-                    estadoContribuyente = "Suspendido";
-                } else {
-                    estadoContribuyente = "Desconocido"; // Opcional: texto si el estado no coincide
-                }
-                if (data.tipo_contribuyente === 1) {
-                    tipoContribuyente = "Persona natural";
-                } else if (tipo_contribuyente === 2) {
-                    tipoContribuyente = "Sociedades";
-                } else {
-                    tipoContribuyente = "Desconocido"; // Opcional: texto si el estado no coincide
-                }
-                // if (data.estado_establecimiento === 1) {
-                //     estadoEstablecimiento = "Abierto";
-                // } else if (tipo_contribuyente === 2) {
-                //     estadoEstablecimiento = "Cerrado";
-                // } else {
-                //     estadoEstablecimiento = "Desconocido"; // Opcional: texto si el estado no coincide
-                // }
-                // if (data.local_propio === 1) {
-                //     localPropio = "Propio";
-                // } else if (tipo_contribuyente === 2) {
-                //     localPropio = "Arrendado";
-                // } else {
-                //     localPropio = "Desconocido"; // Opcional: texto si el estado no coincide
-                // }
-                // LocalComercial=localPropio
-                // Asigna los datos a los campos del formulario
-                document.getElementById("catastro_id").value = data.id;
-                document.getElementById("buscar_contribuyente").value = data.ruc;
-                document.getElementById("propietario_nombre").value = datapropietario.nombres ?? ""+" "+datapropietario.apellidos ?? "";
-                document.getElementById("propietario_cedula").value = datapropietario.ci_ruc ?? "";
-                document.getElementById("ruc_cedula").value = data.ruc ?? "";
-                document.getElementById("nombre_contribuyente").value = data.nombre_fantasia_comercial ?? "" // Nombre de fantasía comercial
-                document.getElementById("razon_social").value = data.razon_social ?? "";
-                document.getElementById("domicilio").value = `${data.calle_principal ?? ""} ${data.calle_secundaria ?? ""} ${data.referencia_ubicacion ?? ""}`.trim();
-                document.getElementById("Telefono_domicilio").value = data.telefono ?? "";
-                // document.getElementById("correo_electronico").value = data.correo_1 ?? "";
-                document.getElementById("representante_legal").value = data.representante_legal_id ?? "";
-                document.getElementById("cedula_representante").value = data.representante_legal_id ?? ""; // Ajustar si tienes datos separados para la cédula
-                document.getElementById("inicio_actividades").value = data.fecha_inicio_actividades ?? "";
-                document.getElementById("estado_contribuyente").value = estadoContribuyente;
-                document.getElementById("clase_contribuyente").value = dataclase.nombre ?? "";
-                document.getElementById("tipo_contribuyente").value = tipoContribuyente ?? "";
-                document.getElementById("num_establecimientos").value = data.id ?? "";
-                // document.getElementById("estado_establecimiento").value = estadoEstablecimiento ?? "";
-                // document.getElementById("local_propio").value = localPropio ?? "";
-
-               
-                // document.getElementById('lleva_contabilidad').value=1
-
-            }else{
-                alert(res.status);
-            }
-        }).catch(function(err) {
-            console.log(err)
-        }).then(function() {
-
-        });
-        var modalElement = document.getElementById('modalContribuyente');
-        // Crea una instancia del modal o toma la instancia existente
-        var modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
-        // Oculta el modal
-        modal.hide();
-    }
-    function limpiarTablaLocal(){
-        // Obtener el cuerpo de la tabla
-        const tbody = document.querySelector("#tablaLocales tbody");
-
-        // Eliminar todas las filas existentes
-        while (tbody.firstChild) {
-            tbody.removeChild(tbody.firstChild);
-        }
-    }
-    function seleccionarLocales(id, local_descripcion, direccion, local_propio_data ){
-        // alert(local_descripcion)
-        // limpiarTablaLocal();
-        const nuevaFila = document.createElement("tr");
-        let local_propio=""
-        if (local_propio_data === 1) {
-            local_propio = "Propio";
-        } else if (local_propio_data === 2) {
-            local_propio = "Arrendado";
-        } else {
-            local_propio = "Desconocido"; // Opcional: texto si el estado no coincide
-        }
-
-        // Definir el contenido de la nueva fila, incluyendo inputs ocultos para enviar a Laravel
-        nuevaFila.innerHTML = `
-            <td>
-                <input class="form-check-input checkbox-grande" type="checkbox" name="locales[${id}][id]" value="${id}">
-            </td>
-            <td>
-                <input type="hidden" name="locales[${id}][local_descripcion]" value="${local_descripcion}">
-                ${local_descripcion}
-            </td>
-            <td>
-                <input type="hidden" name="locales[${id}][direccion]" value="${direccion}">
-                ${direccion}
-            </td>
-            <td>
-                <input type="hidden" name="locales[${id}][local_propio]" value="${local_propio}">
-                ${local_propio}
-            </td>
-
-        `;
-
-        // Añadir la nueva fila a la tabla
-        document.querySelector("#tablaLocales tbody").appendChild(nuevaFila);
-
-        // Cerrar el modal
-        // var modal = bootstrap.Modal.getInstance(document.getElementById('actividadModal'));
-        // modal.hide();
-    }
-    //una vez cargados los contribuyentes esta funcion hace cargar las actividades asociadas
-    function seleccionarActividad(id, nombre, ciiu) {
-        // Crear un nuevo elemento <tr>
-       
-        const nuevaFila = document.createElement("tr");
-
-        // Definir el contenido de la nueva fila, incluyendo inputs ocultos para enviar a Laravel
-        nuevaFila.innerHTML = `
-            <td>
-                <input class="form-check-input checkbox-grande" type="checkbox" name="actividades[${id}][id]" value="${id}">
-            </td>
-            <td>
-                <input type="hidden" name="actividades[${id}][ciiu]" value="${ciiu}">
-                ${ciiu}
-            </td>
-            <td>
-                <input type="hidden" name="actividades[${id}][nombre]" value="${nombre}">
-                ${nombre}
-            </td>
-
-        `;
-
-        // Añadir la nueva fila a la tabla
-        document.querySelector("#tablaActividades tbody").appendChild(nuevaFila);
-
-        // Cerrar el modal
-        // var modal = bootstrap.Modal.getInstance(document.getElementById('actividadModal'));
-        // modal.hide();
-    }
-    //limpia las filas de la tabla cuando se selecciona una persona
-    function limpiarTabla() {
-        // Obtener el cuerpo de la tabla
-        const tbody = document.querySelector("#tablaActividades tbody");
-
-        // Eliminar todas las filas existentes
-        while (tbody.firstChild) {
-            tbody.removeChild(tbody.firstChild);
-        }
-    }
-    function eliminarFila(boton) {
-            // Eliminar la fila padre del botón clicado
-            boton.closest("tr").remove();
-    }
-
-    function cargarparroquia(idcanton){
-        var canton_id = document.getElementById('canton_id');
-
-        axios.post('{{route('getparroquia.catastro')}}', {
-            _token: token,
-            idcanton:idcanton
-        }).then(function(res) {
-            if(res.status==200) {
-                console.log("cargando parroquia");
-                parroquia_id.innerHTML = res.data;
-            }
-        }).catch(function(err) {
-            if(err.response.status == 500){
-                console.log('error al consultar al servidor');
-            }
-
-            if(err.response.status == 419){
-                console.log('Es posible que tu session haya caducado, vuelve a iniciar sesion');
-            }
-        }).then(function() {
-
-        });
-    }
-
-    document.querySelectorAll(".input-decimales").forEach(input => {
-        // Formato al perder el foco
-        input.addEventListener("blur", function() {
-            formatearConDosDecimales(this);
-        });
-
-        // Formato al presionar Enter
-        input.addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
-                formatearConDosDecimales(this);
-            }
-        });
-    });
-
-    function sumarValores(claseInputs, idExclusion) {
-        // Selecciona todos los elementos con la clase especificada, excluyendo el campo con el id dado
-        const inputs = document.querySelectorAll(`.${claseInputs}:not(#${idExclusion})`);
-        let total = 0;
-
-        // Suma los valores de los campos input
-        inputs.forEach(input => {
-            const value = parseFloat(input.value) || 0;
-            total += value;
-        });
-
-        // Asigna el total al campo excluido
-        document.getElementById(idExclusion).value = total.toFixed(2);
-
-        //si  total activo y pasivo es diferente a null, calcula patrimonio_total
-        var act=document.getElementById("act_total_activos").value
-        var pas=document.getElementById("pas_total_pasivos").value
-        if(pas!="" && act!=""){
-            // alert(act+pas)
-            // sumarValores('obligado_contabilidad', 'act_total_activos')
-            restarValores('totales_pasivos_activos', 'patrimonio_total')
-        }
-    }
-
-    function calcularBI(){
-       var activo_total=$('#total_activo15').val()
-       var pasivo_corriente=$('#cont_total_pasivos_corriente').val()
-       var patrimonio_act=activo_total - pasivo_corriente
-       patrimonio_act=patrimonio_act.toFixed(2)
-       $('#cont_total_bi_act_total').val(patrimonio_act)
-    }
-
-    globalThis.LlevaContabilidad=0
-
-    function restarValores(claseInputs, idExclusion) {
-        // alert("sa")
-       
-        // Selecciona todos los elementos con la clase especificada, excluyendo el campo con el id dado
-        const inputs = document.querySelectorAll(`.${claseInputs}:not(#${idExclusion})`);
-        let total = parseFloat(inputs[0]?.value) || 0; // Inicia con el primer valor
-
-        // Resta los valores de los campos input a partir del segundo
-        inputs.forEach((input, index) => {
-            if (index > 0) { // Omite el primer elemento ya que se usó para inicializar `total`
-                const value = parseFloat(input.value) || 0;
-                total -= value;
-            }
-        });
-
-        let es_activo_total=0
-        var total_activo15=$('#total_activo15').val()
-
-        if(LlevaContabilidad==1){
-            // alert(LlevaContabilidad)
-            var cont_total_activos=$('#cont_total_activos').val()
-            // alert(cont_total_activos)
-            // cont_total_activos=cont_total_activos.toFixed(2)
-            $('#total_activo15').val(cont_total_activos)
-
-        }
-        // alert(total_activo15)
-
-        // Asigna el total al campo excluido
-        document.getElementById(idExclusion).value = total.toFixed(2);
-
-        calculaPatente()
-    }
-
-
-    // Función para formatear el valor a dos decimales
-    function formatearConDosDecimales(input) {
-        let valor = parseFloat(input.value);
-        if (!isNaN(valor)) {
-            input.value = valor.toFixed(2);
-        }
-    }
-    
-    // Obtener el checkbox y los fieldsets
-    const checkbox = document.getElementById('lleva_contabilidad');
-    const noObligadosFieldset = document.getElementById('no_obligados_fieldset');
-    const obligadosFieldset = document.getElementById('obligados_fieldset');
-
-    // Función para actualizar la visibilidad de los fieldsets
-    function toggleFieldsets() {
-        let checkboxprofesional = document.getElementById("profesionales");
-        if (checkbox.checked) {
-            // Mostrar el fieldset para "Obligados a llevar contabilidad"
-            obligadosFieldset.style.display = 'block';
-            let div = document.getElementById("obligados_fieldset");
-            div.classList.toggle("mostrar");
-            // Ocultar el fieldset para "No obligados a llevar contabilidad"
-            noObligadosFieldset.style.display = 'none';
-
-            checkboxprofesional.checked =false
-        } else {
-            // Mostrar el fieldset para "No obligados a llevar contabilidad"
-            noObligadosFieldset.style.display = 'block';
-            // Ocultar el fieldset para "Obligados a llevar contabilidad"
-            obligadosFieldset.style.display = 'none';
-            checkboxprofesional.checked =false
-        }
-    }
-
-//     function toggleFieldsets() {
-//     let checkbox = document.getElementById('lleva_contabilidad');
-//     let checkboxprofesional = document.getElementById("profesionales");
-//     let noObligadosFieldset = document.getElementById('no_obligados_fieldset');
-//     let obligadosFieldset = document.getElementById('obligados_fieldset');
-
-//     if (checkbox.checked) {
-//         // Mostrar el fieldset para "Obligados a llevar contabilidad"
-//         obligadosFieldset.classList.remove("d-none");
-//         obligadosFieldset.classList.add("d-flex"); // Para que respete la estructura de Bootstrap
-//         noObligadosFieldset.classList.add("d-none"); // Ocultar el otro fieldset
-//         checkboxprofesional.checked = false;
-//     } else {
-//         // Mostrar el fieldset para "No obligados a llevar contabilidad"
-//         noObligadosFieldset.classList.remove("d-none");
-//         noObligadosFieldset.classList.add("d-flex");
-//         obligadosFieldset.classList.add("d-none");
-//         checkboxprofesional.checked = false;
-//     }
-// }
-
-
-    // Ejecutar la función al cambiar el estado del checkbox
-    checkbox.addEventListener('change', toggleFieldsets);
-
-    // Ejecutar la función al cargar la página para establecer el estado inicial
-    window.onload = toggleFieldsets;
-
-    document.addEventListener("DOMContentLoaded", function() {
-    // Ejecutar la llamada de Axios cuando el DOM esté listo
-    @if (old('catastro_id'))
-        @if (old('catastro_id') != '')
-        seleccionarcontribuyentesinactividad({{old('catastro_id')}});
-        @endif
-    @endif
-
-    document.addEventListener('keydown', function (event) {
-            // Verifica si la tecla presionada es ArrowDown o ArrowUp
-            if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-                // Prevenir el comportamiento por defecto
-                event.preventDefault();
-
-                // Seleccionar todos los inputs con la clase "navegable"
-                const inputs = Array.from(document.querySelectorAll('.input-decimales'));
-
-                // Obtener el input actualmente enfocado
-                const currentIndex = inputs.findIndex(input => input === document.activeElement);
-
-                if (currentIndex !== -1) {
-                    let nextIndex;
-                    if (event.key === 'ArrowDown') {
-                        // Siguiente índice (baja al siguiente input)
-                        nextIndex = (currentIndex + 1) % inputs.length;
-                    } else if (event.key === 'ArrowUp') {
-                        // Índice anterior (sube al input anterior)
-                        nextIndex = (currentIndex - 1 + inputs.length) % inputs.length;
-                    }
-
-                    // Enfocar el siguiente o anterior input
-                    inputs[nextIndex].focus();
-                }
-            }
-        });
-    });
-
-    
-
-    document.getElementById("impuesto_1punto5").addEventListener("change", function() {
-       
-        LimpiarTotalActivo()
-        LimpiarTotalPatente()
-
-        calculaPatente()
-    });
-
-
-   
-    document.getElementById("lleva_contabilidad").addEventListener("change", function() {
-        document.getElementById("cont_exoneracion").value= parseFloat(Math.round(0.00)).toFixed(2);
-        // document.getElementById("cont_pf").value = parseFloat(Math.round(0.00)).toFixed(2);
-        document.getElementById("cont_impuesto").value = parseFloat(Math.round(0.00)).toFixed(2);
-        document.getElementById("cont_sta").value = parseFloat(Math.round(0.00)).toFixed(2);
-        document.getElementById("cont_pago_patente").value = parseFloat(Math.round(0.00)).toFixed(2);
-
-        $('.desabilita_txt ').val('')
-        $('#cont_total_percibidos_sv').val(100)
-
-        let checkboxlleva_contabilidad = document.getElementById("lleva_contabilidad");
-        if (checkboxlleva_contabilidad.checked) {
-            LlevaContabilidad=1         
-        }else{
-            LlevaContabilidad=0        
-        }
-        LimpiarTotalActivo()
-        LimpiarTotalPatente()
-
-        // calculaPatente()
-    });
-
-    document.getElementById("calificacion_artesanal").addEventListener("change", function() {
-        
-        let checkbox = document.getElementById("calificacion_artesanal");
-        let checkbox2 = document.getElementById("tercera_edad");
-        if (checkbox.checked) {
-            checkbox2.checked=false    
-            TerceraEdadSeleccionado=0          
-        }
-        LimpiarTotalActivo()
-        LimpiarTotalPatente()
-
-        calculaPatente()
-    });
-    globalThis.TerceraEdadSeleccionado=0
-    document.getElementById("tercera_edad").addEventListener("change", function() {
-        let checkbox = document.getElementById("calificacion_artesanal");
-        let checkbox2 = document.getElementById("tercera_edad");
-        if (checkbox2.checked) {
-            checkbox.checked=false   
-            TerceraEdadSeleccionado=1         
-        }else{
-            TerceraEdadSeleccionado=0        
-        }
-        calculaPatente()
-    });
-
-    globalThis.EsProfesional=0
-    document.getElementById("profesionales").addEventListener("change", function() {
-        let checkboxlleva_contabilidad = document.getElementById("lleva_contabilidad");
-        let checkboxprofesional = document.getElementById("profesionales");
-        if (checkboxprofesional.checked) {
-            checkboxlleva_contabilidad.checked=false   
-            EsProfesional=1     
-            $('#act_caja_banco').val(0.00)   
-            $('#act_ctas_cobrar').val(0.00)    
-            $('#act_inv_mercaderia').val(0)   
-            $('#act_vehiculo_maquinaria').val(0)   
-            $('#act_equipos_oficinas').val(0)   
-            $('#act_edificios_locales').val(0)   
-            $('#act_terrenos').val(0)   
-            $('#act_total_activos').val(0)   
-            $('#pas_ctas_dctos_pagar').val(0)   
-            $('#pas_obligaciones_financieras').val(0)   
-            $('#pas_otras_ctas_pagar').val(0)   
-            $('#pas_otros_pasivos').val(0)   
-            $('#pas_total_pasivos').val(0)   
-            $('#patrimonio_total').val(0)   
-            // $('#act_caja_banco').val(0)   
-        }else{
-            EsProfesional=0        
-        }
-        // Mostrar el fieldset para "No obligados a llevar contabilidad"
-        noObligadosFieldset.style.display = 'none';
-        // Ocultar el fieldset para "Obligados a llevar contabilidad"
-        obligadosFieldset.style.display = 'none';
-        calculaPatente()
-    });
-
-    document.getElementById("cont_total_percibidos_sv").addEventListener("blur", function() {
-        let anio_declaracion=$('#year_declaracion').val() 
-        valor=$('#cont_total_patrimonio').val()
-
-        if(valor=="" || anio_declaracion==""){return}
-        let porcentaje=$('#cont_total_percibidos_sv').val()
-        if(porcentaje>100 || porcentaje<=0){
-            alertNotificar("El porcentaje debe ser mayor a cero y menor o igual a 100","error")
-            return
-        }
-        calculaPatente()
-    });
-
-
-    function calculaPatente(){
-        LimpiarTotalActivo()
-        LimpiarTotalPatente()
-        let checkbox1 = document.getElementById("lleva_contabilidad");
-        let anio_declaracion=$('#year_declaracion').val()
-        let obligado="";
-        let valor=0;
-        let checkboxprofesional = document.getElementById("profesionales");
-       
-        if (checkbox1.checked) {
-            obligado="S"
-            let porcentaje=$('#cont_total_percibidos_sv').val()
-            valor=$('#cont_total_patrimonio').val()
-            valor = Number(valor) * Number(porcentaje/100)
-            if(valor==0 || anio_declaracion==""){return}
-        } else {
-            obligado="N"
-            valor=$('#patrimonio_total').val()
-            
-            if(!checkboxprofesional.checked){
-                if(valor==0 || anio_declaracion==""){return}
-            }
-        }
-        // var lc=document.getElementById("local_propio").value 
-        // if(lc==""){
-        //     alert("Seleccione el contribuyente")
-        //     return
-        // }
-        
-        var impuesto=0;
-        var exoneracion=0
-        var sta=0
-        var pf=0
-        var total=0
-        document.getElementById("cont_exoneracion").value =parseFloat(Math.round(0.00)).toFixed(2);
-
-        // alert("s")
-        if(checkboxprofesional.checked){
-
-            let checkbox_art = document.getElementById("calificacion_artesanal");
-            let checkbox_te = document.getElementById("tercera_edad");
-            let porcentaje_exon=0
-            let exone=0
-            if (checkbox_art.checked) {
-               
-                let exone= $('#cont_impuesto').val()/2
-            
-                document.getElementById("cont_exoneracion").value =exone.toFixed(2);
-                porcentaje_exon=50
-            }   
-          
-            else if (checkbox_te.checked) {               
-                let exone= $('#cont_impuesto').val()   
-            
-                document.getElementById("cont_exoneracion").value =exone; 
-                porcentaje_exon=100                  
-                
-            }
-           
-            valor=0
-            var exoneracion=0
-            // document.getElementById("cont_exoneracion").value= parseFloat(exone).toFixed(2);
-            // document.getElementById("cont_pf").value = parseFloat(Math.round(5.00)).toFixed(2);
-            document.getElementById("cont_impuesto").value = parseFloat(Math.round(30.00)).toFixed(2);
-            // $('#cont_impuesto').val(parseFloat(Math.round(30.00)).toFixed(2))
-            if(LocalComercial=="Desconocido"){
-                // document.getElementById("cont_pf").value =parseFloat(Math.round(5.00)).toFixed(2);
-            }
-           
-
-            document.getElementById("cont_sta").value = parseFloat(Math.round(5.00)).toFixed(2);
-
-            exoneracion=document.getElementById("cont_exoneracion").value
-            sta=document.getElementById("cont_sta").value
-            // pf=document.getElementById("cont_pf").value
-            impuesto=document.getElementById("cont_impuesto").value
-            // alert(impuesto)
-
-            total=(Number(impuesto) + Number(sta) + Number(pf)) - Number(exoneracion)
-            document.getElementById("cont_pago_patente").value =total.toFixed(2);
-
-            return
-        }else {
-            // valor=0
-
-            document.getElementById("cont_exoneracion").value= parseFloat(Math.round(0.00)).toFixed(2);
-            // document.getElementById("cont_pf").value = parseFloat(Math.round(0.00)).toFixed(2);
-            document.getElementById("cont_impuesto").value = parseFloat(Math.round(0.00)).toFixed(2);
-            document.getElementById("cont_sta").value = parseFloat(Math.round(0.00)).toFixed(2);
-            document.getElementById("cont_pago_patente").value = parseFloat(Math.round(0.00)).toFixed(2);
-            // $('.desabilita_txt ').val('')
-
-            let checkboxlleva_contabilidas = document.getElementById("lleva_contabilidad");
-            if(!checkboxlleva_contabilidas.checked){
-                
-                document.getElementById("cont_exoneracion").value= parseFloat(Math.round(0.00)).toFixed(2);
-                // document.getElementById("cont_pf").value = parseFloat(Math.round(0.00)).toFixed(2);
-                document.getElementById("cont_impuesto").value = parseFloat(Math.round(0.00)).toFixed(2);
-                document.getElementById("cont_sta").value = parseFloat(Math.round(0.00)).toFixed(2);
-                document.getElementById("cont_pago_patente").value = parseFloat(Math.round(0.00)).toFixed(2);
-
-                // return
-            }
-           
-        }
-       
-        vistacargando("m","Espere por favor")
-       
-        $.get("patente/calcular-impuesto/"+valor+"/"+obligado+"/"+anio_declaracion+"/"+TerceraEdadSeleccionado, function(data){
-            console.log(data)
-            vistacargando("")
-            if(data.error==true){
-                // alertNotificar(data.mensaje,"error");
-                alert(data.mensaje);
-                return;   
-            }
-           
-            impuesto=data.calcular.sumar_total;
-            if(impuesto>25000){
-                impuesto=parseFloat(Math.round(25000.00)).toFixed(2);
-            }
-            $('#cont_impuesto').val(impuesto)
-            let checkbox = document.getElementById("calificacion_artesanal");
-            let checkbox2 = document.getElementById("tercera_edad");
-            let porcentaje_exon=0
-            if (checkbox.checked) {
-               
-                let exone= impuesto/2
-                document.getElementById("cont_exoneracion").value =exone.toFixed(2);
-                porcentaje_exon=50
-            }   
-          
-            if (checkbox2.checked) {
-               
-                if(data.calcular.aplica==0){
-                    let exone= impuesto   
-                    document.getElementById("cont_exoneracion").value =exone; 
-                    porcentaje_exon=100
-                }else{
-                    // document.getElementById("cont_exoneracion").value =data.calcular.comprobar; 
-                }             
-                
-            }
-           
-            // document.getElementById("cont_pf").value = parseFloat(Math.round(5.00)).toFixed(2);
-            if(LocalComercial=="Desconocido"){
-                // document.getElementById("cont_pf").value =parseFloat(Math.round(5.00)).toFixed(2);
-            }
-
-            
-            let checkboxImpAct = document.getElementById("impuesto_1punto5");
-            let calculaActivo=0
-            if (checkboxImpAct.checked) {
-                calculaActivo=1
-           }
-        
-            var patente = parseFloat(Math.round(0.00)).toFixed(2);
-
-            document.getElementById("cont_sta").value = parseFloat(Math.round(5.00)).toFixed(2);
-
-            exoneracion=document.getElementById("cont_exoneracion").value
-            sta=document.getElementById("cont_sta").value
-            // pf=document.getElementById("cont_pf").value
-            pf=0;
-           
-            total=(Number(impuesto) + Number(sta) + Number(pf)) - Number(exoneracion)
-            document.getElementById("cont_pago_patente").value =total.toFixed(2);
-
-            if(obligado=="S" && calculaActivo==1){
-                calculaActivoTotales(valor,porcentaje_exon)
-            }
-
-          
-        }).fail(function(){
-            vistacargando("")
-            alert("Se produjo un error, por favor intentelo más tarde");  
-        });
-
-    }
-    function calculaActivoTotales(valor,porcentaje_exon){
-        let activo_total=Number(valor) * (1.5/1000)
-
-        document.getElementById("cont_sta").value = parseFloat(Math.round(5.00)).toFixed(2);
-
-        let exoneracion_act=Number(valor) * Number(porcentaje_exon/100)
-        let sta_act=document.getElementById("cont_sta").value
-        // let pf_act=document.getElementById("cont_pf").value
-        let pf_act=0
-
-        document.getElementById("cont_exoneracion_act").value = parseFloat(Math.round(exoneracion_act * 100) / 100).toFixed(2);;
-        document.getElementById("cont_impuesto_act").value = Math.round(activo_total * 100) / 100;
-        document.getElementById("cont_sta_act").value =Math.round(sta_act * 100) / 100;; 
-        // document.getElementById("cont_pf_act").value =Math.round(pf_act * 100) / 100;; 
-        
-        total=(Number(activo_total) + Number(sta_act) + Number(pf_act)) - Number(exoneracion_act)
-        document.getElementById("cont_pago_activo_total").value =total.toFixed(2);
-
-    }
-
-    function LimpiarTotalActivo(){
-        document.getElementById("cont_exoneracion_act").value = "";
-        document.getElementById("cont_impuesto_act").value ="";
-        document.getElementById("cont_pago_activo_total").value ="";
-        document.getElementById("cont_sta_act").value ="";
-        
-    }
-
-    function LimpiarTotalPatente(){
-        
-        document.getElementById("cont_impuesto").value = "";
-        document.getElementById("cont_sta").value = "";
-        document.getElementById("cont_exoneracion").value=""
-        document.getElementById("cont_pago_patente").value ="";
-    }
-
-    $("#formPatente").submit(function(e){
-       
-        e.preventDefault();
-        
-        //validamos los campos obligatorios
-        let catastro_id=$('#catastro_id').val()
-
-           
-        if(catastro_id=="" || catastro_id==null){
-            alertNotificar("Debe seleccionar un contribuyente","error")
-            return
-        } 
-
-        var num_locales = $("#tablaLocales tbody tr").length;
-       
-        let actividadesSeleccionados = $("input[name^='actividades']:checked").length;
-            
-        if (actividadesSeleccionados === 0 ) {
-            alertNotificar("Debe seleccionar al menos una actividad", "error");
-            return;
-        }
-
-        let localesSeleccionados = $("input[name^='locales']:checked").length;
-            
-        if (localesSeleccionados === 0 || localesSeleccionados >1) {
-            alertNotificar("Debe seleccionar un local", "error");
-            return;
-        }
-
-        let anio_declaracion=$('#year_declaracion').val()
-           
-        if(anio_declaracion=="" || anio_declaracion==null){
-            alertNotificar("Debe seleccionar el año de declaracion","error")
-            return
-        } 
-
-        let fecha_declaracion=$('#fecha_declaracion').val()
-           
-        if(fecha_declaracion=="" || fecha_declaracion==null){
-            alertNotificar("Debe seleccionar la fecha de declaracion","error")
-            return
-        } 
-
-        if(EsProfesional==0){
-            
-            if(LlevaContabilidad==0){
-                let act_caja_banco=$('#act_caja_banco').val()
-           
-                if(act_caja_banco=="" || act_caja_banco==null){
-                    alertNotificar("Debe ingresar el activo caja y bancos","error")
-                    $('#act_caja_banco').focus()
-                    return
-                } 
-
-                let act_ctas_cobrar=$('#act_ctas_cobrar').val()
-                if(act_ctas_cobrar=="" || act_ctas_cobrar==null){
-                    alertNotificar("Debe ingresar el activo cuentas por cobrar","error")
-                    $('#act_ctas_cobrar').focus()
-                    return
-                } 
-
-                let act_inv_mercaderia=$('#act_inv_mercaderia').val()
-                if(act_inv_mercaderia=="" || act_inv_mercaderia==null){
-                    alertNotificar("Debe ingresar el activo inventario de mercaderia","error")
-                    $('#act_inv_mercaderia').focus()
-                    return
-                }
-                
-                let act_vehiculo_maquinaria=$('#act_vehiculo_maquinaria').val()
-                if(act_vehiculo_maquinaria=="" || act_vehiculo_maquinaria==null){
-                    alertNotificar("Debe ingresar el activo vehiculo y maquinaria","error")
-                    $('#act_vehiculo_maquinaria').focus()
-                    return
-                }
-
-                let act_equipos_oficinas=$('#act_equipos_oficinas').val()
-                if(act_equipos_oficinas=="" || act_equipos_oficinas==null){
-                    alertNotificar("Debe ingresar el activo equipos de oficina","error")
-                    $('#act_equipos_oficinas').focus()
-                    return
-                }
-
-                let act_edificios_locales=$('#act_edificios_locales').val()
-                if(act_edificios_locales=="" || act_edificios_locales==null){
-                    alertNotificar("Debe ingresar el activo edificios y locales","error")
-                    $('#act_edificios_locales').focus()
-                    return
-                }
-
-                let act_terrenos=$('#act_terrenos').val()
-                if(act_terrenos=="" || act_terrenos==null){
-                    alertNotificar("Debe ingresar el activo terrenos","error")
-                    $('#act_terrenos').focus()
-                    return
-                }
-
-                let pas_ctas_dctos_pagar=$('#pas_ctas_dctos_pagar').val()
-                if(pas_ctas_dctos_pagar=="" || pas_ctas_dctos_pagar==null){
-                    alertNotificar("Debe ingresar el pasivo cuentas y documentos por pagar","error")
-                    $('#pas_ctas_dctos_pagar').focus()
-                    return
-                }
-
-
-                let pas_obligaciones_financieras=$('#pas_obligaciones_financieras').val()
-                if(pas_obligaciones_financieras=="" || pas_obligaciones_financieras==null){
-                    alertNotificar("Debe ingresar el pasivo obligaciones financieras","error")
-                    $('#pas_obligaciones_financieras').focus()
-                    return
-                }
-
-                let pas_otras_ctas_pagar=$('#pas_otras_ctas_pagar').val()
-                if(pas_otras_ctas_pagar=="" || pas_otras_ctas_pagar==null){
-                    alertNotificar("Debe ingresar el pasivo cuentas por pagar","error")
-                    $('#pas_otras_ctas_pagar').focus()
-                    return
-                }
-
-                let pas_otros_pasivos=$('#pas_otros_pasivos').val()
-                if(pas_otros_pasivos=="" || pas_otros_pasivos==null){
-                    alertNotificar("Debe ingresar el pasivo otros pasivos","error")
-                    $('#pas_otros_pasivos').focus()
-                    return
-                }
-
-
-            }else{
-                let cont_total_activos=$('#cont_total_activos').val()
-                if(cont_total_activos=="" || cont_total_activos==null){
-                    alertNotificar("Debe ingresar el total de activos","error")
-                    $('#cont_total_activos').focus()
-                    return
-                }
-
-                let cont_total_pasivos=$('#cont_total_pasivos').val()
-                if(cont_total_pasivos=="" || cont_total_pasivos==null){
-                    alertNotificar("Debe ingresar el total de pasivos","error")
-                    $('#cont_total_pasivos').focus()
-                    return
-                }
-
-                // if(Emitir==1){
-                    let cont_form_sri=$('#cont_form_sri').val()
-                    if(cont_form_sri=="" || cont_form_sri==null){
-                        alertNotificar("Debe ingresar numero formulario SRI","error")
-                        $('#cont_form_sri').focus()
-                        return
-                    }
-
-                    let cont_original=$('#cont_original').val()
-                    if(cont_original=="" || cont_original==null){
-                        alertNotificar("Debe seleccionar si es Original o Sustitutiva","error")
-                        return
-                    }
-
-                    let archivo_patente=$('#archivo_patente').val()
-                    if(archivo_patente=="" || archivo_patente==null){
-                        alertNotificar("Debe seleccionar el documento","error")
-                        return
-                    }
-                // }
-
-            }
-        }
-        // var ruta="patente/simular-patente"
-        // if(Emitir==1){
-        //     ruta="patente"
-        // }
-
-        var ruta="patente"
-        
-        vistacargando("m","Espere por favor")
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-
-        //comprobamos si es registro o edicion
-        let AccionForm="R"
-        let tipo_=""
-        let url_form=""
-        if(AccionForm=="R"){
-            tipo_="POST"
-            url_form=ruta
-        }else{
-            tipo_="PUT"
-            url_form=ruta
-        }
-    
-        // var FrmData=$("#formPatente").serialize();
-        var FrmData = new FormData(this);
-
-        $.ajax({
-                
-            type: tipo_,
-            url: url_form,
-            method: tipo_,             
-            // data: FrmData,      
-            
-            // processData:false, 
-            data: FrmData,
-            contentType:false,
-            cache:false,
-            processData:false, 
-
-            success: function(data){
-                console.log(data)
-                vistacargando("");                
-                if(data.error==true){
-                    alertNotificar(data.mensaje,'error');
-                    return;                      
-                }
-                if(Emitir==1){
-                    limpiarCampos()
-                }
-                alertNotificar(data.mensaje,"success");
-                crearPdf(data.id)
-                 
-            }, error:function (data) {
-                console.log(data)
-
-                vistacargando("");     
-                alertNotificar('Ocurrió un error','error');
-            }
-        });
-    })
-
-    function crearPdf(id){
-        vistacargando("m","Espere por favor")
-        $.get('patente/reporte/'+id, function(data){
-            vistacargando("")
-            if(data.error==true){
-                // alertNotificar(data.mensaje,"error");
-                alert(data.mensaje);
-                return;   
-            }
-
-            alertNotificar("El documento se descargara en unos segundos","success")
-            verpdf(data.pdf)
-
-        }).fail(function(){
-            vistacargando("")
-            alertNotificar('Ocurrió un error','error');
-        });
-    }
 
 </script>
 @endpush

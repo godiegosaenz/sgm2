@@ -656,6 +656,75 @@ class PatenteController extends Controller
             ];
         }
     }
+
+    public function buscaInfoContribuyente($id){
+
+        try {
+
+            $info=DB::connection('pgsql')->table('sgm_patente.pa_catastro_contribuyente as co')
+            ->leftJoin('sgm_app.cat_ente as e','e.id','co.propietario_id')
+            ->leftJoin('sgm_app.cat_ente as rl','rl.id','co.representante_legal_id')
+            ->leftJoin('sgm_patente.pa_clase_contribuyente as cc','cc.id','co.clase_contribuyente_id')
+            ->where('co.id',$id)
+            ->select(DB::raw("CONCAT(e.apellidos, ' ', e.nombres) AS contribuyente"),'co.ruc',
+                DB::raw("CONCAT(rl.apellidos, ' ', rl.nombres) AS representante_legal"),'co.tipo_contribuyente'
+                ,'rl.ci_ruc as cedula_rl',
+                DB::raw("(SELECT COUNT(*) FROM sgm_patente.pa_locales WHERE idcatastro_contr = co.id and estado='A') as cantidad_locales"),'co.fecha_inicio_actividades','co.estado_contribuyente_id','cc.nombre as clase_contri')
+            ->first();
+
+            $actividad=DB::connection('pgsql')->table('sgm_patente.pa_actividad_contribuyente as act_cont')
+            ->leftJoin('sgm_patente.pa_ctlg_actividades_comerciales as ac','ac.id','act_cont.Actividad_comercial_id')
+            ->where('act_cont.Catastro_contribuyente_id',$id)
+            ->select('ac.ciiu','ac.descripcion','act_cont.Actividad_comercial_id as idActividad','act_cont.id')
+            ->get();
+
+            $locales=DB::connection('pgsql')->table('sgm_patente.pa_locales as local')
+            ->leftJoin('sgm_app.cat_provincia as pr','pr.id','local.provincia_id')
+            ->leftJoin('sgm_app.cat_canton as canton','canton.id','local.canton_id')
+            ->leftJoin('sgm_app.cat_parroquia as parroquia','parroquia.id','local.parroquia_id')
+            ->where('local.idcatastro_contr',$id)
+            ->where('local.estado','A')
+            ->select('pr.descripcion as provin','canton.nombre as canton_','parroquia.descripcion as parroquia_'
+            ,'local.calle_principal','local.calle_secundaria','local.actividad_descripcion','local.local_propio',
+            DB::raw("CASE WHEN local.estado_establecimiento = 1 THEN 'Abierto' ELSE 'Cerrado' END as estado_establecimiento")
+            ,'local.id')
+            ->get();
+            
+            return [
+                'data' => $info,
+                'actividad' => $actividad,
+                'locales' => $locales,
+                'error' =>false
+            ];
+        } catch (\Exception $e) {
+
+            return [
+                'error' => true,
+                'mensaje' => 'Ocurrió un error al generar la patente: ' . $e->getMessage()
+            ];
+
+        }
+    }
+
+    public function verLocal($id){
+        try {
+            $local=DB::connection('pgsql')->table('sgm_patente.pa_locales')
+            ->where('id',$id)
+            ->first();
+
+            return [
+                'error' => false,
+                'data' => $local
+            ];
+
+        }catch (\Exception $e) {
+            return [
+                'error' => true,
+                'mensaje' => 'Ocurrió un error al obtener los datos: ' . $e->getMessage()
+            ];
+        }
+
+    }
     
     public function pdfDeclaracionCobro($id=44){
         try{

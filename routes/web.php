@@ -33,10 +33,16 @@ use App\Http\Controllers\analitica\AnaliticaContribuyenteController;
 |
 */
 
-Route::get('sgm/login', function () {
+// Route::get('sgm/login', function () {
+//     return view('auth.login');
+// })->name('sgm/login')->middleware('guest');
+// Route::redirect('/', '/sgm/login');
+
+Route::get('/login', function () {
     return view('auth.login');
-})->name('sgm/login')->middleware('guest');
-Route::redirect('/', '/sgm/login');
+})->name('login')->middleware('guest');
+Route::redirect('/', '/login');
+
 //Route::get('/', [ConsultaPredioController::class, 'index'])->name('welcome');
 Route::get('/consulta', [ConsultaPredioController::class, 'index'])->name('welcome');
 Route::get('/consultapruebaame', function (){
@@ -127,9 +133,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('catastrocontribuyente', [CatastroContribuyente::class, 'store'])->name('store.catastro');
     Route::post('catastrocontribuyente/canton', [CatastroContribuyente::class, 'getCanton'])->name('getcanton.catastro');
     Route::post('catastrocontribuyente/parroquia', [CatastroContribuyente::class, 'getParroquia'])->name('getparroquia.catastro');
+    Route::get('catastrocontribuyente/buscarContribuyente', [CatastroContribuyente::class, 'buscarContribuyente'])->name('buscarContribuyente.catastro');
 
     Route::post('catastrocontribuyente/agregar-local', [CatastroContribuyente::class, 'guardaLocal'])->name('guardaLocal.catastro');
     Route::get('catastrocontribuyente/listado-locales/{id}', [CatastroContribuyente::class, 'listarLocales'])->name('listarLocales.catastro');
+    Route::get('catastrocontribuyente/buscarActividad', [CatastroContribuyente::class, 'buscarActividad'])->name('buscarActividad.catastro');
+    Route::post('catastrocontribuyente/agregar-actividad', [CatastroContribuyente::class, 'guardaActividad'])->name('guardaActividad.catastro');
+    Route::get('catastrocontribuyente/eliminar-activida-contr/{id}', [CatastroContribuyente::class, 'eliminarActividad'])->name('eliminarActividad.catastro');
+    Route::get('catastrocontribuyente/buscarRucContribuyente', [CatastroContribuyente::class, 'buscarRucContribuyente'])->name('buscarRucContribuyente.catastro');
+    
 
 
     Route::get('patente', [PatenteController::class, 'create'])->name('create.patente');
@@ -145,6 +157,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('patente/descargar-documento/{ruta}', [PatenteController::class, 'descargarArchivo'])->name('descargarArchivo.patente');
     Route::get('patente/guarda-liquidacion', [PatenteController::class, 'guardaLiquidacion'])->name('guardaLiquidacion.patente');
     Route::get('patente/declaracion-cobro', [PatenteController::class, 'pdfDeclaracionCobro'])->name('pdfDeclaracionCobro.patente');
+    Route::get('patente/busca-data-contribuyente/{id}', [PatenteController::class, 'buscaInfoContribuyente'])->name('buscaInfoContribuyente.patente');
+    Route::get('patente/ver-local/{id}', [PatenteController::class, 'verLocal'])->name('verLocal.patente');
 
     Route::post('ente/datatables', [EnteController::class, 'datatables'])->name('datatables.ente');
     Route::post('ente/datatables/listar', [EnteController::class, 'datatablesente'])->name('listar.ente');
@@ -159,6 +173,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
     Route::get('analitica/contribuyente', [AnaliticaContribuyenteController::class, 'index'])->name('analitica.contribuyente');
+    Route::get('analitica/predios', [AnaliticaContribuyenteController::class, 'predios'])->name('analitica.predios');
+    Route::post('analitica/carga-data', [AnaliticaContribuyenteController::class, 'cargaData'])->name('analitica.cargaData');
+    Route::post('analitica/reporte-predio-rango', [AnaliticaContribuyenteController::class, 'pdfData'])->name('analitica.pdfData');
+    Route::get('analitica/descargar-reporte/{pdf}', [AnaliticaContribuyenteController::class, 'descargarPdf'])->name('analitica.descargarPdf');
 });
 
 Route::get('/clear', function() {

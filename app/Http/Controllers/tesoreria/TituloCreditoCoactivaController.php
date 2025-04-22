@@ -117,6 +117,8 @@ class TituloCreditoCoactivaController extends Controller
                 'liq.fecha_ingreso',
                 'liq.total_pago',
                 'pre.num_predio',
+                'saldo',
+                'liq.id',
                 DB::raw("
                     CASE
                         WHEN liq.comprador IS NULL THEN liq.nombre_comprador
@@ -159,16 +161,18 @@ class TituloCreditoCoactivaController extends Controller
             )
             ->where('liq.id', $valor)
             ->get();
-
+            // dd($liquidacion);
             $rubros = DB::connection('pgsql')->table('sgm_financiero.ren_det_liquidacion as rdl')
                                                 ->join('sgm_financiero.ren_rubros_liquidacion as rrl', 'rdl.rubro', '=', 'rrl.id')
                                                 ->select('rdl.id', 'rdl.liquidacion', 'rdl.rubro', 'rdl.valor', 'rdl.estado', 'rrl.descripcion')
-                                                ->where('rdl.liquidacion', 217492)
+                                                ->where('rdl.liquidacion', $valor)
                                                 ->get();
+                                               
             $liquidacion['rubros'] = $rubros;
 
             array_push($dataArray, $liquidacion);
         }
+       
 
         $data = [
             'title' => 'Reporte de liquidacion',

@@ -12,13 +12,27 @@ use Exception;
 use Illuminate\Support\Facades\Validator;
 use App\Models\PsqlCatastroContribuyente;
 use App\Models\CatastroLocal;
+use App\Models\PsqlActividadesCont;
 use Illuminate\Validation\Rule;
-
+use GuzzleHttp\Client;
+use DB;
 class CatastroContribuyente extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    private $clientNacional = null;
+
+    public function __construct(){
+        try{
+            $ip="https://srienlinea.sri.gob.ec/movil-servicios/";
+          
+            $this->clientNacional = new Client([
+                'base_uri' =>$ip,
+                'verify' => false,
+            ]);
+
+        }catch(Exception $e){
+            Log::error($e->getMessage());
+        }
+    }
     public function index()
     {
         $data = PsqlCatastroContribuyente::all();
@@ -195,6 +209,58 @@ class CatastroContribuyente extends Controller
              // Redirigir con un mensaje de error
             return redirect('catastrocontribuyente')->with('error', 'Ocurrió un error al registrar el contribuyente. '.$e->getMessage());
         }
+    }
+
+    public function buscarContribuyente(Request $request){
+        $data = [];
+        if($request->has('q')){
+            $search = $request->q;
+            $data=DB::connection('pgsql')->table('sgm_app.cat_ente as ente')
+            ->join('sgm_patente.pa_catastro_contribuyente as cont','cont.propietario_id','ente.id')
+            ->where(function($query)use($search){
+                $query->where('ente.ci_ruc', 'ilike', '%'.$search.'%')
+                ->orwhere(DB::raw("CONCAT(apellidos, ' ', nombres)"), 'ilike', '%'.$search.'%');
+            })            
+            ->select('cont.id AS idper','ci_ruc as documento',DB::raw("CONCAT(apellidos,' ',nombres) AS nombre"))
+            ->take(10)->get();
+
+        }
+        return response()->json($data);
+    }
+    
+    public function buscarActividad(Request $request){
+        $data = [];
+        if($request->has('q')){
+            $search = $request->q;
+            $data=DB::connection('pgsql')->table('sgm_patente.pa_ctlg_actividades_comerciales')
+            ->where(function($query)use($search){
+                $query->where('ciiu', 'ilike', '%'.$search.'%')
+                ->orwhere('descripcion', 'ilike', '%'.$search.'%');
+            })            
+            ->select('id','ciiu','descripcion AS nombre')
+            ->take(10)->get();
+
+        }
+        return response()->json($data);
+    }
+
+    public function buscarRucContribuyente(Request $request){
+        $data = [];
+        if($request->has('q')){
+            $cedula = $request->q;
+           
+            $response = $this->clientNacional->request('GET', "api/v1.0/deudas/porIdentificacion/{$cedula}",[
+                'headers' => [
+                    // 'Authorization'=>'bearer '.$token,
+                    'Content-Type' => 'application/json'
+                ],
+            ]);
+            
+            $responseBody = json_decode($response->getBody(), true);            
+                   
+
+        }
+        return response()->json($responseBody);
     }
 
     public function store_respaldo(Request $r)
@@ -476,26 +542,27 @@ class CatastroContribuyente extends Controller
     public function guardaLocal(Request $request){
       
         try{
-            //comprobamos que no haya sido ingresado
-            $verifica=CatastroLocal::where('provincia_id',$request->prov)
-            ->where('canton_id',$request->cant)
-            ->where('parroquia_id',$request->parr)
-            ->where('calle_principal',$request->calle_princ)
-            ->where('calle_secundaria',$request->calle_secund)
-            ->where('referencia_ubicacion',$request->referencia)
-            ->where('actividad_descripcion',$request->descr)
-            ->where('estado_establecimiento',$request->establ)
-            ->where('local_propio',$request->tipo)
-            ->where('idcatastro_contr',$request->idcont)
-            ->first();
-            
-            if(!is_null($verifica)){
-                //si ya existe activo
-                dd($request->all());
-                if($verifica->estado=="A"){
-                    return (['mensaje'=>'Ya existe un medicamento con el codigo ingresado','error'=>true]);
+            if(isset($request->idEditarLocal) && $request->idEditarLocal>0){
+                $verifica=CatastroLocal::where('provincia_id',$request->prov)
+                ->where('canton_id',$request->cant)
+                ->where('parroquia_id',$request->parr)
+                ->where('calle_principal',$request->calle_princ)
+                ->where('calle_secundaria',$request->calle_secund)
+                ->where('referencia_ubicacion',$request->referencia)
+                ->where('actividad_descripcion',$request->descr)
+                ->where('estado_establecimiento',$request->establ)
+                ->where('local_propio',$request->tipo)
+                ->where('idcatastro_contr',$request->idcont)
+                ->where('id','!=',$request->idEditarLocal)
+                ->first();
+
+                if(!is_null($verifica)){
+                    if($verifica->estado=="A"){
+                        return (['mensaje'=>'Ya existe la informacionxx','error'=>true]);
+                    }
                 }else{
                     //lo actualizamos
+                    $verifica=CatastroLocal::find($request->idEditarLocal);
                     $verifica->idcatastro_contr=$request->idcont;
                     $verifica->provincia_id=$request->prov;
                     $verifica->canton_id=$request->cant;
@@ -504,7 +571,7 @@ class CatastroContribuyente extends Controller
                     $verifica->calle_secundaria=$request->calle_secund;
                     $verifica->referencia_ubicacion=$request->referencia;
                     $verifica->actividad_descripcion=$request->descr;
-                    $verifica->estado_establecimiento=$request->estado_establecimiento_id_modal;
+                    $verifica->estado_establecimiento=$request->establ;
                     $verifica->local_propio=$request->tipo;
                     $verifica->estado='A';
                     $verifica->fecha_actualiza=date('Y-m-d H:i:s');
@@ -514,27 +581,116 @@ class CatastroContribuyente extends Controller
                     }        
 
                 }
+
+            }else{
+                //comprobamos que no haya sido ingresado
+                $verifica=CatastroLocal::where('provincia_id',$request->prov)
+                ->where('canton_id',$request->cant)
+                ->where('parroquia_id',$request->parr)
+                ->where('calle_principal',$request->calle_princ)
+                ->where('calle_secundaria',$request->calle_secund)
+                ->where('referencia_ubicacion',$request->referencia)
+                ->where('actividad_descripcion',$request->descr)
+                ->where('estado_establecimiento',$request->establ)
+                ->where('local_propio',$request->tipo)
+                ->where('idcatastro_contr',$request->idcont)
+                ->first();
+
+                if(!is_null($verifica)){
+                    //si ya existe activo              
+                    if($verifica->estado=="A"){
+                        return (['mensaje'=>'Ya existe la informacionxx','error'=>true]);
+                    }else{
+                        //lo actualizamos
+                        $verifica->idcatastro_contr=$request->idcont;
+                        $verifica->provincia_id=$request->prov;
+                        $verifica->canton_id=$request->cant;
+                        $verifica->parroquia_id=$request->parr;
+                        $verifica->calle_principal=$request->calle_princ;
+                        $verifica->calle_secundaria=$request->calle_secund;
+                        $verifica->referencia_ubicacion=$request->referencia;
+                        $verifica->actividad_descripcion=$request->descr;
+                        $verifica->estado_establecimiento=$request->establ;
+                        $verifica->local_propio=$request->tipo;
+                        $verifica->estado='A';
+                        $verifica->fecha_actualiza=date('Y-m-d H:i:s');
+                        $verifica->id_usuario_act=auth()->user()->idpersona;
+                        if($verifica->save()){
+                            return (['mensaje'=>'Informacion ingresada exitosamente','error'=>false]);
+                        }        
+
+                    }
+                }
+
+                //registramos 
+                $registra=new CatastroLocal();
+                $registra->idcatastro_contr=$request->idcont;
+                $registra->provincia_id=$request->prov;
+                $registra->canton_id=$request->cant;
+                $registra->parroquia_id=$request->parr;
+                $registra->calle_principal=$request->calle_princ;
+                $registra->calle_secundaria=$request->calle_secund;
+                $registra->referencia_ubicacion=$request->referencia;
+                $registra->actividad_descripcion=$request->descr;
+                $registra->estado_establecimiento=$request->establ;
+                $registra->local_propio=$request->tipo;
+                $registra->estado='A';
+                $registra->fecha_registr=date('Y-m-d H:i:s');
+                $registra->id_usuario_reg=auth()->user()->idpersona;
+                if($registra->save()){
+                    return (['mensaje'=>'Informacion ingresada exitosamente','error'=>false]);
+                } 
+            }   
+          
+        } catch (\Throwable $e) {
+            dd($e);
+            // DB::connection('pgsql')->rollback();
+            // Log::error(__CLASS__." => ".__FUNCTION__." => Mensaje =>".$e->getMessage()." Linea =>".$e->getLine());
+            return (['mensaje'=>'Ocurrió un error,intentelo más tarde','error'=>true]); 
+        }
+        
+    }
+
+    public function guardaActividad(Request $request){
+      
+        try{           
+            //comprobamos que no haya sido ingresado
+            $verifica=PsqlActividadesCont::where('Actividad_comercial_id',$request->cmb_actividad)
+            ->where('Catastro_contribuyente_id',$request->cmb_propietario)
+            ->first();
+
+            if(!is_null($verifica)){
+                //si ya existe activo              
+                return (['mensaje'=>'Ya existe la informacion','error'=>true]);
             }
 
             //registramos 
-            $registra=new CatastroLocal();
-            $registra->idcatastro_contr=$request->idcont;
-            $registra->provincia_id=$request->prov;
-            $registra->canton_id=$request->cant;
-            $registra->parroquia_id=$request->parr;
-            $registra->calle_principal=$request->calle_princ;
-            $registra->calle_secundaria=$request->calle_secund;
-            $registra->referencia_ubicacion=$request->referencia;
-            $registra->actividad_descripcion=$request->descr;
-            $registra->estado_establecimiento=$request->estado_establecimiento_id_modal;
-            $registra->local_propio=$request->tipo;
-            $registra->estado='A';
-            $registra->fecha_registr=date('Y-m-d H:i:s');
-            $registra->id_usuario_reg=auth()->user()->idpersona;
+            $registra=new PsqlActividadesCont();
+            $registra->Actividad_comercial_id=$request->cmb_actividad;
+            $registra->Catastro_contribuyente_id=$request->cmb_propietario;
             if($registra->save()){
                 return (['mensaje'=>'Informacion ingresada exitosamente','error'=>false]);
-            }    
-          
+            } 
+                     
+        } catch (\Throwable $e) {
+            dd($e);
+            // DB::connection('pgsql')->rollback();
+            // Log::error(__CLASS__." => ".__FUNCTION__." => Mensaje =>".$e->getMessage()." Linea =>".$e->getLine());
+            return (['mensaje'=>'Ocurrió un error,intentelo más tarde','error'=>true]); 
+        }
+        
+    }
+
+    public function eliminarActividad($id){
+      
+        try{           
+            //comprobamos que no haya sido ingresado
+            $elimina=PsqlActividadesCont::find($id);
+            $elimina->delete();
+
+            return (['mensaje'=>'Informacion eliminada exitosamente','error'=>false]);
+            
+                     
         } catch (\Throwable $e) {
             dd($e);
             // DB::connection('pgsql')->rollback();
