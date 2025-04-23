@@ -119,6 +119,7 @@ class TituloCreditoCoactivaController extends Controller
                 'pre.num_predio',
                 'saldo',
                 'liq.id',
+                'en.direccion',
                 DB::raw("
                     CASE
                         WHEN liq.comprador IS NULL THEN liq.nombre_comprador
@@ -134,7 +135,7 @@ class TituloCreditoCoactivaController extends Controller
                         ELSE (SELECT ci_ruc FROM sgm_app.cat_ente WHERE cat_ente.id = liq.comprador)
                     END AS cedula
                 "),
-                DB::raw("cdla.nombre || ' MZ: ' || pre.urb_mz || ' SL: ' || pre.urb_solarnew AS direccion"),
+                DB::raw("cdla.nombre || ' MZ: ' || pre.urb_mz || ' SL: ' || pre.urb_solarnew AS direccion1"),
                 'pre.clave_cat as cod_predial',
                 DB::raw("(SELECT razon_social FROM sgm_application.empresa) AS empresa"),
                 DB::raw("
@@ -161,7 +162,8 @@ class TituloCreditoCoactivaController extends Controller
             )
             ->where('liq.id', $valor)
             ->get();
-            
+        
+
             $fecha_hoy=date('Y-m-d');
             setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES@euro', 'es_ES', 'esp');
             $fecha_timestamp = strtotime($fecha_hoy);    

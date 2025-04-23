@@ -61,7 +61,7 @@
 
     <form class="" action="{{route('reportecoactiva.titulos')}}" id="formExonerar" name="formExonerar" method="post" enctype="multipart/form-data">
         <div class="row">
-            <div class="col-3">
+            <div class="col-12">
                 <div class="mb-3">
                     <a id="reporteLiquidacion" class="btn btn-secondary" rel="noopener noreferrer">
                         <i class="bi bi-filetype-pdf"></i>
