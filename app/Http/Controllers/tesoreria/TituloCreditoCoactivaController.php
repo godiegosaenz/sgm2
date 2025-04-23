@@ -161,7 +161,13 @@ class TituloCreditoCoactivaController extends Controller
             )
             ->where('liq.id', $valor)
             ->get();
-            // dd($liquidacion);
+            
+            $fecha_hoy=date('Y-m-d');
+            setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES@euro', 'es_ES', 'esp');
+            $fecha_timestamp = strtotime($fecha_hoy);    
+            $fecha_formateada = strftime("%d de %B del %Y", $fecha_timestamp);
+    
+
             $rubros = DB::connection('pgsql')->table('sgm_financiero.ren_det_liquidacion as rdl')
                                                 ->join('sgm_financiero.ren_rubros_liquidacion as rrl', 'rdl.rubro', '=', 'rrl.id')
                                                 ->select('rdl.id', 'rdl.liquidacion', 'rdl.rubro', 'rdl.valor', 'rdl.estado', 'rrl.descripcion')
@@ -178,9 +184,12 @@ class TituloCreditoCoactivaController extends Controller
             'title' => 'Reporte de liquidacion',
             'date' => date('m/d/Y'),
             'DatosLiquidacion' => $dataArray,
+            'fecha_formateada'=>$fecha_formateada
         ];
 
         $pdf = PDF::loadView('reportes.reporteTitulos', $data);
+
+        // return $pdf->stream("aa.pdf");
 
         return $pdf->download('reporteTitulo.pdf');
     }

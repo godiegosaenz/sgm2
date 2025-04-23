@@ -40,16 +40,16 @@
             vertical-align: top;
         }
         .tabla-principal .columna-izquierda {
-            width: 60%;
+            width: 55%;
         }
         .tabla-principal .columna-derecha {
-            width: 40%;
+            width: 45%;
         }
         .tabla-izquierda {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
-            font-size: 12px;
+            font-size: 11px;
         }
         .tabla-izquierda th, .tabla-izquierda td {
             border: none;
@@ -92,6 +92,16 @@
     <table class="tabla-principal">
         <tr>
             <td class="columna-izquierda">
+
+                <table class="tabla-izquierda-" style="margin-bottom: 10px;">
+                    <thead>
+                        <tr>
+                            <th width="50%">San Vicente, {{ $fecha_formateada }} </th>
+                        </tr>
+                    </thead>
+                    
+                </table>
+
                 <table class="tabla-izquierda">
                     <thead>
                         <tr>
@@ -148,7 +158,7 @@
                 <table class="tabla-derecha">
                     <thead>
                         <tr>
-                            <th>RUBROS</th>
+                            <th>RUBROS/CONCEPTO</th>
                             <th>VALOR</th>
                         </tr>
                     </thead>
@@ -171,7 +181,11 @@
                 <table class="tabla-izquierda">
                     <tbody>
                         <tr>
-                            <th>Recargo + Impuestos:</th>
+                            <th>Fecha desde la cual se desvenga intereses:</th>
+                            <<th>Enero {{ $d[0]->anio + 1 }}</th>
+                        </tr>
+                        <tr>
+                            <th>Intereses hasta la fecha de emision:</th>
                             <th>$ {{$d[0]->valor_complemento}}</th>
                         </tr>
                         <tr>

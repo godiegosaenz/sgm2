@@ -67,7 +67,16 @@
                         <i class="bi bi-filetype-pdf"></i>
                         General titulos
                     </a>
+
+                    <button type="button" class="btn btn-success" rel="noopener noreferrer">
+                        <i class="fa fa-edit"></i>
+                        Actualizar Contribuyente
+                    </button>
+               
                 </div>
+
+                
+                  
             </div>
         </div>
         <div class="row mt-3">
