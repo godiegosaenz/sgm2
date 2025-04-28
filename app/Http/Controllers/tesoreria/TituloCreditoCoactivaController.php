@@ -5,6 +5,8 @@ namespace App\Http\Controllers\tesoreria;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\PsqlEnte;
+use App\Models\PsqlLiquidacion;
 use Exception;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -194,5 +196,80 @@ class TituloCreditoCoactivaController extends Controller
         // return $pdf->stream("aa.pdf");
 
         return $pdf->download('reporteTitulo.pdf');
+    }
+
+    public function buscaContribuyente($idliquidacion){
+        try{   
+            $buscaContruyente=DB::connection('pgsql')->table('sgm_app.cat_ente as en')
+            ->leftJoin('sgm_financiero.ren_liquidacion as liq', 'en.id', '=', 'liq.comprador')
+            ->where('liq.id',$idliquidacion)
+            ->select('en.id','en.ci_ruc','en.nombres','en.apellidos','en.direccion')
+            ->first();
+
+            // if(is_null($buscaContruyente)){
+            //     $buscaContruyente=DB::connection('pgsql')->table('sgm_app.cat_predio_propietario as pp')
+            //     ->leftJoin('sgm_financiero.ren_liquidacion as liq', 'pp.predio', '=', 'liq.predio')
+            //     ->leftJoin('sgm_app.cat_ente as en', 'en.id', '=', 'pp.ente')
+            //     ->where('liq.id',$idliquidacion)
+            //     ->where('pp.estado','A')
+            //     ->select('en.id','en.ci_ruc','en.nombres','en.apellidos','en.direccion')
+            //     ->first();
+            // }
+
+            return (['data'=>$buscaContruyente,'error'=>false]); 
+            
+        } catch (\Throwable $th) {
+            // Log::error(__CLASS__." => ".__FUNCTION__." => Mensaje =>".$e->getMessage()." Linea =>".$e->getLine());
+            return (['mensaje'=>'Ocurrió un error,intentelo más tarde '.$th,'error'=>true]); 
+        } 
+    }
+
+    public function actualizaContribuyente(Request $request){
+        DB::beginTransaction(); 
+        try{
+            $id_contribuyente=$request->id;
+            $cedula=$request->cedula;
+            $nombres=$request->nombres;
+            $apellidos=$request->apellidos;
+            $direccion=$request->direccion;
+            $id_liquidacion=$request->id_liquidacion;
+
+            $verificaCedula=PsqlEnte::where('ci_ruc',$cedula)
+            ->where('id','!=',$id_contribuyente)
+            ->first();
+            if(!is_null($verificaCedula)){
+                return [
+                    'error' => true,
+                    'mensaje' => 'La cedula ya existe para otro contribuyente.',
+                ];
+            }
+
+            $actualizaContribuyente=PsqlEnte::find($id_contribuyente);
+            $actualizaContribuyente->ci_ruc=$cedula;
+            $actualizaContribuyente->nombres=$nombres;
+            $actualizaContribuyente->apellidos=$apellidos;
+            $actualizaContribuyente->direccion=$direccion;
+            
+            if($actualizaContribuyente->save()){
+                $actualizaNombreComprador=PsqlLiquidacion::find($id_liquidacion);
+                $actualizaNombreComprador->nombre_comprador=$nombres." ".$apellidos;
+                $actualizaNombreComprador->save();
+
+                DB::commit(); // Confirmar los cambios en la BD
+
+                return [
+                    'error' => false,
+                    'mensaje' => 'Su informacion fue actualizada exitosamente.',
+                ];  
+            }
+
+            
+
+        } catch (\Throwable $th) {
+            DB::rollback();
+            // Log::error(__CLASS__." => ".__FUNCTION__." => Mensaje =>".$e->getMessage()." Linea =>".$e->getLine());
+            return (['mensaje'=>'Ocurrió un error,intentelo más tarde '.$th,'error'=>true]); 
+        } 
+
     }
 }

@@ -33,15 +33,15 @@ use App\Http\Controllers\analitica\AnaliticaContribuyenteController;
 |
 */
 
-// Route::get('sgm/login', function () {
-//     return view('auth.login');
-// })->name('sgm/login')->middleware('guest');
-// Route::redirect('/', '/sgm/login');
-
-Route::get('/login', function () {
+Route::get('sgm/login', function () {
     return view('auth.login');
-})->name('login')->middleware('guest');
-Route::redirect('/', '/login');
+})->name('sgm/login')->middleware('guest');
+Route::redirect('/', '/sgm/login');
+
+// Route::get('/login', function () {
+//     return view('auth.login');
+// })->name('login')->middleware('guest');
+// Route::redirect('/', '/login');
 
 //Route::get('/', [ConsultaPredioController::class, 'index'])->name('welcome');
 Route::get('/consulta', [ConsultaPredioController::class, 'index'])->name('welcome');
@@ -115,6 +115,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('tituloscoactiva/', [TituloCreditoCoactivaController::class, 'index'])->name('index.titulocredito');
     Route::post('tituloscoactiva/', [TituloCreditoCoactivaController::class, 'consulta'])->name('consulta.titulocredito');
     Route::post('tituloscoactiva/imprimir', [TituloCreditoCoactivaController::class, 'reporteTitulosCoactiva'])->name('reportecoactiva.titulos');
+    Route::get('tituloscoactiva/buscar-contribuyente/{idliquidacion}', [TituloCreditoCoactivaController::class, 'buscaContribuyente'])->name('buscaContribuyente.titulocredito');
+    Route::post('tituloscoactiva/actualiza-contribuyente', [TituloCreditoCoactivaController::class, 'actualizaContribuyente'])->name('actualizaContribuyente.titulocredito');
+
     Route::get('/pruebatitulo', function () {
         try {
             $patente = App\Models\PsqlPaPatente::find(1);

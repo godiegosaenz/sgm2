@@ -1,6 +1,7 @@
 @extends('layouts.appv2')
 @section('title', 'Tercera edad')
 @push('styles')
+<link rel="stylesheet" href="{{asset('bower_components/sweetalert/sweetalert.css')}}">
 @endpush
 @section('content')
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -68,7 +69,7 @@
                         General titulos
                     </a>
 
-                    <button type="button" class="btn btn-success" rel="noopener noreferrer">
+                    <button type="button" onclick="actualizarContribuyente()" class="btn btn-success" rel="noopener noreferrer">
                         <i class="fa fa-edit"></i>
                         Actualizar Contribuyente
                     </button>
@@ -130,6 +131,60 @@
             </div>
         </div>
     </form>
+
+    <div class="modal fade" id="modalContri" tabindex="-1" aria-labelledby="ContribuyenteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalContribuyenteLabel">Actualizar Contribuyente</h5>
+                    <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+                </div>
+                @csrf
+                <div class="modal-body">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <!-- Columna izquierda -->
+                            <div class="col-md-12">
+                                
+                                <div class="mb-3">
+                                    <label for="cmb_ruc" class="form-label">CEDULA/RUC</label>
+                                    <input type="hidden" class="form-control" name="id_liquidacion" id="id_liquidacion" >
+                                    <input type="hidden" class="form-control" name="id_contribuyente" id="id_contribuyente" >
+                                    <input type="text" class="form-control" name="cedula_ruc_cont" id="cedula_ruc_cont" >
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="contribuyente" class="form-label">NOMBRES</label>
+                                    <input type="text" class="form-control" name="nombre_cont" id="nombre_cont" >
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="cmb_ruc_rep" class="form-label">APELLIDOS</label>
+                                    <input type="text" class="form-control" name="apellido_cont" id="apellido_cont" >
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="representante" class="form-label">DIRECCION</label>
+                                    <input type="text" class="form-control" name="direccion_cont" id="direccion_cont" >
+                                </div>
+
+                                
+                            </div>
+
+                          
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" onclick="actualizaContribuyente()">
+                        Actualizar
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 @push('scripts')
 <script>
@@ -184,4 +239,8 @@
     });
 
 </script>
+<script src="{{asset('bower_components/sweetalert/sweetalert.js')}}"></script>
+
+<script src="{{ asset('js/titulocredito/reporte.js?v='.rand())}}"></script>
+
 @endpush
