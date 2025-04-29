@@ -46,26 +46,26 @@
         <div class="card mb-4">
             <div class="card-header">Datos del Contribuyente</div>
             <div class="card-body">
-                @foreach ($cliente as $c)
-                    <p><strong>Cédula/RUC:</strong> {{$c->cc_ruc}}</p>
-                    <p><strong>Nombres y apellidos:</strong> {{$c->nombres.' '.$c->apellidos}}</p>
-                    <p><strong>Correo:</strong> {{$c->correo}}</p>
-                    <p><strong>Telefono:</strong> {{$c->telefono}}</p>
-                    <p><strong>Direccion:</strong> {{$c->direccion}}</p>
-                    <p><strong>Fecha de nacimiento:</strong> {{$c->fecha_nacimiento}}</p>
-                @endforeach
+
+                    <p><strong>Cédula/RUC:</strong> {{$cliente->cc_ruc}}</p>
+                    <p><strong>Nombres y apellidos:</strong> {{$cliente->nombres.' '.$cliente->apellidos}}</p>
+                    <p><strong>Correo:</strong> {{$cliente->correo}}</p>
+                    <p><strong>Telefono:</strong> {{$cliente->telefono}}</p>
+                    <p><strong>Direccion:</strong> {{$cliente->direccion}}</p>
+                    <p><strong>Fecha de nacimiento:</strong> {{$cliente->fecha_nacimiento}}</p>
+
             </div>
         </div>
         <div class="card mb-4">
             <div class="card-header">Datos del vehiculo</div>
             <div class="card-body">
-                @foreach($vehiculo as $v)
-                    <p><strong>Placa:</strong> {{$v->placa}}</p>
-                    <p><strong>Chasis:</strong> {{$v->chasis}}</p>
-                    <p><strong>Marca:</strong> {{$v->placa}}</p>
-                    <p><strong>Avalúo:</strong> {{$v->placa}}</p>
-                    <p><strong>Año de modelo:</strong> {{$v->placa}}</p>
-                @endforeach
+
+                    <p><strong>Placa:</strong> {{$vehiculo->placa}}</p>
+                    <p><strong>Chasis:</strong> {{$vehiculo->chasis}}</p>
+                    <p><strong>Marca:</strong> {{$vehiculo->placa}}</p>
+                    <p><strong>Avalúo:</strong> {{$vehiculo->placa}}</p>
+                    <p><strong>Año de modelo:</strong> {{$vehiculo->placa}}</p>
+
 
             </div>
         </div>

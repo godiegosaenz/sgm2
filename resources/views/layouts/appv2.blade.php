@@ -339,6 +339,11 @@
                         'route' => 'create.transito',
                         'active' => request()->routeIs('create.transito')
                     ],
+                    [
+                        'name' => 'Listar impuestos',
+                        'route' => 'index.transito',
+                        'active' => request()->routeIs('index.transito')
+                    ],
                 ],
                 'active' => request()->routeIs('index.catastro') || request()->routeIs('create.catastro') || request()->routeIs('create.patente') || request()->routeIs('create.patente') || request()->routeIs('index.patente')
             ],

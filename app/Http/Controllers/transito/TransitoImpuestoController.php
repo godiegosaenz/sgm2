@@ -24,7 +24,7 @@ class TransitoImpuestoController extends Controller
      */
     public function index()
     {
-        //
+        return view('transito.impuestos_index');
     }
 
     /**
@@ -86,7 +86,7 @@ public function store(Request $request)
      */
     public function show(string $id)
     {
-        $TransitoImpuesto = TransitoImpuesto::find($id);
+        $TransitoImpuesto = TransitoImpuesto::with('vehiculo','cliente')->find($id);
         $vehiculo =  $TransitoImpuesto->vehiculo;
         $cliente = $TransitoImpuesto->cliente;
         $transitoimpuestoconcepto = $TransitoImpuesto->conceptos;
@@ -169,7 +169,7 @@ public function store(Request $request)
     public function reportetituloimpuesto(Request $r,string $id)
     {
         $dataArray = array();
-        $TransitoImpuesto = TransitoImpuesto::find($id);
+        $TransitoImpuesto = TransitoImpuesto::with('cliente','vehiculo')->find($id);
         $vehiculo =  $TransitoImpuesto->vehiculo;
         $cliente = $TransitoImpuesto->cliente;
         $transitoimpuestoconcepto = $TransitoImpuesto->conceptos;
@@ -197,5 +197,27 @@ public function store(Request $request)
         // return $pdf->stream("aa.pdf");
 
         return $pdf->download('reporte_titulo_impuesto'.$r->id.'.pdf');
+    }
+
+    public function datatable(Request $r)
+    {
+        if($r->ajax()){
+            $listaimpuesto = TransitoImpuesto::with('cliente')->get();
+            return Datatables($listaimpuesto)
+            ->addColumn('cc_ruc', function ($listaimpuesto) {
+                return $listaimpuesto->cliente->cc_ruc;
+            })
+            ->addColumn('contribuyente', function ($listaimpuesto) {
+                return $listaimpuesto->cliente->nombres.' '.$listaimpuesto->cliente->apellidos;
+            })
+            ->addColumn('vehiculo', function ($listaimpuesto) {
+                return $listaimpuesto->vehiculo->placa;
+            })
+            ->addColumn('action', function ($listaimpuesto) {
+                return '<a href="' . route('show.transito', $listaimpuesto->id) . '" class="btn btn-primary btn-sm">Ver</a>';
+            })
+            ->rawColumns(['action','contribuyente','vehiculo'])
+            ->make(true);
+        }
     }
 }

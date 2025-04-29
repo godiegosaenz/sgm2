@@ -126,20 +126,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/pruebatitulo', function () {
         $vehiculo = TransitoVehiculo::where('id',2)->first();
-        $tarifa = null;
-        if ($vehiculo) {
-            $avaluo = $vehiculo->avaluo;
-
-            $tarifa = TransitoTarifaAnual::where('desde', '<=', $avaluo)
-                ->where(function ($query) use ($avaluo) {
-                    $query->where('hasta', '>=', $avaluo)
-                          ->orWhereNull('hasta'); // Para el caso de "En adelante"
-                })
-                ->first();
-        } else {
-            $tarifa = null;
-        }
-        return $tarifa->valor;
+        //$vehiculo = TransitoVehiculo::find(2);
+        return $vehiculo->tipo_vehiculo;
     });
 
     Route::get('catastrocontribuyente/list', [CatastroContribuyente::class, 'index'])->name('index.catastro');
@@ -194,6 +182,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('transito', [TransitoImpuestoController::class, 'store'])->name('store.transito');
     Route::get('transito/previsualizar/{id}', [TransitoImpuestoController::class, 'show'])->name('show.transito');
     Route::post('transito/imprimir/{id}', [TransitoImpuestoController::class, 'reportetituloimpuesto'])->name('reportetituloimpuesto.transito');
+    Route::post('transito/datatables', [TransitoImpuestoController::class, 'datatable'])->name('datatables.impuesto');
+    Route::get('transito/lista', [TransitoImpuestoController::class, 'index'])->name('index.transito');
     Route::post('calcular', [TransitoImpuestoController::class, 'calcular'])->name('calcular.transito');
     Route::post('transitoente', [TransitoEnteController::class, 'store'])->name('store.ente');
     Route::post('transitoente/cedula', [TransitoEnteController::class, 'getEnteCedula'])->name('get.cedula.transitoente');
