@@ -62,9 +62,10 @@
 
                     <p><strong>Placa:</strong> {{$vehiculo->placa}}</p>
                     <p><strong>Chasis:</strong> {{$vehiculo->chasis}}</p>
-                    <p><strong>Marca:</strong> {{$vehiculo->placa}}</p>
-                    <p><strong>Avalúo:</strong> {{$vehiculo->placa}}</p>
-                    <p><strong>Año de modelo:</strong> {{$vehiculo->placa}}</p>
+                    <p><strong>Marca:</strong> {{$vehiculo->marca->descripcion}}</p>
+                    <p><strong>Tipo:</strong> {{$vehiculo->tipo_vehiculo->descripcion}}</p>
+                    <p><strong>Avalúo:</strong> $ {{number_format($vehiculo->avaluo, 2)}} </p>
+                    <p><strong>Año de modelo:</strong> {{$vehiculo->year}}</p>
 
 
             </div>
