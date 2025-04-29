@@ -1628,14 +1628,54 @@ $('#modalContri').on('shown.bs.modal', function () {
                 };
             },
             processResults: function (data) {
+                console.log(data)
                 return {
                     results: data.map(item => ({
+                        
                         id: item.id,
-                        text: item.ciiu + " - " + item.nombre
+                        text: item.id + " - " + item.text
                     }))
                 };
             }
         },
-        minimumInputLength: 1
+        minimumInputLength: 13
     });
+
+    $('#cmb_ruc_rep').select2({
+        dropdownParent: $('#modalContri'),
+        ajax: {
+            url: 'catastrocontribuyente/buscarRucContribuyente',
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return {
+                    q: params.term
+                };
+            },
+            processResults: function (data) {
+                console.log(data)
+                return {
+                    results: data.map(item => ({
+                        
+                        id: item.id,
+                        text: item.id + " - " + item.text
+                    }))
+                };
+            }
+        },
+        minimumInputLength: 13
+    });
+
 });
+
+function cargaContribuyente(){
+    var nombre_contr=$('#cmb_ruc option:selected').text();
+    nombre_contr=nombre_contr.split("-")
+    $('#contribuyente').val(nombre_contr[1])
+}
+
+function cargaRepresentanteLegal(){
+    var nombre_rl=$('#cmb_ruc_rep option:selected').text();
+    nombre_rl=nombre_rl.split("-")
+    $('#representante').val(nombre_rl[1])
+}

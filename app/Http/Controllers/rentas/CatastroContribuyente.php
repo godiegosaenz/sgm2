@@ -256,11 +256,16 @@ class CatastroContribuyente extends Controller
                 ],
             ]);
             
-            $responseBody = json_decode($response->getBody(), true);            
-                   
-
+            $responseBody = json_decode($response->getBody(), true); 
+            
+            $data[] = [
+                'id' => $responseBody['contribuyente']['identificacion'] ?? null,
+                'text' => $responseBody['contribuyente']['nombreComercial'] ?? 'Sin nombre'
+            ];
         }
-        return response()->json($responseBody);
+
+        // Siempre se devuelve la variable $data, esté llena o vacía
+        return response()->json($data);
     }
 
     public function store_respaldo(Request $r)
