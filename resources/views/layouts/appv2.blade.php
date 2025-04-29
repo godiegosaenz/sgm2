@@ -334,6 +334,11 @@
                         'route' => 'create.patente',
                         'active' => request()->routeIs('create.patente')
                     ],
+                    [
+                        'name' => 'Impuesto transitos',
+                        'route' => 'create.transito',
+                        'active' => request()->routeIs('create.transito')
+                    ],
                 ],
                 'active' => request()->routeIs('index.catastro') || request()->routeIs('create.catastro') || request()->routeIs('create.patente') || request()->routeIs('create.patente') || request()->routeIs('index.patente')
             ],
