@@ -1221,7 +1221,7 @@
 
                                 <div class="mb-3">
                                     <label for="cmb_ruc" class="form-label">RUC-Contribuyente</label>
-                                    <select id="cmb_ruc" name="cmb_ruc" class="form-control">
+                                    <select id="cmb_ruc" name="cmb_ruc" class="form-control" onchange="cargaContribuyente()">
                                         <option value=""></option>
                                     </select>
                                 </div>
@@ -1233,7 +1233,7 @@
 
                                 <div class="mb-3">
                                     <label for="cmb_ruc_rep" class="form-label">RUC-Repres. Legal</label>
-                                    <select id="cmb_ruc_rep" name="cmb_ruc_rep" class="form-control">
+                                    <select id="cmb_ruc_rep" name="cmb_ruc_rep" class="form-control" onchange="cargaRepresentanteLegal()">
                                         <option value=""></option>
                                     </select>
                                 </div>
