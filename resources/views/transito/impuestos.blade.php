@@ -163,7 +163,7 @@
                             @foreach($conceptos as $concepto)
                                 <tr>
                                     <td>
-                                        <input type="checkbox" class="form-check-input concepto-check" data-id="{{ $concepto->id }}">
+                                        <input type="checkbox" class="form-check-input concepto-check" data-id="{{ $concepto->id }}" checked>
                                     </td>
                                     <td>{{ $concepto->concepto }}</td>
                                     <td>
@@ -370,6 +370,13 @@
             conceptos.push({ id, valor });
         });
 
+        // 2. Poner en 0.00 los NO seleccionados
+        document.querySelectorAll('.concepto-check:not(:checked)').forEach(checkbox => {
+            const id = checkbox.getAttribute('data-id');
+            const input = document.getElementById(`valor_${id}`);
+            input.value = '0.00';
+        });
+
         if (conceptos.length > 0) {
             const spinner = document.getElementById('spinner-total');
             if (spinner) spinner.style.display = 'inline-block';
@@ -387,7 +394,7 @@
                     res.data.conceptos.forEach(function (concepto) {
                         const input = document.getElementById('valor_' + concepto.id);
                         if (input) {
-                            input.value = concepto.nuevo_valor;
+                            input.value = concepto.nuevo_valor.toFixed(2);
                             total += parseFloat(concepto.nuevo_valor);
                         }
                     });
