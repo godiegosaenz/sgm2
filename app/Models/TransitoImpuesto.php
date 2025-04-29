@@ -36,6 +36,6 @@ class TransitoImpuesto extends Model
 
     public function cliente()
     {
-        return $this->belongsTo(TransitoEnte::class,'cat_ente_id','id');
+        return $this->belongsTo(PsqlEnte::class,'cat_ente_id','id');
     }
 }

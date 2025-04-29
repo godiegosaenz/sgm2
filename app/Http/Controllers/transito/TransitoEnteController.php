@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\transito;
 
 use App\Http\Controllers\Controller;
+use App\Models\PsqlEnte;
 use Illuminate\Http\Request;
 use App\Models\TransitoEnte;
 
@@ -66,7 +67,7 @@ class TransitoEnteController extends Controller
 
     public function getEnteCedula(Request $r){
         $query = $r->input('query');
-        $data = TransitoEnte::select('id','cc_ruc','nombres','apellidos','correo','telefono','direccion','fecha_nacimiento')->where('cc_ruc',$query)->first();
+        $data = PsqlEnte::select('id','ci_ruc','nombres','apellidos','direccion','fecha_nacimiento')->where('ci_ruc',$query)->first();
         if ($data) {
             // Devolver la información en formato JSON
             return response()->json($data, 200);

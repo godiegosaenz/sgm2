@@ -119,7 +119,7 @@
                             <tr>
 
                                 <td width="50%">{{$item['cliente']->nombres.' '.$item['cliente']->apellidos}}</td>
-                                <td width="50%">{{$item['cliente']->cc_ruc}}</td>
+                                <td width="50%">{{$item['cliente']->ci_ruc}}</td>
 
                             </tr>
                         </tbody>
