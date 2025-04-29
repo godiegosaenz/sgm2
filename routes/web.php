@@ -21,6 +21,12 @@ use App\Http\Controllers\rentas\PatenteController;
 use App\Http\Controllers\psql\ente\EnteController;
 use App\Http\Controllers\psql\actividad\ActividadComercialController;
 use App\Http\Controllers\analitica\AnaliticaContribuyenteController;
+use App\Http\Controllers\transito\TransitoEnteController;
+use App\Http\Controllers\transito\TransitoImpuestoController;
+use App\Http\Controllers\transito\TransitoVehiculoController;
+use App\Models\TransitoEnte;
+use App\Models\TransitoTarifaAnual;
+use App\Models\TransitoVehiculo;
 
 /*
 |--------------------------------------------------------------------------
@@ -119,12 +125,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('tituloscoactiva/actualiza-contribuyente', [TituloCreditoCoactivaController::class, 'actualizaContribuyente'])->name('actualizaContribuyente.titulocredito');
 
     Route::get('/pruebatitulo', function () {
-        try {
-            $patente = App\Models\PsqlPaPatente::find(1);
-            return $patente->contribuyente;
-        } catch (\Exception $e) {
-            return 'No se pudo conectar a la base de datos: ' . $e->getMessage();
+        $vehiculo = TransitoVehiculo::where('id',2)->first();
+        $tarifa = null;
+        if ($vehiculo) {
+            $avaluo = $vehiculo->avaluo;
+
+            $tarifa = TransitoTarifaAnual::where('desde', '<=', $avaluo)
+                ->where(function ($query) use ($avaluo) {
+                    $query->where('hasta', '>=', $avaluo)
+                          ->orWhereNull('hasta'); // Para el caso de "En adelante"
+                })
+                ->first();
+        } else {
+            $tarifa = null;
         }
+        return $tarifa->valor;
     });
 
     Route::get('catastrocontribuyente/list', [CatastroContribuyente::class, 'index'])->name('index.catastro');
@@ -144,7 +159,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('catastrocontribuyente/agregar-actividad', [CatastroContribuyente::class, 'guardaActividad'])->name('guardaActividad.catastro');
     Route::get('catastrocontribuyente/eliminar-activida-contr/{id}', [CatastroContribuyente::class, 'eliminarActividad'])->name('eliminarActividad.catastro');
     Route::get('catastrocontribuyente/buscarRucContribuyente', [CatastroContribuyente::class, 'buscarRucContribuyente'])->name('buscarRucContribuyente.catastro');
-    
+
 
 
     Route::get('patente', [PatenteController::class, 'create'])->name('create.patente');
@@ -174,6 +189,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('ente/editar/{id}', [EnteController::class, 'update'])->name('update.ente');
     Route::get('ente/mostrar/{id}', [EnteController::class, 'show'])->name('show.ente');
 
+    //RUTAS PARA MODULO DE TRANSITO
+    Route::get('transito', [TransitoImpuestoController::class, 'create'])->name('create.transito');
+    Route::post('transito', [TransitoImpuestoController::class, 'store'])->name('store.transito');
+    Route::get('transito/previsualizar/{id}', [TransitoImpuestoController::class, 'show'])->name('show.transito');
+    Route::post('transito/imprimir/{id}', [TransitoImpuestoController::class, 'reportetituloimpuesto'])->name('reportetituloimpuesto.transito');
+    Route::post('calcular', [TransitoImpuestoController::class, 'calcular'])->name('calcular.transito');
+    Route::post('transitoente', [TransitoEnteController::class, 'store'])->name('store.ente');
+    Route::post('transitoente/cedula', [TransitoEnteController::class, 'getEnteCedula'])->name('get.cedula.transitoente');
+    Route::post('transitovehiculo/placa', [TransitoVehiculoController::class, 'getVehiculoPlaca'])->name('get.placa.transitovehiculo');
 
     Route::get('analitica/contribuyente', [AnaliticaContribuyenteController::class, 'index'])->name('analitica.contribuyente');
     Route::get('analitica/predios', [AnaliticaContribuyenteController::class, 'predios'])->name('analitica.predios');
@@ -188,7 +212,7 @@ Route::get('/clear', function() {
     Artisan::call('config:clear');
     Artisan::call('config:cache');
     Artisan::call('view:clear');
- 
+
     return "Cleared!";
- 
+
  });
