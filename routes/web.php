@@ -204,6 +204,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('analitica/carga-data', [AnaliticaContribuyenteController::class, 'cargaData'])->name('analitica.cargaData');
     Route::post('analitica/reporte-predio-rango', [AnaliticaContribuyenteController::class, 'pdfData'])->name('analitica.pdfData');
     Route::get('analitica/descargar-reporte/{pdf}', [AnaliticaContribuyenteController::class, 'descargarPdf'])->name('analitica.descargarPdf');
+
+    Route::get('transito/reportes', [AnaliticaContribuyenteController::class, 'vistaReporteTransito'])->name('vistaReporteTransito.transito');
+    Route::post('transito/pago-consulta-transito', [AnaliticaContribuyenteController::class, 'consultarPagos'])->name('consultarPagos.transito');
 });
 
 Route::get('/clear', function() {
