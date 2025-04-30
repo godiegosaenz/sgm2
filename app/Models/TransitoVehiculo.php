@@ -15,4 +15,14 @@ class TransitoVehiculo extends Model
     {
         return $this->belongsTo(TransitoImpuesto::class,'id','vehiculo_id');
     }
+
+    public function marca()
+    {
+        return $this->belongsTo(TransitoMarca::class,'marca_id','id');
+    }
+
+    public function tipo_vehiculo()
+    {
+        return $this->belongsTo(TransitoTipoVehiculo::class,'tipo_clase_id','id');
+    }
 }

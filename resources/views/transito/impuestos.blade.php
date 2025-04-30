@@ -15,14 +15,7 @@
 @section('content')
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <h3 class="h2">Impuestos Unidad de Transito</h3>
-        <div class="btn-toolbar mb-2 mb-md-0">
-            <button type="button" class="btn btn-sm btn-primary d-flex align-items-center gap-1 me-2" onclick="enviarFormulario()">
-                Guardar Contribuyente
-            </button>
-            <a href="{{ route('create.catastro') }}" class="btn btn-sm btn-secondary d-flex align-items-center gap-1">
-                Nuevo Contribuyente
-            </a>
-        </div>
+
     </div>
     @if(@session('error'))
             <div class="alert alert-danger">
@@ -170,7 +163,7 @@
                             @foreach($conceptos as $concepto)
                                 <tr>
                                     <td>
-                                        <input type="checkbox" class="form-check-input concepto-check" data-id="{{ $concepto->id }}">
+                                        <input type="checkbox" class="form-check-input concepto-check" data-id="{{ $concepto->id }}" checked>
                                     </td>
                                     <td>{{ $concepto->concepto }}</td>
                                     <td>
@@ -377,6 +370,13 @@
             conceptos.push({ id, valor });
         });
 
+        // 2. Poner en 0.00 los NO seleccionados
+        document.querySelectorAll('.concepto-check:not(:checked)').forEach(checkbox => {
+            const id = checkbox.getAttribute('data-id');
+            const input = document.getElementById(`valor_${id}`);
+            input.value = '0.00';
+        });
+
         if (conceptos.length > 0) {
             const spinner = document.getElementById('spinner-total');
             if (spinner) spinner.style.display = 'inline-block';
@@ -394,7 +394,7 @@
                     res.data.conceptos.forEach(function (concepto) {
                         const input = document.getElementById('valor_' + concepto.id);
                         if (input) {
-                            input.value = concepto.nuevo_valor;
+                            input.value = concepto.nuevo_valor.toFixed(2);
                             total += parseFloat(concepto.nuevo_valor);
                         }
                     });

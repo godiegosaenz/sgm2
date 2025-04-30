@@ -31,11 +31,11 @@ class TransitoImpuesto extends Model
 
     public function vehiculo()
     {
-        return $this->hasMany(TransitoVehiculo::class,'id','vehiculo_id');
+        return $this->belongsTo(TransitoVehiculo::class,'vehiculo_id','id');
     }
 
     public function cliente()
     {
-        return $this->hasMany(TransitoEnte::class,'id','cat_ente_id');
+        return $this->belongsTo(PsqlEnte::class,'cat_ente_id','id');
     }
 }

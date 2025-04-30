@@ -92,6 +92,10 @@
                         <tbody>
                             <td><h4>TITULO DE CREDITO N° {{$impuesto->numero_titulo}}</h4></td>
                             <td><p class="" style="font-size: 10px;"> - San Vicente, {{ $fecha_formateada }}</p></td>
+                            <tr>
+                                <td width="30%"><strong>Año de impuesto:</strong></td>
+                                <td width="70%">{{$impuesto->year_impuesto}}</td>
+                            </tr>
                         </tbody>
                     </table>
 
@@ -113,10 +117,10 @@
                         </thead>
                         <tbody>
                             <tr>
-                                @foreach($item['cliente'] as $cliente)
-                                    <td width="50%">{{$cliente->nombres}}</td>
-                                    <td width="50%">{{$cliente->cc_ruc}}</td>
-                                @endforeach
+
+                                <td width="50%">{{$item['cliente']->nombres.' '.$item['cliente']->apellidos}}</td>
+                                <td width="50%">{{$item['cliente']->ci_ruc}}</td>
+
                             </tr>
                         </tbody>
                     </table>
@@ -127,36 +131,32 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($item['vehiculo'] as $vehiculo)
+
                                 <tr>
                                     <td width="30%"><strong>Placa:</strong></td>
-                                    <td width="70%">{{$vehiculo->placa}}</td>
+                                    <td width="70%">{{$item['vehiculo']->placa}}</td>
                                 </tr>
                                 <tr>
                                     <td width="30%"><strong>Chasis:</strong></td>
-                                    <td width="70%">{{$vehiculo->chasis}}</td>
+                                    <td width="70%">{{$item['vehiculo']->chasis}}</td>
                                 </tr>
                                 <tr>
                                     <td width="30%"><strong>Avaluo:</strong></td>
-                                    <td width="70%">{{$vehiculo->avaluo}}</td>
+                                    <td width="70%">{{$item['vehiculo']->avaluo}}</td>
                                 </tr>
                                 <tr>
                                     <td width="30%"><strong>Año de modelo:</strong></td>
-                                    <td width="70%">{{$vehiculo->avaluo}}</td>
+                                    <td width="70%">{{$item['vehiculo']->year}}</td>
                                 </tr>
                                 <tr>
                                     <td width="30%"><strong>Clase tipo:</strong></td>
-                                    <td width="70%">{{$vehiculo->avaluo}}</td>
+                                    <td width="70%">{{$item['vehiculo']->tipo_vehiculo->descripcion}}</td>
                                 </tr>
                                 <tr>
                                     <td width="30%"><strong>Marca:</strong></td>
-                                    <td width="70%">{{$vehiculo->avaluo}}</td>
+                                    <td width="70%">{{$item['vehiculo']->marca->descripcion}}</td>
                                 </tr>
-                                <tr>
-                                    <td width="30%"><strong>Año de impuesto:</strong></td>
-                                    <td width="70%">{{$vehiculo->avaluo}}</td>
-                                </tr>
-                            @endforeach
+
                         </tbody>
                     </table>
 

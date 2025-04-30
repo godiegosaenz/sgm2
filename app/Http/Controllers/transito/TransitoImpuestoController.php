@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Auth;
 
 class TransitoImpuestoController extends Controller
 {
@@ -24,7 +25,7 @@ class TransitoImpuestoController extends Controller
      */
     public function index()
     {
-        //
+        return view('transito.impuestos_index');
     }
 
     /**
@@ -61,6 +62,8 @@ public function store(Request $request)
     $TransitoImpuesto->year_impuesto = $request->year_declaracion;
     $TransitoImpuesto->cat_ente_id = $request->cliente_id_2;
     $TransitoImpuesto->vehiculo_id = $request->vehiculo_id_2;
+    $TransitoImpuesto->estado = 1; //estado 1 = pagado
+    $TransitoImpuesto->usuario = Auth()->user()->name; //estado 1 = pagado
     $TransitoImpuesto->save();
 
     $total = 0;
@@ -86,7 +89,7 @@ public function store(Request $request)
      */
     public function show(string $id)
     {
-        $TransitoImpuesto = TransitoImpuesto::find($id);
+        $TransitoImpuesto = TransitoImpuesto::with('vehiculo','cliente')->find($id);
         $vehiculo =  $TransitoImpuesto->vehiculo;
         $cliente = $TransitoImpuesto->cliente;
         $transitoimpuestoconcepto = $TransitoImpuesto->conceptos;
@@ -120,6 +123,12 @@ public function store(Request $request)
     public function calcular(Request $request){
         $conceptos = $request->input('conceptos', []);
         $vehiculo = TransitoVehiculo::where('id',$request->input('vehiculo_id'))->first();
+        $DatosTasaAdministrativa = TransitoConcepto::find(5);
+        $DatosStickerVehicular = TransitoConcepto::find(4);
+        $DatosDuplicadoEspecie = TransitoConcepto::find(2);
+        $tasaAdministrativa = $DatosTasaAdministrativa->valor;
+        $tasaStickerVehicular = $DatosStickerVehicular->valor;
+        $tasaDuplicadoEspecie = $DatosDuplicadoEspecie->valor;
 
         $tarifa = null;
         $valortipoclase = null;
@@ -139,7 +148,7 @@ public function store(Request $request)
         $tarifaAnual = $tarifa->valor;
 
         // Simulación de cálculo: aquí puedes aplicar lógica propia
-        $nuevosConceptos = collect($conceptos)->map(function ($item) use ($tarifaAnual,$valortipoclase) {
+        $nuevosConceptos = collect($conceptos)->map(function ($item) use ($tarifaAnual,$valortipoclase,$tasaAdministrativa,$tasaStickerVehicular,$tasaDuplicadoEspecie) {
             // verificas cada concepto y colocas el valor
             $nuevoValor = 0;
             if($item['id'] == 1)
@@ -148,7 +157,19 @@ public function store(Request $request)
             }else if($item['id'] == 3)
             {
                 $nuevoValor = $valortipoclase;
-            }else
+            }else if($item['id'] == 5)
+            {
+                $nuevoValor = $tasaAdministrativa;
+            }
+            else if($item['id'] == 4)
+            {
+                $nuevoValor = $tasaStickerVehicular;
+            }
+            else if($item['id'] == 2)
+            {
+                $nuevoValor = $tasaDuplicadoEspecie;
+            }
+            else
             {
                 $nuevoValor = $item['valor'];
             }
@@ -169,7 +190,7 @@ public function store(Request $request)
     public function reportetituloimpuesto(Request $r,string $id)
     {
         $dataArray = array();
-        $TransitoImpuesto = TransitoImpuesto::find($id);
+        $TransitoImpuesto = TransitoImpuesto::with('cliente','vehiculo')->find($id);
         $vehiculo =  $TransitoImpuesto->vehiculo;
         $cliente = $TransitoImpuesto->cliente;
         $transitoimpuestoconcepto = $TransitoImpuesto->conceptos;
@@ -197,5 +218,27 @@ public function store(Request $request)
         // return $pdf->stream("aa.pdf");
 
         return $pdf->download('reporte_titulo_impuesto'.$r->id.'.pdf');
+    }
+
+    public function datatable(Request $r)
+    {
+        if($r->ajax()){
+            $listaimpuesto = TransitoImpuesto::with('cliente')->get();
+            return Datatables($listaimpuesto)
+            ->addColumn('cc_ruc', function ($listaimpuesto) {
+                return $listaimpuesto->cliente->cc_ruc;
+            })
+            ->addColumn('contribuyente', function ($listaimpuesto) {
+                return $listaimpuesto->cliente->nombres.' '.$listaimpuesto->cliente->apellidos;
+            })
+            ->addColumn('vehiculo', function ($listaimpuesto) {
+                return $listaimpuesto->vehiculo->placa;
+            })
+            ->addColumn('action', function ($listaimpuesto) {
+                return '<a href="' . route('show.transito', $listaimpuesto->id) . '" class="btn btn-primary btn-sm">Ver</a>';
+            })
+            ->rawColumns(['action','contribuyente','vehiculo'])
+            ->make(true);
+        }
     }
 }
