@@ -248,4 +248,47 @@ class AnaliticaContribuyenteController extends Controller
         } 
     }
 
+    public function vistaReporteTransito(){
+        return view('transito.consultaPagos');
+    }
+
+    public function consultarPagos(Request $request){
+        try{
+            $desde=$request->filtroDesde;
+            $hasta=$request->filtroHasta;
+            $tipo=$request->filtroTipo;
+
+            $consultar= DB::connection('pgsql')->table('sgm_transito.impuestos as i')
+            ->leftJoin('sgm_transito.vehiculo as v', 'v.id', '=', 'i.vehiculo_id')
+            ->leftJoin('sgm_transito.clase_tipo_vehiculo as cv', 'cv.id', '=', 'v.tipo_clase_id')
+            ->leftJoin('sgm_transito.marca_vehiculo as mv', 'mv.id', '=', 'v.marca_id')
+            ->leftJoin('sgm_transito.cat_ente as en', 'en.id', '=', 'i.cat_ente_id')
+            ->where(function($query) use($tipo) {
+                if($tipo!="Todos"){
+                    $query->where(' idusuario_registra',$tipo);
+                }
+            })
+            ->whereBetween('created_at', [$desde, $hasta])
+            ->where('estado','A')
+            ->select('v.placa','v.chasis','v.avaluo','v.year','mv.descripcion as marca_veh','cv.descripcion as clase','en.nombres as nombre_propietario','en.apellidos as apellido_propietario','en.cc_ruc as identificacion_propietario' ,'i.year_impuesto','i.numero_titulo','i.total_pagar','i.idusuario_registra','i.created_at','i.id as identificador')
+            ->get();
+
+            foreach($consultar as $key=> $data){
+                $usuarioRegistra=DB::connection('mysql')->table('users as u')
+                ->leftJoin('personas as p', 'p.id', '=', 'u.idpersona')
+                ->where('u.id',$data->idusuario_registra)
+                ->select('p.nombres','p.apellidos','p.cedula')
+                ->first();
+                $consultar[$key]->nombre_usuario=$usuarioRegistra->nombres." ".$usuarioRegistra->apellidos;
+                $consultar[$key]->cedula_usuario=$usuarioRegistra->cedula;
+
+            }
+
+            return ['data'=>$consultar,'error'=>false];
+
+        } catch (\Throwable $th) {
+            return ['mensaje'=>'Ocurrió un error '.$th,'error'=>true];
+        }
+    }
+
 }

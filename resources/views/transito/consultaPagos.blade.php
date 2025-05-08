@@ -1,0 +1,97 @@
+@extends('layouts.appv2')
+@section('title', 'Catastro contribuyente')
+@push('styles')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="{{ asset('css/dataTables.bootstrap5.min.css') }}" rel="stylesheet">
+<link href="{{ asset('css/rowReorder.bootstrap5.min.css') }}" rel="stylesheet">
+@endpush
+@section('content')
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h4 class="h2">Reporte Pago Transito</h4>
+        <div class="btn-toolbar mb-2 mb-md-0">
+
+        </div>
+    </div>
+    <!-- Sección de filtros -->
+    <form id="formReporteria" method="POST"  action=""  enctype="multipart/form-data">
+        @csrf
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <label for="filtroDesde">Desde:</label>
+                <input type="date" class="form-control" id="filtroDesde" onchange="cambioData()"  placeholder="Desde">
+            </div>
+            <div class="col-md-4">
+                <label for="filtroDesde">Hasta:</label>
+                <input type="date" class="form-control" id="filtroHasta" onchange="cambioData()" placeholder="Hasta">
+            </div>
+           
+            <div class="col-md-4">
+                <label for="filtroDesde">Filtro:</label>
+                <select id="filtroTipo" class="form-select" onchange="cambioData()">
+                    <option value="Todos">Todos</option>
+                    <option value="Urbano">Urbano</option>
+                    <option value="Rural">Rural</option>
+                </select>
+            </div>
+            <!-- <div class="col-md-3">
+                <button class="btn btn-primary" id="btnFiltrar">Filtrar</button>
+            </div> -->
+        </div>
+    </form>
+
+    <div class="row">
+
+        <div class="col-md-12"  id="btn_consultar">
+            <center>
+                <button type="button" class="btn btn-sm btn-primary" onclick="mostrarData()">Consultar</button>
+            </center>
+        </div>
+
+        <div class="col-md-12"  style="display:none" id="btn_descargar">
+            <center>
+                <button type="button" class="btn btn-sm btn-success" onclick="descargarPdf()">Descargar</button>
+            </center>
+        </div>
+        <!-- <div class="col-md-12" id="tabla_listado" style="display:none"> -->
+        <div class="col-md-12" id="tabla_listado" >
+            <h4 >Listado</h4>
+
+            <div class="table-responsive" style="margin-bottom:20px; margin-top:10px">
+                <table id="tabla_ingreso" width="100%"class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <!-- <th class="text-center">Documento</th> -->
+                            <th class="text-center">Vehiculo</th>
+                            <th class="text-center">Propietario</th>
+                            <th class="text-center">Detalle Pago</th>
+                            <th class="text-center">Valor</th>                            
+                            <th style="min-width: 30%" class="text-center">Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="5"><center>No hay Datos Disponibles</td>
+                        </tr>
+                        
+                    </tbody>
+                
+                </table>  
+            </div>
+            
+        </div>
+
+    </div>
+
+@endsection
+@push('scripts')
+<!-- jQuery -->
+<script src="{{ asset('js/jquery-3.5.1.js') }}"></script>
+<!-- DataTables -->
+
+<script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('js/dataTables.bootstrap5.min.js') }}"></script>
+<script src="{{ asset('js/dataTables.rowReorder.min.js') }}"></script>
+
+<script src="{{ asset('js/transito/reporteria.js?v='.rand())}}"></script>
+
+@endpush
