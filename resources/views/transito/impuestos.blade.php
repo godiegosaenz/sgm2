@@ -88,7 +88,7 @@
                     <div class="input-group">
 
                         <input type="text" class="form-control {{$errors->has('vehiculo_id') ? 'is-invalid' : ''}}" id="vehiculo_id" name="vehiculo_id" placeholder="Ingrese una placa" value="{{old('vehiculo_id')}}" required>
-                        <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#propietarioModal">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#vehiculoModal">
                             Nuevo
                             <span id="spinner2" class="spinner-border spinner-border-sm" style="display:none;"></span>
                         </button>
@@ -223,6 +223,77 @@
           </form>
         </div>
     </div>
+    <!-- Modal vehiculo-->
+    <!-- Modal -->
+    <div class="modal fade" id="vehiculoModal" tabindex="-1" aria-labelledby="vehiculoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg"> <!-- Aumentamos el tamaño del modal -->
+        <form id="vehiculoForm">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Registrar Vehículo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                <!-- Columna 1 -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                    <label for="placa_v" class="form-label">Placa</label>
+                    <input type="text" class="form-control" id="placa_v" name="placa_v">
+                    <div class="invalid-feedback" id="error-placa_v"></div>
+                    </div>
+                    <div class="mb-3">
+                    <label for="chasis_v" class="form-label">Chasis</label>
+                    <input type="text" class="form-control" id="chasis_v" name="chasis_v">
+                    <div class="invalid-feedback" id="error-chasis_v"></div>
+                    </div>
+                    <div class="mb-3">
+                    <label for="avaluo_v" class="form-label">Avalúo ($)</label>
+                    <input type="number" step="0.01" class="form-control" id="avaluo_v" name="avaluo_v">
+                    <div class="invalid-feedback" id="error-avaluo_v"></div>
+                    </div>
+                </div>
+
+                <!-- Columna 2 -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                    <label for="year_v" class="form-label">Año</label>
+                    <input type="number" class="form-control" id="year_v" name="year_v" min="1900" max="2100">
+                    <div class="invalid-feedback" id="error-year_v"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="marca_v" class="form-label">Marca</label>
+                        <select class="form-select {{ $errors->has('marca_v') ? 'is-invalid' : '' }}" id="marca_v" name="marca_v">
+                            <option value="">Seleccione marca</option>
+                            @foreach ($marcas as $m)
+                                <option value="{{ $m->id }}">{{ $m->descripcion }}</option>
+                            @endforeach
+                        </select>
+                        <div class="invalid-feedback" id="error-marca"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tipo_v" class="form-label">Tipo de vehiculo</label>
+                        <select class="form-select {{ $errors->has('tipo_v') ? 'is-invalid' : '' }}" id="tipo_v" name="tipo_v">
+                            <option value="">Seleccione tipo</option>
+                            @foreach ($tipo_vehiculo as $t)
+                                <option value="{{ $t->id }}">{{ $t->descripcion }}</option>
+                            @endforeach
+                        </select>
+                        <div class="invalid-feedback" id="error_tipo_v"></div>
+                    </div>
+                </div>
+                </div> <!-- End row -->
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-success">Guardar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+            </div>
+        </form>
+        </div>
+    </div>
+
 
 @endsection
 @push('scripts')
@@ -254,10 +325,10 @@
                         if(res.status == 200)
                         {
                             chasis.value = res.data.chasis ?? 'S/N';
-                            tipo.value = res.data.tipo_id ?? 'S/N';
+                            tipo.value = res.data.Tipo ?? 'S/N';
                             year_modelo.value = res.data.year ?? 'S/N';
                             avaluo.value = res.data.avaluo ?? 'S/N';
-                            marca.value = res.data.marca_id ?? 'S/N';
+                            marca.value = res.data.Marcav ?? 'S/N';
                             vehiculo_id_2.value = res.data.id ?? "";
                         }
                         //propietario.focus();
@@ -533,6 +604,44 @@
             spinner.classList.add('d-none');
         });
     });
+    document.getElementById('vehiculoForm').addEventListener('submit', function (e) {
+        e.preventDefault();
 
+        // Limpiar errores previos
+        //document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+        //document.querySelectorAll('.invalid-feedback').forEach(el => el.innerText = '');
+        // Limpiar errores anteriores
+    document.querySelectorAll('.invalid-feedback').forEach(el => el.innerText = '');
+    document.querySelectorAll('.form-control, .form-select').forEach(el => el.classList.remove('is-invalid'));
+
+       /* const formData = {
+            placa_v: document.getElementById('placa_v').value,
+            chasis_v: document.getElementById('chasis_v').value,
+            avaluo_v: document.getElementById('avaluo_v').value,
+            year_v: document.getElementById('year_v').value,
+            marca_v: document.getElementById('marca_v').value,
+            tipo_v: document.getElementById('tipo_v').value
+        };*/
+        const formData = new FormData(this);
+
+        axios.post('{{ route("store.vehiculo") }}', formData)
+            .then(response => {
+                alert('Vehículo registrado correctamente');
+                document.getElementById('vehiculoForm').reset();
+                const modal = bootstrap.Modal.getInstance(document.getElementById('vehiculoModal'));
+                modal.hide();
+            })
+            .catch(error => {
+                if (error.response.status === 422) {
+                    const errors = error.response.data.errors;
+                    for (let field in errors) {
+                        const input = document.getElementById(field);
+                        const errorDiv = document.getElementById(`error-${field}`);
+                        if (input) input.classList.add('is-invalid');
+                        if (errorDiv) errorDiv.innerText = errors[field][0];
+                    }
+                }
+            });
+    });
 </script>
 @endpush

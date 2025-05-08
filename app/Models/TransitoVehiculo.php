@@ -4,12 +4,24 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class TransitoVehiculo extends Model
 {
     use HasFactory;
     protected $connection = 'pgsql'; // Nombre de la conexión configurada
     protected $table = 'sgm_transito.vehiculo';
+
+    protected $fillable = [
+        'marca_id',
+        'tipo_clase_id',
+        'year',
+        'chasis',
+        'avaluo',
+        'placa'
+    ];
+
+    protected $appends = ['Tipo','Marcav'];
 
     public function impuesto_transito()
     {
@@ -24,5 +36,15 @@ class TransitoVehiculo extends Model
     public function tipo_vehiculo()
     {
         return $this->belongsTo(TransitoTipoVehiculo::class,'tipo_clase_id','id');
+    }
+
+    public function getTipoAttribute()
+    {
+        return $this->tipo_vehiculo?->descripcion ?? null;
+    }
+
+    public function getMarcavAttribute()
+    {
+        return $this->marca?->descripcion ?? null;
     }
 }

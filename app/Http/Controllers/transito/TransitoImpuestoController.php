@@ -8,7 +8,9 @@ use App\Models\TransitoConcepto;
 use App\Models\TransitoEnte;
 use App\Models\TransitoImpuesto;
 use App\Models\TransitoImpuestoConcepto;
+use App\Models\TransitoMarca;
 use App\Models\TransitoTarifaAnual;
+use App\Models\TransitoTipoVehiculo;
 use App\Models\TransitoVehiculo;
 use App\Models\TransitoYearImpuesto;
 use Illuminate\Http\Request;
@@ -37,7 +39,9 @@ class TransitoImpuestoController extends Controller
     $vehiculos = TransitoVehiculo::all();
     $conceptos = TransitoConcepto::all();
     $year = TransitoYearImpuesto::all();
-    return view('transito.impuestos', compact('entes', 'vehiculos', 'conceptos','year'));
+    $marcas = TransitoMarca::all();
+    $tipo_vehiculo = TransitoTipoVehiculo::all();
+    return view('transito.impuestos', compact('entes', 'vehiculos', 'conceptos','year','tipo_vehiculo','marcas'));
 }
 
 public function store(Request $request)
