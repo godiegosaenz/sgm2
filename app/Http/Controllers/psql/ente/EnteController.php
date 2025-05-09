@@ -34,7 +34,37 @@ class EnteController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'ci_ruc' => 'required|string|max:20',
+            'nombres' => 'required|string|max:100',
+            'apellidos' => 'required|string|max:100',
+            'es_persona' => 'required|boolean',
+            'direccion' => 'nullable|string|max:255',
+            'fecha_nacimiento' => 'nullable|date',
+            'correo' => 'nullable|email',
+            'telefono' => 'nullable|string|max:20',
+        ]);
+
+        $ente = new PsqlEnte();
+        $ente->ci_ruc = $request->ci_ruc;
+        if($request->es_persona== 1)
+        {
+            $ente->nombres = strtoupper(str_replace(' ', '', $request->nombres));
+            $ente->apellidos = strtoupper(str_replace(' ', '', $request->apellidos));
+        }else
+        {
+            $ente->nombres = strtoupper(str_replace(' ', '', $request->nombres));
+            $ente->apellidos = strtoupper(str_replace(' ', '', $request->apellidos));
+            $ente->razon_social = strtoupper(str_replace(' ', '', $request->nombres));
+            $ente->nombre_comercial = strtoupper(str_replace(' ', '', $request->apellidos));
+        }
+        $ente->es_persona = $request->es_persona;
+        $ente->direccion = strtoupper(str_replace(' ', '', $request->direccion));
+        $ente->fecha_nacimiento = $request->fecha_nacimiento;
+
+        $ente->save();
+
+        return response()->json(['message' => 'Persona creada correctamente'], 200);
     }
 
     /**

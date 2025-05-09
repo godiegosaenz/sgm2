@@ -30,7 +30,17 @@ class TransitoEnteController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'ci_ruc' => 'required|string|max:20|unique:personas,ci_ruc',
+            'nombres' => 'required|string|max:100',
+            'apellidos' => 'required|string|max:100',
+            'es_persona' => 'required|boolean',
+            'direccion' => 'nullable|string|max:255',
+            'fecha_nacimiento' => 'nullable|date',
+            'correo' => 'nullable|email',
+            'telefono' => 'nullable|string|max:20',
+        ]);
+
     }
 
     /**

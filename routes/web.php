@@ -178,6 +178,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('ente/editar/{id}', [EnteController::class, 'update'])->name('update.ente');
     Route::get('ente/mostrar/{id}', [EnteController::class, 'show'])->name('show.ente');
 
+    Route::post('ente', [EnteController::class, 'store'])->name('store.ente.sgmapp');
+
     //RUTAS PARA MODULO DE TRANSITO
     Route::get('transito', [TransitoImpuestoController::class, 'create'])->name('create.transito');
     Route::post('transito', [TransitoImpuestoController::class, 'store'])->name('store.transito');

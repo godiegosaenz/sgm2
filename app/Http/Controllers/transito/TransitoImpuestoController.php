@@ -41,7 +41,8 @@ class TransitoImpuestoController extends Controller
     $year = TransitoYearImpuesto::all();
     $marcas = TransitoMarca::all();
     $tipo_vehiculo = TransitoTipoVehiculo::all();
-    return view('transito.impuestos', compact('entes', 'vehiculos', 'conceptos','year','tipo_vehiculo','marcas'));
+    $rangos = TransitoTarifaAnual::all();
+    return view('transito.impuestos', compact('entes', 'vehiculos', 'conceptos','year','tipo_vehiculo','marcas','rangos'));
 }
 
 public function store(Request $request)

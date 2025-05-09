@@ -15,7 +15,15 @@
 @section('content')
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <h3 class="h2">Impuestos Unidad de Transito</h3>
-
+        <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalEditarRangos"> <i class="bi bi-table"></i> Tarifa </button>
+            <button type="button" class="btn btn-sm btn-outline-secondary"><i class="bi bi-gear-fill"></i> Conf</button>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-secondary d-flex align-items-center">
+           <i class="bi bi-info-circle"></i>
+        </button>
+        </div>
     </div>
     @if(@session('error'))
             <div class="alert alert-danger">
@@ -193,36 +201,72 @@
         <br>
     </form>
     <!-- Modal para cliente -->
+
     <div class="modal fade" id="modalCrearEnte" tabindex="-1" aria-labelledby="modalCrearEnteLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <form method="POST" action="{{ route('store.ente') }}">
-            @csrf
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="modalCrearEnteLabel">Nuevo Cliente</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-              </div>
-              <div class="modal-body">
-                <div class="mb-3">
-                    <label class="form-label">Cédula o RUC</label>
-                    <input type="text" class="form-control" name="identificacion" required>
+    <div class="modal-dialog modal-lg"> <!-- ancho grande -->
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="modalPersonaLabel">Registrar Persona</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+            <form id="formPersona">
+            <div class="row g-3">
+                <div class="col-md-6">
+                <label for="ci_ruc" class="form-label">CI / RUC <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="ci_ruc" name="ci_ruc">
+                <div class="invalid-feedback" id="error-ci_ruc"></div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Nombres</label>
-                    <input type="text" class="form-control" name="nombres" required>
+                <div class="col-md-6">
+                <label for="es_persona" class="form-label">Tipo Persona <span class="text-danger">*</span></label>
+                <select class="form-select" id="es_persona" name="es_persona">
+                    <option value="1">Persona Natural</option>
+                    <option value="0">Persona Jurídica</option>
+                </select>
+                <div class="invalid-feedback" id="error-es_persona"></div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Apellidos</label>
-                    <input type="text" class="form-control" name="apellidos" required>
+                <div class="col-md-6">
+                <label for="nombres" class="form-label" id="label-nombres">Nombres <span class="text-danger">*</span></label>
+
+                <input type="text" class="form-control" id="nombres" name="nombres">
+                <div class="invalid-feedback" id="error-nombres"></div>
                 </div>
-              </div>
-              <div class="modal-footer">
-                <button type="submit" class="btn btn-success">Guardar Cliente</button>
-              </div>
+                <div class="col-md-6">
+                <label for="apellidos" class="form-label" id="label-apellidos">Apellidos <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="apellidos" name="apellidos">
+                <div class="invalid-feedback" id="error-apellidos"></div>
+                </div>
+                <div class="col-md-6">
+                <label for="direccion" class="form-label">Dirección </label>
+                <input type="text" class="form-control" id="direccion" name="direccion">
+                <div class="invalid-feedback" id="error-direccion"></div>
+                </div>
+                <div class="col-md-6">
+                <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento </label>
+                <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento">
+                <div class="invalid-feedback" id="error-fecha_nacimiento"></div>
+                </div>
+                <div class="col-md-6">
+                <label for="correo" class="form-label">Correo </label>
+                <input type="email" class="form-control" id="correo" name="correo">
+                <div class="invalid-feedback" id="error-correo"></div>
+                </div>
+                <div class="col-md-6">
+                <label for="telefono" class="form-label">Teléfono </label>
+                <input type="text" class="form-control" id="telefono" name="telefono">
+                <div class="invalid-feedback" id="error-telefono"></div>
+                </div>
             </div>
-          </form>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-primary" onclick="guardarPersona()">Guardar</button>
+        </div>
         </div>
     </div>
+    </div>
+
     <!-- Modal vehiculo-->
     <!-- Modal -->
     <div class="modal fade" id="vehiculoModal" tabindex="-1" aria-labelledby="vehiculoModalLabel" aria-hidden="true">
@@ -239,17 +283,17 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                     <label for="placa_v" class="form-label">Placa</label>
-                    <input type="text" class="form-control" id="placa_v" name="placa_v">
+                    <input type="text" class="form-control" id="placa_v" name="placa_v" required>
                     <div class="invalid-feedback" id="error-placa_v"></div>
                     </div>
                     <div class="mb-3">
                     <label for="chasis_v" class="form-label">Chasis</label>
-                    <input type="text" class="form-control" id="chasis_v" name="chasis_v">
+                    <input type="text" class="form-control" id="chasis_v" name="chasis_v" required>
                     <div class="invalid-feedback" id="error-chasis_v"></div>
                     </div>
                     <div class="mb-3">
                     <label for="avaluo_v" class="form-label">Avalúo ($)</label>
-                    <input type="number" step="0.01" class="form-control" id="avaluo_v" name="avaluo_v">
+                    <input type="number" step="0.01" class="form-control" id="avaluo_v" name="avaluo_v" required>
                     <div class="invalid-feedback" id="error-avaluo_v"></div>
                     </div>
                 </div>
@@ -258,12 +302,12 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                     <label for="year_v" class="form-label">Año</label>
-                    <input type="number" class="form-control" id="year_v" name="year_v" min="1900" max="2100">
+                    <input type="number" class="form-control" id="year_v" name="year_v" min="1900" max="2100" required>
                     <div class="invalid-feedback" id="error-year_v"></div>
                     </div>
                     <div class="mb-3">
                         <label for="marca_v" class="form-label">Marca</label>
-                        <select class="form-select {{ $errors->has('marca_v') ? 'is-invalid' : '' }}" id="marca_v" name="marca_v">
+                        <select class="form-select {{ $errors->has('marca_v') ? 'is-invalid' : '' }}" id="marca_v" name="marca_v" required>
                             <option value="">Seleccione marca</option>
                             @foreach ($marcas as $m)
                                 <option value="{{ $m->id }}">{{ $m->descripcion }}</option>
@@ -273,7 +317,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="tipo_v" class="form-label">Tipo de vehiculo</label>
-                        <select class="form-select {{ $errors->has('tipo_v') ? 'is-invalid' : '' }}" id="tipo_v" name="tipo_v">
+                        <select class="form-select {{ $errors->has('tipo_v') ? 'is-invalid' : '' }}" id="tipo_v" name="tipo_v" required>
                             <option value="">Seleccione tipo</option>
                             @foreach ($tipo_vehiculo as $t)
                                 <option value="{{ $t->id }}">{{ $t->descripcion }}</option>
@@ -293,6 +337,55 @@
         </form>
         </div>
     </div>
+    <!-- Modal -->
+    <div class="modal fade" id="modalEditarRangos" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Tarifa anual</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered" id="tabla-rangos">
+                <thead>
+                    <tr>
+                    <th>Desde</th>
+                    <th>Hasta</th>
+                    <th>Valor</th>
+                    <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($rangos as $rango)
+                    <tr id="rango-{{ $rango->id }}">
+                    <td>
+                        <input type="number" class="form-control" id="desde-{{ $rango->id }}" value="{{ $rango->desde }}" disabled>
+                        <div class="invalid-feedback" id="error-desde-{{ $rango->id }}"></div>
+                    </td>
+                    <td>
+                        <input type="number" class="form-control" id="hasta-{{ $rango->id }}" value="{{ $rango->hasta }}" disabled>
+                        <div class="invalid-feedback" id="error-hasta-{{ $rango->id }}"></div>
+                    </td>
+                    <td>
+                        <input type="number" class="form-control" id="valor-{{ $rango->id }}" value="{{ $rango->valor }}" disabled>
+                        <div class="invalid-feedback" id="error-valor-{{ $rango->id }}"></div>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-warning" onclick="habilitarFila({{ $rango->id }})"><i class="bi bi-pencil-square"></i></button>
+                        <button class="btn btn-sm btn-primary d-none" id="guardar-btn-{{ $rango->id }}" onclick="guardarFila({{ $rango->id }})"><i class="bi bi-save"></i></button>
+                    </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
 
 
 @endsection
@@ -642,6 +735,59 @@
                     }
                 }
             });
+    });
+    function guardarPersona() {
+        const form = document.getElementById('formPersona');
+        const formData = new FormData(form);
+
+        // Limpiar errores previos
+        form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+        form.querySelectorAll('.invalid-feedback').forEach(el => el.innerText = '');
+
+        axios.post('{{ route("store.ente.sgmapp") }}', formData)
+            .then(response => {
+                alert('Persona registrada correctamente');
+                document.getElementById('formPersona').reset();
+                const modal2Element = document.getElementById('modalCrearEnte');
+                const modal2 = bootstrap.Modal.getInstance(modal2Element) || new bootstrap.Modal(modal2Element);
+                modal2.hide();
+            })
+            .catch(error => {
+            console.log(error.response);
+                if (error.response && error.response.status === 422) {
+                    const errores = error.response.data.errors;
+                    for (const campo in errores) {
+                    const input = document.getElementById(campo);
+                    const errorDiv = document.getElementById(`error-${campo}`);
+                    if (input) {
+                        input.classList.add('is-invalid');
+                    }
+                    if (errorDiv) {
+                        errorDiv.innerText = errores[campo][0];
+                    }
+                    }
+                }
+        });
+    }
+    function habilitarFila(id) {
+        document.getElementById(`desde-${id}`).disabled = false;
+        document.getElementById(`hasta-${id}`).disabled = false;
+        document.getElementById(`valor-${id}`).disabled = false;
+
+        document.getElementById(`guardar-btn-${id}`).classList.remove('d-none');
+    }
+    document.getElementById('es_persona').addEventListener('change', function () {
+        const tipo = this.value;
+        const labelNombres = document.getElementById('label-nombres');
+        const labelApellidos = document.getElementById('label-apellidos');
+
+        if (tipo == 0) {
+            labelNombres.textContent = 'Razón Social *';
+            labelApellidos.textContent = 'Nombre Comercial *';
+        } else {
+            labelNombres.textContent = 'Nombres *';
+            labelApellidos.textContent = 'Apellidos *';
+        }
     });
 </script>
 @endpush
