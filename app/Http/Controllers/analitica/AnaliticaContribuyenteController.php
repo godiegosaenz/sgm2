@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\PsqlEnte;
 use Illuminate\Support\Facades\DB;
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\PngWriter;
 
 class AnaliticaContribuyenteController extends Controller
 {
@@ -262,21 +264,22 @@ class AnaliticaContribuyenteController extends Controller
             ->leftJoin('sgm_transito.vehiculo as v', 'v.id', '=', 'i.vehiculo_id')
             ->leftJoin('sgm_transito.clase_tipo_vehiculo as cv', 'cv.id', '=', 'v.tipo_clase_id')
             ->leftJoin('sgm_transito.marca_vehiculo as mv', 'mv.id', '=', 'v.marca_id')
-            ->leftJoin('sgm_transito.cat_ente as en', 'en.id', '=', 'i.cat_ente_id')
+            // ->leftJoin('sgm_transito.cat_ente as en', 'en.id', '=', 'i.cat_ente_id')
+            ->leftJoin('sgm_app.cat_ente as en', 'en.id', '=', 'i.cat_ente_id')
             ->where(function($query) use($tipo) {
                 if($tipo!="Todos"){
-                    $query->where(' idusuario_registra',$tipo);
+                    $query->where(' usuario',$tipo);
                 }
             })
             ->whereBetween('created_at', [$desde, $hasta])
-            ->where('estado','A')
-            ->select('v.placa','v.chasis','v.avaluo','v.year','mv.descripcion as marca_veh','cv.descripcion as clase','en.nombres as nombre_propietario','en.apellidos as apellido_propietario','en.cc_ruc as identificacion_propietario' ,'i.year_impuesto','i.numero_titulo','i.total_pagar','i.idusuario_registra','i.created_at','i.id as identificador')
+            ->where('i.estado',1)
+            ->select('v.placa','v.chasis','v.avaluo','v.year','mv.descripcion as marca_veh','cv.descripcion as clase','en.nombres as nombre_propietario','en.apellidos as apellido_propietario','en.ci_ruc as identificacion_propietario' ,'i.year_impuesto','i.numero_titulo','i.total_pagar','i.usuario','i.created_at','i.id as identificador')
             ->get();
 
             foreach($consultar as $key=> $data){
                 $usuarioRegistra=DB::connection('mysql')->table('users as u')
                 ->leftJoin('personas as p', 'p.id', '=', 'u.idpersona')
-                ->where('u.id',$data->idusuario_registra)
+                ->where('u.id',$data->usuario)
                 ->select('p.nombres','p.apellidos','p.cedula')
                 ->first();
                 $consultar[$key]->nombre_usuario=$usuarioRegistra->nombres." ".$usuarioRegistra->apellidos;
@@ -290,5 +293,120 @@ class AnaliticaContribuyenteController extends Controller
             return ['mensaje'=>'Ocurrió un error '.$th,'error'=>true];
         }
     }
+
+    public function ReporteTransito(Request $request){
+        try{
+            set_time_limit(0);
+            ini_set("memory_limit",-1);
+            ini_set('max_execution_time', 0);
+
+            $consultaInfo=$this->consultarPagos($request);
+
+            if($consultaInfo['error']==true){
+                return (['mensaje'=>'Ocurrió un error al consultar los datos,intentelo más tarde','error'=>true]); 
+            }
+
+            $nombrePDF="reporte_pago_transito.pdf";
+
+            $pdf=\PDF::LoadView('reportes.reporte_pago_transito',['datos'=>$consultaInfo['resultados_urbano'],'desde'=>$request->filtroDesd,'hasta'=>$request->filtroHasta,'tipo'=>$request->filtroTipo ]);
+            $pdf->setPaper("A4", "portrait");
+            $estadoarch = $pdf->stream();
+
+            //lo guardamos en el disco temporal
+            \Storage::disk('public')->put(str_replace("", "",$nombrePDF), $estadoarch);
+            $exists_destino = \Storage::disk('public')->exists($nombrePDF); 
+            if($exists_destino){ 
+                return response()->json([
+                    'error'=>false,
+                    'pdf'=>$nombrePDF
+                ]);
+            }else{
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'No se pudo crear el documento'
+                ]);
+            }
+           
+        } catch (\Throwable $th) {
+            return ['mensaje'=>'Ocurrió un error '.$th,'error'=>true];
+        }
+
+    }
+
+    public function testReporteTransito(){
+        try{
+            set_time_limit(0);
+            ini_set("memory_limit",-1);
+            ini_set('max_execution_time', 0);
+
+            $desde="01-04-2025";
+            $hasta="30-04-2025";;
+            $tipo="Todos";
+
+            $consultar= DB::connection('pgsql')->table('sgm_transito.impuestos as i')
+            ->leftJoin('sgm_transito.vehiculo as v', 'v.id', '=', 'i.vehiculo_id')
+            ->leftJoin('sgm_transito.clase_tipo_vehiculo as cv', 'cv.id', '=', 'v.tipo_clase_id')
+            ->leftJoin('sgm_transito.marca_vehiculo as mv', 'mv.id', '=', 'v.marca_id')
+            // ->leftJoin('sgm_transito.concepto_impuesto as ci', 'ci.impuesto_matriculacion_id', '=', 'i.id')
+            ->leftJoin('sgm_app.cat_ente as en', 'en.id', '=', 'i.cat_ente_id')
+            ->where(function($query) use($tipo) {
+                if($tipo!="Todos"){
+                    $query->where(' usuario',$tipo);
+                }
+            })
+            ->whereBetween('created_at', [$desde, $hasta])
+            ->where('i.estado',1)
+            ->select('v.placa','v.chasis','v.avaluo','v.year','mv.descripcion as marca_veh','cv.descripcion as clase','en.nombres as nombre_propietario','en.apellidos as apellido_propietario','en.ci_ruc as identificacion_propietario' ,'i.year_impuesto','i.numero_titulo','i.total_pagar','i.usuario','i.created_at','i.id as identificador')
+            ->get();
+
+            foreach($consultar as $key=> $data){
+                $usuarioRegistra=DB::connection('mysql')->table('users as u')
+                ->leftJoin('personas as p', 'p.id', '=', 'u.idpersona')
+                ->where('u.id',$data->usuario)
+                ->select('p.nombres','p.apellidos','p.cedula')
+                ->first();
+                $consultar[$key]->nombre_usuario=$usuarioRegistra->nombres." ".$usuarioRegistra->apellidos;
+                $consultar[$key]->cedula_usuario=$usuarioRegistra->cedula;
+
+                $conceptos=DB::connection('pgsql')->table('sgm_transito.concepto_impuesto as ci')
+                ->leftJoin('sgm_transito.conceptos as c', 'c.id', '=', 'ci.concepto_id')
+                ->where('ci.impuesto_matriculacion_id',$data->identificador)
+                ->select('c.concepto','ci.valor')
+                ->get();
+                $consultar[$key]->conceptos = $conceptos;
+
+            }
+
+            // dd($consultar);
+            $nombrePDF="reporte_pago_transito.pdf";
+
+            $pdf=\PDF::LoadView('reportes.reporte_pago_transito',['datos'=>$consultar,'desde'=>$desde,'hasta'=>$hasta,'tipo'=>$tipo]);
+            $pdf->setPaper("A4", "landscape");
+            $estadoarch = $pdf->stream();
+
+            return $pdf->stream("a.pdf");
+
+            // //lo guardamos en el disco temporal
+            // \Storage::disk('public')->put(str_replace("", "",$nombrePDF), $estadoarch);
+            // $exists_destino = \Storage::disk('public')->exists($nombrePDF); 
+            // if($exists_destino){ 
+            //     return response()->json([
+            //         'error'=>false,
+            //         'pdf'=>$nombrePDF
+            //     ]);
+            // }else{
+            //     return response()->json([
+            //         'error'=>true,
+            //         'mensaje'=>'No se pudo crear el documento'
+            //     ]);
+            // }
+           
+        } catch (\Throwable $th) {
+            return ['mensaje'=>'Ocurrió un error '.$th,'error'=>true];
+        }
+
+    }
+
+
 
 }

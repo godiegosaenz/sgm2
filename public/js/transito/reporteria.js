@@ -32,7 +32,7 @@ function mostrarData(){
 }
 
 $("#formReporteria").submit(function(e){
-
+    var num_col = $("#tabla_ingreso thead tr th").length;
     $("#tabla_ingreso tbody").html('');
 
 	$('#tabla_ingreso').DataTable().destroy();
@@ -98,7 +98,7 @@ $("#formReporteria").submit(function(e){
                                                         <li><b>Descripcion:</b> ${item.clase}</li>
                                                         <li><b>Marca-Modelo:</b> ${item.marca_veh}-${item.year}</li>
                                                         <li><b>Placa:</b> ${item.placa}</li> 
-                                                         <li><b>Avaluo:</b> ${item.avaluo}</li> 
+                                                        <li><b>Avaluo:</b> ${item.avaluo}</li> 
                                                         
                                                     </td>
     
@@ -168,6 +168,43 @@ function cargar_estilos_datatable(idtabla){
 	$('.table-responsive').css({'padding-top':'12px','padding-bottom':'12px', 'border':'0', 'overflow-x':'inherit'});	
 }
 
-function descargarReporte(){
-    
+function descargarPdf(){
+   var ruta="reporte-diario"
+    vistacargando("m","Espere por favor")
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    var tipo="POST"
+  
+    let filtroDesde=$('#filtroDesde').val()
+    let filtroHasta=$('#filtroHasta').val()
+    let filtroTipo=$('#filtroTipo').val()
+
+    $.ajax({
+            
+        type: tipo,
+        url: ruta,
+        method: tipo,             
+        data: {
+            filtroDesde: filtroDesde,
+            filtroHasta: filtroHasta,
+            filtroTipo: filtroTipo
+        },  
+		
+        // processData:false, 
+
+        success: function(response) {
+            vistacargando("")
+            console.log(response)
+
+        },
+        error: function(xhr, status, error) {
+            vistacargando("")
+            console.error("Error al obtener los datos:", error);
+        }
+    });
 }
+

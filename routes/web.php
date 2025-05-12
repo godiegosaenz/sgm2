@@ -39,15 +39,15 @@ use App\Models\TransitoVehiculo;
 |
 */
 
-// Route::get('sgm/login', function () {
-//     return view('auth.login');
-// })->name('sgm/login')->middleware('guest');
-// Route::redirect('/', '/sgm/login');
-
-Route::get('/login', function () {
+ Route::get('sgm/login', function () {
     return view('auth.login');
-})->name('login')->middleware('guest');
-Route::redirect('/', '/login');
+ })->name('sgm/login')->middleware('guest');
+Route::redirect('/', '/sgm/login');
+
+//Route::get('/login', function () {
+ //   return view('auth.login');
+//})->name('login')->middleware('guest');
+////Route::redirect('/', '/login');
 
 //Route::get('/', [ConsultaPredioController::class, 'index'])->name('welcome');
 Route::get('/consulta', [ConsultaPredioController::class, 'index'])->name('welcome');
@@ -197,6 +197,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('transito/reportes', [AnaliticaContribuyenteController::class, 'vistaReporteTransito'])->name('vistaReporteTransito.transito');
     Route::post('transito/pago-consulta-transito', [AnaliticaContribuyenteController::class, 'consultarPagos'])->name('consultarPagos.transito');
+    Route::post('transito/reporte-diario', [AnaliticaContribuyenteController::class, 'ReporteTransito'])->name('ReporteTransito.transito');
+    Route::get('transito/test-reportes', [AnaliticaContribuyenteController::class, 'testReporteTransito'])->name('testReporteTransito.transito');
+
+
 });
 
 Route::get('/clear', function() {
