@@ -126,6 +126,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/pruebatitulo', function () {
         $vehiculo = TransitoVehiculo::where('id',2)->first();
+        return $vehiculo->Tipo;
         //$vehiculo = TransitoVehiculo::find(2);
         return $vehiculo->tipo_vehiculo;
     });
@@ -177,6 +178,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('ente/editar/{id}', [EnteController::class, 'update'])->name('update.ente');
     Route::get('ente/mostrar/{id}', [EnteController::class, 'show'])->name('show.ente');
 
+    Route::post('ente', [EnteController::class, 'store'])->name('store.ente.sgmapp');
+
     //RUTAS PARA MODULO DE TRANSITO
     Route::get('transito', [TransitoImpuestoController::class, 'create'])->name('create.transito');
     Route::post('transito', [TransitoImpuestoController::class, 'store'])->name('store.transito');
@@ -188,6 +191,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('transitoente', [TransitoEnteController::class, 'store'])->name('store.ente');
     Route::post('transitoente/cedula', [TransitoEnteController::class, 'getEnteCedula'])->name('get.cedula.transitoente');
     Route::post('transitovehiculo/placa', [TransitoVehiculoController::class, 'getVehiculoPlaca'])->name('get.placa.transitovehiculo');
+
+    Route::post('vehiculos', [TransitoVehiculoController::class, 'store'])->name('store.vehiculo');
 
     Route::get('analitica/contribuyente', [AnaliticaContribuyenteController::class, 'index'])->name('analitica.contribuyente');
     Route::get('analitica/predios', [AnaliticaContribuyenteController::class, 'predios'])->name('analitica.predios');

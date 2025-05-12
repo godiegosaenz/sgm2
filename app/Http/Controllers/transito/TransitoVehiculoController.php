@@ -5,6 +5,7 @@ namespace App\Http\Controllers\transito;
 use App\Http\Controllers\Controller;
 use App\Models\TransitoVehiculo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TransitoVehiculoController extends Controller
 {
@@ -29,7 +30,26 @@ class TransitoVehiculoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'placa_v'   => 'required|string|max:10',
+            'chasis_v'  => 'required|string|max:50',
+            'avaluo_v'  => 'required|numeric|min:0',
+            'year_v'    => 'required|integer|min:1900|max:' . (date('Y') + 1),
+            'marca_v'   => 'required',
+            'tipo_v'    => 'required' // Validamos que exista en la tabla tipos
+        ]);
+        // Guardado mapeando los campos del formulario a los de la base de datos
+        $vehiculo = new TransitoVehiculo();
+        $vehiculo->placa = $request->placa_v;
+        $vehiculo->chasis = $request->chasis_v;
+        $vehiculo->avaluo = $request->avaluo_v;
+        $vehiculo->year = $request->year_v;
+        $vehiculo->username = Auth()->user()->name;
+        $vehiculo->marca_id = $request->marca_v;
+        $vehiculo->tipo_clase_id = $request->tipo_v; // Mapeo desde "tipo"
+        $vehiculo->save();
+
+        return response()->json(['success' => true, 'vehiculo' => $vehiculo]);
     }
 
     /**
@@ -66,7 +86,7 @@ class TransitoVehiculoController extends Controller
 
     public function getVehiculoPlaca(Request $r){
         $query = $r->input('query');
-        $data = TransitoVehiculo::select('id','placa','avaluo','chasis','year','marca_id','tipo_clase_id')->where('placa',$query)->first();
+        $data = TransitoVehiculo::with('tipo_vehiculo','marca')->where('placa',$query)->first();
         if ($data) {
             // Devolver la información en formato JSON
             return response()->json($data, 200);
