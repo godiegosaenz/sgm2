@@ -96,7 +96,7 @@
                 <table class="tabla-izquierda-" style="margin-bottom: 10px;">
                     <thead>
                         <tr>
-                            <th width="50%">San Vicente, {{ $fecha_formateada }} </th>
+                            <th width="50%">San Vicente, 01 Enero {{ $d[0]->anio + 1 }} </th>
                         </tr>
                     </thead>
                     
@@ -198,6 +198,8 @@
             </td>
         </tr>
     </table>
+    <center><b>Fecha Impresion:</b>{{ $fecha_formateada }}<br>
+    <b>Ley Coa Aticulo 268</b></center>
     <br>
     <br>
     <hr style="border:Dotted;"/>

@@ -39,15 +39,15 @@ use App\Models\TransitoVehiculo;
 |
 */
 
- Route::get('sgm/login', function () {
-    return view('auth.login');
- })->name('sgm/login')->middleware('guest');
-Route::redirect('/', '/sgm/login');
+//  Route::get('sgm/login', function () {
+//     return view('auth.login');
+//  })->name('sgm/login')->middleware('guest');
+// Route::redirect('/', '/sgm/login');
 
-//Route::get('/login', function () {
- //   return view('auth.login');
-//})->name('login')->middleware('guest');
-////Route::redirect('/', '/login');
+Route::get('/login', function () {
+   return view('auth.login');
+})->name('login')->middleware('guest');
+Route::redirect('/', '/login');
 
 //Route::get('/', [ConsultaPredioController::class, 'index'])->name('welcome');
 Route::get('/consulta', [ConsultaPredioController::class, 'index'])->name('welcome');
