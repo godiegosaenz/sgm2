@@ -6,6 +6,7 @@ use App\Http\Controllers\ConsultaPredioController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\TesoreriaController;
 use App\Http\Controllers\tesoreria\TituloCreditoCoactivaController;
+use App\Http\Controllers\tesoreria\TituloRuralController;
 use App\Http\Controllers\RemisionInteresController;
 use App\Http\Controllers\ExoneracionRuralController;
 use App\Http\Controllers\paciente\ListarPacienteController;
@@ -117,12 +118,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('usuario/datatables', [UsuarioController::class, 'datatables'])->name('datatable.usuario');
     Route::get('usuario/lista', [UsuarioController::class, 'index'])->name('lista.usuario');
 
-    //Mostrar la interfaz para generar los titulos de creditos para coactiva
+    //Mostrar la interfaz para generar los titulos de creditos para coactiva (Urbano)
     Route::get('tituloscoactiva/', [TituloCreditoCoactivaController::class, 'index'])->name('index.titulocredito');
     Route::post('tituloscoactiva/', [TituloCreditoCoactivaController::class, 'consulta'])->name('consulta.titulocredito');
     Route::post('tituloscoactiva/imprimir', [TituloCreditoCoactivaController::class, 'reporteTitulosCoactiva'])->name('reportecoactiva.titulos');
     Route::get('tituloscoactiva/buscar-contribuyente/{idliquidacion}', [TituloCreditoCoactivaController::class, 'buscaContribuyente'])->name('buscaContribuyente.titulocredito');
     Route::post('tituloscoactiva/actualiza-contribuyente', [TituloCreditoCoactivaController::class, 'actualizaContribuyente'])->name('actualizaContribuyente.titulocredito');
+
+    //titulorural
+    Route::get('titulorural/', [TituloRuralController::class, 'index'])->name('index.TitulosRural');
+    Route::post('tituloscoactivarural', [TituloRuralController::class, 'consulta'])->name('consulta.TitulosRural');
+    Route::get('test-reporte-rural/', [TituloRuralController::class, 'reportetest'])->name('reporteTitulos.TitulosRural');
+    Route::post('tituloscoactivarural/imprimir', [TituloRuralController::class, 'reportetest'])->name('reporteTitulos.TitulosRural');
 
     Route::get('/pruebatitulo', function () {
         $vehiculo = TransitoVehiculo::where('id',2)->first();

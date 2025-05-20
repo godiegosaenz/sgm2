@@ -298,9 +298,14 @@
                         'active' => request()->routeIs('index.remision')
                     ],
                     [
-                        'name' => 'Impresion de titulos',
+                        'name' => 'Impresion de titulos Urbanos',
                         'route' => 'index.titulocredito',
                         'active' => request()->routeIs('index.titulocredito')
+                    ],
+                    [
+                        'name' => 'Impresion de titulos Rural',
+                        'route' => 'index.TitulosRural',
+                        'active' => request()->routeIs('index.TitulosRural')
                     ],
                     [
                         'name' => 'Reporte de liquidaciones',
@@ -308,7 +313,7 @@
                         'active' => request()->routeIs('consulta.liquidacion.remision')
                     ],
                 ],
-                'active' => request()->routeIs('lista.exoneracion') || request()->routeIs('create.remision') || request()->routeIs('index.remision') || request()->routeIs('index.titulocredito') || request()->routeIs('consulta.liquidacion.remision')
+                'active' => request()->routeIs('lista.exoneracion') || request()->routeIs('create.remision') || request()->routeIs('index.remision') || request()->routeIs('index.titulocredito') || request()->routeIs('index.TitulosRural')  || request()->routeIs('consulta.liquidacion.remision')
             ],
             [
                 'name' => 'RENTAS',

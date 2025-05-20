@@ -121,6 +121,7 @@ class TituloCreditoCoactivaController extends Controller
                 'pre.num_predio',
                 'saldo',
                 'liq.id',
+                'liq.anio',
                 'en.direccion',
                 DB::raw("
                     CASE
@@ -164,6 +165,7 @@ class TituloCreditoCoactivaController extends Controller
             )
             ->where('liq.id', $valor)
             ->get();
+            //dd($liquidacion);
         
 
             $fecha_hoy=date('Y-m-d');
