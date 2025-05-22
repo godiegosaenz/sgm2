@@ -60,7 +60,7 @@
             <div class="col-3">
                 <div class="mb-3">
                     <br>
-                    <button id="btnConsulta" class="btn btn-primary" type="submit" >
+                    <button id="btnConsulta" class="btn btn-primary" type="button" onclick="llenarTabla()" >
                         <span id="spanConsulta" class="bi bi-search" role="status" aria-hidden="true"></span>
                         Consultar
                     </button>
@@ -75,10 +75,13 @@
         <div class="row">
             <div class="col-12">
                 <div class="mb-3">
-                    <a id="reporteLiquidacion" class="btn btn-secondary" rel="noopener noreferrer">
+                    <!-- <a id="reporteLiquidacion1" class="btn btn-secondary" rel="noopener noreferrer">
                         <i class="bi bi-filetype-pdf"></i>
                         General titulos
-                    </a>
+                    </a> -->
+                    <button type="button" class="btn btn-secondary" rel="noopener noreferrer" onclick="generarTitulos()"> 
+                        <i class="bi bi-filetype-pdf"></i> General titulos
+                    </button>
 
                 </div>
 
@@ -96,7 +99,7 @@
             <div class="col-md-12">
                 @csrf
                 <div class="table-responsive">
-                    <table class="table table-bordered table-hover" id="tableCita" style="width: 100%">
+                    <table class="table table-bordered table-hover" id="tableRural" style="width: 100%">
                         <thead>
                             <tr>
                             <th scope="col">*</th>
@@ -110,7 +113,7 @@
                         </thead>
                         <tbody id="tbodyurban">
 
-                            @isset($liquidacionRural)
+                            <!-- @isset($liquidacionRural)
                                 @foreach ($liquidacionRural as $it )
                                     @php
                                         $anio=explode("-",$it->CarVe_NumTitulo);
@@ -134,7 +137,7 @@
                                         <td>{{$it->CarVe_CI}}</td>
                                     </tr>
                                 @endforeach
-                            @endisset
+                            @endisset -->
                         </tbody>
                     </table>
                 </div>

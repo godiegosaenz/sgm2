@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\TituloRuralController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,3 +18,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware("auth:sanctum")->get("/user", function (Request $request) {
     return $request->user();
 });
+
+
+Route::get('buscar-titulo-rural/{tipo}/{valor}', [TituloRuralController::class, 'consultaTitulos'])->name('consultaTitulos.TitulosRural');
+Route::post('tituloscoactivarural/imprimir', [TituloRuralController::class, 'reportetest'])->name('reporteTitulos.TitulosRural');

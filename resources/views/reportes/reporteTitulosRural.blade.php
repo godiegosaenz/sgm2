@@ -245,13 +245,13 @@
                         <tr>
                             <td><b>Intereses hasta la fecha de emision:</b> </td>
                             <td>$</td>
-                            <td style="text-align:right"></td>
+                            <td style="text-align:right">{{number_format($d[0]->intereses,2)}}</td>
                         </tr>
 
                         <tr>
                             <td><b>Total Deuda:</b> </td>
                             <td>$</td>
-                            <td style="text-align:right"></td>
+                            <td style="text-align:right">{{number_format($d[0]->total_pagar,2)}}</td>
                         </tr>
 
                     </table>
@@ -270,9 +270,13 @@
         <b>Ley Coa Aticulo 268</b></center>
         <br>
         <br>
+        <br>
+        <br>
+        <br>
         <hr style="border:Dotted;"/>
         <br>
         <br>
+       
     @endforeach
     
     <h2 style="text-align: center">TOTAL DE TÍTULO DE CRÉDITO: <span class="badge text-bg-secondary"></span></h2>

@@ -4,152 +4,138 @@ namespace App\Http\Controllers\tesoreria;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use App\Models\PsqlEnte;
-use App\Models\PsqlLiquidacion;
 use Exception;
 use Barryvdh\DomPDF\Facade\Pdf;
+use GuzzleHttp\Client;
 
 class TituloRuralController extends Controller
 {
+     private $clientMunicipio = null;
+
+    public function __construct(){
+        
+        try{
+           
+            $this->clientMunicipio = new Client([
+                // 'base_uri' =>'http://192.168.0.68:81/sgm-api/api/',
+                'base_uri' =>'http://192.168.0.68:81/sgm-api/api/',
+                'verify' => false,
+            ]);
+
+        }catch(Exception $e){
+            dd($e);
+        }
+    }
     public function index(){
         $num_predio = 0;
         return view('tesoreria.TitulosRural',compact('num_predio'));
     }
 
-    public function consulta(Request $r)
+    public function consultaTitulos($tipo,$valor)
     {
         try {
-        $data = array();
-        $cedula=1;
-        $clave=2;
-        $valor=29.21;
-        // $intereses=DB::connection('sqlsrv')->table('INTERES_MORA as cv')
-        // ->whereBetween('IntMo_Año',[2017,2025])
-        // ->select('IntMo_Valor')
-        // ->get();
-
-        // foreach ($intereses as $anio => $tasa) {
-        //     // $valor *= $tasa->IntMo_Valor;
-        //     $valor *= (1 + $tasa->IntMo_Valor);
-        // }
-
-        // dd($valor);
-
-
-        // $interesInicio = DB::connection('sqlsrv')->table('INTERES_MORA')->where('IntMo_Año', 2017)->value('IntMo_Valor');
-        // $interesFin = DB::connection('sqlsrv')->table('INTERES_MORA')->where('IntMo_Año', 2024)->value('IntMo_Valor');
-
-        // $interesCalculado = $valor * (($interesInicio / $interesFin) - 1);
-        // $montoFinal = $valor + $interesCalculado;
-        // dd($montoFinal);
-
-
-        if($r->tipo=="2"){
-            $predio_id = DB::connection('sqlsrv')->table('CARTERA_VENCIDA')->select('Pre_CodigoCatastral')
-            ->where('Pre_CodigoCatastral', '=', $r->clave)->first();
-            //se obtiene las liquidaciones rurales
-            $num_predio = $r->clave;
-            $clave = $r->clave;
-
-            $liquidacionRural=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
-            ->leftJoin('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'cv.CarVe_CI')
-            ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
-            ->select('cv.Pre_CodigoCatastral','cv.CarVe_FechaEmision','cv.CarVe_NumTitulo','cv.CarVe_CI'
-            ,'cv.CarVe_Estado','c.Ciu_Apellidos','c.Ciu_Nombres','cv.CarVe_Nombres')
-            ->where('cv.Pre_CodigoCatastral', '=', $r->clave)
-            ->whereIn('cv.CarVe_Estado',['E'])
-            // ->where('Pre_Tipo','Rural')
-            ->orderby('CarVe_NumTitulo','desc')
-            ->get();
-
-           
-
-
-            // dd($liquidacionRural);
-
-        }else{
-            $predio_id = DB::connection('sqlsrv')->table('CARTERA_VENCIDA')->select('CarVe_CI')
-            ->where('CarVe_CI', '=', $r->cedula)->first();
-            //se obtiene las liquidaciones rurales
-            $num_predio = $r->cedula;
-            $cedula = $r->cedula;
-            $liquidacionRural=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
-            ->leftJoin('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'cv.CarVe_CI')
-            ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
-            ->select('cv.Pre_CodigoCatastral','cv.CarVe_FechaEmision','cv.CarVe_NumTitulo','cv.CarVe_CI'
-            ,'cv.CarVe_Estado','c.Ciu_Apellidos','c.Ciu_Nombres')
-            ->where('CarVe_CI', '=', $r->cedula)
-            ->whereIn('cv.CarVe_Estado',['E'])
-            ->where('Pre_Tipo','Rural')
-            ->get();
-            
-        }
         
-
-        if(count($liquidacionRural) >= 1) {
-            return view('tesoreria.TitulosRural',compact('liquidacionRural','num_predio','clave','cedula'));
-        }else{
-            return redirect('titulorural/')->with('status', 'No existe la matricula ingresada')->withInput();
-        }
+            $listaTitulo = $this->clientMunicipio->request('GET', "buscar-titulo-rural/{$tipo}/{$valor}",[
+                'headers' => [
+                    'Authorization' => ''
+                ] ,
+                'connect_timeout' => 10,
+                'timeout' => 10
+            ]);
+           
+         
+            $info= json_decode((string) $listaTitulo->getBody());
+            if($info->error==true){
+                return [
+                    'error'=>true,
+                    'mensaje'=>'Ocurrió un error al consultar la informacion'
+                ];
+            }
+            
+            return ["resultado"=>$info->resultado, "error"=>false];
 
         } catch (Exception $e) {
-            // Log the message locally OR use a tool like Bugsnag/Flare to log the error
-            return redirect('titulorural/')->with('status', 'Problema de conexion '.$e->getMessage());
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
 
         }
     }
 
     public function reportetest(Request $r){
+        try{
+           
+            $data = $this->clientMunicipio->request('POST', "tituloscoactivarural/imprimir",[
+                'headers' => [
+                    'Content-Type' => 'application/json'
+                ],
+                'body' => json_encode($r->all())
+            ]);
 
-        $dataArray = array();
-        foreach($r->checkLiquidacion as $clave => $valor){
-            $liquidacionRural=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
-            ->leftJoin('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'cv.CarVe_CI')
-            ->leftJoin('PROPIETARIO as pr', 'pr.Ciu_Cedula', '=', 'cv.CarVe_CI')
-            ->leftJoin('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
-            ->select('cv.Pre_CodigoCatastral','cv.CarVe_FechaEmision','cv.CarVe_NumTitulo','cv.CarVe_CI'
-            ,'cv.CarVe_Estado','c.Ciu_Apellidos','c.Ciu_Nombres','p.Pre_NombrePredio','cv.CarVe_ValTotalTerrPredio'
-            ,'cv.CarVe_ValTotalEdifPredio','cv.CarVe_ValOtrasInver','cv.CarVe_ValComerPredio','cv.CarVe_RebajaHipotec'
-            ,'cv.CarVe_BaseImponible','cv.CarVe_IPU','cv.CarVe_TasaAdministrativa','cv.CarVe_Bomberos'
-            ,'cv.CarVe_ValorEmitido','pr.Pro_DireccionDomicilio')
-            ->where('CarVe_NumTitulo', '=', $valor)
-            ->get();
-            // Pre_NombrePredio
-            //dd($liquidacion);
-        
+            $data=json_decode((string) $data->getBody());
 
+            if($data->error==true){
+                return [
+                    'error'=>true,
+                    'mensaje'=>'Ocurrió un error al consultar la informacion'
+                ];
+            }
+          
             $fecha_hoy=date('Y-m-d');
             setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES@euro', 'es_ES', 'esp');
             $fecha_timestamp = strtotime($fecha_hoy);    
             $fecha_formateada = strftime("%d de %B del %Y", $fecha_timestamp);
-    
+            $data = [
+                'title' => 'Reporte de liquidacion',
+                'date' => date('m/d/Y'),
+                'DatosLiquidacion' => $data->resultado,
+                'fecha_formateada'=>$fecha_formateada
+            ];
 
-            // $rubros = DB::connection('pgsql')->table('sgm_financiero.ren_det_liquidacion as rdl')
-            //                                     ->join('sgm_financiero.ren_rubros_liquidacion as rrl', 'rdl.rubro', '=', 'rrl.id')
-            //                                     ->select('rdl.id', 'rdl.liquidacion', 'rdl.rubro', 'rdl.valor', 'rdl.estado', 'rrl.descripcion')
-            //                                     ->where('rdl.liquidacion', $valor)
-            //                                     ->get();
+            $nombrePDF="reporteTituloRural.pdf";
 
-            $rubros=[];
-                                               
-            $liquidacionRural['rubros'] = $rubros;
+            $pdf = PDF::loadView('reportes.reporteTitulosRural',$data);
 
-            array_push($dataArray, $liquidacionRural);
+            $estadoarch = $pdf->stream();
+
+            \Storage::disk('public')->put(str_replace("", "",$nombrePDF), $estadoarch);
+            $exists_destino = \Storage::disk('public')->exists($nombrePDF); 
+            if($exists_destino){ 
+                return [
+                    'error'=>false,
+                    'pdf'=>$nombrePDF
+                ];
+            }else{
+                return[
+                    'error'=>true,
+                    'mensaje'=>'No se pudo crear el documento'
+                ];
+            }
+
+            
+        }catch (\Throwable $e) {
+           
+            return response()->json([
+                'error'=>true,
+                'mensaje'=>'Ocurrió un error'.$e
+            ]);
+            
         }
-        // dd($dataArray);
+    }
 
-        $data = [
-            'title' => 'Reporte de liquidacion',
-            'date' => date('m/d/Y'),
-            'DatosLiquidacion' => $dataArray,
-            'fecha_formateada'=>$fecha_formateada
-        ];
+     public function descargarPdf($archivo){
+        try{   
+        
+            $exists_destino = \Storage::disk('public')->exists($archivo); 
 
-        $pdf = PDF::loadView('reportes.reporteTitulosRural',$data);
+            if($exists_destino){
+                return response()->download( storage_path('app/public/'.$archivo))->deleteFileAfterSend(true);
+            }else{
+                return back()->with(['error'=>'Ocurrió un error','estadoP'=>'danger']);
+            } 
 
-        // return $pdf->stream("aa.pdf");
-        return $pdf->download('reporteTituloRural.pdf');
+        } catch (\Throwable $th) {
+            // Log::error(__CLASS__." => ".__FUNCTION__." => Mensaje =>".$e->getMessage()." Linea =>".$e->getLine());
+            return back()->with(['error'=>'Ocurrió un error','estadoP'=>'danger']);
+        } 
     }
 
 }
