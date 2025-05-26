@@ -267,7 +267,7 @@
 
         </table>
         <center><b>Fecha Impresion:</b> {{ $fecha_formateada }}<br>
-        <b>Ley Coa Aticulo 268</b></center>
+        <b>Ley COA Aticulo 268</b></center>
         <br>
         <br>
         <br>
