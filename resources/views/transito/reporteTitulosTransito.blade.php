@@ -18,13 +18,13 @@
             vertical-align: middle;
         }
         .cabecera .logo {
-            width: 25%;
+            width: 10%;
             text-align: left;
         }
         .cabecera .encabezado {
-            width: 75%;
+            width: 90%;
             text-align: center;
-            font-size: 14px;
+            font-size: 12px;
             font-weight: bold;
         }
         .cabecera .subtitulo {
@@ -87,28 +87,60 @@
                     <img src="{{ asset('img/logo4.png') }}" alt="Logo" width="80">
                 </td>
                 <td class="encabezado">
-                    <h3>GAD MUNICIPAL DEL CANTÓN SAN VICENTE <h4>UNIDAD MUNICIPAL DE TRANSITO, TRANSPORTE TERRESTRE Y SEGURIDAD VIAL</h4></h3>
-                    <table>
+                    <h3>GAD MUNICIPAL DEL CANTÓN SAN VICENTE <h4>UNIDAD MUNICIPAL DE TRANSITO, TRANSPORTE TERRESTRE <br>Y SEGURIDAD VIAL</h4></h3>
+                    <!-- <table>
                         <tbody>
-                            <td><h4>TITULO DE CREDITO N° {{$impuesto->numero_titulo}}</h4></td>
+                            <td><h4>TITULO DE CREDITO11 N° {{$impuesto->numero_titulo}}</h4></td>
                             <td><p class="" style="font-size: 10px;"> - San Vicente, {{ $fecha_formateada }}</p></td>
                             <tr>
                                 <td width="30%"><strong>Año de impuesto:</strong></td>
                                 <td width="70%">{{$impuesto->year_impuesto}}</td>
                             </tr>
                         </tbody>
-                    </table>
+                    </table> -->
 
+                </td>
+                 <td class="logo">
+                    <!-- <img src="{{ asset('img/logo4.png') }}" alt="Logo" width="80"> -->
                 </td>
             </tr>
         </table>
-        <table class="tabla-principal">
+        <table width="100%" border="0"  style="">
+            <tr>
+                <td colspan="3" style="text-align: center;">
+                    <b>TITULO DE CREDITO N° {{$impuesto->numero_titulo}}</b><br>
+                    San Vicente, {{ $fecha_formateada }}
+                </td>
+            </tr>
+        </table>
+        
+        <table class="tabla-principal" style="margin-top: 15px;">
             <tr>
                 <td class="columna-izquierda">
 
+                    <table class="tabla-izquierda" style="font-size: 12px;">                       
+                        <tr>
+                            <td width="50%"><b>Año de Impuesto :</b>{{$impuesto->year_impuesto}} </td>
+                            
+                            
+                        </tr>  
+                        
+                        <tr>
+                          
+                            <td width="50%"><b>Cedula/RUC :</b>{{$item['cliente']->ci_ruc}} </td>
+                           
+                            
+                        </tr>  
 
+                        <tr>
+                            
+                            <td width="50%"><b>Contribuyente :</b>{{$item['cliente']->nombres.' '.$item['cliente']->apellidos}} </td>
+                            
+                        </tr>  
+                      
+                    </table>
 
-                    <table class="tabla-izquierda" style="font-size: 12px;">
+                    <!-- <table class="tabla-izquierda" style="font-size: 12px;">
                         <thead>
                             <tr>
                                 <th width="50%">Contribuyente : </th>
@@ -123,7 +155,7 @@
 
                             </tr>
                         </tbody>
-                    </table>
+                    </table> -->
                     <table class="tabla-izquierda" style="font-size: 12px;">
                         <thead >
                             <tr>
@@ -185,7 +217,7 @@
                             </tr>
                         </tfoot>
                     </table>
-                    <table class="tabla-izquierda">
+                    <!-- <table class="tabla-izquierda">
                         <tbody>
                             <tr>
                                 <th>Fecha desde la cual se desvenga intereses:</th>
@@ -201,7 +233,7 @@
                             </tr>
                         </tbody>
 
-                    </table>
+                    </table> -->
                 </td>
             </tr>
         </table>

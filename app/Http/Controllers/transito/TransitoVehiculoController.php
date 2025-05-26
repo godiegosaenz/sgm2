@@ -95,4 +95,6 @@ class TransitoVehiculoController extends Controller
             return response()->json(['message' => 'No encontrado'], 404);
         }
     }
+
+   
 }

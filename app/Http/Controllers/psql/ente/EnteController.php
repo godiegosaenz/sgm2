@@ -45,6 +45,34 @@ class EnteController extends Controller
             'telefono' => 'nullable|string|max:20',
         ]);
 
+        $validaPersona=PsqlEnte::where('ci_ruc',$request->ci_ruc)
+        ->first();
+
+        if(!is_null($validaPersona)){
+            if($validaPersona->estado==="A"){
+                return response()->json(['message' => 'Ya existe una persona con ese numero de identificacion','error'=>true], 500);
+            }else{
+                $validaPersona->ci_ruc = $request->ci_ruc;
+                if($request->es_persona== 1)
+                {
+                    $validaPersona->nombres = strtoupper(str_replace(' ', '', $request->nombres));
+                    $validaPersona->apellidos = strtoupper(str_replace(' ', '', $request->apellidos));
+                }else
+                {
+                    $validaPersona->nombres = strtoupper(str_replace(' ', '', $request->nombres));
+                    $validaPersona->apellidos = strtoupper(str_replace(' ', '', $request->apellidos));
+                    $validaPersona->razon_social = strtoupper(str_replace(' ', '', $request->nombres));
+                    $validaPersona->nombre_comercial = strtoupper(str_replace(' ', '', $request->apellidos));
+                }
+                $validaPersona->es_persona = $request->es_persona;
+                $validaPersona->direccion = strtoupper(str_replace(' ', '', $request->direccion));
+                $validaPersona->fecha_nacimiento = $request->fecha_nacimiento;
+
+                $validaPersona->save();
+                return response()->json(['message' => 'Persona actualida correctamente'], 200);
+            }
+        }
+
         $ente = new PsqlEnte();
         $ente->ci_ruc = $request->ci_ruc;
         if($request->es_persona== 1)

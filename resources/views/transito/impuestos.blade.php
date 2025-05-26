@@ -1,39 +1,41 @@
 @extends('layouts.appv2')
 @section('title', 'Catastro contribuyente')
 @push('styles')
-<link href="{{ asset('css/dataTables.bootstrap5.min.css') }}" rel="stylesheet">
-<link href="{{ asset('css/rowReorder.bootstrap5.min.css') }}" rel="stylesheet">
-<link rel="stylesheet" href="{{asset('bower_components/sweetalert/sweetalert.css')}}">
-<style>
-    tfoot input {
-        width: 100%;
-        padding: 3px;
-        box-sizing: border-box;
-    }
-</style>
+    <link href="{{ asset('css/dataTables.bootstrap5.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/rowReorder.bootstrap5.min.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{asset('bower_components/sweetalert/sweetalert.css')}}">
+    <style>
+        tfoot input {
+            width: 100%;
+            padding: 3px;
+            box-sizing: border-box;
+        }
+    </style>
 @endpush
 @section('content')
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <h3 class="h2">Impuestos Unidad de Transito</h3>
         <div class="btn-toolbar mb-2 mb-md-0">
-        <div class="btn-group me-2">
-            <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalEditarRangos"> <i class="bi bi-table"></i> Tarifa </button>
-            <button type="button" class="btn btn-sm btn-outline-secondary"><i class="bi bi-gear-fill"></i> Conf</button>
-        </div>
-        <button type="button" class="btn btn-sm btn-outline-secondary d-flex align-items-center">
-           <i class="bi bi-info-circle"></i>
-        </button>
+            <div class="btn-group me-2">
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal"
+                    data-bs-target="#modalEditarRangos"> <i class="bi bi-table"></i> Tarifa </button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="abrirModalMantenimiento()"><i
+                        class="bi bi-gear-fill"></i> Conf</button>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-secondary d-flex align-items-center">
+                <i class="bi bi-info-circle"></i>
+            </button>
         </div>
     </div>
     @if(@session('error'))
-            <div class="alert alert-danger">
-                {{session('error')}}
-            </div>
+        <div class="alert alert-danger">
+            {{session('error')}}
+        </div>
     @endif
     @if(@session('success'))
-            <div class="alert alert-success">
-                {{session('success')}}
-            </div>
+        <div class="alert alert-success">
+            {{session('success')}}
+        </div>
     @endif
     <!-- Mensaje general de errores -->
     @if($errors->any())
@@ -47,10 +49,14 @@
             <legend class="float-none w-auto px-3 fs-5">Datos de cliente</legend>
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label for="propietario" class="form-label">Busqueda por cedula <span class="text-danger">*</span></label>
+                    <label for="propietario" class="form-label">Busqueda por cedula <span
+                            class="text-danger">*</span></label>
                     <div class="input-group">
-                        <input type="number" class="form-control {{$errors->has('cliente_id') ? 'is-invalid' : ''}}" id="cliente_id" name="cliente_id" placeholder="Ingrese cedula o ruc" value="{{old('cliente_id')}}" required>
-                        <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalCrearEnte">
+                        <input type="number" class="form-control {{$errors->has('cliente_id') ? 'is-invalid' : ''}}"
+                            id="cliente_id" name="cliente_id" placeholder="Ingrese cedula o ruc"
+                            value="{{old('cliente_id')}}" required>
+                        <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
+                            data-bs-target="#modalCrearEnte">
                             Nuevo
                             <span id="spinner" class="spinner-border spinner-border-sm" style="display:none;"></span>
                         </button>
@@ -62,27 +68,32 @@
 
                 <div class="col-md-6 mb-3">
                     <label for="razon_social" class="form-label">Nombres y apellidos</label>
-                    <input type="text" class="form-control" id="nombrescliente" name="nombrescliente" maxlength="255" value="{{old('nombresPropietario2')}}" disabled>
+                    <input type="text" class="form-control" id="nombrescliente" name="nombrescliente" maxlength="255"
+                        value="{{old('nombresPropietario2')}}" disabled>
 
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="nombresRepresentante" class="form-label">Correo</label>
-                    <input type="text" class="form-control" id="correocliente" maxlength="255" value="{{old('correocliente')}}" disabled>
+                    <input type="text" class="form-control" id="correocliente" maxlength="255"
+                        value="{{old('correocliente')}}" disabled>
 
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="nombresRepresentante" class="form-label">Telefono</label>
-                    <input type="text" class="form-control" id="telefonocliente" maxlength="255" value="{{old('telefonocliente')}}" disabled>
+                    <input type="text" class="form-control" id="telefonocliente" maxlength="255"
+                        value="{{old('telefonocliente')}}" disabled>
 
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="nombresRepresentante" class="form-label">Direccion</label>
-                    <input type="text" class="form-control" id="direccioncliente" maxlength="255" value="{{old('direccioncliente')}}" disabled>
+                    <input type="text" class="form-control" id="direccioncliente" maxlength="255"
+                        value="{{old('direccioncliente')}}" disabled>
 
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="nombresRepresentante" class="form-label">Fecha de nacimiento</label>
-                    <input type="text" class="form-control" id="fechanacimientocliente" maxlength="255" value="{{old('fechanacimientocliente')}}" disabled>
+                    <input type="text" class="form-control" id="fechanacimientocliente" maxlength="255"
+                        value="{{old('fechanacimientocliente')}}" disabled>
 
                 </div>
             </div>
@@ -92,11 +103,15 @@
             <legend class="float-none w-auto px-3 fs-5">Datos de vehiculo</legend>
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label for="propietario" class="form-label">Busqueda por placa <span class="text-danger">*</span></label>
+                    <label for="propietario" class="form-label">Busqueda por placa <span
+                            class="text-danger">*</span></label>
                     <div class="input-group">
 
-                        <input type="text" class="form-control {{$errors->has('vehiculo_id') ? 'is-invalid' : ''}}" id="vehiculo_id" name="vehiculo_id" placeholder="Ingrese una placa" value="{{old('vehiculo_id')}}" required>
-                        <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#vehiculoModal">
+                        <input type="text" class="form-control {{$errors->has('vehiculo_id') ? 'is-invalid' : ''}}"
+                            id="vehiculo_id" name="vehiculo_id" placeholder="Ingrese una placa"
+                            value="{{old('vehiculo_id')}}" required>
+                        <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
+                            data-bs-target="#vehiculoModal">
                             Nuevo
                             <span id="spinner2" class="spinner-border spinner-border-sm" style="display:none;"></span>
                         </button>
@@ -109,27 +124,32 @@
 
                 <div class="col-md-6 mb-3">
                     <label for="razon_social" class="form-label">Avaluo</label>
-                    <input type="text" class="form-control" id="avaluo" name="nombresPropietario" maxlength="255" value="{{old('nombresPropietario2')}}" disabled>
+                    <input type="text" class="form-control" id="avaluo" name="nombresPropietario" maxlength="255"
+                        value="{{old('nombresPropietario2')}}" disabled>
 
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="nombresRepresentante" class="form-label">Chasis</label>
-                    <input type="text" class="form-control" id="chasis" maxlength="255" value="{{old('nombresRepresentante2')}}" disabled>
+                    <input type="text" class="form-control" id="chasis" maxlength="255"
+                        value="{{old('nombresRepresentante2')}}" disabled>
 
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="nombresRepresentante" class="form-label">Año modelo</label>
-                    <input type="text" class="form-control" id="year_modelo" maxlength="255" value="{{old('nombresRepresentante2')}}" disabled>
+                    <input type="text" class="form-control" id="year_modelo" maxlength="255"
+                        value="{{old('nombresRepresentante2')}}" disabled>
 
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="nombresRepresentante" class="form-label">Marca</label>
-                    <input type="text" class="form-control" id="marca" maxlength="255" value="{{old('nombresRepresentante2')}}" disabled>
+                    <input type="text" class="form-control" id="marca" maxlength="255"
+                        value="{{old('nombresRepresentante2')}}" disabled>
 
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="nombresRepresentante" class="form-label">Tipo</label>
-                    <input type="text" class="form-control" id="tipo" maxlength="255" value="{{old('nombresRepresentante2')}}" disabled>
+                    <input type="text" class="form-control" id="tipo" maxlength="255"
+                        value="{{old('nombresRepresentante2')}}" disabled>
 
                 </div>
             </div>
@@ -140,7 +160,8 @@
             <legend class="float-none w-auto px-3 fs-5">Detalle de impuestp</legend>
             <div class="row align-items-end mb-3">
                 <div class="col-md-6">
-                    <select class="form-select {{ $errors->has('year_declaracion') ? 'is-invalid' : '' }}" id="year_declaracion" name="year_declaracion">
+                    <select class="form-select {{ $errors->has('year_declaracion') ? 'is-invalid' : '' }}"
+                        id="year_declaracion" name="year_declaracion" onchange="calcularImpuesto()">
                         <option value="">Seleccione año</option>
                         @foreach ($year as $y)
                             <option value="{{ $y->year }}">{{ $y->year }}</option>
@@ -152,7 +173,8 @@
                 <div class="col-md-6 d-grid gap-2">
                     <button class="btn btn-primary" id="btn-calcular">
                         <span id="btn-text">Calcular</span>
-                        <span id="spinner-btn" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                        <span id="spinner-btn" class="spinner-border spinner-border-sm d-none" role="status"
+                            aria-hidden="true"></span>
                     </button>
                 </div>
             </div>
@@ -171,11 +193,13 @@
                             @foreach($conceptos as $concepto)
                                 <tr>
                                     <td>
-                                        <input type="checkbox" class="form-check-input concepto-check" data-id="{{ $concepto->id }}" checked>
+                                        <input type="checkbox" class="form-check-input concepto-check"
+                                            data-id="{{ $concepto->id }}" checked>
                                     </td>
                                     <td>{{ $concepto->concepto }}</td>
                                     <td>
-                                        <input type="number" step="0.01" class="form-control concepto-valor" id="valor_{{ $concepto->id }}" value="{{ $concepto->valor }}">
+                                        <input type="number" step="0.01" class="form-control concepto-valor"
+                                            id="valor_{{ $concepto->id }}" value="{{ $concepto->valor }}">
                                     </td>
                                 </tr>
                             @endforeach
@@ -203,220 +227,459 @@
     <!-- Modal para cliente -->
 
     <div class="modal fade" id="modalCrearEnte" tabindex="-1" aria-labelledby="modalCrearEnteLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg"> <!-- ancho grande -->
-        <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="modalPersonaLabel">Registrar Persona</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-        </div>
-        <div class="modal-body">
-            <form id="formPersona">
-            <div class="row g-3">
-                <div class="col-md-6">
-                <label for="ci_ruc" class="form-label">CI / RUC <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="ci_ruc" name="ci_ruc">
-                <div class="invalid-feedback" id="error-ci_ruc"></div>
+        <div class="modal-dialog modal-lg"> <!-- ancho grande -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalPersonaLabel">Registrar Persona</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
-                <div class="col-md-6">
-                <label for="es_persona" class="form-label">Tipo Persona <span class="text-danger">*</span></label>
-                <select class="form-select" id="es_persona" name="es_persona">
-                    <option value="1">Persona Natural</option>
-                    <option value="0">Persona Jurídica</option>
-                </select>
-                <div class="invalid-feedback" id="error-es_persona"></div>
-                </div>
-                <div class="col-md-6">
-                <label for="nombres" class="form-label" id="label-nombres">Nombres <span class="text-danger">*</span></label>
+                <div class="modal-body">
+                    <form id="formPersona">
+                        <div class="row g-3">
 
-                <input type="text" class="form-control" id="nombres" name="nombres">
-                <div class="invalid-feedback" id="error-nombres"></div>
+                            <div class="col-md-6">
+                                <label for="es_persona" class="form-label">Tipo Persona <span
+                                        class="text-danger">*</span></label>
+                                <select class="form-select" id="es_persona" name="es_persona">
+                                    <option value="1">Persona Natural</option>
+                                    <option value="0">Persona Jurídica</option>
+                                </select>
+                                <div class="invalid-feedback" id="error-es_persona"></div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="ci_ruc" class="form-label">CI / RUC <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="ci_ruc" name="ci_ruc" onblur="capturaInfoPersona()">
+                                <div class="invalid-feedback" id="error-ci_ruc"></div>
+                            </div>
+                           
+                            <div class="col-md-6">
+                                <label for="nombres" class="form-label" id="label-nombres">Nombres <span
+                                        class="text-danger">*</span></label>
+
+                                <input type="text" class="form-control" id="nombres" name="nombres">
+                                <div class="invalid-feedback" id="error-nombres"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="apellidos" class="form-label" id="label-apellidos">Apellidos <span
+                                        class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="apellidos" name="apellidos">
+                                <div class="invalid-feedback" id="error-apellidos"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="direccion" class="form-label">Dirección </label>
+                                <input type="text" class="form-control" id="direccion" name="direccion">
+                                <div class="invalid-feedback" id="error-direccion"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento </label>
+                                <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento">
+                                <div class="invalid-feedback" id="error-fecha_nacimiento"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="correo" class="form-label">Correo </label>
+                                <input type="email" class="form-control" id="correo" name="correo">
+                                <div class="invalid-feedback" id="error-correo"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="telefono" class="form-label">Teléfono </label>
+                                <input type="text" class="form-control" id="telefono" name="telefono">
+                                <div class="invalid-feedback" id="error-telefono"></div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-                <div class="col-md-6">
-                <label for="apellidos" class="form-label" id="label-apellidos">Apellidos <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="apellidos" name="apellidos">
-                <div class="invalid-feedback" id="error-apellidos"></div>
-                </div>
-                <div class="col-md-6">
-                <label for="direccion" class="form-label">Dirección </label>
-                <input type="text" class="form-control" id="direccion" name="direccion">
-                <div class="invalid-feedback" id="error-direccion"></div>
-                </div>
-                <div class="col-md-6">
-                <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento </label>
-                <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento">
-                <div class="invalid-feedback" id="error-fecha_nacimiento"></div>
-                </div>
-                <div class="col-md-6">
-                <label for="correo" class="form-label">Correo </label>
-                <input type="email" class="form-control" id="correo" name="correo">
-                <div class="invalid-feedback" id="error-correo"></div>
-                </div>
-                <div class="col-md-6">
-                <label for="telefono" class="form-label">Teléfono </label>
-                <input type="text" class="form-control" id="telefono" name="telefono">
-                <div class="invalid-feedback" id="error-telefono"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" onclick="guardarPersona()">Guardar</button>
                 </div>
             </div>
-            </form>
         </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-            <button type="button" class="btn btn-primary" onclick="guardarPersona()">Guardar</button>
-        </div>
-        </div>
-    </div>
     </div>
 
     <!-- Modal vehiculo-->
     <!-- Modal -->
     <div class="modal fade" id="vehiculoModal" tabindex="-1" aria-labelledby="vehiculoModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg"> <!-- Aumentamos el tamaño del modal -->
-        <form id="vehiculoForm">
-            <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Registrar Vehículo</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row g-3">
-                <!-- Columna 1 -->
-                <div class="col-md-6">
-                    <div class="mb-3">
-                    <label for="placa_v" class="form-label">Placa</label>
-                    <input type="text" class="form-control" id="placa_v" name="placa_v" required>
-                    <div class="invalid-feedback" id="error-placa_v"></div>
+            <form id="vehiculoForm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Registrar Vehículo</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                     </div>
-                    <div class="mb-3">
-                    <label for="chasis_v" class="form-label">Chasis</label>
-                    <input type="text" class="form-control" id="chasis_v" name="chasis_v" required>
-                    <div class="invalid-feedback" id="error-chasis_v"></div>
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <!-- Columna 1 -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="placa_v" class="form-label">Placa</label>
+                                    <input type="text" class="form-control" id="placa_v" name="placa_v" required>
+                                    <div class="invalid-feedback" id="error-placa_v"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="chasis_v" class="form-label">Chasis</label>
+                                    <input type="text" class="form-control" id="chasis_v" name="chasis_v" required>
+                                    <div class="invalid-feedback" id="error-chasis_v"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="avaluo_v" class="form-label">Avalúo ($)</label>
+                                    <input type="number" step="0.01" class="form-control" id="avaluo_v" name="avaluo_v"
+                                        required>
+                                    <div class="invalid-feedback" id="error-avaluo_v"></div>
+                                </div>
+                            </div>
+
+                            <!-- Columna 2 -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="year_v" class="form-label">Año</label>
+                                    <input type="number" class="form-control" id="year_v" name="year_v" min="1900"
+                                        max="2100" required>
+                                    <div class="invalid-feedback" id="error-year_v"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="marca_v" class="form-label">Marca</label>
+                                    <select class="form-select {{ $errors->has('marca_v') ? 'is-invalid' : '' }}"
+                                        id="marca_v" name="marca_v" required>
+                                        <option value="">Seleccione marca</option>
+                                        @foreach ($marcas as $m)
+                                            <option value="{{ $m->id }}">{{ $m->descripcion }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div class="invalid-feedback" id="error-marca"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="tipo_v" class="form-label">Tipo de vehiculo</label>
+                                    <select class="form-select {{ $errors->has('tipo_v') ? 'is-invalid' : '' }}" id="tipo_v"
+                                        name="tipo_v" required>
+                                        <option value="">Seleccione tipo</option>
+                                        @foreach ($tipo_vehiculo as $t)
+                                            <option value="{{ $t->id }}">{{ $t->descripcion }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div class="invalid-feedback" id="error_tipo_v"></div>
+                                </div>
+                            </div>
+                        </div> <!-- End row -->
                     </div>
-                    <div class="mb-3">
-                    <label for="avaluo_v" class="form-label">Avalúo ($)</label>
-                    <input type="number" step="0.01" class="form-control" id="avaluo_v" name="avaluo_v" required>
-                    <div class="invalid-feedback" id="error-avaluo_v"></div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Guardar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                     </div>
                 </div>
-
-                <!-- Columna 2 -->
-                <div class="col-md-6">
-                    <div class="mb-3">
-                    <label for="year_v" class="form-label">Año</label>
-                    <input type="number" class="form-control" id="year_v" name="year_v" min="1900" max="2100" required>
-                    <div class="invalid-feedback" id="error-year_v"></div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="marca_v" class="form-label">Marca</label>
-                        <select class="form-select {{ $errors->has('marca_v') ? 'is-invalid' : '' }}" id="marca_v" name="marca_v" required>
-                            <option value="">Seleccione marca</option>
-                            @foreach ($marcas as $m)
-                                <option value="{{ $m->id }}">{{ $m->descripcion }}</option>
-                            @endforeach
-                        </select>
-                        <div class="invalid-feedback" id="error-marca"></div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="tipo_v" class="form-label">Tipo de vehiculo</label>
-                        <select class="form-select {{ $errors->has('tipo_v') ? 'is-invalid' : '' }}" id="tipo_v" name="tipo_v" required>
-                            <option value="">Seleccione tipo</option>
-                            @foreach ($tipo_vehiculo as $t)
-                                <option value="{{ $t->id }}">{{ $t->descripcion }}</option>
-                            @endforeach
-                        </select>
-                        <div class="invalid-feedback" id="error_tipo_v"></div>
-                    </div>
-                </div>
-                </div> <!-- End row -->
-            </div>
-
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-success">Guardar</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-            </div>
-            </div>
-        </form>
+            </form>
         </div>
     </div>
     <!-- Modal -->
     <div class="modal fade" id="modalEditarRangos" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Tarifa anual</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <div class="modal-header">
+                    <h5 class="modal-title">Tarifa anual</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+
+                    <form method="POST" action="" id="form_base">
+                        @csrf
+
+                        <div class="col-md-12">
+                            <div class="row align-items-center">
+                                <div class="col-md-3 text-end">
+                                    <label for="marca_v" class="form-label mb-0">Desde</label>
+                                </div>
+                                <div class="col-md-7">
+                                    <input type="hidden" class="form-control" id="id_base" name="id_base">
+                                    <input type="number" step="0.01" class="form-control" id="desde_base" name="desde_base"
+                                        required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12" style="margin-top: 10px;">
+                            <div class="row align-items-center">
+                                <div class="col-md-3 text-end">
+                                    <label for="marca_v" class="form-label mb-0">Hasta</label>
+                                </div>
+                                <div class="col-md-7">
+                                    <input type="number" step="0.01" class="form-control" id="hasta_base" name="hasta_base"
+                                        required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12" style="margin-top: 10px;">
+                            <div class="row align-items-center">
+                                <div class="col-md-3 text-end">
+                                    <label for="marca_v" class="form-label mb-0">Valor</label>
+                                </div>
+                                <div class="col-md-7">
+                                    <input type="number" step="0.01" class="form-control" id="valor_base" name="valor_base"
+                                        required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12" style="margin-top: 10px; margin-bottom: 20px;">
+                            <div class="row align-items-center">
+                                <div class="col-md-3 text-end">
+                                    <label for="marca_v" class="form-label mb-0"></label>
+                                </div>
+                                <div class="col-md-7">
+                                    <button type="submit" class="btn btn-success btn-sm"><span
+                                            id="btn_base">Guardar</span></button>
+                                    <button type="button" class="btn btn-warning btn-sm"
+                                        onclick="cancelarRango()">Cancelar</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+
+                    <table class="table table-bordered" id="tablaRangos">
+                        <thead>
+                            <tr>
+                                <th>Desde</th>
+                                <th>Hasta</th>
+                                <th>Valor</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- @foreach($rangos as $rango)
+                                <tr id="rango-{{ $rango->id }}">
+                                <td>
+                                    <input type="number" class="form-control" id="desde-{{ $rango->id }}" value="{{ $rango->desde }}" disabled>
+                                    <div class="invalid-feedback" id="error-desde-{{ $rango->id }}"></div>
+                                </td>
+                                <td>
+                                    <input type="number" class="form-control" id="hasta-{{ $rango->id }}" value="{{ $rango->hasta }}" disabled>
+                                    <div class="invalid-feedback" id="error-hasta-{{ $rango->id }}"></div>
+                                </td>
+                                <td>
+                                    <input type="number" class="form-control" id="valor-{{ $rango->id }}" value="{{ $rango->valor }}" disabled>
+                                    <div class="invalid-feedback" id="error-valor-{{ $rango->id }}"></div>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-warning" onclick="habilitarFila({{ $rango->id }})"><i class="bi bi-pencil-square"></i></button>
+                                    <button class="btn btn-sm btn-primary d-none" id="guardar-btn-{{ $rango->id }}" onclick="guardarFila({{ $rango->id }})"><i class="bi bi-save"></i></button>
+                                </td>
+                                </tr>
+                                @endforeach -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
             </div>
-            <div class="modal-body">
-                <table class="table table-bordered" id="tabla-rangos">
-                <thead>
-                    <tr>
-                    <th>Desde</th>
-                    <th>Hasta</th>
-                    <th>Valor</th>
-                    <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($rangos as $rango)
-                    <tr id="rango-{{ $rango->id }}">
-                    <td>
-                        <input type="number" class="form-control" id="desde-{{ $rango->id }}" value="{{ $rango->desde }}" disabled>
-                        <div class="invalid-feedback" id="error-desde-{{ $rango->id }}"></div>
-                    </td>
-                    <td>
-                        <input type="number" class="form-control" id="hasta-{{ $rango->id }}" value="{{ $rango->hasta }}" disabled>
-                        <div class="invalid-feedback" id="error-hasta-{{ $rango->id }}"></div>
-                    </td>
-                    <td>
-                        <input type="number" class="form-control" id="valor-{{ $rango->id }}" value="{{ $rango->valor }}" disabled>
-                        <div class="invalid-feedback" id="error-valor-{{ $rango->id }}"></div>
-                    </td>
-                    <td>
-                        <button class="btn btn-sm btn-warning" onclick="habilitarFila({{ $rango->id }})"><i class="bi bi-pencil-square"></i></button>
-                        <button class="btn btn-sm btn-primary d-none" id="guardar-btn-{{ $rango->id }}" onclick="guardarFila({{ $rango->id }})"><i class="bi bi-save"></i></button>
-                    </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-                </table>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="modalMantenimiento" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Mantenimiento</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs" id="tabsMantenimiento" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="tab1-tab" data-bs-toggle="tab" data-bs-target="#tab1"
+                                type="button" role="tab" aria-controls="tab1" aria-selected="true">
+                                Marca
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button"
+                                role="tab" aria-controls="tab2" aria-selected="false">
+                                Tipo
+                            </button>
+                        </li>
+                    </ul>
+
+                    <!-- Tab content -->
+                    <div class="tab-content mt-3">
+                        <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
+                            <form method="POST" action="" id="form_marca">
+                                @csrf
+
+                                <div class="col-md-12">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-3 text-end">
+                                            <label for="marca_v" class="form-label mb-0">Marca</label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <input type="hidden" class="form-control" id="id_marca_vehi"
+                                                name="id_marca_vehi">
+                                            <input type="text" class="form-control" id="marca_vehi" name="marca_vehi"
+                                                required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12" style="margin-top: 10px; margin-bottom: 20px;">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-3 text-end">
+                                            <label for="marca_v" class="form-label mb-0"></label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <button type="submit" class="btn btn-success btn-sm"><span
+                                                    id="btn_marca">Guardar</span></button>
+                                            <button type="button" class="btn btn-warning btn-sm"
+                                                onclick="cancelarMarca()">Cancelar</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </form>
+
+                            <table class="table table-bordered" id="tablaMarca">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Marca</th>
+
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
+
+                            <form method="POST" action="" id="form_tipo">
+                                @csrf
+
+                                <div class="col-md-12">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-3 text-end">
+                                            <label for="marca_v" class="form-label mb-0">Tipo</label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <input type="hidden" class="form-control" id="id_tipo_vehi" name="id_tipo_vehi">
+                                            <input type="text" class="form-control" id="tipo_vehi" name="tipo_vehi"
+                                                required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12" style="margin-top: 10px; margin-bottom: 10px;">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-3 text-end">
+                                            <label for="marca_v" class="form-label mb-0">Valor</label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <input type="number" class="form-control" id="tipo_valor" name="tipo_valor"
+                                                required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12" style="margin-top: 10px; margin-bottom: 20px;">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-3 text-end">
+                                            <label for="marca_v" class="form-label mb-0"></label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <button type="submit" class="btn btn-success btn-sm"><span
+                                                    id="btn_tipo">Guardar</span></button>
+                                            <button type="button" class="btn btn-warning btn-sm"
+                                                onclick="cancelarTipo()">Cancelar</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </form>
+
+                            <table class="table table-bordered" id="tablaTipoVehiculo">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Tipo</th>
+                                        <th>Valor</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="documentopdf" tabindex="-1" aria-labelledby="ContribuyenteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                @csrf
+                <div class="modal-body">
+                <div class="row">
+                        <div class="col-sm-12 col-xs-11 "style="height: auto ">
+                                <iframe width="100%" height="500" frameborder="0"id="iframePdf"></iframe>
+                                    <p style="color: #747373;font-size:15px"></p>
+                            </div>
+                        </div>
+                </div>
+                <div class="modal-footer"> 
+                    <center>
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" >Salir</button>
+                            <a href=""id="vinculo"><button  type="button" id="descargar"class="btn btn-primary"><i class="fa fa-mail"></i> Descargar</button> </a>                                 
+                    </center>               
+                </div>
             </div>
         </div>
     </div>
 
 
 
+
 @endsection
 @push('scripts')
-<script>
-    let token = "{{csrf_token()}}";
-    document.getElementById('vehiculo_id').addEventListener('keypress', function(event) {
-        // Verificar si la tecla presionada es 'Enter' (keyCode 13)
-        if (event.key === 'Enter') {
-            // Obtener el valor del input
-            event.preventDefault();
-            let query = event.target.value;
-            const spinner = document.getElementById('spinner');
-            spinner.style.display = 'inline-block';
-            let chasis = document.getElementById('chasis');
-            let tipo = document.getElementById('tipo');
-            let year_modelo = document.getElementById('year_modelo');
-            let avaluo = document.getElementById('avaluo');
-            let marca = document.getElementById('marca');
-            let vehiculo_id_2 = document.getElementById('vehiculo_id_2');
+    <script>
+        let token = "{{csrf_token()}}";
+        document.getElementById('vehiculo_id').addEventListener('keypress', function (event) {
+            // Verificar si la tecla presionada es 'Enter' (keyCode 13)
+            if (event.key === 'Enter') {
+                // Obtener el valor del input
+                event.preventDefault();
+                let query = event.target.value;
+                const spinner = document.getElementById('spinner');
+                spinner.style.display = 'inline-block';
+                let chasis = document.getElementById('chasis');
+                let tipo = document.getElementById('tipo');
+                let year_modelo = document.getElementById('year_modelo');
+                let avaluo = document.getElementById('avaluo');
+                let marca = document.getElementById('marca');
+                let vehiculo_id_2 = document.getElementById('vehiculo_id_2');
 
 
-            // Asegurarte que no esté vacío
-            if (query.trim() !== '') {
-                axios.post('{{route('get.placa.transitovehiculo')}}', {
-                    _token: token,
-                    query:query
-                    }).then(function(res) {
+                // Asegurarte que no esté vacío
+                if (query.trim() !== '') {
+                    axios.post('{{route('get.placa.transitovehiculo')}}', {
+                        _token: token,
+                        query: query
+                    }).then(function (res) {
                         //propietario.value = res.data.ci_ruc;
-                        if(res.status == 200)
-                        {
+                        if (res.status == 200) {
                             chasis.value = res.data.chasis ?? 'S/N';
                             tipo.value = res.data.Tipo ?? 'S/N';
                             year_modelo.value = res.data.year ?? 'S/N';
@@ -426,12 +689,12 @@
                         }
                         //propietario.focus();
                         spinner.style.display = 'none';
-                    }).catch(function(err) {
+                    }).catch(function (err) {
 
-                        if(err.request.status == 500){
+                        if (err.request.status == 500) {
                             console.log('error al consultar al servidor');
                         }
-                        if(err.request.status == 404){
+                        if (err.request.status == 404) {
                             let errorResponseS = JSON.parse(err.request.response);
 
                             chasis.value = errorResponseS.message;
@@ -441,42 +704,41 @@
                             marca.value = errorResponseS.message;
                             vehiculo_id_2.value = "";
                         }
-                        if(err.request.status  == 419){
+                        if (err.request.status == 419) {
                             console.log('Es posible que tu session haya caducado, vuelve a iniciar sesion');
                         }
                         spinner.style.display = 'none';
                     });
-            } else {
-                spinner.style.display = 'none';
+                } else {
+                    spinner.style.display = 'none';
+                }
             }
-        }
-    });
-    document.getElementById('cliente_id').addEventListener('keypress', function(event) {
-        // Verificar si la tecla presionada es 'Enter' (keyCode 13)
-        if (event.key === 'Enter') {
-            // Obtener el valor del input
-            event.preventDefault();
-            let query = event.target.value;
-            const spinner = document.getElementById('spinner');
-            spinner.style.display = 'inline-block';
-            let nombrescliente = document.getElementById('nombrescliente');
-            let telefonocliente = document.getElementById('telefonocliente');
-            let correocliente = document.getElementById('correocliente');
-            let direccioncliente = document.getElementById('direccioncliente');
-            let fechanacimientocliente = document.getElementById('fechanacimientocliente');
-            let cliente_id_2 = document.getElementById('cliente_id_2');
+        });
+        document.getElementById('cliente_id').addEventListener('keypress', function (event) {
+            // Verificar si la tecla presionada es 'Enter' (keyCode 13)
+            if (event.key === 'Enter') {
+                // Obtener el valor del input
+                event.preventDefault();
+                let query = event.target.value;
+                const spinner = document.getElementById('spinner');
+                spinner.style.display = 'inline-block';
+                let nombrescliente = document.getElementById('nombrescliente');
+                let telefonocliente = document.getElementById('telefonocliente');
+                let correocliente = document.getElementById('correocliente');
+                let direccioncliente = document.getElementById('direccioncliente');
+                let fechanacimientocliente = document.getElementById('fechanacimientocliente');
+                let cliente_id_2 = document.getElementById('cliente_id_2');
 
 
-            // Asegurarte que no esté vacío
-            if (query.trim() !== '') {
-                axios.post('{{route('get.cedula.transitoente')}}', {
-                    _token: token,
-                    query:query
-                    }).then(function(res) {
+                // Asegurarte que no esté vacío
+                if (query.trim() !== '') {
+                    axios.post('{{route('get.cedula.transitoente')}}', {
+                        _token: token,
+                        query: query
+                    }).then(function (res) {
                         //propietario.value = res.data.ci_ruc;
-                        if(res.status == 200)
-                        {
-                            nombrescliente.value = res.data.nombres+' '+res.data.apellidos;
+                        if (res.status == 200) {
+                            nombrescliente.value = res.data.nombres + ' ' + res.data.apellidos;
                             correocliente.value = res.data.correo ?? 'S/N';
                             telefonocliente.value = res.data.telefono ?? 'S/N';
                             direccioncliente.value = res.data.direccion ?? 'S/N';
@@ -485,12 +747,12 @@
                         }
                         //propietario.focus();
                         spinner.style.display = 'none';
-                    }).catch(function(err) {
+                    }).catch(function (err) {
 
-                        if(err.request.status == 500){
+                        if (err.request.status == 500) {
                             console.log('error al consultar al servidor');
                         }
-                        if(err.request.status == 404){
+                        if (err.request.status == 404) {
                             let errorResponse = JSON.parse(err.request.response);
                             nombrescliente.value = errorResponse.message;
                             nombrescliente.value = errorResponse.message;
@@ -498,146 +760,95 @@
                             telefonocliente.value = errorResponse.message;
                             direccioncliente.value = errorResponse.message;
                             fechanacimientocliente.value = errorResponse.message;
-                            cliente_id_2.value =  "";
+                            cliente_id_2.value = "";
                         }
-                        if(err.request.status  == 419){
+                        if (err.request.status == 419) {
                             console.log('Es posible que tu session haya caducado, vuelve a iniciar sesion');
                         }
                         spinner.style.display = 'none';
                     });
-            } else {
-                spinner.style.display = 'none';
-            }
-        }
-    });
-    document.getElementById('btn-calcular').addEventListener('click', function (e) {
-        e.preventDefault(); // Previene que el formulario se envíe si está dentro de uno
-
-        const conceptos = [];
-        const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        const vehiculo_id = document.getElementById('vehiculo_id_2').value;
-        const cliente_id = document.getElementById('cliente_id_2').value;
-        const year = document.getElementById('year_declaracion').value;
-
-        if (!vehiculo_id || !cliente_id || !year) {
-            alert('Por favor llene los campos: vehiculo, cliente y Año de impuesto');
-            return;
-        }
-
-        // Mostrar spinner en el botón
-        document.getElementById('spinner-btn').classList.remove('d-none');
-        document.getElementById('btn-text').textContent = 'Calculando...';
-
-        document.querySelectorAll('.concepto-check:checked').forEach(checkbox => {
-            const id = checkbox.getAttribute('data-id');
-            const valor = parseFloat(document.getElementById(`valor_${id}`).value) || 0;
-            conceptos.push({ id, valor });
-        });
-
-        // 2. Poner en 0.00 los NO seleccionados
-        document.querySelectorAll('.concepto-check:not(:checked)').forEach(checkbox => {
-            const id = checkbox.getAttribute('data-id');
-            const input = document.getElementById(`valor_${id}`);
-            input.value = '0.00';
-        });
-
-        if (conceptos.length > 0) {
-            const spinner = document.getElementById('spinner-total');
-            if (spinner) spinner.style.display = 'inline-block';
-
-            axios.post('{{ route("calcular.transito") }}', {
-                _token: token,
-                conceptos: conceptos,
-                vehiculo_id: vehiculo_id,
-                cliente_id: cliente_id,
-                year: year
-            }).then(function(res) {
-                if (res.status === 200) {
-                    // Reemplazar los valores en los inputs
-                    let total = 0;
-                    res.data.conceptos.forEach(function (concepto) {
-                        const input = document.getElementById('valor_' + concepto.id);
-                        if (input) {
-                            input.value = concepto.nuevo_valor.toFixed(2);
-                            total += parseFloat(concepto.nuevo_valor);
-                        }
-                    });
-                    // Mostrar el total con dos decimales
-                    document.getElementById('total_concepto').value = total.toFixed(2);
-                    console.log(total);
-                }
-                if (spinner) spinner.style.display = 'none';
-            }).catch(function(err) {
-                if (err.request.status === 500) {
-                    console.log('Error al consultar al servidor.');
-                }
-                if (err.request.status === 419) {
-                    console.log('Sesión caducada, vuelve a iniciar sesión.');
-                }
-                if (spinner) spinner.style.display = 'none';
-            }).finally(function () {
-                // Aquí se detiene el spinner y se restaura el texto del botón
-                document.getElementById('spinner-btn').classList.add('d-none');
-                document.getElementById('btn-text').textContent = 'Calcular';
-            });;
-        } else {
-            alert('Selecciona al menos un concepto para calcular.');
-        }
-    });
-
-    document.getElementById('btn-guardar').addEventListener('click', function () {
-        // limpiar errores
-        ['vehiculo_id', 'cliente_id', 'year_declaracion'].forEach(id => {
-            const input = document.getElementById(id);
-            const errorDiv = document.getElementById('error_' + id);
-
-            if (input) {
-                input.addEventListener('input', limpiarError);
-                input.addEventListener('change', limpiarError); // para tipo number y selects
-
-                function limpiarError() {
-                    input.classList.remove('is-invalid');
-                    if (errorDiv) errorDiv.textContent = '';
+                } else {
+                    spinner.style.display = 'none';
                 }
             }
         });
-        const vehiculo_id_2 = document.getElementById('vehiculo_id_2').value;
-        const cliente_id_2 = document.getElementById('cliente_id_2').value;
-        const year_declaracion = document.getElementById('year_declaracion').value;
-        const btn = document.getElementById('btn-guardar');
-        const spinner = btn.querySelector('.spinner-border');
-        btn.disabled = true;
-        spinner.classList.remove('d-none');
+        document.getElementById('btn-calcular').addEventListener('click', function (e) {
+            e.preventDefault(); // Previene que el formulario se envíe si está dentro de uno
 
-        const conceptosSeleccionados = [];
+            const conceptos = [];
+            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            const vehiculo_id = document.getElementById('vehiculo_id_2').value;
+            const cliente_id = document.getElementById('cliente_id_2').value;
+            const year = document.getElementById('year_declaracion').value;
 
-        document.querySelectorAll('.concepto-check:checked').forEach(function (checkbox) {
-            const id = checkbox.dataset.id;
-            const valor = document.getElementById('valor_' + id).value;
-            conceptosSeleccionados.push({
-                id: id,
-                valor: valor
+            if (!vehiculo_id || !cliente_id || !year) {
+                alert('Por favor llene los campos: vehiculo, cliente y Año de impuesto');
+                return;
+            }
+
+            // Mostrar spinner en el botón
+            document.getElementById('spinner-btn').classList.remove('d-none');
+            document.getElementById('btn-text').textContent = 'Calculando...';
+
+            document.querySelectorAll('.concepto-check:checked').forEach(checkbox => {
+                const id = checkbox.getAttribute('data-id');
+                const valor = parseFloat(document.getElementById(`valor_${id}`).value) || 0;
+                conceptos.push({ id, valor });
             });
+
+            // 2. Poner en 0.00 los NO seleccionados
+            document.querySelectorAll('.concepto-check:not(:checked)').forEach(checkbox => {
+                const id = checkbox.getAttribute('data-id');
+                const input = document.getElementById(`valor_${id}`);
+                input.value = '0.00';
+            });
+
+            if (conceptos.length > 0) {
+                const spinner = document.getElementById('spinner-total');
+                if (spinner) spinner.style.display = 'inline-block';
+
+                axios.post('{{ route("calcular.transito") }}', {
+                    _token: token,
+                    conceptos: conceptos,
+                    vehiculo_id: vehiculo_id,
+                    cliente_id: cliente_id,
+                    year: year
+                }).then(function (res) {
+                    if (res.status === 200) {
+                        // Reemplazar los valores en los inputs
+                        let total = 0;
+                        res.data.conceptos.forEach(function (concepto) {
+                            const input = document.getElementById('valor_' + concepto.id);
+                            if (input) {
+                                input.value = concepto.nuevo_valor.toFixed(2);
+                                total += parseFloat(concepto.nuevo_valor);
+                            }
+                        });
+                        // Mostrar el total con dos decimales
+                        document.getElementById('total_concepto').value = total.toFixed(2);
+                        console.log(total);
+                    }
+                    if (spinner) spinner.style.display = 'none';
+                }).catch(function (err) {
+                    if (err.request.status === 500) {
+                        console.log('Error al consultar al servidor.');
+                    }
+                    if (err.request.status === 419) {
+                        console.log('Sesión caducada, vuelve a iniciar sesión.');
+                    }
+                    if (spinner) spinner.style.display = 'none';
+                }).finally(function () {
+                    // Aquí se detiene el spinner y se restaura el texto del botón
+                    document.getElementById('spinner-btn').classList.add('d-none');
+                    document.getElementById('btn-text').textContent = 'Calcular';
+                });;
+            } else {
+                alert('Selecciona al menos un concepto para calcular.');
+            }
         });
 
-        // Validación simple: debe haber al menos uno
-        if (conceptosSeleccionados.length === 0) {
-            alert('Debes seleccionar al menos un concepto.');
-             // En el then o catch
-             btn.disabled = false;
-            spinner.classList.add('d-none');
-            return;
-        }
-
-        axios.post('{{ route("store.transito") }}', {
-            _token: '{{ csrf_token() }}',
-            conceptos: conceptosSeleccionados,
-            vehiculo_id_2: vehiculo_id_2,
-            cliente_id_2: cliente_id_2,
-            year_declaracion: year_declaracion
-        })
-        .then(function (res) {
-             // limpiar errores
+        document.getElementById('btn-guardar').addEventListener('click', function () {
+            // limpiar errores
             ['vehiculo_id', 'cliente_id', 'year_declaracion'].forEach(id => {
                 const input = document.getElementById(id);
                 const errorDiv = document.getElementById('error_' + id);
@@ -652,142 +863,205 @@
                     }
                 }
             });
-            if(res.status == 200)
-            {
+            const vehiculo_id_2 = document.getElementById('vehiculo_id_2').value;
+            const cliente_id_2 = document.getElementById('cliente_id_2').value;
+            const year_declaracion = document.getElementById('year_declaracion').value;
+            const btn = document.getElementById('btn-guardar');
+            const spinner = btn.querySelector('.spinner-border');
+            btn.disabled = true;
+            spinner.classList.remove('d-none');
 
-                const id = res.data.id;
-                window.location.href = `/transito/previsualizar/${id}`; // Laravel buscará esta ruta con el id
+            const conceptosSeleccionados = [];
 
+            document.querySelectorAll('.concepto-check:checked').forEach(function (checkbox) {
+                const id = checkbox.dataset.id;
+                const valor = document.getElementById('valor_' + id).value;
+                conceptosSeleccionados.push({
+                    id: id,
+                    valor: valor
+                });
+            });
+
+            // Validación simple: debe haber al menos uno
+            if (conceptosSeleccionados.length === 0) {
+                alert('Debes seleccionar al menos un concepto.');
+                // En el then o catch
+                btn.disabled = false;
+                spinner.classList.add('d-none');
+                return;
             }
-            console.log(res);
-           // console.log(response.data.id)
-            //const id = response.data.id; // Suponiendo que el id está en la respuesta
-            // Redirigir a la página con el id obtenido
-            //window.location.href = `/transito/previsualizar/${id}`; // Laravel buscará esta ruta con el id
-        })
-        .catch(function (err) {
-            if (err.response && err.response.status === 422) {
-                const errores = err.response.data.errors;
 
-                // Mapear campos internos a visibles
-                const campoVisible = {
-                    vehiculo_id_2: 'vehiculo_id',
-                    cliente_id_2: 'cliente_id',
-                    year_declaracion: 'year_declaracion',
-                };
+            axios.post('{{ route("store.transito") }}', {
+                _token: '{{ csrf_token() }}',
+                conceptos: conceptosSeleccionados,
+                vehiculo_id_2: vehiculo_id_2,
+                cliente_id_2: cliente_id_2,
+                year_declaracion: year_declaracion
+            })
+                .then(function (res) {
+                    // limpiar errores
+                    ['vehiculo_id', 'cliente_id', 'year_declaracion'].forEach(id => {
+                        const input = document.getElementById(id);
+                        const errorDiv = document.getElementById('error_' + id);
 
-                Object.keys(errores).forEach(function (campo) {
-                    const visibleCampo = campoVisible[campo] || campo;
-                    const input = document.getElementById(visibleCampo);
-                    const errorDiv = document.getElementById('error_' + visibleCampo);
+                        if (input) {
+                            input.addEventListener('input', limpiarError);
+                            input.addEventListener('change', limpiarError); // para tipo number y selects
 
-                    if (input && errorDiv) {
-                        input.classList.add('is-invalid');
-                        errorDiv.textContent = errores[campo][0];
+                            function limpiarError() {
+                                input.classList.remove('is-invalid');
+                                if (errorDiv) errorDiv.textContent = '';
+                            }
+                        }
+                    });
+                    if (res.status == 200) {
+
+                        const id = res.data.id;
+                        // window.location.href = `/transito/previsualizar/${id}`; // Laravel buscará esta ruta con el id
+
+                        generarPdf(id)
+
+                    }
+                    console.log(res);
+                    // console.log(response.data.id)
+                    //const id = response.data.id; // Suponiendo que el id está en la respuesta
+                    // Redirigir a la página con el id obtenido
+                    //window.location.href = `/transito/previsualizar/${id}`; // Laravel buscará esta ruta con el id
+                })
+                .catch(function (err) {
+                    if (err.response && err.response.status === 422) {
+                        const errores = err.response.data.errors;
+
+                        // Mapear campos internos a visibles
+                        const campoVisible = {
+                            vehiculo_id_2: 'vehiculo_id',
+                            cliente_id_2: 'cliente_id',
+                            year_declaracion: 'year_declaracion',
+                        };
+
+                        Object.keys(errores).forEach(function (campo) {
+                            const visibleCampo = campoVisible[campo] || campo;
+                            const input = document.getElementById(visibleCampo);
+                            const errorDiv = document.getElementById('error_' + visibleCampo);
+
+                            if (input && errorDiv) {
+                                input.classList.add('is-invalid');
+                                errorDiv.textContent = errores[campo][0];
+                            }
+                        });
+
+                    } else {
+                        alert('Error al guardar los datos.');
+                    }
+                })
+                .finally(function () {
+                    // En el then o catch
+                    btn.disabled = false;
+                    spinner.classList.add('d-none');
+                });
+        });
+        document.getElementById('vehiculoForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // Limpiar errores previos
+            //document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            //document.querySelectorAll('.invalid-feedback').forEach(el => el.innerText = '');
+            // Limpiar errores anteriores
+            document.querySelectorAll('.invalid-feedback').forEach(el => el.innerText = '');
+            document.querySelectorAll('.form-control, .form-select').forEach(el => el.classList.remove('is-invalid'));
+
+            /* const formData = {
+                 placa_v: document.getElementById('placa_v').value,
+                 chasis_v: document.getElementById('chasis_v').value,
+                 avaluo_v: document.getElementById('avaluo_v').value,
+                 year_v: document.getElementById('year_v').value,
+                 marca_v: document.getElementById('marca_v').value,
+                 tipo_v: document.getElementById('tipo_v').value
+             };*/
+            const formData = new FormData(this);
+
+            axios.post('{{ route("store.vehiculo") }}', formData)
+                .then(response => {
+                    alert('Vehículo registrado correctamente');
+                    document.getElementById('vehiculoForm').reset();
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('vehiculoModal'));
+                    modal.hide();
+                })
+                .catch(error => {
+                    if (error.response.status === 422) {
+                        const errors = error.response.data.errors;
+                        for (let field in errors) {
+                            const input = document.getElementById(field);
+                            const errorDiv = document.getElementById(`error-${field}`);
+                            if (input) input.classList.add('is-invalid');
+                            if (errorDiv) errorDiv.innerText = errors[field][0];
+                        }
                     }
                 });
-
-            } else {
-                alert('Error al guardar los datos.');
-            }
-        })
-        .finally(function () {
-            // En el then o catch
-            btn.disabled = false;
-            spinner.classList.add('d-none');
         });
-    });
-    document.getElementById('vehiculoForm').addEventListener('submit', function (e) {
-        e.preventDefault();
+        function guardarPersona() {
+            const form = document.getElementById('formPersona');
+            const formData = new FormData(form);
 
-        // Limpiar errores previos
-        //document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
-        //document.querySelectorAll('.invalid-feedback').forEach(el => el.innerText = '');
-        // Limpiar errores anteriores
-    document.querySelectorAll('.invalid-feedback').forEach(el => el.innerText = '');
-    document.querySelectorAll('.form-control, .form-select').forEach(el => el.classList.remove('is-invalid'));
+            // Limpiar errores previos
+            form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            form.querySelectorAll('.invalid-feedback').forEach(el => el.innerText = '');
 
-       /* const formData = {
-            placa_v: document.getElementById('placa_v').value,
-            chasis_v: document.getElementById('chasis_v').value,
-            avaluo_v: document.getElementById('avaluo_v').value,
-            year_v: document.getElementById('year_v').value,
-            marca_v: document.getElementById('marca_v').value,
-            tipo_v: document.getElementById('tipo_v').value
-        };*/
-        const formData = new FormData(this);
-
-        axios.post('{{ route("store.vehiculo") }}', formData)
-            .then(response => {
-                alert('Vehículo registrado correctamente');
-                document.getElementById('vehiculoForm').reset();
-                const modal = bootstrap.Modal.getInstance(document.getElementById('vehiculoModal'));
-                modal.hide();
-            })
-            .catch(error => {
-                if (error.response.status === 422) {
-                    const errors = error.response.data.errors;
-                    for (let field in errors) {
-                        const input = document.getElementById(field);
-                        const errorDiv = document.getElementById(`error-${field}`);
-                        if (input) input.classList.add('is-invalid');
-                        if (errorDiv) errorDiv.innerText = errors[field][0];
+            axios.post('{{ route("store.ente.sgmapp") }}', formData)
+                .then(response => {
+                    console.log(response)
+                     console.log(response.data)
+                    if(response.status==500){
+                        alertNotificar(response.data.message,"error")
+                        return
                     }
-                }
-            });
-    });
-    function guardarPersona() {
-        const form = document.getElementById('formPersona');
-        const formData = new FormData(form);
-
-        // Limpiar errores previos
-        form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
-        form.querySelectorAll('.invalid-feedback').forEach(el => el.innerText = '');
-
-        axios.post('{{ route("store.ente.sgmapp") }}', formData)
-            .then(response => {
-                alert('Persona registrada correctamente');
-                document.getElementById('formPersona').reset();
-                const modal2Element = document.getElementById('modalCrearEnte');
-                const modal2 = bootstrap.Modal.getInstance(modal2Element) || new bootstrap.Modal(modal2Element);
-                modal2.hide();
-            })
-            .catch(error => {
-            console.log(error.response);
-                if (error.response && error.response.status === 422) {
-                    const errores = error.response.data.errors;
-                    for (const campo in errores) {
-                    const input = document.getElementById(campo);
-                    const errorDiv = document.getElementById(`error-${campo}`);
-                    if (input) {
-                        input.classList.add('is-invalid');
+                    alert('Persona registrada correctamente');
+                    document.getElementById('formPersona').reset();
+                    const modal2Element = document.getElementById('modalCrearEnte');
+                    const modal2 = bootstrap.Modal.getInstance(modal2Element) || new bootstrap.Modal(modal2Element);
+                    modal2.hide();
+                })
+                .catch(error => {
+                    console.log(error.response);
+                    if(error.response.data.error==true){
+                        alertNotificar(error.response.data.message,"error")
+                        return                    }
+                 
+                    if (error.response && error.response.status === 422) {
+                        const errores = error.response.data.errors;
+                        for (const campo in errores) {
+                            const input = document.getElementById(campo);
+                            const errorDiv = document.getElementById(`error-${campo}`);
+                            if (input) {
+                                input.classList.add('is-invalid');
+                            }
+                            if (errorDiv) {
+                                errorDiv.innerText = errores[campo][0];
+                            }
+                        }
                     }
-                    if (errorDiv) {
-                        errorDiv.innerText = errores[campo][0];
-                    }
-                    }
-                }
-        });
-    }
-    function habilitarFila(id) {
-        document.getElementById(`desde-${id}`).disabled = false;
-        document.getElementById(`hasta-${id}`).disabled = false;
-        document.getElementById(`valor-${id}`).disabled = false;
-
-        document.getElementById(`guardar-btn-${id}`).classList.remove('d-none');
-    }
-    document.getElementById('es_persona').addEventListener('change', function () {
-        const tipo = this.value;
-        const labelNombres = document.getElementById('label-nombres');
-        const labelApellidos = document.getElementById('label-apellidos');
-
-        if (tipo == 0) {
-            labelNombres.textContent = 'Razón Social *';
-            labelApellidos.textContent = 'Nombre Comercial *';
-        } else {
-            labelNombres.textContent = 'Nombres *';
-            labelApellidos.textContent = 'Apellidos *';
+                });
         }
-    });
-</script>
+        function habilitarFila(id) {
+            document.getElementById(`desde-${id}`).disabled = false;
+            document.getElementById(`hasta-${id}`).disabled = false;
+            document.getElementById(`valor-${id}`).disabled = false;
+
+            document.getElementById(`guardar-btn-${id}`).classList.remove('d-none');
+        }
+        document.getElementById('es_persona').addEventListener('change', function () {
+            const tipo = this.value;
+            const labelNombres = document.getElementById('label-nombres');
+            const labelApellidos = document.getElementById('label-apellidos');
+
+            if (tipo == 0) {
+                labelNombres.textContent = 'Razón Social *';
+                labelApellidos.textContent = 'Nombre Comercial *';
+            } else {
+                labelNombres.textContent = 'Nombres *';
+                labelApellidos.textContent = 'Apellidos *';
+            }
+        });
+    </script>
+    <script src="{{ asset('js/transito/impuesto.js?v=' . rand())}}"></script>
 @endpush

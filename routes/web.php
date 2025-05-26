@@ -202,6 +202,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('transitovehiculo/placa', [TransitoVehiculoController::class, 'getVehiculoPlaca'])->name('get.placa.transitovehiculo');
 
     Route::post('vehiculos', [TransitoVehiculoController::class, 'store'])->name('store.vehiculo');
+    Route::get('llenar-tabla-rango', [TransitoImpuestoController::class, 'tablaRango'])->name('tablaRango.transito');
+    Route::post('guardar-rango', [TransitoImpuestoController::class, 'guardarRango'])->name('guardarRango.transito');
+    Route::put('actualizar-rango/{id}', [TransitoImpuestoController::class, 'actualizarRango'])->name('guardarRango.transito');
+
+    Route::get('llenar-tabla-marca', [TransitoImpuestoController::class, 'tablaMarca'])->name('tablaMarca.transito');
+    Route::post('guardar-marca', [TransitoImpuestoController::class, 'guardarMarca'])->name('guardarMarca.transito');
+    Route::put('actualizar-marca/{id}', [TransitoImpuestoController::class, 'actualizarMarca'])->name('actualizarMarca.transito');
+    Route::get('eliminar-marca/{id}', [TransitoImpuestoController::class, 'eliminaMarca'])->name('eliminaMarca.transito');
+
+    Route::get('llenar-tabla-tipo', [TransitoImpuestoController::class, 'tablaTipo'])->name('tablaTipo.transito');
+    Route::post('guardar-tipo', [TransitoImpuestoController::class, 'guardarTipo'])->name('guardarTipo.transito');
+    Route::put('actualizar-tipo/{id}', [TransitoImpuestoController::class, 'actualizarTipo'])->name('actualizarTipo.transito');
+    Route::get('eliminar-tipo/{id}', [TransitoImpuestoController::class, 'eliminaTipo'])->name('eliminaTipo.transito');
+
+    Route::get('carga-info-persona/{ci}', [TransitoImpuestoController::class, 'infoPersona'])->name('infoPersona.transito');
+    Route::get('transito-imprimir/{id}', [TransitoImpuestoController::class, 'pdfTransito'])->name('pdfTransito.transito');
 
     Route::get('analitica/contribuyente', [AnaliticaContribuyenteController::class, 'index'])->name('analitica.contribuyente');
     Route::get('analitica/predios', [AnaliticaContribuyenteController::class, 'predios'])->name('analitica.predios');
