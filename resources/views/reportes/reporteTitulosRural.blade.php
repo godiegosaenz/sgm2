@@ -18,12 +18,12 @@
             vertical-align: middle;
         }
         .cabecera .logo {
-            width: 30%;
+            width: 20%;
             text-align: left;
         }
         .cabecera .encabezado {
-            width: 70%;
-            text-align: center;
+            width: 80%;
+            text-align: left;
             font-size: 14px;
             font-weight: bold;
         }
@@ -111,7 +111,7 @@
                     
                 </td>
             </tr>
-            <tr>
+            <tr style="line-height: 20px;">
                 <td colspan="3" style="border: 1px solid #000; border-left:0px; border-bottom:0px; border-right:0px;width:45%">
                 </td>
             </tr>
@@ -266,7 +266,7 @@
         </table>
 
         </table>
-        <center><b>Fecha Impresion:</b><br>
+        <center><b>Fecha Impresion:</b> {{ $fecha_formateada }}<br>
         <b>Ley Coa Aticulo 268</b></center>
         <br>
         <br>
@@ -276,10 +276,14 @@
         <hr style="border:Dotted;"/>
         <br>
         <br>
+
+        @php
+            $sumatotal = $sumatotal + $d[0]->total_pagar;
+        @endphp
        
-    @endforeach
+    @endforeach 
     
-    <h2 style="text-align: center">TOTAL DE TÍTULO DE CRÉDITO: <span class="badge text-bg-secondary"></span></h2>
+    <h2 style="text-align: center">TOTAL DE TÍTULO DE CRÉDITO: <span class="badge text-bg-secondary">{{$sumatotal}};</span></h2>
     <p>CONCEPTO POR EL CUAL SE EMITE: PAGO DE IMPUESTO PREDIAL VENCIDO.
         EL VALOR TOTAL DEL TÍTULO DE CRÉDITO CAUSARÁ EL INTERES RESPECTIVO A PARTIR DE LA FECHA DE
         NOTIFICACIÓN SEGÚN LO EXPUESTO Y CONFORME LO ESTABLECE EL ART. 265 DEL COA LIQUIDACIÓN DE
