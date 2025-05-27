@@ -80,7 +80,7 @@ class RemisionInteresController extends Controller
             ];
 
             $reglas = [
-                'num_resolucion' => 'required|max:30',
+                'num_resolucion' => 'required|max:3000',
                 'ruta_resolucion' => 'required|file|mimes:pdf|max:2048',
                 'observacion' => 'required',
                 'tipo' => 'required',

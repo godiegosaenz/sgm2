@@ -46,61 +46,60 @@ class TransitoImpuestoController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-{
-    $entes = TransitoEnte::all();
-    $vehiculos = TransitoVehiculo::all();
-    $conceptos = TransitoConcepto::all();
-    $year = TransitoYearImpuesto::all();
-    $marcas = TransitoMarca::where('estado','A')->get();
-    $tipo_vehiculo = TransitoTipoVehiculo::where('estado','A')->get();
-    $rangos = TransitoTarifaAnual::all();
-    return view('transito.impuestos', compact('entes', 'vehiculos', 'conceptos','year','tipo_vehiculo','marcas','rangos'));
-}
-
-public function store(Request $request)
-{
-    $validator = Validator::make($request->all(), [
-        'conceptos' => 'required|array|min:1',
-        'conceptos.*.id' => 'required',
-        'conceptos.*.valor' => 'required|numeric|min:0',
-        'vehiculo_id_2' => 'required',
-        'cliente_id_2' => 'required',
-        'year_declaracion' => 'required'
-    ]);
-
-    if ($validator->fails()) {
-        return response()->json([
-            'errors' => $validator->errors()
-        ], 422);
+    public function create(){
+        $entes = TransitoEnte::all();
+        $vehiculos = TransitoVehiculo::all();
+        $conceptos = TransitoConcepto::all();
+        $year = TransitoYearImpuesto::all();
+        $marcas = TransitoMarca::where('estado','A')->get();
+        $tipo_vehiculo = TransitoTipoVehiculo::where('estado','A')->get();
+        $rangos = TransitoTarifaAnual::all();
+        return view('transito.impuestos', compact('entes', 'vehiculos', 'conceptos','year','tipo_vehiculo','marcas','rangos'));
     }
 
-    $TransitoImpuesto = new TransitoImpuesto();
-
-    $TransitoImpuesto->year_impuesto = $request->year_declaracion;
-    $TransitoImpuesto->cat_ente_id = $request->cliente_id_2;
-    $TransitoImpuesto->vehiculo_id = $request->vehiculo_id_2;
-    $TransitoImpuesto->estado = 1; //estado 1 = pagado
-    $TransitoImpuesto->usuario = Auth()->user()->name; //estado 1 = pagado
-    $TransitoImpuesto->save();
-
-    $total = 0;
-    foreach ($request->conceptos as $concepto) {
-        TransitoImpuestoConcepto::create([
-            'concepto_id' => $concepto['id'],
-            'impuesto_matriculacion_id' => $TransitoImpuesto->id,
-            'valor' => $concepto['valor'],
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'conceptos' => 'required|array|min:1',
+            'conceptos.*.id' => 'required',
+            'conceptos.*.valor' => 'required|numeric|min:0',
+            'vehiculo_id_2' => 'required',
+            'cliente_id_2' => 'required',
+            'year_declaracion' => 'required'
         ]);
-        $total += $concepto['valor'];
+
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $TransitoImpuesto = new TransitoImpuesto();
+
+        $TransitoImpuesto->year_impuesto = $request->year_declaracion;
+        $TransitoImpuesto->cat_ente_id = $request->cliente_id_2;
+        $TransitoImpuesto->vehiculo_id = $request->vehiculo_id_2;
+        $TransitoImpuesto->estado = 1; //estado 1 = pagado
+        $TransitoImpuesto->usuario = Auth()->user()->name; //estado 1 = pagado
+        $TransitoImpuesto->save();
+
+        $total = 0;
+        foreach ($request->conceptos as $concepto) {
+            TransitoImpuestoConcepto::create([
+                'concepto_id' => $concepto['id'],
+                'impuesto_matriculacion_id' => $TransitoImpuesto->id,
+                'valor' => $concepto['valor'],
+            ]);
+            $total += $concepto['valor'];
+        }
+
+        // Ahora actualizas el total
+        $TransitoImpuesto->numero_titulo = 'TR-'.str_pad($TransitoImpuesto->id, 5, '0', STR_PAD_LEFT).'-'.$TransitoImpuesto->year_impuesto;
+        $TransitoImpuesto->total_pagar = $total;
+        $TransitoImpuesto->save();
+
+        return response()->json(['success' => true, 'id' => $TransitoImpuesto->id]);
     }
-
-    // Ahora actualizas el total
-    $TransitoImpuesto->numero_titulo = 'TR-'.str_pad($TransitoImpuesto->id, 5, '0', STR_PAD_LEFT).'-'.$TransitoImpuesto->year_impuesto;
-    $TransitoImpuesto->total_pagar = $total;
-    $TransitoImpuesto->save();
-
-    return response()->json(['success' => true, 'id' => $TransitoImpuesto->id]);
-}
 
     /**
      * Display the specified resource.
@@ -112,30 +111,6 @@ public function store(Request $request)
         $cliente = $TransitoImpuesto->cliente;
         $transitoimpuestoconcepto = $TransitoImpuesto->conceptos;
         return view('transito.impuestos_show', compact('TransitoImpuesto','transitoimpuestoconcepto','vehiculo','cliente'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
     }
 
     public function calcular(Request $request){
@@ -158,13 +133,18 @@ public function store(Request $request)
                     $query->where('hasta', '>=', $avaluo)
                           ->orWhereNull('hasta'); // Para el caso de "En adelante"
                 })
+                ->where('anio',date('Y'))
                 ->first();
+            // dd($tarifa);
 
             $clasetipo = TransitoClaseTipo::where('id', $vehiculo->tipo_clase_id)->first();
             $valortipoclase = $clasetipo->valor;
         }
-        $tarifaAnual = $tarifa->valor;
-
+        $tarifaAnual=0;
+        // if(!is_null($tarifa)){
+        //     $tarifaAnual = $tarifa->valor;
+        // }
+        //  $tarifaAnual = $tarifa->valor;
         // Simulación de cálculo: aquí puedes aplicar lógica propia
         $nuevosConceptos = collect($conceptos)->map(function ($item) use ($tarifaAnual,$valortipoclase,$tasaAdministrativa,$tasaStickerVehicular,$tasaDuplicadoEspecie) {
             // verificas cada concepto y colocas el valor
@@ -265,6 +245,7 @@ public function store(Request $request)
         
             $info=DB::connection('pgsql')->table('sgm_transito.tarifa_anual')
             ->where('estado','A')
+            ->where('anio',date('Y'))
             ->orderBy('desde','asc')
             ->get();
 
