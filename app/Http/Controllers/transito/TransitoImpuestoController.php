@@ -49,7 +49,7 @@ class TransitoImpuestoController extends Controller
     public function create(){
         $entes = TransitoEnte::all();
         $vehiculos = TransitoVehiculo::all();
-        $conceptos = TransitoConcepto::all();
+        $conceptos = TransitoConcepto::where('anio',date('Y'))->orderby('orden','asc')->WHERE('estado','A')->get();
         $year = TransitoYearImpuesto::all();
         $marcas = TransitoMarca::where('estado','A')->get();
         $tipo_vehiculo = TransitoTipoVehiculo::where('estado','A')->get();
@@ -113,7 +113,8 @@ class TransitoImpuestoController extends Controller
         return view('transito.impuestos_show', compact('TransitoImpuesto','transitoimpuestoconcepto','vehiculo','cliente'));
     }
 
-    public function calcular(Request $request){
+    public function calcular1(Request $request){
+       
         $conceptos = $request->input('conceptos', []);
         $vehiculo = TransitoVehiculo::where('id',$request->input('vehiculo_id'))->first();
         $DatosTasaAdministrativa = TransitoConcepto::find(5);
@@ -133,17 +134,17 @@ class TransitoImpuestoController extends Controller
                     $query->where('hasta', '>=', $avaluo)
                           ->orWhereNull('hasta'); // Para el caso de "En adelante"
                 })
-                ->where('anio',date('Y'))
+                ->where('anio',$request->year)
                 ->first();
-            // dd($tarifa);
-
+           
             $clasetipo = TransitoClaseTipo::where('id', $vehiculo->tipo_clase_id)->first();
+            // dd($clasetipo);
             $valortipoclase = $clasetipo->valor;
         }
         $tarifaAnual=0;
-        // if(!is_null($tarifa)){
-        //     $tarifaAnual = $tarifa->valor;
-        // }
+        if(!is_null($tarifa)){
+            $tarifaAnual = $tarifa->valor;
+        }
         //  $tarifaAnual = $tarifa->valor;
         // Simulación de cálculo: aquí puedes aplicar lógica propia
         $nuevosConceptos = collect($conceptos)->map(function ($item) use ($tarifaAnual,$valortipoclase,$tasaAdministrativa,$tasaStickerVehicular,$tasaDuplicadoEspecie) {
@@ -185,6 +186,73 @@ class TransitoImpuestoController extends Controller
         ]);
     }
 
+    public function calcular(Request $request){
+        try{
+            $conceptos = $request->input('conceptos', []);
+            // dd($conceptos['id']);
+            $vehiculo = TransitoVehiculo::where('id',$request->input('vehiculo_id'))->first();
+        
+            $tarifa = null;
+            $valortipoclase = null;
+            if ($vehiculo) {
+                $avaluo = $vehiculo->avaluo;
+                // dd($avaluo);
+
+                $tarifa = TransitoTarifaAnual::where('desde', '<=', $avaluo)
+                    ->where(function ($query) use ($avaluo) {
+                        $query->where('hasta', '>=', $avaluo)
+                            ->orWhereNull('hasta'); // Para el caso de "En adelante"
+                    })
+                    ->where('anio',$request->year)
+                    ->first();
+                // dd($tarifa);
+            
+                $clasetipo = TransitoClaseTipo::where('id', $vehiculo->tipo_clase_id)->first();
+                $valortipoclase = $clasetipo->valor;
+            }
+            $tarifaAnual=0;
+            if(!is_null($tarifa)){
+                $tarifaAnual = $tarifa->valor;
+            }
+            
+            $array=[];
+            foreach($conceptos as $data){
+                // dd($data);
+                // array_push($array, $data['id']);
+                // dd($data['id']);
+                $concepto=TransitoConcepto::where('id',$data["id"])->first();
+                if($concepto["codigo"]=="RTV"){
+                    array_push($array,["id"=>$data["id"], "nuevo_valor"=> (float)$valortipoclase]);
+                    // dd($valortipoclase);
+                }else if($concepto["codigo"]=="IAV"){
+                    array_push($array,["id"=>$data["id"], "nuevo_valor"=>(float)$tarifaAnual]);
+                }else if($concepto["codigo"]=="TSA"){
+                    array_push($array,["id"=>$data["id"], "nuevo_valor"=>(float)$concepto->valor]);
+                }else if($concepto["codigo"]=="SRV"){
+                    array_push($array,["id"=>$data["id"], "nuevo_valor"=>(float)$concepto->valor]);
+                }else if($concepto["codigo"]=="DM"){
+                    array_push($array,["id"=>$data["id"], "nuevo_valor"=>(float)$concepto->valor]);
+                }
+                
+            }
+            // dd($array);
+
+            // $concepto=TransitoConcepto::whereIN('id',$array)->get();
+            // dd($concepto);
+        
+
+            // $total = $nuevosConceptos->sum('nuevo_valor');
+            $total =1;
+            return response()->json([
+                'conceptos' => $array,
+                'total' => round($total, 2)
+            ]);
+        } catch (\Throwable $th) {
+            return ['mensaje'=>'Ocurrió un error '.$th,'error'=>true];
+        }
+
+    }
+
     public function reportetituloimpuesto(Request $r,string $id)
     {
         $dataArray = array();
@@ -221,10 +289,12 @@ class TransitoImpuestoController extends Controller
     public function datatable(Request $r)
     {
         if($r->ajax()){
-            $listaimpuesto = TransitoImpuesto::with('cliente')->get();
+            $listaimpuesto = TransitoImpuesto::with('cliente')->orderBy('id','desc')
+            ->where('estado',1)
+            ->get();
             return Datatables($listaimpuesto)
             ->addColumn('cc_ruc', function ($listaimpuesto) {
-                return $listaimpuesto->cliente->cc_ruc;
+                return $listaimpuesto->cliente->ci_ruc;
             })
             ->addColumn('contribuyente', function ($listaimpuesto) {
                 return $listaimpuesto->cliente->nombres.' '.$listaimpuesto->cliente->apellidos;
@@ -232,9 +302,17 @@ class TransitoImpuestoController extends Controller
             ->addColumn('vehiculo', function ($listaimpuesto) {
                 return $listaimpuesto->vehiculo->placa;
             })
+            // ->addColumn('action', function ($listaimpuesto) {
+            //     return '<a href="' . route('show.transito', $listaimpuesto->id) . '" class="btn btn-primary btn-sm">Imprimir</a>
+            //     <a href="' . route('show.transito', $listaimpuesto->id) . '" class="btn btn-danger btn-sm">Eliminar</a>';
+            // })
+
             ->addColumn('action', function ($listaimpuesto) {
-                return '<a href="' . route('show.transito', $listaimpuesto->id) . '" class="btn btn-primary btn-sm">Ver</a>';
+                return'
+                <a class="btn btn-primary btn-sm" onclick="generarPdf(\''.$listaimpuesto->id.'\')">Titulo</a>
+                <a class="btn btn-danger btn-sm" onclick="eliminarTitulo(\''.$listaimpuesto->id.'\')">Dar Baja</a>';
             })
+
             ->rawColumns(['action','contribuyente','vehiculo'])
             ->make(true);
         }
@@ -274,6 +352,7 @@ class TransitoImpuestoController extends Controller
             $guardaRango->hasta=$request->hasta_base;
             $guardaRango->valor=$request->valor_base;
             $guardaRango->estado='A';
+            $guardaRango->anio=date('Y');
             $guardaRango->save();
             
             return ["mensaje"=>"Informacion Guardada exitosamente", "error"=>false];
@@ -409,7 +488,24 @@ class TransitoImpuestoController extends Controller
         }
     }
 
-     public function guardarTipo(Request $request){
+     public function tablaConcepto(){
+        try {
+        
+            $info=DB::connection('pgsql')->table('sgm_transito.conceptos')
+            ->where('estado','A')
+            ->where('anio',date('Y'))
+            ->whereNotIn('codigo',['IAV','RTV'])
+            ->get();
+
+            return ["resultado"=>$info, "error"=>false];
+
+        } catch (Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+
+        }
+    }
+
+    public function guardarTipo(Request $request){
         try {
 
             $valida=TransitoTipoVehiculo::where('descripcion',$request->tipo_vehi)
@@ -585,8 +681,10 @@ class TransitoImpuestoController extends Controller
         $vehiculo =  $TransitoImpuesto->vehiculo;
         $cliente = $TransitoImpuesto->cliente;
         $transitoimpuestoconcepto = $TransitoImpuesto->conceptos;
+        $fecha_documento=$TransitoImpuesto->created_at;
+        $fecha_hoy=date('d-m-Y', strtotime($fecha_documento));
 
-        $fecha_hoy=date('Y-m-d');
+        // $fecha_hoy=date('Y-m-d');
         setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES@euro', 'es_ES', 'esp');
         $fecha_timestamp = strtotime($fecha_hoy);
         $fecha_formateada = strftime("%d de %B del %Y", $fecha_timestamp);
@@ -629,6 +727,84 @@ class TransitoImpuestoController extends Controller
         // return $pdf->stream("aa.pdf");
 
         // return $pdf->download('reporte_titulo_impuesto'.$r->id.'.pdf');
+    }
+
+    public function bajaTituloTransito(Request $request){
+        try {
+
+            $baja=TransitoImpuesto::find($request->id_impuesto);
+            $baja->observacion_baja=$request->motivo_baja;
+            $baja->idusuariobaja=auth()->user()->id;
+            $baja->fecha_baja=date('Y-m-d H:i:s');
+            $baja->estado=2;
+            $baja->save();
+
+            return ["mensaje"=>"Informacion eliminada exitosamente", "error"=>false];
+
+        } catch (Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+
+        }
+    }
+
+      public function guardarConcepto(Request $request){
+        try {
+
+            $valida=TransitoConcepto::where('concepto',$request->txt_concepto)
+            ->where('anio',date('Y'))
+            ->first();
+            if(!is_null($valida)){
+                if($valida->estado=="A"){
+                    return ["mensaje"=>"La informacion ingresada ya existe ", "error"=>true];
+                }else{
+                    $valida->concepto=$request->txt_concepto;
+                    $valida->estado='A';
+                    $valida->valor=$request->valor_concepto;
+                    $valida->save();
+                    return ["mensaje"=>"Informacion Guardada exitosamente", "error"=>false];
+                }                
+            }
+
+            $guardaConcepto= new TransitoConcepto;
+            $guardaConcepto->concepto=$request->txt_concepto;
+            $guardaConcepto->valor=$request->valor_concepto;
+            $guardaConcepto->estado='A';
+            $guardaConcepto->anio=date('Y');
+            $guardaConcepto->save();
+            
+            return ["mensaje"=>"Informacion Guardada exitosamente", "error"=>false];
+
+        } catch (Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+
+        }
+    }
+
+       public function actualizarConcepto(Request $request, $id){
+        try {
+
+            $valida=TransitoConcepto::where('concepto',$request->txt_concepto)
+            // ->where('estado','A')
+            ->where('anio',date('Y'))
+            ->where('id','!=',$id)
+            ->first();
+            if(!is_null($valida)){
+                return ["mensaje"=>"La informacion ingresada ya existe ", "error"=>true];
+            }
+
+            $actualizarConcepto= TransitoConcepto::find($id);
+            // dd($actualizarConcepto);
+            $actualizarConcepto->concepto=$request->txt_concepto;
+            $actualizarConcepto->valor=$request->valor_concepto;
+            $actualizarConcepto->estado='A';
+            $actualizarConcepto->save();
+            
+            return ["mensaje"=>"Informacion actualizada exitosamente", "error"=>false];
+
+        } catch (Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+
+        }
     }
 
     

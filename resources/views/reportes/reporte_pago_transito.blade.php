@@ -142,12 +142,12 @@
                             <td width="10%"></td>
 
                             <td width="40%" style="text-align: left;">
-                            <b>RESPONSABLE: </b>JUAN ROLANDO CEDEÑO NAVARRETE
+                            <b>RESPONSABLE: </b>{{ auth()->user()->persona->nombres }} {{ auth()->user()->persona->apellidos }}
                             </td>
                             <td width="10%"></td>
 
                             <td width="40%" style="text-align: left;">
-                                <b>FECHA DE IMPRESION:</b> 06/05/2025 14:10:00
+                                <b>FECHA DE IMPRESION:</b> {{ date('d/m/Y H:i:s') }}
                             </td>
                             
                         </tr>
@@ -155,24 +155,14 @@
                             <td width="10%"></td>
 
                             <td width="40%" style="text-align: left;">
-                                <b>DESDE:</b> 01 DE ABRIL DEL 2025
+                                <b>DESDE:</b> {{date('d-m-Y', strtotime($desde))}}
                             </td>
                             <td width="10%"></td>
 
                             <td width="40%" style="text-align: left;">
-                                <b>HASTA:</b> 21 DE ABRIL DEL 2025
+                                <b>HASTA:</b> {{date('d-m-Y', strtotime($hasta))}}
                             </td>
-
-                        <!-- <tr style="font-size: 9px;">
-                            <td colspan="6" style="text-align: left;">
-                                <b>DESDE:</b> 01 DE ABRIL DEL 2025
-                            </td>
-                            
-                            <td colspan="6" style="text-align: left;">
-                                <b>HASTA:</b> 21 DE ABRIL DEL 2025
-                            </td>
-                        </tr> -->
-                        
+                        </tr>
                     </table>
                 </center>   
                 

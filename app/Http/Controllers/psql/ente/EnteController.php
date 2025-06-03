@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\PsqlEnte;
 use App\Models\PsqlCtlgItem;
+use App\Models\PsqlEnteTelefono;
+use App\Models\PsqlEnteCorreo;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
@@ -45,54 +47,103 @@ class EnteController extends Controller
             'telefono' => 'nullable|string|max:20',
         ]);
 
-        $validaPersona=PsqlEnte::where('ci_ruc',$request->ci_ruc)
-        ->first();
+        DB::beginTransaction();
+        try{
+            $validaPersona=PsqlEnte::where('ci_ruc',$request->ci_ruc)
+            ->first();
 
-        if(!is_null($validaPersona)){
-            if($validaPersona->estado==="A"){
-                return response()->json(['message' => 'Ya existe una persona con ese numero de identificacion','error'=>true], 500);
-            }else{
-                $validaPersona->ci_ruc = $request->ci_ruc;
-                if($request->es_persona== 1)
-                {
-                    $validaPersona->nombres = strtoupper(str_replace(' ', '', $request->nombres));
-                    $validaPersona->apellidos = strtoupper(str_replace(' ', '', $request->apellidos));
-                }else
-                {
-                    $validaPersona->nombres = strtoupper(str_replace(' ', '', $request->nombres));
-                    $validaPersona->apellidos = strtoupper(str_replace(' ', '', $request->apellidos));
-                    $validaPersona->razon_social = strtoupper(str_replace(' ', '', $request->nombres));
-                    $validaPersona->nombre_comercial = strtoupper(str_replace(' ', '', $request->apellidos));
+            if(!is_null($validaPersona)){
+                if($validaPersona->estado==="A"){
+                    return response()->json(['message' => 'Ya existe una persona con ese numero de identificacion','error'=>true], 500);
+                }else{
+                    $validaPersona->ci_ruc = $request->ci_ruc;
+                    if($request->es_persona== 1)
+                    {
+                        $tipo_documento=605;
+                        $validaPersona->nombres = strtoupper(str_replace(' ', '', $request->nombres));
+                        $validaPersona->apellidos = strtoupper(str_replace(' ', '', $request->apellidos));
+                    }else
+                    {
+                        $tipo_documento=606;
+                        $validaPersona->nombres = strtoupper(str_replace(' ', ' ', $request->nombres));
+                        $validaPersona->apellidos = strtoupper(str_replace(' ', ' ', $request->apellidos));
+                        $validaPersona->razon_social = strtoupper(str_replace(' ', ' ', $request->nombres));
+                        $validaPersona->nombre_comercial = strtoupper(str_replace(' ', ' ', $request->apellidos));
+                    }
+                    $validaPersona->es_persona = $request->es_persona;
+                    $validaPersona->direccion = strtoupper(str_replace(' ', ' ', $request->direccion));
+                    $validaPersona->fecha_nacimiento = $request->fecha_nacimiento;
+                    $validaPersona->telefono = $request->telefono;
+                    $validaPersona->correo = $request->correo;
+                    $validaPersona->tipo_documento = $tipo_documento;
+
+                    $validaPersona->save();
+                    if(isset($request->es_transito)){
+                        $guardaTelefonoCorreo=$this->storeTlfEmail($request->telefono, $request->correo, $validaPersona->id);
+                    }
+                    return response()->json(['message' => 'Persona actualida correctamente'], 200);
                 }
-                $validaPersona->es_persona = $request->es_persona;
-                $validaPersona->direccion = strtoupper(str_replace(' ', '', $request->direccion));
-                $validaPersona->fecha_nacimiento = $request->fecha_nacimiento;
-
-                $validaPersona->save();
-                return response()->json(['message' => 'Persona actualida correctamente'], 200);
             }
+
+            $ente = new PsqlEnte();
+            $ente->ci_ruc = $request->ci_ruc;
+            if($request->es_persona== 1)
+            {
+                $tipo_documento=605;
+                $ente->nombres = strtoupper(str_replace(' ', ' ', $request->nombres));
+                $ente->apellidos = strtoupper(str_replace(' ', ' ', $request->apellidos));
+            }else
+            {
+                $tipo_documento=606;
+                $ente->nombres = strtoupper(str_replace(' ', ' ', $request->nombres));
+                $ente->apellidos = strtoupper(str_replace(' ', ' ', $request->apellidos));
+                $ente->razon_social = strtoupper(str_replace(' ', ' ', $request->nombres));
+                $ente->nombre_comercial = strtoupper(str_replace(' ', ' ', $request->apellidos));
+            }
+            $ente->es_persona = $request->es_persona;
+            $ente->direccion = strtoupper(str_replace(' ', '', $request->direccion));
+            $ente->fecha_nacimiento = $request->fecha_nacimiento;
+            $ente->tipo_documento = $tipo_documento;
+            
+
+            // $ente->telefono = $request->telefono;
+            // $ente->correo = $request->correo;
+            $ente->save();
+            if(isset($request->es_transito)){
+                $guardaTelefonoCorreo=$this->storeTlfEmail($request->telefono, $request->correo, $ente->id);
+            }
+
+           
+
+            return response()->json(['message' => 'Persona creada correctamente'], 200);
+        } catch (\Exception $e) {
+            // En caso de error, deshacer la transacción
+            DB::rollBack();
+
+            return redirect()->back()->withErrors('Hubo un error al actualizar el ente: ' . $e->getMessage());
         }
+    }
 
-        $ente = new PsqlEnte();
-        $ente->ci_ruc = $request->ci_ruc;
-        if($request->es_persona== 1)
-        {
-            $ente->nombres = strtoupper(str_replace(' ', '', $request->nombres));
-            $ente->apellidos = strtoupper(str_replace(' ', '', $request->apellidos));
-        }else
-        {
-            $ente->nombres = strtoupper(str_replace(' ', '', $request->nombres));
-            $ente->apellidos = strtoupper(str_replace(' ', '', $request->apellidos));
-            $ente->razon_social = strtoupper(str_replace(' ', '', $request->nombres));
-            $ente->nombre_comercial = strtoupper(str_replace(' ', '', $request->apellidos));
+    public function storeTlfEmail($telefono, $correo, $id){
+        try{
+            $verificaTlfo=PsqlEnteTelefono::where('ente',$id)->delete();
+            $verificaCorreo=PsqlEnteCorreo::where('ente',$id)->delete();
+
+            $guardaTlfo=new PsqlEnteTelefono();
+            $guardaTlfo->telefono=$telefono;
+            $guardaTlfo->ente=$id;
+            $guardaTlfo->save();
+
+            $guardaCorreo=new PsqlEnteCorreo();
+            $guardaCorreo->email=$correo;
+            $guardaCorreo->ente=$id;
+            $guardaCorreo->save();
+
+            return ["error"=>false];
+        } catch (\Exception $e) {
+          
+            return ["error"=>true];
         }
-        $ente->es_persona = $request->es_persona;
-        $ente->direccion = strtoupper(str_replace(' ', '', $request->direccion));
-        $ente->fecha_nacimiento = $request->fecha_nacimiento;
-
-        $ente->save();
-
-        return response()->json(['message' => 'Persona creada correctamente'], 200);
     }
 
     /**
@@ -311,6 +362,7 @@ class EnteController extends Controller
     public function getEnteCedula(Request $r){
         $query = $r->input('query');
         $data = PsqlEnte::select('id','ci_ruc','nombres','apellidos')->where('ci_ruc',$query)->first();
+        // dd($data);
         if ($data) {
             // Devolver la información en formato JSON
             return response()->json($data, 200);

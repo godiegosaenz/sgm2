@@ -74,11 +74,12 @@ $("#formReporteria").submit(function(e){
             if(response.error==true){
                 $("#tabla_ingreso tbody").html('');
                 $("#tabla_ingreso tbody").html(`<tr><td colspan="${num_col}">No existen registros</td></tr>`);
+                alertNotificar(response.mensaje)
                 return;   
             }
          
             if(response.error==false){
-                alert(response.data.length)
+                // alert(response.data.length)
                 if(response.data.length==0){
                     $("#tabla_ingreso tbody").html('');
                     $("#tabla_ingreso tbody").html(`<tr><td colspan="${num_col}">No existen registros</td></tr>`);
@@ -199,12 +200,42 @@ function descargarPdf(){
         success: function(response) {
             vistacargando("")
             console.log(response)
-
+            if(response.error==true){
+                alertNotificar("Ocurrio un error","error")
+                return
+            }
+            window.location.href='../analitica/descargar-reporte/'+response.pdf
         },
         error: function(xhr, status, error) {
             vistacargando("")
             console.error("Error al obtener los datos:", error);
         }
     });
+} 
+
+function descargarReporte(id){
+    vistacargando("m","Espere por favor")
+    $.get("../transito-imprimir/"+id, function(data){
+        vistacargando("")
+        if(data.error==true){
+            alertNotificar(data.mensaje,"error");
+            return;   
+        }
+        verpdf(data.pdf)
+        console.log(data)
+        
+        
+    }).fail(function(){
+        vistacargando("")
+        alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+    });
+}
+
+function verpdf(ruta){
+
+    var iframe=$('#iframePdf');
+    iframe.attr("src", "../patente/documento/"+ruta);   
+    $("#vinculo").attr("href", '../patente/descargar-documento/'+ruta);
+    $("#documentopdf").modal("show");
 }
 

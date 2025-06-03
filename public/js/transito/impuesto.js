@@ -36,7 +36,10 @@ function llenarTabla(){
 			$("#tablaRangos tbody").html('');
          
 			$.each(data.resultado,function(i, item){
-                
+                let valor_hasta="En Adelante"
+                if(item.hasta!=null){
+                    valor_hasta=item.hasta
+                }
 				$('#tablaRangos').append(`<tr>
                                                 <td style="width:30%; text-align:center; vertical-align:middle">
                                                     ${item.desde} 
@@ -44,7 +47,7 @@ function llenarTabla(){
                                                 </td>
 
                                                 <td style="width:30%;  text-align:left; vertical-align:middle">
-                                                    ${item.hasta} 
+                                                    ${valor_hasta} 
                                                 </td>
                                                
                                                 <td style="width:30%; text-align:center; vertical-align:middle">
@@ -112,17 +115,17 @@ $("#form_base").submit(function(e){
         return
     }
 
-    if(hasta_base=="" || hasta_base==null){
-        alertNotificar("Debe ingresar hasta","error")
-        $('#hasta_base').focus()
-        return
-    } 
+    // if(hasta_base=="" || hasta_base==null){
+    //     alertNotificar("Debe ingresar hasta","error")
+    //     $('#hasta_base').focus()
+    //     return
+    // } 
 
-    if (isNaN(hasta_base) || hasta_base.trim() === "") {
-        alertNotificar('Debe ingresar un número válido',"error");
-        $('#hasta_base').focus()
-        return
-    }
+    // if (isNaN(hasta_base) || hasta_base.trim() === "") {
+    //     alertNotificar('Debe ingresar un número válido',"error");
+    //     $('#hasta_base').focus()
+    //     return
+    // }
 
     if(valor_base=="" || valor_base==null){
         alertNotificar("Debe ingresar valor","error")
@@ -189,6 +192,7 @@ function abrirModalMantenimiento(){
     $('#modalMantenimiento').modal('show')
     llenarTablaMarca()
     llenarTablaTipo()
+    llenarTablaConcepto()
 }
 
 function llenarTablaMarca(){
@@ -560,7 +564,7 @@ function capturaInfoPersona(){
         $('#apellidos').val(data.data[0].apellido)
         console.log(data)
         
-        
+         
     }).fail(function(){
         vistacargando("")
         alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
@@ -568,7 +572,7 @@ function capturaInfoPersona(){
 }
 
 function verpdf(ruta){
-    alert(ruta)
+   
     var iframe=$('#iframePdf');
     iframe.attr("src", "patente/documento/"+ruta);   
     $("#vinculo").attr("href", 'patente/descargar-documento/'+ruta);
@@ -611,3 +615,168 @@ document.querySelectorAll('.concepto-check').forEach(function(checkbox) {
         }
     });
 });
+
+
+function llenarTablaConcepto(){
+    
+    $("#tablaConceptoVehiculo tbody").html('');
+    $('#tablaConceptoVehiculo tbody').empty(); 
+    var num_col = $("#tablaConceptoVehiculo thead tr th").length; //obtenemos el numero de columnas de la tabla
+    vistacargando("m", "Espere por favor")
+    $.get('llenar-tabla-concepto', function(data){
+        console.log(data)
+       
+        vistacargando("")
+        if(data.error==true){
+			$("#tablaConceptoVehiculo tbody").html('');
+			$("#tablaConceptoVehiculo tbody").html(`<tr><td colspan="${num_col}" style="text-align:center>No existen registros</td></tr>`);
+			alertNotificar(data.mensaje,"error");
+            // cancelar()
+			return;   
+		}
+		if(data.error==false){
+			if(data.resultado.length==0){
+				$("#tablaConceptoVehiculo tbody").html('');
+				$("#tablaConceptoVehiculo tbody").html(`<tr><td colspan="${num_col}" style="text-align:center">No existen registros</td></tr>`);
+				alertNotificar("No se encontró información","error");
+                // cancelar()
+				return;
+			}
+			
+			$("#tablaConceptoVehiculo tbody").html('');
+         
+			$.each(data.resultado,function(i, item){
+
+              
+                
+				$('#tablaConceptoVehiculo').append(`<tr>
+                                                <td style="width:10%; text-align:center; vertical-align:middle">
+                                                    ${i+1} 
+                                                    
+                                                </td>
+
+                                                <td style="width:65%;  text-align:left; vertical-align:middle">
+                                                    ${item.concepto} 
+                                                </td>
+
+                                                 <td style="width:10%;  text-align:left; vertical-align:middle">
+                                                    ${item.valor} 
+                                                </td>
+
+                                             
+                                                <td style="width:10%; text-align:right; vertical-align:middle">
+                                                    <button class="btn btn-sm btn-warning" onclick="editarConcepto('${item.id}','${item.concepto}','${item.valor}')"><i class="bi bi-pencil-square"></i></button>
+
+                                                    
+                                                </td>
+
+
+                                                
+											
+										</tr>`);
+			})
+          
+
+            
+		}
+    
+    }).fail(function(){
+        vistacargando("")
+        alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+        $("#tablaConceptoVehiculo tbody").html('');
+		$("#tablaConceptoVehiculo tbody").html(`<tr><td colspan="${num_col}" style="text-align:center">Se produjo un error, por favor intentelo más tarde</td></tr>`);
+    });
+}
+
+globalThis.FormaAccionConcepto="R"
+globalThis.IdEditarConcepto=""
+function editarConcepto(id, concepto, valor){
+    $('#txt_concepto').val(concepto)
+    $('#valor_concepto').val(valor)
+    $('#id_concepto').val(id)
+    $('#btn_concepto').html('Actualizar')
+    FormaAccionConcepto='A'
+    IdEditarConcepto=id
+}
+
+function cancelarConcepto(){
+    $('#txt_concepto').val('')
+    $('#valor_concepto').val('')
+    $('#id_concepto').val('')
+    $('#btn_concepto').html('Guardar')
+    FormaAccionConcepto='R'
+}
+
+$("#form_concepto").submit(function(e){
+    e.preventDefault();
+    
+    //validamos los campos obligatorios
+    let txt_concepto=$('#txt_concepto').val()
+    let valor_concepto=$('#valor_concepto').val()
+   
+    if(txt_concepto=="" || txt_concepto==null){
+        alertNotificar("Debe ingresar el concepto","error")
+        $('#txt_concepto').focus()
+        return
+    } 
+
+     if(valor_concepto=="" || valor_concepto==null){
+        alertNotificar("Debe ingresar el valor","error")
+        $('#valor_concepto').focus()
+        return
+    } 
+
+     if (isNaN(valor_concepto) || valor_concepto.trim() === "") {
+        alertNotificar('Debe ingresar un número válido',"error");
+        $('#valor_concepto').focus()
+        return
+    }
+
+
+    vistacargando("m","Espere por favor")
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    //comprobamos si es registro o edicion
+    let tipo=""
+    let url_form=""
+    if(FormaAccionConcepto=="R"){
+        tipo="POST"
+        url_form="guardar-concepto"
+    }else{
+        tipo="PUT"
+        url_form="actualizar-concepto/"+IdEditarConcepto
+    }
+  
+    var FrmData=$("#form_concepto").serialize();
+
+    $.ajax({
+            
+        type: tipo,
+        url: url_form,
+        method: tipo,             
+		data: FrmData,      
+		
+        processData:false, 
+
+        success: function(data){
+            vistacargando("");                
+            if(data.error==true){
+                alertNotificar(data.mensaje,'error');
+                return;                      
+            }
+            cancelarConcepto()
+            alertNotificar(data.mensaje,"success");
+            llenarTablaConcepto()
+                            
+        }, error:function (data) {
+            console.log(data)
+
+            vistacargando("");
+            alertNotificar('Ocurrió un error','error');
+        }
+    });
+})

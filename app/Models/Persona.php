@@ -40,4 +40,5 @@ class Persona extends Model
     public function cita(){
         return $this->hasMany(Cita::class,'persona_id');
     }
+    
 }

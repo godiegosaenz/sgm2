@@ -205,7 +205,7 @@
                             @foreach($item['transitoimpuestoconcepto'] as $r)
                                 <tr>
                                     <td>{{$r->concepto}}</td>
-                                    <td>$ {{$r->pivot->valor}}</td>
+                                    <td style="text-align: right;">$ {{$r->pivot->valor}}</td>
                                 </tr>
                             @endforeach
 
@@ -213,7 +213,7 @@
                         <tfoot>
                             <tr>
                                 <td><STRONg>TOTAL</STRONg> </td>
-                                <td><STRONg>$ {{$impuesto->total_pagar}}</STRONg> </td>
+                                <td style="text-align: right;"><STRONg>$ {{$impuesto->total_pagar}}</STRONg> </td>
                             </tr>
                         </tfoot>
                     </table>

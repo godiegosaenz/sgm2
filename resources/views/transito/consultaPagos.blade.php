@@ -82,6 +82,32 @@
 
     </div>
 
+    <div class="modal fade" id="documentopdf" tabindex="-1" aria-labelledby="ContribuyenteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                @csrf
+                <div class="modal-body">
+                <div class="row">
+                        <div class="col-sm-12 col-xs-11 "style="height: auto ">
+                                <iframe width="100%" height="500" frameborder="0"id="iframePdf"></iframe>
+                                    <p style="color: #747373;font-size:15px"></p>
+                            </div>
+                        </div>
+                </div>
+                <div class="modal-footer"> 
+                    <center>
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" >Salir</button>
+                            <a href=""id="vinculo"><button  type="button" id="descargar"class="btn btn-primary"><i class="fa fa-mail"></i> Descargar</button> </a>                                 
+                    </center>               
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 @push('scripts')
 <!-- jQuery -->

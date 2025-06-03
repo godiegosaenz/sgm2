@@ -307,7 +307,7 @@
                     Ing. Jacinta María Mendoza Cusme
                 </td>
                 <td style="text-align: center">
-                    Mgs. Lucía Alvarez Zambrano
+                    Ing. Jandry Fernando Loor Macay
                 </td>
             </tr>
             <tr>
@@ -315,7 +315,7 @@
                     Tesorera Municipal Juez de Coactiva
                 </td>
                 <td style="text-align: center">
-                    Directora Financiera
+                   Director Financiero (E)
                 </td>
             </tr>
         </tbody>

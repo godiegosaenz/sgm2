@@ -271,7 +271,7 @@ class AnaliticaContribuyenteController extends Controller
                     $query->where(' usuario',$tipo);
                 }
             })
-            ->whereBetween('created_at', [$desde, $hasta])
+            ->whereBetween('i.created_at', [$desde, $hasta])
             ->where('i.estado',1)
             ->select('v.placa','v.chasis','v.avaluo','v.year','mv.descripcion as marca_veh','cv.descripcion as clase','en.nombres as nombre_propietario','en.apellidos as apellido_propietario','en.ci_ruc as identificacion_propietario' ,'i.year_impuesto','i.numero_titulo','i.total_pagar','i.usuario','i.created_at','i.id as identificador')
             ->get();
@@ -282,8 +282,20 @@ class AnaliticaContribuyenteController extends Controller
                 ->where('u.id',$data->usuario)
                 ->select('p.nombres','p.apellidos','p.cedula')
                 ->first();
-                $consultar[$key]->nombre_usuario=$usuarioRegistra->nombres." ".$usuarioRegistra->apellidos;
-                $consultar[$key]->cedula_usuario=$usuarioRegistra->cedula;
+                if(is_null($usuarioRegistra)){
+                    $consultar[$key]->nombre_usuario=$data->usuario;
+                }else{
+                    $consultar[$key]->nombre_usuario=$usuarioRegistra->nombres." ".$usuarioRegistra->apellidos;
+                    $consultar[$key]->cedula_usuario=$usuarioRegistra->cedula;
+                }
+
+                $conceptos=DB::connection('pgsql')->table('sgm_transito.concepto_impuesto as ci')
+                ->leftJoin('sgm_transito.conceptos as c', 'c.id', '=', 'ci.concepto_id')
+                ->where('ci.impuesto_matriculacion_id',$data->identificador)
+                ->select('c.concepto','ci.valor')
+                ->get();
+                $consultar[$key]->conceptos = $conceptos;
+                    
 
             }
 
@@ -301,6 +313,7 @@ class AnaliticaContribuyenteController extends Controller
             ini_set('max_execution_time', 0);
 
             $consultaInfo=$this->consultarPagos($request);
+            // dd($request->all());
 
             if($consultaInfo['error']==true){
                 return (['mensaje'=>'Ocurrió un error al consultar los datos,intentelo más tarde','error'=>true]); 
@@ -308,7 +321,7 @@ class AnaliticaContribuyenteController extends Controller
 
             $nombrePDF="reporte_pago_transito.pdf";
 
-            $pdf=\PDF::LoadView('reportes.reporte_pago_transito',['datos'=>$consultaInfo['resultados_urbano'],'desde'=>$request->filtroDesd,'hasta'=>$request->filtroHasta,'tipo'=>$request->filtroTipo ]);
+            $pdf=\PDF::LoadView('reportes.reporte_pago_transito',['datos'=>$consultaInfo['data'],'desde'=>$request->filtroDesde,'hasta'=>$request->filtroHasta,'tipo'=>$request->filtroTipo ]);
             $pdf->setPaper("A4", "portrait");
             $estadoarch = $pdf->stream();
 
@@ -354,7 +367,7 @@ class AnaliticaContribuyenteController extends Controller
                     $query->where(' usuario',$tipo);
                 }
             })
-            ->whereBetween('created_at', [$desde, $hasta])
+            ->whereBetween('i.created_at', [$desde, $hasta])
             ->where('i.estado',1)
             ->select('v.placa','v.chasis','v.avaluo','v.year','mv.descripcion as marca_veh','cv.descripcion as clase','en.nombres as nombre_propietario','en.apellidos as apellido_propietario','en.ci_ruc as identificacion_propietario' ,'i.year_impuesto','i.numero_titulo','i.total_pagar','i.usuario','i.created_at','i.id as identificador')
             ->get();

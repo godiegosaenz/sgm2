@@ -345,12 +345,18 @@
                         'active' => request()->routeIs('create.transito')
                     ],
                     [
-                        'name' => 'Listar impuestos',
+                        'name' => 'Listar impuestos transito',
                         'route' => 'index.transito',
                         'active' => request()->routeIs('index.transito')
                     ],
+
+                    [
+                        'name' => 'Reporteria Transito',
+                        'route' => 'vistaReporteTransito.transito',
+                        'active' => request()->routeIs('vistaReporteTransito.transito')
+                    ],
                 ],
-                'active' => request()->routeIs('index.catastro') || request()->routeIs('create.catastro') || request()->routeIs('create.patente') || request()->routeIs('create.patente') || request()->routeIs('index.patente')
+                'active' => request()->routeIs('index.catastro') || request()->routeIs('create.catastro') || request()->routeIs('create.patente') || request()->routeIs('create.patente') || request()->routeIs('index.patente') || request()->routeIs('vistaReporteTransito.transito') || request()->routeIs('index.transito') || request()->routeIs('create.transito') 
             ],
             [
                 'name' => 'CONFIGURACION',

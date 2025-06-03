@@ -216,8 +216,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('actualizar-tipo/{id}', [TransitoImpuestoController::class, 'actualizarTipo'])->name('actualizarTipo.transito');
     Route::get('eliminar-tipo/{id}', [TransitoImpuestoController::class, 'eliminaTipo'])->name('eliminaTipo.transito');
 
+    Route::get('llenar-tabla-concepto', [TransitoImpuestoController::class, 'tablaConcepto'])->name('tablaConcepto.transito');
+    Route::post('guardar-concepto', [TransitoImpuestoController::class, 'guardarConcepto'])->name('guardarConcepto.transito');
+    Route::put('actualizar-concepto/{id}', [TransitoImpuestoController::class, 'actualizarConcepto'])->name('actualizarConcepto.transito');
+    // Route::get('eliminar-tipo/{id}', [TransitoImpuestoController::class, 'eliminaTipo'])->name('eliminaTipo.transito');
+
     Route::get('carga-info-persona/{ci}', [TransitoImpuestoController::class, 'infoPersona'])->name('infoPersona.transito');
     Route::get('transito-imprimir/{id}', [TransitoImpuestoController::class, 'pdfTransito'])->name('pdfTransito.transito');
+    Route::post('baja-titulo-transito', [TransitoImpuestoController::class, 'bajaTituloTransito'])->name('bajaTituloTransito.transito');
+    
 
     Route::get('analitica/contribuyente', [AnaliticaContribuyenteController::class, 'index'])->name('analitica.contribuyente');
     Route::get('analitica/predios', [AnaliticaContribuyenteController::class, 'predios'])->name('analitica.predios');

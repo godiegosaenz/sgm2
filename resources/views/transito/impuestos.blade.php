@@ -157,7 +157,7 @@
 
         <!-- Conceptos -->
         <fieldset class="border p-3 mb-4">
-            <legend class="float-none w-auto px-3 fs-5">Detalle de impuestp</legend>
+            <legend class="float-none w-auto px-3 fs-5">Detalle de impuesto</legend>
             <div class="row align-items-end mb-3">
                 <div class="col-md-6">
                     <select class="form-select {{ $errors->has('year_declaracion') ? 'is-invalid' : '' }}"
@@ -234,7 +234,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="formPersona">
+                    <form id="formPersona" autocomplete="off">
                         <div class="row g-3">
 
                             <div class="col-md-6">
@@ -249,6 +249,7 @@
 
                             <div class="col-md-6">
                                 <label for="ci_ruc" class="form-label">CI / RUC <span class="text-danger">*</span></label>
+                                <input type="hidden" class="form-control" id="es_transito" name="es_transito" value="S">
                                 <input type="text" class="form-control" id="ci_ruc" name="ci_ruc" onblur="capturaInfoPersona()">
                                 <div class="invalid-feedback" id="error-ci_ruc"></div>
                             </div>
@@ -257,33 +258,33 @@
                                 <label for="nombres" class="form-label" id="label-nombres">Nombres <span
                                         class="text-danger">*</span></label>
 
-                                <input type="text" class="form-control" id="nombres" name="nombres">
+                                <input type="text" class="form-control" id="nombres" name="nombres" autocomplete="of">
                                 <div class="invalid-feedback" id="error-nombres"></div>
                             </div>
                             <div class="col-md-6">
                                 <label for="apellidos" class="form-label" id="label-apellidos">Apellidos <span
                                         class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="apellidos" name="apellidos">
+                                <input type="text" class="form-control" id="apellidos" name="apellidos" autocomplete="of">
                                 <div class="invalid-feedback" id="error-apellidos"></div>
                             </div>
                             <div class="col-md-6">
                                 <label for="direccion" class="form-label">Dirección </label>
-                                <input type="text" class="form-control" id="direccion" name="direccion">
+                                <input type="text" class="form-control" id="direccion" name="direccion" autocomplete="of">
                                 <div class="invalid-feedback" id="error-direccion"></div>
                             </div>
                             <div class="col-md-6">
                                 <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento </label>
-                                <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento">
+                                <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento" autocomplete="of">
                                 <div class="invalid-feedback" id="error-fecha_nacimiento"></div>
                             </div>
                             <div class="col-md-6">
                                 <label for="correo" class="form-label">Correo </label>
-                                <input type="email" class="form-control" id="correo" name="correo">
+                                <input type="email" class="form-control" id="correo" name="correo" autocomplete="of">
                                 <div class="invalid-feedback" id="error-correo"></div>
                             </div>
                             <div class="col-md-6">
                                 <label for="telefono" class="form-label">Teléfono </label>
-                                <input type="text" class="form-control" id="telefono" name="telefono">
+                                <input type="number" class="form-control" id="telefono" name="telefono" autocomplete="of">
                                 <div class="invalid-feedback" id="error-telefono"></div>
                             </div>
                         </div>
@@ -376,7 +377,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Tarifa anual</h5>
+                    <h5 class="modal-title">Tarifa anual del año {{ date('Y') }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -404,7 +405,7 @@
                                 </div>
                                 <div class="col-md-7">
                                     <input type="number" step="0.01" class="form-control" id="hasta_base" name="hasta_base"
-                                        required>
+                                        >
                                 </div>
                             </div>
                         </div>
@@ -497,9 +498,19 @@
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button"
                                 role="tab" aria-controls="tab2" aria-selected="false">
-                                Tipo
+                                Tipo Vehiculo Año  {{date('Y')  }}
                             </button>
                         </li>
+
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="tab3-tab" data-bs-toggle="tab" data-bs-target="#tab3" type="button"
+                                role="tab" aria-controls="tab3" aria-selected="false">
+                                Concepto Año {{date('Y')  }}
+                            </button>
+                        </li>
+
+                        
+
                     </ul>
 
                     <!-- Tab content -->
@@ -552,6 +563,7 @@
                                 </tbody>
                             </table>
                         </div>
+
                         <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
 
                             <form method="POST" action="" id="form_tipo">
@@ -613,6 +625,73 @@
                             </table>
 
                         </div>
+
+                        <div class="tab-pane fade" id="tab3" role="tabpanel" aria-labelledby="tab3-tab">
+
+                            <form method="POST" action="" id="form_concepto">
+                                @csrf
+
+                                <div class="col-md-12" style="margin-top: 10px; margin-bottom: 10px;">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-3 text-end">
+                                            <label for="marca_v" class="form-label mb-0">Concepto</label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <input type="hidden" class="form-control" id="id_concepto" name="id_concepto"
+                                                required>
+                                            <input type="text" class="form-control" id="txt_concepto" name="txt_concepto"
+                                                required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12" style="margin-top: 10px; margin-bottom: 10px;">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-3 text-end">
+                                            <label for="marca_v" class="form-label mb-0">Valor</label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <input type="number" class="form-control" id="valor_concepto" name="valor_concepto"
+                                                required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12" style="margin-top: 10px; margin-bottom: 20px;">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-3 text-end">
+                                            <label for="marca_v" class="form-label mb-0"></label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <button type="submit" class="btn btn-success btn-sm"><span
+                                                    id="btn_concepto">Guardar</span></button>
+                                            <button type="button" class="btn btn-warning btn-sm"
+                                                onclick="cancelarConcepto()">Cancelar</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </form>
+
+                            <table class="table table-bordered" id="tablaConceptoVehiculo">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Concepto</th>
+                                        <th>Valor</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                      
+
+                        
                     </div>
                 </div>
 
@@ -690,7 +769,7 @@
                         //propietario.focus();
                         spinner.style.display = 'none';
                     }).catch(function (err) {
-
+                        console.log(err)
                         if (err.request.status == 500) {
                             console.log('error al consultar al servidor');
                         }
@@ -736,6 +815,7 @@
                         _token: token,
                         query: query
                     }).then(function (res) {
+                        console.log(res)
                         //propietario.value = res.data.ci_ruc;
                         if (res.status == 200) {
                             nombrescliente.value = res.data.nombres + ' ' + res.data.apellidos;
@@ -748,18 +828,26 @@
                         //propietario.focus();
                         spinner.style.display = 'none';
                     }).catch(function (err) {
-
+                        console.log(err)
                         if (err.request.status == 500) {
                             console.log('error al consultar al servidor');
                         }
                         if (err.request.status == 404) {
+                            alertNotificar("No se encontro la persona","error")
                             let errorResponse = JSON.parse(err.request.response);
-                            nombrescliente.value = errorResponse.message;
-                            nombrescliente.value = errorResponse.message;
-                            correocliente.value = errorResponse.message;
-                            telefonocliente.value = errorResponse.message;
-                            direccioncliente.value = errorResponse.message;
-                            fechanacimientocliente.value = errorResponse.message;
+                            // nombrescliente.value = errorResponse.message;
+                            // nombrescliente.value = errorResponse.message;
+                            // correocliente.value = errorResponse.message;
+                            // telefonocliente.value = errorResponse.message;
+                            // direccioncliente.value = errorResponse.message;
+                            // fechanacimientocliente.value = errorResponse.message;
+
+                            nombrescliente.value = "";
+                            nombrescliente.value = "";
+                            correocliente.value = "";
+                            telefonocliente.value = "";
+                            direccioncliente.value ="";
+                            fechanacimientocliente.value = "";
                             cliente_id_2.value = "";
                         }
                         if (err.request.status == 419) {
@@ -814,6 +902,7 @@
                     cliente_id: cliente_id,
                     year: year
                 }).then(function (res) {
+                    console.log(res)
                     if (res.status === 200) {
                         // Reemplazar los valores en los inputs
                         let total = 0;
@@ -821,6 +910,8 @@
                             const input = document.getElementById('valor_' + concepto.id);
                             if (input) {
                                 input.value = concepto.nuevo_valor.toFixed(2);
+                                // var valor = Number(concepto.nuevo_valor)
+                                // input.value = valor.toFixed(2);
                                 total += parseFloat(concepto.nuevo_valor);
                             }
                         });
@@ -830,6 +921,7 @@
                     }
                     if (spinner) spinner.style.display = 'none';
                 }).catch(function (err) {
+                    console.log(err)
                     if (err.request.status === 500) {
                         console.log('Error al consultar al servidor.');
                     }
