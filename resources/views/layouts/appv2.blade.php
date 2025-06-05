@@ -406,8 +406,14 @@
                         'active' => request()->routeIs('analitica.predios')
                     ],
 
+                    [
+                        'name' => ' Predios Exonerados',
+                        'route' => 'analiticaExonerados.predios',
+                        'active' => request()->routeIs('analiticaExonerados.predios')
+                    ],
+
                 ],
-                'active' => request()->routeIs('analitica.contribuyente')
+                'active' => request()->routeIs('analitica.contribuyente') || request()->routeIs('analitica.predios') || request()->routeIs('analiticaExonerados.predios')
             ],
         ];
     @endphp

@@ -239,9 +239,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('transito/test-reportes', [AnaliticaContribuyenteController::class, 'testReporteTransito'])->name('testReporteTransito.transito');
 
     //predios exonerados
-    Route::get('analitica/predios-exonerados', [AnaliticaPredioController::class, 'predios'])->name('analitica.predios');
-    Route::post('analitica/data-predio-exonerado', [AnaliticaPredioController::class, 'cargaData'])->name('analitica.cargaData');
-    Route::post('analitica/reporte-predio-exonerado', [AnaliticaPredioController::class, 'pdfData'])->name('analitica.pdfData');
+    Route::get('analitica/predios-exonerados', [AnaliticaPredioController::class, 'predios'])->name('analiticaExonerados.predios');
+    Route::post('analitica/data-predio-exonerado', [AnaliticaPredioController::class, 'cargaData'])->name('analiticaExonerados.cargaData');
+    Route::post('analitica/reporte-predio-exonerado', [AnaliticaPredioController::class, 'pdfData'])->name('analiticaExonerados.pdfData');
 
 });
 
