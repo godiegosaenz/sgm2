@@ -27,20 +27,6 @@ class AnaliticaContribuyenteController extends Controller
 
     public function predios(){
 
-        $cantidad = DB::connection('pgsql')->table('sgm_app.cat_predio')
-        // ->whereBetween('avaluo_municipal', [$inicio, $fin])
-        ->where('estado','A')
-        ->count();
-        // dd($cantidad); 
-        
-        $cantidad = DB::connection('sqlsrv')
-        ->table('dbo.TITULOS_PREDIO')
-        ->whereDate('TitPr_FechaEmision', '2025-01-01')
-        // ->select('Pre_CodigoCatastral')
-        // ->distinct()
-        ->count();
-        // dd($cantidad);
-
         return view("analitica.AnaliticaPredio");
     }
 
@@ -57,6 +43,8 @@ class AnaliticaContribuyenteController extends Controller
             $resultados_rural = [];
             $resultados_final= [];
             $tipo_busqueda="";
+            $total_urbano=0;
+             $total_rural=0;
             if($tipo=="Urbano"){
                 for ($i = $desde; $i < $hasta; $i += $rango) {
                     $inicio = $i;
@@ -66,6 +54,7 @@ class AnaliticaContribuyenteController extends Controller
                         ->whereBetween('avaluo_municipal', [$inicio, $fin])
                         ->where('estado','A')
                         ->count();
+                    $total_urbano=$total_urbano+$cantidad;
             
                     $resultados_urbano[] = [
                         'rango' => "De {$inicio} a {$fin}",
@@ -78,21 +67,14 @@ class AnaliticaContribuyenteController extends Controller
                     $inicio = $i;
                     $fin = $i + $rango;
             
-                    // $cantidad = DB::connection('sqlsrv')->table('dbo.TERRENO_RURAL_PREDIO')
-                    //     ->whereBetween('TerRup_ValSubTotal', [$inicio, $fin])
-                    //     ->count();
-            
-                    // $resultados_rural[] = [
-                    //     'rango' => "De {$inicio} a {$fin}",
-                    //     'cantidad' => $cantidad
-                    // ];
-
                     $cantidad = DB::connection('sqlsrv')
                     ->table('dbo.TITULOS_PREDIO')
                     ->whereDate('TitPr_FechaEmision', '2025-01-01') 
                     ->whereBetween('TitPr_ValComerPredio', [$inicio, $fin])
                     ->distinct('Pre_CodigoCatastral')
                     ->count();
+
+                    $total_rural=$total_rural+$cantidad;
 
                     $resultados_rural[] = [
                         'rango' => "De {$inicio} a {$fin}",
@@ -110,7 +92,8 @@ class AnaliticaContribuyenteController extends Controller
                         ->whereBetween('avaluo_municipal', [$inicio, $fin])
                         ->where('estado','A')
                         ->count();
-            
+                    $total_urbano=$total_urbano+$cantidad_urbano;
+
                     $resultados_urbano[] = [
                         'rango' => "De {$inicio} a {$fin}",
                         'cantidad' => $cantidad_urbano
@@ -119,43 +102,20 @@ class AnaliticaContribuyenteController extends Controller
                     $tipo_busqueda="T";
                 }
 
-                // for ($i = $desde; $i < $hasta; $i += $rango) {
-                //     $inicio = $i;
-                //     $fin = $i + $rango;
-            
-                //     $cantidad_rural = DB::connection('sqlsrv')->table('dbo.TERRENO_RURAL_PREDIO')
-                //         ->whereBetween('TerRup_ValSubTotal', [$inicio, $fin])
-                //         ->count();
-            
-                //     $resultados_rural[] = [
-                //         'rango' => "De {$inicio} a {$fin}",
-                //         'cantidad' => $cantidad_rural
-                //     ];
-
-                //     $resultados_final[] = [
-                //         'rango' => "De {$inicio} a {$fin}",
-                //         'cantidad_urbano' => $cantidad_urbano,
-                //         'cantidad_rural' => $cantidad_rural,
-                //         'cantidad_total' => $cantidad_urbano + $cantidad_rural
-                //     ];
-
-                //     $tipo_busqueda="T";
-                // }
 
                 $i = $desde;
                 foreach ($resultados_urbano as $index => $urbano) {
                     $inicio = $i;
                     $fin = $i + $rango;
 
-                    // $cantidad_rural = DB::connection('sqlsrv')->table('dbo.TERRENO_RURAL_PREDIO')
-                    //     ->whereBetween('TerRup_ValSubTotal', [$inicio, $fin])
-                    //     ->count();
                     $cantidad_rural = DB::connection('sqlsrv')
                     ->table('dbo.TITULOS_PREDIO')
                     ->whereDate('TitPr_FechaEmision', '2025-01-01') 
                     ->whereBetween('TitPr_ValComerPredio', [$inicio, $fin])
                     ->distinct('Pre_CodigoCatastral')
                     ->count();
+
+                    $total_rural=$total_rural+$cantidad_rural;
 
                     $resultados_rural[] = [
                         'rango' => "De {$inicio} a {$fin}",
@@ -179,6 +139,8 @@ class AnaliticaContribuyenteController extends Controller
                 "resultados_rural"=>$resultados_rural, 
                 "resultados_final"=>$resultados_final, 
                 "tipo_busqueda"=>$tipo_busqueda,
+                "total_urbano"=>$total_urbano,
+                "total_rural"=>$total_rural,
                 "error"=>false
             ];
         

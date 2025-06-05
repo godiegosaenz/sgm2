@@ -7,7 +7,7 @@
 @endpush
 @section('content')
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h4 class="h2">Analitica de Predio por Rango de Avaluo</h4>
+        <h4 class="h2">Analitica de Predios Exonerados</h4>
         <div class="btn-toolbar mb-2 mb-md-0">
 
         </div>
@@ -16,26 +16,17 @@
     <form id="formAnaliticaPredio" method="POST"  action=""  enctype="multipart/form-data">
         @csrf
         <div class="row mb-4">
-            <div class="col-md-3">
-                <label for="filtroDesde">Desde:</label>
-                <input type="number" class="form-control" id="filtroDesde" onkeypress="cambioData()"  placeholder="Desde">
-            </div>
-            <div class="col-md-3">
-                <label for="filtroDesde">Hasta:</label>
-                <input type="number" class="form-control" id="filtroHasta" onkeypress="cambioData()" placeholder="Hasta">
-            </div>
-            <div class="col-md-3">
-                <label for="filtroDesde">Rango:</label>
-                <input type="number" class="form-control" id="filtroRango" onkeypress="cambioData()" placeholder="Rango">
-            </div>
-            <div class="col-md-3">
+            <div class="col-md-2"></div>
+            <div class="col-md-8">
                 <label for="filtroDesde">Filtro:</label>
                 <select id="filtroTipo" class="form-select" onchange="cambioData()">
-                    <option value="Todos">Todos</option>
+                    <!-- <option value="Todos">Todos</option> -->
                     <option value="Urbano">Urbano</option>
-                    <option value="Rural">Rural</option>
+                    <!-- <option value="Rural">Rural</option> -->
                 </select>
             </div>
+            <div class="col-md-2"></div>
+           
             <!-- <div class="col-md-3">
                 <button class="btn btn-primary" id="btnFiltrar">Filtrar</button>
             </div> -->
@@ -57,13 +48,11 @@
         </div>
         <div class="col-md-12" id="grafico_urbano" style="display:none">
             <h3 >Urbano</h3>
-            <div id="total-info-urb"></div>
             <canvas id="myChart" width="600" height="200"></canvas>
         </div>
 
         <div class="col-md-12" id="grafico_rural" style="display:none">
             <h3 >Rural</h3>
-            <div id="total-info-rural"></div>
             <canvas id="myChartRural" width="600" height="200"></canvas>
         </div>
 
@@ -79,6 +68,6 @@
 <script src="{{ asset('js/dataTables.bootstrap5.min.js') }}"></script>
 <script src="{{ asset('js/dataTables.rowReorder.min.js') }}"></script>
 
-<script src="{{ asset('js/analitica/predio.js?v='.rand())}}"></script>
+<script src="{{ asset('js/analitica/predio-exonerado.js?v='.rand())}}"></script>
 
 @endpush

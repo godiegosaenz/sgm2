@@ -6,31 +6,13 @@ function cambioData(){
 }
 function mostrarData(){
     $('#btn_descargar').hide()
-    $('#btn_consultar').show()
-    let filtroDesde=$('#filtroDesde').val()
-    let filtroHasta=$('#filtroHasta').val()
-    let filtroRango=$('#filtroRango').val()
+    $('#btn_consultar').show()   
+   
     let filtroTipo=$('#filtroTipo').val()
+    let filtroAnio=$('#filtroAnio').val()
 
-    if(filtroDesde<0 ){
-        alertNotificar("El valor desde debe ser mayor a cero","error")
-        $('#filtroDesde').focus()
-       
-        return
-    }
+
     
-    if(Number(filtroHasta)<Number(filtroDesde)){        
-        alertNotificar("El valor hasta "+filtroHasta +" debe ser mayor a cero y mayor a desde "+filtroDesde +"","error")
-        $('#filtroHasta').focus()
-        return
-    }
-
-    if(filtroRango<=0){
-        alertNotificar("El valor rango debe ser mayor a cero","error")
-        $('#filtroRango').focus()
-        return
-    }
-
     if(filtroTipo=="Urbano"){
         $('#grafico_urbano').show()
         $('#grafico_rural').hide()
@@ -60,17 +42,19 @@ function descargarPdf(){
     let filtroHasta=$('#filtroHasta').val()
     let filtroRango=$('#filtroRango').val()
     let filtroTipo=$('#filtroTipo').val()
+    let Interno="S"
 
     $.ajax({
             
         type: tipo,
-        url: "reporte-predio-rango",
+        url: "reporte-predio-exonerado",
         method: tipo,             
         data: {
             filtroDesde: filtroDesde,
             filtroHasta: filtroHasta,
             filtroRango: filtroRango,
-            filtroTipo: filtroTipo
+            filtroTipo: filtroTipo,
+            Interno:Interno
         },  
 		
         // processData:false, 
@@ -103,7 +87,7 @@ let myChartRural=null;
 
 $("#formAnaliticaPredio").submit(function(e){
     e.preventDefault();
-    var ruta="carga-data"
+    var ruta="data-predio-exonerado"
     let total_urbano=0   
     let tota_rural=0
     vistacargando("m","Espere por favor")
@@ -116,10 +100,9 @@ $("#formAnaliticaPredio").submit(function(e){
     var tipo="POST"
   
     var FrmData=$("#formAnaliticaPredio").serialize();
-    let filtroDesde=$('#filtroDesde').val()
-    let filtroHasta=$('#filtroHasta').val()
-    let filtroRango=$('#filtroRango').val()
+    
     let filtroTipo=$('#filtroTipo').val()
+    let filtroAnio=$('#filtroAnio').val()
 
     $.ajax({
             
@@ -127,9 +110,8 @@ $("#formAnaliticaPredio").submit(function(e){
         url: ruta,
         method: tipo,             
         data: {
-            filtroDesde: filtroDesde,
-            filtroHasta: filtroHasta,
-            filtroRango: filtroRango,
+            
+            filtroAnio: filtroAnio,
             filtroTipo: filtroTipo
         },  
 		
@@ -162,8 +144,8 @@ $("#formAnaliticaPredio").submit(function(e){
                     myChart.destroy();
                 }
 
-                total_urbano=total_urbano+response.total_urbano               
-                document.getElementById("total-info-urb").innerText = `Total de predios urbanos: ${total_urbano}`;
+                // total_urbano=total_urbano+response.total_urbano               
+                // document.getElementById("total-info-urb").innerText = `Total de predios urbanos: ${total_urbano}`;
                 
 
                 const ctx = document.getElementById('myChart').getContext('2d');
@@ -218,8 +200,8 @@ $("#formAnaliticaPredio").submit(function(e){
                 
                 
 
-                tota_rural=tota_rural+response.total_rural
-                document.getElementById("total-info-rural").innerText = `Total de predios rurales: ${tota_rural}`;
+                // tota_rural=tota_rural+response.total_rural
+                // document.getElementById("total-info-rural").innerText = `Total de predios rurales: ${tota_rural}`;
 
                 const ctx = document.getElementById('myChartRural').getContext('2d');
                 myChartRural = new Chart(ctx, {
@@ -271,11 +253,11 @@ $("#formAnaliticaPredio").submit(function(e){
                     myChart.destroy();
                 }
 
-                tota_rural=tota_rural+response.total_rural
-                document.getElementById("total-info-rural").innerText = `Total de predios rurales: ${tota_rural}`;
+                // tota_rural=tota_rural+response.total_rural
+                // document.getElementById("total-info-rural").innerText = `Total de predios rurales: ${tota_rural}`;
 
-                total_urbano=total_urbano+response.total_urbano               
-                document.getElementById("total-info-urb").innerText = `Total de predios urbanos: ${total_urbano}`;
+                // total_urbano=total_urbano+response.total_urbano               
+                // document.getElementById("total-info-urb").innerText = `Total de predios urbanos: ${total_urbano}`;
 
                 const ctx = document.getElementById('myChart').getContext('2d');
                 myChart = new Chart(ctx, {

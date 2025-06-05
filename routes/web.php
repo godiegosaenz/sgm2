@@ -22,6 +22,7 @@ use App\Http\Controllers\rentas\PatenteController;
 use App\Http\Controllers\psql\ente\EnteController;
 use App\Http\Controllers\psql\actividad\ActividadComercialController;
 use App\Http\Controllers\analitica\AnaliticaContribuyenteController;
+use App\Http\Controllers\analitica\AnaliticaPredioController;
 use App\Http\Controllers\transito\TransitoEnteController;
 use App\Http\Controllers\transito\TransitoImpuestoController;
 use App\Http\Controllers\transito\TransitoVehiculoController;
@@ -237,6 +238,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('transito/reporte-diario', [AnaliticaContribuyenteController::class, 'ReporteTransito'])->name('ReporteTransito.transito');
     Route::get('transito/test-reportes', [AnaliticaContribuyenteController::class, 'testReporteTransito'])->name('testReporteTransito.transito');
 
+    //predios exonerados
+    Route::get('analitica/predios-exonerados', [AnaliticaPredioController::class, 'predios'])->name('analitica.predios');
+    Route::post('analitica/data-predio-exonerado', [AnaliticaPredioController::class, 'cargaData'])->name('analitica.cargaData');
+    Route::post('analitica/reporte-predio-exonerado', [AnaliticaPredioController::class, 'pdfData'])->name('analitica.pdfData');
 
 });
 
