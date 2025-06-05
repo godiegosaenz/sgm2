@@ -125,11 +125,12 @@ $("#formAnaliticaPredio").submit(function(e){
                 let data = [];
                 let backgroundColors = [];
                 let borderColors = [];
-        
+               
                 response.resultados_urbano.forEach(item => {
                     labels.push(item.rango);
                     data.push(item.cantidad);
-        
+                  
+                    total_urbano=total_urbano+item.cantidad
                     // Generar color aleatorio
                     let r = Math.floor(Math.random() * 255);
                     let g = Math.floor(Math.random() * 255);
@@ -138,16 +139,15 @@ $("#formAnaliticaPredio").submit(function(e){
                     backgroundColors.push(`rgba(${r}, ${g}, ${b}, 0.2)`);
                     borderColors.push(`rgba(${r}, ${g}, ${b}, 1)`);
                 });
-                
+
                 // ⚠️ Destruir gráfico anterior si ya existe
                 if (myChart !== null) {
                     myChart.destroy();
                 }
 
                 // total_urbano=total_urbano+response.total_urbano               
-                // document.getElementById("total-info-urb").innerText = `Total de predios urbanos: ${total_urbano}`;
+                document.getElementById("total-info-urb").innerText = `Total de predios urbanos exonerados: ${total_urbano}`;
                 
-
                 const ctx = document.getElementById('myChart').getContext('2d');
                 myChart = new Chart(ctx, {
                     type: 'bar',
@@ -191,7 +191,7 @@ $("#formAnaliticaPredio").submit(function(e){
                     backgroundColors_rural.push(`rgba(${r}, ${g}, ${b}, 0.2)`);
                     borderColors_rural.push(`rgba(${r}, ${g}, ${b}, 1)`);
                 });
-                
+               
                 // ⚠️ Destruir gráfico anterior si ya existe
                 if (myChartRural !== null) {
                     myChartRural.destroy();

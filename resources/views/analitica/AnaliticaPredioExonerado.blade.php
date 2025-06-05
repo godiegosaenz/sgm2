@@ -48,6 +48,7 @@
         </div>
         <div class="col-md-12" id="grafico_urbano" style="display:none">
             <h3 >Urbano</h3>
+            <div id="total-info-urb"></div>
             <canvas id="myChart" width="600" height="200"></canvas>
         </div>
 

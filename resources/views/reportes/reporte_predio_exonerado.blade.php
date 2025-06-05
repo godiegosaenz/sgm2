@@ -230,7 +230,7 @@
 
                             <tr style="font-size: 9px !important;line-height:8px;  "> 
                                 
-                                <th colspan="6" style="border: 0px; ;border-color: #D3D3D3; text-align: center; line-height:15px; margin-top:1px !important;margin-bottom:1px !important;">{{$key}}</th>
+                                <th colspan="6" style="border: 0px; ;border-color: #D3D3D3; text-align: center; line-height:15px; margin-top:1px !important;margin-bottom:1px !important;">{{$key}} ({{ count($lista) }})</th>
                                 
                             </tr>
 

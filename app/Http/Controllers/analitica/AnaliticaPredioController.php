@@ -28,6 +28,7 @@ class AnaliticaPredioController extends Controller
             $total_rural=0;
 
             if(isset($request->Interno)){
+                $tipo_busqueda="U";
                 $resultados_urbano = DB::connection('pgsql')->table('sgm_app.cat_predio as p')
                 // ->leftJoin('sgm_app.cat_predio_propietario as pp', 'pp.predio', '=', 'p.id')
                 //  ->leftJoin('sgm_app.cat_ente as ce', 'ce.id', '=', 'pp.ente')
@@ -42,6 +43,7 @@ class AnaliticaPredioController extends Controller
                 ->select('t.descripcion', 'p.id','p.clave_cat')
                 ->get();
             }else{
+                $tipo_busqueda="U";
                 $resultados_urbano = DB::connection('pgsql')->table('sgm_app.cat_predio as p')
                 ->leftJoin('sgm_financiero.fn_solicitud_exoneracion as se', 'se.predio', '=', 'p.id')
                 ->leftJoin('sgm_financiero.fn_exoneracion_tipo as t', 't.id', '=', 'se.exoneracion_tipo')
@@ -62,7 +64,7 @@ class AnaliticaPredioController extends Controller
                 "resultados_rural"=>$resultados_rural, 
                 "resultados_final"=>$resultados_final, 
                 "tipo_busqueda"=>$tipo_busqueda,
-                "total_urbano"=>$total_urbano,
+                // "total_urbano"=>sizeof($resultados_urbano),
                 "total_rural"=>$total_rural,
                 "error"=>false
             ];
