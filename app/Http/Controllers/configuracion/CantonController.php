@@ -4,8 +4,8 @@ namespace App\Http\Controllers\configuracion;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\models\Provincia;
-use App\models\Canton;
+use App\Models\Provincia;
+use App\Models\Canton;
 
 class CantonController extends Controller
 {
