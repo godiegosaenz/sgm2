@@ -54,7 +54,11 @@ Route::redirect('/', '/login');
 //Route::get('/', [ConsultaPredioController::class, 'index'])->name('welcome');
 Route::get('/consulta', [ConsultaPredioController::class, 'index'])->name('welcome');
 Route::get('/consultapruebaame', function (){
-    return DB::connection('sqlsrv')->select('select * from TITULOS_PREDIO where Pre_CodigoCatastral = "132250510101022000"');
+    return DB::connection('sqlsrv')->select("SELECT * FROM TITULOS_PREDIO WHERE Pre_CodigoCatastral = '132250510101022000'");
+});
+Route::get('/consultapruebaame2', function (){
+    $codigo = '132250510101022000';
+    return DB::connection('sqlsrv')->select("SELECT * FROM TITULOS_PREDIO WHERE Pre_CodigoCatastral = ?", [$codigo]);
 });
 Route::get('/reporteprueba', function (){
     phpinfo();
