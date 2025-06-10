@@ -356,7 +356,7 @@
                         'active' => request()->routeIs('vistaReporteTransito.transito')
                     ],
                 ],
-                'active' => request()->routeIs('index.catastro') || request()->routeIs('create.catastro') || request()->routeIs('create.patente') || request()->routeIs('create.patente') || request()->routeIs('index.patente') || request()->routeIs('vistaReporteTransito.transito') || request()->routeIs('index.transito') || request()->routeIs('create.transito') 
+                'active' => request()->routeIs('index.catastro') || request()->routeIs('create.catastro') || request()->routeIs('create.patente') || request()->routeIs('create.patente') || request()->routeIs('index.patente') || request()->routeIs('vistaReporteTransito.transito') || request()->routeIs('index.transito') || request()->routeIs('create.transito')
             ],
             [
                 'name' => 'CONFIGURACION',
@@ -382,8 +382,13 @@
                         'route' => 'ingresar.persona',
                         'active' => request()->routeIs('ingresar.persona')
                     ],
+                    [
+                        'name' => 'Crear Roles',
+                        'route' => 'create.roles',
+                        'active' => request()->routeIs('create.roles')
+                    ],
                 ],
-                'active' => request()->routeIs('lista.usuario') || request()->routeIs('create.usuario')
+                'active' => request()->routeIs('lista.usuario') || request()->routeIs('create.usuario') || request()->routeIs('create.roles')
             ],
             [
                 'name' => 'REPORTES',

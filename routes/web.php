@@ -23,6 +23,7 @@ use App\Http\Controllers\psql\ente\EnteController;
 use App\Http\Controllers\psql\actividad\ActividadComercialController;
 use App\Http\Controllers\analitica\AnaliticaContribuyenteController;
 use App\Http\Controllers\analitica\AnaliticaPredioController;
+use App\Http\Controllers\configuracion\RolesController;
 use App\Http\Controllers\transito\TransitoEnteController;
 use App\Http\Controllers\transito\TransitoImpuestoController;
 use App\Http\Controllers\transito\TransitoVehiculoController;
@@ -121,6 +122,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('usuario/{id}/edit', [UsuarioController::class, 'update'])->name('update.usuario');
     Route::post('usuario/datatables', [UsuarioController::class, 'datatables'])->name('datatable.usuario');
     Route::get('usuario/lista', [UsuarioController::class, 'index'])->name('lista.usuario');
+
+    //actualizacion de rol a usuarios
+    Route::post('rolusuario', [UsuarioController::class, 'rolusuario'])->name('rol.usuario');
+    //Rutas de roles
+    Route::get('roles', [RolesController::class, 'create'])->name('create.roles');
+    Route::post('roles', [RolesController::class, 'store'])->name('store.roles');
+
+    //rutas permisos de los roles
+    Route::post('permisosroles', [RolesController::class, 'obtenerpermisos'])->name('permisos.roles');
 
     //Mostrar la interfaz para generar los titulos de creditos para coactiva (Urbano)
     Route::get('tituloscoactiva/', [TituloCreditoCoactivaController::class, 'index'])->name('index.titulocredito');
