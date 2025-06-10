@@ -133,8 +133,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //titulorural
     Route::get('titulorural/', [TituloRuralController::class, 'index'])->name('index.TitulosRural');
     Route::post('tituloscoactivarural', [TituloRuralController::class, 'consulta'])->name('consulta.TitulosRural');
-    Route::get('test-reporte-rural/', [TituloRuralController::class, 'reportetest'])->name('reportetest.TitulosRural');
-    Route::post('tituloscoactivarural/imprimir', [TituloRuralController::class, 'reportetest1'])->name('reportetest1.TitulosRural');
+    Route::get('test-reporte-rural/', [TituloRuralController::class, 'reportetest22'])->name('reportetest22.TitulosRural');
+    Route::post('tituloscoactivarural/imprimir', [TituloRuralController::class, 'reportetest'])->name('reportetest.TitulosRural');
     Route::get('buscar-titulo-rural/{tipo}/{valor}', [TituloRuralController::class, 'consultaTitulos'])->name('consultaTitulos.TitulosRural');
     Route::get('descargar-reporte/{pdf}', [TituloRuralController::class, 'descargarPdf'])->name('descargarPdf.TitulosRural');
 
