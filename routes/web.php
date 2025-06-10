@@ -26,6 +26,7 @@ use App\Http\Controllers\analitica\AnaliticaPredioController;
 use App\Http\Controllers\transito\TransitoEnteController;
 use App\Http\Controllers\transito\TransitoImpuestoController;
 use App\Http\Controllers\transito\TransitoVehiculoController;
+use App\Http\Controllers\PredioController;
 use App\Models\TransitoEnte;
 use App\Models\TransitoTarifaAnual;
 use App\Models\TransitoVehiculo;
@@ -242,6 +243,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('analitica/predios-exonerados', [AnaliticaPredioController::class, 'predios'])->name('analiticaExonerados.predios');
     Route::post('analitica/data-predio-exonerado', [AnaliticaPredioController::class, 'cargaData'])->name('analiticaExonerados.cargaData');
     Route::post('analitica/reporte-predio-exonerado', [AnaliticaPredioController::class, 'pdfData'])->name('analiticaExonerados.pdfData');
+
+
+    //no deudor
+    Route::get('nodeudor', [PredioController::class, 'index'])->name('nodeudor.index');
 
 });
 

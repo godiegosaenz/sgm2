@@ -25,8 +25,15 @@
 @endpush
 @section('content')
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h4 class="h2">Declaracion de patente</h4>
-   
+    <h4 class="h2">Declaracion de patente1</h4>
+     <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal"
+                data-bs-target="#modalEditarRangos"> <i class="bi bi-table"></i> Contribuyentes </button>
+           
+        </div>
+     
+    </div>
 </div>
 @if(@session('error'))
         <div class="alert alert-danger">
@@ -1318,6 +1325,93 @@
                     <button type="button" class="btn btn-success" onclick="guardaContribuyente()">
                         <span id="label_btn_contribuyente"></span>
                     </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+     <div class="modal fade" id="modalEditarRangos" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tarifa anual del año {{ date('Y') }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+
+                    <form method="POST" action="" id="form_base">
+                        @csrf
+
+                        <div class="col-md-12">
+                            <div class="row align-items-center">
+                                <div class="col-md-3 text-end">
+                                    <label for="marca_v" class="form-label mb-0">Desde</label>
+                                </div>
+                                <div class="col-md-7">
+                                    <input type="hidden" class="form-control" id="id_base" name="id_base">
+                                    <input type="number" step="0.01" class="form-control" id="desde_base" name="desde_base"
+                                        required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12" style="margin-top: 10px;">
+                            <div class="row align-items-center">
+                                <div class="col-md-3 text-end">
+                                    <label for="marca_v" class="form-label mb-0">Hasta</label>
+                                </div>
+                                <div class="col-md-7">
+                                    <input type="number" step="0.01" class="form-control" id="hasta_base" name="hasta_base"
+                                        >
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12" style="margin-top: 10px;">
+                            <div class="row align-items-center">
+                                <div class="col-md-3 text-end">
+                                    <label for="marca_v" class="form-label mb-0">Valor</label>
+                                </div>
+                                <div class="col-md-7">
+                                    <input type="number" step="0.01" class="form-control" id="valor_base" name="valor_base"
+                                        required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12" style="margin-top: 10px; margin-bottom: 20px;">
+                            <div class="row align-items-center">
+                                <div class="col-md-3 text-end">
+                                    <label for="marca_v" class="form-label mb-0"></label>
+                                </div>
+                                <div class="col-md-7">
+                                    <button type="submit" class="btn btn-success btn-sm"><span
+                                            id="btn_base">Guardar</span></button>
+                                    <button type="button" class="btn btn-warning btn-sm"
+                                        onclick="cancelarRango()">Cancelar</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+
+                    <table class="table table-bordered" id="tablaRangos">
+                        <thead>
+                            <tr>
+                                <th>Desde</th>
+                                <th>Hasta</th>
+                                <th>Valor</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                 </div>
             </div>

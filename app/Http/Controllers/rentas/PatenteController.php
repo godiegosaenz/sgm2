@@ -175,7 +175,7 @@ class PatenteController extends Controller
     
         try {
             $attributes = [
-                'catastro_id' => 'contribuyente',
+                'cmb_propietario' => 'contribuyente',
                 'actividades.*.id' => 'actividad comercial',
                 'locales.*.id' => 'local comercial',
                 'year_declaracion' => 'Año de declaracion',
@@ -210,7 +210,7 @@ class PatenteController extends Controller
                 // dd(sset($r->profesional));
                 // Reglas de validación según lleva contabilidad
                 $reglas = ($r->lleva_contabilidad == '1') ? [
-                    'catastro_id' => 'required',
+                    'cmb_propietario' => 'required',
                     'year_declaracion' => 'required',
                     'fecha_declaracion' => 'required|date',
                     'lleva_contabilidad' => 'required',
@@ -224,7 +224,7 @@ class PatenteController extends Controller
                     'actividades' => 'required|array|min:1',
                     'actividades.*.id' => 'required',
                 ] : [
-                    'catastro_id' => 'required',
+                    'cmb_propietario' => 'required',
                     'year_declaracion' => 'required',
                     'fecha_declaracion' => 'required|date',
                     'lleva_contabilidad' => 'boolean',
@@ -251,7 +251,7 @@ class PatenteController extends Controller
                 ];
             }else{
                 $reglas =[
-                    'catastro_id' => 'required',
+                    'cmb_propietario' => 'required',
                     'year_declaracion' => 'required',
                     'fecha_declaracion' => 'required|date',
                     'lleva_contabilidad' => 'boolean',
@@ -316,7 +316,7 @@ class PatenteController extends Controller
             // ]);
 
             $PsqlPaPatente = PsqlPaPatente::create([
-                'Contribuyente_id' => $validatedData['catastro_id'],
+                'Contribuyente_id' => $validatedData['cmb_propietario'],
                 'fecha_declaracion' => $validatedData['fecha_declaracion'],
                 'calificacion_artesanal' => $validatedData['calificacion_artesanal'] ?? false,
                 'year_declaracion' => $validatedData['year_declaracion'],
@@ -803,13 +803,15 @@ class PatenteController extends Controller
 
             foreach($patente as $key=>&$value){
                 $actividades=DB::connection('pgsql')->table('sgm_patente.pa_patente_actividad_contr as pa_act')
-                ->leftJoin('sgm_patente.pa_actividad_contribuyente as act','pa_act.id_actividad_cont','act.Actividad_comercial_id')
-                ->leftJoin('sgm_patente.pa_ctlg_actividades_comerciales as nom_act','nom_act.id','act.Actividad_comercial_id')
+                // ->leftJoin('sgm_patente.pa_actividad_contribuyente as act','pa_act.id_actividad_cont','act.Actividad_comercial_id')
+                ->leftJoin('sgm_patente.pa_ctlg_actividades_comerciales as nom_act','nom_act.id','pa_act.id_actividad_cont')
                 ->where('id_patente',$id)
                 ->select(DB::raw("CONCAT(nom_act.descripcion) AS actividad"))
                 ->get(); 
                 $value->act = $actividades->pluck('actividad')->toArray(); 
             }
+
+            // dd($patente);
             
             setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES@euro', 'es_ES', 'esp');
 
