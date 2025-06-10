@@ -1292,7 +1292,7 @@ $("#formPatente").submit(function(e){
     e.preventDefault();
     
     //validamos los campos obligatorios
-    let catastro_id=$('#catastro_id').val()
+    let catastro_id=$('#cmb_propietario').val()
 
        
     if(catastro_id=="" || catastro_id==null){
@@ -1456,6 +1456,8 @@ $("#formPatente").submit(function(e){
     //     ruta="patente"
     // }
 
+    
+
     var ruta="patente"
     
     vistacargando("m","Espere por favor")
@@ -1479,6 +1481,11 @@ $("#formPatente").submit(function(e){
 
     // var FrmData=$("#formPatente").serialize();
     var FrmData = new FormData(this);
+
+    let actividadesSeleccionado = $("input[name^='actividades']:checked")
+    actividadesSeleccionado.each(function () {
+        FrmData.append("actividades[]", $(this).val());
+    });
 
     $.ajax({
             
