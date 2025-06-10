@@ -55,11 +55,14 @@ Route::redirect('/', '/login');
 //Route::get('/', [ConsultaPredioController::class, 'index'])->name('welcome');
 Route::get('/consulta', [ConsultaPredioController::class, 'index'])->name('welcome');
 Route::get('/consultapruebaame', function (){
-    return DB::connection('sqlsrv')->select('select * from TITULOS_PREDIO where Pre_CodigoCatastral = "132250510101022000"');
+    return DB::connection('sqlsrv')->select("SELECT * FROM TITULOS_PREDIO WHERE Pre_CodigoCatastral = '132250510101022000'");
+});
+Route::get('/consultapruebaame2', function (){
+    $codigo = '132250510101022000';
+    return DB::connection('sqlsrv')->select("SELECT * FROM TITULOS_PREDIO WHERE Pre_CodigoCatastral = ?", [$codigo]);
 });
 Route::get('/reporteprueba', function (){
-    return view('layouts.appv2');
-    //return view('reportes.reporteDePrueba');
+    phpinfo();
 });
 
 
@@ -226,7 +229,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('carga-info-persona/{ci}', [TransitoImpuestoController::class, 'infoPersona'])->name('infoPersona.transito');
     Route::get('transito-imprimir/{id}', [TransitoImpuestoController::class, 'pdfTransito'])->name('pdfTransito.transito');
     Route::post('baja-titulo-transito', [TransitoImpuestoController::class, 'bajaTituloTransito'])->name('bajaTituloTransito.transito');
-    
+
 
     Route::get('analitica/contribuyente', [AnaliticaContribuyenteController::class, 'index'])->name('analitica.contribuyente');
     Route::get('analitica/predios', [AnaliticaContribuyenteController::class, 'predios'])->name('analitica.predios');

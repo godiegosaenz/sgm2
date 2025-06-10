@@ -89,8 +89,12 @@ return [
             "charset" => "utf8",
             "prefix" => "",
             "prefix_indexes" => true,
-            // 'encrypt' => env('DB_ENCRYPT', 'yes'),
-            // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
+            'encrypt' => 'no', // <-- evita requerir certificado
+            'trust_server_certificate' => true,
+            'options' => [
+                // Opcional: para debugging
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            ],
         ],
     ],
 
