@@ -259,15 +259,18 @@
             [
                 'name' => 'ADMINISTRACION',
                 'icon' => 'people',
+                'permission' => 'menu de administracion',
                 'subMenu' => [
                     [
                         'name' => 'Lista de clientes',
                         'route' => 'index.ente',
+                        'permission' => 'Lista clientes',
                         'active' => request()->routeIs('index.ente')
                     ],
                     [
                         'name' => 'Ingresar cliente',
                         'route' => 'create.ente',
+                        'permission' => 'Ingresar clientes',
                         'active' => request()->routeIs('create.ente')
                     ],
                 ],
@@ -276,40 +279,48 @@
             [
                 'name' => 'TESORERIA',
                 'icon' => 'dollar-icon',
+                'permission' => 'menu de tesoreria',
                 'subMenu' => [
                     [
                         'name' => 'Exoneracion tercera edad',
                         'route' => 'index.tesoreria',
+                        'permission' => 'Exoneracion tercera edad',
                         'active' => request()->routeIs('index.tesoreria')
                     ],
                     [
                         'name' => 'Lista exoneracion',
                         'route' => 'lista.exoneracion',
+                        'permission' => 'Lista de exoneraciones',
                         'active' => request()->routeIs('lista.exoneracion')
                     ],
                     [
                         'name' => 'Remision de interes',
                         'route' => 'create.remision',
+                        'permission' => 'Remision de interes',
                         'active' => request()->routeIs('create.remision')
                     ],
                     [
                         'name' => 'Lista de remisiones',
                         'route' => 'index.remision',
+                        'permission' => 'Lista de remisiones',
                         'active' => request()->routeIs('index.remision')
                     ],
                     [
                         'name' => 'Impresion de titulos Urbanos',
                         'route' => 'index.titulocredito',
+                        'permission' => 'Impresion de titulos urbanos',
                         'active' => request()->routeIs('index.titulocredito')
                     ],
                     [
                         'name' => 'Impresion de titulos Rural',
                         'route' => 'index.TitulosRural',
+                        'permission' => 'Impresion de titulos rurales',
                         'active' => request()->routeIs('index.TitulosRural')
                     ],
                     [
                         'name' => 'Reporte de liquidaciones',
                         'route' => 'consulta.liquidacion.remision',
+                        'permission' => 'Reporte de liquidacion',
                         'active' => request()->routeIs('consulta.liquidacion.remision')
                     ],
                 ],
@@ -318,41 +329,44 @@
             [
                 'name' => 'RENTAS',
                 'icon' => 'calculator-icon',
+                'permission' => 'menu de rentas',
                 'subMenu' => [
                     [
                         'name' => 'Catastro contribuyentes',
                         'route' => 'index.catastro',
+                        'permission' => 'Catastro contribuyentes',
                         'active' => request()->routeIs('index.catastro')
                     ],
-                    [
-                        'name' => 'Registrar contribuyente',
-                        'route' => 'create.catastro',
-                        'active' => request()->routeIs('create.catastro')
-                    ],
+
                     [
                         'name' => 'Lista de patente',
                         'route' => 'index.patente',
+                        'permission' => 'Lista de patentes',
                         'active' => request()->routeIs('index.patente')
                     ],
                     [
                         'name' => 'Declarar patente',
                         'route' => 'create.patente',
+                        'permission' => 'Declarar patentes',
                         'active' => request()->routeIs('create.patente')
                     ],
                     [
                         'name' => 'Impuesto transitos',
                         'route' => 'create.transito',
+                        'permission' => 'Lista de impuestos transito',
                         'active' => request()->routeIs('create.transito')
                     ],
                     [
                         'name' => 'Listar impuestos transito',
                         'route' => 'index.transito',
+                        'permission' => 'Impuestos transito',
                         'active' => request()->routeIs('index.transito')
                     ],
 
                     [
                         'name' => 'Reporteria Transito',
                         'route' => 'vistaReporteTransito.transito',
+                        'permission' => 'Reporte transito',
                         'active' => request()->routeIs('vistaReporteTransito.transito')
                     ],
                 ],
@@ -361,30 +375,36 @@
             [
                 'name' => 'CONFIGURACION',
                 'icon' => 'gear-wide-connected',
+                'permission' => 'menu de configuracion',
                 'subMenu' => [
                     [
                         'name' => 'Lista de usuarios',
                         'route' => 'lista.usuario',
+                        'permission' => 'Lista de usuarios',
                         'active' => request()->routeIs('lista.usuario')
                     ],
                     [
                         'name' => 'Crear usuario',
                         'route' => 'create.usuario',
+                        'permission' => 'Crear usuario',
                         'active' => request()->routeIs('create.usuario')
                     ],
                     [
                         'name' => 'Lista de empleados',
                         'route' => 'mostrar.persona',
+                        'permission' => 'Lista de empleados',
                         'active' => request()->routeIs('mostrar.persona')
                     ],
                     [
                         'name' => 'Ingresar empleado',
                         'route' => 'ingresar.persona',
+                        'permission' => 'Ingreso de empleados',
                         'active' => request()->routeIs('ingresar.persona')
                     ],
                     [
                         'name' => 'Crear Roles',
                         'route' => 'create.roles',
+                        'permission' => 'Crear Roles',
                         'active' => request()->routeIs('create.roles')
                     ],
                 ],
@@ -393,11 +413,13 @@
             [
                 'name' => 'REPORTES',
                 'icon' => 'report-icon',
+                'permission' => 'menu de reportes',
                 'active' => false // Puedes agregar más lógica si necesitas submenús
             ],
             [
                 'name' => 'ANALITICA',
                 'icon' => 'gear-wide-connected',
+                'permission' => 'menu de analitica',
                 'subMenu' => [
                     [
                         'name' => 'Analitica contribuyentes',
@@ -432,6 +454,7 @@
             <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
                 <ul class="nav flex-column">
                     @foreach ($menuItems as $item)
+                        @if (!isset($item['permission']) || auth()->user()->can($item['permission']))
                         <li class="nav-item">
                             @if (isset($item['subMenu']))
                                 <a class="nav-link d-flex justify-content-between align-items-center gap-2" data-bs-toggle="collapse" href="#submenu{{ $loop->index }}" role="button" aria-expanded="{{ $item['active'] ? 'true' : 'false' }}">
@@ -443,12 +466,15 @@
                                 <div class="collapse {{ $item['active'] ? 'show' : '' }}" id="submenu{{ $loop->index }}">
                                     <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                         @foreach ($item['subMenu'] as $subItem)
-                                            <li class="nav-item d-flex align-items-center">
-                                                <a href="{{ route($subItem['route']) }}" class="nav-link ms-4 me-2 {{ $subItem['active'] ? 'active' : '' }}">{{ $subItem['name'] }}</a>
-                                            </li>
+                                            @if (!isset($subItem['permission']) || auth()->user()->can($subItem['permission']))
+                                                <li class="nav-item d-flex align-items-center">
+                                                    <a href="{{ route($subItem['route']) }}" class="nav-link ms-4 me-2 {{ $subItem['active'] ? 'active' : '' }}">{{ $subItem['name'] }}</a>
+                                                </li>
+                                            @endif
                                         @endforeach
                                     </ul>
                                 </div>
+
                             @else
                                 <a class="nav-link d-flex align-items-center gap-2 {{ $item['active'] ?? false ? 'active' : '' }}" href="{{ isset($item['route']) ? route($item['route']) : '#' }}">
                                     <svg class="bi"><use xlink:href="#{{ $item['icon'] }}"/></svg>
@@ -456,6 +482,7 @@
                                 </a>
                             @endif
                         </li>
+                        @endif
                     @endforeach
                 </ul>
                 <hr class="my-3">

@@ -15,7 +15,26 @@ class RolesSeeder extends Seeder
      */
     public function run()
     {
-        Role::create(['name' => 'administrador']);
+        $administrador = Role::create(['name' => 'administrador']);
+        $administrador->givePermissionTo('menu de administracion');
+        $administrador->givePermissionTo('Lista clientes');
+        $administrador->givePermissionTo('Ingresar clientes');
+        $administrador->givePermissionTo('menu de tesoreria');
+        $administrador->givePermissionTo('Exoneracion tercera edad');
+        $administrador->givePermissionTo('Lista de exoneraciones');
+        $administrador->givePermissionTo('Remision de interes');
+        $administrador->givePermissionTo('Lista de remisiones');
+        $administrador->givePermissionTo('Impresion de titulos urbanos');
+        $administrador->givePermissionTo('Impresion de titulos rurales');
+        $administrador->givePermissionTo('Reporte de liquidacion');
+        $administrador->givePermissionTo('menu de rentas');
+        $administrador->givePermissionTo('Catastro contribuyentes');
+        $administrador->givePermissionTo('Lista de patentes');
+        $administrador->givePermissionTo('Declarar patentes');
+        $administrador->givePermissionTo('Impuestos transito');
+        $administrador->givePermissionTo('Lista de impuestos transito');
+        $administrador->givePermissionTo('Impuestos transito');
+        $administrador->givePermissionTo('Reporte transito');
 
         $recaudacion = Role::create(['name' => 'recaudacion']);
         $recaudacion->givePermissionTo('menu de administracion');

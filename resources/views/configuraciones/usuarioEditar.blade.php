@@ -9,7 +9,7 @@
     <h4 class="h2">Actualizar usuario</h4>
     <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group me-2">
-            <button type="button" class="btn btn-sm btn-primary" onclick="enviarFormulario()">Actualizar usuario</button>
+
         </div>
     </div>
 </div>
@@ -49,6 +49,9 @@
             @csrf
             @method('PATCH')
             <div class="row justify-content-center">
+                <div class="text-end mt-3">
+                    <button type="button" class="btn btn-sm btn-primary" onclick="enviarFormulario()">Actualizar usuario</button>
+                </div>
                 <div class="col-5">
                     <div class="mb-3">
                         <label for="name" class="form-label">Nombre de usuario:</label>
@@ -101,15 +104,14 @@
         </form>
   </div>
   <div class="tab-pane" id="simple-tabpanel-1" role="tabpanel" aria-labelledby="simple-tab-1">
-    <div class="row">
+
+    <div class="row justify-content-center">
         <div class="text-end mt-3">
-            <button type="button" id="btnActualizarRol" class="btn btn-success" disabled>
+            <button type="button" id="btnActualizarRol" class="btn btn-sm btn-primary" disabled>
                 <span id="spinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                 <span id="btnText">Actualizar Rol</span>
             </button>
         </div>
-    </div>
-    <div class="row justify-content-center">
         <div class="mb-3">
             <label for="selectRol" class="form-label">Roles:</label>
             <select id="selectRol" class="form-select" name="selectRol">
@@ -160,7 +162,60 @@
 
 
   </div>
-  <div class="tab-pane" id="simple-tabpanel-2" role="tabpanel" aria-labelledby="simple-tab-2">Tab 3 selected</div>
+  <div class="tab-pane" id="simple-tabpanel-2" role="tabpanel" aria-labelledby="simple-tab-2">
+        <div class="text-end mt-3">
+            <button type="button" id="btnActualizarPermiso" class="btn btn-sm btn-primary">
+                <span id="spinnerpermiso" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                <span id="btnTextpermiso">Actualizar Permisos</span>
+            </button>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Permisos especiales:</label>
+
+            @foreach($permissions as $permission)
+                @if($rolPermissionuser->contains($permission->name))
+                    <div class="form-check">
+                        <input class="form-check-input"
+                            type="checkbox"
+                            name="permissions_especiales[]"
+                            value="{{ $permission->name }}"
+                            id="permiso{{ $permission->name }}" checked disabled>
+                        <label class="form-check-label" for="permiso{{ $permission->name }}">
+                            {{ $permission->name }}
+                        </label>
+                    </div>
+                @else
+                    @if($permissionsuser->contains($permission->name))
+                        <div class="form-check">
+                            <input class="form-check-input permiso-checkbox"
+                                type="checkbox"
+                                name="permissions_especiales[]"
+                                value="{{ $permission->name }}"
+                                id="permiso{{ $permission->name }}" checked>
+                            <label class="form-check-label" for="permiso{{ $permission->name }}">
+                                {{ $permission->name }}
+                            </label>
+                        </div>
+                    @else
+                        <div class="form-check">
+                            <input class="form-check-input permiso-checkbox"
+                                type="checkbox"
+                                name="permissions_especiales[]"
+                                value="{{ $permission->name }}"
+                                id="permiso{{ $permission->name }}">
+                            <label class="form-check-label" for="permiso{{ $permission->name }}">
+                                {{ $permission->name }}
+                            </label>
+                        </div>
+                    @endif
+
+                @endif
+
+            @endforeach
+
+
+        </div>
+  </div>
 </div>
 
     <!-- Modal Persona -->
@@ -289,6 +344,10 @@
     const btnText = document.getElementById('btnText');
     const selectRol = document.getElementById('selectRol');
 
+    const btnpermisos = document.getElementById('btnActualizarPermiso');
+    const spinnerpermiso = document.getElementById('spinnerpermiso');
+    const btnTextpermiso = document.getElementById('btnTextpermiso');
+
     // Habilitar botón cuando se seleccione un rol válido
     selectRol.addEventListener('change', function () {
         btn.disabled = !selectRol.value;
@@ -324,6 +383,40 @@
         btn.disabled = false;
         spinner.classList.add('d-none');
         btnText.textContent = 'Actualizar Rol';
+        });
+    });
+
+    btnpermisos.addEventListener('click', function(){
+
+        let usuarioId = {{$User->id}}; // Reemplaza con ID real
+
+
+        // Mostrar spinner y desactivar botón
+        spinnerpermiso.classList.remove('d-none');
+        btnTextpermiso.textContent = 'Actualizando...';
+
+        // Capturar permisos marcados
+        let permisosSeleccionados = [];
+        document.querySelectorAll('.permiso-checkbox:checked').forEach((checkbox) => {
+            permisosSeleccionados.push(checkbox.value);
+        });
+
+        axios.post('{{route('permisos.usuario')}}', {
+        usuarioId : usuarioId,
+        permisos: permisosSeleccionados
+        })
+        .then(response => {
+        alert('Permisos agregados correctamente');
+        })
+        .catch(error => {
+        console.error(error);
+        alert('Error al actualizar el rol');
+        })
+        .finally(() => {
+        // Restaurar botón y ocultar spinner
+        btnpermisos.disabled = false;
+        spinnerpermiso.classList.add('d-none');
+        btnTextpermiso.textContent = 'Actualizar Rol';
         });
     });
 </script>

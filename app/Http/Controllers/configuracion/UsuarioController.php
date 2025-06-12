@@ -97,7 +97,8 @@ class UsuarioController extends Controller
         $roles = Role::orderBy('id', 'asc')->get();
         $rolPermissionuser = $User->getPermissionsViaRoles()->pluck('name','id');
         $roluser = $User->getRoleNames()->first();
-        return view('configuraciones.usuarioEditar', compact('User','permissions','roles','roluser','rolPermissionuser'));
+        $permissionsuser = $User->permissions->pluck('name','id');
+        return view('configuraciones.usuarioEditar', compact('User','permissions','roles','roluser','rolPermissionuser','permissionsuser'));
     }
 
     /**
@@ -180,6 +181,15 @@ class UsuarioController extends Controller
     {
         $user = User::findOrFail($request->usuarioId);
         $user->syncRoles($request->rol); // Reemplaza todos los roles previos con este
+        return response()->json([
+            'guardado' => 'ok'
+        ]);
+    }
+
+    public function Permisousuario(Request $request)
+    {
+        $user = User::findOrFail($request->usuarioId);
+        $user->syncPermissions($request->permisos); // <-- importante
         return response()->json([
             'guardado' => 'ok'
         ]);

@@ -126,6 +126,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     //actualizacion de rol a usuarios
     Route::post('rolusuario', [UsuarioController::class, 'rolusuario'])->name('rol.usuario');
+    Route::post('permisousuario', [UsuarioController::class, 'Permisousuario'])->name('permisos.usuario');
     //Rutas de roles
     Route::get('roles', [RolesController::class, 'create'])->name('create.roles');
     Route::post('roles', [RolesController::class, 'store'])->name('store.roles');
