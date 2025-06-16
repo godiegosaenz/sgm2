@@ -439,7 +439,8 @@ class CatastroContribuyente extends Controller
             ,'fecha_suspension_definitiva','obligado_contabilidad','tipo_contribuyente','calle_principal','calle_secundaria',
             'referencia_ubicacion','co.direccion','correo_1','co.telefono','cc.nombre as clase_cont','e.fecha_nacimiento'
             ,DB::raw("EXTRACT(YEAR FROM age(e.fecha_nacimiento)) AS edad_contribuyente"),'c.nombre as nombre_canton'
-            ,'p.descripcion as nombre_provincia','pa.descripcion as nombre_parroquia',
+            ,'p.descripcion as nombre_provincia','pa.descripcion as nombre_parroquia','co.archivo_ruc','co.archivo_artesano',
+            'co.es_artesano',
             DB::raw("CONCAT(e.apellidos, ' ', e.nombres) AS contribuyente"))
         ->get();
 

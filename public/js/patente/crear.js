@@ -643,10 +643,15 @@ function seleccionarLocales(id, local_descripcion, direccion, local_propio_data,
         local_propio = "Desconocido"; // Opcional: texto si el estado no coincide
     }
 
+    var desabilitar=""
+    if(estado_establecimiento=="Cerrado"){
+        desabilitar="disabled"
+    }
+
     // Definir el contenido de la nueva fila, incluyendo inputs ocultos para enviar a Laravel
     nuevaFila.innerHTML = `
         <td>
-            <input class="form-check-input checkbox-grande" type="checkbox" name="locales[${id}][id]" value="${id}">
+            <input ${desabilitar} class="form-check-input checkbox-grande" type="checkbox" name="locales[${id}][id]" value="${id}">
         </td>
         <td>
             <input type="hidden" name="locales[${id}][local_descripcion]" value="${local_descripcion}">
@@ -666,7 +671,7 @@ function seleccionarLocales(id, local_descripcion, direccion, local_propio_data,
             ${estado_establecimiento}
         </td>
         <td>
-            <button type="button" class="btn btn-primary btn-sm" onclick="editarLocal(${id})">
+            <button type="button" class="btn btn-primary btn-sm" onclick="editarLocal(${id})" >
                 <i class="fa fa-edit" ></i>
             </button>
         </td>
