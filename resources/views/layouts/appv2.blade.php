@@ -324,21 +324,22 @@
                         'route' => 'index.catastro',
                         'active' => request()->routeIs('index.catastro')
                     ],
-                    [
+                    /*[
                         'name' => 'Registrar contribuyente',
                         'route' => 'create.catastro',
                         'active' => request()->routeIs('create.catastro')
+                    ],*/
+                    [
+                        'name' => 'Declarar patente',
+                        'route' => 'create.patente',
+                        'active' => request()->routeIs('create.patente')
                     ],
                     [
                         'name' => 'Lista de patente',
                         'route' => 'index.patente',
                         'active' => request()->routeIs('index.patente')
                     ],
-                    [
-                        'name' => 'Declarar patente',
-                        'route' => 'create.patente',
-                        'active' => request()->routeIs('create.patente')
-                    ],
+                    
                     [
                         'name' => 'Impuesto transitos',
                         'route' => 'create.transito',

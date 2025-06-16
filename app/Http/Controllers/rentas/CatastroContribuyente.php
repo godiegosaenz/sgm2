@@ -220,7 +220,8 @@ class CatastroContribuyente extends Controller
             ->where(function($query)use($search){
                 $query->where('ente.ci_ruc', 'ilike', '%'.$search.'%')
                 ->orwhere(DB::raw("CONCAT(apellidos, ' ', nombres)"), 'ilike', '%'.$search.'%');
-            })            
+            })   
+            ->where('cont.estado_contribuyente_id',1)         
             ->select('cont.id AS idper','ci_ruc as documento',DB::raw("CONCAT(apellidos,' ',nombres) AS nombre"))
             ->take(10)->get();
 
@@ -425,32 +426,50 @@ class CatastroContribuyente extends Controller
      */
     public function show(string $id)
     {
-        $contribuyente = PsqlCatastroContribuyente::findOrFail($id);
-        return view('rentas.catastroContribuyenteVer',compact('contribuyente'));
-    }
+        // $contribuyente = PsqlCatastroContribuyente::findOrFail($id);
+        $contribuyente=DB::connection('pgsql')->table('sgm_patente.pa_catastro_contribuyente as co')
+        ->leftJoin('sgm_app.cat_ente as e','e.id','co.propietario_id')
+        ->leftJoin('sgm_app.cat_provincia as p','p.id','co.provincia_id')
+        ->leftJoin('sgm_app.cat_canton as c','c.id','co.canton_id')
+        ->leftJoin('sgm_app.cat_parroquia as pa','pa.id','co.parroquia_id')
+        ->leftJoin('sgm_patente.pa_clase_contribuyente as cc','cc.id','co.clase_contribuyente_id')
+        ->where('co.id',$id)
+        ->select('co.ruc','co.razon_social','co.id','co.ruc_representante_legal','nombre_representante_legal',
+            'estado_contribuyente_id','fecha_inicio_actividades','fecha_actualizacion_actividades','fecha_reinicio_actividades'
+            ,'fecha_suspension_definitiva','obligado_contabilidad','tipo_contribuyente','calle_principal','calle_secundaria',
+            'referencia_ubicacion','co.direccion','correo_1','co.telefono','cc.nombre as clase_cont','e.fecha_nacimiento'
+            ,DB::raw("EXTRACT(YEAR FROM age(e.fecha_nacimiento)) AS edad_contribuyente"),'c.nombre as nombre_canton'
+            ,'p.descripcion as nombre_provincia','pa.descripcion as nombre_parroquia',
+            DB::raw("CONCAT(e.apellidos, ' ', e.nombres) AS contribuyente"))
+        ->get();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
+        foreach($contribuyente as $key=>$value){
+            $actividades=DB::connection('pgsql')->table('sgm_patente.pa_actividad_contribuyente as act')
+            ->leftJoin('sgm_patente.pa_ctlg_actividades_comerciales as nom_act','nom_act.id','act.Actividad_comercial_id')
+            ->where('Catastro_contribuyente_id',$value->id)
+            ->where('act.estado','A')
+            ->select(DB::raw("CONCAT(nom_act.descripcion) AS actividad"),'ciiu')
+            ->get(); 
+            $contribuyente[$key]->actividades=$actividades;
+            // $value->act = $actividades->pluck('actividad')->toArray(); 
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+            $locales=DB::connection('pgsql')->table('sgm_patente.pa_locales')
+            ->select('calle_principal','calle_secundaria','referencia_ubicacion','actividad_descripcion',
+            'estado_establecimiento','local_propio')
+            // ->select('calle_principal')
+            ->where('idcatastro_contr',$value->id)
+            ->get();
+           
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+            $contribuyente[$key]->locales=$locales;
+        }
+
+        $contribuyente=$contribuyente[0];
+        $PsqlProvincia = PsqlProvincia::all();
+
+        $clase = PsqlPaClaseContribuyente::all();
+        // dd($contribuyente);
+        return view('rentas.catastroContribuyenteVer',compact('contribuyente','PsqlProvincia','clase'));
     }
 
     public function getCanton(Request $r){
@@ -517,8 +536,12 @@ class CatastroContribuyente extends Controller
         })
         ->addColumn('action', function ($listacatastro) {
             $buttonPersona = '';
+            // $buttonPersona .= '<a class="btn btn-primary btn-sm" href="'.route('show.catastro',$listacatastro->id).'">Ver</a> 
+            // <a class="btn btn-success btn-sm" onclick="abrirModal('.$listacatastro->id.')">Locales</a> ';
+            // return $buttonPersona;
+
             $buttonPersona .= '<a class="btn btn-primary btn-sm" href="'.route('show.catastro',$listacatastro->id).'">Ver</a> 
-            <a class="btn btn-success btn-sm" onclick="abrirModal('.$listacatastro->id.')">Locales</a> ';
+          ';
             return $buttonPersona;
 
         })
@@ -665,14 +688,29 @@ class CatastroContribuyente extends Controller
             ->first();
 
             if(!is_null($verifica)){
-                //si ya existe activo              
-                return (['mensaje'=>'Ya existe la informacion','error'=>true]);
+                if($verifica->estado=="A"){
+                    //si ya existe activo              
+                    return (['mensaje'=>'Ya existe la informacion','error'=>true]);
+                }
+                
+                $verifica->Actividad_comercial_id=$request->cmb_actividad;
+                $verifica->Catastro_contribuyente_id=$request->cmb_propietario;
+                $verifica->estado="A";
+                $verifica->idusuario_ingresa=auth()->user()->id;
+                $verifica->fecha_ingresa=date('Y-m-d H:i:s');
+                if($verifica->save()){
+                    return (['mensaje'=>'Informacion ingresada exitosamente','error'=>false]);
+                } 
+
             }
 
             //registramos 
             $registra=new PsqlActividadesCont();
             $registra->Actividad_comercial_id=$request->cmb_actividad;
             $registra->Catastro_contribuyente_id=$request->cmb_propietario;
+            $registra->estado="A";
+            $registra->idusuario_ingresa=auth()->user()->id;
+            $registra->fecha_ingresa=date('Y-m-d H:i:s');
             if($registra->save()){
                 return (['mensaje'=>'Informacion ingresada exitosamente','error'=>false]);
             } 
@@ -691,7 +729,10 @@ class CatastroContribuyente extends Controller
         try{           
             //comprobamos que no haya sido ingresado
             $elimina=PsqlActividadesCont::find($id);
-            $elimina->delete();
+            $elimina->estado="I";
+            $elimina->idusuarioact=auth()->user()->id;
+            $elimina->fecha_actualiza=date('Y-m-d H:i:s');
+            $elimina->save();
 
             return (['mensaje'=>'Informacion eliminada exitosamente','error'=>false]);
             
@@ -721,5 +762,114 @@ class CatastroContribuyente extends Controller
         }
         
     }
+
+    public function listarActividades($id){
+      
+        try{
+            $actividad=DB::connection('pgsql')->table('sgm_patente.pa_actividad_contribuyente as act_cont')
+            ->leftJoin('sgm_patente.pa_ctlg_actividades_comerciales as ac','ac.id','act_cont.Actividad_comercial_id')
+            ->where('act_cont.Catastro_contribuyente_id',$id)
+            ->select('ac.ciiu','ac.descripcion','act_cont.Actividad_comercial_id as idActividad','act_cont.id')
+            ->where('act_cont.estado','A')
+            ->get();
+        
+            return (['resultado'=>$actividad,'error'=>false]);
+           
+        } catch (\Throwable $e) {
+            dd($e);
+            // DB::connection('pgsql')->rollback();
+            // Log::error(__CLASS__." => ".__FUNCTION__." => Mensaje =>".$e->getMessage()." Linea =>".$e->getLine());
+            return (['mensaje'=>'Ocurrió un error,intentelo más tarde','error'=>true]); 
+        }
+        
+    }
+
+    public function detalleContribuyente($id)
+    {
+        // $contribuyente = PsqlCatastroContribuyente::findOrFail($id);
+        $contribuyente=DB::connection('pgsql')->table('sgm_patente.pa_catastro_contribuyente as co')
+        ->leftJoin('sgm_app.cat_ente as e','e.id','co.propietario_id')
+        ->leftJoin('sgm_app.cat_provincia as p','p.id','co.provincia_id')
+        ->leftJoin('sgm_app.cat_canton as c','c.id','co.canton_id')
+        ->leftJoin('sgm_app.cat_parroquia as pa','pa.id','co.parroquia_id')
+        ->leftJoin('sgm_patente.pa_clase_contribuyente as cc','cc.id','co.clase_contribuyente_id')
+        ->where('co.id',$id)
+        ->select('co.ruc','co.razon_social','co.id','co.ruc_representante_legal','nombre_representante_legal',
+            'estado_contribuyente_id','fecha_inicio_actividades','fecha_actualizacion_actividades','fecha_reinicio_actividades'
+            ,'fecha_suspension_definitiva','obligado_contabilidad','tipo_contribuyente','calle_principal','calle_secundaria',
+            'referencia_ubicacion','co.direccion','correo_1','co.telefono','cc.nombre as clase_cont','e.fecha_nacimiento'
+            ,DB::raw("EXTRACT(YEAR FROM age(e.fecha_nacimiento)) AS edad_contribuyente"),'c.nombre as nombre_canton'
+            ,'p.descripcion as nombre_provincia','pa.descripcion as nombre_parroquia','es_artesano','clase_contribuyente_id',
+            'provincia_id','canton_id','parroquia_id',
+            DB::raw("CONCAT(e.apellidos, ' ', e.nombres) AS contribuyente"))
+        ->first();
+
+        
+        return (['resultado'=>$contribuyente,'error'=>false]);
+        
+    }
+
+    public function reporteContribuyente($id){
+        
+       $contribuyente=DB::connection('pgsql')->table('sgm_patente.pa_catastro_contribuyente as co')
+        ->leftJoin('sgm_app.cat_ente as e','e.id','co.propietario_id')
+        ->leftJoin('sgm_app.cat_provincia as p','p.id','co.provincia_id')
+        ->leftJoin('sgm_app.cat_canton as c','c.id','co.canton_id')
+        ->leftJoin('sgm_app.cat_parroquia as pa','pa.id','co.parroquia_id')
+        ->leftJoin('sgm_patente.pa_clase_contribuyente as cc','cc.id','co.clase_contribuyente_id')
+        ->where('co.id',$id)
+        ->select('co.ruc','co.razon_social','co.id','co.ruc_representante_legal','nombre_representante_legal',
+            'estado_contribuyente_id','fecha_inicio_actividades','fecha_actualizacion_actividades','fecha_reinicio_actividades'
+            ,'fecha_suspension_definitiva','obligado_contabilidad','tipo_contribuyente','calle_principal','calle_secundaria',
+            'referencia_ubicacion','co.direccion','correo_1','co.telefono','cc.nombre as clase_cont','e.fecha_nacimiento'
+            ,DB::raw("EXTRACT(YEAR FROM age(e.fecha_nacimiento)) AS edad_contribuyente"),'c.nombre as nombre_canton'
+            ,'p.descripcion as nombre_provincia','pa.descripcion as nombre_parroquia','co.es_artesano',
+            DB::raw("CONCAT(e.apellidos, ' ', e.nombres) AS contribuyente"))
+        ->get();
+
+        foreach($contribuyente as $key=>$value){
+            $actividades=DB::connection('pgsql')->table('sgm_patente.pa_actividad_contribuyente as act')
+            ->leftJoin('sgm_patente.pa_ctlg_actividades_comerciales as nom_act','nom_act.id','act.Actividad_comercial_id')
+            ->where('Catastro_contribuyente_id',$value->id)
+            ->where('act.estado','A')
+            ->select(DB::raw("CONCAT(nom_act.descripcion) AS actividad"),'ciiu')
+            ->get(); 
+            $contribuyente[$key]->actividades=$actividades;
+            // $value->act = $actividades->pluck('actividad')->toArray(); 
+
+            $locales=DB::connection('pgsql')->table('sgm_patente.pa_locales')
+            ->select('calle_principal','calle_secundaria','referencia_ubicacion','actividad_descripcion',
+            'estado_establecimiento','local_propio')
+            // ->select('calle_principal')
+            ->where('idcatastro_contr',$value->id)
+            ->get();
+           
+
+            $contribuyente[$key]->locales=$locales;
+        }
+        $nombrePDF="contribuyente.pdf";
+        $data=$contribuyente[0];
+        // dd($data);
+        $pdf = \PDF::loadView('reportes.contribuyente',['data'=>$data]);
+        // return $pdf->stream('reporte_contribuyente.pdf');
+        $estadoarch = $pdf->stream();
+
+        \Storage::disk('public')->put(str_replace("", "",$nombrePDF), $estadoarch);
+        $exists_destino = \Storage::disk('public')->exists($nombrePDF); 
+        if($exists_destino){ 
+            return [
+                'error'=>false,
+                'pdf'=>$nombrePDF
+            ];
+        }else{
+            return[
+                'error'=>true,
+                'mensaje'=>'No se pudo crear el documento'
+            ];
+        }
+
+    }
+
+  
 
 }

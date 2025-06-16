@@ -158,10 +158,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('catastrocontribuyente/agregar-local', [CatastroContribuyente::class, 'guardaLocal'])->name('guardaLocal.catastro');
     Route::get('catastrocontribuyente/listado-locales/{id}', [CatastroContribuyente::class, 'listarLocales'])->name('listarLocales.catastro');
+    Route::get('catastrocontribuyente/listado-actividades/{id}', [CatastroContribuyente::class, 'listarActividades'])->name('listarActividades.catastro');
     Route::get('catastrocontribuyente/buscarActividad', [CatastroContribuyente::class, 'buscarActividad'])->name('buscarActividad.catastro');
     Route::post('catastrocontribuyente/agregar-actividad', [CatastroContribuyente::class, 'guardaActividad'])->name('guardaActividad.catastro');
     Route::get('catastrocontribuyente/eliminar-activida-contr/{id}', [CatastroContribuyente::class, 'eliminarActividad'])->name('eliminarActividad.catastro');
     Route::get('catastrocontribuyente/buscarRucContribuyente', [CatastroContribuyente::class, 'buscarRucContribuyente'])->name('buscarRucContribuyente.catastro');
+    Route::get('catastrocontribuyente/detalle-contr/{id}', [CatastroContribuyente::class, 'detalleContribuyente'])->name('detalleContribuyente.catastro');
+    Route::get('catastrocontribuyente/pdf-contribuyente/{id}', [CatastroContribuyente::class, 'reporteContribuyente'])->name('reporteContribuyente.catastro');
 
 
 
@@ -180,6 +183,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('patente/declaracion-cobro', [PatenteController::class, 'pdfDeclaracionCobro'])->name('pdfDeclaracionCobro.patente');
     Route::get('patente/busca-data-contribuyente/{id}', [PatenteController::class, 'buscaInfoContribuyente'])->name('buscaInfoContribuyente.patente');
     Route::get('patente/ver-local/{id}', [PatenteController::class, 'verLocal'])->name('verLocal.patente');
+
+    Route::get('patente/test-reporte/{id}', [PatenteController::class, 'testReporte'])->name('testReporte.patente');
+
+
+    Route::post('patente-new-contribuyente', [PatenteController::class, 'guardaContribuyente'])->name('guardaContribuyente.patente');
+    Route::post('catastrocontribuyente/actualiza-contribuyente', [PatenteController::class, 'actualizaContribuyente'])->name('actualizaContribuyente.patente');
+
 
     Route::post('ente/datatables', [EnteController::class, 'datatables'])->name('datatables.ente');
     Route::post('ente/datatables/listar', [EnteController::class, 'datatablesente'])->name('listar.ente');

@@ -108,14 +108,17 @@
         
         </tr>
         @php
+            $subtotal_patente=0;
             $fecha = $patente->fecha_declaracion;
             $anio = substr($fecha, 0, 4);
+
+            $subtotal_patente=$patente->valor_patente- $patente->valor_recargos- $patente->valor_intereses;
         @endphp
         <tr>
             <td colspan="2"><b>PERIODO</b></td>
             <td colspan="6">AÑO {{$anio }}</td>
             <td colspan="2"><b>POR USD</b></td>
-            <td colspan="1" style="text-align: right;">{{$patente->valor_patente}}</td>
+            <td colspan="1" style="text-align: right;">{{number_format($subtotal_patente,2)}}</td>
 
         
         </tr>
@@ -128,7 +131,7 @@
                 @endforeach
             </td>
             <td colspan="2"><b>RECARGOS</b></td>
-            <td colspan="1"></td>
+            <td colspan="1"  style="text-align: right;">{{$patente->valor_recargos}}</td>
 
         
         </tr>
@@ -136,7 +139,7 @@
         <tr>
         
             <td colspan="2"><b>INTERESES</b></td>
-            <td colspan="1"></td>
+            <td colspan="1"  style="text-align: right;">{{$patente->valor_intereses}}</td>
 
         
         </tr>
@@ -256,14 +259,16 @@
                 
                 </tr>
                 @php
+                    $subtotal_activo=0;
                     $fecha = $patente->fecha_declaracion;
                     $anio = substr($fecha, 0, 4);
+                    $subtotal_activo=$patente->valor_activo_total-$patente->valor_recargos_act-$patente->valor_intereses_act;
                 @endphp
                 <tr>
                     <td colspan="2"><b>PERIODO</b></td>
                     <td colspan="6">AÑO {{$anio }}</td>
                     <td colspan="2"><b>POR USD</b></td>
-                    <td colspan="1" style="text-align: right;">{{$patente->valor_activo_total}}</td>
+                    <td colspan="1" style="text-align: right;">{{number_format($patente->subtotal_activo,2)}}</td>
 
                 
                 </tr>
@@ -276,7 +281,7 @@
                         @endforeach
                     </td>
                     <td colspan="2"><b>RECARGOS</b></td>
-                    <td colspan="1"></td>
+                    <td colspan="1">{{$patente->valor_recargos_act}}</td>
 
                 
                 </tr>
@@ -284,7 +289,7 @@
                 <tr>
                 
                     <td colspan="2"><b>INTERESES</b></td>
-                    <td colspan="1"></td>
+                    <td colspan="1">{{$patente->valor_intereses_act}}</td>
 
                 
                 </tr>

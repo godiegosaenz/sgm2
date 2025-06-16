@@ -1,4 +1,4 @@
-
+globalThis.LlevaContabilidad=0
 function cargaInfoContribuyente(){
     let idcontribuyente=$('#cmb_propietario').val()
     if(idcontribuyente=="" || idcontribuyente==null){return}
@@ -34,6 +34,19 @@ function cargaInfoContribuyente(){
         } else {
             estado_contr = "Desconocido"; // Opcional: texto si el estado no coincide
         }
+        $('#lleva_contabilidad').prop('checked', false);
+        let obligado_cont="No"
+        if(data.data.obligado_contabilidad==true){
+            obligado_cont="Si"
+            LlevaContabilidad=1
+            $('#lleva_contabilidad').prop('checked', true);
+        }
+
+       
+        let es_artesano="No"
+        if(data.data.es_artesano==true){
+            es_artesano="Si"
+        }
       
         $('#ruc_cedula').val(data.data.ruc)
         $('#razon_social').val(data.data.contribuyente)
@@ -44,6 +57,12 @@ function cargaInfoContribuyente(){
         $('#tipo_contribuyente').val(tipo_contr)
         $('#estado_contribuyente').val(estado_contr)
         $('#clase_contribuyente').val(data.data.clase_contri)
+        $('#edad_cont').val(data.data.edad_contribuyente)
+        $('#lleva_cont').val(obligado_cont)
+        $('#artesano_cont').val(es_artesano)
+        $('#pdf_artesano').val(data.data.archivo_artesano)
+        $('#pdf_ruc').val(data.data.archivo_ruc)
+        
         
         let actividadesComerciales=data.actividad
         
@@ -65,7 +84,7 @@ function cargaInfoContribuyente(){
         let inputs = document.querySelectorAll(".desabilita_txt");
         inputs.forEach(input => input.disabled = false); // Desbloquea cada input
            
-
+        habilitarCamposObligadoOno(obligado_cont)
         // alertNotificar("El documento se descargara en unos segundos","success")
         // verpdf(data.pdf)
 
@@ -73,6 +92,62 @@ function cargaInfoContribuyente(){
         vistacargando("")
         alertNotificar('Ocurrió un error','error');
     });
+}
+
+function verPdfRuc(){
+   
+    var nombre_pdf_ruc=$('#pdf_ruc').val()
+    var contribuyente= $('#ruc_cedula').val()
+    if(contribuyente==""){
+        alertNotificar("Seleccione el contribuyente","error")
+        return
+    }
+    if(nombre_pdf_ruc==""){
+        alertNotificar("No se encontro el documento","error")
+        return
+    }
+
+    verpdf(nombre_pdf_ruc)
+    
+}
+function verPdfArtesano(){
+   
+    var nombre_pdf_artesano=$('#pdf_artesano').val()
+    var contribuyente= $('#ruc_cedula').val()
+    if(contribuyente==""){
+        alertNotificar("Seleccione el contribuyente","error")
+        return
+    }
+    if(nombre_pdf_artesano==""){
+        alertNotificar("No se encontro el documento","error")
+        return
+    }
+
+    verpdf(nombre_pdf_artesano)
+    
+}
+
+function habilitarCamposObligadoOno(obligado){
+    const noObligadosFieldset = document.getElementById('no_obligados_fieldset');
+    const obligadosFieldset = document.getElementById('obligados_fieldset');
+    if (obligado=="Si") {
+        // Mostrar el fieldset para "Obligados a llevar contabilidad"
+        // obligadosFieldset.classList.remove("d-none");
+        // obligadosFieldset.classList.add("d-flex"); // Para que respete la estructura de Bootstrap
+        // noObligadosFieldset.classList.add("d-none"); // Ocultar el otro fieldset
+        // checkboxprofesional.checked = false;
+        $('#no_obligados_fieldset').hide()
+        $('#obligados_fieldset').show()
+    } else {
+        $('#no_obligados_fieldset').show()
+        $('#obligados_fieldset').hide()
+        // Mostrar el fieldset para "No obligados a llevar contabilidad"
+        // noObligadosFieldset.classList.remove("d-none");
+        // noObligadosFieldset.classList.add("d-flex");
+        // obligadosFieldset.classList.add("d-none");
+        // checkboxprofesional.checked = false;
+    }
+
 }
 
 const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -218,6 +293,16 @@ function guardaActividad(){
     var cmb_actividad=$('#cmb_actividad').val()
     var cmb_propietario=$('#cmb_propietario').val()
 
+    if(cmb_propietario==null || cmb_propietario==""){
+        alertNotificar("Debe seleccionar el contribuyente","error")
+        return
+    }
+
+    if(cmb_actividad==null || cmb_actividad==""){
+        alertNotificar("Debe seleccionar la actividad","error")
+        return
+    }
+
     vistacargando("m","Espere por favor")
     $.ajaxSetup({
         headers: {
@@ -242,7 +327,7 @@ function guardaActividad(){
                 return
             }
             alertNotificar(response.mensaje,"success")
-            $('#modalLocal').modal('hide')
+            $('#actividadLocal').modal('hide')
             
             cargaInfoContribuyente()
         },
@@ -648,26 +733,29 @@ function eliminarFila(boton) {
 
 function eliminarActividad(idactividad){
     if(confirm('¿Quiere eliminar el registro?')){
-    vistacargando("m","Espere por favor")
-    $.get("catastrocontribuyente/eliminar-activida-contr/"+idactividad, function(data){
-        vistacargando("")
-        if(data.error==true){
-            alertNotificar(data.mensaje,"error");
-            return;   
-        }
-      
-        alertNotificar(data.mensaje,"success");
-        cargaInfoContribuyente()
-       
-    }).fail(function(){
-        vistacargando("")
-        alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
-    });
-}
+        vistacargando("m","Espere por favor")
+        $.get("catastrocontribuyente/eliminar-activida-contr/"+idactividad, function(data){
+            vistacargando("")
+            if(data.error==true){
+                alertNotificar(data.mensaje,"error");
+                return;   
+            }
+        
+            alertNotificar(data.mensaje,"success");
+            cargaInfoContribuyente()
+        
+        }).fail(function(){
+            vistacargando("")
+            alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+        });
+    }
 }
 
-function cargarparroquia(idcanton){
+function cargarparroquiaLocal(idcanton){
+    // alert("asa")
     var canton_id = document.getElementById('canton_id');
+    var parroquia_id = document.getElementById('parroquia_id');
+
 
     axios.post('catastrocontribuyente/parroquia', {
         _token: token,
@@ -705,7 +793,7 @@ function editarLocal(id){
    
     $('#modalLocalLabel').html('Actualizar Local')
     $('#label_btn_local').html('Actualizar')
-    cargarparroquia(157)
+    cargarparroquiaLocal(157)
     
     vistacargando("m","Espere por favor")
     $.get('patente/ver-local/'+id, function(data){
@@ -801,7 +889,7 @@ function calcularBI(){
    calculaPatente()
 }
 
-globalThis.LlevaContabilidad=0
+
 
 function restarValores(claseInputs, idExclusion) {
     // alert("sa")
@@ -852,25 +940,25 @@ const noObligadosFieldset = document.getElementById('no_obligados_fieldset');
 const obligadosFieldset = document.getElementById('obligados_fieldset');
 
 // Función para actualizar la visibilidad de los fieldsets
-function toggleFieldsets() {
-    let checkboxprofesional = document.getElementById("profesionales");
-    if (checkbox.checked) {
-        // Mostrar el fieldset para "Obligados a llevar contabilidad"
-        obligadosFieldset.style.display = 'block';
-        let div = document.getElementById("obligados_fieldset");
-        div.classList.toggle("mostrar");
-        // Ocultar el fieldset para "No obligados a llevar contabilidad"
-        noObligadosFieldset.style.display = 'none';
+// function toggleFieldsets() {
+//     let checkboxprofesional = document.getElementById("profesionales");
+//     if (checkbox.checked) {
+//         // Mostrar el fieldset para "Obligados a llevar contabilidad"
+//         obligadosFieldset.style.display = 'block';
+//         let div = document.getElementById("obligados_fieldset");
+//         div.classList.toggle("mostrar");
+//         // Ocultar el fieldset para "No obligados a llevar contabilidad"
+//         noObligadosFieldset.style.display = 'none';
 
-        checkboxprofesional.checked =false
-    } else {
-        // Mostrar el fieldset para "No obligados a llevar contabilidad"
-        noObligadosFieldset.style.display = 'block';
-        // Ocultar el fieldset para "Obligados a llevar contabilidad"
-        obligadosFieldset.style.display = 'none';
-        checkboxprofesional.checked =false
-    }
-}
+//         checkboxprofesional.checked =false
+//     } else {
+//         // Mostrar el fieldset para "No obligados a llevar contabilidad"
+//         noObligadosFieldset.style.display = 'block';
+//         // Ocultar el fieldset para "Obligados a llevar contabilidad"
+//         obligadosFieldset.style.display = 'none';
+//         checkboxprofesional.checked =false
+//     }
+// }
 
 //     function toggleFieldsets() {
 //     let checkbox = document.getElementById('lleva_contabilidad');
@@ -895,10 +983,10 @@ function toggleFieldsets() {
 
 
 // Ejecutar la función al cambiar el estado del checkbox
-checkbox.addEventListener('change', toggleFieldsets);
+// checkbox.addEventListener('change', toggleFieldsets);
 
 // Ejecutar la función al cargar la página para establecer el estado inicial
-window.onload = toggleFieldsets;
+// window.onload = toggleFieldsets;
 
 document.addEventListener("DOMContentLoaded", function() {
 // Ejecutar la llamada de Axios cuando el DOM esté listo
@@ -953,67 +1041,72 @@ document.getElementById("calcula_patente").addEventListener("change", function()
 
 
 
-document.getElementById("lleva_contabilidad").addEventListener("change", function() {
-    document.getElementById("cont_exoneracion").value= parseFloat(Math.round(0.00)).toFixed(2);
-    // document.getElementById("cont_pf").value = parseFloat(Math.round(0.00)).toFixed(2);
-    document.getElementById("cont_impuesto").value = parseFloat(Math.round(0.00)).toFixed(2);
-    document.getElementById("cont_sta").value = parseFloat(Math.round(0.00)).toFixed(2);
-    document.getElementById("cont_pago_patente").value = parseFloat(Math.round(0.00)).toFixed(2);
+// document.getElementById("lleva_contabilidad").addEventListener("change", function() {
+//     document.getElementById("cont_exoneracion").value= parseFloat(Math.round(0.00)).toFixed(2);
+//     // document.getElementById("cont_pf").value = parseFloat(Math.round(0.00)).toFixed(2);
+//     document.getElementById("cont_impuesto").value = parseFloat(Math.round(0.00)).toFixed(2);
+//     document.getElementById("cont_sta").value = parseFloat(Math.round(0.00)).toFixed(2);
+//     document.getElementById("cont_pago_patente").value = parseFloat(Math.round(0.00)).toFixed(2);
 
-    $('.desabilita_txt ').val('')
-    $('#cont_total_percibidos_sv').val(100)
+//     $('.desabilita_txt ').val('')
+//     $('#cont_total_percibidos_sv').val(100)
 
-    let checkboxcalcula_patente = document.getElementById("calcula_patente");
-    let checkboximpuesto_1punto5 = document.getElementById("impuesto_1punto5");
+//     let checkboxcalcula_patente = document.getElementById("calcula_patente");
+//     let checkboximpuesto_1punto5 = document.getElementById("impuesto_1punto5");
 
-    let checkboxlleva_contabilidad = document.getElementById("lleva_contabilidad");
-    if (checkboxlleva_contabilidad.checked) {
-        LlevaContabilidad=1     
+//     let checkboxlleva_contabilidad = document.getElementById("lleva_contabilidad");
+//     if (checkboxlleva_contabilidad.checked) {
+//         LlevaContabilidad=1     
         
-        checkboxcalcula_patente.checked=true
-        checkboximpuesto_1punto5.checked=true
+//         checkboxcalcula_patente.checked=true
+//         checkboximpuesto_1punto5.checked=true
 
-    }else{
-        LlevaContabilidad=0        
-    }
-    LimpiarTotalActivo()
-    LimpiarTotalPatente()
+//     }else{
+//         LlevaContabilidad=0        
+//     }
+//     LimpiarTotalActivo()
+//     LimpiarTotalPatente()
 
-    // calculaPatente()
-});
+//     // calculaPatente()
+// });
 
-document.getElementById("calificacion_artesanal").addEventListener("change", function() {
+// document.getElementById("calificacion_artesanal").addEventListener("change", function() {
     
-    let checkbox = document.getElementById("calificacion_artesanal");
-    let checkbox2 = document.getElementById("tercera_edad");
-    if (checkbox.checked) {
-        checkbox2.checked=false    
-        TerceraEdadSeleccionado=0          
-    }
-    LimpiarTotalActivo()
-    LimpiarTotalPatente()
+//     let checkbox = document.getElementById("calificacion_artesanal");
+//     let checkbox2 = document.getElementById("tercera_edad");
+//     if (checkbox.checked) {
+//         checkbox2.checked=false    
+//         TerceraEdadSeleccionado=0          
+//     }
+//     LimpiarTotalActivo()
+//     LimpiarTotalPatente()
 
-    calculaPatente()
-});
+//     calculaPatente()
+// });
 globalThis.TerceraEdadSeleccionado=0
-document.getElementById("tercera_edad").addEventListener("change", function() {
-    let checkbox = document.getElementById("calificacion_artesanal");
-    let checkbox2 = document.getElementById("tercera_edad");
-    if (checkbox2.checked) {
-        checkbox.checked=false   
-        TerceraEdadSeleccionado=1         
-    }else{
-        TerceraEdadSeleccionado=0        
-    }
-    calculaPatente()
-});
+// document.getElementById("tercera_edad").addEventListener("change", function() {
+//     let checkbox = document.getElementById("calificacion_artesanal");
+//     let checkbox2 = document.getElementById("tercera_edad");
+//     if (checkbox2.checked) {
+//         checkbox.checked=false   
+//         TerceraEdadSeleccionado=1         
+//     }else{
+//         TerceraEdadSeleccionado=0        
+//     }
+//     calculaPatente()
+// });
 
 globalThis.EsProfesional=0
 document.getElementById("profesionales").addEventListener("change", function() {
+    if(LlevaContabilidad==1){
+        $('#profesionales').prop('checked',false)
+        alertNotificar("Opcion no valida el contribuyente lleva contabilidad","error")
+        return
+    }
     let checkboxlleva_contabilidad = document.getElementById("lleva_contabilidad");
     let checkboxprofesional = document.getElementById("profesionales");
     if (checkboxprofesional.checked) {
-        checkboxlleva_contabilidad.checked=false   
+        // checkboxlleva_contabilidad.checked=false   
         EsProfesional=1     
         $('#act_caja_banco').val(0.00)   
         $('#act_ctas_cobrar').val(0.00)    
@@ -1057,26 +1150,39 @@ document.getElementById("cont_total_percibidos_sv").addEventListener("blur", fun
 function calculaPatente(){
     LimpiarTotalActivo()
     LimpiarTotalPatente()
+
+    
     let checkbox1 = document.getElementById("lleva_contabilidad");
     let anio_declaracion=$('#year_declaracion').val()
-    let obligado="";
+    let obligado="N";
     let valor=0;
     let checkboxprofesional = document.getElementById("profesionales");
-   
-    if (checkbox1.checked) {
+    var obligado_cont=$('#lleva_cont').val()
+
+    if(obligado_cont=="Si"){
         obligado="S"
         let porcentaje=$('#cont_total_percibidos_sv').val()
         valor=$('#cont_total_patrimonio').val()
         valor = Number(valor) * Number(porcentaje/100)
         if(valor==0 || anio_declaracion==""){return}
-    } else {
-        obligado="N"
-        valor=$('#patrimonio_total').val()
-        
-        if(!checkboxprofesional.checked){
-            if(valor==0 || anio_declaracion==""){return}
-        }
     }
+
+    
+    // if (checkbox1.checked) {
+    //     obligado="S"
+    //     let porcentaje=$('#cont_total_percibidos_sv').val()
+    //     valor=$('#cont_total_patrimonio').val()
+    //     valor = Number(valor) * Number(porcentaje/100)
+    //     if(valor==0 || anio_declaracion==""){return}
+    // } else {
+    //     obligado="N"
+    //     valor=$('#patrimonio_total').val()
+        
+    //     if(!checkboxprofesional.checked){
+    //         if(valor==0 || anio_declaracion==""){return}
+    //     }
+    // }
+    
     // var lc=document.getElementById("local_propio").value 
     // if(lc==""){
     //     alert("Seleccione el contribuyente")
@@ -1093,44 +1199,13 @@ function calculaPatente(){
     // alert("s")
     if(checkboxprofesional.checked){
 
-        let checkbox_art = document.getElementById("calificacion_artesanal");
-        let checkbox_te = document.getElementById("tercera_edad");
-        let porcentaje_exon=0
-        let exone=0
-        if (checkbox_art.checked) {
-           
-            let exone= $('#cont_impuesto').val()/2
-        
-            document.getElementById("cont_exoneracion").value =exone.toFixed(2);
-            porcentaje_exon=50
-        }   
-      
-        else if (checkbox_te.checked) {               
-            let exone= $('#cont_impuesto').val()   
-        
-            document.getElementById("cont_exoneracion").value =exone; 
-            porcentaje_exon=100                  
-            
-        }
-       
         valor=0
-        var exoneracion=0
-        // document.getElementById("cont_exoneracion").value= parseFloat(exone).toFixed(2);
-        // document.getElementById("cont_pf").value = parseFloat(Math.round(5.00)).toFixed(2);
+        var exoneracion=0        
         document.getElementById("cont_impuesto").value = parseFloat(Math.round(30.00)).toFixed(2);
-        // $('#cont_impuesto').val(parseFloat(Math.round(30.00)).toFixed(2))
-        if(LocalComercial=="Desconocido"){
-            // document.getElementById("cont_pf").value =parseFloat(Math.round(5.00)).toFixed(2);
-        }
-       
-
         document.getElementById("cont_sta").value = parseFloat(Math.round(5.00)).toFixed(2);
-
         exoneracion=document.getElementById("cont_exoneracion").value
         sta=document.getElementById("cont_sta").value
-        // pf=document.getElementById("cont_pf").value
         impuesto=document.getElementById("cont_impuesto").value
-        // alert(impuesto)
 
         total=(Number(impuesto) + Number(sta) + Number(pf)) - Number(exoneracion)
         document.getElementById("cont_pago_patente").value =total.toFixed(2);
@@ -1140,23 +1215,22 @@ function calculaPatente(){
         // valor=0
 
         document.getElementById("cont_exoneracion").value= parseFloat(Math.round(0.00)).toFixed(2);
-        // document.getElementById("cont_pf").value = parseFloat(Math.round(0.00)).toFixed(2);
+      
         document.getElementById("cont_impuesto").value = parseFloat(Math.round(0.00)).toFixed(2);
         document.getElementById("cont_sta").value = parseFloat(Math.round(0.00)).toFixed(2);
         document.getElementById("cont_pago_patente").value = parseFloat(Math.round(0.00)).toFixed(2);
-        // $('.desabilita_txt ').val('')
 
         let checkboxlleva_contabilidas = document.getElementById("lleva_contabilidad");
-        if(!checkboxlleva_contabilidas.checked){
+        // if(!checkboxlleva_contabilidas.checked){
             
-            document.getElementById("cont_exoneracion").value= parseFloat(Math.round(0.00)).toFixed(2);
-            // document.getElementById("cont_pf").value = parseFloat(Math.round(0.00)).toFixed(2);
-            document.getElementById("cont_impuesto").value = parseFloat(Math.round(0.00)).toFixed(2);
-            document.getElementById("cont_sta").value = parseFloat(Math.round(0.00)).toFixed(2);
-            document.getElementById("cont_pago_patente").value = parseFloat(Math.round(0.00)).toFixed(2);
+        //     document.getElementById("cont_exoneracion").value= parseFloat(Math.round(0.00)).toFixed(2);
+        //     // document.getElementById("cont_pf").value = parseFloat(Math.round(0.00)).toFixed(2);
+        //     document.getElementById("cont_impuesto").value = parseFloat(Math.round(0.00)).toFixed(2);
+        //     document.getElementById("cont_sta").value = parseFloat(Math.round(0.00)).toFixed(2);
+        //     document.getElementById("cont_pago_patente").value = parseFloat(Math.round(0.00)).toFixed(2);
 
-            // return
-        }
+        //     // return
+        // }
        
     }
    
@@ -1178,18 +1252,25 @@ function calculaPatente(){
         $('#cont_impuesto').val(impuesto)
         let checkbox = document.getElementById("calificacion_artesanal");
         let checkbox2 = document.getElementById("tercera_edad");
+
+        let es_artesano=$('#artesano_cont').val()
+        let es_mayor_Edad=$('#edad_cont').val()
+
         let porcentaje_exon=0
-        if (checkbox.checked) {
+        if(es_artesano=="Si"){
+        // if (checkbox.checked) {
            
             let exone= impuesto/2
             document.getElementById("cont_exoneracion").value =exone.toFixed(2);
             porcentaje_exon=50
         }   
-      
-        if (checkbox2.checked) {
+       
+        if(es_mayor_Edad>=65){
+        // if (checkbox2.checked) {
            
             if(data.calcular.aplica==0){
                 let exone= impuesto   
+               
                 document.getElementById("cont_exoneracion").value =exone; 
                 porcentaje_exon=100
             }else{
@@ -1198,10 +1279,6 @@ function calculaPatente(){
             
         }
        
-        // document.getElementById("cont_pf").value = parseFloat(Math.round(5.00)).toFixed(2);
-        if(LocalComercial=="Desconocido"){
-            // document.getElementById("cont_pf").value =parseFloat(Math.round(5.00)).toFixed(2);
-        }
 
         
         let checkboxImpAct = document.getElementById("impuesto_1punto5");
@@ -1211,11 +1288,6 @@ function calculaPatente(){
        }
 
 
-       let checkboxPatenteOblig = document.getElementById("calcula_patente");
-        let calculaPatenteOblig=0
-        if (checkboxPatenteOblig.checked) {
-            calculaPatenteOblig=1
-       }
     
         var patente = parseFloat(Math.round(0.00)).toFixed(2);
 
@@ -1225,8 +1297,14 @@ function calculaPatente(){
         sta=document.getElementById("cont_sta").value
         // pf=document.getElementById("cont_pf").value
         pf=0;
+
+        var intereses_=data.calcular.valor_intereses
+        document.getElementById("cont_intereses").value =intereses_;
+
+        var recargos_=data.calcular.valor_recargo
+        document.getElementById("cont_recargos").value =recargos_;
        
-        total=(Number(impuesto) + Number(sta) + Number(pf)) - Number(exoneracion)
+        total=(Number(impuesto) + Number(sta) + Number(pf)) + Number(intereses_) + Number(recargos_) - Number(exoneracion)
         document.getElementById("cont_pago_patente").value =total.toFixed(2);
 
         if(obligado=="S" && calculaActivo==1){
@@ -1234,15 +1312,15 @@ function calculaPatente(){
             let porcentaje=$('#cont_total_percibidos_sv').val()
             valor_bi=valor_bi*(Number(porcentaje)/100)
             // cont_total_percibidos_sv
-            calculaActivoTotales(valor_bi,porcentaje_exon)
+            calculaActivoTotales(valor_bi,porcentaje_exon,data.calcular.porcentaje_intereses, data.calcular.valor_recargo)
         }
 
-        if(obligado=="S" && calculaPatenteOblig==0){
-            $('#cont_impuesto').val('')
-            $('#cont_exoneracion').val('')
-            $('#cont_sta').val('')
-            $('#cont_pago_patente').val('')
-        }   
+        // if(obligado=="S"){
+        //     $('#cont_impuesto').val('')
+        //     $('#cont_exoneracion').val('')
+        //     $('#cont_sta').val('')
+        //     $('#cont_pago_patente').val('')
+        // }   
 
       
     }).fail(function(){
@@ -1251,22 +1329,37 @@ function calculaPatente(){
     });
 
 }
-function calculaActivoTotales(valor,porcentaje_exon){
+function calculaActivoTotales(valor,porcentaje_exon, intereses, recargo){
+    
     let activo_total=Number(valor) * (1.5/1000)
 
     document.getElementById("cont_sta").value = parseFloat(Math.round(5.00)).toFixed(2);
 
-    let exoneracion_act=Number(valor) * Number(porcentaje_exon/100)
+    let exoneracion_act=Number(activo_total) * Number(porcentaje_exon/100)
     let sta_act=document.getElementById("cont_sta").value
+    sta_act=sta_act*1
     // let pf_act=document.getElementById("cont_pf").value
     let pf_act=0
 
-    document.getElementById("cont_exoneracion_act").value = parseFloat(Math.round(exoneracion_act * 100) / 100).toFixed(2);;
+    document.getElementById("cont_exoneracion_act").value = parseFloat(Math.round(exoneracion_act * 100) / 100).toFixed(2);
     document.getElementById("cont_impuesto_act").value = Math.round(activo_total * 100) / 100;
-    document.getElementById("cont_sta_act").value =Math.round(sta_act * 100) / 100;; 
+    document.getElementById("cont_sta_act").value =sta_act.toFixed(2);
+
+    let recargo_aux=Number(recargo)
+    let intereses_aux=Number(intereses)
+
+    recargo_aux=Number(activo_total) * 0.10
+    intereses_aux=Number(activo_total) * Number(intereses)
+    // alert(intereses)
+    // alert(recargo)
+
+
+    document.getElementById("cont_intereses_act").value =intereses_aux.toFixed(2);
+    document.getElementById("cont_recargos_act").value =recargo_aux.toFixed(2);
+
     // document.getElementById("cont_pf_act").value =Math.round(pf_act * 100) / 100;; 
     
-    total=(Number(activo_total) + Number(sta_act) + Number(pf_act)) - Number(exoneracion_act)
+    total=(Number(activo_total) + Number(sta_act) + Number(pf_act)) + Number(recargo_aux) + Number(intereses_aux) - Number(exoneracion_act)
     document.getElementById("cont_pago_activo_total").value =total.toFixed(2);
 
 }
@@ -1416,7 +1509,7 @@ $("#formPatente").submit(function(e){
         }else{
             let cont_total_activos=$('#cont_total_activos').val()
             if(cont_total_activos=="" || cont_total_activos==null){
-                alertNotificar("Debe ingresar el total de activos","error")
+                alertNotificar("Debe ingresar el total de activosQQQ","error")
                 $('#cont_total_activos').focus()
                 return
             }
@@ -1508,7 +1601,7 @@ $("#formPatente").submit(function(e){
                 return;                      
             }
             if(Emitir==1){
-                limpiarCampos()
+                // limpiarCampos()
             }
             alertNotificar(data.mensaje,"success");
             crearPdf(data.id)
@@ -1545,6 +1638,12 @@ function NuevoActividad(){
     $('#modalActividadLabel').html('Nueva Actividad')
     $('#label_btn_actividad').html('Guardar')
     $('#actividadLocal').modal('show')
+    limpiarCampoActividad()
+}
+
+function limpiarCampoActividad(){
+
+    $('.modal_act').val('')
 }
 
 function NuevoLocal(){
@@ -1554,7 +1653,7 @@ function NuevoLocal(){
     $('#modalLocal').modal('show')
     $('#provincia_local').val('Manabi')
     $('#canton_local').val('San Vicente')
-    cargarparroquia(157)
+    cargarparroquiaLocal(157)
 }
 
 function guardaLocal(){
@@ -1568,6 +1667,42 @@ function guardaLocal(){
     var estado_establecimiento_id=$('#estado_establecimiento_id').val()
     var tipo_local=$('#tipo_local').val()
     var cmb_propietario=$('#cmb_propietario').val()
+
+    if(cmb_propietario==null || cmb_propietario==""){
+        alertNotificar("Debe primero seleccionar el contribuyente","error")
+        return
+    }
+
+    if(parroquia_local==null || parroquia_local==""){
+        alertNotificar("Debe seleccionar la parroquia","error")
+        return
+    }
+
+    if(calle_principal==null || calle_principal==""){
+        alertNotificar("Debe ingresar la calle principal","error")
+        return
+    }
+
+    if(referencia_local==null || referencia_local==""){
+        alertNotificar("Debe ingresar la referencia","error")
+        return
+    }
+
+    if(ncomercial_local==null || ncomercial_local==""){
+        alertNotificar("Debe ingresar el nombre comercial","error")
+        return
+    }
+
+    if(estado_establecimiento_id==null || estado_establecimiento_id==""){
+        alertNotificar("Debe seleccionar el estado","error")
+        return
+    }
+
+    if(tipo_local==null || tipo_local==""){
+        alertNotificar("Debe seleccionar el tipo","error")
+        return
+    }
+    
 
     vistacargando("m","Espere por favor")
     $.ajaxSetup({
@@ -1620,7 +1755,108 @@ function NuevoContribuyente(){
     $('#label_btn_contribuyente').html('Guardar')
     $('#modalContri').modal('show')
     
+    limpiarCamposModalCont()
 }
+
+function limpiarCamposModalCont(){
+    $('.modal_new_cont').val('')
+    $('#es_artesano').prop('checked', false);
+    $('#obligado_contabilidad').prop('checked', false);
+    $('#doc_artesano').prop('disabled', true);
+}
+
+function seleccionaProvincia(){
+    var idprov=$('#provincia').val()
+    if(idprov=="" || idprov==null){return}
+    cargarcantones(idprov)
+}
+
+function cargarcantones(idprovincia){
+    var canton_id = document.getElementById('canton_id');
+
+    axios.post('catastrocontribuyente/canton', {
+        _token: token,
+        idprovincia:idprovincia
+    }).then(function(res) {
+        if(res.status==200) {
+            console.log("cargando cantones");
+            canton_id.innerHTML = res.data;
+        }
+    }).catch(function(err) {
+        if(err.response.status == 500){
+            console.log('error al consultar al servidor');
+        }
+
+        if(err.response.status == 419){
+            console.log('Es posible que tu session haya caducado, vuelve a iniciar sesion');
+        }
+    }).then(function() {
+
+    });
+}
+
+function seleccionaParroquia(){
+     var idcanton=$('#canton_id').val()
+    if(idcanton=="" || idcanton==null){return}
+    cargarparroquia(idcanton)
+}
+
+function cargarparroquia(idcanton){
+   
+    var parroquia_id = document.getElementById('parroquia_id_');
+
+    axios.post('catastrocontribuyente/parroquia', {
+        _token: token,
+        idcanton:idcanton
+    }).then(function(res) {
+        if(res.status==200) {
+            console.log("cargando parroquia");
+            console.log(res)
+            parroquia_id.innerHTML = res.data;
+        }
+    }).catch(function(err) {
+        if(err.response.status == 500){
+            console.log('error al consultar al servidor');
+        }
+
+        if(err.response.status == 419){
+            console.log('Es posible que tu session haya caducado, vuelve a iniciar sesion');
+        }
+    }).then(function() {
+
+    });
+}
+globalThis.EsArtesanoNew=0
+$('#es_artesano').change(function () {
+    EsArtesanoNew=0
+    $('#doc_artesano').val('')
+    $('#doc_artesano').prop('disabled', true);
+    if ($(this).is(':checked')) {
+
+        var tipo=$('#tipo_persona_new').val()
+        if(tipo==2){
+           alertNotificar("No se permite como artesano a SOCIEDADES","error")
+            $('#es_artesano').prop('checked', false);
+           return 
+        }
+
+        $('#doc_artesano').prop('disabled', false);
+        EsArtesanoNew=1
+        
+    } 
+});
+
+globalThis.LlevaContabilidaNew=0
+$('#obligado_contabilidad').change(function () {
+    LlevaContabilidaNew=0
+    $('#doc_ruc').val('')
+   
+    if ($(this).is(':checked')) {
+        // $('#doc_ruc').prop('disabled', false);
+       
+        LlevaContabilidaNew=1
+    } 
+});
 
 $('#modalContri').on('shown.bs.modal', function () {
     $('#cmb_ruc').select2({
@@ -1686,3 +1922,180 @@ function cargaRepresentanteLegal(){
     nombre_rl=nombre_rl.split("-")
     $('#representante').val(nombre_rl[1])
 }
+
+function cambioTipoPersona(){
+    limpiaTipo()
+    var tipo_per=$('#tipo_persona_new').val()
+    if(tipo_per==1){
+        $('#representante').prop('disabled', true);
+        $('#cmb_ruc_rep').prop('disabled', true);
+    }else{
+        $('#obligado_contabilidad').prop('checked', true);
+        $('#es_artesano').prop('checked', false);
+        $('#doc_artesano').val('');
+    }
+    
+}
+
+function limpiaTipo(){
+    $('#contribuyente').prop('disabled', false);
+    $('#cmb_ruc_rep').prop('disabled', false);
+
+    $('#representante').val('');
+    $('#cmb_ruc_rep').val('').trigger('change.select2')
+
+    $('#contribuyente').val('');
+    $('#cmb_ruc').val('').trigger('change.select2')
+}
+
+function guardaContribuyente(){
+    var tipo=$('#tipo_persona_new').val()
+    var contribuyente=$('#cmb_ruc').val()
+    var txt_contribuyente=$('#contribuyente').val()
+    var fecha_nacimiento=$('#fecha_nacimiento').val()
+    var cmb_ruc_rep=$('#cmb_ruc_rep').val()
+    var txt_repres=$('#representante').val()
+    var id_provincia=$('#provincia').val()
+    var id_canton=$('#canton_id').val()
+    var id_parroquia=$('#parroquia_id_').val()
+    var direccion=$('#direccion').val()
+    var correo=$('#correo').val()
+    var telefono=$('#telefono').val()
+    var doc_ruc=$('#doc_ruc').val()
+    var doc_artesano=$('#doc_artesano').val()
+    var clase_contribuyente_id=$('#clase_contribuyente_id').val()
+
+    if(tipo=="" || tipo==null){
+        alertNotificar("Seleccione un tipo","error")
+        return
+    }
+
+    if(contribuyente=="" || contribuyente==null){
+        alertNotificar("Seleccione un contribuyente","error")
+        return
+    }
+
+    if(fecha_nacimiento=="" || fecha_nacimiento==null){
+        alertNotificar("Ingrese la fecha de nacimiento","error")
+        return
+    }
+
+    if(tipo==2){
+        if(cmb_ruc_rep=="" || cmb_ruc_rep==null){
+            alertNotificar("Seleccione un representante legal","error")
+            return
+        }
+    }
+
+    if(id_provincia=="" || id_provincia==null){
+        alertNotificar("Seleccione la provincia","error")
+        return
+    }
+
+    if(id_canton=="" || id_canton==null){
+        alertNotificar("Seleccione el canton","error")
+        return
+    }
+
+    if(id_parroquia=="" || id_parroquia==null){
+        alertNotificar("Seleccione la parroquia","error")
+        return
+    }
+
+    if(direccion=="" || direccion==null){
+        alertNotificar("Ingrese la direccion","error")
+        return
+    }
+
+    if(correo=="" || correo==null){
+        alertNotificar("Ingrese el correo","error")
+        return
+    }
+
+    if(telefono=="" || telefono==null){
+        alertNotificar("Ingrese el telefono","error")
+        return
+    }
+
+    if(EsArtesanoNew==1){
+        if(doc_artesano=="" || doc_artesano==null){
+            alertNotificar("Seleccione el documento del artesano","error")
+            return
+        } 
+    }
+
+    if(doc_ruc=="" || doc_ruc==null){
+        alertNotificar("Seleccione el documento del RUC","error")
+        return
+    } 
+
+    if(clase_contribuyente_id=="" || clase_contribuyente_id==null){
+        alertNotificar("Seleccione el regimen","error")
+        return
+    } 
+
+    $("#form_new_contribuyente").submit()
+
+}
+
+$("#form_new_contribuyente").submit(function(e){
+   
+    e.preventDefault();
+
+    var ruta="patente-new-contribuyente"
+    
+    vistacargando("m","Espere por favor")
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    //comprobamos si es registro o edicion
+    let AccionForm="R"
+    let tipo_=""
+    let url_form=""
+    if(AccionForm=="R"){
+        tipo_="POST"
+        url_form=ruta
+    }else{
+        tipo_="PUT"
+        url_form=ruta
+    }
+
+    // var FrmData=$("#formPatente").serialize();
+    var FrmData = new FormData(this);
+
+    $.ajax({
+            
+        type: tipo_,
+        url: url_form,
+        method: tipo_,             
+        // data: FrmData,      
+        
+        // processData:false, 
+        data: FrmData,
+        contentType:false,
+        cache:false,
+        processData:false, 
+
+        success: function(data){
+            console.log(data)
+            vistacargando("");                
+            if(data.error==true){
+                alertNotificar(data.mensaje,'error');
+                return;                      
+            }
+            
+            $('#modalContri').modal('hide')
+            alertNotificar(data.mensaje,'success');
+
+        }, error:function (data) {
+            console.log(data)
+
+            vistacargando("");     
+            alertNotificar('Ocurrió un error','error');
+        }
+    });
+
+})

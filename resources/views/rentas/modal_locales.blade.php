@@ -40,7 +40,7 @@
                     </div>
 
                     <!-- Campo Parroquia -->
-                    <div class="col-md-6">
+                    <div class="col-md-6" style="margin-top:12px">
                         <label for="canton" class="form-label">Parroquia <span class="text-danger">*</span></label>
                         <div class="input-group">
                             <select class="form-select {{$errors->has('parroquia_id_modal') ? 'is-invalid' : ''}}" id="parroquia_id_modal" name="parroquia_id_modal" required>
@@ -56,7 +56,7 @@
                     </div>
 
                         <!-- Campo Parroquia -->
-                    <div class="col-md-6">
+                    <div class="col-md-6" style="margin-top:12px">
                         <label for="calle_principal_modal" class="form-label">Calle Principal <span class="text-danger">*</span></label>
                         <div class="input-group">
                             <input type="text" class="form-control {{$errors->has('calle_principal_modal') ? 'is-invalid' : ''}}" 
@@ -67,7 +67,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-6">
+                    <div class="col-md-6"  style="margin-top:12px">
                         <label for="calle_secundaria_modal" class="form-label">Calle Secundaria <span class="text-danger">*</span></label>
                         <div class="input-group">
                             <input type="text" class="form-control {{$errors->has('calle_secundaria_modal') ? 'is-invalid' : ''}}" 
@@ -77,7 +77,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-6">
+                    <div class="col-md-6" style="margin-top:12px">
                         <label for="referencia_modal" class="form-label">Referencia Ubicacion <span class="text-danger">*</span></label>
                         <div class="input-group">
                             <input type="text" class="form-control {{$errors->has('referencia_modal') ? 'is-invalid' : ''}}" 
@@ -88,7 +88,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-6">
+                    <div class="col-md-6" style="margin-top:12px">
                         <label for="descripcion_modal" class="form-label">Descripcion <span class="text-danger">*</span></label>
                         <div class="input-group">
                             <input type="text" class="form-control {{$errors->has('descripcion_modal') ? 'is-invalid' : ''}}" 
@@ -98,7 +98,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-6">
+                    <div class="col-md-6" style="margin-top:12px">
                         <label for="estado_modal" class="form-label">Estado <span class="text-danger">*</span></label>
                         <div class="input-group">
                         <select class="form-select {{$errors->has('estado_establecimiento_id_modal') ? 'is-invalid' : ''}}" id="estado_establecimiento_id_modal" name="estado_establecimiento_id_modal" required>
@@ -111,7 +111,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-6">
+                    <div class="col-md-6" style="margin-top:12px">
                         <label for="estado_modal" class="form-label">Local <span class="text-danger">*</span></label>
                         <div class="input-group">
                         <select class="form-select {{$errors->has('estado_establecimiento_id_modal') ? 'is-invalid' : ''}}" id="tipo_local_modal" name="tipo_local_modal" required>
@@ -126,7 +126,13 @@
 
                     <div class="col-md-12" style="margin-top:12px">
                         <center>
-                            <button type="button" onclick="guardaLocal()" class="btn btn-success btn-sm">Guardar</button>
+                            <button type="button" onclick="guardaLocal()" class="btn btn-success btn-sm">
+                                <span id="tituloboton">Guardar</span>
+                            </button>
+
+                            <button type="button" onclick="cancelarLocal()" class="btn btn-danger btn-sm">
+                               Cancelar
+                            </button>
                         </center>
                        
                     </div>
@@ -139,10 +145,12 @@
                         <table class="table table-bordered" id="tablaLocales" style="width: 100%">
                             <thead>
                                 <tr>
-                                    <th>Ubicacion</th>
-                                    <th>Direccion</th>
-                                    <th>Local</th>
                                     <th>Nombre Comercial</th>
+                                    <th>Direccion</th>
+                                    <th>Arrendado</th>
+                                    <th>Estado</th>
+                                    <th></th>
+                                   
                                 </tr>
                             </thead>
                             <tbody>
@@ -241,7 +249,7 @@
     }
 
     function guardaLocal(){
-        var idcont=$('#idcont').val()
+        var idcont=$('#id_cont').val()
         var prov=$('#provincia_id_modal').val()
         var cant=$('#canton_id_modal').val()
         var parr=$('#parroquia_id_modal').val()
@@ -302,7 +310,7 @@
         let url_form=""
         if(AccionForm=="R"){
             tipo="POST"
-            url_form="agregar-local"
+            url_form="../agregar-local"
         }else{
             tipo="PUT"
             url_form="catastrocontribuyente/actualizar-local/"+idMenuEditar
@@ -319,6 +327,7 @@
             descr: descr,
             establ:establ,
             tipo: tipo_local,
+            idEditarLocal:idEditarLocal
         };
 
         console.log(FrmData)
@@ -342,9 +351,13 @@
                 }
                 limpiarCampos()
                 alertNotificar(data.mensaje,"success");
-                $('#form_ing').hide(200)
-                $('#listado_menu').show(200)
-                llenar_tabla_locales()
+                
+                llenar_tabla_locales(idcont)
+
+                if(idEditarLocal>0){
+                    $('#tituloboton').html('Guardar')
+                    idEditarLocal=0
+                }
                                 
             }, error:function (data) {
                 console.log(data)
@@ -356,14 +369,12 @@
 
     }
 
-    function llenar_tabla_locales(idcontribuyente){
-       
+    function llenar_tabla_locales(idcontribuyente){       
         
         var num_col = $("#tablaLocales thead tr th").length; //obtenemos el numero de columnas de la tabla
         $("#tablaLocales tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center><span class="spinner-border" role="status" aria-hidden="true"></span><b> Obteniendo información</b></center></td></tr>`);
-    
-        
-        $.get("listado-locales/"+idcontribuyente, function(data){
+            
+        $.get("../listado-locales/"+idcontribuyente, function(data){
         
             if(data.error==true){
                 alertNotificar(data.mensaje,"error");
@@ -381,48 +392,63 @@
                 $('#tablaLocales').DataTable({
                     "destroy":true,
                     pageLength: 10,
-                    autoWidth : true,
+                    autoWidth : false,
                     order: [[ 1, "desc" ]],
                     sInfoFiltered:false,
+                    searching: false,
                     language: {
                         url: 'json/datatables/spanish.json',
                     },
                     columnDefs: [
-                        { "width": "20%", "targets": 0 },
-                        { "width": "35%", "targets": 1 },
-                        { "width": "25%", "targets": 2 },
-                        { "width": "20%", "targets": 3 },
+                        { "width": "30%", "targets": 0 },
+                        { "width": "30%", "targets": 1 },
+                        { "width": "10%", "targets": 2 },
+                       
+                        { "width": "10%", "targets": 3 },
+                        { "width": "10%", "targets": 4 },
                     
                     ],
                     data: data.resultado,
                     columns:[
-                            {data: "id"},
-                            {data: "provincia.descripcion" },
+                            {data: "actividad_descripcion"},
+                            {data: "actividad_descripcion" },
                             {data: "local_propio" },
                             {data: "actividad_descripcion"},
+                             {data: "actividad_descripcion"},
+                          
                     ],    
                     "rowCallback": function( row, data, index ) {
                         var local=""
                         if(data.local_propio==1){
                             local="Propio"
                         }else{
-                            local="Propio"
+                            local="Arrendado"
+                        }
+
+                        var estado=""
+                        if(data.estado_establecimiento==1){
+                            estado="Abierto"
+                        }else{
+                            estado="Cerrado"
                         }
                         // $('td', row).eq(0).html(index+1)
-                        $('td', row).eq(0).html(`${data.provincia.descripcion}/${data.canton.nombre}/${data.parroquia.descripcion}
-                                                `)
+                        // $('td', row).eq(0).html(`${data.provincia.descripcion}/${data.canton.nombre}/${data.parroquia.descripcion}
+                        //                         `)
                         $('td', row).eq(1).html(`${data.calle_principal} - ${data.calle_secundaria} - ${data.referencia_ubicacion}</li>
                                                
                                                 `)   
-                        $('td', row).eq(2).html(local)                   
-                        // $('td', row).eq(3).html(`
+                        $('td', row).eq(2).html(local)    
+                        $('td', row).eq(3).html(estado)                   
+                        $('td', row).eq(4).html(`
                                     
-                        //                         <button type="button" class="btn btn-primary btn-xs" onclick="editarMenu(${data.id})">Editar</button>
+                                                <button type="button" class="btn btn-primary btn-sm" onclick="editarLocal(${data.id})">
+                                                    <i class="fa fa-edit"></i>
+                                                </button>
                                                                                     
-                        //                         <a onclick="eliminarMenu(${data.id})" class="btn btn-danger btn-xs"> Eliminar </a>
+                                               
                                         
                                         
-                        // `); 
+                        `); 
                     }             
                 });
             }
@@ -434,9 +460,85 @@
 
     }
 
-    // $('.collapse-link').click();
-    // $('.datatable_wrapper').children('.row').css('overflow','inherit !important');
+    $('.collapse-link').click();
+    $('.datatable_wrapper').children('.row').css('overflow','inherit !important');
 
-    // $('.table-responsive').css({'padding-top':'12px','padding-bottom':'12px', 'border':'0', 'overflow-x':'inherit'});
+    $('.table-responsive').css({'padding-top':'12px','padding-bottom':'12px', 'border':'0', 'overflow-x':'inherit'});
+
+
+    globalThis.idEditarLocal=0
+    function editarLocal(id){
+        idEditarLocal=id
+        $('#provincia_id_modal').val('')
+        $('#calle_principal_modal').val('')
+        $('#calle_secundaria_modal').val('')
+        $('#referencia_modal').val('')
+        $('#descripcion_modal').val('')
+        $('#estado_establecimiento_id_modal').val('')
+        $('#tipo_local_modal').val('')
+        $('#canton_id_modal').val('')
+        $('#parroquia_id_modal').val('')
+    
+        $('#modalLocalLabel').html('Actualizar Local')
+        $('#label_btn_local').html('Actualizar')
+        // cargarparroquiaLocal(157)
+        
+        vistacargando("m","Espere por favor")
+        $.get('../../patente/ver-local/'+id, function(data){
+        
+            if(data.error==true){
+                vistacargando("")
+                alert(data.mensaje);
+                return;   
+            }
+            
+            $('#provincia_id_modal').val(data.data.provincia_id)
+            cargarcantones(data.data.provincia_id)
+           
+            $('#calle_principal_modal').val(data.data.calle_principal)        
+            $('#calle_secundaria_modal').val(data.data.calle_secundaria)
+            $('#referencia_modal').val(data.data.referencia_ubicacion)
+            $('#descripcion_modal').val(data.data.actividad_descripcion)
+            $('#estado_establecimiento_id_modal').val(data.data.estado_establecimiento)
+            $('#tipo_local_modal').val(data.data.local_propio)
+            
+            setTimeout(() => {
+                $('#canton_id_modal').val(data.data.canton_id)
+                cargarparroquia(data.data.canton_id)   
+            }, 500); // 5000 milisegundos = 5 segundos
+
+            setTimeout(() => {      
+                   
+                $('#parroquia_id_modal').val(data.data.parroquia_id)          
+                vistacargando("")   
+                
+            }, 1500); // 5000 milisegundos = 5 segundos
+        
+            $('#tituloboton').html('Actualizar')
+            // AccionForm="A"
+        }).fail(function(){
+            vistacargando("")
+            alertNotificar('Ocurrió un error','error');
+        })
+    
+    }
+
+   function NuevoActividad(){
+        $('#modalActividadLabel').html('Nueva Actividad')
+        $('#label_btn_actividad').html('Guardar')
+        $('#actividadLocal').modal('show')
+        limpiarCampoActividad()
+    }
+
+    function cargaInfoActividad(){
+        var codigo_desc=$('#cmb_actividad').val()
+        if(codigo_desc==""){return}
+        let texto = $('#cmb_actividad option:selected').text();
+        let separa=texto.split("-")
+        $('#codigo_act').val(separa[0])
+        $('#descripcion_act').val(separa[1])
+
+    }
+
 
 </script>
