@@ -422,7 +422,7 @@
                             <tr>
                                 <td><b>Impuesto 1.5 x mil Activos Totales:</b> </td>
                                 <td>$</td>
-                                <td style="text-align:right">{{ $patente->valor_impuesto_act }}</td>
+                                <td style="text-align:right">{{ number_format($patente->valor_impuesto_act,2) }}</td>
                             </tr>
 
                             <tr>
