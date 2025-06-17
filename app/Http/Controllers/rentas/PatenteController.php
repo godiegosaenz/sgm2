@@ -373,38 +373,61 @@ class PatenteController extends Controller
 
             $codigo_documento=PsqlPaPatente::where('estado',1)
             ->select('codigo','codigo_act')
+            ->whereNotNull('codigo')
             ->orderby('id','desc')
             ->first();
-
+         
             $codigo_patente=1;
             $codigo_activo=1;
             $anio=date('Y');
             if(!is_null($codigo_documento)){
+        
                 if(!is_null($codigo_documento->codigo)){
+                   
                     $solo_anio=explode("-",$codigo_documento->codigo);
                     if($anio==$solo_anio[0]){
                         $codigo_patente = (int) $solo_anio[1] + 1;
-                        $codigo_patente =$anio."-".$codigo_patente."-PAT";
+                        $codigo_patente =$anio."-".str_pad($codigo_patente, 6, "0", STR_PAD_LEFT)."-PAT";
                     }else{
                         $inicio=1;
-                        $codigo_patente = $anio."-".$inicio."-PAT";;
-                    }
+                        $codigo_patente = $anio."-".str_pad($inicio, 6, "0", STR_PAD_LEFT)."-PAT";
+                    }                    
+                }else{
                     
-                }
-                if(!is_null($codigo_documento->codigo_act)){
-                    // $codigo_activo = (int) $codigo_documento->codigo + 1;
+                    $inicio=1;
+                    $codigo_patente = $anio."-".str_pad($inicio, 6, "0", STR_PAD_LEFT)."-PAT";
+                } 
+               
+            }else{               
+                $inicio=1;
+                $codigo_activo = $anio."-".str_pad($inicio, 6, "0", STR_PAD_LEFT)."-ACT";
+            }
 
-                    $solo_anio=explode("-",$codigo_documento->codigo_activo);
+            $codigo_documento_act=PsqlPaPatente::where('estado',1)
+            ->select('codigo','codigo_act')
+            ->whereNotNull('codigo_act')
+            ->orderby('id','desc')
+            ->first();
+            if(!is_null($codigo_documento_act)){
+               
+                if(!is_null($codigo_documento_act->codigo_act)){
+                    
+                    $solo_anio=explode("-",$codigo_documento_act->codigo_act);
                     if($anio==$solo_anio[0]){
                         $codigo_activo = (int) $solo_anio[1] + 1;
-                        $codigo_activo =$anio."-".$codigo_activo."-ACT";
+                        $codigo_activo =$anio."-".str_pad($codigo_activo, 6, "0", STR_PAD_LEFT)."-ACT";
                     }else{
                         $inicio=1;
-                        $codigo_activo = $anio."-".$inicio."-ACT";;
-                    }
-
-                    
-                }
+                        $codigo_activo = $anio."-".str_pad($inicio, 6, "0", STR_PAD_LEFT)."-ACT";
+                    }                    
+                }else{
+                   
+                    $inicio=1;
+                    $codigo_activo = $anio."-".str_pad($inicio, 6, "0", STR_PAD_LEFT)."-ACT";
+                } 
+            }else{
+                $inicio=1;
+                $codigo_activo = $anio."-".str_pad($inicio, 6, "0", STR_PAD_LEFT)."-ACT";
             }
 
             foreach ($r->locales as $key => $value) {
@@ -427,10 +450,13 @@ class PatenteController extends Controller
                     $guardaLocal->valor_intereses=$r->cont_intereses;
                     $guardaLocal->valor_recargos=$r->cont_recargos;
                     $guardaLocal->valor_patente=$r->cont_pago_patente;
-
+                    // dd($codigo_patente);
                     if($estado==1){
                         $guardaLocal->codigo=$codigo_patente;
-                        $guardaLocal->codigo_act=$codigo_activo;  
+                        if($es_activo==true){
+                            $guardaLocal->codigo_act=$codigo_activo; 
+                        }
+                         
                     }
   
     
@@ -1555,7 +1581,7 @@ class PatenteController extends Controller
             ,'cc.nombre as regimen','valor_sta','valor_exoneracion','valor_impuesto','y.year_ejercicio_fiscal',
             'codigo_act','valor_impuesto_act','valor_exoneracion_act','valor_sta_act','valor_activo_total',
             'pa.valor_intereses','pa.valor_recargos','pa.valor_intereses_act','pa.valor_recargos_act',
-            DB::raw("CONCAT(lo.calle_principal, ' y ', lo.calle_secundaria) AS calle"),'pa.fecha_declaracion','co.local_propio',
+            DB::raw("CONCAT(lo.calle_principal, ' y ', lo.calle_secundaria) AS calle"),'pa.fecha_declaracion','lo.local_propio',
             'ca.nombre as canton','pa.valor_patente',DB::raw("CONCAT(e.apellidos, ' ', e.nombres) AS contribuyente"),'pa.estado',
             'pa.valor_activo_total','es_activo')
         ->get();

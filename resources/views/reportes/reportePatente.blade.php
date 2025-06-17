@@ -159,8 +159,8 @@
                     </tr>
 
                     <tr>
-                        <td><b>Arrendado:</b></td>
-                        <td>{{ $patente->local_propio }}</td>
+                        <td><b>Local:</b></td>
+                        <td>{{ $patente->local_propio == 1 ? 'Propio' : 'Arrendado'}}</td>
                         
                     </tr>
                     
@@ -378,8 +378,9 @@
                             </tr>
 
                             <tr>
-                                <td><b>Arrendado:</b></td>
-                                <td>{{ $patente->local_propio }}</td>
+                                <td><b>Local:</b></td>
+                                <td>{{ $patente->local_propio == 1 ? 'Propio' : 'Arrendado'}}</td>
+                               
                                 
                             </tr>
                             

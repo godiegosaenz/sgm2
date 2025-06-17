@@ -268,7 +268,7 @@
                     <td colspan="2"><b>PERIODO</b></td>
                     <td colspan="6">AÑO {{$anio }}</td>
                     <td colspan="2"><b>POR USD</b></td>
-                    <td colspan="1" style="text-align: right;">{{number_format($patente->subtotal_activo,2)}}</td>
+                    <td colspan="1" style="text-align: right;">{{number_format($subtotal_activo,2)}}</td>
 
                 
                 </tr>
