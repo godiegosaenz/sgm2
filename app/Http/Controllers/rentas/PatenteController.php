@@ -378,12 +378,32 @@ class PatenteController extends Controller
 
             $codigo_patente=1;
             $codigo_activo=1;
+            $anio=date('Y');
             if(!is_null($codigo_documento)){
                 if(!is_null($codigo_documento->codigo)){
-                    $codigo_patente = (int) $codigo_documento->codigo + 1;
+                    $solo_anio=explode("-",$codigo_documento->codigo);
+                    if($anio==$solo_anio[0]){
+                        $codigo_patente = (int) $solo_anio[1] + 1;
+                        $codigo_patente =$anio."-".$codigo_patente."-PAT";
+                    }else{
+                        $inicio=1;
+                        $codigo_patente = $anio."-".$inicio."-PAT";;
+                    }
+                    
                 }
                 if(!is_null($codigo_documento->codigo_act)){
-                    $codigo_activo = (int) $codigo_documento->codigo + 1;
+                    // $codigo_activo = (int) $codigo_documento->codigo + 1;
+
+                    $solo_anio=explode("-",$codigo_documento->codigo_activo);
+                    if($anio==$solo_anio[0]){
+                        $codigo_activo = (int) $solo_anio[1] + 1;
+                        $codigo_activo =$anio."-".$codigo_activo."-ACT";
+                    }else{
+                        $inicio=1;
+                        $codigo_activo = $anio."-".$inicio."-ACT";;
+                    }
+
+                    
                 }
             }
 
@@ -483,7 +503,7 @@ class PatenteController extends Controller
             $rubro_patente= $impuesto - $valor_exoneracion;
             $patente_id = $id;
             $total_pago = $valor_patente;
-            $usuario_registro = 'cintriago';
+            $usuario_registro = auth()->user()->name;
             $fecha_ingreso = date('Y-m-d H:i:s');
             $valor_rubro_patente = $rubro_patente;
             $valor_rubro_tasa_admin = $valor_sta;
