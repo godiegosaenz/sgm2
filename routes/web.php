@@ -148,6 +148,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('tituloscoactivarural/imprimir', [TituloRuralController::class, 'reportetest'])->name('reportetest.TitulosRural');
     Route::get('buscar-titulo-rural/{tipo}/{valor}', [TituloRuralController::class, 'consultaTitulos'])->name('consultaTitulos.TitulosRural');
     Route::get('descargar-reporte/{pdf}', [TituloRuralController::class, 'descargarPdf'])->name('descargarPdf.TitulosRural');
+    Route::get('buscarContribuyenteRural', [TituloRuralController::class, 'buscarContribuyenteRural'])->name('buscarContribuyenteRural.TitulosRural');
 
     Route::get('/pruebatitulo', function () {
         $vehiculo = TransitoVehiculo::where('id',2)->first();
