@@ -13,6 +13,7 @@ use Datatables;
 use Storage;
 use DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Gate;
 
 class PatenteController extends Controller
 {
@@ -21,6 +22,7 @@ class PatenteController extends Controller
      */
     public function index()
     {
+        Gate::authorize('index', PsqlPaPatente::class);
         return view('rentas.patente');
     }
 
@@ -29,6 +31,7 @@ class PatenteController extends Controller
      */
     public function create()
     {
+        Gate::authorize('create', PsqlPaPatente::class);
         $PsqlYearDeclaracion = PsqlYearDeclaracion::select('id','year_declaracion','year_ejercicio_fiscal')->get();
         return view('rentas.patenteCrear',compact('PsqlYearDeclaracion'));
     }
@@ -135,7 +138,7 @@ class PatenteController extends Controller
          // Obtener los datos validados
          $validatedData = $validator->validated();
 
-         // Crear el nuevo contribuyente 
+         // Crear el nuevo contribuyente
          $PsqlPaPatente = PsqlPaPatente::create([
              'Contribuyente_id' => $validatedData['catastro_id'],
              'fecha_declaracion' => $validatedData['fecha_declaracion'],
@@ -172,7 +175,7 @@ class PatenteController extends Controller
     {
         // dd($r->all());
         DB::beginTransaction(); // Iniciar la transacción
-    
+
         try {
             $attributes = [
                 'cmb_propietario' => 'contribuyente',
@@ -195,7 +198,7 @@ class PatenteController extends Controller
                 'pas_otros_pasivos' => 'Otros pasivos',
                 'pas_total_pasivos' => 'Total de pasivos',
             ];
-    
+
             $messages = [
                 'required' => 'El campo :attribute es obligatorio.',
                 'numeric' => 'El campo :attribute debe ser numérico.',
@@ -261,7 +264,7 @@ class PatenteController extends Controller
             // dd($r->profesionales);
             // Validar datos
             $validator = Validator::make($r->all(), $reglas, $messages, $attributes);
-           
+
             if ($validator->fails()) {
                 return [
                     'error' => true,
@@ -272,7 +275,7 @@ class PatenteController extends Controller
             // dd($r->all());
             // Datos validados
             $validatedData = $validator->validated();
-            
+
             $estado=$r->emision;
             $cantidad_percibida=null;
             if($r->lleva_contabilidad == '1'){
@@ -312,7 +315,7 @@ class PatenteController extends Controller
             //     // 'archivo_patente' => $nombreDocumento.".".$extension;
             //     'estado' => $estado,
 
-               
+
             // ]);
 
             $PsqlPaPatente = PsqlPaPatente::create([
@@ -342,7 +345,7 @@ class PatenteController extends Controller
                 // 'archivo_patente' => $nombreDocumento.".".$extension;
                 'estado' => $estado,
 
-               
+
             ]);
             if(isset($nombreDocumento)){
                 \Storage::disk('disksDocumentoRenta')->put($nombreDocumento.".".$extension,  \File::get($archivo));
@@ -354,16 +357,16 @@ class PatenteController extends Controller
                     $guardaActividades->id_patente=$PsqlPaPatente->id;
                     $guardaActividades->id_actividad_cont=$value['id'];
                     $guardaActividades->save();
-                }                    
+                }
             }
             $es_activo=false;
             foreach ($r->locales as $key => $value) {
                 if(isset($value['id'])){
-                    
+
                     if(isset($r->impuesto_1punto5)){
                         $es_activo=true;
                     }
-                 
+
                     $guardaLocal=PsqlPaPatente::find($PsqlPaPatente->id);
                     $guardaLocal->id_pa_local=$value['id'];
                     if(isset($nombreDocumento)){
@@ -375,7 +378,7 @@ class PatenteController extends Controller
                     $guardaLocal->valor_exoneracion=$r->cont_exoneracion;
                     $guardaLocal->valor_sta=$r->cont_sta;
                     $guardaLocal->valor_patente=$r->cont_pago_patente;
-    
+
                     $guardaLocal->valor_impuesto_act=$r->cont_impuesto_act;
                     $guardaLocal->valor_exoneracion_act=$r->cont_exoneracion_act;
                     $guardaLocal->valor_sta_act=$r->cont_sta_act;
@@ -385,14 +388,14 @@ class PatenteController extends Controller
                     $guardaLocal->es_activo=$es_activo;
 
                     $guardaLocal->save();
-                }                   
+                }
             }
 
             if($estado==1){
                 $guardaLiquidacionPatente=$this->guardaLiquidacion($PsqlPaPatente->id,259);
                 if($es_activo==true){
                     $guardaLiquidacionPatente=$this->guardaLiquidacion($PsqlPaPatente->id,17);
-                   
+
                 }
             }
 
@@ -403,8 +406,8 @@ class PatenteController extends Controller
                 'mensaje' => 'Su patente fue generada exitosamente.',
                 'id'=>$PsqlPaPatente->id
 
-            ];   
-           
+            ];
+
         } catch (\Exception $e) {
             DB::rollback(); // Revertir cambios en caso de error
             return [
@@ -456,14 +459,14 @@ class PatenteController extends Controller
                 // return false;
                 //enviar mensaje de error
             }
-    
+
             // Contar cuántas secuencias existen para ese año y tipo de liquidación 13
             $existeSecuencia = DB::connection('pgsql')
                                     ->table('sgm_financiero.ren_secuencia_num_liquidacion')
                                     ->where('anio', $anio_fiscal)
                                     ->where('id_tipo_liquidacion', $codigo)
                                     ->count();
-    
+
             if ($existeSecuencia == 0) {
                 // Si no hay secuencia, insertar la primera con secuencia 1
                 $max_num_liquidacion = 1;
@@ -474,10 +477,10 @@ class PatenteController extends Controller
                     ->where('anio', $anio_fiscal)
                     ->where('id_tipo_liquidacion', $codigo)
                     ->max('secuencia');
-    
+
                 $max_num_liquidacion = $max_num_liquidacion + 1;
             }
-    
+
              // Insertar el nuevo número de secuencia
             DB::connection('pgsql')
                         ->table('sgm_financiero.ren_secuencia_num_liquidacion')
@@ -486,19 +489,19 @@ class PatenteController extends Controller
                             'anio'               => $anio_fiscal,
                             'id_tipo_liquidacion'=> $codigo
                         ]);
-    
+
             $tipo = DB::connection('pgsql')
                         ->table('sgm_financiero.ren_tipo_liquidacion')
                         ->select('prefijo', 'nombre_titulo')
                         ->where('id', $codigo)
                         ->first();
-    
+
             $contribuyente = DB::connection('pgsql')
                         ->table('sgm_patente.pa_catastro_contribuyente')
                         ->select('propietario_id')
                         ->where('id', $contribuyente_id)
                         ->first();
-    
+
             $liquidacionId = DB::connection('pgsql')->table('sgm_financiero.ren_liquidacion')->insertGetId([
                 'num_liquidacion'    => $max_num_liquidacion,
                 'id_liquidacion'     => $anio_fiscal.'-'.str_pad($max_num_liquidacion, 6, '0', STR_PAD_LEFT).'-'.$tipo->prefijo,
@@ -516,8 +519,8 @@ class PatenteController extends Controller
                 'pa_patente_id'      => $patente_id,
                 'comprador'          => $contribuyente->propietario_id,
             ]);
-            
-            
+
+
             $rubros = [
                 ['rubro' => $rubro_codigo, 'valor' => $valor_rubro_patente,'estado' => true, 'valor_recaudado' => 0],
                 ['rubro' => 3, 'valor' => $valor_rubro_tasa_admin, 'estado' => true, 'valor_recaudado' => 0]
@@ -538,7 +541,7 @@ class PatenteController extends Controller
                 'error' => false,
                 'mensaje' => 'Informacion guardad exitosamente'
             ];
-        
+
         } catch (\Exception $e) {
             dd($e);
             DB::rollback();
@@ -647,9 +650,9 @@ class PatenteController extends Controller
                 'error' => false,
                 'mensaje' => 'Informacion guardad exitosamente'
             ];
-        
+
         } catch (\Exception $e) {
-           
+
             return [
                 'error' => true,
                 'mensaje' => 'Ocurrió un error al generar la patente: ' . $e->getMessage()
@@ -689,7 +692,7 @@ class PatenteController extends Controller
             DB::raw("CASE WHEN local.estado_establecimiento = 1 THEN 'Abierto' ELSE 'Cerrado' END as estado_establecimiento")
             ,'local.id')
             ->get();
-            
+
             return [
                 'data' => $info,
                 'actividad' => $actividad,
@@ -725,7 +728,7 @@ class PatenteController extends Controller
         }
 
     }
-    
+
     public function pdfDeclaracionCobro($id=44){
         try{
             $patente=DB::connection('pgsql')->table('sgm_patente.pa_patente as pa')
@@ -746,30 +749,30 @@ class PatenteController extends Controller
                 ->leftJoin('sgm_patente.pa_ctlg_actividades_comerciales as nom_act','nom_act.id','act.Actividad_comercial_id')
                 ->where('id_patente',$id)
                 ->select(DB::raw("CONCAT(nom_act.descripcion) AS actividad"))
-                ->get(); 
-                $value->act = $actividades->pluck('actividad')->toArray(); 
+                ->get();
+                $value->act = $actividades->pluck('actividad')->toArray();
             }
-            
+
             setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES@euro', 'es_ES', 'esp');
 
             $fecha_timestamp = strtotime($patente[0]->fecha_declaracion);
-    
+
             $fecha_formateada = strftime("%d de %B de %Y", $fecha_timestamp);
-            
+
             if($patente[0]->estado==2){
                 if(!is_null($patente[0]->valor_activo_total)){
                     $nombrePDF="simulacion_patente_activo_total.pdf";
                 }else{
                     $nombrePDF="simulacion_patente.pdf";
                 }
-                    
+
             }else{
                 if(!is_null($patente[0]->valor_activo_total)){
                     $nombrePDF="emision_patente_activo_total.pdf";
                 }else{
                     $nombrePDF="emision_patente.pdf";
                 }
-               
+
             }
             // dd($patente);
 
@@ -784,7 +787,7 @@ class PatenteController extends Controller
                 'error'=>true,
                 'mensaje'=>'Ocurrió un error'
             ];
-            
+
         }
     }
     public function crearTitulo($id){
@@ -807,46 +810,46 @@ class PatenteController extends Controller
                 ->leftJoin('sgm_patente.pa_ctlg_actividades_comerciales as nom_act','nom_act.id','pa_act.id_actividad_cont')
                 ->where('id_patente',$id)
                 ->select(DB::raw("CONCAT(nom_act.descripcion) AS actividad"))
-                ->get(); 
-                $value->act = $actividades->pluck('actividad')->toArray(); 
+                ->get();
+                $value->act = $actividades->pluck('actividad')->toArray();
             }
 
             // dd($patente);
-            
+
             setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES@euro', 'es_ES', 'esp');
 
             $fecha_timestamp = strtotime($patente[0]->fecha_declaracion);
-    
+
             $fecha_formateada = strftime("%d de %B de %Y", $fecha_timestamp);
-            
+
             if($patente[0]->estado==2){
                 if(!is_null($patente[0]->valor_activo_total)){
                     $nombrePDF="simulacion_patente_activo_total.pdf";
                 }else{
                     $nombrePDF="simulacion_patente.pdf";
                 }
-                    
+
             }else{
                 if(!is_null($patente[0]->valor_activo_total)){
                     $nombrePDF="emision_patente_activo_total.pdf";
                 }else{
                     $nombrePDF="emision_patente.pdf";
                 }
-               
+
             }
-            
+
 
             $pdf=\PDF::LoadView('reportes.reporte_patente',['patente'=>$patente[0], "fecha_formateada"=>$fecha_formateada] );
             $pdf->setPaper("A4", "portrait");
 
             // return $pdf->stream("aa.pdf");
-            
+
             $estadoarch = $pdf->stream();
 
             //lo guardamos en el disco temporal
             Storage::disk('disksDocumentoRenta')->put(str_replace("", "",$nombrePDF), $estadoarch);
-            $exists_destino = Storage::disk('disksDocumentoRenta')->exists($nombrePDF); 
-            if($exists_destino){ 
+            $exists_destino = Storage::disk('disksDocumentoRenta')->exists($nombrePDF);
+            if($exists_destino){
                 return[
                     'error'=>false,
                     'pdf'=>$nombrePDF
@@ -857,7 +860,7 @@ class PatenteController extends Controller
                     'mensaje'=>'No se pudo crear el documento'
                 ];
             }
-           
+
         }catch (\Throwable $e) {
             dd($e);
             // Log::error('Sgm2Controller => pdfPagosImpPrediales => mensaje => '.$e->getMessage());
@@ -865,7 +868,7 @@ class PatenteController extends Controller
                 'error'=>true,
                 'mensaje'=>'Ocurrió un error'
             ];
-            
+
         }
     }
 
@@ -882,8 +885,8 @@ class PatenteController extends Controller
                 return view("vistaPreviaDocumento")->with([
                     "documentName"=>$documentName,
                     "documentEncode"=>$documentEncode
-                ]);        
-            }            
+                ]);
+            }
         } catch (\Throwable $th) {
             // Log::error('AbonoController => visualizardoc => mensaje => '.$th->getMessage());
             abort("404");
@@ -892,9 +895,9 @@ class PatenteController extends Controller
     }
 
     public function descargarArchivo($archivo){
-        try{   
-            
-            $exists_destino = \Storage::disk('disksDocumentoRenta')->exists($archivo); 
+        try{
+
+            $exists_destino = \Storage::disk('disksDocumentoRenta')->exists($archivo);
             // dd($exists_destino);
             if($exists_destino){
                 // return response()->download( public_path('storage/documentosRentas/'.$archivo));
@@ -905,14 +908,14 @@ class PatenteController extends Controller
             }else{
                 // Log::error("DocumentosController =>descargarArchivo =>sms => Documento no encontrado");
                 return back()->with(['error'=>'Ocurrió un error','error'=>'danger']);
-            } 
+            }
 
         } catch (\Throwable $th) {
             dd($th);
             // Log::error("DocumentosController =>descargarArchivo =>sms => ".$th->getMessage());
             return back()->with(['error'=>'Ocurrió un error','error'=>'danger']);
-        } 
-         
+        }
+
     }
 
     public function calcular($valor, $tipo,$anio, $terceraEdad){
@@ -921,7 +924,7 @@ class PatenteController extends Controller
             ->where('id',$anio)
             ->select('year_declaracion')
             ->first();
-            
+
             $aplica=0;
             if($terceraEdad==1){
                 $salario_basico=DB::connection('pgsql')->table('sgm_patente.salario_basico')
@@ -929,14 +932,14 @@ class PatenteController extends Controller
                 ->select('valor')
                 ->first();
                 if(!is_null($salario_basico)){
-                    $comprobar=$salario_basico->valor * 500;            
+                    $comprobar=$salario_basico->valor * 500;
                     if($valor > $comprobar){
                         $valor=$valor - $comprobar;
                         $aplica=1;
                     }
                 }
             }
-           
+
             $rangos = DB::connection('pgsql')
             ->table('sgm_patente.pa_base_imponible')
             ->selectRaw('MIN(desde) as minimo, MAX(desde) as maximo')
@@ -957,7 +960,7 @@ class PatenteController extends Controller
                 $total_porcent_pagar=0;
                 $calcular=null;
             }else if($valor >= $maximo){
-                
+
                 $calcular= DB::connection('pgsql')->table('sgm_patente.pa_base_imponible as bi')
                 ->where('desde','=',$maximo)
                 ->select('dolares','imp_sobre_fraccion_exec','desde','hasta','codigo')
@@ -973,16 +976,16 @@ class PatenteController extends Controller
                 ->where('estado','A')
                 ->first();
             }
-           
+
             if(!is_null($calcular)){
                 $valor_pagar=$calcular->dolares;
                 $valor_porc_exced=$calcular->imp_sobre_fraccion_exec;
                 $obtener_dif=$valor -$calcular->desde;
                 $total_porcent_pagar= $obtener_dif * ($valor_porc_exced /100);
                 $desde=$calcular->desde;
-                 
+
             }
-           
+
             $sumar_total=$valor_pagar + $total_porcent_pagar;
             $sumar_total= number_format(($sumar_total),2,'.', '');
             $valores=["valor_pagar"=>$valor_pagar, "valor_porc_exced"=>$valor_porc_exced, "total_porcent_pagar"=>$total_porcent_pagar, "obtener_dif"=>$obtener_dif,"valor"=>$valor,"desde"=>$desde,"sumar_total"=>$sumar_total,"aplica"=>$aplica];
@@ -991,7 +994,7 @@ class PatenteController extends Controller
                 'calcular'=>$valores,
                 // 'salario_basico'=>$salario_basico
             ]);
-           
+
 
         }catch (\Throwable $e) {
             dd($e);
@@ -1000,7 +1003,7 @@ class PatenteController extends Controller
                 'error'=>true,
                 'mensaje'=>'Ocurrió un error'
             ]);
-            
+
         }
     }
 
@@ -1068,11 +1071,11 @@ class PatenteController extends Controller
                 return $listaPatente->year->year_ejercicio_fiscal;
             })
             // ->addColumn('action', function ($listaPatente) {
-            //     return '<a class="btn btn-primary btn-sm" href="'.route('index.patente',$listaPatente->id).'">Ver</a> 
+            //     return '<a class="btn btn-primary btn-sm" href="'.route('index.patente',$listaPatente->id).'">Ver</a>
             //      ';
             // })
             ->addColumn('action', function ($listaPatente) {
-                // return '<button type="button" class="btn btn-primary btn-sm" onclick="verPatente('$listaPatente->id')">Ver</a> 
+                // return '<button type="button" class="btn btn-primary btn-sm" onclick="verPatente('$listaPatente->id')">Ver</a>
                 //  ';
                 return '<a class="btn btn-primary btn-sm" onclick="verPatente(\''.$listaPatente->id.'\')">Ver</a>';
             })

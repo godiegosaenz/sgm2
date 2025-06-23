@@ -12,6 +12,7 @@ use Exception;
 use Illuminate\Console\View\Components\Warn;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Gate;
 
 class UsuarioController extends Controller
 {
@@ -20,6 +21,7 @@ class UsuarioController extends Controller
      */
     public function index()
     {
+        Gate::authorize('lista_usuario', User::class);
         return view('configuraciones.usuarioListar');
     }
 
@@ -28,6 +30,7 @@ class UsuarioController extends Controller
      */
     public function create()
     {
+        Gate::authorize('crear_usuario', User::class);
         return view('configuraciones.usuarioCrear');
     }
 

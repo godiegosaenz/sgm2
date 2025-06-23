@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Illuminate\Support\Facades\Gate;
+use App\Models\User;
 
 class RolesController extends Controller
 {
@@ -22,6 +24,7 @@ class RolesController extends Controller
      */
     public function create()
     {
+        Gate::authorize('crear_roles', User::class);
         $permissions = Permission::orderBy('id', 'asc')->get();
         return view('configuraciones.rolesCrear',compact('permissions'));
     }

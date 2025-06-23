@@ -10,6 +10,7 @@ use App\Models\ExoneracionDetalleLiquidacion;
 use Illuminate\Support\Facades\Validator;
 use Datatables;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Gate;
 
 
 use Illuminate\Support\Str;
@@ -29,6 +30,7 @@ class TesoreriaController extends Controller
      */
     public function index()
     {
+        Gate::authorize('index', ExoneracionAnterior::class);
         return view('tesoreria.exoneracion');
     }
 
@@ -37,8 +39,12 @@ class TesoreriaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
+        /*if ($request->user()->cannot('index',)) {
+            abort(403);
+        }*/
+        Gate::authorize('create', ExoneracionAnterior::class);
         return view('tesoreria.consulta');
     }
 

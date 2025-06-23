@@ -9,6 +9,7 @@ use App\Models\PsqlEnte;
 use App\Models\PsqlLiquidacion;
 use Exception;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Gate;
 
 class TituloCreditoCoactivaController extends Controller
 {
@@ -17,6 +18,7 @@ class TituloCreditoCoactivaController extends Controller
      */
     public function index()
     {
+        Gate::authorize('impresion_titulos_urb', PsqlLiquidacion::class);
         $num_predio = 0;
         return view('tesoreria.TitulosCreditosCoactiva',compact('num_predio'));
     }
@@ -166,25 +168,25 @@ class TituloCreditoCoactivaController extends Controller
             ->where('liq.id', $valor)
             ->get();
             //dd($liquidacion);
-        
+
 
             $fecha_hoy=date('Y-m-d');
             setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES@euro', 'es_ES', 'esp');
-            $fecha_timestamp = strtotime($fecha_hoy);    
+            $fecha_timestamp = strtotime($fecha_hoy);
             $fecha_formateada = strftime("%d de %B del %Y", $fecha_timestamp);
-    
+
 
             $rubros = DB::connection('pgsql')->table('sgm_financiero.ren_det_liquidacion as rdl')
                                                 ->join('sgm_financiero.ren_rubros_liquidacion as rrl', 'rdl.rubro', '=', 'rrl.id')
                                                 ->select('rdl.id', 'rdl.liquidacion', 'rdl.rubro', 'rdl.valor', 'rdl.estado', 'rrl.descripcion')
                                                 ->where('rdl.liquidacion', $valor)
                                                 ->get();
-                                               
+
             $liquidacion['rubros'] = $rubros;
 
             array_push($dataArray, $liquidacion);
         }
-       
+
 
         $data = [
             'title' => 'Reporte de liquidacion',
@@ -201,7 +203,7 @@ class TituloCreditoCoactivaController extends Controller
     }
 
     public function buscaContribuyente($idliquidacion){
-        try{   
+        try{
             $buscaContruyente=DB::connection('pgsql')->table('sgm_app.cat_ente as en')
             ->leftJoin('sgm_financiero.ren_liquidacion as liq', 'en.id', '=', 'liq.comprador')
             ->where('liq.id',$idliquidacion)
@@ -218,16 +220,16 @@ class TituloCreditoCoactivaController extends Controller
             //     ->first();
             // }
 
-            return (['data'=>$buscaContruyente,'error'=>false]); 
-            
+            return (['data'=>$buscaContruyente,'error'=>false]);
+
         } catch (\Throwable $th) {
             // Log::error(__CLASS__." => ".__FUNCTION__." => Mensaje =>".$e->getMessage()." Linea =>".$e->getLine());
-            return (['mensaje'=>'Ocurrió un error,intentelo más tarde '.$th,'error'=>true]); 
-        } 
+            return (['mensaje'=>'Ocurrió un error,intentelo más tarde '.$th,'error'=>true]);
+        }
     }
 
     public function actualizaContribuyente(Request $request){
-        DB::beginTransaction(); 
+        DB::beginTransaction();
         try{
             $id_contribuyente=$request->id;
             $cedula=$request->cedula;
@@ -251,7 +253,7 @@ class TituloCreditoCoactivaController extends Controller
             $actualizaContribuyente->nombres=$nombres;
             $actualizaContribuyente->apellidos=$apellidos;
             $actualizaContribuyente->direccion=$direccion;
-            
+
             if($actualizaContribuyente->save()){
                 $actualizaNombreComprador=PsqlLiquidacion::find($id_liquidacion);
                 $actualizaNombreComprador->nombre_comprador=$nombres." ".$apellidos;
@@ -262,16 +264,16 @@ class TituloCreditoCoactivaController extends Controller
                 return [
                     'error' => false,
                     'mensaje' => 'Su informacion fue actualizada exitosamente.',
-                ];  
+                ];
             }
 
-            
+
 
         } catch (\Throwable $th) {
             DB::rollback();
             // Log::error(__CLASS__." => ".__FUNCTION__." => Mensaje =>".$e->getMessage()." Linea =>".$e->getLine());
-            return (['mensaje'=>'Ocurrió un error,intentelo más tarde '.$th,'error'=>true]); 
-        } 
+            return (['mensaje'=>'Ocurrió un error,intentelo más tarde '.$th,'error'=>true]);
+        }
 
     }
 }
