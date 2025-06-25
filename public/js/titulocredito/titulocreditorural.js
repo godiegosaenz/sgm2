@@ -3,19 +3,27 @@ function cambiaTipo(){
     var tipo=$('#tipo').val()
     $('#div_cedula').show()
     $('#div_clave').hide()
+    $('#div_nombres').hide()
     if(tipo==""){return}
     else if(tipo=="1"){
         $('#div_cedula').show()
         $('#div_clave').hide()
+         $('#div_nombres').hide()
+    }else if(tipo=="2"){
+        $('#div_cedula').hide()
+        $('#div_nombres').hide()
+        $('#div_clave').show()
     }else{
         $('#div_cedula').hide()
-        $('#div_clave').show()
+        $('#div_nombres').show()
+        $('#div_clave').hide()
     }
 }
 
 function limpiarBusqueda(){
     $('#cedula').val('')
     $('#clave').val('')
+    $('#cmb_nombres').val('')
 }
 
 
@@ -23,6 +31,7 @@ $('#formConsulta').on('submit', function(event) {
     let tipo = $('#tipo').val();
     let cedula = $('#cedula').val().trim();
     let clave = $('#clave').val().trim();
+    let nombres = $('#cmb_nombres').val();
     let valido = true;
 
     // Oculta mensajes de error previos si los hay
@@ -40,6 +49,14 @@ $('#formConsulta').on('submit', function(event) {
             alertNotificar('Ingrese la clave','error')
             valido = false;
         }
+    }else if (tipo == '3') {
+        if (nombres === '') {
+            $('#cmb_nombres').addClass('is-invalid');
+            alertNotificar('Seleccione el nombre','error')
+            return
+            
+        }
+        valor=nombres
     }
 
     if (!valido) {
@@ -52,11 +69,13 @@ function llenarTabla(){
     let tipo = $('#tipo').val();
     let cedula = $('#cedula').val().trim();
     let clave = $('#clave').val().trim();
+    let nombres = $('#cmb_nombres').val();
     let valor=""
     if (tipo == '1') {
         if (cedula === '') {
             $('#cedula').addClass('is-invalid');
             alertNotificar('Ingrese la cedula','error')
+            return
             
         }
         valor=cedula
@@ -65,9 +84,18 @@ function llenarTabla(){
         if (clave === '') {
             $('#clave').addClass('is-invalid');
             alertNotificar('Ingrese la clave','error')
+            return
             
         }
         valor=clave
+    }else if (tipo == '3') {
+        if (nombres === '') {
+            $('#cmb_nombres').addClass('is-invalid');
+            alertNotificar('Seleccione el nombre','error')
+            return
+            
+        }
+        valor=nombres
     }
 
     $("#tableRural tbody").html('');
@@ -195,3 +223,30 @@ function generarTitulos(){
         }
     });
 }
+
+$('#cmb_nombres').select2({
+    // dropdownParent: $('#actividadLocal'),
+    ajax: {
+        url: 'buscarContribuyenteRural',
+        dataType: 'json',
+        delay: 250,
+        data: function (params) {
+            return {
+                q: params.term
+            };
+        },
+        processResults: function (data) {
+            return {
+                results: data.map(item => ({
+                    id: item.Pre_CodigoCatastral,
+                    text: item.CarVe_CI + " - " + item.CarVe_Nombres
+                }))
+            };
+        }
+    },
+    minimumInputLength: 1
+});
+
+
+
+

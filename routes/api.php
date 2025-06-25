@@ -22,3 +22,4 @@ Route::middleware("auth:sanctum")->get("/user", function (Request $request) {
 
 Route::get('buscar-titulo-rural/{tipo}/{valor}', [TituloRuralController::class, 'consultaTitulos'])->name('consultaTitulos.TitulosRural');
 Route::post('tituloscoactivarural/imprimir', [TituloRuralController::class, 'reportetest'])->name('reporteTitulos.TitulosRural');
+Route::post('tituloscoactivarural/buscarContribuyente', [TituloRuralController::class, 'buscarContribuyente'])->name('buscarContribuyente.TitulosRural');

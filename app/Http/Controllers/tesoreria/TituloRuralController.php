@@ -141,4 +141,28 @@ class TituloRuralController extends Controller
         }
     }
 
+    public function buscarContribuyenteRural(Request $request){
+
+        $data = $this->clientMunicipio->request('POST', "tituloscoactivarural/buscarContribuyente",[
+            'headers' => [
+                'Content-Type' => 'application/json'
+            ],
+            'body' => json_encode($request->all())
+        ]);
+
+        $data=json_decode((string) $data->getBody());
+
+        // dd($data);
+
+        if($data->error==true){
+            return [
+                'error'=>true,
+                'mensaje'=>'Ocurrió un error al consultar la informacion'
+            ];
+        }
+
+
+        return response()->json($data->resultado);
+    }
+
 }

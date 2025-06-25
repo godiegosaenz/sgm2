@@ -25,7 +25,7 @@
 @endpush
 @section('content')
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h4 class="h2">Declaracion de patente1</h4>
+    <h4 class="h2">Declaracion de patente</h4>
      <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group me-2">
             <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal"
@@ -135,6 +135,27 @@
                         </div>
                     </div>
 
+                    <div class="row mb-3">
+                        <label for="tipo_contribuyente" class="col-md-4 col-form-label fw-bold">Obligado Contabilidad</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control form-control-sm" id="lleva_cont"  disabled>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label for="tipo_contribuyente" class="col-md-4 col-form-label fw-bold">Artesano</label>
+                        <div class="col-md-7">
+                            <input type="text" class="form-control form-control-sm" id="artesano_cont"  disabled>
+                        </div>
+
+                        <div class="col-md-1">
+                            <input type="hidden" name="pdf_artesano" id="pdf_artesano">
+                            <button type="button" class="btn btn-xs btn-primary" onclick="verPdfArtesano()">
+                                <i class="fa fa-file-pdf"></i>
+                            </button>
+                        </div>
+                    </div>
+
                     <!-- <div class="row mb-3">
                         <label for="nombre_contribuyente" class="col-md-4 col-form-label fw-bold">Fantasia comercial</label>
                         <div class="col-md-8">
@@ -196,6 +217,26 @@
                         <label for="clase_contribuyente" class="col-md-4 col-form-label fw-bold">Clase de contribuyente</label>
                         <div class="col-md-8">
                             <input type="text" class="form-control form-control-sm" id="clase_contribuyente"  disabled>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label for="tipo_contribuyente" class="col-md-4 col-form-label fw-bold">Edad (Años)</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control form-control-sm" id="edad_cont"  disabled>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label for="tipo_contribuyente" class="col-md-4 col-form-label fw-bold">Documento RUC</label>
+                        <div class="col-md-7">
+                            <input type="text" class="form-control form-control-sm" id="artesano_cont" value="Si"  disabled>
+                        </div>
+                        <div class="col-md-1">
+                            <input type="hidden" name="pdf_ruc" id="pdf_ruc">
+                            <button type="button" class="btn btn-xs btn-primary" onclick="verPdfRuc()">
+                                <i class="fa fa-file-pdf"></i>
+                            </button>
                         </div>
                     </div>
                     
@@ -378,7 +419,7 @@
                 </div>
             </div>
             <div class="mb-3">
-                <div class="form-check">
+                <div class="form-check" style="display: none;">
                     <input class="form-check-input checkbox-grande" type="checkbox" id="lleva_contabilidad" name="lleva_contabilidad" value="1" {{ old('lleva_contabilidad') ? 'checked' : '' }}>
                     <label class="form-check-label" for="lleva_contabilidad">Lleva Contabilidad</label>
 
@@ -611,7 +652,7 @@
                             </div>
                         </div>
 
-                        <div class="col-sm-9">
+                        <div class="col-sm-9" style="display: none;">
                             <div class="form-check">
                                 <input class="form-check-input checkbox-grande" type="checkbox" id="calcula_patente" name="calcula_patente" value="1" {{ old('calcula_patente') ? 'checked' : '' }}>
                                 <label class="form-check-label" for="calcula_patente">Patente</label>
@@ -761,7 +802,7 @@
         
     <!-- </div> -->
        <!-- Exoneraciones -->
-    <fieldset class="border p-3 mb-4">
+    <!-- <fieldset class="border p-3 mb-4">
         <legend class="float-none w-auto px-3 fs-5">Exoneraciones</legend>
         <div class="row">
             <div class="col-md-4 mb-3">
@@ -789,7 +830,7 @@
             </div>
 
         </div>
-    </fieldset>
+    </fieldset> -->
 
     <!-- calculo patente municipal -->
     <div class="row">
@@ -824,6 +865,26 @@
                             <div class="input-group">
                                 <span class="input-group-text">$</span>
                                 <input type="number" class="desabilita_txt form-control {{$errors->has('cont_sta') ? 'is-invalid' : ''}} input-decimales cont_patente_muni" name="cont_sta" id="cont_sta" value="{{old('cont_sta')}}" onblur="sumarValores('cont_patente_muni', 'cont_pago_patente')" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label for="cont_intereses" class="col-sm-6 col-form-label">Intereses</label>
+                        <div class="col-sm-6">
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="desabilita_txt form-control {{$errors->has('cont_intereses') ? 'is-invalid' : ''}} input-decimales cont_patente_muni" name="cont_intereses" id="cont_intereses" value="{{old('cont_intereses')}}" onblur="sumarValores('cont_patente_muni', 'cont_pago_patente')" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label for="cont_recargos" class="col-sm-6 col-form-label">Recargos</label>
+                        <div class="col-sm-6">
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="desabilita_txt form-control {{$errors->has('cont_recargos') ? 'is-invalid' : ''}} input-decimales cont_patente_muni" name="cont_recargos" id="cont_recargos" value="{{old('cont_recargos')}}" onblur="sumarValores('cont_patente_muni', 'cont_pago_patente')" readonly>
                             </div>
                         </div>
                     </div>
@@ -889,6 +950,28 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="mb-3 row">
+                        <label for="cont_intereses_act" class="col-sm-6 col-form-label">Intereses</label>
+                        <div class="col-sm-6">
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="desabilita_txt form-control {{$errors->has('cont_intereses_act') ? 'is-invalid' : ''}} input-decimales cont_pago_acti" name="cont_intereses_act" id="cont_intereses_act" value="{{old('cont_intereses_act')}}" onblur="sumarValores('cont_pago_acti', 'cont_pago_activo_total')" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label for="cont_recargos_act" class="col-sm-6 col-form-label">Recargos</label>
+                        <div class="col-sm-6">
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="desabilita_txt form-control {{$errors->has('cont_recargos_act') ? 'is-invalid' : ''}} input-decimales cont_pago_acti" name="cont_recargos_act" id="cont_recargos_act" value="{{old('cont_recargos_act')}}" onblur="sumarValores('cont_pago_acti', 'cont_pago_activo_total')" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+
 
                     <!-- <div class="mb-3 row">
                         <label for="cont_pf_act" class="col-sm-6 col-form-label">Permiso de Funcionamiento</label>
@@ -1162,7 +1245,7 @@
                                     <label for="cmb_actividad" class="col-sm-3 col-form-label" style="text-align: end;">Actividad</label>
                                     <div class="col-sm-8">
                                         <div class="input-group">
-                                            <select id="cmb_actividad" name="cmb_actividad" class="col-md-4 col-form-label fw-bold form-control" style="width: 100%;" data-bs-theme="dark" onchange="cargaInfoActividad()">
+                                            <select id="cmb_actividad" name="cmb_actividad" class="col-md-4 col-form-label fw-bold form-control modal_act" style="width: 100%;" data-bs-theme="dark" onchange="cargaInfoActividad()">
                                                 <option value=""></option>
                                             </select>
                                         </div>
@@ -1173,7 +1256,7 @@
                                     <label for="codigo_act" class="col-sm-3 col-form-label" style="text-align: end;">Codigo</label>
                                     <div class="col-sm-8">
                                         <div class="input-group">
-                                            <input type="text" class="desabilita_txt form-control" name="codigo_act" id="codigo_act" value="{{old('codigo_act')}}">
+                                            <input type="text" class="desabilita_txt form-control modal_act" name="codigo_act" id="codigo_act" value="{{old('codigo_act')}}">
                                         </div>
                                     </div>
                                 </div>
@@ -1182,7 +1265,7 @@
                                     <label for="descripcion_act" class="col-sm-3 col-form-label" style="text-align: end;">Descripcion</label>
                                     <div class="col-sm-8">
                                         <div class="input-group">
-                                            <textarea class="desabilita_txt form-control" name="descripcion_act" id="descripcion_act" value="{{old('descripcion_act')}}" rows="6"></textarea>
+                                            <textarea class="desabilita_txt form-control modal_act" name="descripcion_act" id="descripcion_act" value="{{old('descripcion_act')}}" rows="6"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -1211,122 +1294,170 @@
                     <h5 class="modal-title" id="modalContribuyenteLabel">Nuevo Contribuyente</h5>
                     <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
                 </div>
-                @csrf
-                <div class="modal-body">
-                    <div class="col-md-12">
-                        <div class="row">
-                            <!-- Columna izquierda -->
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="tipo_persona_new" class="form-label">Tipo Persona</label>
-                                    <select class="form-select" id="tipo_persona_new" name="tipo_persona_new" required>
-                                        <option value="">Seleccione un tipo</option>
-                                        <option value="1" {{ old('tipo_contribuyente_id') == '1' ? 'selected' : '' }}>Persona natural</option>
-                                        <option value="2" {{ old('tipo_contribuyente_id') == '2' ? 'selected' : '' }}>Sociedades</option>
-                                    </select>
-                                </div>
+               
+                    <div class="modal-body">
+                        <form method="POST" action="" id="form_new_contribuyente">
+                        <div class="col-md-12">
+                            <div class="row">
 
-                                <div class="mb-3">
-                                    <label for="cmb_ruc" class="form-label">RUC-Contribuyente</label>
-                                    <select id="cmb_ruc" name="cmb_ruc" class="form-control" onchange="cargaContribuyente()">
-                                        <option value=""></option>
-                                    </select>
-                                </div>
+                                <!-- <form method="POST" action="" id="form_new_contribuyente"> -->
+                                    @csrf
+                                    <!-- Columna izquierda -->
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="tipo_persona_new" class="form-label">Tipo Persona</label>
+                                            <select class="form-select modal_new_cont" id="tipo_persona_new" name="tipo_persona_new" onchange="cambioTipoPersona()">
+                                                <option value="">Seleccione un tipo</option>
+                                                <option value="1" {{ old('tipo_contribuyente_id') == '1' ? 'selected' : '' }}>Persona natural</option>
+                                                <option value="2" {{ old('tipo_contribuyente_id') == '2' ? 'selected' : '' }}>Sociedades</option>
+                                            </select>
+                                        </div>
 
-                                <div class="mb-3">
-                                    <label for="contribuyente" class="form-label">Contribuyente</label>
-                                    <input type="text" class="form-control" name="contribuyente" id="contribuyente" value="{{old('contribuyente')}}">
-                                </div>
+                                        <div class="mb-3">
+                                            <label for="cmb_ruc" class="form-label">RUC-Contribuyente</label>
+                                            <select id="cmb_ruc" name="cmb_ruc" class="form-control modal_new_cont" onchange="cargaContribuyente()">
+                                                <option value=""></option>
+                                            </select>
+                                        </div>
 
-                                <div class="mb-3">
-                                    <label for="cmb_ruc_rep" class="form-label">RUC-Repres. Legal</label>
-                                    <select id="cmb_ruc_rep" name="cmb_ruc_rep" class="form-control" onchange="cargaRepresentanteLegal()">
-                                        <option value=""></option>
-                                    </select>
-                                </div>
+                                        <div class="mb-3">
+                                            <label for="contribuyente" class="form-label">Contribuyente</label>
+                                            <input type="text" class="form-control modal_new_cont" name="contribuyente" id="contribuyente" value="{{old('contribuyente')}}">
+                                        </div>
 
-                                <div class="mb-3">
-                                    <label for="representante" class="form-label">Repres. Legal</label>
-                                    <input type="text" class="form-control" name="representante" id="representante" value="{{old('representante')}}">
-                                </div>
+                                        <div class="mb-3">
+                                            <label for="fecha_nacimiento" class="form-label">Fecha Nacimiento</label>
+                                            <input type="date" class="form-control modal_new_cont" name="fecha_nacimiento" id="fecha_nacimiento" value="{{old('fecha_nacimiento')}}">
+                                        </div>
 
-                                <div class="mb-3">
-                                    <label for="provincia" class="form-label">Provincia</label>
-                                    <select class="form-select" id="provincia" name="provincia" required>
-                                        <option value="">Seleccione una</option>
-                                        <option value="1" {{ old('tipo_local') == '1' ? 'selected' : '' }}>Propio</option>
-                                        <option value="2" {{ old('tipo_local') == '2' ? 'selected' : '' }}>Arrendado</option>
-                                    </select>
-                                </div>
+                                        <div class="mb-3">
+                                            <label for="cmb_ruc_rep" class="form-label">RUC-Repres. Legal</label>
+                                            <select id="cmb_ruc_rep" name="cmb_ruc_rep" class="form-control modal_new_cont" onchange="cargaRepresentanteLegal()">
+                                                <option value=""></option>
+                                            </select>
+                                        </div>
 
-                                <div class="mb-3">
-                                    <label for="canton" class="form-label">Cantón</label>
-                                    <select class="form-select" id="canton" name="canton" required>
-                                        <option value="">Seleccione una</option>
-                                        <option value="1" {{ old('tipo_local') == '1' ? 'selected' : '' }}>Propio</option>
-                                        <option value="2" {{ old('tipo_local') == '2' ? 'selected' : '' }}>Arrendado</option>
-                                    </select>
-                                </div>
+                                        <div class="mb-3">
+                                            <label for="representante" class="form-label">Repres. Legal</label>
+                                            <input type="text" class="form-control modal_new_cont" name="representante" id="representante" value="{{old('representante')}}">
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="provincia" class="form-label">Provincia</label>
+                                            <select class="form-select modal_new_cont" id="provincia" name="provincia" onchange="seleccionaProvincia()">
+                                            <option value="">Seleccione una provincia</option>
+                                                @foreach ($PsqlProvincia as $p)
+                                                    <option value="{{$p->id}}" {{ old('provincia_id') == $p->id ? 'selected' : '' }}>{{$p->descripcion}}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="canton" class="form-label">Cantón</label>
+                                            <select class="form-select modal_new_cont" id="canton_id" name="canton_id" onchange="seleccionaParroquia()">
+                                                <option value="">Seleccione una</option>
+                                            
+                                            </select>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="parroquia" class="form-label">Parroquia</label>
+                                            <select class="form-select modal_new_cont" id="parroquia_id_" name="parroquia_id_" required>
+                                                <option value="">Seleccione una Parroquia</option>
+                                                
+                                            </select>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="direccion" class="form-label">Dirección</label>
+                                            <input type="text"  class="form-control modal_new_cont" name="direccion" id="direccion">{{ old('descripcion_act') }}
+                                        </div>
+
+                                        
+                                    </div>
+
+                                    <!-- Columna derecha -->
+                                    <div class="col-md-6">
+                                        
+
+                                        <div class="mb-3">
+                                            <label for="correo" class="form-label">Correo Electrónico</label>
+                                            <input type="email" class="form-control modal_new_cont" name="correo" id="correo" value="{{old('correo')}}">
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="telefono" class="form-label">Teléfono</label>
+                                            <input type="text" class="form-control modal_new_cont" name="telefono" id="telefono" value="{{old('telefono')}}">
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Otros</label><br>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input modal_new_cont" type="checkbox" id="obligado_contabilidad" name="obligado_contabilidad" value="1" {{ old('obligado_contabilidad') ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="obligado_contabilidad">Obligado a llevar contabilidad</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input modal_new_cont" type="checkbox" id="es_artesano" name="es_artesano" value="1" {{ old('es_artesano') ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="es_artesano">¿Es artesano?</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="doc_ruc" class="form-label">Cargar Documento RUC</label>
+                                            <input type="file" class="form-control modal_new_cont" name="doc_ruc" id="doc_ruc">
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="doc_artesano" class="form-label">Cargar Documento Artesano</label>
+                                            <input type="file" class="form-control modal_new_cont" name="doc_artesano" id="doc_artesano">
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="doc_artesano" class="form-label">Fecha de Inicio Actividades</label>
+                                            <input type="date" class="form-control modal_new_cont" name="fecha_inicio_act" id="fecha_inicio_act">
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="doc_artesano" class="form-label">Fecha de Reinicio Actividades</label>
+                                            <input type="date" class="form-control modal_new_cont" name="fecha_reinicio_act" id="fecha_reinicio_act">
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="doc_artesano" class="form-label">Fecha de Actualizacion Actividades</label>
+                                            <input type="date" class="form-control modal_new_cont" name="fecha_actualizacion_act" id="fecha_actualizacion_act">
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="doc_artesano" class="form-label">Fecha de Suspension Actividades</label>
+                                            <input type="date" class="form-control modal_new_cont" name="fecha_suspension_act" id="fecha_suspension_act">
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="doc_artesano" class="form-label">Regimen</label>
+                                                <select class="modal_new_cont form-select {{$errors->has('clase_contribuyente_id') ? 'is-invalid' : ''}}" id="clase_contribuyente_id" name="clase_contribuyente_id" required>
+                                                    <option value="">Seleccione una clase</option>
+                                                    @foreach ($clase as $c)
+                                                        <option value="{{$c->id}}" {{ old('clase_contribuyente_id') == $c->id ? 'selected' : '' }}>{{$c->nombre}}</option>
+                                                    @endforeach
+                                            </select>
+                                        </div>
+
+                                        
+
+                                    </div>
+                                <!-- </form> -->
                             </div>
 
-                            <!-- Columna derecha -->
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="parroquia" class="form-label">Parroquia</label>
-                                    <select class="form-select" id="parroquia" name="parroquia" required>
-                                        <option value="">Seleccione una</option>
-                                        <option value="1" {{ old('tipo_local') == '1' ? 'selected' : '' }}>Propio</option>
-                                        <option value="2" {{ old('tipo_local') == '2' ? 'selected' : '' }}>Arrendado</option>
-                                    </select>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="direccion" class="form-label">Dirección</label>
-                                    <input type="text" class="form-control" name="direccion" id="direccion">{{ old('descripcion_act') }}
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="correo" class="form-label">Correo Electrónico</label>
-                                    <input type="email" class="form-control" name="correo" id="correo" value="{{old('correo')}}">
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="telefono" class="form-label">Teléfono</label>
-                                    <input type="text" class="form-control" name="telefono" id="telefono" value="{{old('telefono')}}">
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label">Otros</label><br>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" id="obligado_contabilidad" name="obligado_contabilidad" value="1" {{ old('obligado_contabilidad') ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="obligado_contabilidad">Obligado a llevar contabilidad</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" id="es_artesano" name="es_artesano" value="1" {{ old('es_artesano') ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="es_artesano">¿Es artesano?</label>
-                                    </div>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="doc_ruc" class="form-label">Cargar Documento RUC</label>
-                                    <input type="file" class="form-control" name="doc_ruc" id="doc_ruc">
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="doc_artesano" class="form-label">Cargar Documento Artesano</label>
-                                    <input type="file" class="form-control" name="doc_artesano" id="doc_artesano">
-                                </div>
-                            </div>
                         </div>
-
+                        </form>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success" onclick="guardaContribuyente()">
-                        <span id="label_btn_contribuyente"></span>
-                    </button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                </div>
+                
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" onclick="guardaContribuyente()">
+                            <span id="label_btn_contribuyente"></span>
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
             </div>
         </div>
     </div>
@@ -1461,7 +1592,10 @@
 
 </script>
 <script>
+    $('#doc_artesano').prop('disabled', true);
     let token = "{{csrf_token()}}";
+
+    
 // alert(token)
 
 let tk=$('meta[name="csrf-token"]').attr('content')

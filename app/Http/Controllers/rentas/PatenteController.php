@@ -10,7 +10,18 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\PsqlPaPatente;
 use App\Models\PsqlPatenteActividadesCont;
 use Datatables;
+use App\Models\PsqlCatastroContribuyente;
+use App\Models\PsqlProvincia;
+use App\Models\PsqlCanton;
+use App\Models\PsqlParroquia;
+use Number;
 use Storage;
+use App\Models\PsqlEnte;
+use App\Models\PsqlCtlgItem;
+use App\Models\PsqlEnteTelefono;
+use App\Models\PsqlEnteCorreo;
+use App\Models\PsqlPaClaseContribuyente;
+use App\Models\BaseImponiblePatente;
 use DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Gate;
@@ -33,7 +44,9 @@ class PatenteController extends Controller
     {
         Gate::authorize('create', PsqlPaPatente::class);
         $PsqlYearDeclaracion = PsqlYearDeclaracion::select('id','year_declaracion','year_ejercicio_fiscal')->get();
-        return view('rentas.patenteCrear',compact('PsqlYearDeclaracion'));
+        $PsqlProvincia = PsqlProvincia::all();
+        $clase = PsqlPaClaseContribuyente::all();
+        return view('rentas.patenteCrear',compact('PsqlYearDeclaracion','PsqlProvincia','clase'));
     }
 
     /**
@@ -173,13 +186,14 @@ class PatenteController extends Controller
 
     public function store(Request $r)
     {
+        // dd($r->profesionales);
         // dd($r->all());
         DB::beginTransaction(); // Iniciar la transacción
 
         try {
             $attributes = [
                 'cmb_propietario' => 'contribuyente',
-                'actividades.*.id' => 'actividad comercial',
+                // 'actividades.*.id' => 'actividad comercial11',
                 'locales.*.id' => 'local comercial',
                 'year_declaracion' => 'Año de declaracion',
                 'fecha_declaracion' => 'Fecha declaracion',
@@ -225,7 +239,7 @@ class PatenteController extends Controller
                     'cont_total_percibidos_sv' => 'required',
                     // 'cantidad_ingreso_percibido' => 'required|decimal:2,4',
                     'actividades' => 'required|array|min:1',
-                    'actividades.*.id' => 'required',
+                    // 'actividades.*.id' => 'required',
                 ] : [
                     'cmb_propietario' => 'required',
                     'year_declaracion' => 'required',
@@ -250,7 +264,7 @@ class PatenteController extends Controller
                         }
                     }],
                     'actividades' => 'required|array|min:1',
-                    'actividades.*.id' => 'required',
+                    // 'actividades.*.id' => 'required',
                 ];
             }else{
                 $reglas =[
@@ -360,6 +374,66 @@ class PatenteController extends Controller
                 }
             }
             $es_activo=false;
+
+            $codigo_documento=PsqlPaPatente::where('estado',1)
+            ->select('codigo','codigo_act')
+            ->whereNotNull('codigo')
+            ->orderby('id','desc')
+            ->first();
+
+            $codigo_patente=1;
+            $codigo_activo=1;
+            $anio=date('Y');
+            if(!is_null($codigo_documento)){
+
+                if(!is_null($codigo_documento->codigo)){
+
+                    $solo_anio=explode("-",$codigo_documento->codigo);
+                    if($anio==$solo_anio[0]){
+                        $codigo_patente = (int) $solo_anio[1] + 1;
+                        $codigo_patente =$anio."-".str_pad($codigo_patente, 6, "0", STR_PAD_LEFT)."-PAT";
+                    }else{
+                        $inicio=1;
+                        $codigo_patente = $anio."-".str_pad($inicio, 6, "0", STR_PAD_LEFT)."-PAT";
+                    }
+                }else{
+
+                    $inicio=1;
+                    $codigo_patente = $anio."-".str_pad($inicio, 6, "0", STR_PAD_LEFT)."-PAT";
+                }
+
+            }else{
+                $inicio=1;
+                $codigo_activo = $anio."-".str_pad($inicio, 6, "0", STR_PAD_LEFT)."-ACT";
+            }
+
+            $codigo_documento_act=PsqlPaPatente::where('estado',1)
+            ->select('codigo','codigo_act')
+            ->whereNotNull('codigo_act')
+            ->orderby('id','desc')
+            ->first();
+            if(!is_null($codigo_documento_act)){
+
+                if(!is_null($codigo_documento_act->codigo_act)){
+
+                    $solo_anio=explode("-",$codigo_documento_act->codigo_act);
+                    if($anio==$solo_anio[0]){
+                        $codigo_activo = (int) $solo_anio[1] + 1;
+                        $codigo_activo =$anio."-".str_pad($codigo_activo, 6, "0", STR_PAD_LEFT)."-ACT";
+                    }else{
+                        $inicio=1;
+                        $codigo_activo = $anio."-".str_pad($inicio, 6, "0", STR_PAD_LEFT)."-ACT";
+                    }
+                }else{
+
+                    $inicio=1;
+                    $codigo_activo = $anio."-".str_pad($inicio, 6, "0", STR_PAD_LEFT)."-ACT";
+                }
+            }else{
+                $inicio=1;
+                $codigo_activo = $anio."-".str_pad($inicio, 6, "0", STR_PAD_LEFT)."-ACT";
+            }
+
             foreach ($r->locales as $key => $value) {
                 if(isset($value['id'])){
 
@@ -377,15 +451,33 @@ class PatenteController extends Controller
                     $guardaLocal->valor_impuesto= $r->cont_impuesto;
                     $guardaLocal->valor_exoneracion=$r->cont_exoneracion;
                     $guardaLocal->valor_sta=$r->cont_sta;
+                    $guardaLocal->valor_intereses=$r->cont_intereses;
+                    $guardaLocal->valor_recargos=$r->cont_recargos;
                     $guardaLocal->valor_patente=$r->cont_pago_patente;
+
+                    // dd($codigo_patente);
+                    if($estado==1){
+                        $guardaLocal->codigo=$codigo_patente;
+                        if($es_activo==true){
+                            $guardaLocal->codigo_act=$codigo_activo;
+                        }
+
+                    }
+
 
                     $guardaLocal->valor_impuesto_act=$r->cont_impuesto_act;
                     $guardaLocal->valor_exoneracion_act=$r->cont_exoneracion_act;
                     $guardaLocal->valor_sta_act=$r->cont_sta_act;
+                    $guardaLocal->valor_intereses_act=$r->cont_intereses_act;
+                    $guardaLocal->valor_recargos_act=$r->cont_recargos_act;
+
+
                     $guardaLocal->valor_activo_total=$r->cont_pago_activo_total;
 
                     $guardaLocal->es_patente=true;
                     $guardaLocal->es_activo=$es_activo;
+
+
 
                     $guardaLocal->save();
                 }
@@ -417,7 +509,7 @@ class PatenteController extends Controller
         }
     }
 
-    public function guardaLiquidacion($id=44, $codigo=17){
+    public function guardaLiquidacion($id, $codigo){
         DB::beginTransaction(); // Iniciar la transacción
         try{
             $PsqlPaPatente=PsqlPaPatente::find($id);
@@ -442,7 +534,7 @@ class PatenteController extends Controller
             $rubro_patente= $impuesto - $valor_exoneracion;
             $patente_id = $id;
             $total_pago = $valor_patente;
-            $usuario_registro = 'cintriago';
+            $usuario_registro = auth()->user()->name;
             $fecha_ingreso = date('Y-m-d H:i:s');
             $valor_rubro_patente = $rubro_patente;
             $valor_rubro_tasa_admin = $valor_sta;
@@ -670,15 +762,18 @@ class PatenteController extends Controller
             ->leftJoin('sgm_patente.pa_clase_contribuyente as cc','cc.id','co.clase_contribuyente_id')
             ->where('co.id',$id)
             ->select(DB::raw("CONCAT(e.apellidos, ' ', e.nombres) AS contribuyente"),'co.ruc',
-                DB::raw("CONCAT(rl.apellidos, ' ', rl.nombres) AS representante_legal"),'co.tipo_contribuyente'
-                ,'rl.ci_ruc as cedula_rl',
-                DB::raw("(SELECT COUNT(*) FROM sgm_patente.pa_locales WHERE idcatastro_contr = co.id and estado='A') as cantidad_locales"),'co.fecha_inicio_actividades','co.estado_contribuyente_id','cc.nombre as clase_contri')
+                // DB::raw("CONCAT(rl.apellidos, ' ', rl.nombres) AS representante_legal"),'co.tipo_contribuyente'
+                // ,'rl.ci_ruc as cedula_rl',
+                'nombre_representante_legal as representante_legal', 'ruc_representante_legal as cedula_rl','co.tipo_contribuyente',
+                'co.obligado_contabilidad','es_artesano','co.archivo_ruc','co.archivo_artesano',
+                DB::raw("(SELECT COUNT(*) FROM sgm_patente.pa_locales WHERE idcatastro_contr = co.id and estado='A') as cantidad_locales"),'co.fecha_inicio_actividades','co.estado_contribuyente_id','cc.nombre as clase_contri',DB::raw("EXTRACT(YEAR FROM age(e.fecha_nacimiento)) AS edad_contribuyente"))
             ->first();
 
             $actividad=DB::connection('pgsql')->table('sgm_patente.pa_actividad_contribuyente as act_cont')
             ->leftJoin('sgm_patente.pa_ctlg_actividades_comerciales as ac','ac.id','act_cont.Actividad_comercial_id')
             ->where('act_cont.Catastro_contribuyente_id',$id)
             ->select('ac.ciiu','ac.descripcion','act_cont.Actividad_comercial_id as idActividad','act_cont.id')
+            ->where('act_cont.estado','A')
             ->get();
 
             $locales=DB::connection('pgsql')->table('sgm_patente.pa_locales as local')
@@ -790,7 +885,7 @@ class PatenteController extends Controller
 
         }
     }
-    public function crearTitulo($id){
+    public function crearTitulo1($id){
         try{
             $patente=DB::connection('pgsql')->table('sgm_patente.pa_patente as pa')
             ->leftJoin('sgm_patente.pa_catastro_contribuyente as co','pa.Contribuyente_id','co.id')
@@ -898,9 +993,7 @@ class PatenteController extends Controller
         try{
 
             $exists_destino = \Storage::disk('disksDocumentoRenta')->exists($archivo);
-            // dd($exists_destino);
             if($exists_destino){
-                // return response()->download( public_path('storage/documentosRentas/'.$archivo));
                 $filePath = \Storage::disk('disksDocumentoRenta')->path($archivo);
 
                 // Devuelve la respuesta para descargar el archivo
@@ -943,6 +1036,8 @@ class PatenteController extends Controller
             $rangos = DB::connection('pgsql')
             ->table('sgm_patente.pa_base_imponible')
             ->selectRaw('MIN(desde) as minimo, MAX(desde) as maximo')
+            ->where('anio', $obtener_anio->year_declaracion)
+            ->where('estado','A')
             ->first();
             // dd($rangos);
             $minimo = $rangos->minimo;
@@ -988,7 +1083,28 @@ class PatenteController extends Controller
 
             $sumar_total=$valor_pagar + $total_porcent_pagar;
             $sumar_total= number_format(($sumar_total),2,'.', '');
-            $valores=["valor_pagar"=>$valor_pagar, "valor_porc_exced"=>$valor_porc_exced, "total_porcent_pagar"=>$total_porcent_pagar, "obtener_dif"=>$obtener_dif,"valor"=>$valor,"desde"=>$desde,"sumar_total"=>$sumar_total,"aplica"=>$aplica];
+
+            $valor_intereses=0;
+            $porcentaje_intereses=0;
+            if($obtener_anio->year_declaracion < date('Y')){
+                $intereses= DB::connection('pgsql')->table('sgm_financiero.ren_intereses as i')
+                ->where('anio', $obtener_anio->year_declaracion)
+                ->select('porcentaje')
+                ->first();
+                $porcentaje_intereses= $intereses->porcentaje;
+                $valor_intereses=(($intereses->porcentaje/100) * ($sumar_total));
+                $valor_intereses=number_format($valor_intereses,2);
+            }
+
+            $valor_recargo=0;
+            if($obtener_anio->year_declaracion == date('Y') && date('m') >=7){
+                $valor_recargo=$sumar_total*0.10;
+                $valor_recargo=number_format($valor_recargo,2);
+            }
+
+
+            $valores=["valor_pagar"=>$valor_pagar, "valor_porc_exced"=>$valor_porc_exced, "total_porcent_pagar"=>$total_porcent_pagar, "obtener_dif"=>$obtener_dif,"valor"=>$valor,"desde"=>$desde,"sumar_total"=>$sumar_total,"aplica"=>$aplica
+            ,"valor_intereses"=>number_format($valor_intereses,2),"valor_recargo"=>number_format($valor_recargo,2),"porcentaje_intereses"=>number_format($porcentaje_intereses,2)];
             return response()->json([
                 'error'=>false,
                 'calcular'=>$valores,
@@ -1021,26 +1137,11 @@ class PatenteController extends Controller
     public function previsualizar(string $id){
         return view('rentas.patentePrevisualizarRubros');
     }
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
 
     public function datatable(Request $r)
     {
         if($r->ajax()){
-            $listaPatente = PsqlPaPatente::all();
+            $listaPatente = PsqlPaPatente::where('estado','!=',3)->get();
             return Datatables($listaPatente)
             ->editColumn('lleva_contabilidad', function($listaPatente){
                     if($listaPatente->lleva_contabilidad == true){
@@ -1052,13 +1153,13 @@ class PatenteController extends Controller
             ->editColumn('estado', function($listaPatente){
                     if($listaPatente->estado == 1){
                         return '<span class="badge text-bg-primary">Generada</span>';
-                    }else{
+                    }else  if($listaPatente->estado == 3){
                         return '<span class="badge text-bg-success">Completada</span>';
                     }
                 })
             ->addColumn('ruc', function ($listaPatente) {
                 // return $listaPatente->contribuyente->ruc ;
-                return '<b>RUC:</b>'.$listaPatente->contribuyente->ruc . '<br> <b>NOMBRES:</b>' . $listaPatente->contribuyente->razon_social. '<br> <b>CONTABILIDAD:</b>' . $listaPatente->lleva_contabilidad;
+                return '<b>RUC:</b>'.$listaPatente->contribuyente->ruc . '<br> <b>NOMBRES:</b>' . $listaPatente->contribuyente->razon_social;
             })
 
             ->addColumn('contribuyente_name', function ($listaPatente) {
@@ -1077,10 +1178,490 @@ class PatenteController extends Controller
             ->addColumn('action', function ($listaPatente) {
                 // return '<button type="button" class="btn btn-primary btn-sm" onclick="verPatente('$listaPatente->id')">Ver</a>
                 //  ';
-                return '<a class="btn btn-primary btn-sm" onclick="verPatente(\''.$listaPatente->id.'\')">Ver</a>';
+                return '<a class="btn btn-primary btn-sm" onclick="verPatentePdf(\''.$listaPatente->archivo_patente.'\')">Ver</a>';
             })
             ->rawColumns(['action','estado','ruc'])
             ->make(true);
         }
     }
+
+   public function guardaContribuyente(Request $request){
+
+        DB::beginTransaction();
+        try {
+
+            $separaNombre = $this->separarNombreApellido($request->contribuyente);
+
+            $ci_ruc = $request->cmb_ruc;
+
+            $verificaExiste=PsqlCatastroContribuyente::where('ruc', $ci_ruc)
+                ->orWhere('ruc', substr($ci_ruc, 0, 10))
+                ->first();
+            if(!is_null($verificaExiste)){
+                if($verificaExiste->estado_contribuyente_id==1){
+                    return [
+                        'error' => true,
+                        'mensaje' => 'El contribuyente ingresado ya existe '
+                    ];
+                }
+
+                $validaContribuyente = PsqlEnte::where('ci_ruc', $ci_ruc)
+                ->orWhere('ci_ruc', substr($ci_ruc, 0, 10))
+                ->first();
+
+                $archivo_ruc = $request->doc_ruc;
+                $extension = pathinfo($archivo_ruc->getClientOriginalName(), PATHINFO_EXTENSION);
+                $nombreDocumento = "ruc_" . $request->cmb_ruc . "-" . date('Ymd') . '-' . time();
+
+                $es_artesano=0;
+                if ($request->has('es_artesano')) {
+                // if(isset($request->es_artesano)){
+                    $archivo_artesano = $request->doc_artesano;
+                    $extension_artesano = pathinfo($archivo_artesano->getClientOriginalName(), PATHINFO_EXTENSION);
+                    $nombreDocumentoArtesano = "docArtesano_" . $request->cmb_ruc . "-" . date('Ymd') . '-' . time();
+                    $es_artesano=1;
+                }
+
+                $guardaContribuyente = new PsqlCatastroContribuyente();
+                $guardaContribuyente->ruc = $request->cmb_ruc;
+                $guardaContribuyente->razon_social = $separaNombre['primer_nombre'] . " " . $separaNombre['segundo_nombre'] . " " . $separaNombre['apellido_paterno'] . " " . $separaNombre['apellido_materno'];
+                $guardaContribuyente->estado_contribuyente_id = 1;
+                $guardaContribuyente->fecha_inicio_actividades = $request->fecha_inicio_act;
+                $guardaContribuyente->fecha_actualizacion_actividades = $request->fecha_actualizacion_act;
+                $guardaContribuyente->fecha_reinicio_actividades = $request->fecha_reinicio_act;
+                $guardaContribuyente->fecha_suspension_definitiva = $request->fecha_suspension_act;
+                $guardaContribuyente->tipo_contribuyente = $request->tipo_persona_new;
+                $guardaContribuyente->provincia_id = $request->provincia;
+                $guardaContribuyente->canton_id = $request->canton_id;
+                $guardaContribuyente->parroquia_id = $request->parroquia_id_;
+                $guardaContribuyente->direccion = $request->direccion;
+                $guardaContribuyente->correo_1 = $request->correo;
+                $guardaContribuyente->telefono = $request->telefono;
+                $guardaContribuyente->usuario_ingreso = auth()->user()->id;
+                $guardaContribuyente->propietario_id = $validaContribuyente->id;
+                if($guardaContribuyente->tipo_contribuyente==1){
+                    $guardaContribuyente->ruc_representante_legal= $request->cmb_ruc;
+                    $guardaContribuyente->nombre_representante_legal= $guardaContribuyente->razon_social;
+                }else{
+                    $guardaContribuyente->ruc_representante_legal= $request->cmb_ruc_rep;
+                    $guardaContribuyente->nombre_representante_legal= $request->representante;
+                }
+
+                $guardaContribuyente->clase_contribuyente_id = $request->clase_contribuyente_id;
+
+                $guardaContribuyente->archivo_ruc = $nombreDocumento . "." . $extension;
+                if($es_artesano==1){
+                    $guardaContribuyente->archivo_artesano = $nombreDocumentoArtesano . "." . $extension_artesano;
+                    $guardaContribuyente->es_artesano = true;
+                }
+
+                if ($request->has('obligado_contabilidad')) {
+                    $guardaContribuyente->obligado_contabilidad =true;
+                }
+
+                if ($guardaContribuyente->save()) {
+                    Storage::disk('disksDocumentoRenta')->put($nombreDocumento . "." . $extension, \File::get($archivo_ruc));
+                    if($es_artesano==1){
+                        Storage::disk('disksDocumentoRenta')->put($nombreDocumentoArtesano . "." . $extension_artesano, \File::get($archivo_artesano));
+                    }
+                }
+
+                DB::commit();
+                return [
+                    'error' => false,
+                    'mensaje' => 'Contribuyente guardado correctamente.'
+                ];
+            }
+
+
+            $validaContribuyente = PsqlEnte::where('ci_ruc', $ci_ruc)
+                ->orWhere('ci_ruc', substr($ci_ruc, 0, 10))
+                ->first();
+
+            if (!is_null($validaContribuyente)) {
+                if ($validaContribuyente->estado === "A") {
+                    goto guardar_contribuyente;
+                }
+
+                // Actualizar datos si no está activo
+                $validaContribuyente->ci_ruc = $ci_ruc;
+                $validaContribuyente->nombres = $separaNombre['primer_nombre'] . " " . $separaNombre['segundo_nombre'];
+                $validaContribuyente->apellidos = $separaNombre['apellido_paterno'] . " " . $separaNombre['apellido_materno'];
+                $validaContribuyente->razon_social = $separaNombre['primer_nombre'] . " " . $separaNombre['segundo_nombre'];
+                $validaContribuyente->nombre_comercial = $separaNombre['apellido_paterno'] . " " . $separaNombre['apellido_materno'];
+                $validaContribuyente->es_persona = true;
+                $validaContribuyente->direccion = strtoupper(str_replace(' ', '', $request->direccion));
+                $validaContribuyente->fecha_nacimiento = $request->fecha_nacimiento;
+                $validaContribuyente->tipo_documento = 606;
+                $validaContribuyente->save();
+
+                $this->storeTlfEmail($request->telefono, $request->correo, $validaContribuyente->id);
+                goto guardar_contribuyente;
+            }
+
+            // Crear nuevo ente
+            $ente = new PsqlEnte();
+            $ente->ci_ruc = $ci_ruc;
+            $ente->nombres = $separaNombre['primer_nombre'] . " " . $separaNombre['segundo_nombre'];
+            $ente->apellidos = $separaNombre['apellido_paterno'] . " " . $separaNombre['apellido_materno'];
+            $ente->razon_social = $ente->nombres;
+            $ente->nombre_comercial = $ente->apellidos;
+            $ente->es_persona = true;
+            $ente->direccion = strtoupper(str_replace(' ', '', $request->direccion));
+            $ente->fecha_nacimiento = $request->fecha_nacimiento;
+            $ente->tipo_documento = 606;
+            if ($request->has('obligado_contabilidad')) {
+                $ente->lleva_contabilidad =true;
+            }
+
+            $ente->save();
+
+            $this->storeTlfEmail($request->telefono, $request->correo, $ente->id);
+            $validaContribuyente = $ente;
+
+            guardar_contribuyente:
+
+            $archivo_ruc = $request->doc_ruc;
+            $extension = pathinfo($archivo_ruc->getClientOriginalName(), PATHINFO_EXTENSION);
+            $nombreDocumento = "ruc_" . $request->cmb_ruc . "-" . date('Ymd') . '-' . time();
+
+            $es_artesano=0;
+            if ($request->has('es_artesano')) {
+            // if(isset($request->es_artesano)){
+                $archivo_artesano = $request->doc_artesano;
+                $extension_artesano = pathinfo($archivo_artesano->getClientOriginalName(), PATHINFO_EXTENSION);
+                $nombreDocumentoArtesano = "docArtesano_" . $request->cmb_ruc . "-" . date('Ymd') . '-' . time();
+                $es_artesano=1;
+            }
+
+            $guardaContribuyente = new PsqlCatastroContribuyente();
+            $guardaContribuyente->ruc = $request->cmb_ruc;
+            $guardaContribuyente->razon_social = $separaNombre['primer_nombre'] . " " . $separaNombre['segundo_nombre'] . " " . $separaNombre['apellido_paterno'] . " " . $separaNombre['apellido_materno'];
+            $guardaContribuyente->estado_contribuyente_id = 1;
+            $guardaContribuyente->fecha_inicio_actividades = $request->fecha_inicio_act;
+            $guardaContribuyente->fecha_actualizacion_actividades = $request->fecha_actualizacion_act;
+            $guardaContribuyente->fecha_reinicio_actividades = $request->fecha_reinicio_act;
+            $guardaContribuyente->fecha_suspension_definitiva = $request->fecha_suspension_act;
+            $guardaContribuyente->tipo_contribuyente = $request->tipo_persona_new;
+            $guardaContribuyente->provincia_id = $request->provincia;
+            $guardaContribuyente->canton_id = $request->canton_id;
+            $guardaContribuyente->parroquia_id = $request->parroquia_id_;
+            $guardaContribuyente->direccion = $request->direccion;
+            $guardaContribuyente->correo_1 = $request->correo;
+            $guardaContribuyente->telefono = $request->telefono;
+            $guardaContribuyente->usuario_ingreso = auth()->user()->id;
+            $guardaContribuyente->propietario_id = $validaContribuyente->id;
+            if($guardaContribuyente->tipo_contribuyente==1){
+                $guardaContribuyente->ruc_representante_legal= $request->cmb_ruc;
+                $guardaContribuyente->nombre_representante_legal= $guardaContribuyente->razon_social;
+            }else{
+                $guardaContribuyente->ruc_representante_legal= $request->cmb_ruc_rep;
+                $guardaContribuyente->nombre_representante_legal= $request->representante;
+            }
+
+            $guardaContribuyente->clase_contribuyente_id = $request->clase_contribuyente_id;
+            $guardaContribuyente->archivo_ruc = $nombreDocumento . "." . $extension;
+            if($es_artesano==1){
+                $guardaContribuyente->archivo_artesano = $nombreDocumentoArtesano . "." . $extension_artesano;
+                $guardaContribuyente->es_artesano = true;
+            }
+            if ($request->has('obligado_contabilidad')) {
+                $guardaContribuyente->obligado_contabilidad =true;
+            }
+
+            if ($guardaContribuyente->save()) {
+                Storage::disk('disksDocumentoRenta')->put($nombreDocumento . "." . $extension, \File::get($archivo_ruc));
+                if($es_artesano==1){
+                    Storage::disk('disksDocumentoRenta')->put($nombreDocumentoArtesano . "." . $extension_artesano, \File::get($archivo_artesano));
+                }
+            }
+
+            DB::commit();
+            return [
+                'error' => false,
+                'mensaje' => 'Contribuyente guardado correctamente.'
+            ];
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            return [
+                'error' => true,
+                'mensaje' => 'Ocurrió un error al guardar el contribuyente: ' . $e->getMessage()
+            ];
+        }
+    }
+
+
+    public function actualizaContribuyente(Request $request){
+        DB::beginTransaction();
+        try {
+
+            $verificaExiste=PsqlCatastroContribuyente::Where('id', $request->contribuyente_id)
+            ->first();
+
+            if(!is_null($verificaExiste)){
+
+                $archivo_ruc = $request->doc_ruc;
+                $archivo_artesano = $request->doc_artesano;
+
+                $es_artesano=0;
+                if ($request->has('es_artesano')) {
+                    $es_artesano=1;
+                }
+
+                $validaContribuyente = PsqlEnte::where('id', $verificaExiste->propietario_id)
+                ->first();
+
+                if (!is_null($validaContribuyente)) {
+
+                    $validaContribuyente->es_persona = true;
+                    $validaContribuyente->direccion = strtoupper(str_replace(' ', '', $request->direccion));
+                    $validaContribuyente->fecha_nacimiento = $request->fecha_nacimiento;
+                    $validaContribuyente->tipo_documento = 606;
+                    $validaContribuyente->save();
+                    $this->storeTlfEmail($request->telefono, $request->correo, $validaContribuyente->id);
+
+                }
+
+                // $verificaExiste->ruc = $request->cmb_ruc;
+                $verificaExiste->razon_social = $request->contribuyente;
+                $verificaExiste->estado_contribuyente_id = 1;
+                $verificaExiste->fecha_inicio_actividades = $request->fecha_inicio_act;
+                $verificaExiste->fecha_actualizacion_actividades = $request->fecha_actualizacion_act;
+                $verificaExiste->fecha_reinicio_actividades = $request->fecha_reinicio_act;
+                $verificaExiste->fecha_suspension_definitiva = $request->fecha_suspension_act;
+                $verificaExiste->tipo_contribuyente = $request->tipo_persona_new;
+                $verificaExiste->provincia_id = $request->provincia;
+                $verificaExiste->canton_id = $request->canton_id;
+                $verificaExiste->parroquia_id = $request->parroquia_id_;
+                $verificaExiste->direccion = $request->direccion;
+                $verificaExiste->correo_1 = $request->correo;
+                $verificaExiste->telefono = $request->telefono;
+                $verificaExiste->usuario_ingreso = auth()->user()->id;
+                // $guardaContribuyente->propietario_id = $validaContribuyente->id;
+                if($verificaExiste->tipo_contribuyente==1){
+                    $verificaExiste->ruc_representante_legal= $request->cmb_ruc;
+                    $verificaExiste->nombre_representante_legal= $verificaExiste->razon_social;
+                }else{
+                    $verificaExiste->ruc_representante_legal= $request->cmb_ruc_rep;
+                    $verificaExiste->nombre_representante_legal= $request->representante;
+                }
+
+                if(!is_null($archivo_ruc)){
+                    $extension = pathinfo($archivo_ruc->getClientOriginalName(), PATHINFO_EXTENSION);
+                    $nombreDocumento = "ruc_" . $request->cmb_ruc . "-" . date('Ymd') . '-' . time();
+                    $verificaExiste->archivo_ruc = $nombreDocumento . "." . $extension;
+                }
+                $verificaExiste->clase_contribuyente_id = $request->clase_contribuyente_id;
+
+
+                if($es_artesano==1){
+                    if(!is_null($archivo_artesano)){
+                        $extension_artesano = pathinfo($archivo_artesano->getClientOriginalName(), PATHINFO_EXTENSION);
+                        $nombreDocumentoArtesano = "docArtesano_" . $request->cmb_ruc . "-" . date('Ymd') . '-' . time();
+                        $verificaExiste->archivo_artesano = $nombreDocumentoArtesano . "." . $extension_artesano;
+                    }
+                    $verificaExiste->es_artesano = true;
+                }
+
+                if ($request->has('obligado_contabilidad')) {
+                    $verificaExiste->obligado_contabilidad =true;
+                }
+
+                if ($verificaExiste->save()) {
+                    if(!is_null($archivo_ruc)){
+                        Storage::disk('disksDocumentoRenta')->put($nombreDocumento . "." . $extension, \File::get($archivo_ruc));
+                    }
+                    if(!is_null($archivo_artesano)){
+                        Storage::disk('disksDocumentoRenta')->put($nombreDocumentoArtesano . "." . $extension_artesano, \File::get($archivo_artesano));
+                    }
+                }
+
+                DB::commit();
+                return [
+                    'error' => false,
+                    'mensaje' => 'Contribuyente guardado correctamente.'
+                ];
+            }
+
+
+
+            DB::commit();
+            return [
+                'error' => false,
+                'mensaje' => 'Contribuyente guardado correctamente.'
+            ];
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            return [
+                'error' => true,
+                'mensaje' => 'Ocurrió un error al guardar el contribuyente: ' . $e->getMessage()
+            ];
+        }
+    }
+
+
+    public function storeTlfEmail($telefono, $correo, $id){
+        try{
+            $verificaTlfo=PsqlEnteTelefono::where('ente',$id)->delete();
+            $verificaCorreo=PsqlEnteCorreo::where('ente',$id)->delete();
+
+            $guardaTlfo=new PsqlEnteTelefono();
+            $guardaTlfo->telefono=$telefono;
+            $guardaTlfo->ente=$id;
+            $guardaTlfo->save();
+
+            $guardaCorreo=new PsqlEnteCorreo();
+            $guardaCorreo->email=$correo;
+            $guardaCorreo->ente=$id;
+            $guardaCorreo->save();
+
+            return ["error"=>false];
+        } catch (\Exception $e) {
+
+            return ["error"=>true];
+        }
+    }
+
+    public function separarNombreApellido($nombreCompleto) {
+        $nombreCompleto = strtoupper(trim($nombreCompleto));
+        $partes = preg_split('/\s+/', $nombreCompleto);
+
+        $preposiciones = ['DE', 'DEL', 'LA', 'LOS', 'LAS'];
+
+        $apellido_paterno = '';
+        $apellido_materno = '';
+        $primer_nombre = '';
+        $segundo_nombre = '';
+
+        $i = 0;
+
+        // Capturar apellido paterno (considerando preposiciones)
+        $apellido_paterno .= $partes[$i++];
+        while (isset($partes[$i]) && in_array($partes[$i], $preposiciones)) {
+            $apellido_paterno .= ' ' . $partes[$i++];
+            if (isset($partes[$i])) {
+                $apellido_paterno .= ' ' . $partes[$i++];
+            }
+        }
+
+        // Capturar apellido materno (igual)
+        if (isset($partes[$i])) {
+            $apellido_materno .= $partes[$i++];
+            while (isset($partes[$i]) && in_array($partes[$i], $preposiciones)) {
+                $apellido_materno .= ' ' . $partes[$i++];
+                if (isset($partes[$i])) {
+                    $apellido_materno .= ' ' . $partes[$i++];
+                }
+            }
+        }
+
+        // Lo que queda son los nombres
+        $resto = array_slice($partes, $i);
+        if (count($resto) > 0) {
+            $primer_nombre = array_shift($resto);
+            $segundo_nombre = implode(' ', $resto); // todo lo demás como segundo nombre
+        }
+
+        return [
+            'apellido_paterno' => trim($apellido_paterno),
+            'apellido_materno' => trim($apellido_materno),
+            'primer_nombre'    => trim($primer_nombre),
+            'segundo_nombre'   => trim($segundo_nombre),
+        ];
+    }
+
+    public function crearTitulo($id){
+
+        $patente=DB::connection('pgsql')->table('sgm_patente.pa_patente as pa')
+        ->leftJoin('sgm_patente.pa_catastro_contribuyente as co','pa.Contribuyente_id','co.id')
+        ->leftJoin('sgm_app.cat_ente as e','e.id','co.propietario_id')
+        ->leftJoin('sgm_patente.pa_clase_contribuyente as cc','cc.id','co.clase_contribuyente_id')
+        ->leftJoin('sgm_patente.pa_locales as lo','pa.id_pa_local','lo.id')
+        ->leftJoin('sgm_app.cat_canton as ca','lo.canton_id','ca.id')
+        ->leftJoin('sgm_patente.year_declaracion as y','pa.year_declaracion','y.id')
+        ->where('pa.id',$id)
+        ->select('actividad_descripcion','co.ruc','co.razon_social','co.obligado_contabilidad','codigo'
+            ,'cc.nombre as regimen','valor_sta','valor_exoneracion','valor_impuesto','y.year_ejercicio_fiscal',
+            'codigo_act','valor_impuesto_act','valor_exoneracion_act','valor_sta_act','valor_activo_total',
+            'pa.valor_intereses','pa.valor_recargos','pa.valor_intereses_act','pa.valor_recargos_act',
+            DB::raw("CONCAT(lo.calle_principal, ' y ', lo.calle_secundaria) AS calle"),'pa.fecha_declaracion','lo.local_propio',
+            'ca.nombre as canton','pa.valor_patente',DB::raw("CONCAT(e.apellidos, ' ', e.nombres) AS contribuyente"),'pa.estado',
+            'pa.valor_activo_total','es_activo')
+        ->get();
+
+        foreach($patente as $key=>&$value){
+            $actividades=DB::connection('pgsql')->table('sgm_patente.pa_patente_actividad_contr as pa_act')
+            // ->leftJoin('sgm_patente.pa_actividad_contribuyente as act','pa_act.id_actividad_cont','act.Actividad_comercial_id')
+            ->leftJoin('sgm_patente.pa_ctlg_actividades_comerciales as nom_act','nom_act.id','pa_act.id_actividad_cont')
+            ->where('id_patente',$id)
+            ->select(DB::raw("CONCAT(nom_act.descripcion) AS actividad"))
+            ->get();
+            $value->act = $actividades->pluck('actividad')->toArray();
+        }
+
+        // dd($patente);
+
+        setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES@euro', 'es_ES', 'esp');
+
+        $fecha_timestamp = strtotime($patente[0]->fecha_declaracion);
+
+        $fecha_formateada = strftime("%d de %B de %Y", $fecha_timestamp);
+
+         $fecha_hoy=date('Y-m-d');
+        setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES@euro', 'es_ES', 'esp');
+        $fecha_timestamp_hoy = strtotime($fecha_hoy);
+        $fecha_formateada_hoy = strftime("%d de %B del %Y", $fecha_timestamp_hoy);
+
+        $simulacion=0;
+        if($patente[0]->estado==2){
+            if(!is_null($patente[0]->valor_activo_total)){
+                $nombrePDF="simulacion_patente_activo_total.pdf";
+            }else{
+                $nombrePDF="simulacion_patente.pdf";
+            }
+            $simulacion=1;
+        }else{
+            if(!is_null($patente[0]->valor_activo_total)){
+                $nombrePDF="emision_patente_activo_total.pdf";
+            }else{
+                $nombrePDF="emision_patente.pdf";
+            }
+
+        }
+
+        if($simulacion==1){
+            $pdf=\PDF::LoadView('reportes.reporte_patente',['patente'=>$patente[0], "fecha_formateada"=>$fecha_formateada] );
+            $pdf->setPaper("A4", "portrait");
+
+        }else{
+            $pdf=\PDF::LoadView('reportes.reportePatente',['patente'=>$patente[0], "fecha_formateada"=>$fecha_formateada, "fecha_formateada_hoy"=>$fecha_formateada_hoy] );
+            $pdf->setPaper("A4", "portrait");
+        }
+        // return $pdf->stream("aa.pdf");
+         $estadoarch = $pdf->stream();
+
+        //lo guardamos en el disco temporal
+        Storage::disk('disksDocumentoRenta')->put(str_replace("", "",$nombrePDF), $estadoarch);
+        $exists_destino = Storage::disk('disksDocumentoRenta')->exists($nombrePDF);
+        if($exists_destino){
+            return[
+                'error'=>false,
+                'pdf'=>$nombrePDF
+            ];
+        }else{
+            return [
+                'error'=>true,
+                'mensaje'=>'No se pudo crear el documento'
+            ];
+        }
+
+
+        // $pdf=\PDF::LoadView('reportes.reportePatente',[] );
+        // $pdf->setPaper("A4", "portrait");
+
+        return $pdf->stream("aa.pdf");
+    }
+
 }
