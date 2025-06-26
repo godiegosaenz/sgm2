@@ -6,12 +6,15 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use App\Models\ExoneracionAnterior;
 use App\Models\RemisionInteres;
 use App\Models\RemisionLiquidacion;
+use App\Models\PsqlLiquidacion;
 use Exception;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Gate;
 
 class RemisionInteresController extends Controller
 {
@@ -20,6 +23,7 @@ class RemisionInteresController extends Controller
      */
     public function index()
     {
+        Gate::authorize('index', RemisionInteres::class);
         $RemisionInteres = RemisionInteres::orderBy('id', 'desc')->get();
         return view('tesoreria.remisionInteresLista', compact('RemisionInteres'));
     }
@@ -29,6 +33,7 @@ class RemisionInteresController extends Controller
      */
     public function create()
     {
+        Gate::authorize('create', RemisionInteres::class);
         $num_predio = 0;
         return view('tesoreria.remisionInteresNuevo',compact('num_predio'));
     }
@@ -116,7 +121,7 @@ class RemisionInteresController extends Controller
             $RemisionInteres->ruta_resolucion = $archivo_exoneracion;
             $RemisionInteres->estado = $r->tipo;
             $RemisionInteres->usuario = auth()->user()->email;
-            $RemisionInteres->usuariosgm = 'pquinonez';
+            $RemisionInteres->usuariosgm = auth()->user()->name;
             $RemisionInteres->valorInteres = 0.00;
             $RemisionInteres->valorRecargo = 0.00;
             $RemisionInteres->valorTotal = 0.00;
@@ -291,6 +296,7 @@ class RemisionInteresController extends Controller
     }
 
     public function consultaLiquidacionConRemision(Request $r){
+        Gate::authorize('reporte_liquidaciones', PsqlLiquidacion::class);
         return view('tesoreria.consultaLiquidacionConRemision');
     }
 

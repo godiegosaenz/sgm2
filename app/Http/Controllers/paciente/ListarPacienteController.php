@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Datatables;
 use App\Models\Persona;
+use Illuminate\Support\Facades\Gate;
+use App\Models\User;
 
 class ListarPacienteController extends Controller
 {
@@ -15,6 +17,7 @@ class ListarPacienteController extends Controller
     }
 
     public function index(){
+        Gate::authorize('lista_empleados', User::class);
         return view('paciente.listarpaciente');
     }
 

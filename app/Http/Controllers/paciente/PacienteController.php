@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Gate;
+use App\Models\User;
 
 class PacienteController extends Controller
 {
@@ -20,6 +22,7 @@ class PacienteController extends Controller
     }
 
     public function index(Request $r){
+        Gate::authorize('crear_empleados', User::class);
         $provincias = Provincia::all();
         $cantones = new Canton();
         if(Cookie::get('provincia_id') !== null){

@@ -20,15 +20,16 @@ use Exception;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Gate;
 
 class TransitoImpuestoController extends Controller
-{   
+{
     private $clientNacional = null;
 
     public function __construct(){
         try{
             $ip="https://srienlinea.sri.gob.ec/movil-servicios/";
-          
+
             $this->clientNacional = new Client([
                 'base_uri' =>$ip,
                 'verify' => false,
@@ -40,6 +41,7 @@ class TransitoImpuestoController extends Controller
     }
     public function index()
     {
+        Gate::authorize('index', TransitoImpuesto::class);
         return view('transito.impuestos_index');
     }
 
@@ -47,6 +49,7 @@ class TransitoImpuestoController extends Controller
      * Show the form for creating a new resource.
      */
     public function create(){
+        Gate::authorize('create', TransitoImpuesto::class);
         $entes = TransitoEnte::all();
         $vehiculos = TransitoVehiculo::all();
         $conceptos = TransitoConcepto::where('anio',date('Y'))->orderby('orden','asc')->WHERE('estado','A')->get();
@@ -114,7 +117,7 @@ class TransitoImpuestoController extends Controller
     }
 
     public function calcular1(Request $request){
-       
+
         $conceptos = $request->input('conceptos', []);
         $vehiculo = TransitoVehiculo::where('id',$request->input('vehiculo_id'))->first();
         $DatosTasaAdministrativa = TransitoConcepto::find(5);
@@ -136,7 +139,7 @@ class TransitoImpuestoController extends Controller
                 })
                 ->where('anio',$request->year)
                 ->first();
-           
+
             $clasetipo = TransitoClaseTipo::where('id', $vehiculo->tipo_clase_id)->first();
             // dd($clasetipo);
             $valortipoclase = $clasetipo->valor;
@@ -191,7 +194,7 @@ class TransitoImpuestoController extends Controller
             $conceptos = $request->input('conceptos', []);
             // dd($conceptos['id']);
             $vehiculo = TransitoVehiculo::where('id',$request->input('vehiculo_id'))->first();
-        
+
             $tarifa = null;
             $valortipoclase = null;
             if ($vehiculo) {
@@ -206,7 +209,7 @@ class TransitoImpuestoController extends Controller
                     ->where('anio',$request->year)
                     ->first();
                 // dd($tarifa);
-            
+
                 $clasetipo = TransitoClaseTipo::where('id', $vehiculo->tipo_clase_id)->first();
                 $valortipoclase = $clasetipo->valor;
             }
@@ -214,7 +217,7 @@ class TransitoImpuestoController extends Controller
             if(!is_null($tarifa)){
                 $tarifaAnual = $tarifa->valor;
             }
-            
+
             $array=[];
             foreach($conceptos as $data){
                 // dd($data);
@@ -233,13 +236,13 @@ class TransitoImpuestoController extends Controller
                 }else if($concepto["codigo"]=="DM"){
                     array_push($array,["id"=>$data["id"], "nuevo_valor"=>(float)$concepto->valor]);
                 }
-                
+
             }
             // dd($array);
 
             // $concepto=TransitoConcepto::whereIN('id',$array)->get();
             // dd($concepto);
-        
+
 
             // $total = $nuevosConceptos->sum('nuevo_valor');
             $total =1;
@@ -320,7 +323,7 @@ class TransitoImpuestoController extends Controller
 
     public function tablaRango(){
         try {
-        
+
             $info=DB::connection('pgsql')->table('sgm_transito.tarifa_anual')
             ->where('estado','A')
             ->where('anio',date('Y'))
@@ -354,7 +357,7 @@ class TransitoImpuestoController extends Controller
             $guardaRango->estado='A';
             $guardaRango->anio=date('Y');
             $guardaRango->save();
-            
+
             return ["mensaje"=>"Informacion Guardada exitosamente", "error"=>false];
 
         } catch (Exception $e) {
@@ -382,7 +385,7 @@ class TransitoImpuestoController extends Controller
             $guardaRango->valor=$request->valor_base;
             $guardaRango->estado='A';
             $guardaRango->save();
-            
+
             return ["mensaje"=>"Informacion actualizada exitosamente", "error"=>false];
 
         } catch (Exception $e) {
@@ -393,7 +396,7 @@ class TransitoImpuestoController extends Controller
 
     public function tablaMarca(){
         try {
-        
+
             $info=DB::connection('pgsql')->table('sgm_transito.marca_vehiculo')
             ->where('estado','A')
             ->get();
@@ -419,14 +422,14 @@ class TransitoImpuestoController extends Controller
                     $valida->estado='A';
                     $valida->save();
                     return ["mensaje"=>"Informacion Guardada exitosamente", "error"=>false];
-                }                
+                }
             }
 
             $guardaMarca= new TransitoMarca;
             $guardaMarca->descripcion=$request->marca_vehi;
             $guardaMarca->estado='A';
             $guardaMarca->save();
-            
+
             return ["mensaje"=>"Informacion Guardada exitosamente", "error"=>false];
 
         } catch (Exception $e) {
@@ -450,7 +453,7 @@ class TransitoImpuestoController extends Controller
             $actualizarMarca->descripcion=$request->marca_vehi;
             $actualizarMarca->estado='A';
             $actualizarMarca->save();
-            
+
             return ["mensaje"=>"Informacion actualizada exitosamente", "error"=>false];
 
         } catch (Exception $e) {
@@ -464,7 +467,7 @@ class TransitoImpuestoController extends Controller
             $eliminarMarca= TransitoMarca::find($id);
             $eliminarMarca->estado='I';
             $eliminarMarca->save();
-            
+
             return ["mensaje"=>"Informacion eliminada exitosamente", "error"=>false];
 
         } catch (Exception $e) {
@@ -475,7 +478,7 @@ class TransitoImpuestoController extends Controller
 
     public function tablaTipo(){
         try {
-        
+
             $info=DB::connection('pgsql')->table('sgm_transito.clase_tipo_vehiculo')
             ->where('estado','A')
             ->get();
@@ -490,7 +493,7 @@ class TransitoImpuestoController extends Controller
 
      public function tablaConcepto(){
         try {
-        
+
             $info=DB::connection('pgsql')->table('sgm_transito.conceptos')
             ->where('estado','A')
             ->where('anio',date('Y'))
@@ -519,7 +522,7 @@ class TransitoImpuestoController extends Controller
                     $valida->valor=$request->tipo_valor;
                     $valida->save();
                     return ["mensaje"=>"Informacion Guardada exitosamente", "error"=>false];
-                }                
+                }
             }
 
             $guardaTipo= new TransitoTipoVehiculo;
@@ -527,7 +530,7 @@ class TransitoImpuestoController extends Controller
             $guardaTipo->valor=$request->tipo_valor;
             $guardaTipo->estado='A';
             $guardaTipo->save();
-            
+
             return ["mensaje"=>"Informacion Guardada exitosamente", "error"=>false];
 
         } catch (Exception $e) {
@@ -552,7 +555,7 @@ class TransitoImpuestoController extends Controller
             $actualizaTipo->valor=$request->tipo_valor;
             $actualizaTipo->estado='A';
             $actualizaTipo->save();
-            
+
             return ["mensaje"=>"Informacion actualizada exitosamente", "error"=>false];
 
         } catch (Exception $e) {
@@ -566,7 +569,7 @@ class TransitoImpuestoController extends Controller
             $eliminarTipo= TransitoTipoVehiculo::find($id);
             $eliminarTipo->estado='I';
             $eliminarTipo->save();
-            
+
             return ["mensaje"=>"Informacion eliminada exitosamente", "error"=>false];
 
         } catch (Exception $e) {
@@ -579,19 +582,19 @@ class TransitoImpuestoController extends Controller
         try {
             $data = [];
             if($cedula){
-                    
+
                 $response = $this->clientNacional->request('GET', "api/v1.0/deudas/porIdentificacion/{$cedula}",[
                     'headers' => [
                         // 'Authorization'=>'bearer '.$token,
                         'Content-Type' => 'application/json'
                     ],
                 ]);
-                
-                $responseBody = json_decode($response->getBody(), true); 
+
+                $responseBody = json_decode($response->getBody(), true);
 
                 $separaNombre=$this->separarNombre($responseBody['contribuyente']['nombreComercial'] ?? 'Sin nombre');
-             
-               
+
+
                 $data[] = [
                     'id' => $responseBody['contribuyente']['identificacion'] ?? null,
                     'nombre' => $separaNombre[0],
@@ -603,15 +606,15 @@ class TransitoImpuestoController extends Controller
             return ['data'=>$data, 'error'=>false];
 
          } catch (Exception $e) {
-            
+
             $response = $e->getResponse();
             $responseBody = json_decode($response->getBody(), true);
-                            
+
             return [
                 'error'=>true,
                 'mensaje'=>$responseBody['mensaje']
             ];
-        
+
         }
     }
 
@@ -711,8 +714,8 @@ class TransitoImpuestoController extends Controller
         $estadoarch = $pdf->stream();
 
         \Storage::disk('disksDocumentoRenta')->put(str_replace("", "",$nombrePDF), $estadoarch);
-        $exists_destino = \Storage::disk('disksDocumentoRenta')->exists($nombrePDF); 
-        if($exists_destino){ 
+        $exists_destino = \Storage::disk('disksDocumentoRenta')->exists($nombrePDF);
+        if($exists_destino){
             return [
                 'error'=>false,
                 'pdf'=>$nombrePDF
@@ -762,7 +765,7 @@ class TransitoImpuestoController extends Controller
                     $valida->valor=$request->valor_concepto;
                     $valida->save();
                     return ["mensaje"=>"Informacion Guardada exitosamente", "error"=>false];
-                }                
+                }
             }
 
             $guardaConcepto= new TransitoConcepto;
@@ -771,7 +774,7 @@ class TransitoImpuestoController extends Controller
             $guardaConcepto->estado='A';
             $guardaConcepto->anio=date('Y');
             $guardaConcepto->save();
-            
+
             return ["mensaje"=>"Informacion Guardada exitosamente", "error"=>false];
 
         } catch (Exception $e) {
@@ -798,7 +801,7 @@ class TransitoImpuestoController extends Controller
             $actualizarConcepto->valor=$request->valor_concepto;
             $actualizarConcepto->estado='A';
             $actualizarConcepto->save();
-            
+
             return ["mensaje"=>"Informacion actualizada exitosamente", "error"=>false];
 
         } catch (Exception $e) {
@@ -807,5 +810,5 @@ class TransitoImpuestoController extends Controller
         }
     }
 
-    
+
 }

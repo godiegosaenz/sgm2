@@ -5,9 +5,11 @@ namespace App\Http\Controllers\analitica;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\PsqlEnte;
+use App\Models\TransitoImpuesto;
 use Illuminate\Support\Facades\DB;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
+use Illuminate\Support\Facades\Gate;
 
 class AnaliticaContribuyenteController extends Controller
 {
@@ -31,14 +33,14 @@ class AnaliticaContribuyenteController extends Controller
     }
 
     public function cargaData(Request $request){
-       
+
         try{
-           
+
             $desde = (float) $request->input('filtroDesde');
             $hasta = (float) $request->input('filtroHasta');
             $rango = (float) $request->input('filtroRango');
             $tipo=$request->filtroTipo;
-            
+
             $resultados_urbano = [];
             $resultados_rural = [];
             $resultados_final= [];
@@ -49,27 +51,27 @@ class AnaliticaContribuyenteController extends Controller
                 for ($i = $desde; $i < $hasta; $i += $rango) {
                     $inicio = $i;
                     $fin = $i + $rango;
-            
+
                     $cantidad = DB::connection('pgsql')->table('sgm_app.cat_predio')
                         ->whereBetween('avaluo_municipal', [$inicio, $fin])
                         ->where('estado','A')
                         ->count();
                     $total_urbano=$total_urbano+$cantidad;
-            
+
                     $resultados_urbano[] = [
                         'rango' => "De {$inicio} a {$fin}",
                         'cantidad' => $cantidad
                     ];
                     $tipo_busqueda="U";
                 }
-            }else if($tipo== 'Rural'){  
+            }else if($tipo== 'Rural'){
                 for ($i = $desde; $i < $hasta; $i += $rango) {
                     $inicio = $i;
                     $fin = $i + $rango;
-            
+
                     $cantidad = DB::connection('sqlsrv')
                     ->table('dbo.TITULOS_PREDIO')
-                    ->whereDate('TitPr_FechaEmision', '2025-01-01') 
+                    ->whereDate('TitPr_FechaEmision', '2025-01-01')
                     ->whereBetween('TitPr_ValComerPredio', [$inicio, $fin])
                     ->distinct('Pre_CodigoCatastral')
                     ->count();
@@ -80,14 +82,14 @@ class AnaliticaContribuyenteController extends Controller
                         'rango' => "De {$inicio} a {$fin}",
                         'cantidad' => $cantidad
                     ];
-                   
+
                     $tipo_busqueda="R";
                 }
             }else{
                 for ($i = $desde; $i < $hasta; $i += $rango) {
                     $inicio = $i;
                     $fin = $i + $rango;
-            
+
                     $cantidad_urbano = DB::connection('pgsql')->table('sgm_app.cat_predio')
                         ->whereBetween('avaluo_municipal', [$inicio, $fin])
                         ->where('estado','A')
@@ -110,7 +112,7 @@ class AnaliticaContribuyenteController extends Controller
 
                     $cantidad_rural = DB::connection('sqlsrv')
                     ->table('dbo.TITULOS_PREDIO')
-                    ->whereDate('TitPr_FechaEmision', '2025-01-01') 
+                    ->whereDate('TitPr_FechaEmision', '2025-01-01')
                     ->whereBetween('TitPr_ValComerPredio', [$inicio, $fin])
                     ->distinct('Pre_CodigoCatastral')
                     ->count();
@@ -132,38 +134,38 @@ class AnaliticaContribuyenteController extends Controller
 
                     $i += $rango;
                 }
-            } 
-        
+            }
+
             return [
-                "resultados_urbano"=>$resultados_urbano, 
-                "resultados_rural"=>$resultados_rural, 
-                "resultados_final"=>$resultados_final, 
+                "resultados_urbano"=>$resultados_urbano,
+                "resultados_rural"=>$resultados_rural,
+                "resultados_final"=>$resultados_final,
                 "tipo_busqueda"=>$tipo_busqueda,
                 "total_urbano"=>$total_urbano,
                 "total_rural"=>$total_rural,
                 "error"=>false
             ];
-        
-           
+
+
         } catch (\Throwable $e) {
             dd($e);
             // DB::connection('pgsql')->rollback();
             // Log::error(__CLASS__." => ".__FUNCTION__." => Mensaje =>".$e->getMessage()." Linea =>".$e->getLine());
-            return (['mensaje'=>'Ocurrió un error,intentelo más tarde','error'=>true]); 
+            return (['mensaje'=>'Ocurrió un error,intentelo más tarde','error'=>true]);
         }
     }
 
     public function pdfData(Request $request){
-       
+
         try{
             set_time_limit(0);
             ini_set("memory_limit",-1);
             ini_set('max_execution_time', 0);
 
             $consultaInfo=$this->cargaData($request);
-            
+
             if($consultaInfo['error']==true){
-                return (['mensaje'=>'Ocurrió un error al consultar los datos,intentelo más tarde','error'=>true]); 
+                return (['mensaje'=>'Ocurrió un error al consultar los datos,intentelo más tarde','error'=>true]);
             }
 
             $nombrePDF="reporte_predio_avaluo_rango.pdf";
@@ -174,8 +176,8 @@ class AnaliticaContribuyenteController extends Controller
 
             //lo guardamos en el disco temporal
             \Storage::disk('public')->put(str_replace("", "",$nombrePDF), $estadoarch);
-            $exists_destino = \Storage::disk('public')->exists($nombrePDF); 
-            if($exists_destino){ 
+            $exists_destino = \Storage::disk('public')->exists($nombrePDF);
+            if($exists_destino){
                 return response()->json([
                     'error'=>false,
                     'pdf'=>$nombrePDF
@@ -191,28 +193,29 @@ class AnaliticaContribuyenteController extends Controller
             dd($e);
             // DB::connection('pgsql')->rollback();
             // Log::error(__CLASS__." => ".__FUNCTION__." => Mensaje =>".$e->getMessage()." Linea =>".$e->getLine());
-            return (['mensaje'=>'Ocurrió un error,intentelo más tarde ','error'=>true]); 
+            return (['mensaje'=>'Ocurrió un error,intentelo más tarde ','error'=>true]);
         }
     }
 
     public function descargarPdf($archivo){
-        try{   
-        
-            $exists_destino = \Storage::disk('public')->exists($archivo); 
+        try{
+
+            $exists_destino = \Storage::disk('public')->exists($archivo);
 
             if($exists_destino){
                 return response()->download( storage_path('app/public/'.$archivo))->deleteFileAfterSend(true);
             }else{
                 return back()->with(['error'=>'Ocurrió un error','estadoP'=>'danger']);
-            } 
+            }
 
         } catch (\Throwable $th) {
             // Log::error(__CLASS__." => ".__FUNCTION__." => Mensaje =>".$e->getMessage()." Linea =>".$e->getLine());
             return back()->with(['error'=>'Ocurrió un error','estadoP'=>'danger']);
-        } 
+        }
     }
 
     public function vistaReporteTransito(){
+        Gate::authorize('reporte_transito', TransitoImpuesto::class);
         return view('transito.consultaPagos');
     }
 
@@ -257,7 +260,7 @@ class AnaliticaContribuyenteController extends Controller
                 ->select('c.concepto','ci.valor')
                 ->get();
                 $consultar[$key]->conceptos = $conceptos;
-                    
+
 
             }
 
@@ -278,7 +281,7 @@ class AnaliticaContribuyenteController extends Controller
             // dd($request->all());
 
             if($consultaInfo['error']==true){
-                return (['mensaje'=>'Ocurrió un error al consultar los datos,intentelo más tarde','error'=>true]); 
+                return (['mensaje'=>'Ocurrió un error al consultar los datos,intentelo más tarde','error'=>true]);
             }
 
             $nombrePDF="reporte_pago_transito.pdf";
@@ -289,8 +292,8 @@ class AnaliticaContribuyenteController extends Controller
 
             //lo guardamos en el disco temporal
             \Storage::disk('public')->put(str_replace("", "",$nombrePDF), $estadoarch);
-            $exists_destino = \Storage::disk('public')->exists($nombrePDF); 
-            if($exists_destino){ 
+            $exists_destino = \Storage::disk('public')->exists($nombrePDF);
+            if($exists_destino){
                 return response()->json([
                     'error'=>false,
                     'pdf'=>$nombrePDF
@@ -301,7 +304,7 @@ class AnaliticaContribuyenteController extends Controller
                     'mensaje'=>'No se pudo crear el documento'
                 ]);
             }
-           
+
         } catch (\Throwable $th) {
             return ['mensaje'=>'Ocurrió un error '.$th,'error'=>true];
         }
@@ -363,8 +366,8 @@ class AnaliticaContribuyenteController extends Controller
 
             // //lo guardamos en el disco temporal
             // \Storage::disk('public')->put(str_replace("", "",$nombrePDF), $estadoarch);
-            // $exists_destino = \Storage::disk('public')->exists($nombrePDF); 
-            // if($exists_destino){ 
+            // $exists_destino = \Storage::disk('public')->exists($nombrePDF);
+            // if($exists_destino){
             //     return response()->json([
             //         'error'=>false,
             //         'pdf'=>$nombrePDF
@@ -375,7 +378,7 @@ class AnaliticaContribuyenteController extends Controller
             //         'mensaje'=>'No se pudo crear el documento'
             //     ]);
             // }
-           
+
         } catch (\Throwable $th) {
             return ['mensaje'=>'Ocurrió un error '.$th,'error'=>true];
         }

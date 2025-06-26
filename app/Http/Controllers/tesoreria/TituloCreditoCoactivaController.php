@@ -10,6 +10,7 @@ use App\Models\PsqlLiquidacion;
 use App\Models\PsqlPropietarioPredio;
 use Exception;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Gate;
 
 class TituloCreditoCoactivaController extends Controller
 {
@@ -18,6 +19,7 @@ class TituloCreditoCoactivaController extends Controller
      */
     public function index()
     {
+        Gate::authorize('impresion_titulos_urb', PsqlLiquidacion::class);
         $num_predio = 0;
         return view('tesoreria.TitulosCreditosCoactiva',compact('num_predio'));
     }
