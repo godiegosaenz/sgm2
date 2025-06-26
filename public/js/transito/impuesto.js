@@ -5,7 +5,7 @@ $('#modalEditarRangos').on('shown.bs.modal', function () {
     llenarTabla()
     FormAccionRango='R'
 });
-
+ 
 
 function llenarTabla(){
     

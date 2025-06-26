@@ -281,7 +281,7 @@
                         @endforeach
                     </td>
                     <td colspan="2"><b>RECARGOS</b></td>
-                    <td colspan="1">{{$patente->valor_recargos_act}}</td>
+                    <td colspan="1" style="text-align: right;">{{$patente->valor_recargos_act}}</td>
 
                 
                 </tr>
@@ -289,7 +289,7 @@
                 <tr>
                 
                     <td colspan="2"><b>INTERESES</b></td>
-                    <td colspan="1">{{$patente->valor_intereses_act}}</td>
+                    <td colspan="1" style="text-align: right;">{{$patente->valor_intereses_act}}</td>
 
                 
                 </tr>

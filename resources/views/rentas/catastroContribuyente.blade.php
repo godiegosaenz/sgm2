@@ -129,7 +129,7 @@
             //"columnDefs": [{ targets: [3], "orderable": false}],
             "columns": [
                 {width: '',data: 'action', name: 'action', orderable: false, searchable: false},
-                {width: '',data: 'id', name: 'id'},
+                {width: '',data: 'locales.length'},
                 {width: '',data: 'ruc', name: 'ruc'},
                 {width: '',data: 'razon_social'},
                 {width: '',data: 'fecha_inicio_actividades'},

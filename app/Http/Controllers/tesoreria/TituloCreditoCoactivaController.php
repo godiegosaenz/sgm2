@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\PsqlEnte;
 use App\Models\PsqlLiquidacion;
+use App\Models\PsqlPropietarioPredio;
 use Exception;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -21,11 +22,51 @@ class TituloCreditoCoactivaController extends Controller
         return view('tesoreria.TitulosCreditosCoactiva',compact('num_predio'));
     }
 
+    
+    public function buscarContribuyenteUrbano(Request $request){
+
+        $data = [];
+        if($request->has('q')){
+            $search = $request->q;
+            $data=DB::connection('pgsql')->table('sgm_app.cat_ente')
+            ->where(function($query)use($search){
+                $query->where('ci_ruc', 'ilike', '%'.$search.'%')
+                // ->orwhere('nombres', 'ilike', '%'.$search.'%')
+                // ->orwhere('apellidos', 'ilike', '%'.$search.'%')
+                ->orwhere(DB::raw("CONCAT(nombres, ' ', apellidos)"), 'ilike', '%'.$search.'%');
+            })            
+            ->select('id','ci_ruc',DB::raw("CONCAT(apellidos, ' ', nombres) AS nombre"))
+            ->take(50)->get();
+
+        }
+        return response()->json($data);
+        // return response()->json($data);
+    }
+
     public function consulta(Request $r)
-    {
+    {   
+       
         try {
         $data = array();
-        $predio_id = DB::connection('pgsql')->table('sgm_app.cat_predio')->select('id')->where('num_predio', '=', $r->num_predio)->first();
+        $tipo=$r->tipo;
+        $num_predio=$r->num_predio;
+        $clave=$r->clave;
+        $nombre=$r->cmb_nombres;
+        
+        if($tipo!=3){
+            $predio_id = DB::connection('pgsql')->table('sgm_app.cat_predio')->select('id')
+            // ->where('num_predio', '=', $r->num_predio)
+            ->where(function($query) use($tipo, $num_predio, $clave, $nombre) {
+                if($tipo==1){
+                    $query->where('num_predio', '=', $num_predio);
+                }else if($tipo==2){
+                    $query->where('clave_cat', '=', $clave);
+                }else{
+                    // $query->where('clave_cat', '=', $clave);
+                }
+            })
+            ->first();
+        }
         //se obtiene las liquidaciones urbanas
         $num_predio = $r->num_predio;
 
@@ -33,8 +74,15 @@ class TituloCreditoCoactivaController extends Controller
         $liquidacionUrbana = DB::connection('pgsql')->table('sgm_financiero.ren_liquidacion')
                                         ->join('sgm_app.cat_predio', 'sgm_financiero.ren_liquidacion.predio', '=', 'sgm_app.cat_predio.id')
                                         ->leftJoin('sgm_app.cat_ente', 'sgm_financiero.ren_liquidacion.comprador', '=', 'sgm_app.cat_ente.id')
-                                        ->select('sgm_financiero.ren_liquidacion.id','sgm_financiero.ren_liquidacion.id_liquidacion','sgm_financiero.ren_liquidacion.total_pago','sgm_financiero.ren_liquidacion.estado_liquidacion','sgm_financiero.ren_liquidacion.predio','sgm_financiero.ren_liquidacion.anio','sgm_financiero.ren_liquidacion.nombre_comprador','sgm_app.cat_predio.clave_cat','sgm_app.cat_ente.nombres','sgm_app.cat_ente.apellidos')
-                                        ->where('predio','=',$predio_id->id)
+                                        ->select('sgm_financiero.ren_liquidacion.id','sgm_financiero.ren_liquidacion.id_liquidacion','sgm_financiero.ren_liquidacion.total_pago','sgm_financiero.ren_liquidacion.estado_liquidacion','sgm_financiero.ren_liquidacion.predio','sgm_financiero.ren_liquidacion.anio','sgm_financiero.ren_liquidacion.nombre_comprador','sgm_app.cat_predio.clave_cat','sgm_app.cat_ente.nombres','sgm_app.cat_ente.apellidos','sgm_app.cat_ente.ci_ruc')
+                                        ->where(function($query) use($tipo, $num_predio, $nombre) {
+                                            if($tipo!=3){
+                                                $query->where('predio','=',$num_predio);
+                                            }else{
+                                                $query->where('comprador','=',$nombre);
+                                            }   
+                                        })
+                                        
                                         ->whereNot(function($query){
                                             $query->where('estado_liquidacion', 4)
                                             ->orWhere('estado_liquidacion', '=', 5);
@@ -227,6 +275,121 @@ class TituloCreditoCoactivaController extends Controller
     }
 
     public function actualizaContribuyente(Request $request){
+        
+        DB::beginTransaction(); 
+
+        try{
+
+            $cedula=$request->cedula;
+            $nombres=$request->nombres;
+            $apellidos=$request->apellidos;
+            $direccion=$request->direccion;
+
+            //por cedula
+            $buscaContribuyente=PsqlEnte::where('ci_ruc',$cedula)
+            ->orWhere('ci_ruc', substr($cedula, 0, 10))
+            ->first();
+
+            if(!is_null($buscaContribuyente)){
+
+                $buscaContribuyente->ci_ruc=$cedula;
+                $buscaContribuyente->nombres=$nombres;
+                $buscaContribuyente->apellidos=$apellidos;
+                $buscaContribuyente->direccion=$direccion;
+                $buscaContribuyente->save();
+                
+                foreach($request->id_liquidacion as $data){                   
+                    $actualizaNombreComprador=PsqlLiquidacion::find($data);
+                    $actualizaNombreComprador->nombre_comprador=$nombres." ".$apellidos;
+                    $actualizaNombreComprador->comprador=$buscaContribuyente->id;
+                    $actualizaNombreComprador->save();    
+                    
+                    // $actualizaPropietarioPredio=PsqlPropietarioPredio::where('predio',$actualizaNombreComprador->predio)
+                    // ->orderBy('id','desc')
+                    // ->first();
+
+                    // $actualizaPropietarioPredio->ente=$buscaContribuyente->id;
+                    // $actualizaPropietarioPredio->estado='A';
+                    // $actualizaPropietarioPredio->save();
+                }
+
+                DB::commit(); // Confirmar los cambios en la BD
+
+                return [
+                    'error' => false,
+                    'mensaje' => 'Su informacion fue actualizada exitosamente.',
+                ];
+                
+            }else{
+                //si no encuentra x cedula busca el ultimo predio de las liquidaciones seleccionadas
+                $buscaPredioProp=DB::connection('pgsql')->table('sgm_financiero.ren_liquidacion as liq')
+                ->whereIn('id',$request->id_liquidacion)
+                ->whereNotNull('predio')
+                ->select('id_liquidacion','predio')
+                ->get()->last();
+
+                if(!is_null($buscaPredioProp)){
+                    //buscamos el propietario
+                    $buscaPropietario=DB::connection('pgsql')->table('sgm_app.cat_predio_propietario')
+                    ->where('predio',$buscaPredioProp->predio)
+                    ->where('estado','A')
+                    ->select('ente')
+                    ->get()->last();
+
+                    if(is_null($buscaPropietario)){                        
+                        DB::rollback();
+                        return (['mensaje'=>'No se encontro propietario en las liquidaciones','error'=>true]);
+                    }
+
+                    $buscaContribuyente=PsqlEnte::where('id',$buscaPropietario->ente)
+                    ->first();
+
+                    if(!is_null($buscaContribuyente)){
+                        $buscaContribuyente->ci_ruc=$cedula;
+                        $buscaContribuyente->nombres=$nombres;
+                        $buscaContribuyente->apellidos=$apellidos;
+                        $buscaContribuyente->direccion=$direccion;
+                        $buscaContribuyente->save();
+                        foreach($request->id_liquidacion as $data){                           
+                            $actualizaNombreComprador=PsqlLiquidacion::find($data);
+                            $actualizaNombreComprador->nombre_comprador=$nombres." ".$apellidos;
+                            $actualizaNombreComprador->comprador=$buscaContribuyente->id;
+                            $actualizaNombreComprador->save();       
+                            
+                            // $actualizaPropietarioPredio=PsqlPropietarioPredio::where('predio',$actualizaNombreComprador->predio)
+                            // ->orderBy('id','desc')
+                            // ->first();
+
+                            // $actualizaPropietarioPredio->ente=$buscaContribuyente->id;
+                            // $actualizaPropietarioPredio->estado='A';
+                            // $actualizaPropietarioPredio->save();
+                        }
+
+                        DB::commit(); // Confirmar los cambios en la BD
+
+                        return [
+                            'error' => false,
+                            'mensaje' => 'Su informacion fue actualizada exitosamente.',
+                        ];  
+                    }
+                }else{
+                    DB::rollback();
+                    return (['mensaje'=>'No se encontro predio en las liquidaciones','error'=>true]); 
+                }
+            }
+
+           
+
+        } catch (\Throwable $th) {
+            DB::rollback();
+            // Log::error(__CLASS__." => ".__FUNCTION__." => Mensaje =>".$e->getMessage()." Linea =>".$e->getLine());
+            return (['mensaje'=>'Ocurrió un error,intentelo más tarde '.$th,'error'=>true]); 
+        } 
+
+    }
+
+     public function actualizaContribuyente_resp(Request $request){
+        
         DB::beginTransaction(); 
         try{
             $id_contribuyente=$request->id;

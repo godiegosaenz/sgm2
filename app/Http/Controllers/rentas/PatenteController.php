@@ -21,6 +21,7 @@ use App\Models\PsqlCtlgItem;
 use App\Models\PsqlEnteTelefono;
 use App\Models\PsqlEnteCorreo;
 use App\Models\PsqlPaClaseContribuyente;
+use App\Models\BaseImponiblePatente;
 use DB;
 use Carbon\Carbon;
 
@@ -45,7 +46,7 @@ class PatenteController extends Controller
         return view('rentas.patenteCrear',compact('PsqlYearDeclaracion','PsqlProvincia','clase'));
     }
 
-    /**
+    /* *
      * Store a newly created resource in storage.
      */
     public function store1(Request $r)
@@ -380,6 +381,7 @@ class PatenteController extends Controller
             $codigo_patente=1;
             $codigo_activo=1;
             $anio=date('Y');
+           
             if(!is_null($codigo_documento)){
         
                 if(!is_null($codigo_documento->codigo)){
@@ -400,7 +402,7 @@ class PatenteController extends Controller
                
             }else{               
                 $inicio=1;
-                $codigo_activo = $anio."-".str_pad($inicio, 6, "0", STR_PAD_LEFT)."-ACT";
+                $codigo_patente = $anio."-".str_pad($inicio, 6, "0", STR_PAD_LEFT)."-PAT";
             }
 
             $codigo_documento_act=PsqlPaPatente::where('estado',1)
@@ -429,7 +431,7 @@ class PatenteController extends Controller
                 $inicio=1;
                 $codigo_activo = $anio."-".str_pad($inicio, 6, "0", STR_PAD_LEFT)."-ACT";
             }
-
+           
             foreach ($r->locales as $key => $value) {
                 if(isset($value['id'])){
                     
@@ -1135,8 +1137,9 @@ class PatenteController extends Controller
     
     public function datatable(Request $r)
     {
+       
         if($r->ajax()){
-            $listaPatente = PsqlPaPatente::where('estado','!=',3)->get();
+            $listaPatente = PsqlPaPatente::where('estado','=',1)->get();
             return Datatables($listaPatente)
             ->editColumn('lleva_contabilidad', function($listaPatente){
                     if($listaPatente->lleva_contabilidad == true){
@@ -1173,7 +1176,7 @@ class PatenteController extends Controller
             ->addColumn('action', function ($listaPatente) {
                 // return '<button type="button" class="btn btn-primary btn-sm" onclick="verPatente('$listaPatente->id')">Ver</a> 
                 //  ';
-                return '<a class="btn btn-primary btn-sm" onclick="verPatentePdf(\''.$listaPatente->archivo_patente.'\')">Ver</a>';
+                return '<a class="btn btn-primary btn-sm" onclick="verPatentePdf(\''.$listaPatente->id.'\')">Ver</a>';
             })
             ->rawColumns(['action','estado','ruc'])
             ->make(true);
@@ -1657,6 +1660,84 @@ class PatenteController extends Controller
         // $pdf->setPaper("A4", "portrait");
 
         return $pdf->stream("aa.pdf");
+    }
+
+    public function tablaRango(){
+        try {
+        
+            $info=DB::connection('pgsql')->table('sgm_patente.pa_base_imponible')
+            ->where('estado','A')
+            ->where('anio',date('Y'))
+            ->orderBy('desde','asc')
+            ->get();
+
+            return ["resultado"=>$info, "error"=>false];
+
+        } catch (\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+
+        }
+    }
+
+    public function guardarRango(Request $request){
+        try {
+
+            $valida=BaseImponiblePatente::where('desde',$request->desde_base)
+            ->where('hasta',$request->hasta_base)
+            ->where('dolares',$request->valor_base)
+            ->where('imp_sobre_fraccion_exec',$request->impuesto_fracion)
+            ->where('estado','A')
+            ->first();
+            if(!is_null($valida)){
+                return ["mensaje"=>"La informacion ingresada ya existe ", "error"=>true];
+            }
+            // dd($valida);
+
+            $guardaRango=new BaseImponiblePatente();
+            $guardaRango->desde=$request->desde_base;
+            $guardaRango->hasta=$request->hasta_base;
+            $guardaRango->dolares=$request->valor_base;
+            $guardaRango->imp_sobre_fraccion_exec=$request->impuesto_fracion;
+            $guardaRango->estado='A';
+            $guardaRango->anio=date('Y');
+            $guardaRango->save();
+            
+            return ["mensaje"=>"Informacion Guardada exitosamente", "error"=>false];
+
+        } catch (\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+
+        }
+    }
+
+    public function actualizarRango(Request $request, $id){
+        try {
+
+            $valida=BaseImponiblePatente::where('desde',$request->desde_base)
+            ->where('hasta',$request->hasta_base)
+            ->where('dolares',$request->valor_base)
+            ->where('imp_sobre_fraccion_exec',$request->impuesto_fracion)
+            ->where('estado','A')
+            ->where('id','!=',$id)
+            ->first();
+            if(!is_null($valida)){
+                return ["mensaje"=>"La informacion ingresada ya existe ", "error"=>true];
+            }
+
+            $guardaRango= BaseImponiblePatente::find($id);
+            $guardaRango->desde=$request->desde_base;
+            $guardaRango->hasta=$request->hasta_base;
+            $guardaRango->dolares=$request->valor_base;
+            $guardaRango->imp_sobre_fraccion_exec=$request->impuesto_fracion;
+            $guardaRango->estado='A';
+            $guardaRango->save();
+            
+            return ["mensaje"=>"Informacion actualizada exitosamente", "error"=>false];
+
+        } catch (\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+
+        }
     }
 
 }

@@ -44,6 +44,21 @@ class AnaliticaPredioController extends Controller
                 ->get();
             }else{
                 $tipo_busqueda="U";
+
+            //     $predio= DB::connection('pgsql')->table('sgm_app.cat_predio as p')
+            //     // ->distinct('p.id')
+            //     ->where('estado','A')
+            //     ->distinct('clave_cat')
+            //    ->get();
+            //     dd($predio);
+
+                $liquidacionActual= DB::connection('pgsql')->table('sgm_financiero.ren_liquidacion as r')
+                ->where('r.anio',date('Y'))
+                ->distinct('r.predio')
+                ->pluck('r.predio') // Asegúrate de que este es el campo correcto
+                ->toArray();
+                // dd($liquidacionActual);
+
                 $resultados_urbano = DB::connection('pgsql')->table('sgm_app.cat_predio as p')
                 ->leftJoin('sgm_financiero.fn_solicitud_exoneracion as se', 'se.predio', '=', 'p.id')
                 ->leftJoin('sgm_financiero.fn_exoneracion_tipo as t', 't.id', '=', 'se.exoneracion_tipo')
@@ -52,10 +67,25 @@ class AnaliticaPredioController extends Controller
                 ->where('p.esta_exonerado', true)
                 ->where('anio_fin', '>=', date('Y'))
                 ->whereNotIn('t.descripcion',['BAJAS DE TITULOS'])
+                ->whereIn('p.id',$liquidacionActual)
                 ->select('t.descripcion as rango', DB::raw('count(*) as cantidad'))
                 ->groupBy('t.descripcion')
                 ->get();
             }
+
+            // foreach($resultados_urbano as $key=> $data){
+            //     dd($data);
+            //     $liquidacionActual= DB::connection('pgsql')->table('sgm_financiero.ren_liquidacion as r')
+            //     ->where('r.predio',$data->id)
+            //     ->where('r.anio',date('Y'))
+            //     ->first();
+
+            //     if(!is_null($liquidacionActual)){
+            //         $resultados_urbano->permitir="Si";
+            //     }
+            // }
+
+            // dd($resultados_urbano);
             
          
 

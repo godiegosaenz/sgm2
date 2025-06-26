@@ -130,7 +130,7 @@
                                 <span id="tituloboton">Guardar</span>
                             </button>
 
-                            <button type="button" onclick="cancelarLocal()" class="btn btn-danger btn-sm">
+                            <button type="button" onclick="limpiarCampos()" class="btn btn-danger btn-sm">
                                Cancelar
                             </button>
                         </center>
@@ -176,16 +176,19 @@
         var optionSelectCanton = document.getElementById('optionSelectCanton');
         optionSelectCanton.innerHTML = 'Cargando...';
         var selectedOption = this.options[provincia_id.selectedIndex];
-        cargarcantones(selectedOption.value);
-        cargarparroquia(null);
+        cargarcantonesModal(selectedOption.value);
+        cargarparroquiaModal(null);
     });
-    function cargarcantones(idprovincia){
+    function cargarcantonesModal(idprovincia){
+        // alert("rrtt")
         var canton_id_modal = document.getElementById('canton_id_modal');
 
         axios.post('{{route('getcanton.catastro')}}', {
             _token: token,
             idprovincia:idprovincia
         }).then(function(res) {
+            console.log("qaz")
+            console.log(res)
             if(res.status==200) {
                 console.log("cargando cantones");
                 canton_id_modal.innerHTML = res.data;
@@ -209,9 +212,9 @@
         optionSelectParroquia.innerHTML = 'Cargando...';
         var selectedOption = this.options[canton_id_modal.selectedIndex];
         //console.log(selectedOption.value + ': ' + selectedOption.text);
-        cargarparroquia(selectedOption.value);
+        cargarparroquiaModal(selectedOption.value);
     });
-    function cargarparroquia(idcanton){
+    function cargarparroquiaModal(idcanton){
         var canton_id_modal = document.getElementById('canton_id_modal');
         
 
@@ -397,7 +400,7 @@
                     sInfoFiltered:false,
                     searching: false,
                     language: {
-                        url: 'json/datatables/spanish.json',
+                        // url: 'json/datatables/spanish.json',
                     },
                     columnDefs: [
                         { "width": "30%", "targets": 0 },
@@ -493,7 +496,7 @@
             }
             
             $('#provincia_id_modal').val(data.data.provincia_id)
-            cargarcantones(data.data.provincia_id)
+            cargarcantonesModal(data.data.provincia_id)
            
             $('#calle_principal_modal').val(data.data.calle_principal)        
             $('#calle_secundaria_modal').val(data.data.calle_secundaria)
@@ -504,7 +507,7 @@
             
             setTimeout(() => {
                 $('#canton_id_modal').val(data.data.canton_id)
-                cargarparroquia(data.data.canton_id)   
+                cargarparroquiaModal(data.data.canton_id)   
             }, 500); // 5000 milisegundos = 5 segundos
 
             setTimeout(() => {      

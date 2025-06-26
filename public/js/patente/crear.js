@@ -2104,3 +2104,198 @@ $("#form_new_contribuyente").submit(function(e){
     });
 
 })
+
+globalThis.FormAccionRango=""
+globalThis.IdEditarRango=
+$('#modalEditarRangos').on('shown.bs.modal', function () {
+    // Tu acción aquí
+    llenarTabla()
+    FormAccionRango='R'
+});
+
+function llenarTabla(){
+    
+    $("#tablaRangos tbody").html('');
+    $('#tablaRangos tbody').empty(); 
+    var num_col = $("#tablaRangos thead tr th").length; //obtenemos el numero de columnas de la tabla
+    vistacargando("m", "Espere por favor")
+    $.get('patente/llenar-tabla-rango', function(data){
+        console.log(data)
+       
+        vistacargando("")
+        if(data.error==true){
+			$("#tablaRangos tbody").html('');
+			$("#tablaRangos tbody").html(`<tr><td colspan="${num_col}" style="text-align:center>No existen registros</td></tr>`);
+			alertNotificar(data.mensaje,"error");
+            // cancelar()
+			return;   
+		}
+		if(data.error==false){
+			if(data.resultado.length==0){
+				$("#tablaRangos tbody").html('');
+				$("#tablaRangos tbody").html(`<tr><td colspan="${num_col}" style="text-align:center">No existen registros</td></tr>`);
+				alertNotificar("No se encontró información","error");
+                // cancelar()
+				return;
+			}
+			
+			$("#tablaRangos tbody").html('');
+         
+			$.each(data.resultado,function(i, item){
+                let valor_hasta="En Adelante"
+                if(item.hasta!=null){
+                    valor_hasta=item.hasta
+                }
+				$('#tablaRangos').append(`<tr>
+                                                <td style="width:10%; text-align:center; vertical-align:middle">
+                                                    ${item.desde} 
+                                                    
+                                                </td>
+
+                                                <td style="width:10%;  text-align:left; vertical-align:middle">
+                                                    ${valor_hasta} 
+                                                </td>
+                                               
+                                                <td style="width:10%; text-align:center; vertical-align:middle">
+                                                    ${item.dolares}
+                                                </td>
+
+                                                <td style="width:20%; text-align:center; vertical-align:middle">
+                                                    ${item.imp_sobre_fraccion_exec}
+                                                </td>
+
+                                               
+                                                <td style="width:10%; text-align:right; vertical-align:middle">
+                                                    <button class="btn btn-sm btn-warning" onclick="editarRango('${item.id}','${item.desde}','${item.hasta}','${item.dolares}','${item.imp_sobre_fraccion_exec}')"><i class="bi bi-pencil-square"></i></button>
+                                                </td>
+                                                
+											
+										</tr>`);
+			})
+          
+
+            
+		}
+    
+    }).fail(function(){
+        vistacargando("")
+        alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+        $("#tablaRangos tbody").html('');
+		$("#tablaRangos tbody").html(`<tr><td colspan="${num_col}" style="text-align:center">Se produjo un error, por favor intentelo más tarde</td></tr>`);
+    });
+}
+
+$("#form_base").submit(function(e){
+    e.preventDefault();
+    
+    //validamos los campos obligatorios
+    let desde_base=$('#desde_base').val()
+    let hasta_base=$('#hasta_base').val()
+    let valor_base=$('#valor_base').val()
+    let impuesto=$('#impuesto_fracion').val()
+
+    if(desde_base=="" || desde_base==null){
+        alertNotificar("Debe ingresar desde","error")
+        $('#desde_base').focus()
+        return
+    } 
+
+    if (isNaN(desde_base) || desde_base.trim() === "") {
+        alertNotificar('Debe ingresar un número válido',"error");
+        $('#desde_base').focus()
+        return
+    }
+   
+
+    if(valor_base=="" || valor_base==null){
+        alertNotificar("Debe ingresar valor","error")
+        $('#valor_base').focus()
+        return
+    } 
+
+    if (isNaN(valor_base) || valor_base.trim() === "") {
+        alertNotificar('Debe ingresar un número válido',"error");
+        $('#valor_base').focus()
+        return
+    }
+
+    if(impuesto=="" || impuesto==null){
+        alertNotificar("Debe ingresar impuesto","error")
+        $('#impuesto').focus()
+        return
+    } 
+
+    if (isNaN(impuesto) || impuesto.trim() === "") {
+        alertNotificar('Debe ingresar impuesto',"error");
+        $('#impuesto').focus()
+        return
+    }
+
+    vistacargando("m","Espere por favor")
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    //comprobamos si es registro o edicion
+    let tipo=""
+    let url_form=""
+    if(FormAccionRango=="R"){
+        tipo="POST"
+        url_form="patente/guardar-rango"
+    }else{
+        tipo="PUT"
+        url_form="patente/actualizar-rango/"+IdEditarRango
+    }
+  
+    var FrmData=$("#form_base").serialize();
+
+    $.ajax({
+            
+        type: tipo,
+        url: url_form,
+        method: tipo,             
+		data: FrmData,      
+		
+        processData:false, 
+
+        success: function(data){
+            vistacargando("");                
+            if(data.error==true){
+                alertNotificar(data.mensaje,'error');
+                return;                      
+            }
+            cancelarRango()
+            alertNotificar(data.mensaje,"success");
+            llenarTabla()
+                            
+        }, error:function (data) {
+            console.log(data)
+
+            vistacargando("");
+            alertNotificar('Ocurrió un error','error');
+        }
+    });
+})
+
+function editarRango(id, desde, hasta, rango, impuesto){
+    $('#desde_base').val(desde)
+    $('#hasta_base').val(hasta)
+    $('#valor_base').val(rango)
+    $('#impuesto_fracion').val(impuesto)
+    $('#id_base').val(id)
+    $('#btn_base').html('Actualizar')
+    FormAccionRango='A'
+    IdEditarRango=id
+}
+
+function cancelarRango(){
+    $('#desde_base').val('')
+    $('#hasta_base').val('')
+    $('#valor_base').val('')
+    $('#impuesto_fracion').val('')
+    $('#id_base').val('')
+    $('#btn_base').html('Guardar')
+    FormAccionRango='R'
+}

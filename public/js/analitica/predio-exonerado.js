@@ -121,58 +121,62 @@ $("#formAnaliticaPredio").submit(function(e){
             vistacargando("")
             
             if(response.tipo_busqueda=="U"){
-                let labels = [];
-                let data = [];
-                let backgroundColors = [];
-                let borderColors = [];
-               
-                response.resultados_urbano.forEach(item => {
-                    labels.push(item.rango);
-                    data.push(item.cantidad);
-                  
-                    total_urbano=total_urbano+item.cantidad
-                    // Generar color aleatorio
-                    let r = Math.floor(Math.random() * 255);
-                    let g = Math.floor(Math.random() * 255);
-                    let b = Math.floor(Math.random() * 255);
-        
-                    backgroundColors.push(`rgba(${r}, ${g}, ${b}, 0.2)`);
-                    borderColors.push(`rgba(${r}, ${g}, ${b}, 1)`);
-                });
-
-                // ⚠️ Destruir gráfico anterior si ya existe
-                if (myChart !== null) {
-                    myChart.destroy();
-                }
-
-                // total_urbano=total_urbano+response.total_urbano               
-                document.getElementById("total-info-urb").innerText = `Total de predios urbanos exonerados: ${total_urbano}`;
                 
-                const ctx = document.getElementById('myChart').getContext('2d');
-                myChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: '# de Predios por Rango Urbano ',
-                            data: data,
-                            backgroundColor: backgroundColors,
-                            borderColor: borderColors,
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    precision: 0 // evita decimales si no los necesitas
+                    let labels = [];
+                    let data = [];
+                    let backgroundColors = [];
+                    let borderColors = [];
+                
+                    response.resultados_urbano.forEach(item => {
+
+                        
+                            labels.push(item.rango);
+                            data.push(item.cantidad);
+                        
+                            total_urbano=total_urbano+item.cantidad
+                            // Generar color aleatorio
+                            let r = Math.floor(Math.random() * 255);
+                            let g = Math.floor(Math.random() * 255);
+                            let b = Math.floor(Math.random() * 255);
+                
+                            backgroundColors.push(`rgba(${r}, ${g}, ${b}, 0.2)`);
+                            borderColors.push(`rgba(${r}, ${g}, ${b}, 1)`);
+                        
+                    });
+
+                    // ⚠️ Destruir gráfico anterior si ya existe
+                    if (myChart !== null) {
+                        myChart.destroy();
+                    }
+
+                    // total_urbano=total_urbano+response.total_urbano               
+                    document.getElementById("total-info-urb").innerText = `Total de predios urbanos exonerados: ${total_urbano}`;
+                    
+                    const ctx = document.getElementById('myChart').getContext('2d');
+                    myChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: '# de Predios por Rango Urbano ',
+                                data: data,
+                                backgroundColor: backgroundColors,
+                                borderColor: borderColors,
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        precision: 0 // evita decimales si no los necesitas
+                                    }
                                 }
                             }
                         }
-                    }
-                });
+                    });
             }else if(response.tipo_busqueda=="R"){
                 let labels_rural = [];
                 let data_rural = [];

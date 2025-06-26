@@ -140,6 +140,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('tituloscoactiva/imprimir', [TituloCreditoCoactivaController::class, 'reporteTitulosCoactiva'])->name('reportecoactiva.titulos');
     Route::get('tituloscoactiva/buscar-contribuyente/{idliquidacion}', [TituloCreditoCoactivaController::class, 'buscaContribuyente'])->name('buscaContribuyente.titulocredito');
     Route::post('tituloscoactiva/actualiza-contribuyente', [TituloCreditoCoactivaController::class, 'actualizaContribuyente'])->name('actualizaContribuyente.titulocredito');
+    Route::get('buscarContribuyenteUrbano', [TituloCreditoCoactivaController::class, 'buscarContribuyenteUrbano'])->name('buscarContribuyenteUrbano.titulocredito');
 
     //titulorural
     Route::get('titulorural/', [TituloRuralController::class, 'index'])->name('index.TitulosRural');
@@ -201,6 +202,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('patente-new-contribuyente', [PatenteController::class, 'guardaContribuyente'])->name('guardaContribuyente.patente');
     Route::post('catastrocontribuyente/actualiza-contribuyente', [PatenteController::class, 'actualizaContribuyente'])->name('actualizaContribuyente.patente');
+
+    Route::get('patente/llenar-tabla-rango', [PatenteController::class, 'tablaRango'])->name('tablaRango.patente');
+    Route::post('patente/guardar-rango', [PatenteController::class, 'guardarRango'])->name('guardarRango.patente');
+    Route::put('patente/actualizar-rango/{id}', [PatenteController::class, 'actualizarRango'])->name('actualizarRango.patente');
 
 
     Route::post('ente/datatables', [EnteController::class, 'datatables'])->name('datatables.ente');
@@ -271,7 +276,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
     //no deudor
-    Route::get('nodeudor', [PredioController::class, 'index'])->name('nodeudor.index');
+    Route::get('nodeudor', [PredioController::class, 'index'])->name('index.nodeudor');
+    Route::get('buscar-deudas/{cedula}', [PredioController::class, 'buscarDeudas'])->name('buscarDeudas.nodeudor');
+    Route::get('buscar-detalle-deudas/{cedula}/{tipo}', [PredioController::class, 'buscarDetalleDeudas'])->name('buscarDetalleDeudas.nodeudor');
+    Route::get('generar-nd/{cedula}/{tipo}', [PredioController::class, 'generarNoDeudor'])->name('generarNoDeudor.nodeudor');
+    Route::post('nodeudor/guarda-contribuyente', [PredioController::class, 'guardaContribuyente'])->name('guardaContribuyente.nodeudor');
+    Route::get('nodeudor/documento/{ruta}', [PredioController::class, 'verDocumento'])->name('verDocumento.nodeudor');
+
+
+    //emisiones repetidas
+    Route::get('emisiones-repetidas', [PredioController::class, 'vistaRepetidos'])->name('vistaRepetidos.emisiones');
+    Route::get('buscar-repetidas/{estado}', [PredioController::class, 'buscarRepetidos'])->name('buscarRepetidos.emisiones');
+    Route::get('quitar-repetidos/{estado}', [PredioController::class, 'quitarDuplicados'])->name('quitarDuplicados.emisiones');
+    Route::get('descargar-txt/{txt}', [PredioController::class, 'descargarTxt'])->name('descargarTxt.emisiones');
 
 });
 

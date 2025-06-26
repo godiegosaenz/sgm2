@@ -29,7 +29,7 @@
      <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group me-2">
             <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal"
-                data-bs-target="#modalEditarRangos"> <i class="bi bi-table"></i> Contribuyentes </button>
+                data-bs-target="#modalEditarRangos"> <i class="bi bi-table"></i> Tarifa </button>
            
         </div>
      
@@ -1512,6 +1512,18 @@
                             </div>
                         </div>
 
+                        <div class="col-md-12" style="margin-top: 10px;">
+                            <div class="row align-items-center">
+                                <div class="col-md-3 text-end">
+                                    <label for="marca_v" class="form-label mb-0">Imp sobre Fraccion Exc</label>
+                                </div>
+                                <div class="col-md-7">
+                                    <input type="number" step="0.01" class="form-control" id="impuesto_fracion" name="impuesto_fracion"
+                                        required>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="col-md-12" style="margin-top: 10px; margin-bottom: 20px;">
                             <div class="row align-items-center">
                                 <div class="col-md-3 text-end">
@@ -1534,6 +1546,7 @@
                                 <th>Desde</th>
                                 <th>Hasta</th>
                                 <th>Valor</th>
+                                <th>Imp. sobre fraccion exc</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>

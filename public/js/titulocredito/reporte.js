@@ -1,9 +1,61 @@
+function cambiaTipo(){
+    limpiarBusqueda()
+    var tipo=$('#tipo').val()
+    $('#div_matricula').show()
+    $('#div_clave').hide()
+    $('#div_nombres').hide()
+    if(tipo==""){return}
+    else if(tipo=="1"){
+        $('#div_matricula').show()
+        $('#div_clave').hide()
+         $('#div_nombres').hide()
+    }else if(tipo=="2"){
+        $('#div_matricula').hide()
+        $('#div_nombres').hide()
+        $('#div_clave').show()
+    }else{
+        $('#div_matricula').hide()
+        $('#div_nombres').show()
+        $('#div_clave').hide()
+    }
+}
+
+function limpiarBusqueda(){
+    $('#num_predio').val('')
+    $('#clave').val('')
+    $('#cmb_nombres').val('')
+}
+
+$('#cmb_nombres').select2({
+    // dropdownParent: $('#actividadLocal'),
+    ajax: {
+        url: 'buscarContribuyenteUrbano',
+        dataType: 'json',
+        delay: 250,
+        data: function (params) {
+            return {
+                q: params.term
+            };
+        },
+        processResults: function (data) {
+            console.log(data)
+            return {
+                results: data.map(item => ({
+                    id: item.id,
+                    text: item.ci_ruc + " - " + item.nombre
+                }))
+            };
+        }
+    },
+    minimumInputLength: 1
+});
+
 function actualizarContribuyente(){
     if ($('input[name="checkLiquidacion[]"]:checked').length == 0) {
         alertNotificar("Debe seleccionar al menos uno de la lista","error")
-    } else if(($('input[name="checkLiquidacion[]"]:checked').length > 1) ) {
+    } else if(($('input[name="checkLiquidacion[]"]:checked').length > 1000000) ) {
         // Ninguno está seleccionado
-        alertNotificar("Debe seleccionar solo uno de la lista","error")
+        // alertNotificar("Debe seleccionar solo uno de la lista","error")
     }else{
         $('#cedula_ruc_cont').val('')
         $('#nombre_cont').val('')
@@ -12,34 +64,34 @@ function actualizarContribuyente(){
         $('#id_contribuyente').val('')
         $('#id_liquidacion').val('')
 
-        var id_selecc= $('input[name="checkLiquidacion[]"]:checked').val();
+        // var id_selecc= $('input[name="checkLiquidacion[]"]:checked').val();
         
-        vistacargando("m","Espere por favor")
-        $.get("tituloscoactiva/buscar-contribuyente/"+id_selecc, function(data){
-            vistacargando("")
-            if(data.error==true){
-                alertNotificar(data.mensaje,"error");
-                return;   
-            }
+        // vistacargando("m","Espere por favor")
+        // $.get("tituloscoactiva/buscar-contribuyente/"+id_selecc, function(data){
+        //     vistacargando("")
+        //     if(data.error==true){
+        //         alertNotificar(data.mensaje,"error");
+        //         return;   
+        //     }
 
-            if(data.data==null){
-                alertNotificar('No se encontro informacion del contribuyente',"error");
-                return;   
-            }
+        //     if(data.data==null){
+        //         alertNotificar('No se encontro informacion del contribuyente',"error");
+        //         return;   
+        //     }
           
-            $('#cedula_ruc_cont').val(data.data.ci_ruc)
-            $('#nombre_cont').val(data.data.nombres)
-            $('#apellido_cont').val(data.data.apellidos)
-            $('#direccion_cont').val(data.data.direccion)
-            $('#id_contribuyente').val(data.data.id)
-            $('#id_liquidacion').val(id_selecc)
-            $('#modalContri').modal('show')
+        //     $('#cedula_ruc_cont').val(data.data.ci_ruc)
+        //     $('#nombre_cont').val(data.data.nombres)
+        //     $('#apellido_cont').val(data.data.apellidos)
+        //     $('#direccion_cont').val(data.data.direccion)
+        //     $('#id_contribuyente').val(data.data.id)
+        //     $('#id_liquidacion').val(id_selecc)
+        //     $('#modalContri').modal('show')
            
-        }).fail(function(){
-            vistacargando("")
-            alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
-        });
-        
+        // }).fail(function(){
+        //     vistacargando("")
+        //     alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+        // }); 
+        $('#modalContri').modal('show')
     }
 }
 
@@ -50,7 +102,14 @@ function actualizaContribuyente(){
     var apellidos= $('#apellido_cont').val()
     var direccion= $('#direccion_cont').val()
     var id= $('#id_contribuyente').val()
-    var id_liquidacion= $('#id_liquidacion').val()
+    // var id_liquidacion= $('#id_liquidacion').val()
+    // var id_liquidacion= $('#id_liquidacion').val()
+    let valoresSeleccionados = [];
+
+    $('input[name="checkLiquidacion[]"]:checked').each(function() {
+        valoresSeleccionados.push($(this).val());
+    });
+
 
     if(cedula=="" || cedula==null){
         alertNotificar("Ingrese la celula o ruc","error")
@@ -108,7 +167,7 @@ function actualizaContribuyente(){
                     apellidos:apellidos,
                     direccion:direccion,
                     id:id,
-                    id_liquidacion:id_liquidacion
+                    id_liquidacion:valoresSeleccionados
 
                 },
                 success: function(data){
@@ -141,4 +200,39 @@ function limpiarCamposContribuyente(){
     $('#direccion_cont').val('')
     $('#id_contribuyente').val('')
 }
-   
+
+
+function BuscaContribuyente(){
+    let cedula=$('#cedula_ruc_cont').val();
+    if(cedula==""){return}
+    if(cedula.length<10){
+        alertNotificar("El numero de identificacion debe tener mas de 9 digitos")
+        return
+    }
+    vistacargando("m","Espere por favor")
+    $.get("carga-info-persona/"+cedula, function(data){
+        console.log(data)
+        vistacargando("")
+        if(data.error==true){
+            alertNotificar(data.mensaje,"error");
+            return;   
+        }
+
+        if(data.data==null){
+            alertNotificar('No se encontro informacion del contribuyente',"error");
+            return;   
+        }
+        
+        // $('#cedula_ruc_cont').val(data.data.ci_ruc)
+        $('#nombre_cont').val(data.data[0].nombre)
+        $('#apellido_cont').val(data.data[0].apellido)
+        // $('#direccion_cont').val(data.data.direccion)
+        // $('#id_contribuyente').val(data.data.id)
+        // $('#id_liquidacion').val(id_selecc)
+        // $('#modalContri').modal('show')
+        
+    }).fail(function(){
+        vistacargando("")
+        alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+    }); 
+}

@@ -492,7 +492,7 @@ class CatastroContribuyente extends Controller
         //echo json_encode($cantones);
         return $html;
     }
-
+ 
     public function datatable(Request $r){
         $listacatastro = PsqlCatastroContribuyente::all();
         return Datatables($listacatastro)
@@ -518,7 +518,7 @@ class CatastroContribuyente extends Controller
     }
 
     public function datatable2(Request $r){
-        $listacatastro = PsqlCatastroContribuyente::all();
+        $listacatastro = PsqlCatastroContribuyente::with('locales')->get();
 
         return Datatables($listacatastro)
         ->editColumn('obligado_contabilidad', function($listacatastro){
