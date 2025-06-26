@@ -225,6 +225,9 @@ class AnaliticaContribuyenteController extends Controller
             $hasta=$request->filtroHasta;
             $tipo=$request->filtroTipo;
 
+            $desde=$desde." 00:00:00.000";
+            $hasta=$hasta." 23:59:59.000";
+
             $consultar= DB::connection('pgsql')->table('sgm_transito.impuestos as i')
             ->leftJoin('sgm_transito.vehiculo as v', 'v.id', '=', 'i.vehiculo_id')
             ->leftJoin('sgm_transito.clase_tipo_vehiculo as cv', 'cv.id', '=', 'v.tipo_clase_id')

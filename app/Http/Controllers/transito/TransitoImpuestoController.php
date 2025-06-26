@@ -750,7 +750,7 @@ class TransitoImpuestoController extends Controller
         }
     }
 
-      public function guardarConcepto(Request $request){
+    public function guardarConcepto(Request $request){
         try {
 
             $valida=TransitoConcepto::where('concepto',$request->txt_concepto)

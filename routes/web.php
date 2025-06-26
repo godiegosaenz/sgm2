@@ -206,6 +206,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('patente/llenar-tabla-rango', [PatenteController::class, 'tablaRango'])->name('tablaRango.patente');
     Route::post('patente/guardar-rango', [PatenteController::class, 'guardarRango'])->name('guardarRango.patente');
     Route::put('patente/actualizar-rango/{id}', [PatenteController::class, 'actualizarRango'])->name('actualizarRango.patente');
+    Route::post('patente/baja-titulo-patente', [PatenteController::class, 'bajaTituloPatente'])->name('bajaTituloPatente.patente');
+
+    Route::get('patente/reportes', [PatenteController::class, 'vistaReportePatente'])->name('vistaReportePatente.patente');
+     Route::post('patente/pago-consulta', [PatenteController::class, 'consultarPagos'])->name('consultarPagos.patente');
+    Route::post('patente/reporte-diario', [PatenteController::class, 'ReporteTransito'])->name('ReporteTransito.patente');
+    // Route::get('transito/test-reportes', [AnaliticaContribuyenteController::class, 'testReporteTransito'])->name('testReporteTransito.transito');
 
 
     Route::post('ente/datatables', [EnteController::class, 'datatables'])->name('datatables.ente');

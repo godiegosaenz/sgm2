@@ -342,6 +342,11 @@
                         'active' => request()->routeIs('index.patente')
                     ],
                     [
+                        'name' => 'Reporteria Patente',
+                        'route' => 'vistaReportePatente.patente',
+                        'active' => request()->routeIs('vistaReportePatente.patente')
+                    ],
+                    [
                         'name' => 'Impuesto transitos',
                         'route' => 'create.transito',
                         'active' => request()->routeIs('create.transito')
@@ -358,7 +363,7 @@
                         'active' => request()->routeIs('vistaReporteTransito.transito')
                     ],
                 ],
-                'active' => request()->routeIs('index.catastro') || request()->routeIs('create.catastro') || request()->routeIs('create.patente') || request()->routeIs('create.patente') || request()->routeIs('index.patente') || request()->routeIs('vistaReporteTransito.transito') || request()->routeIs('index.transito') || request()->routeIs('create.transito') 
+                'active' => request()->routeIs('index.catastro') || request()->routeIs('create.catastro') || request()->routeIs('create.patente') || request()->routeIs('create.patente') || request()->routeIs('index.patente') || request()->routeIs('vistaReporteTransito.transito') || request()->routeIs('index.transito') || request()->routeIs('create.transito') | request()->routeIs('vistaReportePatente.patente') 
             ],
             [
                 'name' => 'CONFIGURACION',

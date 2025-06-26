@@ -7,7 +7,7 @@
 @endpush
 @section('content')
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h4 class="h2">Reporte Pago Transito</h4>
+        <h4 class="h2">Reporte Pago Patente y 1.5 Activos</h4>
         <div class="btn-toolbar mb-2 mb-md-0">
 
         </div>
@@ -63,10 +63,11 @@
                     <thead>
                         <tr>
                             <!-- <th class="text-center">Documento</th> -->
-                            <th class="text-center">Vehiculo</th>
-                            <th class="text-center">Propietario</th>
-                            <th class="text-center">Detalle Pago</th>
-                            <th class="text-center">Valor</th>                            
+                            <th class="text-center">Contribuyente</th>
+                            <th class="text-center">Fecha Registro</th>
+                            <th class="text-center">Numero Titulo</th>
+                            <th class="text-center">Valor Patente</th>    
+                            <th class="text-center">Valor Activo</th>                            
                             <th style="min-width: 30%" class="text-center">Opciones</th>
                         </tr>
                     </thead>
@@ -120,6 +121,6 @@
 <script src="{{ asset('js/dataTables.bootstrap5.min.js') }}"></script>
 <script src="{{ asset('js/dataTables.rowReorder.min.js') }}"></script>
 
-<script src="{{ asset('js/transito/reporteria.js?v='.rand())}}"></script>
+<script src="{{ asset('js/patente/reporteria.js?v='.rand())}}"></script>
 
 @endpush

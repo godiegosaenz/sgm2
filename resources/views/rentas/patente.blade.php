@@ -13,7 +13,7 @@
                 Nuevo declaracion de patente
             </a>
         </div>
-        </div>
+        </div> 
     </div>
     @if(@session('error'))
             <div class="alert alert-danger">
@@ -42,8 +42,8 @@
                             <th scope="col">Contribuyente</th>
                             <th scope="col">Fecha declaracion</th>
                             <th scope="col">Contabilidad</th>
-                            <th scope="col">Año declaracion</th>
-                            <th scope="col">Año balance</th>
+                            <th scope="col">Años</th>
+                            <th scope="col">Numero Titulo</th>
                             <th scope="col">Estado</th>
 
                         </tr>
@@ -78,6 +78,56 @@
                             <a href=""id="vinculo"><button  type="button" id="descargar"class="btn btn-primary"><i class="fa fa-mail"></i> Descargar</button> </a>                                 
                     </center>               
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="tituloEliminaModal" tabindex="-1" aria-labelledby="ContribuyenteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Baja de Titulo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+               
+                <div class="modal-body">
+                <div class="row">
+                        
+                    <form method="POST" action="" id="form_baja">
+                        @csrf
+
+                        <div class="col-md-12">
+                            <div class="row align-items-center">
+                                <div class="col-md-2 text-end">
+                                    <label for="marca_v" class="form-label mb-0">Motivo</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="hidden" class="form-control" id="id_impuesto" name="id_impuesto">
+                                    <textarea class="form-control" id="motivo_baja" name="motivo_baja"
+                                        required rows="4"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-12" style="margin-top: 10px; margin-bottom: 20px;">
+                            <div class="row align-items-center">
+                                <div class="col-md-2 text-end">
+                                    <label for="marca_v" class="form-label mb-0"></label>
+                                </div>
+                                <div class="col-md-9">
+                                    <button type="submit" class="btn btn-success btn-sm"><span
+                                            id="btn_tipo">Aceptar</span></button>
+                                    <button type="button" class="btn btn-warning btn-sm"
+                                        onclick="cancelarBaja()">Cancelar</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+                
             </div>
         </div>
     </div>
@@ -117,8 +167,8 @@
                 // {width: '',data: 'contribuyente_name', name: 'contribuyente_name'},
                 {width: '',data: 'fecha_declaracion'},
                 {width: '',data: 'lleva_contabilidad'},
-                {width: '',data: 'year_declaracion'},
-                {width: '',data: 'year_balance'},
+                {width: '',data: 'year_declaracion', name: 'year_declaracion'},
+                {width: '',data: 'codigo'},
                 {width: '',data: 'estado'},
             ],
             "fixedColumns" : true

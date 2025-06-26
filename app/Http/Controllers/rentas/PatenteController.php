@@ -180,6 +180,7 @@ class PatenteController extends Controller
              'original_sustitutiva' => $validatedData['cont_original'] ?? null, // Opcional
              'porc_ing_perc_sv' => $validatedData['cont_total_percibidos_sv'] ?? null, // Opcional
              'estado' => 1, // Opcional
+             'idusuario_registra'=>auth()->user()->id
          ]);
          return redirect()->route('create.patente')->with('success', 'Su patente fue generada exitosamente.');
     }
@@ -358,6 +359,7 @@ class PatenteController extends Controller
                 // 'cantidad_ingreso_percibido' => $cantidad_percibida,
                 // 'archivo_patente' => $nombreDocumento.".".$extension;
                 'estado' => $estado,
+                'idusuario_registra'=>auth()->user()->id
 
 
             ]);
@@ -1143,7 +1145,7 @@ class PatenteController extends Controller
     {
        
         if($r->ajax()){
-            $listaPatente = PsqlPaPatente::where('estado','=',1)->get();
+            $listaPatente = PsqlPaPatente::where('estado','=',1)->orderby('id','desc')->get();
             return Datatables($listaPatente)
             ->editColumn('lleva_contabilidad', function($listaPatente){
                     if($listaPatente->lleva_contabilidad == true){
@@ -1168,10 +1170,12 @@ class PatenteController extends Controller
                 return $listaPatente->contribuyente->razon_social;
             })
             ->addColumn('year_declaracion', function ($listaPatente) {
-                return $listaPatente->year->year_declaracion;
+                // return $listaPatente->year->year_declaracion;
+                return '<b>DECLARACION:</b>'.$listaPatente->year->year_declaracion . '<br> <b>BALANCE:</b>' . $listaPatente->year->year_ejercicio_fiscal;
             })
-            ->addColumn('year_balance', function ($listaPatente) {
-                return $listaPatente->year->year_ejercicio_fiscal;
+            ->addColumn('codigo', function ($listaPatente) {
+                // return $listaPatente->year->year_ejercicio_fiscal;
+                return '<b>PATENTE:</b>'.$listaPatente->codigo . '<br> <b>1.5 ACTIVO:</b>' . $listaPatente->codigo_act;
             })
             // ->addColumn('action', function ($listaPatente) {
             //     return '<a class="btn btn-primary btn-sm" href="'.route('index.patente',$listaPatente->id).'">Ver</a>
@@ -1180,10 +1184,29 @@ class PatenteController extends Controller
             ->addColumn('action', function ($listaPatente) {
                 // return '<button type="button" class="btn btn-primary btn-sm" onclick="verPatente('$listaPatente->id')">Ver</a>
                 //  ';
-                return '<a class="btn btn-primary btn-sm" onclick="verPatentePdf(\''.$listaPatente->id.'\')">Ver</a>';
+                return '<a class="btn btn-primary btn-sm" onclick="verPatentePdf(\''.$listaPatente->id.'\')">Ver</a>
+                <a class="btn btn-danger btn-sm" onclick="eliminarTitulo(\''.$listaPatente->id.'\')">Dar Baja</a>';
             })
-            ->rawColumns(['action','estado','ruc'])
+            ->rawColumns(['action','estado','ruc','year_declaracion','codigo'])
             ->make(true);
+        }
+    }
+
+    public function bajaTituloPatente(Request $request){
+        try {
+
+            $baja=PsqlPaPatente::find($request->id_impuesto);
+            $baja->observacion_baja=$request->motivo_baja;
+            $baja->idusuariobaja=auth()->user()->id;
+            $baja->fecha_baja=date('Y-m-d H:i:s');
+            $baja->estado=3;
+            $baja->save();
+
+            return ["mensaje"=>"Informacion eliminada exitosamente", "error"=>false];
+
+        } catch (Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+
         }
     }
 
@@ -1742,6 +1765,100 @@ class PatenteController extends Controller
             return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
 
         }
+    }
+
+    public function vistaReportePatente(){
+        // Gate::authorize('reporte_patente', PsqlPaPatente::class);
+        return view('rentas.consultaPagosPatente');
+    }
+
+    public function consultarPagos(Request $request){
+        try{
+            $desde=$request->filtroDesde;
+            $hasta=$request->filtroHasta;
+            $tipo=$request->filtroTipo;
+
+            $desde=$desde." 00:00:00.000";
+            $hasta=$hasta." 23:59:59.000";
+
+            $consultar= DB::connection('pgsql')->table('sgm_patente.pa_patente as i')
+            // ->leftJoin('sgm_transito.vehiculo as v', 'v.id', '=', 'i.vehiculo_id')
+            // ->leftJoin('sgm_transito.clase_tipo_vehiculo as cv', 'cv.id', '=', 'v.tipo_clase_id')
+            // ->leftJoin('sgm_transito.marca_vehiculo as mv', 'mv.id', '=', 'v.marca_id')
+            // ->leftJoin('sgm_transito.cat_ente as en', 'en.id', '=', 'i.cat_ente_id')
+            ->leftJoin('sgm_patente.pa_catastro_contribuyente as en', 'en.id', '=', 'i.Contribuyente_id')
+            
+            ->whereBetween('i.created_at', [$desde, $hasta])
+            ->where('i.estado',1)
+            ->select('en.razon_social','en.ruc as identificacion_propietario' ,'i.created_at','i.codigo', 'i.codigo_act','i.valor_activo_total','i.valor_patente','i.idusuario_registra as usuario','i.created_at','i.id as identificador')
+            ->get();
+
+            foreach($consultar as $key=> $data){
+                $usuarioRegistra=DB::connection('mysql')->table('users as u')
+                ->leftJoin('personas as p', 'p.id', '=', 'u.idpersona')
+                ->where('u.id',$data->usuario)
+                ->select('p.nombres','p.apellidos','p.cedula')
+                ->first();
+                if(is_null($usuarioRegistra)){
+                    $consultar[$key]->nombre_usuario=$data->usuario;
+                }else{
+                    $consultar[$key]->nombre_usuario=$usuarioRegistra->nombres." ".$usuarioRegistra->apellidos;
+                    $consultar[$key]->cedula_usuario=$usuarioRegistra->cedula;
+                }
+
+             
+
+
+            }
+
+            return ['data'=>$consultar,'error'=>false];
+
+        } catch (\Throwable $th) {
+            return ['mensaje'=>'Ocurrió un error '.$th,'error'=>true];
+        }
+    }
+
+    public function ReporteTransito(Request $request){
+        // dd("s");
+        try{
+            set_time_limit(0);
+            ini_set("memory_limit",-1);
+            ini_set('max_execution_time', 0);
+
+            $consultaInfo=$this->consultarPagos($request);
+            // dd($consultaInfo);
+
+            if($consultaInfo['error']==true){
+                return (['mensaje'=>'Ocurrió un error al consultar los datos,intentelo más tarde','error'=>true]);
+            }
+
+            $nombrePDF="reporte_pago_patente.pdf";
+            // dd($nombrePDF);
+
+            $pdf=\PDF::LoadView('reportes.reporte_pago_patente',['datos'=>$consultaInfo['data'],'desde'=>$request->filtroDesde,'hasta'=>$request->filtroHasta,'tipo'=>$request->filtroTipo ]);
+            $pdf->setPaper("A4", "portrait");
+            $estadoarch = $pdf->stream();
+
+            //lo guardamos en el disco temporal
+            \Storage::disk('public')->put(str_replace("", "",$nombrePDF), $estadoarch);
+            $exists_destino = \Storage::disk('public')->exists($nombrePDF);
+            if($exists_destino){
+                return response()->json([
+                    'error'=>false,
+                    'pdf'=>$nombrePDF
+                ]);
+            }else{
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'No se pudo crear el documento'
+                ]);
+            }
+
+        } catch (\Throwable $th) {
+            dd($th);
+            return ['mensaje'=>'Ocurrió un error '.$th,'error'=>true];
+        }
+
     }
 
 }

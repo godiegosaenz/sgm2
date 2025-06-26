@@ -41,7 +41,7 @@ $("#formReporteria").submit(function(e){
 	$('#tabla_ingreso tbody').empty(); 
     
     e.preventDefault();
-    var ruta="pago-consulta-transito"
+    var ruta="pago-consulta"
         
     vistacargando("m","Espere por favor")
     $.ajaxSetup({
@@ -93,31 +93,32 @@ $("#formReporteria").submit(function(e){
                 $("#tabla_ingreso tbody").html('');
 
                 $.each(response.data,function(i, item){
-                    tota_recaudado=tota_recaudado + Number(item.total_pagar)
+                    tota_recaudado=tota_recaudado + Number(item.valor_patente) + Number(item.valor_activo_total)
                     $('#tabla_ingreso').append(`<tr>
                                                     <td style="width:25%; text-align:left; vertical-align:middle">
-                                                        <li><b>Descripcion:</b> ${item.clase}</li>
-                                                        <li><b>Marca-Modelo:</b> ${item.marca_veh}-${item.year}</li>
-                                                        <li><b>Placa:</b> ${item.placa}</li> 
-                                                        <li><b>Avaluo:</b> ${item.avaluo}</li> 
-                                                        
+                                                        <li><b>RUC:</b> ${item.identificacion_propietario}</li>
+                                                        <li><b>RAZON SOCIAL:</b> ${item.razon_social}</li>
+                                                       
                                                     </td>
     
                                                   
-                                                    <td style="width:30%;  text-align:left; vertical-align:middle">
-                                                        <li><b>C.I:</b> ${item.identificacion_propietario}</li>
-                                                        <li><b>Nombres:</b> ${item.nombre_propietario} ${item.apellido_propietario}</li>
+                                                    <td style="width:10%;  text-align:left; vertical-align:middle">
+                                                        ${item.created_at}
                                                     </td>
     
-                                                     <td style="width:30%; text-align:left; vertical-align:middle">
-                                                        <li><b>Usuario:</b> ${item.nombre_usuario}</li>
-                                                        <li><b>Fecha Pago:</b> ${item.created_at}</li>
-                                                        <li><b>Año Impuesto:</b> ${item.year_impuesto}</li>
+                                                     <td style="width:25%; text-align:left; vertical-align:middle">
+                                                        <li><b>PATENTE:</b> ${item.codigo}</li>
+                                                        <li><b>ACTIVO:</b> ${item.codigo_act}</li>
                                                     </td>
     
                                                    
                                                     <td style="width:10%; text-align:right;vertical-align:middle">
-                                                        ${item.total_pagar}
+                                                        ${item.valor_patente}
+                                                       
+                                                    </td>
+
+                                                     <td style="width:10%; text-align:right;vertical-align:middle">
+                                                        ${item.valor_activo_total}
                                                        
                                                     </td>
     
@@ -125,7 +126,7 @@ $("#formReporteria").submit(function(e){
                                                    
                                                     <td style="width:5%; text-align:center; vertical-align:middle">
     
-                                                        <button type="button" class="btn btn-xs btn-primary" onclick="descargarReporte('${item.identificador}')"> <i class="fa fa-file-pdf-o"></i></button>
+                                                        <button type="button" class="btn btn-xs btn-primary" onclick="verPatentePdf('${item.identificador}')"> <i class="fa fa-file-pdf-o"></i></button>
     
                                                        
                                                     </td>
@@ -173,6 +174,7 @@ function cargar_estilos_datatable(idtabla){
 
 function descargarPdf(){
    var ruta="reporte-diario"
+   
     vistacargando("m","Espere por favor")
     $.ajaxSetup({
         headers: {
@@ -240,4 +242,25 @@ function verpdf(ruta){
     $("#vinculo").attr("href", '../patente/descargar-documento/'+ruta);
     $("#documentopdf").modal("show");
 }
+
+
+function verPatentePdf(id){
+    vistacargando("m","Espere por favor")
+    $.get('reporte/'+id, function(data){
+        vistacargando("")
+        if(data.error==true){
+            // alertNotificar(data.mensaje,"error");
+            alert(data.mensaje);
+            return;   
+        }
+
+        alertNotificar("El documento se descargara en unos segundos","success")
+        verpdf(data.pdf)
+
+    }).fail(function(){
+        vistacargando("")
+        alertNotificar('Ocurrió un error','error');
+    });
+}
+
 
