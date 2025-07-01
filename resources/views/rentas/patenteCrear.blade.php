@@ -1314,10 +1314,15 @@
                                         </div>
 
                                         <div class="mb-3">
-                                            <label for="cmb_ruc" class="form-label">RUC-Contribuyente</label>
-                                            <select id="cmb_ruc" name="cmb_ruc" class="form-control modal_new_cont" onchange="cargaContribuyente()">
+                                            <label for="cmb_ruc" class="form-label">RUC-Contribuyente </label>
+                                            <!-- <select id="cmb_ruc" name="cmb_ruc" class="form-control modal_new_cont" onchange="cargaContribuyente()">
                                                 <option value=""></option>
-                                            </select>
+                                            </select> -->
+
+                                            <!-- <input type="text" name="cmb_ruc" class="form-control modal_new_cont" id="cmb_ruc"> -->
+
+                                            <input type="text" class="form-control" name="cmb_ruc" id="cmb_ruc" onblur="BuscaContribuyente()" >
+
                                         </div>
 
                                         <div class="mb-3">
@@ -1332,9 +1337,10 @@
 
                                         <div class="mb-3">
                                             <label for="cmb_ruc_rep" class="form-label">RUC-Repres. Legal</label>
-                                            <select id="cmb_ruc_rep" name="cmb_ruc_rep" class="form-control modal_new_cont" onchange="cargaRepresentanteLegal()">
+                                            <!-- <select id="cmb_ruc_rep" name="cmb_ruc_rep" class="form-control modal_new_cont" onchange="cargaRepresentanteLegal()">
                                                 <option value=""></option>
-                                            </select>
+                                            </select> -->
+                                            <input type="text" class="form-control" name="cmb_ruc_rep" id="cmb_ruc_rep" onblur="BuscaContribuyenteRL()" >
                                         </div>
 
                                         <div class="mb-3">

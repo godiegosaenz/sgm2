@@ -2299,3 +2299,61 @@ function cancelarRango(){
     $('#btn_base').html('Guardar')
     FormAccionRango='R'
 }
+
+function BuscaContribuyente(){
+    let cedula=$('#cmb_ruc').val();
+    if(cedula==""){return}
+    if(cedula.length<10){
+        alertNotificar("El numero de identificacion debe tener mas de 9 digitos")
+        return
+    }
+    // vistacargando("m","Espere por favor")
+    $.get("carga-info-persona/"+cedula, function(data){
+        console.log(data)
+        // vistacargando("")
+        if(data.error==true){
+            // alertNotificar(data.mensaje,"error");
+            return;   
+        }
+
+        if(data.data==null){
+            alertNotificar('No se encontro informacion del contribuyente',"error");
+            return;   
+        }
+               
+        $('#contribuyente').val(data.data[0].nombre +" "+data.data[0].apellido)
+        // $('#apellido_cont').val(data.data[0].apellido)
+        
+    }).fail(function(){
+        
+    }); 
+}
+
+function BuscaContribuyenteRL(){
+    let cedula=$('#cmb_ruc_rep').val();
+    if(cedula==""){return}
+    if(cedula.length<10){
+        alertNotificar("El numero de identificacion debe tener mas de 9 digitos")
+        return
+    }
+    // vistacargando("m","Espere por favor")
+    $.get("carga-info-persona/"+cedula, function(data){
+        console.log(data)
+        // vistacargando("")
+        if(data.error==true){
+            // alertNotificar(data.mensaje,"error");
+            return;   
+        }
+
+        if(data.data==null){
+            alertNotificar('No se encontro informacion del contribuyente',"error");
+            return;   
+        }
+               
+        $('#representante').val(data.data[0].nombre +" "+data.data[0].apellido)
+        // $('#apellido_cont').val(data.data[0].apellido)
+        
+    }).fail(function(){
+        
+    }); 
+}
