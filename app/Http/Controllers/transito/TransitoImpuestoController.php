@@ -612,7 +612,7 @@ class TransitoImpuestoController extends Controller
 
             return [
                 'error'=>true,
-                'mensaje'=>$responseBody['mensaje']
+                'mensaje'=>$responseBody
             ];
 
         }

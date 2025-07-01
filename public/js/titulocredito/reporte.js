@@ -233,12 +233,12 @@ function BuscaContribuyente(){
         alertNotificar("El numero de identificacion debe tener mas de 9 digitos")
         return
     }
-    vistacargando("m","Espere por favor")
+    // vistacargando("m","Espere por favor")
     $.get("carga-info-persona/"+cedula, function(data){
         console.log(data)
-        vistacargando("")
+        // vistacargando("")
         if(data.error==true){
-            alertNotificar(data.mensaje,"error");
+            // alertNotificar(data.mensaje,"error");
             return;   
         }
 
@@ -256,7 +256,7 @@ function BuscaContribuyente(){
         // $('#modalContri').modal('show')
         
     }).fail(function(){
-        vistacargando("")
-        alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+        // vistacargando("")
+        // alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
     }); 
 }
