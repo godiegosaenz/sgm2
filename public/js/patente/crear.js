@@ -1864,55 +1864,55 @@ $('#obligado_contabilidad').change(function () {
 });
 
 $('#modalContri').on('shown.bs.modal', function () {
-    $('#cmb_ruc').select2({
-        dropdownParent: $('#modalContri'),
-        ajax: {
-            url: 'catastrocontribuyente/buscarRucContribuyente',
-            dataType: 'json',
-            delay: 250,
-            data: function (params) {
-                return {
-                    q: params.term
-                };
-            },
-            processResults: function (data) {
-                console.log(data)
-                return {
-                    results: data.map(item => ({
+    // $('#cmb_ruc').select2({
+    //     dropdownParent: $('#modalContri'),
+    //     ajax: {
+    //         url: 'catastrocontribuyente/buscarRucContribuyente',
+    //         dataType: 'json',
+    //         delay: 250,
+    //         data: function (params) {
+    //             return {
+    //                 q: params.term
+    //             };
+    //         },
+    //         processResults: function (data) {
+    //             console.log(data)
+    //             return {
+    //                 results: data.map(item => ({
                         
-                        id: item.id,
-                        text: item.id + " - " + item.text
-                    }))
-                };
-            }
-        },
-        minimumInputLength: 13
-    });
+    //                     id: item.id,
+    //                     text: item.id + " - " + item.text
+    //                 }))
+    //             };
+    //         }
+    //     },
+    //     minimumInputLength: 13
+    // });
 
-    $('#cmb_ruc_rep').select2({
-        dropdownParent: $('#modalContri'),
-        ajax: {
-            url: 'catastrocontribuyente/buscarRucContribuyente',
-            dataType: 'json',
-            delay: 250,
-            data: function (params) {
-                return {
-                    q: params.term
-                };
-            },
-            processResults: function (data) {
-                console.log(data)
-                return {
-                    results: data.map(item => ({
+    // $('#cmb_ruc_rep').select2({
+    //     dropdownParent: $('#modalContri'),
+    //     ajax: {
+    //         url: 'catastrocontribuyente/buscarRucContribuyente',
+    //         dataType: 'json',
+    //         delay: 250,
+    //         data: function (params) {
+    //             return {
+    //                 q: params.term
+    //             };
+    //         },
+    //         processResults: function (data) {
+    //             console.log(data)
+    //             return {
+    //                 results: data.map(item => ({
                         
-                        id: item.id,
-                        text: item.id + " - " + item.text
-                    }))
-                };
-            }
-        },
-        minimumInputLength: 13
-    });
+    //                     id: item.id,
+    //                     text: item.id + " - " + item.text
+    //                 }))
+    //             };
+    //         }
+    //     },
+    //     minimumInputLength: 13
+    // });
 
 });
 
