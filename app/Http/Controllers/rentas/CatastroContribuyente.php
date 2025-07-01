@@ -38,7 +38,7 @@ class CatastroContribuyente extends Controller
     }
     public function index()
     {
-        Gate::authorize('index', PsqlCatastroContribuyente::class);
+        //Gate::authorize('index', PsqlCatastroContribuyente::class);
         $data = PsqlCatastroContribuyente::all();
         $PsqlProvincia = PsqlProvincia::all();
         $totalCatastro = $data->count();

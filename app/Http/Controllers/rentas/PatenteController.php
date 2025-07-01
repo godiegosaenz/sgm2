@@ -33,7 +33,7 @@ class PatenteController extends Controller
      */
     public function index()
     {
-        Gate::authorize('index', PsqlPaPatente::class);
+        //Gate::authorize('index', PsqlPaPatente::class);
         return view('rentas.patente');
     }
 
@@ -42,7 +42,7 @@ class PatenteController extends Controller
      */
     public function create()
     {
-        Gate::authorize('create', PsqlPaPatente::class);
+       // Gate::authorize('create', PsqlPaPatente::class);
         $PsqlYearDeclaracion = PsqlYearDeclaracion::select('id','year_declaracion','year_ejercicio_fiscal')->get();
         $PsqlProvincia = PsqlProvincia::all();
         $clase = PsqlPaClaseContribuyente::all();

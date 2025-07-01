@@ -14,13 +14,13 @@ class RemisionInteresPolicy
         //
     }
 
-    public function create(User $user): bool
-    {
-        return  $user->hasPermissionTo('Remision de interes');
-    }
+    // public function create(User $user): bool
+    // {
+    //     return  $user->hasPermissionTo('Remision de interes');
+    // }
 
-    public function index(User $user): bool
-    {
-        return  $user->hasPermissionTo('Lista de remisiones');
-    }
+    // public function index(User $user): bool
+    // {
+    //     return  $user->hasPermissionTo('Lista de remisiones');
+    // }
 }

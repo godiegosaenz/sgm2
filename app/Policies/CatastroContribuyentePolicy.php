@@ -14,8 +14,8 @@ class CatastroContribuyentePolicy
         //
     }
 
-    public function index(User $user): bool
-    {
-        return  $user->hasPermissionTo('Catastro contribuyentes');
-    }
+    // public function index(User $user): bool
+    // {
+    //     return  $user->hasPermissionTo('Catastro contribuyentes');
+    // }
 }

@@ -19,7 +19,7 @@ class TituloCreditoCoactivaController extends Controller
      */
     public function index()
     {
-        Gate::authorize('impresion_titulos_urb', PsqlLiquidacion::class);
+        //Gate::authorize('impresion_titulos_urb', PsqlLiquidacion::class);
         $num_predio = 0;
         return view('tesoreria.TitulosCreditosCoactiva',compact('num_predio'));
     }

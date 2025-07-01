@@ -215,7 +215,7 @@ class AnaliticaContribuyenteController extends Controller
     }
 
     public function vistaReporteTransito(){
-        Gate::authorize('reporte_transito', TransitoImpuesto::class);
+        //Gate::authorize('reporte_transito', TransitoImpuesto::class);
         return view('transito.consultaPagos');
     }
 

@@ -23,7 +23,7 @@ class RemisionInteresController extends Controller
      */
     public function index()
     {
-        Gate::authorize('index', RemisionInteres::class);
+        //Gate::authorize('index', RemisionInteres::class);
         $RemisionInteres = RemisionInteres::orderBy('id', 'desc')->get();
         return view('tesoreria.remisionInteresLista', compact('RemisionInteres'));
     }
@@ -33,7 +33,7 @@ class RemisionInteresController extends Controller
      */
     public function create()
     {
-        Gate::authorize('create', RemisionInteres::class);
+        //Gate::authorize('create', RemisionInteres::class);
         $num_predio = 0;
         return view('tesoreria.remisionInteresNuevo',compact('num_predio'));
     }
@@ -296,7 +296,7 @@ class RemisionInteresController extends Controller
     }
 
     public function consultaLiquidacionConRemision(Request $r){
-        Gate::authorize('reporte_liquidaciones', PsqlLiquidacion::class);
+        //Gate::authorize('reporte_liquidaciones', PsqlLiquidacion::class);
         return view('tesoreria.consultaLiquidacionConRemision');
     }
 

@@ -30,7 +30,7 @@ class TesoreriaController extends Controller
      */
     public function index()
     {
-        Gate::authorize('index', ExoneracionAnterior::class);
+        //Gate::authorize('index', ExoneracionAnterior::class);
         return view('tesoreria.exoneracion');
     }
 
@@ -44,7 +44,7 @@ class TesoreriaController extends Controller
         /*if ($request->user()->cannot('index',)) {
             abort(403);
         }*/
-        Gate::authorize('create', ExoneracionAnterior::class);
+        //Gate::authorize('create', ExoneracionAnterior::class);
         return view('tesoreria.consulta');
     }
 

@@ -18,14 +18,14 @@ class ExoneracionAnteriorPolicy
         //
     }
 
-    public function create(User $user): bool
-    {
-        return  $user->hasPermissionTo('Exoneracion tercera edad');
-    }
+    // public function create(User $user): bool
+    // {
+    //     return  $user->hasPermissionTo('Exoneracion tercera edad');
+    // }
 
-    public function index(User $user): bool
-    {
-        return  $user->hasPermissionTo('Lista de exoneraciones');
-    }
+    // public function index(User $user): bool
+    // {
+    //     return  $user->hasPermissionTo('Lista de exoneraciones');
+    // }
 
 }

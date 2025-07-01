@@ -24,7 +24,7 @@ class RolesController extends Controller
      */
     public function create()
     {
-        Gate::authorize('crear_roles', User::class);
+        //Gate::authorize('crear_roles', User::class);
         $permissions = Permission::orderBy('id', 'asc')->get();
         return view('configuraciones.rolesCrear',compact('permissions'));
     }

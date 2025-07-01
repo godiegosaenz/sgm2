@@ -41,7 +41,7 @@ class TransitoImpuestoController extends Controller
     }
     public function index()
     {
-        Gate::authorize('index', TransitoImpuesto::class);
+        //Gate::authorize('index', TransitoImpuesto::class);
         return view('transito.impuestos_index');
     }
 
@@ -49,7 +49,7 @@ class TransitoImpuestoController extends Controller
      * Show the form for creating a new resource.
      */
     public function create(){
-        Gate::authorize('create', TransitoImpuesto::class);
+        //Gate::authorize('create', TransitoImpuesto::class);
         $entes = TransitoEnte::all();
         $vehiculos = TransitoVehiculo::all();
         $conceptos = TransitoConcepto::where('anio',date('Y'))->orderby('orden','asc')->WHERE('estado','A')->get();

@@ -29,7 +29,7 @@ class TituloRuralController extends Controller
         }
     }
     public function index(){
-        Gate::authorize('impresion_titulos_rur', PsqlLiquidacion::class);
+        //Gate::authorize('impresion_titulos_rur', PsqlLiquidacion::class);
         $num_predio = 0;
         return view('tesoreria.TitulosRural',compact('num_predio'));
     }

@@ -21,7 +21,7 @@ class UsuarioController extends Controller
      */
     public function index()
     {
-        Gate::authorize('lista_usuario', User::class);
+        //Gate::authorize('lista_usuario', User::class);
         return view('configuraciones.usuarioListar');
     }
 
@@ -30,7 +30,7 @@ class UsuarioController extends Controller
      */
     public function create()
     {
-        Gate::authorize('crear_usuario', User::class);
+        //Gate::authorize('crear_usuario', User::class);
         return view('configuraciones.usuarioCrear');
     }
 

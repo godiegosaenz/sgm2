@@ -14,13 +14,13 @@ class PatentePolicy
         //
     }
 
-    public function create(User $user): bool
-    {
-        return  $user->hasPermissionTo('Declarar patentes');
-    }
+    // public function create(User $user): bool
+    // {
+    //     return  $user->hasPermissionTo('Declarar patentes');
+    // }
 
-    public function index(User $user): bool
-    {
-        return  $user->hasPermissionTo('Lista de patentes');
-    }
+    // public function index(User $user): bool
+    // {
+    //     return  $user->hasPermissionTo('Lista de patentes');
+    // }
 }

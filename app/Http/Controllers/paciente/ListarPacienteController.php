@@ -17,7 +17,7 @@ class ListarPacienteController extends Controller
     }
 
     public function index(){
-        Gate::authorize('lista_empleados', User::class);
+        //Gate::authorize('lista_empleados', User::class);
         return view('paciente.listarpaciente');
     }
 
