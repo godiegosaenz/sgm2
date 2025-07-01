@@ -64,11 +64,14 @@
                 </div>
             </div>
 
-            <div class="col-3" id="div_clave" style="display:none">
+            <div class="col-5" id="div_clave" style="display:none">
                 <div class="mb-3">
                     <label for="num_predio">* Clave Catastral : </label>
                    
-                    <input type="number" class="form-control {{$errors->has('inputclave') ? 'is-invalid' : ''}}" id="clave" name="clave" value="{{old('clave')}}" >
+                    <!-- <input type="number" class="form-control {{$errors->has('inputclave') ? 'is-invalid' : ''}}" id="clave" name="clave" value="{{old('clave')}}" > -->
+                    <select id="clave" name="clave" class="form-control modal_new_cont"  style="width: 100%;">
+                        <option value=""></option>
+                    </select>
                    
                 </div>
             </div>
@@ -203,7 +206,7 @@
                                     <input type="text" class="form-control" name="apellido_cont" id="apellido_cont" >
                                 </div>
 
-                                <div class="mb-3">
+                                <div class="mb-3" style="display: none;">
                                     <label for="representante" class="form-label">DIRECCION</label>
                                     <input type="text" class="form-control" name="direccion_cont" id="direccion_cont" >
                                 </div>

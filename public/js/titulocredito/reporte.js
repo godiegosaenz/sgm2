@@ -50,6 +50,30 @@ $('#cmb_nombres').select2({
     minimumInputLength: 1
 });
 
+$('#clave').select2({
+    // dropdownParent: $('#actividadLocal'),
+    ajax: {
+        url: 'buscarClaveCatastralUrbano',
+        dataType: 'json',
+        delay: 250,
+        data: function (params) {
+            return {
+                q: params.term
+            };
+        },
+        processResults: function (data) {
+            console.log(data)
+            return {
+                results: data.map(item => ({
+                    id: item.clave_cat,
+                    text: item.clave_cat + " - " + item.nombre
+                }))
+            };
+        }
+    },
+    minimumInputLength: 1
+});
+
 function actualizarContribuyente(){
     if ($('input[name="checkLiquidacion[]"]:checked').length == 0) {
         alertNotificar("Debe seleccionar al menos uno de la lista","error")
@@ -132,10 +156,10 @@ function actualizaContribuyente(){
         alertNotificar("Ingrese los apellidos","error")
         return
     }
-    if(direccion=="" || direccion==null){
-        alertNotificar("Ingrese la direccion","error")
-        return
-    }
+    // if(direccion=="" || direccion==null){
+    //     alertNotificar("Ingrese la direccion2","error")
+    //     return
+    // }
     
     swal({
         title: '¿Desea actualizar el registro?',

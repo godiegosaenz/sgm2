@@ -42,6 +42,8 @@ class AnaliticaPredioController extends Controller
                 // ->where('pp.estado','A')
                 ->select('t.descripcion', 'p.id','p.clave_cat')
                 ->get();
+
+                
             }else{
                 $tipo_busqueda="U";
 
@@ -54,6 +56,7 @@ class AnaliticaPredioController extends Controller
 
                 $liquidacionActual= DB::connection('pgsql')->table('sgm_financiero.ren_liquidacion as r')
                 ->where('r.anio',date('Y'))
+                ->where('estado_liquidacion',1)
                 ->distinct('r.predio')
                 ->pluck('r.predio') // Asegúrate de que este es el campo correcto
                 ->toArray();
@@ -71,6 +74,10 @@ class AnaliticaPredioController extends Controller
                 ->select('t.descripcion as rango', DB::raw('count(*) as cantidad'))
                 ->groupBy('t.descripcion')
                 ->get();
+
+                // dd($resultados_urbano);
+
+
             }
 
             // foreach($resultados_urbano as $key=> $data){

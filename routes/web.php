@@ -141,6 +141,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('tituloscoactiva/buscar-contribuyente/{idliquidacion}', [TituloCreditoCoactivaController::class, 'buscaContribuyente'])->name('buscaContribuyente.titulocredito');
     Route::post('tituloscoactiva/actualiza-contribuyente', [TituloCreditoCoactivaController::class, 'actualizaContribuyente'])->name('actualizaContribuyente.titulocredito');
     Route::get('buscarContribuyenteUrbano', [TituloCreditoCoactivaController::class, 'buscarContribuyenteUrbano'])->name('buscarContribuyenteUrbano.titulocredito');
+    Route::get('buscarClaveCatastralUrbano', [TituloCreditoCoactivaController::class, 'buscarClaveCatastralUrbano'])->name('buscarClaveCatastralUrbano.titulocredito');
 
     //titulorural
     Route::get('titulorural/', [TituloRuralController::class, 'index'])->name('index.TitulosRural');

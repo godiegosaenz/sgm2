@@ -45,6 +45,37 @@ class TituloCreditoCoactivaController extends Controller
         // return response()->json($data);
     }
 
+     public function buscarClaveCatastralUrbano(Request $request){
+
+        $data = [];
+        if($request->has('q')){
+            $search = $request->q;
+            // $data=DB::connection('pgsql')->table('sgm_app.cat_predio_propietario as pp')
+            // ->leftjoin('sgm_app.cat_ente as e','e.id','pp.ente')
+            // ->join('sgm_app.cat_predio as p', 'p.id', '=', 'pp.ente')
+            // // ->where('pp.estado','A')
+            // ->where(function($query)use($search){
+            //     $query->where('p.clave_cat', 'ilike', '%'.$search.'%');
+            // })            
+            // ->select('p.clave_cat',DB::raw("CONCAT(apellidos, ' ', nombres) AS nombre"))
+            // ->take(50)->get();
+
+
+             $data=DB::connection('pgsql')->table('sgm_app.cat_predio as p')
+            ->leftjoin('sgm_app.cat_predio_propietario as pp','p.id','pp.predio')
+            ->leftjoin('sgm_app.cat_ente as e', 'e.id', '=', 'pp.ente')
+            // ->where('pp.estado','A')
+            ->where(function($query)use($search){
+                $query->where('p.clave_cat', 'ilike', '%'.$search.'%');
+            })            
+            ->select('p.clave_cat',DB::raw("CONCAT(apellidos, ' ', nombres) AS nombre"))
+            ->take(50)->get();
+
+        }
+        return response()->json($data);
+        // return response()->json($data);
+    }
+
     public function consulta(Request $r)
     {   
        
@@ -68,10 +99,14 @@ class TituloCreditoCoactivaController extends Controller
                 }
             })
             ->first();
+           $num_predio = $predio_id->id;
+        }else{
+            $num_predio = $r->num_predio;
         }
+        
         //se obtiene las liquidaciones urbanas
-        $num_predio = $r->num_predio;
-
+        // $num_predio = $r->num_predio;
+        // dd($num_predio);
 
         $liquidacionUrbana = DB::connection('pgsql')->table('sgm_financiero.ren_liquidacion')
                                         ->join('sgm_app.cat_predio', 'sgm_financiero.ren_liquidacion.predio', '=', 'sgm_app.cat_predio.id')
@@ -91,10 +126,13 @@ class TituloCreditoCoactivaController extends Controller
                                         })
                                         ->orderBy('anio', 'desc')
                                         ->get();
+
+                                        // dd($liquidacionUrbana);
         if(count($liquidacionUrbana) >= 1) {
+            $num_predio=$r->num_predio;
             return view('tesoreria.TitulosCreditosCoactiva',compact('liquidacionUrbana','num_predio'));
         }else{
-            return redirect('tituloscoactiva/')->with('status', 'No existe la matricula ingresada');
+            return redirect('tituloscoactiva/')->with('status', 'No existe liquidaciones pendientes');
         }
 
         } catch (Exception $e) {
