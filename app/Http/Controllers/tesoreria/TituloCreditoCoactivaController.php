@@ -35,7 +35,8 @@ class TituloCreditoCoactivaController extends Controller
                 $query->where('ci_ruc', 'ilike', '%'.$search.'%')
                 // ->orwhere('nombres', 'ilike', '%'.$search.'%')
                 // ->orwhere('apellidos', 'ilike', '%'.$search.'%')
-                ->orwhere(DB::raw("CONCAT(nombres, ' ', apellidos)"), 'ilike', '%'.$search.'%');
+                ->orwhere(DB::raw("CONCAT(nombres, ' ', apellidos)"), 'ilike', '%'.$search.'%')
+                ->orwhere(DB::raw("CONCAT(apellidos, ' ', nombres )"), 'ilike', '%'.$search.'%');
             })            
             ->select('id','ci_ruc',DB::raw("CONCAT(apellidos, ' ', nombres) AS nombre"))
             ->take(50)->get();
@@ -120,10 +121,12 @@ class TituloCreditoCoactivaController extends Controller
                                             }   
                                         })
                                         
-                                        ->whereNot(function($query){
-                                            $query->where('estado_liquidacion', 4)
-                                            ->orWhere('estado_liquidacion', '=', 5);
-                                        })
+                                        // ->whereNot(function($query){
+                                        //     $query->where('estado_liquidacion', 4)
+                                        //     ->orWhere('estado_liquidacion', '=', 5);
+                                        // })
+                                        ->whereNotIN('estado_liquidacion',[3,4,5])
+                                        ->orderby('clave_cat','desc')
                                         ->orderBy('anio', 'desc')
                                         ->get();
 
