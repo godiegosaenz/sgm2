@@ -252,11 +252,119 @@ class TituloCreditoCoactivaController extends Controller
                         WHERE d.liquidacion = liq.id AND d.rubro = 2
                     ) AS valor_complemento
                 "),
+
+                DB::raw("
+                        (
+                            SELECT
+                                CASE
+                                    WHEN (liq.anio = EXTRACT(YEAR FROM NOW())) AND (EXTRACT(MONTH FROM NOW()) < 7) THEN
+                                        ROUND(d.valor * (
+                                            SELECT porcentaje
+                                            FROM sgm_app.ctlg_descuento_emision
+                                            WHERE num_mes = EXTRACT(MONTH FROM NOW())
+                                            AND num_quincena = (CASE WHEN EXTRACT(DAY FROM NOW()) > 15 THEN 2 ELSE 1 END)
+                                            LIMIT 1
+                                        ) / 100, 2) * (-1)
+                                    ELSE
+                                        0.00
+                                END
+                            FROM sgm_financiero.ren_det_liquidacion d
+                            WHERE d.liquidacion = liq.id AND d.rubro = 2
+                            LIMIT 1
+                        ) AS desc
+                    "),
+                    
+                    DB::raw("
+                        (
+                            SELECT
+                                CASE
+                                     WHEN (liq.anio < EXTRACT(YEAR FROM NOW())) THEN                                        
+                                        ROUND((liq.saldo * (
+                                            SELECT ROUND((porcentaje / 100), 2) 
+                                            FROM sgm_financiero.ren_intereses i
+                                            WHERE i.anio = liq.anio
+                                            LIMIT 1
+                                        )), 2)
+                                    ELSE
+                                        0.00
+                                    END
+                            FROM sgm_financiero.ren_det_liquidacion d
+                            WHERE d.liquidacion = liq.id AND d.rubro = 2
+                            LIMIT 1
+                        ) AS interes
+                    "),
+
+                    DB::raw("
+                        (
+                            SELECT
+                                CASE
+                                    WHEN liq.anio = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM NOW()) > 7 THEN
+                                        ROUND((d.valor * 0.10), 2)
+                                    WHEN liq.anio < EXTRACT(YEAR FROM NOW()) THEN
+                                        ROUND((d.valor * 0.10), 2)
+                                    ELSE
+                                        0.00
+                                END
+                            FROM sgm_financiero.ren_det_liquidacion d
+                            WHERE d.liquidacion = liq.id AND d.rubro = 2
+                            LIMIT 1
+                        ) AS recargos
+                    "),
+
+                      DB::raw("
+                    (
+                        SELECT
+                            ROUND((
+                                COALESCE(liq.saldo, 0)
+                                +
+                                COALESCE((
+                                    CASE
+                                        WHEN (liq.anio = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM NOW()) < 7) THEN
+                                            ROUND(d.valor * (
+                                                SELECT porcentaje
+                                                FROM sgm_app.ctlg_descuento_emision
+                                                WHERE num_mes = EXTRACT(MONTH FROM NOW())
+                                                AND num_quincena = (CASE WHEN EXTRACT(DAY FROM NOW()) > 15 THEN 2 ELSE 1 END)
+                                                LIMIT 1
+                                            ) / 100, 2) * (-1)
+                                        ELSE 0
+                                    END
+                                ), 0)
+                                +
+                                COALESCE((
+                                    CASE
+                                    WHEN (liq.anio < EXTRACT(YEAR FROM NOW())) THEN                                        
+                                        ROUND((liq.saldo * (
+                                            SELECT ROUND((porcentaje / 100), 2) 
+                                            FROM sgm_financiero.ren_intereses i
+                                            WHERE i.anio = liq.anio
+                                            LIMIT 1
+                                        )), 2)
+                                        ELSE 0
+                                    END
+                                ), 0)
+                                +
+                                COALESCE((
+                                    CASE
+                                        WHEN liq.anio = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM NOW()) > 7 THEN
+                                            ROUND((d.valor * 0.10), 2)
+                                        WHEN liq.anio < EXTRACT(YEAR FROM NOW()) THEN
+                                            ROUND((d.valor * 0.10), 2)
+                                        ELSE 0
+                                    END
+                                ), 0)
+                            ), 2)
+                        FROM sgm_financiero.ren_det_liquidacion d
+                        WHERE d.liquidacion = liq.id AND d.rubro = 2
+                        LIMIT 1
+                    ) AS total_complemento
+                "),
+
                 'liq.id_liquidacion'
             )
             ->where('liq.id', $valor)
             ->get();
-            //dd($liquidacion);
+            // dd($liquidacion);
         
 
             $fecha_hoy=date('Y-m-d');

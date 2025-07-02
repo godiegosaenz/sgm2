@@ -12,7 +12,7 @@
         .cabecera {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
         .cabecera td {
             vertical-align: middle;
@@ -48,7 +48,7 @@
         .tabla-izquierda {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             font-size: 11px;
         }
         .tabla-izquierda th, .tabla-izquierda td {
@@ -59,7 +59,7 @@
         .tabla-derecha {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             font-size: 10px;
         }
         .tabla-derecha th, .tabla-derecha td {
@@ -93,7 +93,7 @@
         <tr>
             <td class="columna-izquierda">
 
-                <table class="tabla-izquierda-" style="margin-bottom: 10px;">
+                <table class="tabla-izquierda-" style="margin-bottom: 3px;">
                     <thead>
                         <tr>
                             <th width="50%">San Vicente, 01 Enero {{ $d[0]->anio + 1 }} </th>
@@ -182,15 +182,21 @@
                     <tbody>
                         <tr>
                             <th>Fecha desde la cual se desvenga intereses:</th>
-                            <<th>Enero {{ $d[0]->anio + 1 }}</th>
+                            <th>Enero {{ $d[0]->anio + 1 }}</th>
                         </tr>
                         <tr>
                             <th>Intereses hasta la fecha de emision:</th>
-                            <th>$ {{$d[0]->valor_complemento}}</th>
+                            <th style="text-align: right;">$ {{$d[0]->interes}}</th>
                         </tr>
+
+                        <tr>
+                            <th>Recargos:</th>
+                            <th style="text-align: right;">$ {{$d[0]->recargos}}</th>
+                        </tr>
+
                         <tr>
                             <th>Total de Deuda:</th>
-                            <th>$ {{($d[0]->total_pago + $d[0]->valor_complemento)}}</th>
+                            <th style="text-align: right;">$ {{($d[0]->total_complemento)}}</th>
                         </tr>
                     </tbody>
 
@@ -204,7 +210,7 @@
     <br>
     <hr style="border:Dotted;"/>
     <br>
-    <br>
+   
     @php
         $sumatotal = $sumatotal + $d[0]->total_pago + $d[0]->valor_complemento;
     @endphp
@@ -216,8 +222,7 @@
         INTERESES Y MULTAS</p>
     <br>
     <br>
-    <br>
-    <br>
+    
     <table width="100%">
         <tbody>
             <tr>

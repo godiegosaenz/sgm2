@@ -297,6 +297,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('quitar-repetidos/{estado}', [PredioController::class, 'quitarDuplicados'])->name('quitarDuplicados.emisiones');
     Route::get('descargar-txt/{txt}', [PredioController::class, 'descargarTxt'])->name('descargarTxt.emisiones');
 
+
+    //coactivar emisiones
+    Route::get('coactivar-emisiones', [PredioController::class, 'vistaRepetidos'])->name('vistaRepetidos.emisiones');
+
+
 });
 
 Route::get('/clear', function() {
