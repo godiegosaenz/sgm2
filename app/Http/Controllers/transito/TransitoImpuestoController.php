@@ -64,14 +64,14 @@ class TransitoImpuestoController extends Controller
      */
     public function create(){
         //Gate::authorize('create', TransitoImpuesto::class);
-        $entes = TransitoEnte::all();
+        // $entes = TransitoEnte::all();
         $vehiculos = TransitoVehiculo::all();
         $conceptos = TransitoConcepto::where('anio',date('Y'))->orderby('orden','asc')->WHERE('estado','A')->get();
         $year = TransitoYearImpuesto::all();
         $marcas = TransitoMarca::where('estado','A')->get();
         $tipo_vehiculo = TransitoTipoVehiculo::where('estado','A')->get();
         $rangos = TransitoTarifaAnual::all();
-        return view('transito.impuestos', compact('entes', 'vehiculos', 'conceptos','year','tipo_vehiculo','marcas','rangos'));
+        return view('transito.impuestos', compact('vehiculos', 'conceptos','year','tipo_vehiculo','marcas','rangos'));
     }
 
     public function store(Request $request)
