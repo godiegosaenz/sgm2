@@ -329,8 +329,11 @@ class TransitoImpuestoController extends Controller
                 $placa=$vehiculo->placa_cpn_ramv;
                 $lastChar = substr($placa, -1);
                 $mes = date("n");
+
+                $lastChar=(int)$lastChar;
+                $valor=$lastChar+1;
                
-                if($lastChar>=$mes){
+                if($valor<$mes){
                     $aplica_recargo=1;
                 }
             }
