@@ -118,7 +118,7 @@
                                 </div>
                                 <div class="col-md-9">
                                      <select class="form-select {{$errors->has('user_id') ? 'is-invalid' : ''}}" id="user_id" name="user_id" required>
-                                        <option value="">Seleccione una usuario</option>
+                                        <option value="">Seleccione un usuario</option>
                                             @foreach ($usuario as $c)
                                             <option value="{{$c->id}}">{{$c->persona->apellidos}} {{$c->persona->nombres}}</option>
                                             @endforeach

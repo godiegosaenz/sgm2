@@ -79,6 +79,64 @@ class TransitoImpuestoController extends Controller
         DB::beginTransaction();
         try {
 
+            $qr_Rentas = DB::connection('mysql')
+                        ->table('area as a')
+                        ->leftJoin('jefe_area as ja', 'ja.id_area', '=', 'a.id_area')
+                        ->leftJoin('archivo_p12 as pdoce', 'pdoce.id_usuario', '=', 'ja.id_usuario')
+                        ->leftJoin('users as u', 'u.id', '=', 'ja.id_usuario')
+                        ->leftJoin('personas as p', 'p.id', '=', 'u.idpersona')
+                        ->select(DB::raw("CONCAT(nombres,' ',apellidos) AS nombre"),'pdoce.archivo', 'pdoce.password')
+                        ->where('a.descripcion', 'Rentas')
+                        ->where('a.estado', 'A')
+                        ->where('ja.estado', 'A')
+                        ->where('pdoce.estado', 'A')
+                        ->first();
+                    
+            if(is_null($qr_Rentas)) {
+                
+                return [
+                    'error' => true,
+                    'mensaje' => "No existe un Certificado Vigente para el encargado de Rentas"
+                ];
+            }
+
+
+            $qr_Tesoreria = DB::connection('mysql')
+                    ->table('area as a')
+                    ->leftJoin('jefe_area as ja', 'ja.id_area', '=', 'a.id_area')
+                    ->leftJoin('archivo_p12 as pdoce', 'pdoce.id_usuario', '=', 'ja.id_usuario')
+                    ->leftJoin('users as u', 'u.id', '=', 'ja.id_usuario')
+                    ->leftJoin('personas as p', 'p.id', '=', 'u.idpersona')
+                    ->select(DB::raw("CONCAT(nombres,' ',apellidos) AS nombre"),'pdoce.archivo', 'pdoce.password')
+                    ->where('a.descripcion', 'Rentas')
+                    ->where('a.estado', 'A')
+                    ->where('ja.estado', 'A')
+                    ->where('pdoce.estado', 'A')
+                    ->first();
+
+            if(is_null($qr_Tesoreria)) {
+                return [
+                    'error' => true,
+                    'mensaje' => "No existe un Certificado Vigente para el encargado de Tesoreria"
+                ];
+            }
+
+
+            $qr_Recaudador = DB::connection('mysql')
+                    ->table('archivo_p12 as pdoce')
+                    ->leftJoin('users as u', 'u.id', '=', 'pdoce.id_usuario')
+                    ->leftJoin('personas as p', 'p.id', '=', 'u.idpersona')
+                    ->select(DB::raw("CONCAT(nombres,' ',apellidos) AS nombre"),'pdoce.archivo', 'pdoce.password')
+                    ->where('pdoce.id_usuario', auth()->user()->id)
+                    ->where('pdoce.estado', 'A')
+                    ->first();
+            if(is_null($qr_Recaudador)) {
+                return [
+                    'error' => true,
+                    'mensaje' => "No existe un Certificado Vigente para el encargado de Recaudacion"
+                ];
+            }
+
             $verificaTitulo=TransitoImpuesto::where('cat_ente_id',$request->cliente_id_2)
             ->where('vehiculo_id',$request->vehiculo_id_2)
             ->where('estado',1)
@@ -910,9 +968,30 @@ class TransitoImpuestoController extends Controller
                     ->first();
                    
         if(is_null($qr_Rentas)) {
+            
             return [
                 'error' => true,
                 'mensaje' => "No existe un Certificado Vigente para el encargado de Rentas"
+            ];
+        }
+
+        $qr_Tesoreria = DB::connection('mysql')
+                    ->table('area as a')
+                    ->leftJoin('jefe_area as ja', 'ja.id_area', '=', 'a.id_area')
+                    ->leftJoin('archivo_p12 as pdoce', 'pdoce.id_usuario', '=', 'ja.id_usuario')
+                    ->leftJoin('users as u', 'u.id', '=', 'ja.id_usuario')
+                    ->leftJoin('personas as p', 'p.id', '=', 'u.idpersona')
+                    ->select(DB::raw("CONCAT(nombres,' ',apellidos) AS nombre"),'pdoce.archivo', 'pdoce.password')
+                    ->where('a.descripcion', 'Rentas')
+                    ->where('a.estado', 'A')
+                    ->where('ja.estado', 'A')
+                    ->where('pdoce.estado', 'A')
+                    ->first();
+
+        if(is_null($qr_Tesoreria)) {
+            return [
+                'error' => true,
+                'mensaje' => "No existe un Certificado Vigente para el encargado de Tesoreria"
             ];
         }
       
