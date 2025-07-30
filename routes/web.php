@@ -28,6 +28,11 @@ use App\Http\Controllers\transito\TransitoEnteController;
 use App\Http\Controllers\transito\TransitoImpuestoController;
 use App\Http\Controllers\transito\TransitoVehiculoController;
 use App\Http\Controllers\PredioController;
+use App\Http\Controllers\coactiva\CoactivaEmisionesController;
+use App\Http\Controllers\coactiva\NotificacionesController;
+use App\Http\Controllers\AreaController;
+use App\Http\Controllers\FirmaElectronicaController;
+
 use App\Models\TransitoEnte;
 use App\Models\TransitoTarifaAnual;
 use App\Models\TransitoVehiculo;
@@ -43,15 +48,15 @@ use App\Models\TransitoVehiculo;
 |
 */
 
-//  Route::get('sgm/login', function () {
-//     return view('auth.login');
-//  })->name('sgm/login')->middleware('guest');
-// Route::redirect('/', '/sgm/login');
+ Route::get('sgm/login', function () {
+    return view('auth.login');
+ })->name('sgm/login')->middleware('guest');
+Route::redirect('/', '/sgm/login');
 
-Route::get('/login', function () {
-   return view('auth.login');
-})->name('login')->middleware('guest');
-Route::redirect('/', '/login');
+// Route::get('/login', function () {
+//    return view('auth.login');
+// })->name('login')->middleware('guest');
+// Route::redirect('/', '/login');
 
 //Route::get('/', [ConsultaPredioController::class, 'index'])->name('welcome');
 Route::get('/consulta', [ConsultaPredioController::class, 'index'])->name('welcome');
@@ -261,8 +266,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Route::get('eliminar-tipo/{id}', [TransitoImpuestoController::class, 'eliminaTipo'])->name('eliminaTipo.transito');
 
     Route::get('carga-info-persona/{ci}', [TransitoImpuestoController::class, 'infoPersona'])->name('infoPersona.transito');
-    Route::get('transito-imprimir/{id}', [TransitoImpuestoController::class, 'pdfTransito'])->name('pdfTransito.transito');
+    Route::get('transito-imprimir/{id}/{tipo}', [TransitoImpuestoController::class, 'pdfTransito'])->name('pdfTransito.transito');
     Route::post('baja-titulo-transito', [TransitoImpuestoController::class, 'bajaTituloTransito'])->name('bajaTituloTransito.transito');
+    Route::get('detalle-titulo/{id}', [TransitoImpuestoController::class, 'detalleTitulo'])->name('detalleTitulo.transito');
+    Route::get('registrar-cobro-transito/{id}', [TransitoImpuestoController::class, 'realizarCobro'])->name('realizarCobro.transito');
+
+    Route::get('carga-combo-marca', [TransitoImpuestoController::class, 'comboMarca'])->name('comboMarca.transito');
+    Route::get('carga-combo-tipo-vehiculo', [TransitoImpuestoController::class, 'comboTipoVehiculo'])->name('comboTipoVehiculo.transito');
+
+    Route::get('firma-p12/{documento}/{pdoce}/{clave}/{prefijo}/{disco}', [TransitoImpuestoController::class, 'firmarDocumento2'])->name('firmarDocumento2.transito');
+
 
 
     Route::get('analitica/contribuyente', [AnaliticaContribuyenteController::class, 'index'])->name('analitica.contribuyente');
@@ -297,10 +310,35 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('quitar-repetidos/{estado}', [PredioController::class, 'quitarDuplicados'])->name('quitarDuplicados.emisiones');
     Route::get('descargar-txt/{txt}', [PredioController::class, 'descargarTxt'])->name('descargarTxt.emisiones');
 
+    //notifciar coactiva emisiones
+    Route::get('notificar-coactiva', [NotificacionesController::class, 'index'])->name('index.notificacion');
+    Route::post('guardar-notificacion', [NotificacionesController::class, 'notificar'])->name('notificar.coativa');
+
+
 
     //coactivar emisiones
-    Route::get('coactivar-emisiones', [PredioController::class, 'vistaRepetidos'])->name('vistaRepetidos.emisiones');
+    Route::get('coactivar-emisiones', [CoactivaEmisionesController::class, 'vistaCoactivar'])->name('vistaCoactivar.coativa');
+    Route::get('buscar-titulo-urbano/{tipo}/{valor}', [CoactivaEmisionesController::class, 'consultaTitulosUrbanos'])->name('consultaTitulosUrbanos.coativa');
+    Route::get('buscar-notificados/{tipo}/{valor}', [CoactivaEmisionesController::class, 'buscarNotificados'])->name('consultaTitulosUrbanos.coativa');
+    Route::get('ver-detalle-deudas/{id}', [CoactivaEmisionesController::class, 'detalleDeudas'])->name('detalleDeudas.coativa');
+    Route::post('guardar-coactiva', [CoactivaEmisionesController::class, 'coactivar'])->name('coactivar.coativa');
+    Route::post('guardar-coactiva-emi', [CoactivaEmisionesController::class, 'coactivarEmisiones'])->name('coactivarEmisiones.coativa');
 
+
+    //jefe area
+    Route::get('jefe-area', [AreaController::class, 'index'])->name('index.area');
+    Route::post('jefe-area/datatables', [AreaController::class, 'datatable'])->name('datatables.area');
+    Route::post('mantenimiento-jefe-area', [AreaController::class, 'mantenimiento'])->name('mantenimiento.area');
+    Route::get('editar-jefe-area/{id}', [AreaController::class, 'editar'])->name('editar.area');
+    Route::get('eliminar-jefe-area/{id}', [AreaController::class, 'eliminar'])->name('eliminar.area');
+
+    //firma electronica
+    Route::get('mi-firma-electronica', [FirmaElectronicaController::class, 'index'])->name('index.firma');
+    Route::post('mi-firma-electronica/datatables', [FirmaElectronicaController::class, 'datatable'])->name('datatables.firma');
+    Route::post('mantenimiento-firma', [FirmaElectronicaController::class, 'mantenimiento'])->name('mantenimiento.firma');
+    Route::get('eliminar-firma/{id}', [FirmaElectronicaController::class, 'eliminar'])->name('eliminar.firma');
+
+    Route::get('firma-qr/{nombre}/{img}', [FirmaElectronicaController::class, 'generar_firma_qr']);
 
 });
 

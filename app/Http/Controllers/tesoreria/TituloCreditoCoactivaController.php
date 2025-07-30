@@ -125,7 +125,7 @@ class TituloCreditoCoactivaController extends Controller
                                         //     $query->where('estado_liquidacion', 4)
                                         //     ->orWhere('estado_liquidacion', '=', 5);
                                         // })
-                                        ->whereNotIN('estado_liquidacion',[3,4,5])
+                                        ->whereNotIN('estado_liquidacion',[1,3,4,5])
                                         ->orderby('clave_cat','desc')
                                         ->orderBy('anio', 'desc')
                                         ->get();
@@ -143,54 +143,6 @@ class TituloCreditoCoactivaController extends Controller
             return redirect('tituloscoactiva/')->with('status', 'Problema de conexion '.$e->getMessage());
 
         }
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
     }
 
     public function reporteTitulosCoactiva(Request $r)

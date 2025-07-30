@@ -103,12 +103,12 @@
             <legend class="float-none w-auto px-3 fs-5">Datos de vehiculo</legend>
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label for="propietario" class="form-label">Busqueda por placa <span
+                    <label for="propietario" class="form-label">Busqueda por PLACA/CPN/RAMV <span
                             class="text-danger">*</span></label>
                     <div class="input-group">
 
                         <input type="text" class="form-control {{$errors->has('vehiculo_id') ? 'is-invalid' : ''}}"
-                            id="vehiculo_id" name="vehiculo_id" placeholder="Ingrese una placa"
+                            id="vehiculo_id" name="vehiculo_id" placeholder="Ingrese una placa o cpn o ramv"
                             value="{{old('vehiculo_id')}}" required>
                         <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
                             data-bs-target="#vehiculoModal">
@@ -194,7 +194,7 @@
                                 <tr>
                                     <td>
                                         <input type="checkbox" class="form-check-input concepto-check"
-                                            data-id="{{ $concepto->id }}" checked>
+                                            data-id="{{ $concepto->id }}" checked id="check_valor_{{ $concepto->codigo }}">
                                     </td>
                                     <td>{{ $concepto->concepto }}</td>
                                     <td>
@@ -312,11 +312,22 @@
                         <div class="row g-3">
                             <!-- Columna 1 -->
                             <div class="col-md-6">
+
                                 <div class="mb-3">
-                                    <label for="placa_v" class="form-label">Placa</label>
-                                    <input type="text" class="form-control" id="placa_v" name="placa_v" required>
+                                    <label for="placa_v" class="form-label">Tipo Identificacipn</label>
+                                    <select class="form-select {{ $errors->has('tipo_ident') ? 'is-invalid' : '' }}" id="tipo_ident"
+                                        name="tipo_ident" required onchange="cambioTipoidentif()">
+                                        <!-- <option value="">Seleccione tipo</option> -->
+                                        <option value="PLACA">PLACA</option>
+                                        <option value="CPN">CPN</option>
+                                        <option value="RAMV">RAMV</option>
+
+                                    </select>
                                     <div class="invalid-feedback" id="error-placa_v"></div>
                                 </div>
+
+                                
+
                                 <div class="mb-3">
                                     <label for="chasis_v" class="form-label">Chasis</label>
                                     <input type="text" class="form-control" id="chasis_v" name="chasis_v" required>
@@ -328,10 +339,27 @@
                                         required>
                                     <div class="invalid-feedback" id="error-avaluo_v"></div>
                                 </div>
+
+                                <div class="mb-3">
+                                    <label for="tipo_v" class="form-label">Tipo de vehiculo</label>
+                                    <select class="form-select {{ $errors->has('tipo_v') ? 'is-invalid' : '' }}" id="tipo_v"
+                                        name="tipo_v" required>
+                                        
+                                    </select>
+                                    <div class="invalid-feedback" id="error_tipo_v"></div>
+                                </div>
                             </div>
 
                             <!-- Columna 2 -->
                             <div class="col-md-6">
+
+                                <div class="mb-3">
+                                    <label for="placa_v" class="form-label label_plac_cpn_ramv" >Placa</label>
+                                    <input type="text" class="form-control" id="placa_v" name="placa_v" required>
+                                    <div class="invalid-feedback" id="error-placa_v"></div>
+                                </div>
+
+
                                 <div class="mb-3">
                                     <label for="year_v" class="form-label">Año</label>
                                     <input type="number" class="form-control" id="year_v" name="year_v" min="1900"
@@ -342,24 +370,11 @@
                                     <label for="marca_v" class="form-label">Marca</label>
                                     <select class="form-select {{ $errors->has('marca_v') ? 'is-invalid' : '' }}"
                                         id="marca_v" name="marca_v" required>
-                                        <option value="">Seleccione marca</option>
-                                        @foreach ($marcas as $m)
-                                            <option value="{{ $m->id }}">{{ $m->descripcion }}</option>
-                                        @endforeach
+                                       
                                     </select>
                                     <div class="invalid-feedback" id="error-marca"></div>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="tipo_v" class="form-label">Tipo de vehiculo</label>
-                                    <select class="form-select {{ $errors->has('tipo_v') ? 'is-invalid' : '' }}" id="tipo_v"
-                                        name="tipo_v" required>
-                                        <option value="">Seleccione tipo</option>
-                                        @foreach ($tipo_vehiculo as $t)
-                                            <option value="{{ $t->id }}">{{ $t->descripcion }}</option>
-                                        @endforeach
-                                    </select>
-                                    <div class="invalid-feedback" id="error_tipo_v"></div>
-                                </div>
+                                
                             </div>
                         </div> <!-- End row -->
                     </div>
@@ -734,6 +749,7 @@
 @endsection
 @push('scripts')
     <script>
+        $('#check_valor_REC').prop('disabled', true)
         let token = "{{csrf_token()}}";
         document.getElementById('vehiculo_id').addEventListener('keypress', function (event) {
             // Verificar si la tecla presionada es 'Enter' (keyCode 13)
@@ -902,6 +918,7 @@
                     cliente_id: cliente_id,
                     year: year
                 }).then(function (res) {
+                    console.log("txt")
                     console.log(res)
                     if (res.status === 200) {
                         // Reemplazar los valores en los inputs
@@ -914,6 +931,8 @@
                                 // input.value = valor.toFixed(2);
                                 total += parseFloat(concepto.nuevo_valor);
                             }
+
+                            
                         });
                         // Mostrar el total con dos decimales
                         document.getElementById('total_concepto').value = total.toFixed(2);
@@ -1008,9 +1027,11 @@
                     });
                     if (res.status == 200) {
 
+                        if(res.data.error==true){
+                            alertNotificar(res.data.mensaje,"error")
+                            return
+                        }
                         const id = res.data.id;
-                        // window.location.href = `/transito/previsualizar/${id}`; // Laravel buscará esta ruta con el id
-
                         generarPdf(id)
 
                     }

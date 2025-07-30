@@ -552,11 +552,11 @@ function capturaInfoPersona(){
     $('#nombres').val('')
     $('#apellidos').val('')
 
-    vistacargando("m","Espere por favor")
+    // vistacargando("m","Espere por favor")
     $.get("carga-info-persona/"+ci_ruc, function(data){
         vistacargando("")
         if(data.error==true){
-            alertNotificar(data.mensaje,"error");
+            // alertNotificar(data.mensaje,"error");
             return;   
         }
 
@@ -566,7 +566,7 @@ function capturaInfoPersona(){
         
          
     }).fail(function(){
-        vistacargando("")
+        // vistacargando("")
         alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
     });
 }
@@ -579,9 +579,83 @@ function verpdf(ruta){
     $("#documentopdf").modal("show");
 }
 
+$('#documentopdf').on('hidden.bs.modal', function (e) {
+    console.log('El modal se ha cerrado');
+    location.reload();
+});
+
+$('#vehiculoModal').on('show.bs.modal', function () {
+   cargaComboMarca()
+   cargaComboTipoVeh()
+});
+
+function cargaComboMarca(){
+    vistacargando("m","");
+    $.get('carga-combo-marca', function(data){
+        console.log(data)
+        vistacargando("")
+        if(data.error==true){
+			alertNotificar(data.mensaje,"error");
+			return;   
+		}
+        $('#marca_v').html('');	
+        $('#marca_v').find('option').remove().end();
+        $('#marca_v').append('<option value="">Selecccione un  tipo</option>');
+        $.each(data.resultado, function(i,item){
+          			
+            $('#marca_v').append('<option class="" value="'+item.id+'">'+item.descripcion+'</option>');
+           
+        })
+         $("#marca_v").trigger("chosen:updated"); // actualizamos el combo 
+          
+        
+    }).fail(function(){
+        alertNotificar("Ocurrio un error","error");
+        vistacargando("")
+       
+    }); 
+}
+
+function cargaComboTipoVeh(){
+    vistacargando("m","");
+    $.get('carga-combo-tipo-vehiculo', function(data){
+        console.log(data)
+        vistacargando("")
+        if(data.error==true){
+			alertNotificar(data.mensaje,"error");
+			return;   
+		}
+        $('#tipo_v').html('');	
+        $('#tipo_v').find('option').remove().end();
+        $('#tipo_v').append('<option value="">Selecccione un  tipo</option>');
+        $.each(data.resultado, function(i,item){
+          			
+            $('#tipo_v').append('<option class="" value="'+item.id+'">'+item.descripcion+'</option>');
+           
+        })
+         $("#tipo_v").trigger("chosen:updated"); // actualizamos el combo 
+          
+        
+    }).fail(function(){
+        alertNotificar("Ocurrio un error","error");
+        vistacargando("")
+       
+    }); 
+}
+
+$('#vehiculoModal').on('hidden.bs.modal', function () {
+    $('body').removeClass('modal-open');
+    $('body').css('overflow', 'auto');
+
+    // Elimina backdrop si quedó alguno
+    $('.modal-backdrop').remove();
+});
+
+
+
 function generarPdf(id){
     vistacargando("m","Espere por favor")
-    $.get("transito-imprimir/"+id, function(data){
+    $.get("transito-imprimir/"+id+"/G", function(data){
         vistacargando("")
         if(data.error==true){
             alertNotificar(data.mensaje,"error");
@@ -780,3 +854,13 @@ $("#form_concepto").submit(function(e){
         }
     });
 })
+
+function cambioTipoidentif(){
+    var tipo=$('#tipo_ident').val()
+    if(tipo==""){return}
+    else if(tipo=="PLACA"){$('.label_plac_cpn_ramv').html('PLACA')}
+    else if(tipo=="CPN"){$('.label_plac_cpn_ramv').html('CPN')}
+    else if(tipo=="RAMV"){$('.label_plac_cpn_ramv').html('RAMV')}
+    
+}
+

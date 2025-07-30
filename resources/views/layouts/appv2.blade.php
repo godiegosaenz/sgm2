@@ -389,6 +389,14 @@
                         'route' => 'ingresar.persona',
                         'active' => request()->routeIs('ingresar.persona')
                     ],
+
+                    [
+                        'name' => 'Jefe Area',
+                        'route' => 'index.area',
+                        'active' => request()->routeIs('index.area')
+                    ],
+
+                    
                 ],
                 'active' => request()->routeIs('lista.usuario') || request()->routeIs('create.usuario')
             ],
@@ -421,6 +429,23 @@
 
                 ],
                 'active' => request()->routeIs('analitica.contribuyente') || request()->routeIs('analitica.predios') || request()->routeIs('analiticaExonerados.predios')
+            ],
+
+
+            [
+                'name' => 'MI PERFIL',
+                'icon' => 'gear-wide-connected',
+                'subMenu' => [
+                    [
+                        'name' => 'Firma Electronica',
+                        'route' => 'index.firma',
+                        'active' => request()->routeIs('index.firma')
+                    ],
+
+                   
+
+                ],
+                'active' => request()->routeIs('index.firma')
             ],
         ];
     @endphp

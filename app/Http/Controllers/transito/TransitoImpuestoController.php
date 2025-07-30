@@ -21,10 +21,16 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Gate;
+use App\BSrE_PDF_Signer_Cli;
+use Illuminate\Support\Facades\Crypt;
+
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Writer\PngWriter;
 
 class TransitoImpuestoController extends Controller
 {
     private $clientNacional = null;
+     private $clienteFirmador = null;
 
     public function __construct(){
         try{
@@ -32,6 +38,14 @@ class TransitoImpuestoController extends Controller
 
             $this->clientNacional = new Client([
                 'base_uri' =>$ip,
+                'verify' => false,
+            ]);
+
+
+            $ip2="http://192.168.0.68:82/";
+
+            $this->clienteFirmador = new Client([
+                'base_uri' =>$ip2,
                 'verify' => false,
             ]);
 
@@ -61,47 +75,105 @@ class TransitoImpuestoController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'conceptos' => 'required|array|min:1',
-            'conceptos.*.id' => 'required',
-            'conceptos.*.valor' => 'required|numeric|min:0',
-            'vehiculo_id_2' => 'required',
-            'cliente_id_2' => 'required',
-            'year_declaracion' => 'required'
-        ]);
+    {   
+        DB::beginTransaction();
+        try {
 
-        if ($validator->fails()) {
-            return response()->json([
-                'errors' => $validator->errors()
-            ], 422);
-        }
+            $verificaTitulo=TransitoImpuesto::where('cat_ente_id',$request->cliente_id_2)
+            ->where('vehiculo_id',$request->vehiculo_id_2)
+            ->where('estado',1)
+            ->where('year_impuesto',date('Y'))
+            ->first();
 
-        $TransitoImpuesto = new TransitoImpuesto();
+            if(!is_null($verificaTitulo)){
+                return (['error' => true, 'mensaje'=>'Ya existe un pago realizado para este vehiculo en este año']);
+            }
 
-        $TransitoImpuesto->year_impuesto = $request->year_declaracion;
-        $TransitoImpuesto->cat_ente_id = $request->cliente_id_2;
-        $TransitoImpuesto->vehiculo_id = $request->vehiculo_id_2;
-        $TransitoImpuesto->estado = 1; //estado 1 = pagado
-        $TransitoImpuesto->usuario = Auth()->user()->name; //estado 1 = pagado
-        $TransitoImpuesto->save();
-
-        $total = 0;
-        foreach ($request->conceptos as $concepto) {
-            TransitoImpuestoConcepto::create([
-                'concepto_id' => $concepto['id'],
-                'impuesto_matriculacion_id' => $TransitoImpuesto->id,
-                'valor' => $concepto['valor'],
+            $validator = Validator::make($request->all(), [
+                'conceptos' => 'required|array|min:1',
+                'conceptos.*.id' => 'required',
+                'conceptos.*.valor' => 'required|numeric|min:0',
+                'vehiculo_id_2' => 'required',
+                'cliente_id_2' => 'required',
+                'year_declaracion' => 'required'
             ]);
-            $total += $concepto['valor'];
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            $TransitoImpuesto = new TransitoImpuesto();
+
+            $TransitoImpuesto->year_impuesto = $request->year_declaracion;
+            $TransitoImpuesto->cat_ente_id = $request->cliente_id_2;
+            $TransitoImpuesto->vehiculo_id = $request->vehiculo_id_2;
+            $TransitoImpuesto->usuario = Auth()->user()->name; //estado 1 = pagado
+            $TransitoImpuesto->idusuario_registra = Auth()->user()->id;
+            $TransitoImpuesto->save();
+
+            $total = 0;
+            foreach ($request->conceptos as $concepto) {
+                TransitoImpuestoConcepto::create([
+                    'concepto_id' => $concepto['id'],
+                    'impuesto_matriculacion_id' => $TransitoImpuesto->id,
+                    'valor' => $concepto['valor'],
+                ]);
+                $total += $concepto['valor'];
+            }
+
+            $verificaNum=TransitoImpuesto::where('year_impuesto',date('Y'))
+            ->select('numero_titulo')
+            ->whereNotNull('numero_titulo')
+            ->get()->last();
+
+         
+            $num=0;
+            if(is_null($verificaNum)){
+                $num=1;
+            }else{
+                $solo_numero=explode("-",$verificaNum->numero_titulo);
+                $num = (int)$solo_numero[1] + 1;
+            }
+            
+            // Ahora actualizas el total
+            // $TransitoImpuesto->numero_titulo = 'TR-'.str_pad($TransitoImpuesto->id, 5, '0', STR_PAD_LEFT).'-'.$TransitoImpuesto->year_impuesto;
+
+            $TransitoImpuesto->numero_titulo = 'TR-'.str_pad($num, 5, '0', STR_PAD_LEFT).'-'.$TransitoImpuesto->year_impuesto;
+
+            $TransitoImpuesto->total_pagar = $total;
+            $TransitoImpuesto->estado = 1; //estado 1 = pagado
+            $TransitoImpuesto->save();
+            DB::commit();
+
+            return response()->json(['success' => true, 'id' => $TransitoImpuesto->id]);
+        } catch (Exception $e) {
+            DB::rollback();
+            return (['error' => true, 'mensaje'=>'Ocurrio un error, intentelo mas tarde']);
         }
+    }
 
-        // Ahora actualizas el total
-        $TransitoImpuesto->numero_titulo = 'TR-'.str_pad($TransitoImpuesto->id, 5, '0', STR_PAD_LEFT).'-'.$TransitoImpuesto->year_impuesto;
-        $TransitoImpuesto->total_pagar = $total;
-        $TransitoImpuesto->save();
+    public function comboMarca(){
+        try{
+            $marcas = TransitoMarca::where('estado','A')->get();
+            return["error"=>false, "resultado"=>$marcas];
 
-        return response()->json(['success' => true, 'id' => $TransitoImpuesto->id]);
+        } catch (Exception $e) {
+            DB::rollback();
+            return (['error' => true, 'mensaje'=>'Ocurrio un error, intentelo mas tarde']);
+        }
+    }
+
+    public function comboTipoVehiculo(){
+        try{
+            $tipo_vehiculo = TransitoTipoVehiculo::where('estado','A')->get();
+            return["error"=>false, "resultado"=>$tipo_vehiculo];
+
+        } catch (Exception $e) {
+            DB::rollback();
+            return (['error' => true, 'mensaje'=>'Ocurrio un error, intentelo mas tarde']);
+        }
     }
 
     /**
@@ -192,15 +264,24 @@ class TransitoImpuestoController extends Controller
     public function calcular(Request $request){
         try{
             $conceptos = $request->input('conceptos', []);
-            // dd($conceptos['id']);
+            
             $vehiculo = TransitoVehiculo::where('id',$request->input('vehiculo_id'))->first();
+            $aplica_recargo=0;
+            if($vehiculo->tipo_identif=="PLACA"){
+                $placa=$vehiculo->placa_cpn_ramv;
+                $lastChar = substr($placa, -1);
+                $mes = date("n");
+               
+                if($lastChar>=$mes){
+                    $aplica_recargo=1;
+                }
+            }
 
             $tarifa = null;
             $valortipoclase = null;
             if ($vehiculo) {
                 $avaluo = $vehiculo->avaluo;
-                // dd($avaluo);
-
+               
                 $tarifa = TransitoTarifaAnual::where('desde', '<=', $avaluo)
                     ->where(function ($query) use ($avaluo) {
                         $query->where('hasta', '>=', $avaluo)
@@ -208,8 +289,7 @@ class TransitoImpuestoController extends Controller
                     })
                     ->where('anio',$request->year)
                     ->first();
-                // dd($tarifa);
-
+               
                 $clasetipo = TransitoClaseTipo::where('id', $vehiculo->tipo_clase_id)->first();
                 $valortipoclase = $clasetipo->valor;
             }
@@ -220,31 +300,30 @@ class TransitoImpuestoController extends Controller
 
             $array=[];
             foreach($conceptos as $data){
-                // dd($data);
-                // array_push($array, $data['id']);
-                // dd($data['id']);
+                
                 $concepto=TransitoConcepto::where('id',$data["id"])->first();
                 if($concepto["codigo"]=="RTV"){
-                    array_push($array,["id"=>$data["id"], "nuevo_valor"=> (float)$valortipoclase]);
-                    // dd($valortipoclase);
+                    array_push($array,["id"=>$data["id"], "nuevo_valor"=> (float)$valortipoclase, "codigo"=>"RTV"]);
+                   
                 }else if($concepto["codigo"]=="IAV"){
-                    array_push($array,["id"=>$data["id"], "nuevo_valor"=>(float)$tarifaAnual]);
+                    array_push($array,["id"=>$data["id"], "nuevo_valor"=>(float)$tarifaAnual, "codigo"=>"IAV"]);
                 }else if($concepto["codigo"]=="TSA"){
-                    array_push($array,["id"=>$data["id"], "nuevo_valor"=>(float)$concepto->valor]);
+                    array_push($array,["id"=>$data["id"], "nuevo_valor"=>(float)$concepto->valor, "codigo"=>"TSA"]);
                 }else if($concepto["codigo"]=="SRV"){
-                    array_push($array,["id"=>$data["id"], "nuevo_valor"=>(float)$concepto->valor]);
+                    array_push($array,["id"=>$data["id"], "nuevo_valor"=>(float)$concepto->valor, "codigo"=>"SRV"]);
                 }else if($concepto["codigo"]=="DM"){
-                    array_push($array,["id"=>$data["id"], "nuevo_valor"=>(float)$concepto->valor]);
+                    array_push($array,["id"=>$data["id"], "nuevo_valor"=>(float)$concepto->valor, "codigo"=>"DM"]);
+                }else if($concepto["codigo"]=="REC"){
+                    $valor_recargo=$concepto->valor;                   
+                    if($aplica_recargo==0){
+                        $valor_recargo=0;
+                    }
+                  
+                    array_push($array,["id"=>$data["id"], "nuevo_valor"=>(float)$valor_recargo, "codigo"=>"REC"]);
                 }
 
             }
-            // dd($array);
-
-            // $concepto=TransitoConcepto::whereIN('id',$array)->get();
-            // dd($concepto);
-
-
-            // $total = $nuevosConceptos->sum('nuevo_valor');
+            
             $total =1;
             return response()->json([
                 'conceptos' => $array,
@@ -293,7 +372,7 @@ class TransitoImpuestoController extends Controller
     {
         if($r->ajax()){
             $listaimpuesto = TransitoImpuesto::with('cliente')->orderBy('id','desc')
-            ->where('estado',1)
+            ->whereIN('estado',[1,3])//generado, pagado
             ->get();
             return Datatables($listaimpuesto)
             ->addColumn('cc_ruc', function ($listaimpuesto) {
@@ -303,7 +382,7 @@ class TransitoImpuestoController extends Controller
                 return $listaimpuesto->cliente->nombres.' '.$listaimpuesto->cliente->apellidos;
             })
             ->addColumn('vehiculo', function ($listaimpuesto) {
-                return $listaimpuesto->vehiculo->placa;
+                return $listaimpuesto->vehiculo->placa_cpn_ramv;
             })
             // ->addColumn('action', function ($listaimpuesto) {
             //     return '<a href="' . route('show.transito', $listaimpuesto->id) . '" class="btn btn-primary btn-sm">Imprimir</a>
@@ -311,13 +390,50 @@ class TransitoImpuestoController extends Controller
             // })
 
             ->addColumn('action', function ($listaimpuesto) {
-                return'
-                <a class="btn btn-primary btn-sm" onclick="generarPdf(\''.$listaimpuesto->id.'\')">Titulo</a>
-                <a class="btn btn-danger btn-sm" onclick="eliminarTitulo(\''.$listaimpuesto->id.'\')">Dar Baja</a>';
+                $disabled="";
+                if($listaimpuesto->estado==1){
+                    $btn='<a class="btn btn-success btn-sm" onclick="cobrarTitulo(\''.$listaimpuesto->id.'\')">Cobrar</a>';
+                    $disabled="disabled";
+
+                    $btn_pdf='<button class="btn btn-primary btn-sm" onclick="verpdf(\''.$listaimpuesto->documento_firmado.'\')" disabled>Titulo</button>';
+                }else if($listaimpuesto->estado==3){
+                    $btn='<a class="btn btn-danger btn-sm" onclick="eliminarTitulo(\''.$listaimpuesto->id.'\')">Dar Baja</a>';
+                    $btn_pdf=' <a class="btn btn-primary btn-sm" onclick="verpdf(\''.$listaimpuesto->documento_firmado.'\')" >Titulo</a>';
+                }
+                return $btn_pdf.' '.$btn;
             })
 
             ->rawColumns(['action','contribuyente','vehiculo'])
             ->make(true);
+        }
+    }
+
+    public function realizarCobro($id){
+        try {
+            $realizarCobro= TransitoImpuesto::find($id);
+            if($realizarCobro->estado==2){
+                return ["mensaje"=>"La informacion ha sido eliminada y no se puede cobrar", "error"=>true];   
+            }else if($realizarCobro->estado==3){
+                return ["mensaje"=>"La informacion ya sido cobrada y no se puede volver a cobrar", "error"=>true];
+            }
+            $realizarCobro->estado=3;
+            $realizarCobro->id_usuario_cobra=auth()->user()->id;
+            $realizarCobro->fecha_cobro=date('Y-m-d H:i:s');
+            $realizarCobro->save();
+
+            $generarDocumento=$this->pdfTransito($id,'');
+            // dd($generarDocumento);
+
+            if($generarDocumento['error']==true){
+                return ["mensaje"=>$generarDocumento['mensaje'], "error"=>true];
+            }
+            
+
+            return ["mensaje"=>"Cobro registrado exitosamente", "error"=>false, 'pdf'=>$generarDocumento];
+
+        } catch (Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+
         }
     }
 
@@ -676,14 +792,96 @@ class TransitoImpuestoController extends Controller
 
     }
 
+    public function generar_firma_qr($nombre_firma,$nombre_img){
 
-    public function pdfTransito($id)
+        $fecha = date('Y-m-d H:i:s');
+        $textoQR = "GADM SAN VICENTE\nFirmado por: $nombre_firma\nFecha: $fecha";
+
+        // 1. Generar el QR
+        $qr = Builder::create()
+            ->writer(new PngWriter())
+            ->data($textoQR)
+            ->size(1000)
+            ->margin(0)
+            ->build();
+
+        // 2. Obtener imagen desde QR generado
+        $qrImage = imagecreatefromstring($qr->getString());
+
+        $dimensiones = 1000;
+        $ancho_adicional = 2000;
+        $nueva_imagen = imagecreatetruecolor($dimensiones + $ancho_adicional, $dimensiones);
+        $color_blanco = imagecolorallocate($nueva_imagen, 255, 255, 255);
+        imagefill($nueva_imagen, 0, 0, $color_blanco);
+
+        imagecopy($nueva_imagen, $qrImage, 0, 0, 0, 0, $dimensiones, $dimensiones);
+
+        // Separar nombre
+        $nombres = $this->separarNombre($nombre_firma); // [apellido, nombre]
+
+        $texto1 = "Firmado electrónicamente por:\n";
+        $texto2 = "{$nombres[1]}\n";
+        $texto3 = $nombres[0];
+
+        $text_color = imagecolorallocate($nueva_imagen, 0, 0, 0); // negro
+
+        
+        $font_path1 = public_path('fonts/cour.ttf');
+        $font_path2 = public_path('fonts/Courier_BOLD.ttf');
+
+        $font_size1 = 80;
+        $font_size2 = 145;
+        $text_x = 1002;
+        $text_y1 = 400;
+        $text_y2 = $text_y1 + 145;
+        $text_y3 = $text_y2 + 145;
+
+        imagettftext($nueva_imagen, $font_size1, 0, $text_x, $text_y1, $text_color, $font_path1, $texto1);
+        imagettftext($nueva_imagen, $font_size2, 0, $text_x, $text_y2, $text_color, $font_path2, $texto2);
+        imagettftext($nueva_imagen, $font_size2, 0, $text_x, $text_y3, $text_color, $font_path2, $texto3);
+
+        // Guardar imagen
+        // $nombre_img = uniqid('qr_');
+        $ruta = public_path("qrfirma/{$nombre_img}.png");
+        imagepng($nueva_imagen, $ruta);
+
+        imagedestroy($nueva_imagen);
+
+        // return $nombre_img . '.png'; // o retorna la ruta o response()->download($ruta);
+
+        return ['error'=>false, 'img'=>$nombre_img . '.png'];
+
+    }
+    public function pdfTransito($id,$tipo)
     {
         $dataArray = array();
         $TransitoImpuesto = TransitoImpuesto::with('cliente','vehiculo')->find($id);
+
+        if($TransitoImpuesto->estado==3 && $tipo=='C'){
+            return [
+                'error'=>false,
+                'pdf'=>$TransitoImpuesto->documento_firmado
+            ];
+        }
+      
         $vehiculo =  $TransitoImpuesto->vehiculo;
         $cliente = $TransitoImpuesto->cliente;
         $transitoimpuestoconcepto = $TransitoImpuesto->conceptos;
+
+        foreach($transitoimpuestoconcepto as $key => $data){
+           
+            if($data->codigo=='RTV'){
+                $obtener= DB::connection('pgsql')
+                ->table('sgm_transito.clase_tipo_vehiculo')
+                ->where('valor', $data->pivot->valor)
+                ->pluck('descripcion')
+                ->toArray();
+                
+                $transitoimpuestoconcepto[$key]->agrupado=$obtener;
+            }           
+
+        }
+       
         $fecha_documento=$TransitoImpuesto->created_at;
         $fecha_hoy=date('d-m-Y', strtotime($fecha_documento));
 
@@ -698,28 +896,144 @@ class TransitoImpuestoController extends Controller
         $liquidacion['transitoimpuestoconcepto'] = $transitoimpuestoconcepto;
         array_push($dataArray, $liquidacion);
 
+        $qr_Rentas = DB::connection('mysql')
+                    ->table('area as a')
+                    ->leftJoin('jefe_area as ja', 'ja.id_area', '=', 'a.id_area')
+                    ->leftJoin('archivo_p12 as pdoce', 'pdoce.id_usuario', '=', 'ja.id_usuario')
+                    ->leftJoin('users as u', 'u.id', '=', 'ja.id_usuario')
+                    ->leftJoin('personas as p', 'p.id', '=', 'u.idpersona')
+                    ->select(DB::raw("CONCAT(nombres,' ',apellidos) AS nombre"),'pdoce.archivo', 'pdoce.password')
+                    ->where('a.descripcion', 'Rentas')
+                    ->where('a.estado', 'A')
+                    ->where('ja.estado', 'A')
+                    ->where('pdoce.estado', 'A')
+                    ->first();
+                   
+        if(is_null($qr_Rentas)) {
+            return [
+                'error' => true,
+                'mensaje' => "No existe un Certificado Vigente para el encargado de Rentas"
+            ];
+        }
+      
+        $nombreRentas=$qr_Rentas->nombre;
+        $archivoFirmaRentas=$qr_Rentas->archivo;
+        $claveFirmaRentas=$qr_Rentas->password;
+        
+
+        $imagenRentas="";
+        $imagenRentas=$this->generar_firma_qr($nombreRentas, 'Rentas');
+        if($imagenRentas['error']==true){
+            return [
+                'error' => true,
+                'mensaje' => $imagenRentas['error']
+            ];
+        }
+
+        $qr_Tesoreria = DB::connection('mysql')
+                    ->table('area as a')
+                    ->leftJoin('jefe_area as ja', 'ja.id_area', '=', 'a.id_area')
+                    ->leftJoin('archivo_p12 as pdoce', 'pdoce.id_usuario', '=', 'ja.id_usuario')
+                    ->leftJoin('users as u', 'u.id', '=', 'ja.id_usuario')
+                    ->leftJoin('personas as p', 'p.id', '=', 'u.idpersona')
+                    ->select(DB::raw("CONCAT(nombres,' ',apellidos) AS nombre"),'pdoce.archivo', 'pdoce.password')
+                    ->where('a.descripcion', 'Rentas')
+                    ->where('a.estado', 'A')
+                    ->where('ja.estado', 'A')
+                    ->where('pdoce.estado', 'A')
+                    ->first();
+
+        if(is_null($qr_Tesoreria)) {
+            return [
+                'error' => true,
+                'mensaje' => "No existe un Certificado Vigente para el encargado de Tesoreria"
+            ];
+        }
+        $nombreTesoreria=$qr_Tesoreria->nombre;
+        $archivoFirmaTesoreria=$qr_Tesoreria->archivo;
+        $claveFirmaTesoreria=$qr_Tesoreria->password;
+
+        $imagenTesoreria="";
+        $imagenTesoreria=$this->generar_firma_qr($nombreTesoreria, 'Tesoreria');
+        if($imagenTesoreria['error']==true){
+            return [
+                'error' => true,
+                'mensaje' => $imagenTesoreria['error']
+            ];
+        }
+
+        $qr_Recaudador = DB::connection('mysql')
+                    ->table('archivo_p12 as pdoce')
+                    ->leftJoin('users as u', 'u.id', '=', 'pdoce.id_usuario')
+                    ->leftJoin('personas as p', 'p.id', '=', 'u.idpersona')
+                    ->select(DB::raw("CONCAT(nombres,' ',apellidos) AS nombre"),'pdoce.archivo', 'pdoce.password')
+                    ->where('pdoce.id_usuario', auth()->user()->id)
+                    ->where('pdoce.estado', 'A')
+                    ->first();
+        if(is_null($qr_Recaudador)) {
+            return [
+                'error' => true,
+                'mensaje' => "No existe un Certificado Vigente para el encargado de Recaudacion"
+            ];
+        }
+
+        $nombreRecaudador=$qr_Recaudador->nombre;
+        $archivoFirmaRecaudador=$qr_Recaudador->archivo;
+        $claveFirmaRecaudador=$qr_Recaudador->password;
+
+        $imagenTesoreria="";
+        $imagenTesoreria=$this->generar_firma_qr($nombreRecaudador, 'Recaudador');
+        if($imagenTesoreria['error']==true){
+            return [
+                'error' => true,
+                'mensaje' => $imagenTesoreria['error']
+            ];
+        }
+
+        
         $data = [
             'title' => 'Reporte de liquidacion',
             'date' => date('m/d/Y'),
             'datosTitulo' => $dataArray,
             'fecha_formateada'=>$fecha_formateada
         ];
-
-        // $pdf = PDF::loadView('transito.reporteTitulosTransito', $data);
+        
 
         $nombrePDF='reporte_titulo_impuesto'.$id.'.pdf';
 
         $pdf = PDF::loadView('transito.reporteTitulosTransito', $data);
 
+        // return $pdf->stream('a.pdf');
         $estadoarch = $pdf->stream();
 
         \Storage::disk('disksDocumentoRenta')->put(str_replace("", "",$nombrePDF), $estadoarch);
         $exists_destino = \Storage::disk('disksDocumentoRenta')->exists($nombrePDF);
         if($exists_destino){
-            return [
-                'error'=>false,
-                'pdf'=>$nombrePDF
+
+            if($tipo=='G'){
+                return [
+                    'error'=>false,
+                    'pdf'=>$nombrePDF
+                ];
+            }
+            
+            $procesaFirma=$this->firmarDocumento($nombrePDF,$archivoFirmaRentas,$claveFirmaRentas, $archivoFirmaTesoreria, $claveFirmaTesoreria, $archivoFirmaRecaudador, $claveFirmaRecaudador);
+           
+            if($procesaFirma['error']==false){
+                $TransitoImpuesto->documento_firmado=$procesaFirma['pdf'];
+                $TransitoImpuesto->save();
+                return [
+                    'error'=>false,
+                    'pdf'=>$procesaFirma['pdf']
+                ];
+            }
+
+            return[
+                'error'=>true,
+                'mensaje'=>$procesaFirma['mensaje']
             ];
+            
+
         }else{
             return[
                 'error'=>true,
@@ -727,9 +1041,6 @@ class TransitoImpuestoController extends Controller
             ];
         }
 
-        // return $pdf->stream("aa.pdf");
-
-        // return $pdf->download('reporte_titulo_impuesto'.$r->id.'.pdf');
     }
 
     public function bajaTituloTransito(Request $request){
@@ -748,6 +1059,64 @@ class TransitoImpuestoController extends Controller
             return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
 
         }
+    }
+
+    public function detalleTitulo($id)
+    {
+        $dataArray = array();
+        $TransitoImpuesto = TransitoImpuesto::with('cliente','vehiculo')->find($id);
+
+        $usuario=$TransitoImpuesto->idusuario_registra;
+
+        $persona= DB::connection('mysql')
+                ->table('personas as p')
+                ->leftJoin('users as u', 'u.idpersona', '=', 'p.id')
+                ->where('u.id', $usuario)
+                ->select(DB::raw("CONCAT(p.apellidos, ' ', p.nombres) AS nombre"))
+                ->first();
+      
+        $vehiculo =  $TransitoImpuesto->vehiculo;
+        $cliente = $TransitoImpuesto->cliente;
+        $transitoimpuestoconcepto = $TransitoImpuesto->conceptos;
+
+        foreach($transitoimpuestoconcepto as $key => $data){
+           
+            if($data->codigo=='RTV'){
+                $obtener= DB::connection('pgsql')
+                ->table('sgm_transito.clase_tipo_vehiculo')
+                ->where('valor', $data->pivot->valor)
+                ->pluck('descripcion')
+                ->toArray();
+                
+                $transitoimpuestoconcepto[$key]->agrupado=$obtener;
+            }           
+
+        }
+       
+        $fecha_documento=$TransitoImpuesto->created_at;
+        $fecha_hoy=date('d-m-Y', strtotime($fecha_documento));
+
+        // $fecha_hoy=date('Y-m-d');
+        setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES@euro', 'es_ES', 'esp');
+        $fecha_timestamp = strtotime($fecha_hoy);
+        $fecha_formateada = strftime("%d de %B del %Y", $fecha_timestamp);
+
+        $liquidacion['TransitoImpuesto'] = $TransitoImpuesto;
+        $liquidacion['vehiculo'] = $vehiculo;
+        $liquidacion['cliente'] = $cliente;
+        $liquidacion['transitoimpuestoconcepto'] = $transitoimpuestoconcepto;
+        array_push($dataArray, $liquidacion);
+
+       
+        $data = [
+            'title' => 'Reporte de liquidacion',
+            'date' => date('m/d/Y'),
+            'datosTitulo' => $dataArray,
+            'fecha_formateada'=>$fecha_formateada
+        ];
+        
+        return ['error'=>false, 'data'=> $transitoimpuestoconcepto,'info'=>$dataArray, 'persona'=>$persona];
+
     }
 
     public function guardarConcepto(Request $request){
@@ -783,7 +1152,7 @@ class TransitoImpuestoController extends Controller
         }
     }
 
-       public function actualizarConcepto(Request $request, $id){
+    public function actualizarConcepto(Request $request, $id){
         try {
 
             $valida=TransitoConcepto::where('concepto',$request->txt_concepto)
@@ -809,6 +1178,212 @@ class TransitoImpuestoController extends Controller
 
         }
     }
+
+    public function verificaArchivo($tipo){
+        try{
+            $certificado = null;
+
+            if ($tipo === "Recaudador") {
+                $certificado = DB::connection('mysql')
+                    ->table('archivo_p12 as pdoce')
+                    ->select('archivo', 'password')
+                    ->where('pdoce.id_usuario', auth()->user()->id)
+                    ->where('pdoce.estado', 'A')
+                    ->first();
+            } else {
+                $certificado = DB::connection('mysql')
+                    ->table('area as a')
+                    ->leftJoin('jefe_area as ja', 'ja.id_area', '=', 'a.id_area')
+                    ->leftJoin('archivo_p12 as pdoce', 'pdoce.id_usuario', '=', 'ja.id_usuario')
+                    ->select('archivo', 'password')
+                    ->where('a.descripcion', $tipo)
+                    ->where('a.estado', 'A')
+                    ->where('ja.estado', 'A')
+                    ->where('pdoce.estado', 'A')
+                    ->first();
+            }
+
+            if (is_null($certificado)) {
+                return [
+                    'error' => true,
+                    'mensaje' => "No existe un Certificado Vigente para el encargado de $tipo"
+                ];
+            }
+
+            return [
+                'error' => false,
+                'resultado' => $certificado
+            ];
+
+
+        }catch(\Throwable $th){
+            \Log::error("TransitoImpuestoController =>verificaArchivo =>sms => ".$th->getMessage());
+            return [
+                "error"=>true,
+                "mensaje"=>'Ocurrió un error, al generar el documento'
+            ];
+        }
+    }
+
+    public function firmarDocumento($nombre_documento_firmar, $archivoFirmaRentas, $claveFirmaRentas, $archivoFirmaTesoreria, $claveFirmaTesoreria, $archivoFirmaRecaudador, $claveFirmaRecaudador){
+
+        // $consultaCertRenta=$this->verificaArchivo('Tesoreria');
+        // if($consultaCertRenta['error']==true){
+        //     return ['error' => true, 'mensaje' => $consultaCertRenta['mensaje']];
+        // }
+        // $desencriptado = Crypt::decrypt($consultaCertRenta['resultado']->password);
+        
+       
+        $nombre_archivo_certificado=$archivoFirmaRentas;
+        $desencriptado = Crypt::decrypt($claveFirmaRentas);
+        $clave_certificado=$desencriptado;
+        $prefijofinal="_firmado";
+        //firma rentas
+        $response = $this->clienteFirmador->request('POST', '/tics-soporte/api/firma-p12', [
+            'multipart' => [
+                [
+                    'name'     => 'certificado',
+                    'contents' => fopen(storage_path('app/documentosFirmar/'.$nombre_archivo_certificado), 'r'),
+                    'filename' => $nombre_archivo_certificado
+                ],
+                [
+                    'name'     => 'documento',
+                    'contents' => fopen(storage_path('app/documentosRentas/'.$nombre_documento_firmar), 'r'),
+                    'filename' => $nombre_documento_firmar
+                ],
+                [
+                    'name'     => 'clave',
+                    'contents' => $clave_certificado
+                ],
+              
+                [
+                    'name'     => 'nombre_pdf',
+                    'contents' =>  $nombre_documento_firmar
+                ],
+                [
+                    'name'     => 'nombre_p12',
+                    'contents' =>  $nombre_archivo_certificado
+                ],
+
+                [
+                    'name'     => 'tipo',
+                    'contents' =>  'rentas'
+                ]
+            ],
+        ]);
+
+        $responseBody = json_decode($response->getBody(), true);
+        
+        if($responseBody["error"]!=true){
+            //firma  tesoreria   
+
+            // $consultaCertRenta=$this->verificaArchivo('Tesoreria');
+            // if($consultaCertRenta['error']==true){
+            //     return ['error' => true, 'mensaje' => $consultaCertRenta['mensaje']];
+            // }
+            $desencriptado = Crypt::decrypt($claveFirmaTesoreria);
+       
+            $nombre_archivo_certificado=$archivoFirmaTesoreria;
+            $clave_certificado=$desencriptado;
+
+            $nombreSinExtension = explode('.', $nombre_documento_firmar)[0];   
+            $archivo_tesoreria=$nombreSinExtension."".$prefijofinal.".pdf";      
+            $response = $this->clienteFirmador->request('POST', '/tics-soporte/api/firma-p12', [
+                'multipart' => [
+                    [
+                        'name'     => 'nombre_pdf',
+                        'contents' => $archivo_tesoreria,
+                    ],
+                    [
+                        'name'     => 'nombre_p12',
+                        'contents' =>  $nombre_archivo_certificado
+                    ],
+                    [
+                        'name'     => 'clave',
+                        'contents' => $clave_certificado
+                    ],
+                    [
+                        'name'     => 'tipo',
+                        'contents' =>  'tesoreria'
+                    ]
+                ],
+            ]);
+
+            $responseBody = json_decode($response->getBody(), true);
+
+            if($responseBody["error"]!=true){
+                $nombreSinExtension = explode('.', $archivo_tesoreria)[0];   
+                $archivo_recaudador=$nombreSinExtension."".$prefijofinal.".pdf";     
+                //firma recaudador   
+                
+                // $consultaCertRenta=$this->verificaArchivo('Recaudador');
+                // if($consultaCertRenta['error']==true){
+                //     return ['error' => true, 'mensaje' => $consultaCertRenta['mensaje']];
+                // }
+                $desencriptado = Crypt::decrypt($claveFirmaRecaudador);
+        
+                $nombre_archivo_certificado=$archivoFirmaRecaudador;
+                $clave_certificado=$desencriptado;
+
+
+                $response = $this->clienteFirmador->request('POST', '/tics-soporte/api/firma-p12', [
+                    'multipart' => [
+                        [
+                            'name'     => 'nombre_pdf',
+                            'contents' =>  $archivo_recaudador
+                        ],
+                        [
+                            'name'     => 'nombre_p12',
+                            'contents' =>  $nombre_archivo_certificado
+                        ],
+                        [
+                            'name'     => 'clave',
+                            'contents' => $clave_certificado
+                        ],
+                        [
+                            'name'     => 'tipo',
+                            'contents' =>  'recaudador'
+                        ]
+                    ],
+                ]);
+
+                $responseBody = json_decode($response->getBody(), true);
+
+                if($responseBody["error"]!=true){
+                    $archivo=$archivo_recaudador;
+                    $response = $this->clienteFirmador->request('GET', "/tics-soporte/api/documento/{$archivo}", [
+                        'headers' => [
+                            'Accept' => 'application/pdf',
+                        ],
+                    ]);
+
+                    if ($response->getStatusCode() === 200) {
+                        $contenidoPDF = $response->getBody()->getContents();
+
+                        // Guardar en disco local del Proyecto A
+                        \Storage::disk('local')->put("documentosRentas/{$archivo}", $contenidoPDF);
+                        
+                        return ['error' => false, 'mensaje' => 'Archivo generado exitosamente.', 'pdf'=>$archivo];
+                    } else {
+                        return ['error' => true, 'mensaje' => 'Error al obtener el PDF.'];
+                    }
+
+                    
+                }else{
+                    return ["mensaje"=>"Ocurrio un error al realizar la firma de RECAUDADOR ", "error"=>true];
+                }
+
+            }else{
+                return ["mensaje"=>"Ocurrio un error al realizar la firma de TESORERIA ", "error"=>true];
+            }
+        }else{
+            return ["mensaje"=>"Ocurrio un error al realizar la firma de RENTAS ", "error"=>true];
+        }
+
+       
+
+    }
+
 
 
 }

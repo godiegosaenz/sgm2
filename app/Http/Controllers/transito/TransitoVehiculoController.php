@@ -40,12 +40,13 @@ class TransitoVehiculoController extends Controller
         ]);
         // Guardado mapeando los campos del formulario a los de la base de datos
         $vehiculo = new TransitoVehiculo();
-        $vehiculo->placa = $request->placa_v;
+        $vehiculo->placa_cpn_ramv = $request->placa_v;
         $vehiculo->chasis = $request->chasis_v;
         $vehiculo->avaluo = $request->avaluo_v;
         $vehiculo->year = $request->year_v;
         $vehiculo->username = Auth()->user()->name;
         $vehiculo->marca_id = $request->marca_v;
+        $vehiculo->tipo_identif = $request->tipo_ident;
         $vehiculo->tipo_clase_id = $request->tipo_v; // Mapeo desde "tipo"
         $vehiculo->save();
 
@@ -86,7 +87,7 @@ class TransitoVehiculoController extends Controller
 
     public function getVehiculoPlaca(Request $r){
         $query = $r->input('query');
-        $data = TransitoVehiculo::with('tipo_vehiculo','marca')->where('placa',$query)->first();
+        $data = TransitoVehiculo::with('tipo_vehiculo','marca')->where('placa_cpn_ramv',$query)->first();
         if ($data) {
             // Devolver la información en formato JSON
             return response()->json($data, 200);

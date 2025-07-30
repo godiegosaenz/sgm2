@@ -240,8 +240,8 @@ class AnaliticaContribuyenteController extends Controller
                 }
             })
             ->whereBetween('i.created_at', [$desde, $hasta])
-            ->where('i.estado',1)
-            ->select('v.placa','v.chasis','v.avaluo','v.year','mv.descripcion as marca_veh','cv.descripcion as clase','en.nombres as nombre_propietario','en.apellidos as apellido_propietario','en.ci_ruc as identificacion_propietario' ,'i.year_impuesto','i.numero_titulo','i.total_pagar','i.usuario','i.created_at','i.id as identificador')
+            ->where('i.estado',3)
+            ->select('v.placa_cpn_ramv','v.chasis','v.avaluo','v.year','mv.descripcion as marca_veh','cv.descripcion as clase','en.nombres as nombre_propietario','en.apellidos as apellido_propietario','en.ci_ruc as identificacion_propietario' ,'i.year_impuesto','i.numero_titulo','i.total_pagar','i.usuario','i.created_at','i.id as identificador')
             ->get();
 
             foreach($consultar as $key=> $data){

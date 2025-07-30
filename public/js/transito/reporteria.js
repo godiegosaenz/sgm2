@@ -98,7 +98,7 @@ $("#formReporteria").submit(function(e){
                                                     <td style="width:25%; text-align:left; vertical-align:middle">
                                                         <li><b>Descripcion:</b> ${item.clase}</li>
                                                         <li><b>Marca-Modelo:</b> ${item.marca_veh}-${item.year}</li>
-                                                        <li><b>Placa:</b> ${item.placa}</li> 
+                                                        <li><b>Placa:</b> ${item.placa_cpn_ramv}</li> 
                                                         <li><b>Avaluo:</b> ${item.avaluo}</li> 
                                                         
                                                     </td>
@@ -217,7 +217,7 @@ function descargarPdf(){
 
 function descargarReporte(id){
     vistacargando("m","Espere por favor")
-    $.get("../transito-imprimir/"+id, function(data){
+    $.get("../transito-imprimir/"+id+'/C', function(data){
         vistacargando("")
         if(data.error==true){
             alertNotificar(data.mensaje,"error");

@@ -176,7 +176,7 @@
 
                         <th width="20%" style="border: 0px; ;border-color: #D3D3D3; text-align: center">DETALLE PAGO</th>
 
-                        <th width="5%" style="border: 0px; ;border-color: #D3D3D3; text-align: center">IMP. ANUAL A LOS VEHICULOS  </th>
+                        <!-- <th width="5%" style="border: 0px; ;border-color: #D3D3D3; text-align: center">IMP. ANUAL A LOS VEHICULOS  </th>
 
                         <th width="5%" style="border: 0px; ;border-color: #D3D3D3; text-align: center">DUPLICADO DE MATRICULA  </th>
 
@@ -184,7 +184,7 @@
                         
                         <th width="5%" style="border: 0px; ;border-color: #D3D3D3; text-align: center">STICKER REVISION VEHICULAR  </th>
 
-                        <th width="5%" style="border: 0px; ;border-color: #D3D3D3; text-align: center">TASA SERVICIOS ADMINISTRATIVOS  </th>
+                        <th width="5%" style="border: 0px; ;border-color: #D3D3D3; text-align: center">TASA SERVICIOS ADMINISTRATIVOS  </th> -->
 
 
                         <th width="5%" style="border: 0px; ;border-color: #D3D3D3; text-align: center">TOTAL  </th>
@@ -213,7 +213,7 @@
                                     <td align="left" style="border-center:0px;border-color: #D3D3D3">
                                         <li style="list-style: none;"><b>Descripcion:</b> {{$item->clase}}</li>
                                         <li style="list-style: none;"><b>Marca-Modelo:</b> {{$item->marca_veh}}-{{$item->year}}</li>
-                                        <li style="list-style: none;"><b>Placa:</b> {{$item->placa}}</li> 
+                                        <li style="list-style: none;"><b>Placa:</b> {{$item->placa_cpn_ramv}}</li> 
                                         <li style="list-style: none;"><b>Avaluo:</b> {{$item->avaluo}}</li> 
                                     </td>
 
@@ -226,7 +226,7 @@
                                         
                                     </td>
 
-                                    <td align="right" style="border-left: 0px; border-center:0px;border-color: #D3D3D3">
+                                    <!-- <td align="right" style="border-left: 0px; border-center:0px;border-color: #D3D3D3">
                                         {{ $item->conceptos[0]->valor ?? '' }}
                                         
                                     </td>
@@ -246,7 +246,7 @@
                                     <td align="right" style="border-left: 0px; border-center:0px;border-color: #D3D3D3">
                                         {{ $item->conceptos[4]->valor ?? '' }}
                                         
-                                    </td>
+                                    </td> -->
                                     <td align="right" style="border-left: 0px; border-center:0px;border-color: #D3D3D3">
                                         {{$item->total_pagar}}
                                         
@@ -285,7 +285,7 @@
                             <b>TOTAL</b>
                         </td>
 
-                        <td style="border: 0px;border-color: #D3D3D3;  text-align: right; font-size:9px">
+                        <!-- <td style="border: 0px;border-color: #D3D3D3;  text-align: right; font-size:9px">
                            {{number_format($impuesto_anual,2)}}                            
                         </td>
 
@@ -304,7 +304,7 @@
                         <td style="border: 0px;border-color: #D3D3D3;  text-align: right; font-size:9px">
                            {{number_format($tsa,2)}}                            
                         </td>
-                        
+                         -->
                         <td style="border: 0px;border-color: #D3D3D3;  text-align: right; font-size:9px">
                            {{number_format($total_final,2)}}                            
                         </td>
