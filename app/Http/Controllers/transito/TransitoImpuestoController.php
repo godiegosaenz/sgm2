@@ -76,8 +76,34 @@ class TransitoImpuestoController extends Controller
 
     public function store(Request $request)
     {   
+       
         DB::beginTransaction();
         try {
+
+            $vehiculo = TransitoVehiculo::where('id',$request->input('vehiculo_id_2'))->first();
+            $aplica_recargo=0;
+            $fin = date('Y');
+            if($vehiculo->tipo_identif=="PLACA"){
+                $placa=$vehiculo->placa_cpn_ramv;
+                $lastChar = substr($placa, -1);
+                $mes = date("n");
+
+                $lastChar=(int)$lastChar;
+                $valor=$lastChar+1;
+               
+                if($valor<$mes){
+                    $aplica_recargo=1;
+                    $fin=$fin+1;
+                }
+            }
+                     
+            $inicio = $request->last_year_declaracion;
+            $cadena=null;
+            if($inicio!=date('Y')){                
+                // Genera el array: [2023, 2024]
+                $anios = range($inicio, $fin - 1);
+                $cadena = implode(', ', $anios);
+            }
 
             $qr_Rentas = DB::connection('mysql')
                         ->table('area as a')
@@ -153,7 +179,8 @@ class TransitoImpuestoController extends Controller
                 'conceptos.*.valor' => 'required|numeric|min:0',
                 'vehiculo_id_2' => 'required',
                 'cliente_id_2' => 'required',
-                'year_declaracion' => 'required'
+                'year_declaracion' => 'required',
+                'last_year_declaracion'=>'required'
             ]);
 
             if ($validator->fails()) {
@@ -164,11 +191,16 @@ class TransitoImpuestoController extends Controller
 
             $TransitoImpuesto = new TransitoImpuesto();
 
-            $TransitoImpuesto->year_impuesto = $request->year_declaracion;
+           
+            
             $TransitoImpuesto->cat_ente_id = $request->cliente_id_2;
             $TransitoImpuesto->vehiculo_id = $request->vehiculo_id_2;
             $TransitoImpuesto->usuario = Auth()->user()->name; //estado 1 = pagado
             $TransitoImpuesto->idusuario_registra = Auth()->user()->id;
+            $TransitoImpuesto->calendarizacion = $cadena;
+            $TransitoImpuesto->recargo_anio_actual = $aplica_recargo;
+            $TransitoImpuesto->last_year_declaracion = $request->last_year_declaracion;
+            $TransitoImpuesto->year_impuesto = $request->year_declaracion;
             $TransitoImpuesto->save();
 
             $total = 0;
@@ -180,6 +212,8 @@ class TransitoImpuestoController extends Controller
                 ]);
                 $total += $concepto['valor'];
             }
+
+
 
             $verificaNum=TransitoImpuesto::where('year_impuesto',date('Y'))
             ->select('numero_titulo')
@@ -194,6 +228,7 @@ class TransitoImpuestoController extends Controller
                 $solo_numero=explode("-",$verificaNum->numero_titulo);
                 $num = (int)$solo_numero[1] + 1;
             }
+
             
             // Ahora actualizas el total
             // $TransitoImpuesto->numero_titulo = 'TR-'.str_pad($TransitoImpuesto->id, 5, '0', STR_PAD_LEFT).'-'.$TransitoImpuesto->year_impuesto;
@@ -208,7 +243,7 @@ class TransitoImpuestoController extends Controller
             return response()->json(['success' => true, 'id' => $TransitoImpuesto->id]);
         } catch (Exception $e) {
             DB::rollback();
-            return (['error' => true, 'mensaje'=>'Ocurrio un error, intentelo mas tarde']);
+            return (['error' => true, 'mensaje'=>'Ocurrio un error, intentelo mas tarde' .$e]);
         }
     }
 
@@ -338,6 +373,13 @@ class TransitoImpuestoController extends Controller
                 }
             }
 
+            $ultimo_anio_matriculacion=$request->last_year_declaracion;
+            $diferencia=0;
+            if($ultimo_anio_matriculacion < date('Y')){
+                $diferencia=date('Y') - (int)$ultimo_anio_matriculacion;
+            }
+            // dd($diferencia);
+
             $tarifa = null;
             $valortipoclase = null;
             if ($vehiculo) {
@@ -375,11 +417,12 @@ class TransitoImpuestoController extends Controller
                 }else if($concepto["codigo"]=="DM"){
                     array_push($array,["id"=>$data["id"], "nuevo_valor"=>(float)$concepto->valor, "codigo"=>"DM"]);
                 }else if($concepto["codigo"]=="REC"){
-                    $valor_recargo=$concepto->valor;                   
+                    $valor_recargo=$concepto->valor;
+                    $valor_recargo_ant=$valor_recargo * $diferencia;                   
                     if($aplica_recargo==0){
                         $valor_recargo=0;
                     }
-                  
+                    $valor_recargo=$valor_recargo + $valor_recargo_ant;
                     array_push($array,["id"=>$data["id"], "nuevo_valor"=>(float)$valor_recargo, "codigo"=>"REC"]);
                 }
 
@@ -917,7 +960,7 @@ class TransitoImpuestoController extends Controller
     {
         $dataArray = array();
         $TransitoImpuesto = TransitoImpuesto::with('cliente','vehiculo')->find($id);
-
+        
         if($TransitoImpuesto->estado==3 && $tipo=='C'){
             return [
                 'error'=>false,

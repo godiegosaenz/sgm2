@@ -159,7 +159,9 @@
         <fieldset class="border p-3 mb-4">
             <legend class="float-none w-auto px-3 fs-5">Detalle de impuesto</legend>
             <div class="row align-items-end mb-3">
-                <div class="col-md-6">
+
+                <div class="col-md-4">
+                    <label for="nombresRepresentante" class="form-label"> Proceso de Matriculacion Vehicular </label>
                     <select class="form-select {{ $errors->has('year_declaracion') ? 'is-invalid' : '' }}"
                         id="year_declaracion" name="year_declaracion" onchange="calcularImpuesto()">
                         <option value="">Seleccione año</option>
@@ -170,7 +172,18 @@
                     <div class="invalid-feedback" id="error_year_declaracion"></div>
                 </div>
 
-                <div class="col-md-6 d-grid gap-2">
+                <div class="col-md-4">
+                    <label for="nombresRepresentante" class="form-label">Ultimo Año Matriculacion</label>
+                    <select class="form-select {{ $errors->has('last_year_declaracion') ? 'is-invalid' : '' }}"
+                        id="last_year_declaracion" name="last_year_declaracion" onchange="calcularImpuesto()">
+                         @for ($i = 0; $i <= 10; $i++)
+                            <option value="{{ date('Y') - $i }}">{{ date('Y') - $i }}</option>
+                        @endfor
+                    </select>
+                    <div class="invalid-feedback" id="error_last_year_declaracion"></div>
+                </div>
+
+                <div class="col-md-4 d-grid gap-2">
                     <button class="btn btn-primary" id="btn-calcular">
                         <span id="btn-text">Calcular</span>
                         <span id="spinner-btn" class="spinner-border spinner-border-sm d-none" role="status"
@@ -884,6 +897,7 @@
             const vehiculo_id = document.getElementById('vehiculo_id_2').value;
             const cliente_id = document.getElementById('cliente_id_2').value;
             const year = document.getElementById('year_declaracion').value;
+            const last_year_declaracion = document.getElementById('last_year_declaracion').value;
 
             if (!vehiculo_id || !cliente_id || !year) {
                 alert('Por favor llene los campos: vehiculo, cliente y Año de impuesto');
@@ -916,7 +930,8 @@
                     conceptos: conceptos,
                     vehiculo_id: vehiculo_id,
                     cliente_id: cliente_id,
-                    year: year
+                    year: year,
+                    last_year_declaracion: last_year_declaracion
                 }).then(function (res) {
                     console.log("txt")
                     console.log(res)
@@ -977,6 +992,7 @@
             const vehiculo_id_2 = document.getElementById('vehiculo_id_2').value;
             const cliente_id_2 = document.getElementById('cliente_id_2').value;
             const year_declaracion = document.getElementById('year_declaracion').value;
+            const last_year_declaracion = document.getElementById('last_year_declaracion').value;
             const btn = document.getElementById('btn-guardar');
             const spinner = btn.querySelector('.spinner-border');
             btn.disabled = true;
@@ -1007,11 +1023,12 @@
                 conceptos: conceptosSeleccionados,
                 vehiculo_id_2: vehiculo_id_2,
                 cliente_id_2: cliente_id_2,
-                year_declaracion: year_declaracion
+                year_declaracion: year_declaracion,
+                last_year_declaracion: last_year_declaracion
             })
                 .then(function (res) {
                     // limpiar errores
-                    ['vehiculo_id', 'cliente_id', 'year_declaracion'].forEach(id => {
+                    ['vehiculo_id', 'cliente_id', 'year_declaracion','last_year_declaracion'].forEach(id => {
                         const input = document.getElementById(id);
                         const errorDiv = document.getElementById('error_' + id);
 
@@ -1050,6 +1067,7 @@
                             vehiculo_id_2: 'vehiculo_id',
                             cliente_id_2: 'cliente_id',
                             year_declaracion: 'year_declaracion',
+                            last_year_declaracion:'last_year_declaracion'
                         };
 
                         Object.keys(errores).forEach(function (campo) {

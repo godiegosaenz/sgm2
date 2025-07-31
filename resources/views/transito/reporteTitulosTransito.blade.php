@@ -192,8 +192,8 @@
                     <table class="tabla-derecha">
                         <thead>
                             <tr>
-                                <th>RUBROS/CONCEPTO</th>
-                                <th>VALOR</th>
+                                <th style="text-align:center">RUBROS/CONCEPTO</th>
+                                <th style="width:18% !important; text-align:center">VALOR</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -202,6 +202,10 @@
                                     $concepto=$r->concepto;
                                     if($r->codigo=='RTV'){
                                         $concepto=$r->concepto ." (".implode(', ', $r->agrupado). ")";
+                                    }
+
+                                    if($r->codigo=='REC' && !is_null($impuesto['calendarizacion'])){
+                                        $concepto=$r->concepto ." (CALENDARIZACION ".$impuesto['calendarizacion'].")";
                                     }
                                 @endphp
                                 

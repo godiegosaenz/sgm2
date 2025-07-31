@@ -391,6 +391,11 @@
                 if(item.codigo=='RTV'){
                     concepto=item.concepto + ' ( '+item.agrupado.join(', ')+' )';
                 }
+
+                if(item.codigo=='REC' && data.info[0].TransitoImpuesto.calendarizacion!=null){
+                    concepto=item.concepto + ' (Calendarizacion '+data.info[0].TransitoImpuesto.calendarizacion+')';
+                }
+
                 $('#tablaImpuestoDetalle').append(`<tr>
                                                 <td style="width:75%; text-align:left; vertical-align:middle">
                                                     ${concepto}

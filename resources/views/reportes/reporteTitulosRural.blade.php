@@ -307,7 +307,7 @@
                     Ing. Jacinta María Mendoza Cusme
                 </td>
                 <td style="text-align: center">
-                    Ing. Jandry Fernando Loor Macay
+                    Ing. Danes Steven Cedeño Choez
                 </td>
             </tr>
             <tr>
