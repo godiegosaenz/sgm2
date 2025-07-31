@@ -315,7 +315,7 @@
                     Tesorera Municipal Juez de Coactiva
                 </td>
                 <td style="text-align: center">
-                   Director Financiero (E)
+                   Director Financiero
                 </td>
             </tr>
         </tbody>
