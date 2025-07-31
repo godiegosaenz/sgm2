@@ -264,6 +264,13 @@
         $("#vinculo").attr("href", '../patente/descargar-documento/'+ruta);
         $("#documentopdf").modal("show");
     }
+    globalThis.CargarPagina=0
+    $('#documentopdf').on('hidden.bs.modal', function () {
+       if(CargarPagina==1){
+            $("#documentopdf").modal("hide");
+            location.reload();
+        }
+    });
 
     function eliminarTitulo(id){
         $('#tituloEliminaModal').modal('show')
@@ -444,8 +451,11 @@
                     return;   
                 }
                 alertNotificar(data.mensaje,"success");
+                CargarPagina=1
+                verpdf(data.pdf)
+
                
-                location.reload();
+                // location.reload();
             }).fail(function(){
                 vistacargando("")
                 alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
