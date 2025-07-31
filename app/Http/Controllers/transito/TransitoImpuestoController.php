@@ -532,7 +532,7 @@ class TransitoImpuestoController extends Controller
                 return ["mensaje"=>$generarDocumento['mensaje'], "error"=>true];
             }
             
-            //change
+            //change LOCALES
             return ["mensaje"=>"Cobro registrado exitosamente", "error"=>false, 'pdf'=>$generarDocumento['pdf']];
 
         } catch (Exception $e) {
