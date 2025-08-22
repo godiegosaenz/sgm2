@@ -105,20 +105,55 @@ class TituloRuralController extends Controller
     public function reportetest(Request $r){
         try{
 
-            $data = $this->clientMunicipio->request('POST', "tituloscoactivarural/imprimir",[
-                'headers' => [
-                    'Content-Type' => 'application/json'
-                ],
-                'body' => json_encode($r->all())
-            ]);
+            // $data = $this->clientMunicipio->request('POST', "tituloscoactivarural/imprimir",[
+            //     'headers' => [
+            //         'Content-Type' => 'application/json'
+            //     ],
+            //     'body' => json_encode($r->all())
+            // ]);
 
-            $data=json_decode((string) $data->getBody());
+            // $data=json_decode((string) $data->getBody());
 
-            if($data->error==true){
-                return [
-                    'error'=>true,
-                    'mensaje'=>'Ocurrió un error al consultar la informacion'
-                ];
+            // if($data->error==true){
+            //     return [
+            //         'error'=>true,
+            //         'mensaje'=>'Ocurrió un error al consultar la informacion'
+            //     ];
+            // }
+
+            $dataArray = array();
+            foreach($r->checkLiquidacion as $clave => $valor){
+                $liquidacionRural=\DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
+                ->leftJoin('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'cv.CarVe_CI')
+                ->leftJoin('PROPIETARIO as pr', 'pr.Ciu_Cedula', '=', 'cv.CarVe_CI')
+                ->leftJoin('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
+                ->select('cv.Pre_CodigoCatastral','cv.CarVe_FechaEmision','cv.CarVe_NumTitulo','cv.CarVe_CI'
+                ,'cv.CarVe_Estado','c.Ciu_Apellidos','c.Ciu_Nombres','p.Pre_NombrePredio','cv.CarVe_ValTotalTerrPredio'
+                ,'cv.CarVe_ValTotalEdifPredio','cv.CarVe_ValOtrasInver','cv.CarVe_ValComerPredio','cv.CarVe_RebajaHipotec'
+                ,'cv.CarVe_BaseImponible','cv.CarVe_IPU','cv.CarVe_TasaAdministrativa','cv.CarVe_Bomberos'
+                ,'cv.CarVe_ValorEmitido','pr.Pro_DireccionDomicilio' ,'cv.CarVe_TasaAdministrativa')
+                ->where('CarVe_NumTitulo', '=', $valor)
+                ->get();
+
+                foreach($liquidacionRural as $key=> $data){
+                    $anio=explode("-",$data->CarVe_NumTitulo);
+                    $consultaInteresMora=\DB::connection('sqlsrv')->table('INTERES_MORA as im')
+                    ->where('IntMo_Año',$anio)
+                    ->select('IntMo_Valor')
+                    ->first();
+
+                    $valor=(($consultaInteresMora->IntMo_Valor/100) * ($data->CarVe_ValorEmitido - $data->CarVe_TasaAdministrativa));
+                    
+                    $valor=number_format($valor,2);
+
+                    $liquidacionRural[$key]->porcentaje_intereses=$consultaInteresMora->IntMo_Valor;
+                    $liquidacionRural[$key]->intereses=$valor;
+
+                    $total_pago=$valor +$data->CarVe_ValorEmitido;
+                    $liquidacionRural[$key]->total_pagar=number_format($total_pago,2);
+                }
+                         
+                array_push($dataArray, $liquidacionRural);
             }
 
             $fecha_hoy=date('Y-m-d');
@@ -128,7 +163,7 @@ class TituloRuralController extends Controller
             $data = [
                 'title' => 'Reporte de liquidacion',
                 'date' => date('m/d/Y'),
-                'DatosLiquidacion' => $data->resultado,
+                'DatosLiquidacion' => $dataArray,
                 'fecha_formateada'=>$fecha_formateada
             ];
 
