@@ -38,24 +38,63 @@ class TituloRuralController extends Controller
     {
         try {
 
-            $listaTitulo = $this->clientMunicipio->request('GET', "buscar-titulo-rural/{$tipo}/{$valor}",[
-                'headers' => [
-                    'Authorization' => ''
-                ] ,
-                'connect_timeout' => 30,
-                'timeout' => 30
-            ]);
+            // $listaTitulo = $this->clientMunicipio->request('GET', "buscar-titulo-rural/{$tipo}/{$valor}",[
+            //     'headers' => [
+            //         'Authorization' => ''
+            //     ] ,
+            //     'connect_timeout' => 30,
+            //     'timeout' => 30
+            // ]);
 
 
-            $info= json_decode((string) $listaTitulo->getBody());
-            if($info->error==true){
-                return [
-                    'error'=>true,
-                    'mensaje'=>'Ocurrió un error al consultar la informacion'
-                ];
+            // $info= json_decode((string) $listaTitulo->getBody());
+            // if($info->error==true){
+            //     return [
+            //         'error'=>true,
+            //         'mensaje'=>'Ocurrió un error al consultar la informacion'
+            //     ];
+            // }
+            // return ["resultado"=>$info->resultado, "error"=>false];
+
+            $liquidacionRural=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
+            ->leftJoin('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'cv.CarVe_CI')
+            ->leftJoin('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
+            ->select('cv.Pre_CodigoCatastral','cv.CarVe_FechaEmision','cv.CarVe_NumTitulo','cv.CarVe_CI'
+            ,'cv.CarVe_Estado','c.Ciu_Apellidos','c.Ciu_Nombres','cv.CarVe_Nombres','cv.CarVe_ValorEmitido'
+            ,'cv.CarVe_TasaAdministrativa')
+            ->where(function($query)use($tipo,$valor) {
+                if($tipo==1){
+                    $query->where('CarVe_CI', '=', $valor);
+                }else{
+                    $query->where('cv.Pre_CodigoCatastral', '=', $valor);
+                }
+                
+            })
+            
+            ->whereIn('cv.CarVe_Estado',['E'])
+            // ->where('Pre_Tipo','Rural')
+            ->orderby('CarVe_NumTitulo','desc')
+            ->get();
+
+            foreach($liquidacionRural as $key=> $data){
+                $anio=explode("-",$data->CarVe_NumTitulo);
+                $consultaInteresMora=DB::connection('sqlsrv')->table('INTERES_MORA as im')
+                ->where('IntMo_Año',$anio)
+                ->select('IntMo_Valor')
+                ->first();
+
+                $valor=(($consultaInteresMora->IntMo_Valor/100) * ($data->CarVe_ValorEmitido - $data->CarVe_TasaAdministrativa));
+                
+                $valor=number_format($valor,2);
+
+                $liquidacionRural[$key]->porcentaje_intereses=$consultaInteresMora->IntMo_Valor;
+                $liquidacionRural[$key]->intereses=$valor;
+
+                $total_pago=$valor +$data->CarVe_ValorEmitido;
+                $liquidacionRural[$key]->total_pagar=number_format($total_pago,2);
             }
 
-            return ["resultado"=>$info->resultado, "error"=>false];
+            return ["resultado"=>$liquidacionRural, "error"=>false];
 
         } catch (Exception $e) {
             return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
