@@ -185,6 +185,7 @@
                             <center> 
                                 <button type="button" class="btn btn-success btn-sm" onclick="registrarCobro()">Registrar Cobro</button>
                                 <button type="button" class="btn btn-danger btn-sm" onclick="cerrarCobro()">Cerrar</button>
+                                <button type="button" class="btn btn-warning btn-sm" onclick="anularCobro()">Anular Cobro</button>
                             </center>
                         </div>
                         
@@ -456,6 +457,29 @@
 
                
                 // location.reload();
+            }).fail(function(){
+                vistacargando("")
+                alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+            });
+        }
+    }
+
+    function anularCobro(){
+        var id=$('#id_impuesto').val()
+       
+        if(confirm('¿Estas seguro que quieres anular el cobro?'))
+        {
+            cerrarCobro()
+            vistacargando("m","Espere por favor")
+            $.get("../anular-cobro-transito/"+id, function(data){
+                vistacargando("")
+                if(data.error==true){
+                    alertNotificar(data.mensaje,"error");
+                    return;   
+                }
+                alertNotificar(data.mensaje,"success");
+                location.reload();
+               
             }).fail(function(){
                 vistacargando("")
                 alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  

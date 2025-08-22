@@ -98,6 +98,9 @@ class TransitoImpuestoController extends Controller
             }
                      
             $inicio = $request->last_year_declaracion;
+            if($inicio<date('Y')){
+                $inicio=$inicio+1;
+            }
             $cadena=null;
             if($inicio!=date('Y')){                
                 // Genera el array: [2023, 2024]
@@ -165,12 +168,17 @@ class TransitoImpuestoController extends Controller
 
             $verificaTitulo=TransitoImpuesto::where('cat_ente_id',$request->cliente_id_2)
             ->where('vehiculo_id',$request->vehiculo_id_2)
-            ->where('estado',1)
+            ->whereIn('estado',[1,3])
             ->where('year_impuesto',date('Y'))
             ->first();
 
             if(!is_null($verificaTitulo)){
-                return (['error' => true, 'mensaje'=>'Ya existe un pago realizado para este vehiculo en este año']);
+                if($verificaTitulo->estado==1){
+                    return (['error' => true, 'mensaje'=>'Ya existe un titulo pendiente de pago para este vehiculo en este año']);
+                }else{
+                    return (['error' => true, 'mensaje'=>'Ya existe un pago realizado para este vehiculo en este año']);
+                }
+                
             }
 
             $validator = Validator::make($request->all(), [
@@ -376,7 +384,7 @@ class TransitoImpuestoController extends Controller
             $ultimo_anio_matriculacion=$request->last_year_declaracion;
             $diferencia=0;
             if($ultimo_anio_matriculacion < date('Y')){
-                $diferencia=date('Y') - (int)$ultimo_anio_matriculacion;
+                $diferencia=(date('Y')-1) - (int)$ultimo_anio_matriculacion;
             }
             // dd($diferencia);
 
@@ -534,6 +542,27 @@ class TransitoImpuestoController extends Controller
             
             //change LOCALES
             return ["mensaje"=>"Cobro registrado exitosamente", "error"=>false, 'pdf'=>$generarDocumento['pdf']];
+
+        } catch (Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+
+        }
+    }
+
+    public function anularCobro($id){
+        try {
+            $anularCobro= TransitoImpuesto::find($id);
+            if($anularCobro->estado==2){
+                return ["mensaje"=>"La informacion ya ha sido eliminada y no se puede volver a eliminar", "error"=>true];   
+            }else if($anularCobro->estado==3){
+                return ["mensaje"=>"La informacion ya sido cobrada y no se puede anular", "error"=>true];
+            }
+            $anularCobro->estado=3;
+            $anularCobro->idusuario_anula=auth()->user()->id;
+            $anularCobro->fecha_anula=date('Y-m-d H:i:s');
+            $anularCobro->save();
+
+            return ["mensaje"=>"Cobro anulado exitosamente", "error"=>false];
 
         } catch (Exception $e) {
             return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];

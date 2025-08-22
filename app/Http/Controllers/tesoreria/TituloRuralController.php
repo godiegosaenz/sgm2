@@ -42,8 +42,8 @@ class TituloRuralController extends Controller
                 'headers' => [
                     'Authorization' => ''
                 ] ,
-                'connect_timeout' => 10,
-                'timeout' => 10
+                'connect_timeout' => 30,
+                'timeout' => 30
             ]);
 
 

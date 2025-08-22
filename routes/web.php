@@ -32,6 +32,8 @@ use App\Http\Controllers\coactiva\CoactivaEmisionesController;
 use App\Http\Controllers\coactiva\NotificacionesController;
 use App\Http\Controllers\AreaController;
 use App\Http\Controllers\FirmaElectronicaController;
+use App\Http\Controllers\ParteDiarioController;
+use App\Http\Controllers\CambiarContraseniaController;
 
 use App\Models\TransitoEnte;
 use App\Models\TransitoTarifaAnual;
@@ -270,6 +272,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('baja-titulo-transito', [TransitoImpuestoController::class, 'bajaTituloTransito'])->name('bajaTituloTransito.transito');
     Route::get('detalle-titulo/{id}', [TransitoImpuestoController::class, 'detalleTitulo'])->name('detalleTitulo.transito');
     Route::get('registrar-cobro-transito/{id}', [TransitoImpuestoController::class, 'realizarCobro'])->name('realizarCobro.transito');
+    Route::get('anular-cobro-transito/{id}', [TransitoImpuestoController::class, 'anularCobro'])->name('anularCobro.transito');
 
     Route::get('carga-combo-marca', [TransitoImpuestoController::class, 'comboMarca'])->name('comboMarca.transito');
     Route::get('carga-combo-tipo-vehiculo', [TransitoImpuestoController::class, 'comboTipoVehiculo'])->name('comboTipoVehiculo.transito');
@@ -339,6 +342,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('eliminar-firma/{id}', [FirmaElectronicaController::class, 'eliminar'])->name('eliminar.firma');
 
     Route::get('firma-qr/{nombre}/{img}', [FirmaElectronicaController::class, 'generar_firma_qr']);
+
+    //contrasenia
+    Route::get('cambiar-contrasenia', [CambiarContraseniaController::class, 'index'])->name('index.contrasenia');
+    Route::post('guardar-contrasenia', [CambiarContraseniaController::class, 'cambiar'])->name('cambiar.contrasenia');
+
+
+    //parte-diario
+    Route::get('parte-diario', [ParteDiarioController::class, 'index'])->name('index.parte_diario');
+    Route::get('generar-parte-diario/{fecha}', [ParteDiarioController::class, 'consultar'])->name('consultar.parte_diario');
+    Route::get('descargar-parte/{pdf}', [ParteDiarioController::class, 'descargarPdf'])->name('descargarPdf.parte_diario');
+
 
 });
 

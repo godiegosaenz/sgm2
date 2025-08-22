@@ -312,8 +312,13 @@
                         'route' => 'consulta.liquidacion.remision',
                         'active' => request()->routeIs('consulta.liquidacion.remision')
                     ],
+                    [
+                        'name' => 'Parte Diario',
+                        'route' => 'index.parte_diario',
+                        'active' => request()->routeIs('index.parte_diario')
+                    ],
                 ],
-                'active' => request()->routeIs('lista.exoneracion') || request()->routeIs('create.remision') || request()->routeIs('index.remision') || request()->routeIs('index.titulocredito') || request()->routeIs('index.TitulosRural')  || request()->routeIs('consulta.liquidacion.remision')
+                'active' => request()->routeIs('lista.exoneracion') || request()->routeIs('create.remision') || request()->routeIs('index.remision') || request()->routeIs('index.titulocredito') || request()->routeIs('index.TitulosRural')  || request()->routeIs('consulta.liquidacion.remision') || request()->routeIs('index.parte_diario')
             ],
             [
                 'name' => 'RENTAS',
@@ -440,6 +445,12 @@
                         'name' => 'Firma Electronica',
                         'route' => 'index.firma',
                         'active' => request()->routeIs('index.firma')
+                    ],
+
+                    [
+                        'name' => 'Cambiar Contraseña',
+                        'route' => 'index.contrasenia',
+                        'active' => request()->routeIs('index.contrasenia')
                     ],
 
                    
