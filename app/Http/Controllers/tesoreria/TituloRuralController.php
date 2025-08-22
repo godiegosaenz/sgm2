@@ -56,7 +56,7 @@ class TituloRuralController extends Controller
             // }
             // return ["resultado"=>$info->resultado, "error"=>false];
 
-            $liquidacionRural=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
+            $liquidacionRural=\DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
             ->leftJoin('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'cv.CarVe_CI')
             ->leftJoin('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
             ->select('cv.Pre_CodigoCatastral','cv.CarVe_FechaEmision','cv.CarVe_NumTitulo','cv.CarVe_CI'
@@ -78,7 +78,7 @@ class TituloRuralController extends Controller
 
             foreach($liquidacionRural as $key=> $data){
                 $anio=explode("-",$data->CarVe_NumTitulo);
-                $consultaInteresMora=DB::connection('sqlsrv')->table('INTERES_MORA as im')
+                $consultaInteresMora=\DB::connection('sqlsrv')->table('INTERES_MORA as im')
                 ->where('IntMo_Año',$anio)
                 ->select('IntMo_Valor')
                 ->first();
