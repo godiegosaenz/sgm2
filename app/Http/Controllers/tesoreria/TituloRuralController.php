@@ -245,7 +245,7 @@ class TituloRuralController extends Controller
         //     ->take(10)->get();
 
         // }
-        return ["resultado"=>$data, "error"=>false];
+        // return ["resultado"=>$data, "error"=>false];
 
         return response()->json($data);
     }
