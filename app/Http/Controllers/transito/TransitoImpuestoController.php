@@ -42,7 +42,7 @@ class TransitoImpuestoController extends Controller
             ]);
 
 
-            $ip2="http://192.168.0.68:82/";
+            $ip2="http://192.168.0.77:82/";
 
             $this->clienteFirmador = new Client([
                 'base_uri' =>$ip2,

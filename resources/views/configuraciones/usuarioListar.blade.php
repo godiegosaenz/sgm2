@@ -78,5 +78,24 @@
             "fixedColumns" : true
         });
     });
+
+    function resetear(id){
+        if(confirm('¿Quiere resetear la clave del usuario?')){
+            vistacargando("m","Espere por favor")
+            $.get("resetear-clave/"+id, function(data){
+                vistacargando("")
+                if(data.error==true){
+                    alertNotificar(data.mensaje,"error");
+                    return;   
+                }
+        
+                alertNotificar(data.mensaje,"success");
+                
+            }).fail(function(){
+                vistacargando("")
+                alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+            });
+        }
+    }
 </script>
 @endpush

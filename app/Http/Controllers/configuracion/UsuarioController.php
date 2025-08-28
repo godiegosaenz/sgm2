@@ -151,6 +151,33 @@ class UsuarioController extends Controller
         }
     }
 
+    public function resetearPassword($id){
+
+        try{
+
+            $buscarPersona=\DB::connection('mysql')->table('personas as p')
+            ->leftJoin('users as u', 'u.idpersona', '=', 'p.id')
+            ->where('u.id',$id)
+            ->select('p.cedula')
+            ->where('status',1)
+            ->first();
+
+            if(is_null($buscarPersona)){
+                return['error'=>true, 'mensaje'=>'No se encontro informacion del Usuario'];
+            }
+
+            $User = User::find($id);
+            $User->password = bcrypt($buscarPersona->cedula);
+            $User->save();
+
+            return['error'=>false, 'mensaje'=>'Contraseña reseteada exitosamente'];
+
+        } catch (Exception $e) {
+            return['error'=>true, 'mensaje'=>'Ocurrio un error '.$e];
+        }
+
+    }
+
     /**
      * Remove the specified resource from storage.
      */
@@ -173,6 +200,8 @@ class UsuarioController extends Controller
                     $botonesCita = '';
                     $botonesCita .= '<a href="'.route('show.remision',$User->id).'" class="btn btn-primary btn-sm"><i class="bi bi-eye"></i></a> ';
                     $botonesCita .= '<a href="'.route('edit.usuario',$User->id).'" class="btn btn-warning btn-sm"><i class="bi bi-pencil-square"></i></a> ';
+
+                    $botonesCita .= '<a onclick="resetear(\''.$User->id.'\')" class="btn btn-danger btn-sm"><i class="bi bi-arrow-clockwise"></i></a> ';
 
                     return $botonesCita;
                 })

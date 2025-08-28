@@ -50,15 +50,15 @@ use App\Models\TransitoVehiculo;
 |
 */
 
- Route::get('sgm/login', function () {
-    return view('auth.login');
- })->name('sgm/login')->middleware('guest');
-Route::redirect('/', '/sgm/login');
+//  Route::get('sgm/login', function () {
+//     return view('auth.login');
+//  })->name('sgm/login')->middleware('guest');
+// Route::redirect('/', '/sgm/login');
 
-// Route::get('/login', function () {
-//    return view('auth.login');
-// })->name('login')->middleware('guest');
-// Route::redirect('/', '/login');
+Route::get('/login', function () {
+   return view('auth.login');
+})->name('login')->middleware('guest');
+Route::redirect('/', '/login');
 
 //Route::get('/', [ConsultaPredioController::class, 'index'])->name('welcome');
 Route::get('/consulta', [ConsultaPredioController::class, 'index'])->name('welcome');
@@ -130,6 +130,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('usuario/{id}/edit', [UsuarioController::class, 'update'])->name('update.usuario');
     Route::post('usuario/datatables', [UsuarioController::class, 'datatables'])->name('datatable.usuario');
     Route::get('usuario/lista', [UsuarioController::class, 'index'])->name('lista.usuario');
+    Route::get('usuario/resetear-clave/{id}', [UsuarioController::class, 'resetearPassword'])->name('resetearPassword.usuario');
 
     //actualizacion de rol a usuarios
     Route::post('rolusuario', [UsuarioController::class, 'rolusuario'])->name('rol.usuario');

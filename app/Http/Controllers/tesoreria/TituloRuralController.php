@@ -19,8 +19,8 @@ class TituloRuralController extends Controller
         try{
 
             $this->clientMunicipio = new Client([
-                // 'base_uri' =>'http://192.168.0.68:81/sgm-api/api/',
-                'base_uri' =>'http://192.168.0.68:81/sgm-api/api/',
+                // 'base_uri' =>'http://192.168.0.77:81/sgm-api/api/',
+                'base_uri' =>'http://192.168.0.77:81/sgm-api/api/',
                 'verify' => false,
             ]);
 
