@@ -217,35 +217,35 @@ class TituloRuralController extends Controller
 
     public function buscarContribuyenteRural(Request $request){
 
-        // $data = $this->clientMunicipio->request('POST', "tituloscoactivarural/buscarContribuyente",[
-        //     'headers' => [
-        //         'Content-Type' => 'application/json'
-        //     ],
-        //     'body' => json_encode($request->all())
-        // ]);
+        $data = $this->clientMunicipio->request('POST', "tituloscoactivarural/buscarContribuyente",[
+            'headers' => [
+                'Content-Type' => 'application/json'
+            ],
+            'body' => json_encode($request->all())
+        ]);
 
-        // $data=json_decode((string) $data->getBody());
+        $data=json_decode((string) $data->getBody());
 
-        // // dd($data);
+        // dd($data);
 
-        // if($data->error==true){
-        //     return [
-        //         'error'=>true,
-        //         'mensaje'=>'Ocurrió un error al consultar la informacion'
-        //     ];
-        // }
-
-        $data = [];
-        if($request->has('q')){
-            $search = $request->q;
-            $data = \DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
-            ->whereRaw('UPPER(cv.CarVe_Nombres) LIKE UPPER(?)', ['%' . $search . '%'])
-            ->select('Pre_CodigoCatastral','CarVe_Nombres','CarVe_CI')
-            ->distinct('Pre_CodigoCatastral')
-            ->take(10)->get();
-
+        if($data->error==true){
+            return [
+                'error'=>true,
+                'mensaje'=>'Ocurrió un error al consultar la informacion'
+            ];
         }
-        // return ["resultado"=>$data, "error"=>false];
+
+        // $data = [];
+        // if($request->has('q')){
+        //     $search = $request->q;
+        //     $data = \DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
+        //     ->whereRaw('UPPER(cv.CarVe_Nombres) LIKE UPPER(?)', ['%' . $search . '%'])
+        //     ->select('Pre_CodigoCatastral','CarVe_Nombres','CarVe_CI')
+        //     ->distinct('Pre_CodigoCatastral')
+        //     ->take(10)->get();
+
+        // }
+        return ["resultado"=>$data, "error"=>false];
 
         return response()->json($data);
     }
