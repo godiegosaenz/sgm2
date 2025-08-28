@@ -247,7 +247,7 @@ class TituloRuralController extends Controller
         // }
         // return ["resultado"=>$data, "error"=>false];
 
-        return response()->json($data);
+        return response()->json($data->resultado);
     }
 
 }
