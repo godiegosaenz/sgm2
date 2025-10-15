@@ -50,15 +50,15 @@ use App\Models\TransitoVehiculo;
 |
 */
 
-//  Route::get('sgm/login', function () {
-//     return view('auth.login');
-//  })->name('sgm/login')->middleware('guest');
-// Route::redirect('/', '/sgm/login');
+ Route::get('sgm/login', function () {
+    return view('auth.login');
+ })->name('sgm/login')->middleware('guest');
+Route::redirect('/', '/sgm/login');
 
-Route::get('/login', function () {
-   return view('auth.login');
-})->name('login')->middleware('guest');
-Route::redirect('/', '/login');
+// Route::get('/login', function () {
+//    return view('auth.login');
+// })->name('login')->middleware('guest');
+// Route::redirect('/', '/login');
 
 //Route::get('/', [ConsultaPredioController::class, 'index'])->name('welcome');
 Route::get('/consulta', [ConsultaPredioController::class, 'index'])->name('welcome');
@@ -342,7 +342,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('mantenimiento-firma', [FirmaElectronicaController::class, 'mantenimiento'])->name('mantenimiento.firma');
     Route::get('eliminar-firma/{id}', [FirmaElectronicaController::class, 'eliminar'])->name('eliminar.firma');
 
-    Route::get('firma-qr/{nombre}/{img}', [FirmaElectronicaController::class, 'generar_firma_qr']);
+    // Route::get('firma-qr/{nombre}/{img}', [FirmaElectronicaController::class, 'generar_firma_qr']);
+    Route::get('firma-qr/{nombre}/{img}', [TransitoImpuestoController::class, 'generar_firma_qr']);
 
     //contrasenia
     Route::get('cambiar-contrasenia', [CambiarContraseniaController::class, 'index'])->name('index.contrasenia');
