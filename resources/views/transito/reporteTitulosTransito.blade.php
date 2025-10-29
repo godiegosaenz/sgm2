@@ -177,7 +177,7 @@
                                 </tr>
                                 <tr style="line-height: 8px;">
                                     <td width="30%"><strong>Clase tipo:</strong></td>
-                                    <td width="70%">{{$item['vehiculo']->tipo_vehiculo->descripcion}}</td>
+                                    <td width="70%">{{$item['vehiculo']->clase_vehiculo->descripcion}}</td>
                                 </tr>
                                 <tr style="line-height: 8px;">
                                     <td width="30%"><strong>Marca:</strong></td>
@@ -201,7 +201,8 @@
                                 @php
                                     $concepto=$r->concepto;
                                     if($r->codigo=='RTV'){
-                                        $concepto=$r->concepto ." (".implode(', ', $r->agrupado). ")";
+                                        //$concepto=$r->concepto ." (".implode(', ', $r->agrupado). ")";
+                                        $concepto=$r->concepto ." (".$item['vehiculo']->tipo_vehiculo->descripcion. ")";
                                     }
 
                                     if($r->codigo=='REC' && !is_null($impuesto['calendarizacion'])){
@@ -261,18 +262,19 @@
 
             <tr>
                 <td style="text-align: center">
-                    @if($impuesto->estado==3)            
+                    <!-- tenia 3 en el esatdo -->
+                    @if($impuesto->estado==13)            
                         <img src="{{ asset('qrfirma/Rentas.png') }}"  width="60%">
                     @endif
                 </td>
                 <td style="text-align: center">
-                    @if($impuesto->estado==3)
+                    @if($impuesto->estado==13)
                         <img src="{{ asset('qrfirma/Tesoreria.png') }}"  width="60%">
                     @endif
                 </td>
 
                 <td style="text-align: center">
-                    @if($impuesto->estado==3)
+                    @if($impuesto->estado==13)
                         <img src="{{ asset('qrfirma/Recaudador.png') }}"  width="60%">
                     @endif
                 </td>

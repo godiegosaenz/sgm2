@@ -54,14 +54,14 @@ class EnteController extends Controller
 
             if(!is_null($validaPersona)){
                 if($validaPersona->estado==="A"){
-                    return response()->json(['message' => 'Ya existe una persona con ese numero de identificacion','error'=>true], 500);
-                }else{
+                //     return response()->json(['message' => 'Ya existe una persona con ese numero de identificacion','error'=>true], 500);
+                // }else{
                     $validaPersona->ci_ruc = $request->ci_ruc;
                     if($request->es_persona== 1)
                     {
                         $tipo_documento=605;
-                        $validaPersona->nombres = strtoupper(str_replace(' ', '', $request->nombres));
-                        $validaPersona->apellidos = strtoupper(str_replace(' ', '', $request->apellidos));
+                        $validaPersona->nombres = strtoupper(str_replace(' ', ' ', $request->nombres));
+                        $validaPersona->apellidos = strtoupper(str_replace(' ', ' ', $request->apellidos));
                     }else
                     {
                         $tipo_documento=606;

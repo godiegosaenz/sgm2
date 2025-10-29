@@ -21,7 +21,7 @@ class ParteDiarioController extends Controller
     public function __construct(){
         try{
            
-            $ip2="http://192.168.0.77:82/";
+            $ip2="http://192.168.0.42:82/";
 
             $this->clienteFirmador = new Client([
                 'base_uri' =>$ip2,

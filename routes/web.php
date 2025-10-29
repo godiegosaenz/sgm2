@@ -263,12 +263,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('actualizar-tipo/{id}', [TransitoImpuestoController::class, 'actualizarTipo'])->name('actualizarTipo.transito');
     Route::get('eliminar-tipo/{id}', [TransitoImpuestoController::class, 'eliminaTipo'])->name('eliminaTipo.transito');
 
+    Route::get('llenar-tabla-clase-tipo', [TransitoImpuestoController::class, 'tablaClaseTipo'])->name('tablaClaseTipo.transito');
+    Route::post('guardar-clase-tipo', [TransitoImpuestoController::class, 'guardarClaseTipo'])->name('guardarClaseTipo.transito');
+    Route::put('actualizar-clase-tipo/{id}', [TransitoImpuestoController::class, 'actualizarClaseTipo'])->name('actualizarClaseTipo.transito');
+    Route::get('eliminar-clase-tipo/{id}', [TransitoImpuestoController::class, 'eliminaClaseTipo'])->name('eliminaClaseTipo.transito');
+
     Route::get('llenar-tabla-concepto', [TransitoImpuestoController::class, 'tablaConcepto'])->name('tablaConcepto.transito');
     Route::post('guardar-concepto', [TransitoImpuestoController::class, 'guardarConcepto'])->name('guardarConcepto.transito');
     Route::put('actualizar-concepto/{id}', [TransitoImpuestoController::class, 'actualizarConcepto'])->name('actualizarConcepto.transito');
     // Route::get('eliminar-tipo/{id}', [TransitoImpuestoController::class, 'eliminaTipo'])->name('eliminaTipo.transito');
 
     Route::get('carga-info-persona/{ci}', [TransitoImpuestoController::class, 'infoPersona'])->name('infoPersona.transito');
+    Route::get('carga-info-vehiculo/{ci}', [TransitoImpuestoController::class, 'infoVehiculo']);
     Route::get('transito-imprimir/{id}/{tipo}', [TransitoImpuestoController::class, 'pdfTransito'])->name('pdfTransito.transito');
     Route::post('baja-titulo-transito', [TransitoImpuestoController::class, 'bajaTituloTransito'])->name('bajaTituloTransito.transito');
     Route::get('detalle-titulo/{id}', [TransitoImpuestoController::class, 'detalleTitulo'])->name('detalleTitulo.transito');
@@ -277,6 +283,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('carga-combo-marca', [TransitoImpuestoController::class, 'comboMarca'])->name('comboMarca.transito');
     Route::get('carga-combo-tipo-vehiculo', [TransitoImpuestoController::class, 'comboTipoVehiculo'])->name('comboTipoVehiculo.transito');
+    Route::get('carga-combo-clase-tipo-vehiculo/{id}', [TransitoImpuestoController::class, 'comboClaseTipoVehiculo'])->name('comboClaseTipoVehiculo.transito');
 
     Route::get('firma-p12/{documento}/{pdoce}/{clave}/{prefijo}/{disco}', [TransitoImpuestoController::class, 'firmarDocumento2'])->name('firmarDocumento2.transito');
 

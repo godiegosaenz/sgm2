@@ -243,7 +243,7 @@
         <div class="modal-dialog modal-lg"> <!-- ancho grande -->
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalPersonaLabel">Registrar Persona</h5>
+                    <h5 class="modal-title" id="modalPersonaLabel">Formulario Persona</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
@@ -263,7 +263,7 @@
                             <div class="col-md-6">
                                 <label for="ci_ruc" class="form-label">CI / RUC <span class="text-danger">*</span></label>
                                 <input type="hidden" class="form-control" id="es_transito" name="es_transito" value="S">
-                                <input type="text" class="form-control" id="ci_ruc" name="ci_ruc" onblur="capturaInfoPersona()">
+                                <input type="number" class="form-control" id="ci_ruc" name="ci_ruc" onblur="capturaInfoPersona()" onkeyup="bloqueaInpust(this)">
                                 <div class="invalid-feedback" id="error-ci_ruc"></div>
                             </div>
                            
@@ -304,8 +304,11 @@
                     </form>
                 </div>
                 <div class="modal-footer">
+                    
+                    <button type="button" class="btn" id="btn_guarda_act_persona" onclick="guardarPersona()">
+                        <span id="nombre_btn_persona"></span>
+                    </button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary" onclick="guardarPersona()">Guardar</button>
                 </div>
             </div>
         </div>
@@ -315,10 +318,10 @@
     <!-- Modal -->
     <div class="modal fade" id="vehiculoModal" tabindex="-1" aria-labelledby="vehiculoModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg"> <!-- Aumentamos el tamaño del modal -->
-            <form id="vehiculoForm">
+            <form id="vehiculoForm" autocomplete="off">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Registrar Vehículo</h5>
+                        <h5 class="modal-title">Formulario Vehículo</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                     </div>
                     <div class="modal-body">
@@ -343,7 +346,7 @@
 
                                 <div class="mb-3">
                                     <label for="chasis_v" class="form-label">Chasis</label>
-                                    <input type="text" class="form-control" id="chasis_v" name="chasis_v" required>
+                                    <input type="text" class="form-control" id="chasis_v" name="chasis_v" required >
                                     <div class="invalid-feedback" id="error-chasis_v"></div>
                                 </div>
                                 <div class="mb-3">
@@ -354,9 +357,9 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="tipo_v" class="form-label">Tipo de vehiculo</label>
+                                    <label for="tipo_v" class="form-label">Grupo de vehiculo</label>
                                     <select class="form-select {{ $errors->has('tipo_v') ? 'is-invalid' : '' }}" id="tipo_v"
-                                        name="tipo_v" required>
+                                        name="tipo_v" required onchange="cargaComboClaseTipoVeh()">
                                         
                                     </select>
                                     <div class="invalid-feedback" id="error_tipo_v"></div>
@@ -368,7 +371,7 @@
 
                                 <div class="mb-3">
                                     <label for="placa_v" class="form-label label_plac_cpn_ramv" >Placa</label>
-                                    <input type="text" class="form-control" id="placa_v" name="placa_v" required>
+                                    <input type="text" class="form-control" id="placa_v" name="placa_v" required onblur="capturaInfoVehiculo()" onkeyup="convertirMayuscula(this)">
                                     <div class="invalid-feedback" id="error-placa_v"></div>
                                 </div>
 
@@ -387,13 +390,24 @@
                                     </select>
                                     <div class="invalid-feedback" id="error-marca"></div>
                                 </div>
+
+                                 <div class="mb-3">
+                                    <label for="tipo_v" class="form-label">Clase de vehiculo</label>
+                                    <select class="form-select {{ $errors->has('tipo_v') ? 'is-invalid' : '' }}" id="clase_tipo_v"
+                                        name="clase_tipo_v" required>
+                                        
+                                    </select>
+                                    <div class="invalid-feedback" id="error_clasetipo_v"></div>
+                                </div>
                                 
                             </div>
                         </div> <!-- End row -->
                     </div>
 
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-success">Guardar</button>
+                        <button type="submit" class="btn btn-success" id="btn_guarda_act_vehiculo">
+                            <span id="nombre_btn_vehiculo"></span>
+                        </button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                     </div>
                 </div>
@@ -526,7 +540,14 @@
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button"
                                 role="tab" aria-controls="tab2" aria-selected="false">
-                                Tipo Vehiculo Año  {{date('Y')  }}
+                                Grupo Vehiculo Año  {{date('Y')  }}
+                            </button>
+                        </li>
+
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="tab4-tab" data-bs-toggle="tab" data-bs-target="#tab4" type="button"
+                                role="tab" aria-controls="tab4" aria-selected="false">
+                                Clase Vehiculo Año  {{date('Y')  }}
                             </button>
                         </li>
 
@@ -567,7 +588,7 @@
                                             <label for="marca_v" class="form-label mb-0"></label>
                                         </div>
                                         <div class="col-md-7">
-                                            <button type="submit" class="btn btn-success btn-sm"><span
+                                            <button type="submit" class="btn btn-success btn-sm" ><span
                                                     id="btn_marca">Guardar</span></button>
                                             <button type="button" class="btn btn-warning btn-sm"
                                                 onclick="cancelarMarca()">Cancelar</button>
@@ -600,7 +621,7 @@
                                 <div class="col-md-12">
                                     <div class="row align-items-center">
                                         <div class="col-md-3 text-end">
-                                            <label for="marca_v" class="form-label mb-0">Tipo</label>
+                                            <label for="marca_v" class="form-label mb-0">Descripcion</label>
                                         </div>
                                         <div class="col-md-7">
                                             <input type="hidden" class="form-control" id="id_tipo_vehi" name="id_tipo_vehi">
@@ -642,7 +663,7 @@
                                 <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>Tipo</th>
+                                        <th>Descripcion</th>
                                         <th>Valor</th>
                                         <th>Acciones</th>
                                     </tr>
@@ -691,7 +712,7 @@
                                             <label for="marca_v" class="form-label mb-0"></label>
                                         </div>
                                         <div class="col-md-7">
-                                            <button type="submit" class="btn btn-success btn-sm"><span
+                                            <button type="submit" class="btn btn-success btn-sm btn_conc" disabled><span
                                                     id="btn_concepto">Guardar</span></button>
                                             <button type="button" class="btn btn-warning btn-sm"
                                                 onclick="cancelarConcepto()">Cancelar</button>
@@ -717,7 +738,72 @@
 
                         </div>
 
-                      
+                        <div class="tab-pane fade" id="tab4" role="tabpanel" aria-labelledby="tab4-tab">
+
+                            <form method="POST" action="" id="form_clase_tipo">
+                                @csrf
+
+                                <div class="col-md-12">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-3 text-end">
+                                            <label for="marca_v" class="form-label mb-0">Grupo</label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <input type="hidden" class="form-control" id="id_clase_vehi" name="id_clase_vehi">
+                                             <select class="form-select {{ $errors->has('year_declaracion') ? 'is-invalid' : '' }}"
+                                                id="id_tipo" name="id_tipo" >
+                                                <option value="">Seleccione una opcion</option>
+                                                @foreach ($tipo_vehiculo as $y)
+                                                    <option value="{{ $y->id }}">{{ $y->descripcion }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12" style="margin-top: 10px; margin-bottom: 10px;">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-3 text-end">
+                                            <label for="marca_v" class="form-label mb-0">Descripcion</label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <input type="text" class="form-control" id="descripcion_clase" name="descripcion_clase"
+                                                required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12" style="margin-top: 10px; margin-bottom: 20px;">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-3 text-end">
+                                            <label for="marca_v" class="form-label mb-0"></label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <button type="submit" class="btn btn-success btn-sm"><span
+                                                    id="btn_tipo_clase">Guardar</span></button>
+                                            <button type="button" class="btn btn-warning btn-sm"
+                                                onclick="cancelarClaseTipo()">Cancelar</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </form>
+
+                            <table class="table table-bordered" id="tablaTipoClaseVehiculo">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Grupo</th>
+                                        <th>Descripcion</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+
+                        </div>
 
                         
                     </div>
@@ -1113,7 +1199,9 @@
 
             axios.post('{{ route("store.vehiculo") }}', formData)
                 .then(response => {
-                    alert('Vehículo registrado correctamente');
+                    console.log(response)
+                    // alert('Vehículo registrado correctamente');
+                    alertNotificar(response.data.mensaje,"success")
                     document.getElementById('vehiculoForm').reset();
                     const modal = bootstrap.Modal.getInstance(document.getElementById('vehiculoModal'));
                     modal.hide();
@@ -1131,7 +1219,20 @@
                 });
         });
         function guardarPersona() {
+            
             const form = document.getElementById('formPersona');
+            var ci_ruc=$('#ci_ruc').val()
+            if(ci_ruc=="" || ci_ruc==null){
+                alertNotificar("Ingrese el numero de cedua o ruc","error")
+                return
+            }
+            var cant=$('#ci_ruc').val().length;
+          
+            if(cant!=10 && cant!=13){
+                alertNotificar("El numero de Identificacion debe tener 10 o 13 digitos", "error")
+                return
+            }
+            
             const formData = new FormData(form);
 
             // Limpiar errores previos
@@ -1146,7 +1247,8 @@
                         alertNotificar(response.data.message,"error")
                         return
                     }
-                    alert('Persona registrada correctamente');
+                    // alert('Persona registrada correctamente');
+                    alertNotificar(response.data.message,"success")
                     document.getElementById('formPersona').reset();
                     const modal2Element = document.getElementById('modalCrearEnte');
                     const modal2 = bootstrap.Modal.getInstance(modal2Element) || new bootstrap.Modal(modal2Element);

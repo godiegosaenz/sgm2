@@ -368,6 +368,7 @@
 
         vistacargando("m","Espere por favor")
         $.get("../detalle-titulo/"+id, function(data){
+            console.log(data)
             vistacargando("")
             if(data.error==true){
                 alertNotificar(data.mensaje,"error");
@@ -384,7 +385,7 @@
             $('#chasis_det').html(data.info[0].vehiculo.chasis)
             $('#avaluo_det').html('$'+avaluo.toFixed(2))
             $('#modelo_det').html(data.info[0].vehiculo.year)
-            $('#clase_tipo_det').html(data.info[0].vehiculo.tipo_vehiculo.descripcion)
+            $('#clase_tipo_det').html(data.info[0].vehiculo.clase_vehiculo.descripcion)
             $('#marca_det').html(data.info[0].vehiculo.marca.descripcion)
 
             $('#generado').html(data.persona.nombre)
@@ -397,7 +398,8 @@
             $.each(data.data,function(i, item){
                 var concepto=item.concepto;
                 if(item.codigo=='RTV'){
-                    concepto=item.concepto + ' ( '+item.agrupado.join(', ')+' )';
+                    // concepto=item.concepto + ' ( '+item.agrupado.join(', ')+' )';
+                    concepto=item.concepto + ' ( '+data.info[0].vehiculo.tipo_vehiculo.descripcion+' )';
                 }
 
                 if(item.codigo=='REC' && data.info[0].TransitoImpuesto.calendarizacion!=null){

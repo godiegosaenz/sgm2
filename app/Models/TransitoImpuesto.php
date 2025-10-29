@@ -31,7 +31,7 @@ class TransitoImpuesto extends Model
 
     public function vehiculo()
     {
-        return $this->belongsTo(TransitoVehiculo::class,'vehiculo_id','id');
+        return $this->belongsTo(TransitoVehiculo::class,'vehiculo_id','id')->with('clase_vehiculo');
     }
 
     public function cliente()

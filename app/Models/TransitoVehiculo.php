@@ -38,6 +38,11 @@ class TransitoVehiculo extends Model
         return $this->belongsTo(TransitoTipoVehiculo::class,'tipo_clase_id','id');
     }
 
+    public function clase_vehiculo()
+    {
+        return $this->belongsTo(ClaseVehiculo::class,'clase_id','id');
+    }
+
     public function getTipoAttribute()
     {
         return $this->tipo_vehiculo?->descripcion ?? null;

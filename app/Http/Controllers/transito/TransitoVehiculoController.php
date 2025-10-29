@@ -39,6 +39,24 @@ class TransitoVehiculoController extends Controller
             'tipo_v'    => 'required' // Validamos que exista en la tabla tipos
         ]);
         // Guardado mapeando los campos del formulario a los de la base de datos
+        $verificaExiste=TransitoVehiculo::where('placa_cpn_ramv',$request->placa_v)
+        ->first();
+
+        if(!is_null($verificaExiste)){
+            $verificaExiste->placa_cpn_ramv = $request->placa_v;
+            $verificaExiste->chasis = $request->chasis_v;
+            $verificaExiste->avaluo = $request->avaluo_v;
+            $verificaExiste->year = $request->year_v;
+            $verificaExiste->username = Auth()->user()->name;
+            $verificaExiste->marca_id = $request->marca_v;
+            $verificaExiste->tipo_identif = $request->tipo_ident;
+            $verificaExiste->tipo_clase_id = $request->tipo_v; // Mapeo desde "tipo"
+            $verificaExiste->clase_id = $request->clase_tipo_v; 
+            $verificaExiste->save();
+
+            return ['success' => true, 'vehiculo' => $verificaExiste, 'mensaje'=>'Vehiculo Actualizado Exitosamente'];
+        }
+
         $vehiculo = new TransitoVehiculo();
         $vehiculo->placa_cpn_ramv = $request->placa_v;
         $vehiculo->chasis = $request->chasis_v;
@@ -48,9 +66,10 @@ class TransitoVehiculoController extends Controller
         $vehiculo->marca_id = $request->marca_v;
         $vehiculo->tipo_identif = $request->tipo_ident;
         $vehiculo->tipo_clase_id = $request->tipo_v; // Mapeo desde "tipo"
+        $vehiculo->clase_id = $request->clase_tipo_v; 
         $vehiculo->save();
 
-        return response()->json(['success' => true, 'vehiculo' => $vehiculo]);
+        return response()->json(['success' => true, 'vehiculo' => $vehiculo , 'mensaje'=>'Vehiculo Registrado Exitosamente']);
     }
 
     /**

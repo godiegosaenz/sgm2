@@ -13,6 +13,7 @@ use App\Models\TransitoTarifaAnual;
 use App\Models\TransitoTipoVehiculo;
 use App\Models\TransitoVehiculo;
 use App\Models\TransitoYearImpuesto;
+use App\Models\ClaseVehiculo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
@@ -23,9 +24,10 @@ use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Gate;
 use App\BSrE_PDF_Signer_Cli;
 use Illuminate\Support\Facades\Crypt;
-
+use App\Models\PsqlEnte;
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Writer\PngWriter;
+
 
 class TransitoImpuestoController extends Controller
 {
@@ -42,7 +44,7 @@ class TransitoImpuestoController extends Controller
             ]);
 
 
-            $ip2="http://192.168.0.77:82/";
+            $ip2="http://192.168.0.42:82/";
 
             $this->clienteFirmador = new Client([
                 'base_uri' =>$ip2,
@@ -123,10 +125,10 @@ class TransitoImpuestoController extends Controller
                     
             if(is_null($qr_Rentas)) {
                 
-                return [
-                    'error' => true,
-                    'mensaje' => "No existe un Certificado Vigente para el encargado de Rentas"
-                ];
+                // return [
+                //     'error' => true,
+                //     'mensaje' => "No existe un Certificado Vigente para el encargado de Rentas"
+                // ];
             }
 
 
@@ -144,10 +146,10 @@ class TransitoImpuestoController extends Controller
                     ->first();
 
             if(is_null($qr_Tesoreria)) {
-                return [
-                    'error' => true,
-                    'mensaje' => "No existe un Certificado Vigente para el encargado de Tesoreria"
-                ];
+                // return [
+                //     'error' => true,
+                //     'mensaje' => "No existe un Certificado Vigente para el encargado de Tesoreria"
+                // ];
             }
 
 
@@ -160,10 +162,10 @@ class TransitoImpuestoController extends Controller
                     ->where('pdoce.estado', 'A')
                     ->first();
             if(is_null($qr_Recaudador)) {
-                return [
-                    'error' => true,
-                    'mensaje' => "No existe un Certificado Vigente para el encargado de Recaudacion"
-                ];
+                // return [
+                //     'error' => true,
+                //     'mensaje' => "No existe un Certificado Vigente para el encargado de Recaudacion"
+                // ];
             }
 
             $verificaTitulo=TransitoImpuesto::where('cat_ente_id',$request->cliente_id_2)
@@ -269,6 +271,19 @@ class TransitoImpuestoController extends Controller
     public function comboTipoVehiculo(){
         try{
             $tipo_vehiculo = TransitoTipoVehiculo::where('estado','A')->get();
+            return["error"=>false, "resultado"=>$tipo_vehiculo];
+
+        } catch (Exception $e) {
+            DB::rollback();
+            return (['error' => true, 'mensaje'=>'Ocurrio un error, intentelo mas tarde']);
+        }
+    }
+
+    public function comboClaseTipoVehiculo($id){
+        try{
+            $tipo_vehiculo = ClaseVehiculo::where('estado','A')
+            ->where('clase_tipo_vehiculo_id',$id)
+            ->get();
             return["error"=>false, "resultado"=>$tipo_vehiculo];
 
         } catch (Exception $e) {
@@ -454,6 +469,7 @@ class TransitoImpuestoController extends Controller
         $vehiculo =  $TransitoImpuesto->vehiculo;
         $cliente = $TransitoImpuesto->cliente;
         $transitoimpuestoconcepto = $TransitoImpuesto->conceptos;
+      
 
         $fecha_hoy=date('Y-m-d');
         setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES@euro', 'es_ES', 'esp');
@@ -508,9 +524,12 @@ class TransitoImpuestoController extends Controller
                     $disabled="disabled";
 
                     $btn_pdf='<button class="btn btn-primary btn-sm" onclick="verpdf(\''.$listaimpuesto->documento_firmado.'\')" disabled>Titulo</button>';
+
                 }else if($listaimpuesto->estado==3){
                     $btn='<a class="btn btn-danger btn-sm" onclick="eliminarTitulo(\''.$listaimpuesto->id.'\')">Dar Baja</a>';
-                    $btn_pdf=' <a class="btn btn-primary btn-sm" onclick="verpdf(\''.$listaimpuesto->documento_firmado.'\')" >Titulo</a>';
+                    // $btn_pdf=' <a class="btn btn-primary btn-sm" onclick="verpdf(\''.$listaimpuesto->documento_firmado.'\')" >Titulo</a>';
+
+                    $btn_pdf=' <a class="btn btn-primary btn-sm" onclick="generarPdf(\''.$listaimpuesto->id.'\')" >Titulo</a>';
                 }
                 return $btn_pdf.' '.$btn;
             })
@@ -533,6 +552,8 @@ class TransitoImpuestoController extends Controller
             $realizarCobro->fecha_cobro=date('Y-m-d H:i:s');
             $realizarCobro->save();
 
+            // $generarDocumento=$this->pdfTransito($id,'');
+            //queme la G para que no firme electronicamente
             $generarDocumento=$this->pdfTransito($id,'');
             // dd($generarDocumento);
 
@@ -739,6 +760,22 @@ class TransitoImpuestoController extends Controller
 
         }
     }
+    public function tablaClaseTipo(){
+        try {
+
+            $info=DB::connection('pgsql')->table('sgm_transito.clase_vehiculo as cv')
+            ->leftJoin('sgm_transito.clase_tipo_vehiculo as tv','tv.id','=','cv.clase_tipo_vehiculo_id')
+            ->select('cv.id','cv.descripcion as descripcion_clase','tv.descripcion as descripcion_tipo','tv.id as idtipo')
+            ->where('cv.estado','A')
+            ->get();
+
+            return ["resultado"=>$info, "error"=>false];
+
+        } catch (Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+
+        }
+    }
 
      public function tablaConcepto(){
         try {
@@ -792,7 +829,7 @@ class TransitoImpuestoController extends Controller
         try {
 
             $valida=TransitoTipoVehiculo::where('descripcion',$request->tipo_vehi)
-            // ->where('estado','A')
+            ->where('estado','A')
             ->where('id','!=',$id)
             ->first();
             if(!is_null($valida)){
@@ -827,12 +864,144 @@ class TransitoImpuestoController extends Controller
         }
     }
 
-     public function infoPersona($cedula){
+    public function guardarClaseTipo(Request $request){
+        try {
+            $valida=ClaseVehiculo::where('descripcion',$request->descripcion_clase)
+            ->first();
+            if(!is_null($valida)){
+                if($valida->estado=="A"){
+                    return ["mensaje"=>"La informacion ingresada ya existe ", "error"=>true];
+                }else{
+                    $valida->descripcion=$request->descripcion_clase;
+                    $valida->estado='A';
+                    $valida->clase_tipo_vehiculo_id=$request->id_tipo;
+                    $valida->save();
+                    return ["mensaje"=>"Informacion Guardada exitosamente", "error"=>false];
+                }
+            }
+
+            $guardaTipo= new ClaseVehiculo;
+            $guardaTipo->descripcion=$request->descripcion_clase;
+            $guardaTipo->clase_tipo_vehiculo_id=$request->id_tipo;
+            $guardaTipo->estado='A';
+            $guardaTipo->save();
+
+            return ["mensaje"=>"Informacion Guardada exitosamente", "error"=>false];
+
+        } catch (Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+
+        }
+    }
+
+     public function actualizarClaseTipo(Request $request, $id){
+        try {
+
+            $valida=ClaseVehiculo::where('descripcion',$request->descripcion_clase)
+            ->where('estado','A')
+            ->where('id','!=',$id)
+            ->first();
+            if(!is_null($valida)){
+                return ["mensaje"=>"La informacion ingresada ya existe ", "error"=>true];
+            }
+
+            $actualizaTipo= ClaseVehiculo::find($id);
+            $actualizaTipo->descripcion=$request->descripcion_clase;
+            $actualizaTipo->clase_tipo_vehiculo_id=$request->id_tipo;
+            $actualizaTipo->estado='A';
+            $actualizaTipo->save();
+
+            return ["mensaje"=>"Informacion actualizada exitosamente", "error"=>false];
+
+        } catch (Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+
+        }
+    }
+
+    public function eliminaClaseTipo($id){
+        try {
+            $eliminarTipo= ClaseVehiculo::find($id);
+            $eliminarTipo->estado='I';
+            $eliminarTipo->save();
+
+            return ["mensaje"=>"Informacion eliminada exitosamente", "error"=>false];
+
+        } catch (Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+
+        }
+    }
+
+    public function infoVehiculo($placa_cpn_ramv){
+        try{
+            $buscaVehiculo=\DB::connection('pgsql')
+            ->table('sgm_transito.vehiculo as v')
+            ->where('v.placa_cpn_ramv',$placa_cpn_ramv  )
+            ->first();
+            $id_vehiculo=0;
+            if(!is_null($buscaVehiculo)){
+                $id_vehiculo=$buscaVehiculo->id;
+            }
+            return ['data'=>$buscaVehiculo, 'error'=>false, 'id_vehiculo'=>$id_vehiculo];
+
+        } catch (Exception $e) {
+            dd($e);
+            return [
+                'error'=>true,
+                'mensaje'=>'Ocurrio un error',
+            ];
+
+        }
+    }
+
+    public function infoPersona($cedula){
         try {
             $data = [];
+            $id_persona=0;
+            // $existeEnBd=Ent
+            $validaPersona=PsqlEnte::where('ci_ruc',$cedula)
+            ->first();
+            // dd($validaPersona);
+            $id="";
+            $nombres="";
+            $apellidos="";
+            $direccion="";
+            $f_nacimiento="";
+            $correo="";
+            $telefono="";
+            if(!is_null($validaPersona)){
+                $ultimoTlFn=\DB::connection('pgsql')->table('sgm_app.ente_telefono')
+                ->where('ente',$validaPersona->id)
+                ->orderBy('id','desc')
+                ->first();
+
+                $ultimoCorreo=\DB::connection('pgsql')->table('sgm_app.ente_correo')
+                ->where('ente',$validaPersona->id)
+                ->orderBy('id','desc')
+                ->first();
+
+                $id_persona=$validaPersona->id;
+                $id=$id_persona;
+                $nombres=$validaPersona->nombres;
+                $apellidos=$validaPersona->apellidos;
+                $direccion=$validaPersona->direccion;
+                $date = new \DateTime($validaPersona->fecha_nacimiento);
+
+                // Formatear la fecha como 'yy-mm-dd'
+                // $fechaFormateada = $date->format('y-m-d');
+                $f_nacimiento= $date->format('Y-m-d');;
+                
+                if(!is_null($ultimoTlFn)){
+                    $telefono=$ultimoTlFn->telefono;
+                }
+                if(!is_null($ultimoCorreo)){
+                    $correo=$ultimoCorreo->email;
+                }
+            }
             if($cedula){
 
-                $response = $this->clientNacional->request('GET', "api/v1.0/deudas/porIdentificacion/{$cedula}",[
+                $response = $this->clientNacional->request('GET', "api/v1.0/deudas/porIdentificacion1/{$cedula}",[
                     'headers' => [
                         // 'Authorization'=>'bearer '.$token,
                         'Content-Type' => 'application/json'
@@ -848,20 +1017,38 @@ class TransitoImpuestoController extends Controller
                     'id' => $responseBody['contribuyente']['identificacion'] ?? null,
                     'nombre' => $separaNombre[0],
                     'apellido' => $separaNombre[1],
+                    'direccion' => $direccion,
+                    'f_nacimiento' => $f_nacimiento,
+                    'telefono' => $telefono,
+                    'correo' => $correo,
+                    
                 ];
             }
-
+           
             // Siempre se devuelve la variable $data, esté llena o vacía
-            return ['data'=>$data, 'error'=>false];
+            return ['data'=>$data, 'error'=>false , 'id_persona'=>$id_persona];
 
          } catch (Exception $e) {
-
+            // dd($e);
             $response = $e->getResponse();
             $responseBody = json_decode($response->getBody(), true);
 
+            $data[] = [
+                'id' => $id,
+                'nombre' => $nombres,
+                'apellido' => $apellidos,
+                'direccion' => $direccion,
+                'f_nacimiento' => $f_nacimiento,
+                'telefono' => $telefono,
+                'correo' => $correo,
+            ];
+
             return [
                 'error'=>true,
-                'mensaje'=>$responseBody
+                'mensaje'=>$responseBody,
+                'id_persona'=>$id_persona,
+                'data'=>$data
+                
             ];
 
         }
@@ -994,7 +1181,7 @@ class TransitoImpuestoController extends Controller
     {
         $dataArray = array();
         $TransitoImpuesto = TransitoImpuesto::with('cliente','vehiculo')->find($id);
-        
+       
         if($TransitoImpuesto->estado==3 && $tipo=='C'){
             return [
                 'error'=>false,
@@ -1005,6 +1192,7 @@ class TransitoImpuestoController extends Controller
         $vehiculo =  $TransitoImpuesto->vehiculo;
         $cliente = $TransitoImpuesto->cliente;
         $transitoimpuestoconcepto = $TransitoImpuesto->conceptos;
+        // $clase=\DB::connection('psql')->table('clase_vehiculo')-
 
         foreach($transitoimpuestoconcepto as $key => $data){
            
@@ -1023,7 +1211,6 @@ class TransitoImpuestoController extends Controller
         $fecha_documento=$TransitoImpuesto->created_at;
         $fecha_hoy=date('d-m-Y', strtotime($fecha_documento));
 
-        // $fecha_hoy=date('Y-m-d');
         setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES@euro', 'es_ES', 'esp');
         $fecha_timestamp = strtotime($fecha_hoy);
         $fecha_formateada = strftime("%d de %B del %Y", $fecha_timestamp);
@@ -1034,120 +1221,120 @@ class TransitoImpuestoController extends Controller
         $liquidacion['transitoimpuestoconcepto'] = $transitoimpuestoconcepto;
         array_push($dataArray, $liquidacion);
 
-        $qr_Rentas = DB::connection('mysql')
-                    ->table('area as a')
-                    ->leftJoin('jefe_area as ja', 'ja.id_area', '=', 'a.id_area')
-                    ->leftJoin('archivo_p12 as pdoce', 'pdoce.id_usuario', '=', 'ja.id_usuario')
-                    ->leftJoin('users as u', 'u.id', '=', 'ja.id_usuario')
-                    ->leftJoin('personas as p', 'p.id', '=', 'u.idpersona')
-                    ->select(DB::raw("CONCAT(nombres,' ',apellidos) AS nombre"),'pdoce.archivo', 'pdoce.password')
-                    ->where('a.descripcion', 'Rentas')
-                    ->where('a.estado', 'A')
-                    ->where('ja.estado', 'A')
-                    ->where('pdoce.estado', 'A')
-                    ->first();
+        // $qr_Rentas = DB::connection('mysql')
+        //             ->table('area as a')
+        //             ->leftJoin('jefe_area as ja', 'ja.id_area', '=', 'a.id_area')
+        //             ->leftJoin('archivo_p12 as pdoce', 'pdoce.id_usuario', '=', 'ja.id_usuario')
+        //             ->leftJoin('users as u', 'u.id', '=', 'ja.id_usuario')
+        //             ->leftJoin('personas as p', 'p.id', '=', 'u.idpersona')
+        //             ->select(DB::raw("CONCAT(nombres,' ',apellidos) AS nombre"),'pdoce.archivo', 'pdoce.password')
+        //             ->where('a.descripcion', 'Rentas')
+        //             ->where('a.estado', 'A')
+        //             ->where('ja.estado', 'A')
+        //             ->where('pdoce.estado', 'A')
+        //             ->first();
                    
-        if(is_null($qr_Rentas)) {
+        // if(is_null($qr_Rentas)) {
             
-            return [
-                'error' => true,
-                'mensaje' => "No existe un Certificado Vigente para el encargado de Rentas"
-            ];
-        }
+        //     return [
+        //         'error' => true,
+        //         'mensaje' => "No existe un Certificado Vigente para el encargado de Rentas"
+        //     ];
+        // }
 
-        $qr_Tesoreria = DB::connection('mysql')
-                    ->table('area as a')
-                    ->leftJoin('jefe_area as ja', 'ja.id_area', '=', 'a.id_area')
-                    ->leftJoin('archivo_p12 as pdoce', 'pdoce.id_usuario', '=', 'ja.id_usuario')
-                    ->leftJoin('users as u', 'u.id', '=', 'ja.id_usuario')
-                    ->leftJoin('personas as p', 'p.id', '=', 'u.idpersona')
-                    ->select(DB::raw("CONCAT(nombres,' ',apellidos) AS nombre"),'pdoce.archivo', 'pdoce.password')
-                    ->where('a.descripcion', 'Rentas')
-                    ->where('a.estado', 'A')
-                    ->where('ja.estado', 'A')
-                    ->where('pdoce.estado', 'A')
-                    ->first();
+        // $qr_Tesoreria = DB::connection('mysql')
+        //             ->table('area as a')
+        //             ->leftJoin('jefe_area as ja', 'ja.id_area', '=', 'a.id_area')
+        //             ->leftJoin('archivo_p12 as pdoce', 'pdoce.id_usuario', '=', 'ja.id_usuario')
+        //             ->leftJoin('users as u', 'u.id', '=', 'ja.id_usuario')
+        //             ->leftJoin('personas as p', 'p.id', '=', 'u.idpersona')
+        //             ->select(DB::raw("CONCAT(nombres,' ',apellidos) AS nombre"),'pdoce.archivo', 'pdoce.password')
+        //             ->where('a.descripcion', 'Rentas')
+        //             ->where('a.estado', 'A')
+        //             ->where('ja.estado', 'A')
+        //             ->where('pdoce.estado', 'A')
+        //             ->first();
 
-        if(is_null($qr_Tesoreria)) {
-            return [
-                'error' => true,
-                'mensaje' => "No existe un Certificado Vigente para el encargado de Tesoreria"
-            ];
-        }
+        // if(is_null($qr_Tesoreria)) {
+        //     return [
+        //         'error' => true,
+        //         'mensaje' => "No existe un Certificado Vigente para el encargado de Tesoreria"
+        //     ];
+        // }
       
-        $nombreRentas=$qr_Rentas->nombre;
-        $archivoFirmaRentas=$qr_Rentas->archivo;
-        $claveFirmaRentas=$qr_Rentas->password;
+        // $nombreRentas=$qr_Rentas->nombre;
+        // $archivoFirmaRentas=$qr_Rentas->archivo;
+        // $claveFirmaRentas=$qr_Rentas->password;
         
 
-        $imagenRentas="";
-        $imagenRentas=$this->generar_firma_qr($nombreRentas, 'Rentas');
-        if($imagenRentas['error']==true){
-            return [
-                'error' => true,
-                'mensaje' => $imagenRentas['error']
-            ];
-        }
+        // $imagenRentas="";
+        // $imagenRentas=$this->generar_firma_qr($nombreRentas, 'Rentas');
+        // if($imagenRentas['error']==true){
+        //     return [
+        //         'error' => true,
+        //         'mensaje' => $imagenRentas['error']
+        //     ];
+        // }
 
-        $qr_Tesoreria = DB::connection('mysql')
-                    ->table('area as a')
-                    ->leftJoin('jefe_area as ja', 'ja.id_area', '=', 'a.id_area')
-                    ->leftJoin('archivo_p12 as pdoce', 'pdoce.id_usuario', '=', 'ja.id_usuario')
-                    ->leftJoin('users as u', 'u.id', '=', 'ja.id_usuario')
-                    ->leftJoin('personas as p', 'p.id', '=', 'u.idpersona')
-                    ->select(DB::raw("CONCAT(nombres,' ',apellidos) AS nombre"),'pdoce.archivo', 'pdoce.password')
-                    ->where('a.descripcion', 'Rentas')
-                    ->where('a.estado', 'A')
-                    ->where('ja.estado', 'A')
-                    ->where('pdoce.estado', 'A')
-                    ->first();
+        // $qr_Tesoreria = DB::connection('mysql')
+        //             ->table('area as a')
+        //             ->leftJoin('jefe_area as ja', 'ja.id_area', '=', 'a.id_area')
+        //             ->leftJoin('archivo_p12 as pdoce', 'pdoce.id_usuario', '=', 'ja.id_usuario')
+        //             ->leftJoin('users as u', 'u.id', '=', 'ja.id_usuario')
+        //             ->leftJoin('personas as p', 'p.id', '=', 'u.idpersona')
+        //             ->select(DB::raw("CONCAT(nombres,' ',apellidos) AS nombre"),'pdoce.archivo', 'pdoce.password')
+        //             ->where('a.descripcion', 'Rentas')
+        //             ->where('a.estado', 'A')
+        //             ->where('ja.estado', 'A')
+        //             ->where('pdoce.estado', 'A')
+        //             ->first();
 
-        if(is_null($qr_Tesoreria)) {
-            return [
-                'error' => true,
-                'mensaje' => "No existe un Certificado Vigente para el encargado de Tesoreria"
-            ];
-        }
-        $nombreTesoreria=$qr_Tesoreria->nombre;
-        $archivoFirmaTesoreria=$qr_Tesoreria->archivo;
-        $claveFirmaTesoreria=$qr_Tesoreria->password;
+        // if(is_null($qr_Tesoreria)) {
+        //     return [
+        //         'error' => true,
+        //         'mensaje' => "No existe un Certificado Vigente para el encargado de Tesoreria"
+        //     ];
+        // }
+        // $nombreTesoreria=$qr_Tesoreria->nombre;
+        // $archivoFirmaTesoreria=$qr_Tesoreria->archivo;
+        // $claveFirmaTesoreria=$qr_Tesoreria->password;
 
-        $imagenTesoreria="";
-        $imagenTesoreria=$this->generar_firma_qr($nombreTesoreria, 'Tesoreria');
-        if($imagenTesoreria['error']==true){
-            return [
-                'error' => true,
-                'mensaje' => $imagenTesoreria['error']
-            ];
-        }
+        // $imagenTesoreria="";
+        // $imagenTesoreria=$this->generar_firma_qr($nombreTesoreria, 'Tesoreria');
+        // if($imagenTesoreria['error']==true){
+        //     return [
+        //         'error' => true,
+        //         'mensaje' => $imagenTesoreria['error']
+        //     ];
+        // }
 
-        $qr_Recaudador = DB::connection('mysql')
-                    ->table('archivo_p12 as pdoce')
-                    ->leftJoin('users as u', 'u.id', '=', 'pdoce.id_usuario')
-                    ->leftJoin('personas as p', 'p.id', '=', 'u.idpersona')
-                    ->select(DB::raw("CONCAT(nombres,' ',apellidos) AS nombre"),'pdoce.archivo', 'pdoce.password')
-                    ->where('pdoce.id_usuario', auth()->user()->id)
-                    ->where('pdoce.estado', 'A')
-                    ->first();
-        if(is_null($qr_Recaudador)) {
-            return [
-                'error' => true,
-                'mensaje' => "No existe un Certificado Vigente para el encargado de Recaudacion"
-            ];
-        }
+        // $qr_Recaudador = DB::connection('mysql')
+        //             ->table('archivo_p12 as pdoce')
+        //             ->leftJoin('users as u', 'u.id', '=', 'pdoce.id_usuario')
+        //             ->leftJoin('personas as p', 'p.id', '=', 'u.idpersona')
+        //             ->select(DB::raw("CONCAT(nombres,' ',apellidos) AS nombre"),'pdoce.archivo', 'pdoce.password')
+        //             ->where('pdoce.id_usuario', auth()->user()->id)
+        //             ->where('pdoce.estado', 'A')
+        //             ->first();
+        // if(is_null($qr_Recaudador)) {
+        //     return [
+        //         'error' => true,
+        //         'mensaje' => "No existe un Certificado Vigente para el encargado de Recaudacion"
+        //     ];
+        // }
 
-        $nombreRecaudador=$qr_Recaudador->nombre;
-        $archivoFirmaRecaudador=$qr_Recaudador->archivo;
-        $claveFirmaRecaudador=$qr_Recaudador->password;
+        // $nombreRecaudador=$qr_Recaudador->nombre;
+        // $archivoFirmaRecaudador=$qr_Recaudador->archivo;
+        // $claveFirmaRecaudador=$qr_Recaudador->password;
 
-        $imagenTesoreria="";
-        $imagenTesoreria=$this->generar_firma_qr($nombreRecaudador, 'Recaudador');
-        if($imagenTesoreria['error']==true){
-            return [
-                'error' => true,
-                'mensaje' => $imagenTesoreria['error']
-            ];
-        }
+        // $imagenTesoreria="";
+        // $imagenTesoreria=$this->generar_firma_qr($nombreRecaudador, 'Recaudador');
+        // if($imagenTesoreria['error']==true){
+        //     return [
+        //         'error' => true,
+        //         'mensaje' => $imagenTesoreria['error']
+        //     ];
+        // }
 
         
         $data = [
@@ -1168,29 +1355,32 @@ class TransitoImpuestoController extends Controller
         \Storage::disk('disksDocumentoRenta')->put(str_replace("", "",$nombrePDF), $estadoarch);
         $exists_destino = \Storage::disk('disksDocumentoRenta')->exists($nombrePDF);
         if($exists_destino){
-
-            if($tipo=='G'){
-                return [
-                    'error'=>false,
-                    'pdf'=>$nombrePDF
-                ];
-            }
-            
-            $procesaFirma=$this->firmarDocumento($nombrePDF,$archivoFirmaRentas,$claveFirmaRentas, $archivoFirmaTesoreria, $claveFirmaTesoreria, $archivoFirmaRecaudador, $claveFirmaRecaudador);
-           
-            if($procesaFirma['error']==false){
-                $TransitoImpuesto->documento_firmado=$procesaFirma['pdf'];
-                $TransitoImpuesto->save();
-                return [
-                    'error'=>false,
-                    'pdf'=>$procesaFirma['pdf']
-                ];
-            }
-
-            return[
-                'error'=>true,
-                'mensaje'=>$procesaFirma['mensaje']
+           return [
+                'error'=>false,
+                'pdf'=>$nombrePDF
             ];
+            // if($tipo=='G'){
+            //     return [
+            //         'error'=>false,
+            //         'pdf'=>$nombrePDF
+            //     ];
+            // }
+            
+            // $procesaFirma=$this->firmarDocumento($nombrePDF,$archivoFirmaRentas,$claveFirmaRentas, $archivoFirmaTesoreria, $claveFirmaTesoreria, $archivoFirmaRecaudador, $claveFirmaRecaudador);
+           
+            // if($procesaFirma['error']==false){
+            //     $TransitoImpuesto->documento_firmado=$procesaFirma['pdf'];
+            //     $TransitoImpuesto->save();
+            //     return [
+            //         'error'=>false,
+            //         'pdf'=>$procesaFirma['pdf']
+            //     ];
+            // }
+
+            // return[
+            //     'error'=>true,
+            //     'mensaje'=>$procesaFirma['mensaje']
+            // ];
             
 
         }else{
@@ -1363,10 +1553,10 @@ class TransitoImpuestoController extends Controller
             }
 
             if (is_null($certificado)) {
-                return [
-                    'error' => true,
-                    'mensaje' => "No existe un Certificado Vigente para el encargado de $tipo"
-                ];
+                // return [
+                //     'error' => true,
+                //     'mensaje' => "No existe un Certificado Vigente para el encargado de $tipo"
+                // ];
             }
 
             return [
