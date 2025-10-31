@@ -58,6 +58,7 @@ class TransitoImpuestoController extends Controller
     public function index()
     {
         //Gate::authorize('index', TransitoImpuesto::class);
+        // dd(auth()->user());
         return view('transito.impuestos_index');
     }
 

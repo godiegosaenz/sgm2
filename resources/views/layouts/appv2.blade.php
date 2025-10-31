@@ -256,65 +256,79 @@
                 'icon' => 'house-fill',
                 'active' => request()->routeIs('home')
             ],
+            
             [
                 'name' => 'ADMINISTRACION',
                 'icon' => 'people',
+                'permission' => 'menu de administracion',
                 'subMenu' => [
                     [
                         'name' => 'Lista de clientes',
                         'route' => 'index.ente',
+                        'permission' => 'Lista de clientes',
                         'active' => request()->routeIs('index.ente')
                     ],
                     [
                         'name' => 'Ingresar cliente',
                         'route' => 'create.ente',
+                        'permission' => 'Ingresar cliente',
                         'active' => request()->routeIs('create.ente')
                     ],
                 ],
-                'active' => request()->routeIs('mostrar.persona') || request()->routeIs('ingresar.persona')
+                'active' => request()->routeIs('index.ente') || request()->routeIs('create.ente')
             ],
+           
             [
                 'name' => 'TESORERIA',
                 'icon' => 'dollar-icon',
+                'permission' => 'menu de tesoreria',
                 'subMenu' => [
                     [
                         'name' => 'Exoneracion tercera edad',
                         'route' => 'index.tesoreria',
+                        'permission' => 'Exoneracion tercera edad',
                         'active' => request()->routeIs('index.tesoreria')
                     ],
                     [
                         'name' => 'Lista exoneracion',
                         'route' => 'lista.exoneracion',
+                        'permission' => 'Lista exoneracion',
                         'active' => request()->routeIs('lista.exoneracion')
                     ],
                     [
                         'name' => 'Remision de interes',
                         'route' => 'create.remision',
+                        'permission' => 'Remision de interes',
                         'active' => request()->routeIs('create.remision')
                     ],
                     [
                         'name' => 'Lista de remisiones',
                         'route' => 'index.remision',
+                        'permission' => 'Lista de remisiones',
                         'active' => request()->routeIs('index.remision')
                     ],
                     [
                         'name' => 'Impresion de titulos Urbanos',
                         'route' => 'index.titulocredito',
+                        'permission' => 'Impresion de titulos Urbanos',
                         'active' => request()->routeIs('index.titulocredito')
                     ],
                     [
                         'name' => 'Impresion de titulos Rural',
                         'route' => 'index.TitulosRural',
+                        'permission' => 'Impresion de titulos Rural',
                         'active' => request()->routeIs('index.TitulosRural')
                     ],
                     [
                         'name' => 'Reporte de liquidaciones',
                         'route' => 'consulta.liquidacion.remision',
+                        'permission' => 'Reporte de liquidaciones',
                         'active' => request()->routeIs('consulta.liquidacion.remision')
                     ],
                     [
                         'name' => 'Parte Diario',
                         'route' => 'index.parte_diario',
+                        'permission' => 'Parte Diario',
                         'active' => request()->routeIs('index.parte_diario')
                     ],
                 ],
@@ -323,11 +337,14 @@
             [
                 'name' => 'RENTAS',
                 'icon' => 'calculator-icon',
+                'permission' => 'menu de rentas',
                 'subMenu' => [
                     [
                         'name' => 'Catastro contribuyentes',
                         'route' => 'index.catastro',
+                        'permission' => 'Catastro contribuyentes',
                         'active' => request()->routeIs('index.catastro')
+                        
                     ],
                    /* [
                         'name' => 'Registrar contribuyente',
@@ -338,33 +355,39 @@
                     [
                         'name' => 'Declarar patente',
                         'route' => 'create.patente',
+                        'permission' => 'Declarar patente',
                         'active' => request()->routeIs('create.patente')
                     ],
                     
                     [
                         'name' => 'Lista de patente',
                         'route' => 'index.patente',
+                        'permission' => 'Lista de patente',
                         'active' => request()->routeIs('index.patente')
                     ],
                     [
                         'name' => 'Reporteria Patente',
                         'route' => 'vistaReportePatente.patente',
+                        'permission' => 'Reporteria Patente',
                         'active' => request()->routeIs('vistaReportePatente.patente')
                     ],
                     [
                         'name' => 'Impuesto transitos',
                         'route' => 'create.transito',
+                        'permission' => 'Impuesto transitos',
                         'active' => request()->routeIs('create.transito')
                     ],
                     [
                         'name' => 'Listar impuestos transito',
                         'route' => 'index.transito',
+                        'permission' => 'Listar impuestos transito',
                         'active' => request()->routeIs('index.transito')
                     ],
 
                     [
                         'name' => 'Reporteria Transito',
                         'route' => 'vistaReporteTransito.transito',
+                        'permission' => 'Reporteria Transito',
                         'active' => request()->routeIs('vistaReporteTransito.transito')
                     ],
                 ],
@@ -373,37 +396,53 @@
             [
                 'name' => 'CONFIGURACION',
                 'icon' => 'gear-wide-connected',
+                'permission' => 'menu de configuracion',
                 'subMenu' => [
                     [
                         'name' => 'Lista de usuarios',
                         'route' => 'lista.usuario',
+                        'permission' => 'Lista de usuarios',
                         'active' => request()->routeIs('lista.usuario')
                     ],
                     [
                         'name' => 'Crear usuario',
                         'route' => 'create.usuario',
+                        'permission' => 'Crear usuario',
                         'active' => request()->routeIs('create.usuario')
                     ],
+
+                    [
+                        'name' => 'Permisos',
+                        'route' => 'index.permisos',
+                        'permission' => 'Permisos',
+                        'active' => request()->routeIs('index.permisos')
+                    ],
+
                     [
                         'name' => 'Lista de empleados',
                         'route' => 'mostrar.persona',
+                        'permission' => 'Lista de empleados',
                         'active' => request()->routeIs('mostrar.persona')
                     ],
                     [
                         'name' => 'Ingresar empleado',
                         'route' => 'ingresar.persona',
+                        'permission' => 'Ingresar empleado',
                         'active' => request()->routeIs('ingresar.persona')
                     ],
 
                     [
                         'name' => 'Jefe Area',
                         'route' => 'index.area',
+                        'permission' => 'Jefe Area',
                         'active' => request()->routeIs('index.area')
                     ],
 
                     
+
+                    
                 ],
-                'active' => request()->routeIs('lista.usuario') || request()->routeIs('create.usuario')
+                'active' => request()->routeIs('lista.usuario') || request()->routeIs('create.usuario') || request()->routeIs('index.permisos')|| request()->routeIs('mostrar.persona')|| request()->routeIs('ingresar.persona')|| request()->routeIs('index.area')
             ],
             [
                 'name' => 'REPORTES',
@@ -413,22 +452,26 @@
             [
                 'name' => 'ANALITICA',
                 'icon' => 'gear-wide-connected',
+                'permission' => 'menu analitica',
                 'subMenu' => [
                     [
                         'name' => 'Analitica contribuyentes',
                         'route' => 'analitica.contribuyente',
+                        'permission' => 'Analitica contribuyentes',
                         'active' => request()->routeIs('analitica.contribuyente')
                     ],
 
                     [
                         'name' => ' Predios por Rango',
                         'route' => 'analitica.predios',
+                        'permission' => 'Predios por Rango',
                         'active' => request()->routeIs('analitica.predios')
                     ],
 
                     [
                         'name' => ' Predios Exonerados',
                         'route' => 'analiticaExonerados.predios',
+                        'permission' => 'Predios Exonerados',
                         'active' => request()->routeIs('analiticaExonerados.predios')
                     ],
 
@@ -440,16 +483,19 @@
             [
                 'name' => 'MI PERFIL',
                 'icon' => 'gear-wide-connected',
+                'permission' => 'menu perfil',
                 'subMenu' => [
                     [
                         'name' => 'Firma Electronica',
                         'route' => 'index.firma',
+                        'permission' => 'Firma Electronica',
                         'active' => request()->routeIs('index.firma')
                     ],
 
                     [
                         'name' => 'Cambiar Contraseña',
                         'route' => 'index.contrasenia',
+                        'permission' => 'Cambiar Contraseña',
                         'active' => request()->routeIs('index.contrasenia')
                     ],
 
@@ -470,6 +516,8 @@
             <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
                 <ul class="nav flex-column">
                     @foreach ($menuItems as $item)
+                      @if (!isset($item['permission']) || auth()->user()->can($item['permission']))
+                        
                         <li class="nav-item">
                             @if (isset($item['subMenu']))
                                 <a class="nav-link d-flex justify-content-between align-items-center gap-2" data-bs-toggle="collapse" href="#submenu{{ $loop->index }}" role="button" aria-expanded="{{ $item['active'] ? 'true' : 'false' }}">
@@ -481,19 +529,19 @@
                                 <div class="collapse {{ $item['active'] ? 'show' : '' }}" id="submenu{{ $loop->index }}">
                                     <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                         @foreach ($item['subMenu'] as $subItem)
-                                            <li class="nav-item d-flex align-items-center">
-                                                <a href="{{ route($subItem['route']) }}" class="nav-link ms-4 me-2 {{ $subItem['active'] ? 'active' : '' }}">{{ $subItem['name'] }}</a>
-                                            </li>
+                                          @if (!isset($subItem['permission']) || auth()->user()->can($subItem['permission']))
+                                              <li class="nav-item d-flex align-items-center">
+                                                  <a href="{{ route($subItem['route']) }}" class="nav-link ms-4 me-2 {{ $subItem['active'] ? 'active' : '' }}">{{ $subItem['name'] }}</a>
+                                              </li>
+                                          @endif
                                         @endforeach
                                     </ul>
                                 </div>
                             @else
-                                <a class="nav-link d-flex align-items-center gap-2 {{ $item['active'] ?? false ? 'active' : '' }}" href="{{ isset($item['route']) ? route($item['route']) : '#' }}">
-                                    <svg class="bi"><use xlink:href="#{{ $item['icon'] }}"/></svg>
-                                    {{ $item['name'] }}
-                                </a>
+                                
                             @endif
                         </li>
+                      @endif
                     @endforeach
                 </ul>
                 <hr class="my-3">

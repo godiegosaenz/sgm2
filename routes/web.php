@@ -34,6 +34,7 @@ use App\Http\Controllers\AreaController;
 use App\Http\Controllers\FirmaElectronicaController;
 use App\Http\Controllers\ParteDiarioController;
 use App\Http\Controllers\CambiarContraseniaController;
+use App\Http\Controllers\PermisosController;
 
 use App\Models\TransitoEnte;
 use App\Models\TransitoTarifaAnual;
@@ -363,6 +364,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('generar-parte-diario/{fecha}', [ParteDiarioController::class, 'consultar'])->name('consultar.parte_diario');
     Route::get('descargar-parte/{pdf}', [ParteDiarioController::class, 'descargarPdf'])->name('descargarPdf.parte_diario');
 
+
+    //permisos
+    Route::get('permisos', [PermisosController::class, 'index'])->name('index.permisos');
+    Route::get('listado-rol', [PermisosController::class, 'listar'])->name('listar.permisos');
+    Route::get('/ver-permisos-roles/{id}', [PermisosController::class, 'verPermisos']);
+    Route::get('/eliminar-permiso/{idpermiso}/{idrol}', [PermisosController::class, 'eliminarPermiso']);
+    Route::post('/guardar-permiso', [PermisosController::class, 'guardarPermiso']);
 
 });
 
