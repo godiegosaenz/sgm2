@@ -267,7 +267,7 @@
                         <img src="{{ asset('qrfirma/Rentas.png') }}"  width="60%">
                     @endif -->
                     @if($impuesto->estado==3)  
-                        <img src="{{ asset('qrfirma/FIRMA-RENTA.png') }}"   height="115px">
+                        <img src="{{ asset('FIRMA-RENTA.png') }}"   height="115px">
                     @endif
                 </td>
                 <td style="text-align: center">
