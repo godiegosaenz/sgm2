@@ -231,6 +231,7 @@ class AnaliticaContribuyenteController extends Controller
             $consultar= DB::connection('pgsql')->table('sgm_transito.impuestos as i')
             ->leftJoin('sgm_transito.vehiculo as v', 'v.id', '=', 'i.vehiculo_id')
             ->leftJoin('sgm_transito.clase_tipo_vehiculo as cv', 'cv.id', '=', 'v.tipo_clase_id')
+            ->leftJoin('sgm_transito.clase_vehiculo as clv', 'clv.id', '=', 'v.clase_id')
             ->leftJoin('sgm_transito.marca_vehiculo as mv', 'mv.id', '=', 'v.marca_id')
             // ->leftJoin('sgm_transito.cat_ente as en', 'en.id', '=', 'i.cat_ente_id')
             ->leftJoin('sgm_app.cat_ente as en', 'en.id', '=', 'i.cat_ente_id')
@@ -241,7 +242,7 @@ class AnaliticaContribuyenteController extends Controller
             })
             ->whereBetween('i.created_at', [$desde, $hasta])
             ->where('i.estado',3)
-            ->select('v.placa_cpn_ramv','v.chasis','v.avaluo','v.year','mv.descripcion as marca_veh','cv.descripcion as clase','en.nombres as nombre_propietario','en.apellidos as apellido_propietario','en.ci_ruc as identificacion_propietario' ,'i.year_impuesto','i.numero_titulo','i.total_pagar','i.usuario','i.created_at','i.id as identificador')
+            ->select('v.placa_cpn_ramv','v.chasis','v.avaluo','v.year','mv.descripcion as marca_veh','cv.descripcion as clase','en.nombres as nombre_propietario','en.apellidos as apellido_propietario','en.ci_ruc as identificacion_propietario' ,'i.year_impuesto','i.numero_titulo','i.total_pagar','i.usuario','i.created_at','i.id as identificador','clv.descripcion as clase_desc')
             ->get();
 
             foreach($consultar as $key=> $data){
@@ -290,7 +291,7 @@ class AnaliticaContribuyenteController extends Controller
             $nombrePDF="reporte_pago_transito.pdf";
 
             $pdf=\PDF::LoadView('reportes.reporte_pago_transito',['datos'=>$consultaInfo['data'],'desde'=>$request->filtroDesde,'hasta'=>$request->filtroHasta,'tipo'=>$request->filtroTipo ]);
-            $pdf->setPaper("A4", "portrait");
+            $pdf->setPaper("A4", "landscape");
             $estadoarch = $pdf->stream();
 
             //lo guardamos en el disco temporal

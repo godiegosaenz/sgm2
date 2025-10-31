@@ -283,7 +283,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('carga-combo-marca', [TransitoImpuestoController::class, 'comboMarca'])->name('comboMarca.transito');
     Route::get('carga-combo-tipo-vehiculo', [TransitoImpuestoController::class, 'comboTipoVehiculo'])->name('comboTipoVehiculo.transito');
-    Route::get('carga-combo-clase-tipo-vehiculo/{id}', [TransitoImpuestoController::class, 'comboClaseTipoVehiculo'])->name('comboClaseTipoVehiculo.transito');
+    Route::get('carga-combo-clase-tipo-vehiculo', [TransitoImpuestoController::class, 'comboClaseTipoVehiculo'])->name('comboClaseTipoVehiculo.transito');
+    Route::get('busca-tipo-vehiculo/{idclase}', [TransitoImpuestoController::class, 'buscaTipoVehiculo'])->name('buscaTipoVehiculo.transito');
 
     Route::get('firma-p12/{documento}/{pdoce}/{clave}/{prefijo}/{disco}', [TransitoImpuestoController::class, 'firmarDocumento2'])->name('firmarDocumento2.transito');
 

@@ -106,7 +106,7 @@ class TransitoVehiculoController extends Controller
 
     public function getVehiculoPlaca(Request $r){
         $query = $r->input('query');
-        $data = TransitoVehiculo::with('tipo_vehiculo','marca')->where('placa_cpn_ramv',$query)->first();
+        $data = TransitoVehiculo::with('tipo_vehiculo','marca','clase_vehiculo')->where('placa_cpn_ramv',$query)->first();
         if ($data) {
             // Devolver la información en formato JSON
             return response()->json($data, 200);

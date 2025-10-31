@@ -18,7 +18,7 @@
         <div class="btn-toolbar mb-2 mb-md-0">
             <div class="btn-group me-2">
                 <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal"
-                    data-bs-target="#modalEditarRangos"> <i class="bi bi-table"></i> Tarifa </button>
+                    data-bs-target="#modalEditarRangos"> <i class="bi bi-table"></i> Impuesto Rodaje Municipal </button>
                 <button type="button" class="btn btn-sm btn-outline-secondary" onclick="abrirModalMantenimiento()"><i
                         class="bi bi-gear-fill"></i> Conf</button>
             </div>
@@ -147,7 +147,14 @@
 
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label for="nombresRepresentante" class="form-label">Tipo</label>
+                    <label for="nombresRepresentante" class="form-label">Clase Vehiculo</label>
+                    <input type="text" class="form-control" id="clase_tipo" maxlength="255"
+                        value="{{old('nombresRepresentante2')}}" disabled>
+
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="nombresRepresentante" class="form-label">Cuadro Tarifario RTV</label>
                     <input type="text" class="form-control" id="tipo" maxlength="255"
                         value="{{old('nombresRepresentante2')}}" disabled>
 
@@ -164,9 +171,9 @@
                     <label for="nombresRepresentante" class="form-label"> Proceso de Matriculacion Vehicular </label>
                     <select class="form-select {{ $errors->has('year_declaracion') ? 'is-invalid' : '' }}"
                         id="year_declaracion" name="year_declaracion" onchange="calcularImpuesto()">
-                        <option value="">Seleccione año</option>
+                        <!-- <option value="">Seleccione año</option> -->
                         @foreach ($year as $y)
-                            <option value="{{ $y->year }}">{{ $y->year }}</option>
+                            <option value="{{ $y->year }}" selected>{{ $y->year }}</option>
                         @endforeach
                     </select>
                     <div class="invalid-feedback" id="error_year_declaracion"></div>
@@ -203,11 +210,22 @@
                             </tr>
                         </thead>
                         <tbody id="tabla-conceptos">
+                           
+                        
                             @foreach($conceptos as $concepto)
+                                @php
+                                    $checked='checked';
+                                    if($concepto->codigo=='DM' || $concepto->codigo=='DE'){
+                                        $checked='';
+                                    }
+
+                                @endphp
+                                
+                               
                                 <tr>
                                     <td>
                                         <input type="checkbox" class="form-check-input concepto-check"
-                                            data-id="{{ $concepto->id }}" checked id="check_valor_{{ $concepto->codigo }}">
+                                            data-id="{{ $concepto->id }}" {{ $checked }} id="check_valor_{{ $concepto->codigo }}">
                                     </td>
                                     <td>{{ $concepto->concepto }}</td>
                                     <td>
@@ -342,8 +360,6 @@
                                     <div class="invalid-feedback" id="error-placa_v"></div>
                                 </div>
 
-                                
-
                                 <div class="mb-3">
                                     <label for="chasis_v" class="form-label">Chasis</label>
                                     <input type="text" class="form-control" id="chasis_v" name="chasis_v" required >
@@ -357,12 +373,12 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="tipo_v" class="form-label">Grupo de vehiculo</label>
-                                    <select class="form-select {{ $errors->has('tipo_v') ? 'is-invalid' : '' }}" id="tipo_v"
-                                        name="tipo_v" required onchange="cargaComboClaseTipoVeh()">
-                                        
+                                    <label for="tipo_v" class="form-label">Clase de vehiculo</label>
+                                    <select class="form-select {{ $errors->has('tipo_v') ? 'is-invalid' : '' }}" id="clase_tipo_v"
+                                        name="clase_tipo_v" required onchange="seleccionaTipoVeh()">
+
                                     </select>
-                                    <div class="invalid-feedback" id="error_tipo_v"></div>
+                                    <div class="invalid-feedback" id="error_clasetipo_v"></div>
                                 </div>
                             </div>
 
@@ -377,7 +393,7 @@
 
 
                                 <div class="mb-3">
-                                    <label for="year_v" class="form-label">Año</label>
+                                    <label for="year_v" class="form-label">Año Modelo</label>
                                     <input type="number" class="form-control" id="year_v" name="year_v" min="1900"
                                         max="2100" required>
                                     <div class="invalid-feedback" id="error-year_v"></div>
@@ -391,13 +407,15 @@
                                     <div class="invalid-feedback" id="error-marca"></div>
                                 </div>
 
-                                 <div class="mb-3">
-                                    <label for="tipo_v" class="form-label">Clase de vehiculo</label>
-                                    <select class="form-select {{ $errors->has('tipo_v') ? 'is-invalid' : '' }}" id="clase_tipo_v"
-                                        name="clase_tipo_v" required>
+                                
+
+                                <div class="mb-3">
+                                    <label for="tipo_v" class="form-label">Cuadro Tarifario RTV</label>
+                                    <select class="form-select {{ $errors->has('tipo_v') ? 'is-invalid' : '' }}" id="tipo_v"
+                                        name="tipo_v" required >
                                         
                                     </select>
-                                    <div class="invalid-feedback" id="error_clasetipo_v"></div>
+                                    <div class="invalid-feedback" id="error_tipo_v"></div>
                                 </div>
                                 
                             </div>
@@ -419,7 +437,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Tarifa anual del año {{ date('Y') }}</h5>
+                    <h5 class="modal-title">Impuesto Rodaje Municipal del año {{ date('Y') }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -540,7 +558,7 @@
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button"
                                 role="tab" aria-controls="tab2" aria-selected="false">
-                                Grupo Vehiculo Año  {{date('Y')  }}
+                                Cuadro Tarifario RTV  {{date('Y')  }}
                             </button>
                         </li>
 
@@ -848,6 +866,7 @@
 @endsection
 @push('scripts')
     <script>
+        
         $('#check_valor_REC').prop('disabled', true)
         let token = "{{csrf_token()}}";
         document.getElementById('vehiculo_id').addEventListener('keypress', function (event) {
@@ -860,6 +879,7 @@
                 spinner.style.display = 'inline-block';
                 let chasis = document.getElementById('chasis');
                 let tipo = document.getElementById('tipo');
+                let clase_tipo = document.getElementById('clase_tipo');
                 let year_modelo = document.getElementById('year_modelo');
                 let avaluo = document.getElementById('avaluo');
                 let marca = document.getElementById('marca');
@@ -874,8 +894,10 @@
                     }).then(function (res) {
                         //propietario.value = res.data.ci_ruc;
                         if (res.status == 200) {
+                            console.log(res)
                             chasis.value = res.data.chasis ?? 'S/N';
                             tipo.value = res.data.Tipo ?? 'S/N';
+                            clase_tipo.value = res.data.clase_vehiculo.descripcion ?? 'S/N';
                             year_modelo.value = res.data.year ?? 'S/N';
                             avaluo.value = res.data.avaluo ?? 'S/N';
                             marca.value = res.data.Marcav ?? 'S/N';
@@ -893,6 +915,7 @@
 
                             chasis.value = errorResponseS.message;
                             tipo.value = errorResponseS.message;
+                            clase_tipo.value = errorResponseS.message;
                             year_modelo.value = errorResponseS.message;
                             avaluo.value = errorResponseS.message;
                             marca.value = errorResponseS.message;
@@ -906,6 +929,17 @@
                 } else {
                     spinner.style.display = 'none';
                 }
+                let nombres=$('#nombrescliente').val()
+                let avaluo_aux=$('#avaluo').val()
+                
+                if(avaluo_aux=="No encontrado"){
+                    avaluo_aux=""
+                }
+
+                if(nombres!="" && avaluo_aux!=""){
+                    calcularImpuesto()
+                }
+                    
             }
         });
         document.getElementById('cliente_id').addEventListener('keypress', function (event) {
@@ -1000,13 +1034,7 @@
                 conceptos.push({ id, valor });
             });
 
-            // 2. Poner en 0.00 los NO seleccionados
-            document.querySelectorAll('.concepto-check:not(:checked)').forEach(checkbox => {
-                const id = checkbox.getAttribute('data-id');
-                const input = document.getElementById(`valor_${id}`);
-                input.value = '0.00';
-            });
-
+            
             if (conceptos.length > 0) {
                 const spinner = document.getElementById('spinner-total');
                 if (spinner) spinner.style.display = 'inline-block';
@@ -1025,8 +1053,10 @@
                         // Reemplazar los valores en los inputs
                         let total = 0;
                         res.data.conceptos.forEach(function (concepto) {
+                            console.log(concepto)
                             const input = document.getElementById('valor_' + concepto.id);
                             if (input) {
+                                console.log(input)
                                 input.value = concepto.nuevo_valor.toFixed(2);
                                 // var valor = Number(concepto.nuevo_valor)
                                 // input.value = valor.toFixed(2);
@@ -1054,12 +1084,33 @@
                     document.getElementById('spinner-btn').classList.add('d-none');
                     document.getElementById('btn-text').textContent = 'Calcular';
                 });;
+
+                // 2. Poner en 0.00 los NO seleccionados
+            document.querySelectorAll('.concepto-check:not(:checked)').forEach(checkbox => {
+                const id = checkbox.getAttribute('data-id');
+                const input = document.getElementById(`valor_${id}`);
+                input.value = '0.00';
+            });
+
             } else {
                 alert('Selecciona al menos un concepto para calcular.');
             }
         });
 
         document.getElementById('btn-guardar').addEventListener('click', function () {
+
+            let nombres=$('#nombrescliente').val()
+            let avaluo_aux=$('#avaluo').val()
+                
+            if(avaluo_aux=="No encontrado"){
+                avaluo_aux=""
+            }
+
+            if(nombres=="" || avaluo_aux==""){
+                alertNotificar("Selecccione un Cliente y/o Vehiculo existente","error")
+                return
+            }
+
             // limpiar errores
             ['vehiculo_id', 'cliente_id', 'year_declaracion'].forEach(id => {
                 const input = document.getElementById(id);

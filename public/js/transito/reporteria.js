@@ -95,24 +95,23 @@ $("#formReporteria").submit(function(e){
                 $.each(response.data,function(i, item){
                     tota_recaudado=tota_recaudado + Number(item.total_pagar)
                     $('#tabla_ingreso').append(`<tr>
-                                                    <td style="width:25%; text-align:left; vertical-align:middle">
-                                                        <li><b>Descripcion:</b> ${item.clase}</li>
-                                                        <li><b>Marca-Modelo:</b> ${item.marca_veh}-${item.year}</li>
-                                                        <li><b>Placa:</b> ${item.placa_cpn_ramv}</li> 
-                                                        <li><b>Avaluo:</b> ${item.avaluo}</li> 
+                                                    <td style="width:35%; text-align:left; vertical-align:middle">
+                                                        <p style="margin-bottom:0px !important"><b>Placa:</b> ${item.placa_cpn_ramv}</p> 
+                                                        <p style="margin-bottom:0px !important"><b>Cuadro Tarifario RTV:</b> ${item.clase}</p>
+                                                
                                                         
                                                     </td>
     
                                                   
                                                     <td style="width:30%;  text-align:left; vertical-align:middle">
-                                                        <li><b>C.I:</b> ${item.identificacion_propietario}</li>
-                                                        <li><b>Nombres:</b> ${item.nombre_propietario} ${item.apellido_propietario}</li>
+                                                        <p style="margin-bottom:0px !important"><b>C.I:</b> ${item.identificacion_propietario}</p>
+                                                        <p style="margin-bottom:0px !important"><b>Nombres:</b> ${item.nombre_propietario} ${item.apellido_propietario}</p>
                                                     </td>
     
-                                                     <td style="width:30%; text-align:left; vertical-align:middle">
-                                                        <li><b>Usuario:</b> ${item.nombre_usuario}</li>
-                                                        <li><b>Fecha Pago:</b> ${item.created_at}</li>
-                                                        <li><b>Año Impuesto:</b> ${item.year_impuesto}</li>
+                                                     <td style="width:20%; text-align:left; vertical-align:middle">
+                                                        <p style="margin-bottom:0px !important"><b>Usuario:</b> ${item.nombre_usuario}</p>
+                                                        <p style="margin-bottom:0px !important"><b>Fecha Pago:</b> ${item.created_at}</p>
+                                                       
                                                     </td>
     
                                                    
@@ -217,7 +216,7 @@ function descargarPdf(){
 
 function descargarReporte(id){
     vistacargando("m","Espere por favor")
-    $.get("../transito-imprimir/"+id+'/C', function(data){
+    $.get("../transito-imprimir/"+id+'/G', function(data){
         vistacargando("")
         if(data.error==true){
             alertNotificar(data.mensaje,"error");

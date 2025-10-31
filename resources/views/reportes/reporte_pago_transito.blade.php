@@ -136,7 +136,7 @@
                     <span style="font-size:14px; text-align:center"><b>Pagos Transito Municipal</b><br></span>
                  
                 </center> 
-                <center>
+                <center> 
                     <table class="ltable"  border="0" width="100%" >
                         <tr style="font-size: 9px;">
                             <td width="10%"></td>
@@ -172,22 +172,22 @@
                         
                         <th width="2%" style="border: 0px; ;border-color: #D3D3D3; text-align: center; line-height:15px">#</th>
 
-                        <th width="15%" style="border: 0px; ;border-color: #D3D3D3; text-align: center; line-height:15px">VEHICULO</th>
+                        <th width="10%" style="border: 0px; ;border-color: #D3D3D3; text-align: center">Cedula</th>
 
-                        <th width="20%" style="border: 0px; ;border-color: #D3D3D3; text-align: center">DETALLE PAGO</th>
+                        <th width="20%" style="border: 0px; ;border-color: #D3D3D3; text-align: center">Cliente</th>
 
-                        <!-- <th width="5%" style="border: 0px; ;border-color: #D3D3D3; text-align: center">IMP. ANUAL A LOS VEHICULOS  </th>
+                        <th width="10%" style="border: 0px; ;border-color: #D3D3D3; text-align: center; line-height:15px">Placa/CPN/RAMV</th>
 
-                        <th width="5%" style="border: 0px; ;border-color: #D3D3D3; text-align: center">DUPLICADO DE MATRICULA  </th>
+                        <th width="10%" style="border: 0px; ;border-color: #D3D3D3; text-align: center; line-height:15px">Clase</th>
 
-                        <th width="5%" style="border: 0px; ;border-color: #D3D3D3; text-align: center">REVISION TECNICA VEHICULAR  </th>
+                        <th width="40%" style="border: 0px; ;border-color: #D3D3D3; text-align: center">Cuadro Tarifario RTV</th>
+
                         
-                        <th width="5%" style="border: 0px; ;border-color: #D3D3D3; text-align: center">STICKER REVISION VEHICULAR  </th>
 
-                        <th width="5%" style="border: 0px; ;border-color: #D3D3D3; text-align: center">TASA SERVICIOS ADMINISTRATIVOS  </th> -->
+                       
 
 
-                        <th width="5%" style="border: 0px; ;border-color: #D3D3D3; text-align: center">TOTAL  </th>
+                        <th width="5%" style="border: 0px; ;border-color: #D3D3D3; text-align: center">Total  </th>
                 
                     </tr>
 
@@ -210,21 +210,33 @@
                                         {{ $key+1 }}
                                     </td>
 
+                                    <td align="left" style="border-left: 0px; border-center:0px;border-color: #D3D3D3">
+                                          {{$item->identificacion_propietario}}
+                                        
+                                        
+                                    </td>
+
+                                    <td align="left" style="border-left: 0px; border-center:0px;border-color: #D3D3D3">
+                                       {{$item->nombre_propietario}} {{$item->apellido_propietario}}
+                                        
+                                        
+                                    </td>
+
                                     <td align="left" style="border-center:0px;border-color: #D3D3D3">
-                                        <li style="list-style: none;"><b>Descripcion:</b> {{$item->clase}}</li>
-                                        <li style="list-style: none;"><b>Marca-Modelo:</b> {{$item->marca_veh}}-{{$item->year}}</li>
-                                        <li style="list-style: none;"><b>Placa:</b> {{$item->placa_cpn_ramv}}</li> 
-                                        <li style="list-style: none;"><b>Avaluo:</b> {{$item->avaluo}}</li> 
+                                        <li style="list-style: none;">{{$item->placa_cpn_ramv}}
+                                    </td>
+
+                                     <td align="left" style="border-center:0px;border-color: #D3D3D3">
+                                        <li style="list-style: none;">{{$item->clase_desc}}
                                     </td>
 
                                   
                                     <td align="left" style="border-left: 0px; border-center:0px;border-color: #D3D3D3">
-                                        <li style="list-style: none;"><b>Usuario:</b> {{$item->nombre_usuario}}</li>
-                                        <li style="list-style: none;"><b>Fecha Pago:</b> {{$item->created_at}}</li>
-                                        <li style="list-style: none;"><b>Año Impuesto:</b> {{$item->year_impuesto}}</li>
-                                        <li style="list-style: none;"><b>Contribuyente:</b>  {{$item->nombre_propietario}} {{$item->apellido_propietario}}</li>
-                                        
+                                        {{$item->clase}}
+
                                     </td>
+
+                                   
 
                                     <!-- <td align="right" style="border-left: 0px; border-center:0px;border-color: #D3D3D3">
                                         {{ $item->conceptos[0]->valor ?? '' }}
@@ -281,7 +293,7 @@
                     <tfoot >
                     <tr style="font-size:10px !important;line-height:5px" style="">
 
-                        <td  colspan="3"style="font-size:9px;border: 0px; border-color: #D3D3D3;  text-align: right;">
+                        <td  colspan="6"style="font-size:9px;border: 0px; border-color: #D3D3D3;  text-align: right;">
                             <b>TOTAL</b>
                         </td>
 

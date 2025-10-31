@@ -279,16 +279,32 @@ class TransitoImpuestoController extends Controller
         }
     }
 
-    public function comboClaseTipoVehiculo($id){
+    public function comboClaseTipoVehiculo(){
         try{
             $tipo_vehiculo = ClaseVehiculo::where('estado','A')
-            ->where('clase_tipo_vehiculo_id',$id)
+            // ->where('clase_tipo_vehiculo_id',$id)
             ->get();
             return["error"=>false, "resultado"=>$tipo_vehiculo];
 
         } catch (Exception $e) {
             DB::rollback();
             return (['error' => true, 'mensaje'=>'Ocurrio un error, intentelo mas tarde']);
+        }
+    }
+
+    public function buscaTipoVehiculo($id){
+        try{
+            $tipo_vehiculo = \DB::connection('pgsql')
+            ->table('sgm_transito.clase_vehiculo as cv')
+            ->where('cv.estado','A')
+            ->where('cv.id',$id)
+            ->select('cv.clase_tipo_vehiculo_id')
+            ->first();
+            return["error"=>false, "resultado"=>$tipo_vehiculo];
+
+        } catch (Exception $e) {
+            DB::rollback();
+            return (['error' => true, 'mensaje'=>'Ocurrio un error, intentelo mas tarde '.$e]);
         }
     }
 
@@ -439,6 +455,8 @@ class TransitoImpuestoController extends Controller
                     array_push($array,["id"=>$data["id"], "nuevo_valor"=>(float)$concepto->valor, "codigo"=>"SRV"]);
                 }else if($concepto["codigo"]=="DM"){
                     array_push($array,["id"=>$data["id"], "nuevo_valor"=>(float)$concepto->valor, "codigo"=>"DM"]);
+                }else if($concepto["codigo"]=="DE"){
+                    array_push($array,["id"=>$data["id"], "nuevo_valor"=>(float)$concepto->valor, "codigo"=>"DE"]);
                 }else if($concepto["codigo"]=="REC"){
                     $valor_recargo=$concepto->valor;
                     $valor_recargo_ant=$valor_recargo * $diferencia;                   

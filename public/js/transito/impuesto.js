@@ -808,6 +808,7 @@ function capturaInfoVehiculo(){
     $('#chasis_v').val('')
     $('#year_v').val('')
     $('#marca_v').val('')
+    $('#clase_tipo_v').val('')
     $('#nombre_btn_vehiculo').html('')
     $('#btn_guarda_act_vehiculo').prop('disabled',false)
 
@@ -839,11 +840,12 @@ function capturaInfoVehiculo(){
         $('#marca_v').val(data.data.marca_id)
         $('#tipo_ident').val(data.data.tipo_identif)
         console.log(data)
-        cargaComboClaseTipoVeh()
+        // cargaComboClaseTipoVeh()
 
-        setTimeout(function() {
-            $('#clase_tipo_v').val(data.data.clase_id)
-        }, 1000);
+        // setTimeout(function() {
+        //     $('#clase_tipo_v').val(data.data.clase_id)
+        // }, 1000);
+        $('#clase_tipo_v').val(data.data.clase_id)
          
     }).fail(function(){
         // vistacargando("")
@@ -867,6 +869,7 @@ $('#documentopdf').on('hidden.bs.modal', function (e) {
 $('#vehiculoModal').on('show.bs.modal', function () {
    cargaComboMarca()
    cargaComboTipoVeh()
+   cargaComboClaseTipoVeh()
 });
 
 function cargaComboMarca(){
@@ -923,7 +926,58 @@ function cargaComboTipoVeh(){
     }); 
 }
 
+function seleccionaTipoVeh(){
+    vistacargando("m","");
+    var clase_tipo_v=$('#clase_tipo_v').val()
+     $('#tipo_v').val('')
+    $.get('busca-tipo-vehiculo/'+clase_tipo_v, function(data){
+        console.log(data)
+        vistacargando("")
+        if(data.error==true){
+			alertNotificar(data.mensaje,"error");
+			return;   
+		}
+        $('#tipo_v').val(data.resultado.clase_tipo_vehiculo_id)
+        
+    }).fail(function(){
+        alertNotificar("Ocurrio un error","error");
+        vistacargando("")
+       
+    }); 
+}
+
+$('#tipo_v').on('focus mousedown', function (e) {
+    e.preventDefault();
+});
+
+
 function cargaComboClaseTipoVeh(){
+    vistacargando("m","");
+    $.get('carga-combo-clase-tipo-vehiculo', function(data){
+        console.log(data)
+        vistacargando("")
+        if(data.error==true){
+			alertNotificar(data.mensaje,"error");
+			return;   
+		}
+        $('#clase_tipo_v').html('');	
+        $('#clase_tipo_v').find('option').remove().end();
+        $('#clase_tipo_v').append('<option value="">Selecccione un  tipo</option>');
+        $.each(data.resultado, function(i,item){
+          			
+            $('#clase_tipo_v').append('<option class="" value="'+item.id+'">'+item.descripcion+'</option>');
+           
+        })
+         $("#clase_tipo_v").trigger("chosen:updated"); // actualizamos el combo 
+          
+        
+    }).fail(function(){
+        alertNotificar("Ocurrio un error","error");
+        vistacargando("")
+       
+    }); 
+}
+function cargaComboClaseTipoVeh1(){
     var tipo_v=$('#tipo_v').val()
     vistacargando("m","");
     $.get('carga-combo-clase-tipo-vehiculo/'+tipo_v, function(data){

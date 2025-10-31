@@ -257,14 +257,17 @@
     @endforeach
 
 
-    <table width="100%" style="margin-top:10px">
+    <table width="100%" style="margin-top:0px">
         <tbody>
 
-            <tr>
+            <tr style="line-height: 5px;">
                 <td style="text-align: center">
                     <!-- tenia 3 en el esatdo -->
-                    @if($impuesto->estado==13)            
+                    <!-- @if($impuesto->estado==13)            
                         <img src="{{ asset('qrfirma/Rentas.png') }}"  width="60%">
+                    @endif -->
+                    @if($impuesto->estado==3)  
+                        <img src="{{ asset('qrfirma/FIRMA-RENTA.png') }}"   height="115px">
                     @endif
                 </td>
                 <td style="text-align: center">
@@ -281,7 +284,7 @@
 
             </tr>
 
-            <tr>
+            <tr style="line-height: 5px;">
                 <td style="text-align: center">
                     __________________________________________
                 </td>
