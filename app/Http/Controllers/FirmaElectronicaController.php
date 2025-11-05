@@ -34,6 +34,10 @@ class FirmaElectronicaController extends Controller
     }
 
     public function index(){
+        if(!Auth()->user()->hasPermissionTo('Firma Electronica'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
         return view('firma.index');
     }
 

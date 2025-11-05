@@ -18,7 +18,10 @@ class AnaliticaContribuyenteController extends Controller
      */
     public function index()
     {
-
+        if(!Auth()->user()->hasPermissionTo('Analitica contribuyentes'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
         $duplicados_nombres_apellidos = DB::connection('pgsql')->table('sgm_app.cat_ente')
                         ->select('nombres', 'apellidos', DB::raw('COUNT(*) as cantidad'))
                         ->groupBy('nombres', 'apellidos')
@@ -28,8 +31,11 @@ class AnaliticaContribuyenteController extends Controller
     }
 
     public function predios(){
-
-        return view("analitica.AnaliticaPredio");
+        if(!Auth()->user()->hasPermissionTo('Predios por Rango'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
+        return view("analitica.analiticaPredio");
     }
 
     public function cargaData(Request $request){
@@ -216,6 +222,10 @@ class AnaliticaContribuyenteController extends Controller
 
     public function vistaReporteTransito(){
         //Gate::authorize('reporte_transito', TransitoImpuesto::class);
+        if(!Auth()->user()->hasPermissionTo('Reporteria Transito'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
         return view('transito.consultaPagos');
     }
 

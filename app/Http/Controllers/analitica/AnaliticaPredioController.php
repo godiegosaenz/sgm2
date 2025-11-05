@@ -13,6 +13,10 @@ class AnaliticaPredioController extends Controller
 {
     
     public function predios(){
+        if(!Auth()->user()->hasPermissionTo('Predios Exonerados'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
         return view("analitica.AnaliticaPredioExonerado");
     }
 

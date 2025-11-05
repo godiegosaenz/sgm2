@@ -24,6 +24,10 @@ class RemisionInteresController extends Controller
     public function index()
     {
         //Gate::authorize('index', RemisionInteres::class);
+        if(!Auth()->user()->hasPermissionTo('Lista de remisiones'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
         $RemisionInteres = RemisionInteres::orderBy('id', 'desc')->get();
         return view('tesoreria.remisionInteresLista', compact('RemisionInteres'));
     }
@@ -34,6 +38,11 @@ class RemisionInteresController extends Controller
     public function create()
     {
         //Gate::authorize('create', RemisionInteres::class);
+        
+        if(!Auth()->user()->hasPermissionTo('Remision de interes'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
         $num_predio = 0;
         return view('tesoreria.remisionInteresNuevo',compact('num_predio'));
     }
@@ -297,6 +306,10 @@ class RemisionInteresController extends Controller
 
     public function consultaLiquidacionConRemision(Request $r){
         //Gate::authorize('reporte_liquidaciones', PsqlLiquidacion::class);
+        if(!Auth()->user()->hasPermissionTo('Reporte de liquidaciones'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
         return view('tesoreria.consultaLiquidacionConRemision');
     }
 

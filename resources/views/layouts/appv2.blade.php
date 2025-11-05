@@ -240,12 +240,23 @@
 
 <header class="navbar sticky-top bg-dark flex-md-nowrap p-0 shadow" data-bs-theme="dark">
   <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6 text-white" href="#">GADM San Vicente</a>
-
-  <div id="navbarSearch" class="navbar-search w-100 collapse">
-
+  
+    <div class="ms-auto dropdown me-3">
+    <a class="nav-link dropdown-toggle text-white d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+      {{ Auth::user()->persona->apellidos }} {{ Auth::user()->persona->nombres }}
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end">
+      <li>
+        <form method="POST" action="{{ route('logout') }}">
+          @csrf
+          <button type="submit" class="dropdown-item">Cerrar sesión</button>
+        </form>
+      </li>
+    </ul>
   </div>
+  
 </header>
-
+ 
 <div class="container-fluid">
   <div class="row">
     @php
@@ -493,16 +504,16 @@
                     ],
 
                     [
-                        'name' => 'Cambiar Contraseña',
+                        'name' => 'Cambiar Contrasenia',
                         'route' => 'index.contrasenia',
-                        'permission' => 'Cambiar Contraseña',
+                        'permission' => 'Cambiar Contrasenia',
                         'active' => request()->routeIs('index.contrasenia')
                     ],
 
                    
 
                 ],
-                'active' => request()->routeIs('index.firma')
+                'active' => request()->routeIs('index.firma') || request()->routeIs('index.contrasenia')
             ],
         ];
     @endphp
@@ -545,17 +556,7 @@
                     @endforeach
                 </ul>
                 <hr class="my-3">
-                <ul class="nav flex-column mb-auto">
-                    <li class="nav-item">
-                    <form action="{{route('logout')}}" method="post">
-                        @csrf
-                        <a onclick="this.closest('form').submit()" class="nav-link d-flex align-items-center gap-2" href="#">
-                            <svg class="bi"><use xlink:href="#door-closed"/></svg>
-                            Cerrar sesión
-                        </a>
-                    </form>
-                    </li>
-                </ul>
+                
             </div>
         </div>
     </div>

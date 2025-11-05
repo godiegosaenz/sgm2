@@ -17,6 +17,10 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 class CambiarContraseniaController extends Controller
 {
     public function index(){
+        if(!Auth()->user()->hasPermissionTo('Cambiar Contrasenia'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
         return view('contrasenia.index');
     }
 

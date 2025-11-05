@@ -22,6 +22,10 @@ class UsuarioController extends Controller
     public function index()
     {
         //Gate::authorize('lista_usuario', User::class);
+        if(!Auth()->user()->hasPermissionTo('Lista de usuarios'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
         return view('configuraciones.usuarioListar');
     }
 
@@ -31,6 +35,10 @@ class UsuarioController extends Controller
     public function create()
     {
         //Gate::authorize('crear_usuario', User::class);
+        if(!Auth()->user()->hasPermissionTo('Crear usuario'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
         return view('configuraciones.usuarioCrear');
     }
 

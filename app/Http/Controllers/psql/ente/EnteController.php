@@ -20,6 +20,10 @@ class EnteController extends Controller
      */
     public function index()
     {
+        if(!Auth()->user()->hasPermissionTo('Lista de clientes'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
         return view('ente.ente');
     }
 
@@ -28,6 +32,10 @@ class EnteController extends Controller
      */
     public function create()
     {
+        if(!Auth()->user()->hasPermissionTo('Ingresar cliente'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
         return view('ente.enteCrear');
     }
 

@@ -31,6 +31,10 @@ class TesoreriaController extends Controller
     public function index()
     {
         //Gate::authorize('index', ExoneracionAnterior::class);
+        if(!Auth()->user()->hasPermissionTo('Lista exoneracion'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
         return view('tesoreria.exoneracion');
     }
 
@@ -45,6 +49,10 @@ class TesoreriaController extends Controller
             abort(403);
         }*/
         //Gate::authorize('create', ExoneracionAnterior::class);
+        if(!Auth()->user()->hasPermissionTo('Exoneracion tercera edad'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
         return view('tesoreria.consulta');
     }
 

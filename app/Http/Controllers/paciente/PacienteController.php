@@ -23,6 +23,10 @@ class PacienteController extends Controller
 
     public function index(Request $r){
         //Gate::authorize('crear_empleados', User::class);
+        if(!Auth()->user()->hasPermissionTo('Ingresar empleado'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
         $provincias = Provincia::all();
         $cantones = new Canton();
         if(Cookie::get('provincia_id') !== null){

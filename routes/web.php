@@ -1,5 +1,5 @@
 <?php
-
+ 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\ConsultaPredioController;
@@ -86,9 +86,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard/discapacidad', [HomeController::class, 'obtenerDatosDiscapacidad']);
     Route::post('/consulta', [ConsultaPredioController::class, 'store'])->name('catpredio.consulta');
 
-    Route::get('paciente/mostrar', [ListarPacienteController::class, 'index'])->name('mostrar.persona');
+    Route::get('persona/mostrar', [ListarPacienteController::class, 'index'])->name('mostrar.persona');
     Route::post('paciente/listar', [ListarPacienteController::class, 'listar'])->name('listar.persona');
-    Route::get('paciente/ingresar', [PacienteController::class, 'index'])->name('ingresar.persona');
+    Route::get('persona/ingresar', [PacienteController::class, 'index'])->name('ingresar.persona');
     Route::post('paciente/guardar', [PacienteController::class, 'store'])->name('guardar.persona');
     Route::patch('paciente/actualizar/{id}', [PacienteController::class, 'update'])->name('actualizar.paciente');
     Route::post('paciente/foto', [DetallarPacienteController::class, 'guardarFoto'])->name('foto.persona');

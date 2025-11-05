@@ -30,6 +30,10 @@ class TituloRuralController extends Controller
     }
     public function index(){
         //Gate::authorize('impresion_titulos_rur', PsqlLiquidacion::class);
+        if(!Auth()->user()->hasPermissionTo('Impresion de titulos Rural'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
         $num_predio = 0;
         return view('tesoreria.TitulosRural',compact('num_predio'));
     }

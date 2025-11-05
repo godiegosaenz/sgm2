@@ -59,6 +59,10 @@ class TransitoImpuestoController extends Controller
     {
         //Gate::authorize('index', TransitoImpuesto::class);
         // dd(auth()->user());
+        if(!Auth()->user()->hasPermissionTo('Listar impuestos transito'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
         return view('transito.impuestos_index');
     }
 
@@ -68,6 +72,10 @@ class TransitoImpuestoController extends Controller
     public function create(){
         //Gate::authorize('create', TransitoImpuesto::class);
         // $entes = TransitoEnte::all();
+        if(!Auth()->user()->hasPermissionTo('Impuesto transitos'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
         $vehiculos = TransitoVehiculo::all();
         $conceptos = TransitoConcepto::where('anio',date('Y'))->orderby('orden','asc')->WHERE('estado','A')->get();
         $year = TransitoYearImpuesto::all();

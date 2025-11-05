@@ -18,6 +18,10 @@ class PermisosController extends Controller
     public function index()
     {
         //Gate::authorize('index', PsqlPaPatente::class);
+        if(!Auth()->user()->hasPermissionTo('Permisos'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
          $permisos=DB::table('permissions')
         ->get();
         return view('permisos.index',[

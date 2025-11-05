@@ -34,6 +34,10 @@ class ParteDiarioController extends Controller
     }
 
     public function index(){
+        if(!Auth()->user()->hasPermissionTo('Parte Diario'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
         return view('parte_diario.index');
     }
 

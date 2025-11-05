@@ -13,6 +13,10 @@ use Exception;
 class AreaController extends Controller
 {
     public function index(){
+        if(!Auth()->user()->hasPermissionTo('Jefe Area'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
         $area = Area::where('estado','A')->get();
         $usuario = User::with('persona')->where('status',1)->get();
         return view('area.index',compact('area','usuario'));

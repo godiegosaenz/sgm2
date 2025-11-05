@@ -1,8 +1,14 @@
 @extends('layouts.appv2')
-@section('title', 'Mostrar lista de patente')
+@section('title', 'Permisos')
 @push('styles')
 <link href="{{ asset('css/dataTables.bootstrap5.min.css') }}" rel="stylesheet">
 <link href="{{ asset('css/rowReorder.bootstrap5.min.css') }}" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+<style>
+    .select2-container .select2-selection--single {
+    height: 36px !important;
+}
+</style>
 @endpush
 @section('content')
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -129,13 +135,13 @@
         </div>
     </div>
 
-    <div class="modal fade_ detalle_class"  id="modal_Permisos" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade_ detalle_class"  id="modal_Permisos" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span></button>
+                    
                     <h4 class="modal-title">AGREGAR PERMISOS</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
@@ -238,14 +244,19 @@
  <!-- jQuery -->
  <script src="{{ asset('js/jquery-3.5.1.js') }}"></script>
  <!-- DataTables -->
-  <script src="{{ asset('js/permisos/mantenimiento.js?v='.rand())}}"></script>
+  
 
  <script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
  <script src="{{ asset('js/dataTables.bootstrap5.min.js') }}"></script>
  <script src="{{ asset('js/dataTables.rowReorder.min.js') }}"></script>
-
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<script src="{{ asset('js/permisos/mantenimiento.js?v='.rand())}}"></script>
 <script>
+    
+  
+
    
+
     llenar_tabla_rol()
    
 </script>

@@ -39,6 +39,10 @@ class CatastroContribuyente extends Controller
     public function index()
     {
         //Gate::authorize('index', PsqlCatastroContribuyente::class);
+        if(!Auth()->user()->hasPermissionTo('Catastro contribuyentes'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
         $data = PsqlCatastroContribuyente::all();
         $PsqlProvincia = PsqlProvincia::all();
         $totalCatastro = $data->count();

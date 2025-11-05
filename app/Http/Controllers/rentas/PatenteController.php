@@ -34,6 +34,10 @@ class PatenteController extends Controller
     public function index()
     {
         //Gate::authorize('index', PsqlPaPatente::class);
+        if(!Auth()->user()->hasPermissionTo('Lista de patente'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
         return view('rentas.patente');
     }
 
@@ -43,6 +47,10 @@ class PatenteController extends Controller
     public function create()
     {
        // Gate::authorize('create', PsqlPaPatente::class);
+        if(!Auth()->user()->hasPermissionTo('Declarar patente'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
         $PsqlYearDeclaracion = PsqlYearDeclaracion::select('id','year_declaracion','year_ejercicio_fiscal')->get();
         $PsqlProvincia = PsqlProvincia::all();
         $clase = PsqlPaClaseContribuyente::all();
@@ -1769,6 +1777,10 @@ class PatenteController extends Controller
 
     public function vistaReportePatente(){
         // Gate::authorize('reporte_patente', PsqlPaPatente::class);
+        if(!Auth()->user()->hasPermissionTo('Reporteria Patente'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
         return view('rentas.consultaPagosPatente');
     }
 

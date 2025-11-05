@@ -18,6 +18,10 @@ class ListarPacienteController extends Controller
 
     public function index(){
         //Gate::authorize('lista_empleados', User::class);
+        if(!Auth()->user()->hasPermissionTo('Lista de empleados'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
         return view('paciente.listarpaciente');
     }
 
