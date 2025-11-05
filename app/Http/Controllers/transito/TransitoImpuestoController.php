@@ -408,18 +408,21 @@ class TransitoImpuestoController extends Controller
             
             $vehiculo = TransitoVehiculo::where('id',$request->input('vehiculo_id'))->first();
             $aplica_recargo=0;
-            if($vehiculo->tipo_identif=="PLACA"){
+           
+            //if($vehiculo->tipo_identif=="PLACA"){
                 $placa=$vehiculo->placa_cpn_ramv;
                 $lastChar = substr($placa, -1);
                 $mes = date("n");
 
                 $lastChar=(int)$lastChar;
                 $valor=$lastChar+1;
-               
-                if($valor<$mes){
+                
+                if($valor<$mes && $valor>1){
                     $aplica_recargo=1;
                 }
-            }
+                
+            //}
+           
 
             $ultimo_anio_matriculacion=$request->last_year_declaracion;
             $diferencia=0;

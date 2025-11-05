@@ -183,7 +183,7 @@
                     <label for="nombresRepresentante" class="form-label">Ultimo Año Matriculacion</label>
                     <select class="form-select {{ $errors->has('last_year_declaracion') ? 'is-invalid' : '' }}"
                         id="last_year_declaracion" name="last_year_declaracion" onchange="calcularImpuesto()">
-                         @for ($i = 0; $i <= 10; $i++)
+                        @for ($i = 1; $i <= 15; $i++)
                             <option value="{{ date('Y') - $i }}">{{ date('Y') - $i }}</option>
                         @endfor
                     </select>
