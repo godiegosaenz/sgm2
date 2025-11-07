@@ -1025,6 +1025,8 @@
             const year = document.getElementById('year_declaracion').value;
             const last_year_declaracion = document.getElementById('last_year_declaracion').value;
 
+            // alert(year)
+
             if (!vehiculo_id || !cliente_id || !year) {
                 alert('Por favor llene los campos: vehiculo, cliente y Año de impuesto');
                 return;

@@ -236,14 +236,14 @@ class TransitoImpuestoController extends Controller
                 $total += $concepto['valor'];
             }
 
-
-
-            $verificaNum=TransitoImpuesto::where('year_impuesto',date('Y'))
+            // $verificaNum=TransitoImpuesto::where('year_impuesto',date('Y'))
+            // ->select('numero_titulo')
+            // ->whereNotNull('numero_titulo')
+            // ->get()->last();
+            $verificaNum=TransitoImpuesto::whereNotNull('numero_titulo')
             ->select('numero_titulo')
-            ->whereNotNull('numero_titulo')
-            ->get()->last();
+            ->orderBy('id','desc')->first();
 
-         
             $num=0;
             if(is_null($verificaNum)){
                 $num=1;
