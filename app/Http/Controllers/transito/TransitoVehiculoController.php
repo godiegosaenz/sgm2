@@ -52,6 +52,7 @@ class TransitoVehiculoController extends Controller
             $verificaExiste->tipo_identif = $request->tipo_ident;
             $verificaExiste->tipo_clase_id = $request->tipo_v; // Mapeo desde "tipo"
             $verificaExiste->clase_id = $request->clase_tipo_v; 
+            $verificaExiste->tipo_vehi = $request->tipo_vehiculo; 
             $verificaExiste->save();
 
             return ['success' => true, 'vehiculo' => $verificaExiste, 'mensaje'=>'Vehiculo Actualizado Exitosamente'];
@@ -67,6 +68,7 @@ class TransitoVehiculoController extends Controller
         $vehiculo->tipo_identif = $request->tipo_ident;
         $vehiculo->tipo_clase_id = $request->tipo_v; // Mapeo desde "tipo"
         $vehiculo->clase_id = $request->clase_tipo_v; 
+        $vehiculo->tipo_vehi = $request->tipo_vehiculo; 
         $vehiculo->save();
 
         return response()->json(['success' => true, 'vehiculo' => $vehiculo , 'mensaje'=>'Vehiculo Registrado Exitosamente']);

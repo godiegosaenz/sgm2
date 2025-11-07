@@ -809,6 +809,7 @@ function capturaInfoVehiculo(){
     $('#year_v').val('')
     $('#marca_v').val('')
     $('#clase_tipo_v').val('')
+    $('#tipo_vehiculo').val('')
     $('#nombre_btn_vehiculo').html('')
     $('#btn_guarda_act_vehiculo').prop('disabled',false)
 
@@ -846,6 +847,7 @@ function capturaInfoVehiculo(){
         //     $('#clase_tipo_v').val(data.data.clase_id)
         // }, 1000);
         $('#clase_tipo_v').val(data.data.clase_id)
+        $('#tipo_vehiculo').val(data.data.tipo_vehi)
          
     }).fail(function(){
         // vistacargando("")

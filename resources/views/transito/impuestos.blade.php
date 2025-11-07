@@ -159,6 +159,13 @@
                         value="{{old('nombresRepresentante2')}}" disabled>
 
                 </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="nombresRepresentante" class="form-label">Tipo</label>
+                    <input type="text" class="form-control" id="tipo_vehi" maxlength="255"
+                        value="{{old('nombresRepresentante2')}}" disabled>
+
+                </div>
             </div>
         </fieldset>
 
@@ -380,6 +387,17 @@
                                     </select>
                                     <div class="invalid-feedback" id="error_clasetipo_v"></div>
                                 </div>
+
+                                <div class="mb-3">
+                                    <label for="placa_v" class="form-label">Tipo Vehiculo</label>
+                                    <select class="form-select {{ $errors->has('tipo_vehiculo') ? 'is-invalid' : '' }}" id="tipo_vehiculo"name="tipo_vehiculo" required >
+                                        <option value="">Seleccione tipo</option>
+                                        <option value="PUBLICO">PUBLICO</option>
+                                        <option value="PARTICULAR">PARTICULAR</option>
+                                        
+                                    </select>
+                                    <div class="invalid-feedback" id="error-placa_v"></div>
+                                </div>
                             </div>
 
                             <!-- Columna 2 -->
@@ -406,8 +424,6 @@
                                     </select>
                                     <div class="invalid-feedback" id="error-marca"></div>
                                 </div>
-
-                                
 
                                 <div class="mb-3">
                                     <label for="tipo_v" class="form-label">Cuadro Tarifario RTV</label>
@@ -880,6 +896,7 @@
                 let chasis = document.getElementById('chasis');
                 let tipo = document.getElementById('tipo');
                 let clase_tipo = document.getElementById('clase_tipo');
+                let tipo_vehi = document.getElementById('tipo_vehi');
                 let year_modelo = document.getElementById('year_modelo');
                 let avaluo = document.getElementById('avaluo');
                 let marca = document.getElementById('marca');
@@ -897,7 +914,8 @@
                             console.log(res)
                             chasis.value = res.data.chasis ?? 'S/N';
                             tipo.value = res.data.Tipo ?? 'S/N';
-                            clase_tipo.value = res.data.clase_vehiculo.descripcion ?? 'S/N';
+                            clase_tipo.value = res.data.clase_vehiculo.descripcion ?? 'S/N';                            
+                            tipo_vehi.value = res.data.tipo_vehi ?? 'S/N';
                             year_modelo.value = res.data.year ?? 'S/N';
                             avaluo.value = res.data.avaluo ?? 'S/N';
                             marca.value = res.data.Marcav ?? 'S/N';

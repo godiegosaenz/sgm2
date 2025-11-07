@@ -183,6 +183,10 @@
                                     <td width="30%"><strong>Marca:</strong></td>
                                     <td width="70%">{{$item['vehiculo']->marca->descripcion}}</td>
                                 </tr>
+                                <tr style="line-height: 8px;">
+                                    <td width="30%"><strong>Tipo:</strong></td>
+                                    <td width="70%">{{$item['vehiculo']->tipo_vehi ?? 'PUBLICO'}}</td>
+                                </tr>
 
                         </tbody>
                     </table>
