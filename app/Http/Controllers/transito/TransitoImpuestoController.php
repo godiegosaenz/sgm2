@@ -57,8 +57,6 @@ class TransitoImpuestoController extends Controller
     }
     public function index()
     {
-        //Gate::authorize('index', TransitoImpuesto::class);
-        // dd(auth()->user());
         if(!Auth()->user()->hasPermissionTo('Listar impuestos transito'))
         {
             abort(403, 'No tienes acceso a esta seccion.');
@@ -66,12 +64,8 @@ class TransitoImpuestoController extends Controller
         return view('transito.impuestos_index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create(){
-        //Gate::authorize('create', TransitoImpuesto::class);
-        // $entes = TransitoEnte::all();
+        
         if(!Auth()->user()->hasPermissionTo('Impuesto transitos'))
         {
             abort(403, 'No tienes acceso a esta seccion.');
@@ -114,15 +108,21 @@ class TransitoImpuestoController extends Controller
             }
             $cadena=null;
             if($inicio!=date('Y')){                
-                // Genera el array: [2023, 2024]
                 $anios = range($inicio, $fin - 1);
-                // dd($anios);
-                $ultimosCinco = array_slice($anios, -5);
-
-                // dd($ultimosCinco);
+                $ultimo_5_anio=date('Y')-5;
+                if($request->last_year_declaracion<$ultimo_5_anio){
+                    $ultimosCinco = array_slice($anios, -5);
+                }else{
+                    $ultimosCinco = $anios;
+                }
+                
                 $cadena = implode(', ', $ultimosCinco);
+                
             }
-
+            if($cadena==null){
+                $cadena=date('Y');
+            }
+            // dd($cadena);
             $qr_Rentas = DB::connection('mysql')
                         ->table('area as a')
                         ->leftJoin('jefe_area as ja', 'ja.id_area', '=', 'a.id_area')
@@ -213,9 +213,6 @@ class TransitoImpuestoController extends Controller
             }
 
             $TransitoImpuesto = new TransitoImpuesto();
-
-           
-            
             $TransitoImpuesto->cat_ente_id = $request->cliente_id_2;
             $TransitoImpuesto->vehiculo_id = $request->vehiculo_id_2;
             $TransitoImpuesto->usuario = Auth()->user()->name; //estado 1 = pagado
@@ -236,10 +233,6 @@ class TransitoImpuestoController extends Controller
                 $total += $concepto['valor'];
             }
 
-            // $verificaNum=TransitoImpuesto::where('year_impuesto',date('Y'))
-            // ->select('numero_titulo')
-            // ->whereNotNull('numero_titulo')
-            // ->get()->last();
             $verificaNum=TransitoImpuesto::whereNotNull('numero_titulo')
             ->select('numero_titulo')
             ->orderBy('id','desc')->first();
@@ -251,10 +244,6 @@ class TransitoImpuestoController extends Controller
                 $solo_numero=explode("-",$verificaNum->numero_titulo);
                 $num = (int)$solo_numero[1] + 1;
             }
-
-            
-            // Ahora actualizas el total
-            // $TransitoImpuesto->numero_titulo = 'TR-'.str_pad($TransitoImpuesto->id, 5, '0', STR_PAD_LEFT).'-'.$TransitoImpuesto->year_impuesto;
 
             $TransitoImpuesto->numero_titulo = 'TR-'.str_pad($num, 5, '0', STR_PAD_LEFT).'-'.$TransitoImpuesto->year_impuesto;
 
@@ -358,14 +347,13 @@ class TransitoImpuestoController extends Controller
                 ->first();
 
             $clasetipo = TransitoClaseTipo::where('id', $vehiculo->tipo_clase_id)->first();
-            // dd($clasetipo);
             $valortipoclase = $clasetipo->valor;
         }
         $tarifaAnual=0;
         if(!is_null($tarifa)){
             $tarifaAnual = $tarifa->valor;
         }
-        //  $tarifaAnual = $tarifa->valor;
+
         // Simulación de cálculo: aquí puedes aplicar lógica propia
         $nuevosConceptos = collect($conceptos)->map(function ($item) use ($tarifaAnual,$valortipoclase,$tasaAdministrativa,$tasaStickerVehicular,$tasaDuplicadoEspecie) {
             // verificas cada concepto y colocas el valor
@@ -412,6 +400,12 @@ class TransitoImpuestoController extends Controller
             
             $vehiculo = TransitoVehiculo::where('id',$request->input('vehiculo_id'))->first();
             $aplica_recargo=0;
+            $ultimo_4_anio=date('Y')-4;
+            $anio_modelo=$vehiculo->year;
+            $desmarca_rtv="";
+            if($anio_modelo>$ultimo_4_anio){
+                $desmarca_rtv='S';
+            }          
            
             if($vehiculo->tipo_identif=="PLACA"){
                 $placa=$vehiculo->placa_cpn_ramv;
@@ -427,20 +421,18 @@ class TransitoImpuestoController extends Controller
                 
             }
            
-
             $ultimo_anio_matriculacion=$request->last_year_declaracion;
 
             $ultimo_5_anio=date('Y')-5;
             if($ultimo_5_anio>=$ultimo_anio_matriculacion){
                 $ultimo_anio_matriculacion=$ultimo_5_anio;
             }
-            // dd("a");
+        
             $diferencia=0;
             if($ultimo_anio_matriculacion < date('Y')){
                 $diferencia=(date('Y')-1) - (int)$ultimo_anio_matriculacion;
             }
-            // dd($diferencia);
-
+           
             $tarifa = null;
             $valortipoclase = null;
             if ($vehiculo) {
@@ -456,6 +448,9 @@ class TransitoImpuestoController extends Controller
                
                 $clasetipo = TransitoClaseTipo::where('id', $vehiculo->tipo_clase_id)->first();
                 $valortipoclase = $clasetipo->valor;
+                if($desmarca_rtv=='S'){
+                    $valortipoclase=0;
+                }
             }
             $tarifaAnual=0;
             if(!is_null($tarifa)){
@@ -467,6 +462,7 @@ class TransitoImpuestoController extends Controller
                 
                 $concepto=TransitoConcepto::where('id',$data["id"])->first();
                 if($concepto["codigo"]=="RTV"){
+    
                     array_push($array,["id"=>$data["id"], "nuevo_valor"=> (float)$valortipoclase, "codigo"=>"RTV"]);
                    
                 }else if($concepto["codigo"]=="IAV"){
@@ -492,10 +488,12 @@ class TransitoImpuestoController extends Controller
             }
             
             $total =1;
-            return response()->json([
+            return [
                 'conceptos' => $array,
-                'total' => round($total, 2)
-            ]);
+                'total' => round($total, 2),
+                'anio_modelo'=>$anio_modelo,
+                'desmarca_rtv'=>$desmarca_rtv
+            ];
         } catch (\Throwable $th) {
             return ['mensaje'=>'Ocurrió un error '.$th,'error'=>true];
         }
@@ -531,8 +529,6 @@ class TransitoImpuestoController extends Controller
 
         $pdf = PDF::loadView('transito.reporteTitulosTransito', $data);
 
-        // return $pdf->stream("aa.pdf");
-
         return $pdf->download('reporte_titulo_impuesto'.$r->id.'.pdf');
     }
 
@@ -552,11 +548,7 @@ class TransitoImpuestoController extends Controller
             ->addColumn('vehiculo', function ($listaimpuesto) {
                 return $listaimpuesto->vehiculo->placa_cpn_ramv;
             })
-            // ->addColumn('action', function ($listaimpuesto) {
-            //     return '<a href="' . route('show.transito', $listaimpuesto->id) . '" class="btn btn-primary btn-sm">Imprimir</a>
-            //     <a href="' . route('show.transito', $listaimpuesto->id) . '" class="btn btn-danger btn-sm">Eliminar</a>';
-            // })
- 
+            
             ->addColumn('action', function ($listaimpuesto) {
                 $disabled="";
                 if($listaimpuesto->estado==1){
@@ -567,8 +559,7 @@ class TransitoImpuestoController extends Controller
 
                 }else if($listaimpuesto->estado==3){
                     $btn='<a class="btn btn-danger btn-sm" onclick="eliminarTitulo(\''.$listaimpuesto->id.'\')">Dar Baja</a>';
-                    // $btn_pdf=' <a class="btn btn-primary btn-sm" onclick="verpdf(\''.$listaimpuesto->documento_firmado.'\')" >Titulo</a>';
-
+                   
                     $btn_pdf=' <a class="btn btn-primary btn-sm" onclick="generarPdf(\''.$listaimpuesto->id.'\')" >Titulo</a>';
                 }
                 return $btn_pdf.' '.$btn;
@@ -999,10 +990,9 @@ class TransitoImpuestoController extends Controller
         try {
             $data = [];
             $id_persona=0;
-            // $existeEnBd=Ent
             $validaPersona=PsqlEnte::where('ci_ruc',$cedula)
             ->first();
-            // dd($validaPersona);
+            
             $id="";
             $nombres="";
             $apellidos="";
@@ -1028,8 +1018,6 @@ class TransitoImpuestoController extends Controller
                 $direccion=$validaPersona->direccion;
                 $date = new \DateTime($validaPersona->fecha_nacimiento);
 
-                // Formatear la fecha como 'yy-mm-dd'
-                // $fechaFormateada = $date->format('y-m-d');
                 $f_nacimiento= $date->format('Y-m-d');;
                 
                 if(!is_null($ultimoTlFn)){

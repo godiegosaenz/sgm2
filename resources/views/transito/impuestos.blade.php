@@ -1044,6 +1044,7 @@
 
             
             if (conceptos.length > 0) {
+                
                 const spinner = document.getElementById('spinner-total');
                 if (spinner) spinner.style.display = 'inline-block';
 
@@ -1057,6 +1058,7 @@
                 }).then(function (res) {
                     console.log("txt")
                     console.log(res)
+
                     if (res.status === 200) {
                         // Reemplazar los valores en los inputs
                         let total = 0;
@@ -1073,6 +1075,15 @@
 
                             
                         });
+
+                        
+                        $('#check_valor_RTV').prop('checked',true)
+                       
+                        if(res.data.desmarca_rtv=="S"){
+                           
+                            $('#check_valor_RTV').prop('checked',false)
+                        }
+
                         // Mostrar el total con dos decimales
                         document.getElementById('total_concepto').value = total.toFixed(2);
                         console.log(total);
