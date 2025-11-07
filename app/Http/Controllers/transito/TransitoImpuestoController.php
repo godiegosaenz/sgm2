@@ -116,7 +116,11 @@ class TransitoImpuestoController extends Controller
             if($inicio!=date('Y')){                
                 // Genera el array: [2023, 2024]
                 $anios = range($inicio, $fin - 1);
-                $cadena = implode(', ', $anios);
+                // dd($anios);
+                $ultimosCinco = array_slice($anios, -5);
+
+                // dd($ultimosCinco);
+                $cadena = implode(', ', $ultimosCinco);
             }
 
             $qr_Rentas = DB::connection('mysql')
@@ -425,6 +429,12 @@ class TransitoImpuestoController extends Controller
            
 
             $ultimo_anio_matriculacion=$request->last_year_declaracion;
+
+            $ultimo_5_anio=date('Y')-5;
+            if($ultimo_5_anio>=$ultimo_anio_matriculacion){
+                $ultimo_anio_matriculacion=$ultimo_5_anio;
+            }
+            // dd("a");
             $diferencia=0;
             if($ultimo_anio_matriculacion < date('Y')){
                 $diferencia=(date('Y')-1) - (int)$ultimo_anio_matriculacion;
@@ -546,7 +556,7 @@ class TransitoImpuestoController extends Controller
             //     return '<a href="' . route('show.transito', $listaimpuesto->id) . '" class="btn btn-primary btn-sm">Imprimir</a>
             //     <a href="' . route('show.transito', $listaimpuesto->id) . '" class="btn btn-danger btn-sm">Eliminar</a>';
             // })
-
+ 
             ->addColumn('action', function ($listaimpuesto) {
                 $disabled="";
                 if($listaimpuesto->estado==1){

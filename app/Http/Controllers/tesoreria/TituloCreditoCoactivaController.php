@@ -238,7 +238,7 @@ class TituloCreditoCoactivaController extends Controller
                                         ROUND((liq.saldo * (
                                             SELECT ROUND((porcentaje / 100), 2) 
                                             FROM sgm_financiero.ren_intereses i
-                                            WHERE i.anio = liq.anio
+                                            WHERE i.anio = 2024
                                             LIMIT 1
                                         )), 2)
                                     ELSE
@@ -311,7 +311,8 @@ class TituloCreditoCoactivaController extends Controller
                                 ), 0)
                             ), 2)
                         FROM sgm_financiero.ren_det_liquidacion d
-                        WHERE d.liquidacion = liq.id AND d.rubro = 2
+                        WHERE d.liquidacion = liq.id 
+                        AND d.rubro = 2
                         LIMIT 1
                     ) AS total_complemento
                 "),
@@ -320,7 +321,7 @@ class TituloCreditoCoactivaController extends Controller
             )
             ->where('liq.id', $valor)
             ->get();
-            // dd($liquidacion);
+            //dd($liquidacion);
         
 
             $fecha_hoy=date('Y-m-d');

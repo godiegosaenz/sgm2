@@ -195,8 +195,7 @@ class PatenteController extends Controller
 
     public function store(Request $r)
     {
-        // dd($r->profesionales);
-        // dd($r->all());
+        
         DB::beginTransaction(); // Iniciar la transacción
 
         try {
@@ -233,7 +232,6 @@ class PatenteController extends Controller
             ];
             $reglas=[];
             if (!isset($r->profesionales)) {
-                // dd(sset($r->profesional));
                 // Reglas de validación según lleva contabilidad
                 $reglas = ($r->lleva_contabilidad == '1') ? [
                     'cmb_propietario' => 'required',
@@ -284,7 +282,7 @@ class PatenteController extends Controller
                     // 'lleva_contabilidad' => 'boolean',
                 ];
             }
-            // dd($r->profesionales);
+           
             // Validar datos
             $validator = Validator::make($r->all(), $reglas, $messages, $attributes);
 
@@ -295,7 +293,7 @@ class PatenteController extends Controller
                     'errores' => $validator->errors()
                 ];
             }
-            // dd($r->all());
+         
             // Datos validados
             $validatedData = $validator->validated();
 
@@ -311,36 +309,7 @@ class PatenteController extends Controller
                 $cantidad_percibida=$r->cont_total_patrimonio * ($r->cont_total_percibidos_sv / 100);
             }
 
-            // $PsqlPaPatente = PsqlPaPatente::create([
-            //     'Contribuyente_id' => $validatedData['catastro_id'],
-            //     'fecha_declaracion' => $validatedData['fecha_declaracion'],
-            //     'calificacion_artesanal' => $validatedData['calificacion_artesanal'] ?? false,
-            //     'year_declaracion' => $validatedData['year_declaracion'],
-            //     'lleva_contabilidad' => $validatedData['lleva_contabilidad'] ?? false,
-            //     'act_caja_banco' => $validatedData['act_caja_banco'] ?? null,
-            //     'act_ctas_cobrar' => $validatedData['act_ctas_cobrar'] ?? null,
-            //     'act_inv_mercaderia' => $validatedData['act_inv_mercaderia'] ?? null,
-            //     'act_vehiculo_maquinaria' => $validatedData['act_vehiculo_maquinaria'] ?? null,
-            //     'act_equipos_oficinas' => $validatedData['act_equipos_oficinas'] ?? null,
-            //     'act_edificios_locales' => $validatedData['act_edificios_locales'] ?? null,
-            //     'act_terrenos' => $validatedData['act_terrenos'] ?? null,
-            //     'act_total_activos' => $validatedData['act_total_activos'] ?? $validatedData['cont_total_activos'] ?? null,
-            //     'pas_ctas_dctos_pagar' => $validatedData['pas_ctas_dctos_pagar'] ?? null,
-            //     'pas_obligaciones_financieras' => $validatedData['pas_obligaciones_financieras'] ?? null,
-            //     'pas_otras_ctas_pagar' => $validatedData['pas_otras_ctas_pagar'] ?? null,
-            //     'pas_otros_pasivos' => $validatedData['pas_otros_pasivos'] ?? null,
-            //     'pas_total_pasivos' => $validatedData['pas_total_pasivos'] ?? $validatedData['cont_total_pasivos'] ?? null,
-            //     'patrimonio' => $validatedData['patrimonio_total'] ?? $validatedData['cont_total_patrimonio'] ?? null,
-            //     'formulario_sri_num' => $validatedData['cont_form_sri'] ?? null,
-            //     'original_sustitutiva' => $validatedData['cont_original'] ?? null,
-            //     'porc_ing_perc_sv' => $validatedData['cont_total_percibidos_sv'] ?? null,
-            //     // 'cantidad_ingreso_percibido' => $cantidad_percibida,
-            //     // 'archivo_patente' => $nombreDocumento.".".$extension;
-            //     'estado' => $estado,
-
-
-            // ]);
-
+            
             $PsqlPaPatente = PsqlPaPatente::create([
                 'Contribuyente_id' => $validatedData['cmb_propietario'],
                 'fecha_declaracion' => $validatedData['fecha_declaracion'],
@@ -494,13 +463,13 @@ class PatenteController extends Controller
                 }
             }
 
-            if($estado==1){
+            /*if($estado==1){
                 $guardaLiquidacionPatente=$this->guardaLiquidacion($PsqlPaPatente->id,259);
                 if($es_activo==true){
                     $guardaLiquidacionPatente=$this->guardaLiquidacion($PsqlPaPatente->id,17);
 
                 }
-            }
+            }*/
 
             DB::commit(); // Confirmar los cambios en la BD
 
@@ -1153,7 +1122,7 @@ class PatenteController extends Controller
     {
        
         if($r->ajax()){
-            $listaPatente = PsqlPaPatente::where('estado','=',1)->orderby('id','desc')->get();
+            $listaPatente = PsqlPaPatente::whereIn('estado',[1,4])->orderby('id','desc')->get();
             return Datatables($listaPatente)
             ->editColumn('lleva_contabilidad', function($listaPatente){
                     if($listaPatente->lleva_contabilidad == true){
@@ -1165,7 +1134,7 @@ class PatenteController extends Controller
             ->editColumn('estado', function($listaPatente){
                     if($listaPatente->estado == 1){
                         return '<span class="badge text-bg-primary">Generada</span>';
-                    }else  if($listaPatente->estado == 3){
+                    }else  if($listaPatente->estado == 4){
                         return '<span class="badge text-bg-success">Completada</span>';
                     }
                 })
@@ -1183,17 +1152,34 @@ class PatenteController extends Controller
             })
             ->addColumn('codigo', function ($listaPatente) {
                 // return $listaPatente->year->year_ejercicio_fiscal;
-                return '<b>PATENTE:</b>'.$listaPatente->codigo . '<br> <b>1.5 ACTIVO:</b>' . $listaPatente->codigo_act;
+                return '<b>PATENTE:</b>'.$listaPatente->estado . '<br> <b>1.5 ACTIVO:</b>' . $listaPatente->codigo_act;
             })
             // ->addColumn('action', function ($listaPatente) {
             //     return '<a class="btn btn-primary btn-sm" href="'.route('index.patente',$listaPatente->id).'">Ver</a>
             //      ';
             // })
+
+            // ->addColumn('action', function ($listaPatente) {
+            //     return '<a class="btn btn-primary btn-sm" onclick="verPatentePdf(\''.$listaPatente->id.'\')">Ver</a>
+            //     <a class="btn btn-danger btn-sm" onclick="eliminarTitulo(\''.$listaPatente->id.'\')">Dar Baja</a>';
+            // })
             ->addColumn('action', function ($listaPatente) {
-                // return '<button type="button" class="btn btn-primary btn-sm" onclick="verPatente('$listaPatente->id')">Ver</a>
-                //  ';
-                return '<a class="btn btn-primary btn-sm" onclick="verPatentePdf(\''.$listaPatente->id.'\')">Ver</a>
-                <a class="btn btn-danger btn-sm" onclick="eliminarTitulo(\''.$listaPatente->id.'\')">Dar Baja</a>';
+                $disabled="";
+                $btn_pdf="";
+                $btn="";
+                if($listaPatente->estado==1){
+                    $btn='<a class="btn btn-success btn-sm" onclick="cobrarTitulo(\''.$listaPatente->id.'\')">Cobrar</a>';
+                    $disabled="disabled";
+
+                    $btn_pdf='<button class="btn btn-primary btn-sm" onclick="verpdf(\''.$listaPatente->id.'\')" disabled>Titulo</button>';
+
+                }else if($listaPatente->estado==4){
+                    $btn='<a class="btn btn-danger btn-sm" onclick="eliminarTitulo(\''.$listaPatente->id.'\')">Dar Baja</a>';
+                    // $btn_pdf=' <a class="btn btn-primary btn-sm" onclick="verpdf(\''.$listaimpuesto->documento_firmado.'\')" >Titulo</a>';
+
+                    $btn_pdf=' <a class="btn btn-primary btn-sm" onclick="generarPdf(\''.$listaPatente->id.'\')" >Titulo</a>';
+                }
+                return $btn_pdf.' '.$btn;
             })
             ->rawColumns(['action','estado','ruc','year_declaracion','codigo'])
             ->make(true);

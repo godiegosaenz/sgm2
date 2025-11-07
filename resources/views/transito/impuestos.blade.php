@@ -1,5 +1,5 @@
 @extends('layouts.appv2')
-@section('title', 'Catastro contribuyente')
+@section('title', 'Transito')
 @push('styles')
     <link href="{{ asset('css/dataTables.bootstrap5.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/rowReorder.bootstrap5.min.css') }}" rel="stylesheet">
@@ -109,7 +109,7 @@
 
                         <input type="text" class="form-control {{$errors->has('vehiculo_id') ? 'is-invalid' : ''}}"
                             id="vehiculo_id" name="vehiculo_id" placeholder="Ingrese una placa o cpn o ramv"
-                            value="{{old('vehiculo_id')}}" required>
+                            value="{{old('vehiculo_id')}}" onkeyup="convertirMayuscula(this)" required>
                         <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
                             data-bs-target="#vehiculoModal">
                             Nuevo

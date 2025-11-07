@@ -381,10 +381,13 @@ class RemisionInteresController extends Controller
                     }
 
                     $impuesto_predial = DB::connection('pgsql')->table('sgm_financiero.ren_det_liquidacion')->select('sgm_financiero.ren_det_liquidacion.*')->where('liquidacion', '=', $liq->id)->where('rubro', '=', 2)->first();
-                    if($liq->anio < $fechaactual){
-                        $data['recargo'] = round($impuesto_predial->valor * 0.10,2);
-                    }else{
-                        $data['recargo'] = 0.00;
+                    $data['recargo'] = 0.00;
+                    if(!is_null($impuesto_predial)){
+                        if($liq->anio < $fechaactual){
+                            $data['recargo'] = round($impuesto_predial->valor * 0.10,2);
+                        }else{
+                            $data['recargo'] = 0.00;
+                        }
                     }
                     $data['suma_emision_interes_recargos'] = $data['total_pago'] + $data['interes'] + $data['recargo'];
 
