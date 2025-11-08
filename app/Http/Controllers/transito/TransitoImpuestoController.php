@@ -84,7 +84,7 @@ class TransitoImpuestoController extends Controller
        
         DB::beginTransaction();
         try {
-
+            
             $vehiculo = TransitoVehiculo::where('id',$request->input('vehiculo_id_2'))->first();
             $aplica_recargo=0;
             $fin = date('Y');
@@ -122,7 +122,7 @@ class TransitoImpuestoController extends Controller
             if($cadena==null){
                 $cadena=date('Y');
             }
-            // dd($cadena);
+           
             $qr_Rentas = DB::connection('mysql')
                         ->table('area as a')
                         ->leftJoin('jefe_area as ja', 'ja.id_area', '=', 'a.id_area')
@@ -548,6 +548,10 @@ class TransitoImpuestoController extends Controller
             ->addColumn('vehiculo', function ($listaimpuesto) {
                 return $listaimpuesto->vehiculo->placa_cpn_ramv;
             })
+            ->editColumn('created_at', function ($item) {
+                // Formato: día-mes-año hora:minuto:segundo
+                return \Carbon\Carbon::parse($item->created_at)->format('d-m-Y H:i:s');
+            })
             
             ->addColumn('action', function ($listaimpuesto) {
                 $disabled="";
@@ -572,7 +576,27 @@ class TransitoImpuestoController extends Controller
 
     public function realizarCobro($id){
         try {
+
             $realizarCobro= TransitoImpuesto::find($id);
+            
+            if (!$realizarCobro) {
+                return response()->json([
+                    "error" => true,
+                    "mensaje" => "No se encontró el registro especificado.",
+                ]);
+            }
+           
+            // Convierte ambas fechas a formato Y-m-d (sin hora)
+            $fechaRegistro = date('Y-m-d', strtotime($realizarCobro->created_at));
+            $fechaActual   = date('Y-m-d');
+
+            if ($fechaRegistro < $fechaActual) {
+                return response()->json([
+                    "error"   => true,
+                    "mensaje" => "Solo se permite el cobro el mismo dia de la emision.",
+                ]);
+            }
+                        
             if($realizarCobro->estado==2){
                 return ["mensaje"=>"La informacion ha sido eliminada y no se puede cobrar", "error"=>true];   
             }else if($realizarCobro->estado==3){
@@ -586,7 +610,7 @@ class TransitoImpuestoController extends Controller
             // $generarDocumento=$this->pdfTransito($id,'');
             //queme la G para que no firme electronicamente
             $generarDocumento=$this->pdfTransito($id,'');
-            // dd($generarDocumento);
+          
 
             if($generarDocumento['error']==true){
                 return ["mensaje"=>$generarDocumento['mensaje'], "error"=>true];
@@ -605,22 +629,24 @@ class TransitoImpuestoController extends Controller
         try {
             $anularCobro= TransitoImpuesto::find($id);
             if($anularCobro->estado==2){
-                return ["mensaje"=>"La informacion ya ha sido eliminada y no se puede volver a eliminar", "error"=>true];   
+                return ["mensaje"=>"La informacion ya ha sido dada de baja y no se puede eliminar", "error"=>true];   
             }else if($anularCobro->estado==3){
                 return ["mensaje"=>"La informacion ya sido cobrada y no se puede anular", "error"=>true];
+            }else if($anularCobro->estado==4){
+                return ["mensaje"=>"La informacion ya sido eliminada", "error"=>true];
             }
-            $anularCobro->estado=3;
+            $anularCobro->estado=4;
             $anularCobro->idusuario_anula=auth()->user()->id;
             $anularCobro->fecha_anula=date('Y-m-d H:i:s');
             $anularCobro->save();
 
-            return ["mensaje"=>"Cobro anulado exitosamente", "error"=>false];
+            return ["mensaje"=>"Registro eliminado exitosamente", "error"=>false];
 
         } catch (Exception $e) {
             return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
 
         }
-    }
+    } 
 
     public function tablaRango(){
         try {
@@ -977,7 +1003,7 @@ class TransitoImpuestoController extends Controller
             return ['data'=>$buscaVehiculo, 'error'=>false, 'id_vehiculo'=>$id_vehiculo];
 
         } catch (Exception $e) {
-            dd($e);
+           
             return [
                 'error'=>true,
                 'mensaje'=>'Ocurrio un error',
@@ -1057,7 +1083,7 @@ class TransitoImpuestoController extends Controller
             return ['data'=>$data, 'error'=>false , 'id_persona'=>$id_persona];
 
          } catch (Exception $e) {
-            // dd($e);
+            
             $response = $e->getResponse();
             $responseBody = json_decode($response->getBody(), true);
 
@@ -1424,6 +1450,24 @@ class TransitoImpuestoController extends Controller
         try {
 
             $baja=TransitoImpuesto::find($request->id_impuesto);
+             if (!$baja) {
+                return response()->json([
+                    "error" => true,
+                    "mensaje" => "No se encontró el registro especificado.",
+                ]);
+            }
+           
+            // Convierte ambas fechas a formato Y-m-d (sin hora)
+            $fechaRegistro = date('Y-m-d', strtotime($baja->created_at));
+            $fechaActual   = date('Y-m-d');
+
+            if ($fechaRegistro < $fechaActual) {
+                return response()->json([
+                    "error"   => true,
+                    "mensaje" => "Solo se permite dar de baja el titulo el mismo dia de la emision.",
+                ]);
+            }
+
             $baja->observacion_baja=$request->motivo_baja;
             $baja->idusuariobaja=auth()->user()->id;
             $baja->fecha_baja=date('Y-m-d H:i:s');
@@ -1542,7 +1586,6 @@ class TransitoImpuestoController extends Controller
             }
 
             $actualizarConcepto= TransitoConcepto::find($id);
-            // dd($actualizarConcepto);
             $actualizarConcepto->concepto=$request->txt_concepto;
             $actualizarConcepto->valor=$request->valor_concepto;
             $actualizarConcepto->estado='A';

@@ -456,9 +456,7 @@ class PatenteController extends Controller
 
                     $guardaLocal->es_patente=true;
                     $guardaLocal->es_activo=$es_activo;
-
-
-
+                    
                     $guardaLocal->save();
                 }
             }
@@ -1139,8 +1137,8 @@ class PatenteController extends Controller
                     }
                 })
             ->addColumn('ruc', function ($listaPatente) {
-                // return $listaPatente->contribuyente->ruc ;
-                return '<b>RUC:</b>'.$listaPatente->contribuyente->ruc . '<br> <b>NOMBRES:</b>' . $listaPatente->contribuyente->razon_social;
+                return $listaPatente->contribuyente->ruc ;
+                /*return '<b>RUC:</b>'.$listaPatente->contribuyente->ruc . '<br> <b>NOMBRES:</b>' . $listaPatente->contribuyente->razon_social;*/
             })
 
             ->addColumn('contribuyente_name', function ($listaPatente) {
@@ -1152,7 +1150,12 @@ class PatenteController extends Controller
             })
             ->addColumn('codigo', function ($listaPatente) {
                 // return $listaPatente->year->year_ejercicio_fiscal;
-                return '<b>PATENTE:</b>'.$listaPatente->estado . '<br> <b>1.5 ACTIVO:</b>' . $listaPatente->codigo_act;
+                return ''.$listaPatente->codigo . '<br> ' . $listaPatente->codigo_act;
+            })
+
+            ->addColumn('total_pagar', function ($listaPatente) {
+                // return $listaPatente->year->year_ejercicio_fiscal;
+                return number_format($listaPatente->valor_patente + $listaPatente->valor_activo_total,2);
             })
             // ->addColumn('action', function ($listaPatente) {
             //     return '<a class="btn btn-primary btn-sm" href="'.route('index.patente',$listaPatente->id).'">Ver</a>
@@ -1177,7 +1180,7 @@ class PatenteController extends Controller
                     $btn='<a class="btn btn-danger btn-sm" onclick="eliminarTitulo(\''.$listaPatente->id.'\')">Dar Baja</a>';
                     // $btn_pdf=' <a class="btn btn-primary btn-sm" onclick="verpdf(\''.$listaimpuesto->documento_firmado.'\')" >Titulo</a>';
 
-                    $btn_pdf=' <a class="btn btn-primary btn-sm" onclick="generarPdf(\''.$listaPatente->id.'\')" >Titulo</a>';
+                    $btn_pdf=' <a class="btn btn-primary btn-sm" onclick="verPatentePdf(\''.$listaPatente->id.'\')" >Titulo</a>';
                 }
                 return $btn_pdf.' '.$btn;
             })
@@ -1190,15 +1193,106 @@ class PatenteController extends Controller
         try {
 
             $baja=PsqlPaPatente::find($request->id_impuesto);
+            if (!$baja) {
+                return response()->json([
+                    "error" => true,
+                    "mensaje" => "No se encontró el registro especificado.",
+                ]);
+            }
+           
+            // Convierte ambas fechas a formato Y-m-d (sin hora)
+            $fechaRegistro = date('Y-m-d', strtotime($baja->created_at));
+            $fechaActual   = date('Y-m-d');
+
+            if ($fechaRegistro < $fechaActual) {
+                return response()->json([
+                    "error"   => true,
+                    "mensaje" => "Solo se permite dar de baja el titulo el mismo dia de la emision.",
+                ]);
+            }
+
             $baja->observacion_baja=$request->motivo_baja;
             $baja->idusuariobaja=auth()->user()->id;
             $baja->fecha_baja=date('Y-m-d H:i:s');
-            $baja->estado=3;
+            $baja->estado=5;
             $baja->save();
 
             return ["mensaje"=>"Informacion eliminada exitosamente", "error"=>false];
 
+        } catch (\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+
+        }
+    }
+
+    public function anularCobro($id){
+        try {
+            $anularCobro= PsqlPaPatente::find($id);
+            if($anularCobro->estado==5){
+                return ["mensaje"=>"La informacion ya ha sido dada de baja y no se puede eliminar", "error"=>true];   
+            }else if($anularCobro->estado==4){
+                return ["mensaje"=>"La informacion ya sido cobrada y no se puede anular", "error"=>true];
+            }else if($anularCobro->estado==3){
+                return ["mensaje"=>"La informacion ya sido eliminada", "error"=>true];
+            }
+            $anularCobro->estado=3;
+            $anularCobro->idusuario_anula=auth()->user()->id;
+            $anularCobro->fecha_anula=date('Y-m-d H:i:s');
+            $anularCobro->save();
+
+            return ["mensaje"=>"Registro eliminado exitosamente", "error"=>false];
+
         } catch (Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+
+        }
+    }
+    public function realizarCobro($id){
+        try {
+
+            $realizarCobro= PsqlPaPatente::find($id);
+            
+            if (!$realizarCobro) {
+                return response()->json([
+                    "error" => true,
+                    "mensaje" => "No se encontró el registro especificado.",
+                ]);
+            }
+           
+            // Convierte ambas fechas a formato Y-m-d (sin hora)
+            $fechaRegistro = date('Y-m-d', strtotime($realizarCobro->created_at));
+            $fechaActual   = date('Y-m-d');
+
+            if ($fechaRegistro < $fechaActual) {
+                return response()->json([
+                    "error"   => true,
+                    "mensaje" => "Solo se permite el cobro el mismo dia de la emision.",
+                ]);
+            }
+                        
+            if($realizarCobro->estado==3){
+                return ["mensaje"=>"La informacion ha sido eliminada y no se puede cobrar", "error"=>true];   
+            }else if($realizarCobro->estado==4){
+                return ["mensaje"=>"La informacion ya sido cobrada y no se puede volver a cobrar", "error"=>true];
+            }
+            $realizarCobro->estado=4;
+            $realizarCobro->id_usuario_cobra=auth()->user()->id;
+            $realizarCobro->fecha_cobro=date('Y-m-d H:i:s');
+            $realizarCobro->save();
+
+            // $generarDocumento=$this->pdfTransito($id,'');
+            //queme la G para que no firme electronicamente
+            $generarDocumento=$this->crearTitulo($id);
+          
+
+            if($generarDocumento['error']==true){
+                return ["mensaje"=>$generarDocumento['mensaje'], "error"=>true];
+            }
+            
+            //change LOCALES
+            return ["mensaje"=>"Cobro registrado exitosamente", "error"=>false, 'pdf'=>$generarDocumento['pdf']];
+
+        } catch (\Exception $e) {
             return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
 
         }
@@ -1680,7 +1774,7 @@ class PatenteController extends Controller
         // $pdf=\PDF::LoadView('reportes.reportePatente',[] );
         // $pdf->setPaper("A4", "portrait");
 
-        return $pdf->stream("aa.pdf");
+       // return $pdf->stream("aa.pdf");
     }
 
     public function tablaRango(){
@@ -1857,6 +1951,19 @@ class PatenteController extends Controller
             return ['mensaje'=>'Ocurrió un error '.$th,'error'=>true];
         }
 
+    }
+
+    public function detalle($id){
+        try {
+
+            $baja=PsqlPaPatente::with('contribuyente','local','actividades')->where('id',$id)->get();
+
+            return ["resultado"=>$baja, "error"=>false];
+
+        } catch (\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+
+        }
     }
 
 }

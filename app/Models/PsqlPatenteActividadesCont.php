@@ -14,4 +14,8 @@ class PsqlPatenteActividadesCont extends Model
 
     protected $primaryKey  = 'id';
     public $timestamps = false;
+
+    public function detalle_actividad(){
+        return $this->belongsTo('App\Models\PsqlPaActividadesComerciales', 'id_actividad_cont', 'id');
+    }
 }

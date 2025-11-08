@@ -1,5 +1,5 @@
 @extends('layouts.appv2')
-@section('title', 'Mostrar lista de patente')
+@section('title', 'Lista de Impuesto de transito')
 @push('styles')
 <link href="{{ asset('css/dataTables.bootstrap5.min.css') }}" rel="stylesheet">
 <link href="{{ asset('css/rowReorder.bootstrap5.min.css') }}" rel="stylesheet">
@@ -9,9 +9,7 @@
         <h4 class="h2">Lista de impuestos de transito</h4>
         <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group me-2">
-            <a href="{{ route('create.transito') }}" class="btn btn-sm btn-secondary d-flex align-items-center gap-1">
-                Nuevo impuesto
-            </a>
+            
         </div>
         </div>
     </div>
@@ -43,8 +41,9 @@
                             <th scope="col">Contribuyente</th>
                             <th scope="col">Vehiculo</th>
                             <th scope="col">Numero de titulo</th>
-                            <th scope="col">Total a pagar</th>
                             <th scope="col">Fecha</th>
+                            <th scope="col">Total a pagar</th>
+                            
                         </tr>
                     </thead>
                     <tbody>
@@ -185,7 +184,7 @@
                             <center> 
                                 <button type="button" class="btn btn-success btn-sm" onclick="registrarCobro()">Registrar Cobro</button>
                                 <button type="button" class="btn btn-danger btn-sm" onclick="cerrarCobro()">Cerrar</button>
-                                <button type="button" class="btn btn-warning btn-sm" onclick="anularCobro()">Anular Cobro</button>
+                                <button type="button" class="btn btn-warning btn-sm" onclick="anularCobro()">Anular</button>
                             </center>
                         </div>
                         
@@ -232,8 +231,12 @@
                 {width: '',data: 'contribuyente', name: 'contribuyente'},
                 {width: '',data: 'vehiculo'},
                 {width: '',data: 'numero_titulo'},
-                {width: '',data: 'total_pagar'},
                 {width: '',data: 'created_at'},
+                {width: '',data: 'total_pagar'},
+               
+            ],
+            "columnDefs": [
+                { targets: [6], className: "text-end" } // <-- alinea la columna 5 a la derecha
             ],
             "fixedColumns" : true
         });
@@ -442,10 +445,11 @@
 
     function registrarCobro(){
         var id=$('#id_impuesto').val()
+        alert(id)
        
         if(confirm('¿Estas seguro que quieres realizar el cobro?'))
         {
-            cerrarCobro()
+            
             vistacargando("m","Espere por favor")
             $.get("../registrar-cobro-transito/"+id, function(data){
                 vistacargando("")
@@ -453,6 +457,7 @@
                     alertNotificar(data.mensaje,"error");
                     return;   
                 }
+                cerrarCobro()
                 alertNotificar(data.mensaje,"success");
                 CargarPagina=1
                 verpdf(data.pdf)
@@ -469,9 +474,9 @@
     function anularCobro(){
         var id=$('#id_impuesto').val()
        
-        if(confirm('¿Estas seguro que quieres anular el cobro?'))
+        if(confirm('¿Estas seguro que quieres anular el registro?'))
         {
-            cerrarCobro()
+           
             vistacargando("m","Espere por favor")
             $.get("../anular-cobro-transito/"+id, function(data){
                 vistacargando("")
@@ -480,7 +485,12 @@
                     return;   
                 }
                 alertNotificar(data.mensaje,"success");
-                location.reload();
+                
+                setTimeout(() => {
+                    cerrarCobro()
+                    location.reload();
+                }, 2000);
+                
                
             }).fail(function(){
                 vistacargando("")

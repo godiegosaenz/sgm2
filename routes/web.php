@@ -206,9 +206,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('patente/declaracion-cobro', [PatenteController::class, 'pdfDeclaracionCobro'])->name('pdfDeclaracionCobro.patente');
     Route::get('patente/busca-data-contribuyente/{id}', [PatenteController::class, 'buscaInfoContribuyente'])->name('buscaInfoContribuyente.patente');
     Route::get('patente/ver-local/{id}', [PatenteController::class, 'verLocal'])->name('verLocal.patente');
-
     Route::get('patente/test-reporte/{id}', [PatenteController::class, 'testReporte'])->name('testReporte.patente');
-
+    Route::get('patente/detalle-titulo-patente/{id}', [PatenteController::class, 'detalle'])->name('detalle.patente');
+    Route::get('patente/registrar-cobro-patente/{id}', [PatenteController::class, 'realizarCobro'])->name('realizarCobro.patente');
+    Route::get('patente/anular-cobro-patente/{id}', [PatenteController::class, 'anularCobro'])->name('anularCobro.patente');
 
     Route::post('patente-new-contribuyente', [PatenteController::class, 'guardaContribuyente'])->name('guardaContribuyente.patente');
     Route::post('catastrocontribuyente/actualiza-contribuyente', [PatenteController::class, 'actualizaContribuyente'])->name('actualizaContribuyente.patente');

@@ -71,6 +71,11 @@ class PsqlCatastroContribuyente extends Model
         return $this->belongsTo(PsqlParroquia::class);
     }
 
+    public function regimen()
+    {
+        return $this->belongsTo(PsqlPaClaseContribuyente::class,'clase_contribuyente_id','id');
+    }
+
     public function propietario()
     {
         return $this->belongsTo(PsqlEnte::class,'propietario_id','id');

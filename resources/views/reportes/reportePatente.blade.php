@@ -246,7 +246,7 @@
                     </tr>
 
                     <tr>
-                        <td><b>Total Deuda:</b> </td>
+                        <td><b>Total A Pagar:</b> </td>
                         <td>$</td>
                         <td style="text-align:right">{{ $patente->valor_patente }}</td>
                     </tr>

@@ -1,5 +1,5 @@
 @extends('layouts.appv2')
-@section('title', 'Mostrar lista de patente')
+@section('title', 'Firma Electronica')
 @push('styles')
 <link href="{{ asset('css/dataTables.bootstrap5.min.css') }}" rel="stylesheet">
 <link href="{{ asset('css/rowReorder.bootstrap5.min.css') }}" rel="stylesheet">

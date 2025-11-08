@@ -40,16 +40,30 @@ class PsqlPaPatente extends Model
         'original_sustitutiva',
         'porc_ing_perc_sv',
         'estado',
+        'idusuario_registra',
+        'id_usuario_cobra',
+        'fecha_cobro',
+        'idusuario_anula',
+        'fecha_anula',
     ];
 
     public function contribuyente(): BelongsTo
     {
-        return $this->belongsTo(PsqlCatastroContribuyente::class,'Contribuyente_id','id');
+        return $this->belongsTo(PsqlCatastroContribuyente::class,'Contribuyente_id','id')->with('regimen');
+    }
+
+    public function local(): BelongsTo
+    {
+        return $this->belongsTo(CatastroLocal::class,'id_pa_local','id');
     }
 
     public function year(): BelongsTo
     {
         return $this->belongsTo(PsqlYearDeclaracion::class,'year_declaracion','id');
+    }
+
+    public function actividades(){
+        return $this->hasMany('App\Models\PsqlPatenteActividadesCont', 'id_patente', 'id')->with('detalle_actividad');
     }
 
 }
