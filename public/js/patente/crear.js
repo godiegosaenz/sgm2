@@ -1325,14 +1325,24 @@ function calculaPatente(){
         //     $('#cont_exoneracion').val('')
         //     $('#cont_sta').val('')
         //     $('#cont_pago_patente').val('')
-        // }   
-
+        // }  
+        setTimeout(function() {
+            calcularTotal()
+        }, 1000); 
+        
       
     }).fail(function(){
         vistacargando("")
         alert("Se produjo un error, por favor intentelo más tarde");  
     });
 
+}
+
+function calcularTotal(){
+    let total_patente=parseFloat($('#cont_pago_patente').val()) || 0
+    let total_activo=parseFloat($('#cont_pago_activo_total').val()) || 0   
+    let total_final = (total_patente + total_activo).toFixed(2)
+    $('#total_final').val(total_final)
 }
 function calculaActivoTotales(valor,porcentaje_exon, intereses, recargo){
     
@@ -1630,7 +1640,7 @@ function crearPdf(id){
             return;   
         }
 
-        alertNotificar("El documento se descargara en unos segundos","success")
+        //alertNotificar("El documento se descargara en unos segundos","success")
         verpdf(data.pdf)
 
     }).fail(function(){

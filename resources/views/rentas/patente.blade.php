@@ -326,7 +326,7 @@
                 // {width: '',data: 'contribuyente_name', name: 'contribuyente_name'},
                 {width: '',data: 'contribuyente_name'},
                 {width: '',data: 'codigo'},
-                {width: '',data: 'fecha_declaracion'},
+                {width: '',data: 'created_at'},
                 {width: '',data: 'total_pagar'},
               
             ],

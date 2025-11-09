@@ -235,6 +235,7 @@ class TransitoImpuestoController extends Controller
 
             $verificaNum=TransitoImpuesto::whereNotNull('numero_titulo')
             ->select('numero_titulo')
+            ->where('year_impuesto',date('Y'))
             ->orderBy('id','desc')->first();
 
             $num=0;

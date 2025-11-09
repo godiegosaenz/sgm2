@@ -353,66 +353,43 @@ class PatenteController extends Controller
                 }
             }
             $es_activo=false;
-
-            $codigo_documento=PsqlPaPatente::where('estado',1)
-            ->select('codigo','codigo_act')
-            ->whereNotNull('codigo')
-            ->orderby('id','desc')
-            ->first();
-
-            $codigo_patente=1;
-            $codigo_activo=1;
             $anio=date('Y');
-           
-            if(!is_null($codigo_documento)){
 
-                if(!is_null($codigo_documento->codigo)){
+            $verificaNum=PsqlPaPatente::with('year')
+            ->whereHas('year', function($query){
+                $query->where('year_declaracion', date('Y'));
+            })
+            ->whereNotNull('codigo')
+            ->select('codigo')
+            ->orderBy('id','desc')->first();
 
-                    $solo_anio=explode("-",$codigo_documento->codigo);
-                    if($anio==$solo_anio[0]){
-                        $codigo_patente = (int) $solo_anio[1] + 1;
-                        $codigo_patente =$anio."-".str_pad($codigo_patente, 6, "0", STR_PAD_LEFT)."-PAT";
-                    }else{
-                        $inicio=1;
-                        $codigo_patente = $anio."-".str_pad($inicio, 6, "0", STR_PAD_LEFT)."-PAT";
-                    }
-                }else{
-
-                    $inicio=1;
-                    $codigo_patente = $anio."-".str_pad($inicio, 6, "0", STR_PAD_LEFT)."-PAT";
-                }
-
+            $num=0;
+            if(is_null($verificaNum)){
+                $num=1;
             }else{
-                $inicio=1;
-                $codigo_patente = $anio."-".str_pad($inicio, 6, "0", STR_PAD_LEFT)."-PAT";
+                $solo_numero=explode("-",$verificaNum->codigo);
+                $num = (int)$solo_numero[1] + 1;
             }
 
-            $codigo_documento_act=PsqlPaPatente::where('estado',1)
-            ->select('codigo','codigo_act')
+            $codigo_patente= 'PAT-'.str_pad($num, 5, '0', STR_PAD_LEFT).'-'.$anio;
+
+            $verificaNum=PsqlPaPatente::with('year')
+            ->whereHas('year', function($query){
+                $query->where('year_declaracion', date('Y'));
+            })
             ->whereNotNull('codigo_act')
-            ->orderby('id','desc')
-            ->first();
-            if(!is_null($codigo_documento_act)){
+            ->select('codigo_act')
+            ->orderBy('id','desc')->first();
 
-                if(!is_null($codigo_documento_act->codigo_act)){
-
-                    $solo_anio=explode("-",$codigo_documento_act->codigo_act);
-                    if($anio==$solo_anio[0]){
-                        $codigo_activo = (int) $solo_anio[1] + 1;
-                        $codigo_activo =$anio."-".str_pad($codigo_activo, 6, "0", STR_PAD_LEFT)."-ACT";
-                    }else{
-                        $inicio=1;
-                        $codigo_activo = $anio."-".str_pad($inicio, 6, "0", STR_PAD_LEFT)."-ACT";
-                    }
-                }else{
-
-                    $inicio=1;
-                    $codigo_activo = $anio."-".str_pad($inicio, 6, "0", STR_PAD_LEFT)."-ACT";
-                }
+            $num=0;
+            if(is_null($verificaNum)){
+                $num=1;
             }else{
-                $inicio=1;
-                $codigo_activo = $anio."-".str_pad($inicio, 6, "0", STR_PAD_LEFT)."-ACT";
+                $solo_numero=explode("-",$verificaNum->codigo_act);
+                $num = (int)$solo_numero[1] + 1;
             }
+
+            $codigo_activo= 'ACT-'.str_pad($num, 5, '0', STR_PAD_LEFT).'-'.$anio;
            
             foreach ($r->locales as $key => $value) {
                 if(isset($value['id'])){
@@ -1166,6 +1143,10 @@ class PatenteController extends Controller
             //     return '<a class="btn btn-primary btn-sm" onclick="verPatentePdf(\''.$listaPatente->id.'\')">Ver</a>
             //     <a class="btn btn-danger btn-sm" onclick="eliminarTitulo(\''.$listaPatente->id.'\')">Dar Baja</a>';
             // })
+             ->editColumn('created_at', function ($item) {
+                // Formato: día-mes-año hora:minuto:segundo
+                return \Carbon\Carbon::parse($item->created_at)->format('d-m-Y H:i:s');
+            })
             ->addColumn('action', function ($listaPatente) {
                 $disabled="";
                 $btn_pdf="";
@@ -1706,7 +1687,6 @@ class PatenteController extends Controller
 
         foreach($patente as $key=>&$value){
             $actividades=DB::connection('pgsql')->table('sgm_patente.pa_patente_actividad_contr as pa_act')
-            // ->leftJoin('sgm_patente.pa_actividad_contribuyente as act','pa_act.id_actividad_cont','act.Actividad_comercial_id')
             ->leftJoin('sgm_patente.pa_ctlg_actividades_comerciales as nom_act','nom_act.id','pa_act.id_actividad_cont')
             ->where('id_patente',$id)
             ->select(DB::raw("CONCAT(nom_act.descripcion) AS actividad"))
@@ -1752,8 +1732,8 @@ class PatenteController extends Controller
             $pdf=\PDF::LoadView('reportes.reportePatente',['patente'=>$patente[0], "fecha_formateada"=>$fecha_formateada, "fecha_formateada_hoy"=>$fecha_formateada_hoy] );
             $pdf->setPaper("A4", "portrait");
         }
-        // return $pdf->stream("aa.pdf");
-         $estadoarch = $pdf->stream();
+        //return $pdf->stream("aa.pdf");
+        $estadoarch = $pdf->stream();
 
         //lo guardamos en el disco temporal
         Storage::disk('disksDocumentoRenta')->put(str_replace("", "",$nombrePDF), $estadoarch);

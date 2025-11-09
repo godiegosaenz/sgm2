@@ -1,531 +1,509 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reporte en PDF</title>
     <style>
+        @page {
+            margin: 10mm;
+            /* Puedes ajustar aquí el margen de toda la hoja */
+        }
+
         body {
             font-family: Arial, sans-serif;
-            font-size: 12px;
+            font-size: 10px;
         }
+
         .cabecera {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 1px;
         }
+
         .cabecera td {
             vertical-align: middle;
         }
+
         .cabecera .logo {
-            width: 20%;
+            width: 10%;
             text-align: left;
         }
+
         .cabecera .encabezado {
-            width: 80%;
-            text-align: left;
-            font-size: 14px;
+            width: 90%;
+            text-align: center;
+            font-size: 9px;
             font-weight: bold;
         }
+
         .cabecera .subtitulo {
-            font-size: 12px;
+            font-size: 10px;
             font-weight: normal;
-            margin-top: 5px;
+            margin-top: 2px;
         }
+
         .tabla-principal {
             width: 100%;
             border-collapse: collapse;
         }
+
         .tabla-principal td {
             vertical-align: top;
         }
+
         .tabla-principal .columna-izquierda {
             width: 55%;
         }
+
         .tabla-principal .columna-derecha {
             width: 45%;
         }
+
         .tabla-izquierda {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             font-size: 11px;
         }
-        .tabla-izquierda th, .tabla-izquierda td {
+
+        .tabla-izquierda th,
+        .tabla-izquierda td {
             border: none;
             padding: 4px;
             text-align: left;
         }
+
         .tabla-derecha {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
-            font-size: 10px;
+            margin-bottom: 10px;
+            font-size: 9px;
         }
-        .tabla-derecha th, .tabla-derecha td {
+
+        .tabla-derecha th,
+        .tabla-derecha td {
             border: 1px solid #000;
             padding: 4px;
             text-align: left;
         }
+
         .tabla-derecha th {
             background-color: #f2f2f2;
         }
-
-        .ltable
-        {
-            border-collapse: collapse;
-            font-family: sans-serif;
-        }
-
-        
-
     </style>
 </head>
+
 <body>
-  
-    <table class="cabecera">
+
+    <table class="cabecera" style="font-size:8px !important">
         <tr>
             <td class="logo">
-                <img src="{{ asset('img/logo4.png') }}" alt="Logo" width="100">
+                <img src="{{ asset('img/logo4.png') }}" alt="Logo" width="60">
             </td>
             <td class="encabezado">
-                Gobierno Autónomo Descentralizado Municipal del Cantón San Vicente
-                <!-- <div class="subtitulo">Título de Crédito</div> -->
+
+                <h3>GAD MUNICIPAL DEL CANTÓN SAN VICENTE <h4>DIRECCION FINANCIERA<br>
+                        SAN VICENTE - MANABI - ECUADOR</h4>
+                </h3>
+
+            </td>
+            <td class="logo">
+
             </td>
         </tr>
     </table>
-    
-    <table width="100%" border="0" >
+    <table width="100%" border="0" style="font-size:10px">
         <tr>
+            <td colspan="3" style="text-align: left; line-height: 15px;">
+                <b>&nbsp;RUC: </b>1360014850001<br>
+                <b>&nbsp;Lugar y Fecha: </b>San Vicente, {{ $fecha_formateada }}
+            </td>
+
             <td colspan="3" style="text-align: center;">
-                <b>TITULO DE CREDITO - PATENTE #{{str_pad($patente->codigo, 5, '0', STR_PAD_LEFT)}} </b><br>
-                San Vicente, {{ $fecha_formateada }}
-                
-            </td>
-        </tr>
-        <tr style="line-height: 20px;">
-            <td colspan="3" style="border: 1px solid #000; border-left:0px; border-bottom:0px; border-right:0px;width:45%">
-            </td>
-        </tr>
-        <tr style="font-size: 11px;">
-            <td style="width: 48%;"><b>RUC/C.I.:</b> {{ $patente->ruc }}</td>
-            
-        
-            <td style="width: 1%; text-align:left"></td>
+                <b>TITULO DE CREDITO N° {{$patente->codigo}} </b>
 
-            <td><b>RAZON SOCIAL:</b> {{ $patente->razon_social }} </td>
-            
-            
-        
-        </tr>
-        <tr style="font-size: 11px;">
-            <td><b>Obligado Contabilidad:</b> {{  $patente->obligado_contabilidad ? 'SI' : 'NO' }}</td>
-            
-            <td></td>
-            <td><b>Regimen:</b> {{ $patente->regimen }}</td>
-            
-        </tr>
+            </td>
 
-        <tr style="font-size: 11px;">
-            <td><b>Periodo:</b> {{ $patente->year_ejercicio_fiscal }}</td>
-            
-            <td></td>
-            <td><b></b> </td>
-            
+
         </tr>
-        
     </table>
-    
-    <table style="border-collapse: collapse; width: 100%;">
-        <tr style="font-size: 11px;">
-            <td style="border: 1px solid #000; border-left:0px; border-bottom:0px;width:60%">
-                <table style="width:100%">
-                    <tr>
-                        <td colspan="2" style="text-align: center;"><b>LOCAL</b></td>
-                        
-                    </tr>
 
-                    <tr>
-                        <td style="width:35%"><b>Nombre Comercial:</b></td>
-                        <td>{{ $patente->actividad_descripcion }}</td>
-                        
-                        
-                    </tr>
-
-                    <tr>
-                        <td><b>Direccion:</b></td>
-                        <td>{{ $patente->calle }}</td>
-                        
-                    </tr>
-
-                    <tr>
-                        <td><b>Local:</b></td>
-                        <td>{{ $patente->local_propio == 1 ? 'Propio' : 'Arrendado'}}</td>
-                        
-                    </tr>
-                    
-                    <tr style="line-height: 20px;">
-                        <td colspan="2" style="border: 1px solid #000; border-left:0px; border-bottom:0px;border-right:0px"></td>
-                    
-                    </tr>
-
-                        <tr>
-                        <td colspan="2" style="text-align: center;"><b>ACTIVIDADES</b></td>
-                        
-                    </tr>
-
-                    @foreach($patente->act as $data)
-                        <tr>
-                            <td colspan="2">* {{ $data }}</td>
-                            
-                        </tr>
-                    @endforeach
-
-                    
-                </table>
-            
-            </td>
-            
-            <td style="border: 1px solid #000; border-left:0px; border-bottom:0px;border-right:0px">
-                <table style="width:100%">
-                    <tr>
-                        <td><b>RUBROS/CONCEPTO</b></td>
-                        <td></td>
-                        <td><b>VALORES</b></td>
-                    </tr>
-                    <tr style="line-height: 20px;">
-                        <td colspan="3" style="border: 1px solid #000; border-left:0px; border-bottom:0px;border-right:0px"></td>
-                    
-                    </tr>
-
-                    <tr>
-                        <td><b>Impuesto Patente Municipal:</b> </td>
-                        <td>$</td>
-                        <td style="text-align:right">{{ $patente->valor_impuesto }}</td>
-                    </tr>
-
-                    <tr>
-                        <td><b>Exoneracion:</b> </td>
-                        <td>$</td>
-                            <td style="text-align:right">-{{number_format($patente->valor_exoneracion,2)}}</td>
-                    </tr>
-
-                    <tr>
-                        <td><b>Servicios Administrativo:</b> </td>
-                        <td>$</td>
-                        <td style="text-align:right">{{number_format($patente->valor_sta,2)}}</td>
-                    </tr>
-
-
-                    <!-- @php
-                        $valor_emitido= ($patente->valor_patente - $patente->valor_intereses - $patente->valor_recargos);
-
-                    @endphp
-                    
-                    <tr style="margin-top:20px">
-                        <td><b>Valor Emitido:</b> </td>
-                        <td>$</td>
-                        <td style="text-align:right">{{ number_format($valor_emitido,2) }}</td>
-                    </tr> -->
-
-                    
-
-
-                
-
-                    <tr>
-                        <td><b>Intereses:</b> </td>
-                        <td>$</td>
-                        <td style="text-align:right">{{ $patente->valor_intereses }}</td>
-                    </tr>
-
-                    <tr>
-                        <td><b>Recargos:</b> </td>
-                        <td>$</td>
-                        <td style="text-align:right">{{ $patente->valor_recargos }}</td>
-                    </tr>
-
-                    <tr>
-                        <td><b>Total A Pagar:</b> </td>
-                        <td>$</td>
-                        <td style="text-align:right">{{ $patente->valor_patente }}</td>
-                    </tr>
-
-                </table>
-            </td>
-        </tr>
+    <table class="tabla-principal" style="margin-top: 5px;">
         <tr>
-            <td colspan="2" style="border: 1px solid #000; border-left:0px; border-bottom:0px; border-right:0px;width:45%">
+            <td class="columna-izquierda">
+
+                <table class="tabla-izquierda" style="font-size: 10px;">
+                    <tr>
+                        <td width="50%"><b>PATENTE ANUAL PARA ACTIVIDADES ECONOMICAS </b></td>
+
+
+                    </tr>
+                    <tr>
+                        <td width="50%"><b>Periodo: </b>{{ $patente->year_ejercicio_fiscal }} </td>
+
+
+                    </tr>
+
+                    <tr>
+
+                        <td width="50%" style=" line-height: 15px;">
+                            <b>Contribuyente: </b> {{ $patente->razon_social }}<br>
+                            <b>Cedula/RUC: </b> {{ $patente->ruc }}
+                        </td>
+
+                    </tr>
+
+                </table>
+
+                <table class="tabla-izquierda" style="font-size: 10px;">
+                    <thead>
+                        <tr>
+                            <th colspan="2">DATOS DEL ESTABLECIMIENTO</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr style="line-height: 10px;">
+                            <td width="30%"><strong>Nombre Comercial: </strong></td>
+                            <td width="70%">{{ $patente->actividad_descripcion }}</td>
+                        </tr>
+                        <tr style="line-height: 8px;">
+                            <td width="30%"><strong>Direccion: </strong></td>
+                            <td width="70%">{{ $patente->calle }}</td>
+                        </tr>
+
+
+                    </tbody>
+                </table>
+
+            </td>
+            <td class="columna-derecha">
+                <table class="tabla-derecha">
+                    <thead>
+                        <tr>
+                            <th style="text-align:center">RUBROS/CONCEPTO</th>
+                            <th style="width:18% !important; text-align:center">VALOR</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>IMPUESTO PATENTE MUNICIPAL</td>
+
+                            <td style="text-align:right">{{ $patente->valor_impuesto }}</td>
+                        </tr>
+
+                        <tr>
+                            <td>EXONERACION </td>
+
+                            <td style="text-align:right">-{{number_format($patente->valor_exoneracion, 2)}}</td>
+                        </tr>
+
+                        <tr>
+                            <td>SERVICIOS ADMINISTRATIVOS</td>
+
+                            <td style="text-align:right">{{number_format($patente->valor_sta, 2)}}</td>
+                        </tr>
+
+                        <tr>
+                            <td>INTERESES</td>
+
+                            <td style="text-align:right">{{ $patente->valor_intereses }}</td>
+                        </tr>
+
+                        <tr>
+                            <td>RECARGOS </td>
+
+                            <td style="text-align:right">{{ $patente->valor_recargos }}</td>
+                        </tr>
+
+                        <tr>
+                            <td>TOTAL A PAGAR </td>
+
+                            <td style="text-align:right">{{ $patente->valor_patente }}</td>
+                        </tr>
+                    </tbody>
+
+                </table>
 
             </td>
         </tr>
-    
     </table>
 
-    
-    <br>
-    <center><b>Fecha Impresion: </b>{{ $fecha_formateada_hoy }}<br>
-    
-    <br>
-    <br>
-    <br>
-    <br>
-
-    <table width="100%">
+    <table class="tabla-izquierda-" style="font-size: 10px;">
+        <thead>
+            <tr>
+                <th colspan="3" style="text-align:left">ACTIVIDADES</th>
+            </tr>
+        </thead>
         <tbody>
-            <tr>
+            @foreach($patente->act as $data)
+                <tr>
+                    <td colspan="3">{{ $data }}</td>
+
+                </tr>
+            @endforeach
+
+        </tbody>
+    </table>
+    <p style="text-align: center;"><b>Fecha Impresion: </b>{{ date('d-m-Y H:i:s') }}</p>
+
+    <table width="100%" style="margin-top:0px">
+        <tbody>
+
+            <tr style="line-height: 5px;">
+                <td style="text-align: center">
+
+
+                    <img src="{{ asset('FIRMA-RENTA.png') }}" height="115px">
+
+                </td>
+                <td style="text-align: center">
+
+                </td>
+
+                <td style="text-align: center">
+
+                </td>
+
+            </tr>
+
+            <tr style="line-height: 5px;">
                 <td style="text-align: center">
                     __________________________________________
                 </td>
                 <td style="text-align: center">
                     __________________________________________
                 </td>
+
+                <td style="text-align: center">
+                    __________________________________________
+                </td>
+
             </tr>
+
             <tr>
                 <td style="text-align: center">
-                    Ing. Jacinta María Mendoza Cusme
+                    <b>RENTAS</b>
                 </td>
                 <td style="text-align: center">
-                    Ing. Jandry Fernando Loor Macay
-                </td>
-            </tr>
-            <tr>
-                <td style="text-align: center">
-                    Tesorera Municipal Juez de Coactiva
+                    <b>TESORERIA</b>
                 </td>
                 <td style="text-align: center">
-                Director Financiero (E)
+                    <b>RECAUDADOR</b>
                 </td>
             </tr>
         </tbody>
     </table>
 
-    @if(!is_null($patente->valor_activo_total) && $patente->es_activo==true)
+    @if(!is_null($patente->valor_activo_total) && $patente->es_activo == true)
         <div style="page-break-before: always; break-before: page;"></div>
-            <table class="cabecera">
-                <tr>
-                    <td class="logo">
-                        <img src="{{ asset('img/logo4.png') }}" alt="Logo" width="100">
-                    </td>
-                    <td class="encabezado">
-                        Gobierno Autónomo Descentralizado Municipal del Cantón San Vicente
-                        <!-- <div class="subtitulo">Título de Crédito</div> -->
-                    </td>
-                </tr>
-            </table>
-        
-            <table width="100%" border="0" >
-                <tr>
-                    <td colspan="3" style="text-align: center;">
-                        <b>TITULO DE CREDITO  IMPUESTO ANUAL DEL 1.5 POR MIL <br>SOBRE LOS ACTIVOS TOTALES #{{str_pad($patente->codigo_act, 5, '0', STR_PAD_LEFT)}} </b><br>
-                        San Vicente, {{ $fecha_formateada }}
-                        
-                    </td>
-                </tr>
-                <tr style="line-height: 20px;">
-                    <td colspan="3" style="border: 1px solid #000; border-left:0px; border-bottom:0px; border-right:0px;width:45%">
-                    </td>
-                </tr>
-                <tr style="font-size: 11px;">
-                    <td style="width: 48%;"><b>RUC/C.I.:</b> {{ $patente->ruc }}</td>
-                    
-                
-                    <td style="width: 1%; text-align:left"></td>
 
-                    <td><b>RAZON SOCIAL:</b> {{ $patente->razon_social }} </td>
-                    
-                    
-                
-                </tr>
-                <tr style="font-size: 11px;">
-                    <td><b>Obligado Contabilidad:</b> {{  $patente->obligado_contabilidad ? 'SI' : 'NO' }}</td>
-                    
-                    <td></td>
-                    <td><b>Regimen:</b> {{ $patente->regimen }}</td>
-                    
-                </tr>
+        <table class="cabecera" style="font-size:8px !important">
+            <tr>
+                <td class="logo">
+                    <img src="{{ asset('img/logo4.png') }}" alt="Logo" width="60">
+                </td>
+                <td class="encabezado">
 
-                <tr style="font-size: 11px;">
-                    <td><b>Periodo:</b> {{ $patente->year_ejercicio_fiscal }}</td>
-                    
-                    <td></td>
-                    <td><b></b> </td>
-                    
-                </tr>
-                
-            </table>
-            
-            <table style="border-collapse: collapse; width: 100%;">
-                <tr style="font-size: 11px;">
-                    <td style="border: 1px solid #000; border-left:0px; border-bottom:0px;width:60%">
-                        <table style="width:100%">
+                    <h3>GAD MUNICIPAL DEL CANTÓN SAN VICENTE <h4>DIRECCION FINANCIERA<br>
+                            SAN VICENTE - MANABI - ECUADOR</h4>
+                    </h3>
+
+                </td>
+                <td class="logo">
+
+                </td>
+            </tr>
+        </table>
+        <table width="100%" border="0" style="font-size:10px">
+            <tr>
+                <td colspan="3" style="text-align: left; line-height: 15px;">
+                    <b>&nbsp;RUC: </b>1360014850001<br>
+                    <b>&nbsp;Lugar y Fecha: </b>San Vicente, {{ $fecha_formateada }}
+                </td>
+
+                <td colspan="3" style="text-align: center;">
+                    <b>TITULO DE CREDITO N° {{$patente->codigo_act}} </b>
+
+                </td>
+
+
+            </tr>
+        </table>
+
+        <table class="tabla-principal" style="margin-top: 5px;">
+            <tr>
+                <td class="columna-izquierda">
+
+                    <table class="tabla-izquierda" style="font-size: 10px;">
+                        <tr>
+                            <td width="50%"><b> IMPUESTO ANUAL DEL 1.5 POR MIL SOBRE LOS ACTIVOS TOTALES </b></td>
+
+
+                        </tr>
+                        <tr>
+                            <td width="50%"><b>Periodo: </b>{{ $patente->year_ejercicio_fiscal }} </td>
+
+
+                        </tr>
+
+                        <tr>
+
+                            <td width="50%" style=" line-height: 15px;">
+                                <b>Contribuyente: </b> {{ $patente->razon_social }}<br>
+                                <b>Cedula/RUC: </b> {{ $patente->ruc }}
+                            </td>
+
+                        </tr>
+
+                    </table>
+
+                    <table class="tabla-izquierda" style="font-size: 10px;">
+                        <thead>
                             <tr>
-                                <td colspan="2" style="text-align: center;"><b>LOCAL</b></td>
-                                
+                                <th colspan="2">DATOS DEL ESTABLECIMIENTO</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr style="line-height: 10px;">
+                                <td width="30%"><strong>Nombre Comercial: </strong></td>
+                                <td width="70%">{{ $patente->actividad_descripcion }}</td>
+                            </tr>
+                            <tr style="line-height: 8px;">
+                                <td width="30%"><strong>Direccion: </strong></td>
+                                <td width="70%">{{ $patente->calle }}</td>
                             </tr>
 
+
+                        </tbody>
+                    </table>
+
+
+
+                </td>
+                <td class="columna-derecha">
+                    <table class="tabla-derecha">
+                        <thead>
                             <tr>
-                                <td style="width:35%"><b>Nombre Comercial:</b></td>
-                                <td>{{ $patente->actividad_descripcion }}</td>
-                                
-                                
+                                <th style="text-align:center">RUBROS/CONCEPTO</th>
+                                <th style="width:18% !important; text-align:center">VALOR</th>
                             </tr>
-
+                        </thead>
+                        <tbody>
                             <tr>
-                                <td><b>Direccion:</b></td>
-                                <td>{{ $patente->calle }}</td>
-                                
-                            </tr>
+                                <td>IMPUESTO PATENTE MUNICIPAL</td>
 
-                            <tr>
-                                <td><b>Local:</b></td>
-                                <td>{{ $patente->local_propio == 1 ? 'Propio' : 'Arrendado'}}</td>
-                               
-                                
-                            </tr>
-                            
-                            <tr style="line-height: 20px;">
-                                <td colspan="2" style="border: 1px solid #000; border-left:0px; border-bottom:0px;border-right:0px"></td>
-                            
-                            </tr>
-
-                                <tr>
-                                <td colspan="2" style="text-align: center;"><b>ACTIVIDADES</b></td>
-                                
-                            </tr>
-
-                            @foreach($patente->act as $data)
-                                <tr>
-                                    <td colspan="2">* {{ $data }}</td>
-                                    
-                                </tr>
-                            @endforeach
-
-                            
-                        </table>
-                    
-                    </td>
-                    
-                    <td style="border: 1px solid #000; border-left:0px; border-bottom:0px;border-right:0px">
-                        <table style="width:100%">
-                            <tr>
-                                <td><b>RUBROS/CONCEPTO</b></td>
-                                <td></td>
-                                <td><b>VALORES</b></td>
-                            </tr>
-
-                            <tr style="line-height: 20px;">
-                                <td colspan="3" style="border: 1px solid #000; border-left:0px; border-bottom:0px;border-right:0px"></td>
-                            
+                                <td style="text-align:right">{{ $patente->valor_impuesto_act }}</td>
                             </tr>
 
                             <tr>
-                                <td><b>Impuesto 1.5 x mil Activos Totales:</b> </td>
-                                <td>$</td>
-                                <td style="text-align:right">{{ number_format($patente->valor_impuesto_act,2) }}</td>
+                                <td>EXONERACION </td>
+
+                                <td style="text-align:right">-{{number_format($patente->valor_exoneracion_act, 2)}}</td>
                             </tr>
 
                             <tr>
-                                <td><b>Exoneracion:</b> </td>
-                                <td>$</td>
-                                <td style="text-align:right">-{{number_format($patente->valor_exoneracion_act,2)}}</td>
+                                <td>SERVICIOS ADMINISTRATIVOS</td>
+
+                                <td style="text-align:right">{{number_format($patente->valor_sta_act, 2)}}</td>
                             </tr>
 
                             <tr>
-                                <td><b>Servicios Administrativo:</b> </td>
-                                <td>$</td>
-                                <td style="text-align:right">{{number_format($patente->valor_sta_act,2)}}</td>
-                            </tr>
+                                <td>INTERESES</td>
 
-
-                            
-                            
-                            <!-- <tr style="margin-top:20px">
-                                <td><b>Valor Emitido:</b> </td>
-                                <td>$</td>
-                                <td style="text-align:right">{{ $patente->valor_activo_total }}</td>
-                            </tr>
-
-                            <tr style="line-height: 20px;">
-                                <td colspan="3" style="border: 1px solid #000; border-left:0px; border-bottom:0px;border-right:0px"></td>
-                            
-                            </tr> -->
-
-
-                        
-
-                            <tr>
-                                <td><b>Intereses:</b> </td>
-                                <td>$</td>
                                 <td style="text-align:right">{{ $patente->valor_intereses_act }}</td>
                             </tr>
 
                             <tr>
-                                <td><b>Recargos:</b> </td>
-                                <td>$</td>
+                                <td>RECARGOS </td>
+
                                 <td style="text-align:right">{{ $patente->valor_recargos_act }}</td>
                             </tr>
 
                             <tr>
-                                <td><b>Total Deuda:</b> </td>
-                                <td>$</td>
+                                <td>TOTAL A PAGAR </td>
+
                                 <td style="text-align:right">{{ $patente->valor_activo_total }}</td>
                             </tr>
+                        </tbody>
 
-                        </table>
-                    </td>
-                </tr>
+                    </table>
+
+                </td>
+            </tr>
+        </table>
+
+        <table class="tabla-izquierda-" style="font-size: 10px;">
+            <thead>
                 <tr>
-                    <td colspan="2" style="border: 1px solid #000; border-left:0px; border-bottom:0px; border-right:0px;width:45%">
+                    <th colspan="3" style="text-align:left">ACTIVIDADES</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($patente->act as $data)
+                    <tr>
+                        <td colspan="3">{{ $data }}</td>
+
+                    </tr>
+                @endforeach
+
+            </tbody>
+        </table>
+        <p style="text-align: center;"><b>Fecha Impresion: </b>{{ date('d-m-Y H:i:s') }}</p>
+
+        <table width="100%" style="margin-top:0px">
+            <tbody>
+
+                <tr style="line-height: 5px;">
+                    <td style="text-align: center">
+
+
+                        <img src="{{ asset('FIRMA-RENTA.png') }}" height="115px">
 
                     </td>
+                    <td style="text-align: center">
+
+                    </td>
+
+                    <td style="text-align: center">
+
+                    </td>
+
                 </tr>
-            
-            </table>
 
-        
-            <br>
-            <center><b>Fecha Impresion: </b>{{ $fecha_formateada_hoy }}<br>
-            
-            <br>
-            <br>
-            <br>
-            <br>
+                <tr style="line-height: 5px;">
+                    <td style="text-align: center">
+                        __________________________________________
+                    </td>
+                    <td style="text-align: center">
+                        __________________________________________
+                    </td>
 
-            <table width="100%">
-                <tbody>
-                    <tr>
-                        <td style="text-align: center">
-                            __________________________________________
-                        </td>
-                        <td style="text-align: center">
-                            __________________________________________
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: center">
-                            Ing. Jacinta María Mendoza Cusme
-                        </td>
-                        <td style="text-align: center">
-                            Ing. Jandry Fernando Loor Macay
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: center">
-                            Tesorera Municipal Juez de Coactiva
-                        </td>
-                        <td style="text-align: center">
-                        Director Financiero (E)
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                    <td style="text-align: center">
+                        __________________________________________
+                    </td>
 
+                </tr>
+
+                <tr>
+                    <td style="text-align: center">
+                        <b>RENTAS</b>
+                    </td>
+                    <td style="text-align: center">
+                        <b>TESORERIA</b>
+                    </td>
+                    <td style="text-align: center">
+                        <b>RECAUDADOR</b>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
     @endif
-    
-
-    
 
 </body>
+
 </html>

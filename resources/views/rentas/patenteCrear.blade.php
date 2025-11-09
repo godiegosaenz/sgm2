@@ -1000,6 +1000,25 @@
 
         </fieldset>
     </div>
+    <div class="row">
+        <fieldset class="col-md-12 border p-3 mb-4" id="patente_fieldset1" >
+            <legend class="float-none w-auto px-3 fs-5">Valor Total</legend>
+            <div class="row">
+                <div class="col-md-12 mb-3">
+                    
+                    <div class="mb-3 row">
+                        <label for="cont_impuesto_act" class="col-sm-3 col-form-label" style="text-align: right;">Total a Pagar</label>
+                        <div class="col-sm-6">
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="desabilita_txt form-control "name="total_final" id="total_final" value=""readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
 </form>
 
 <div class="btn-toolbar1 d-flex justify-content-center gap-2" style="margin-bottom: 22px;">
@@ -1372,6 +1391,7 @@
                                                 <option value="">Seleccione una Parroquia</option>
                                                 
                                             </select>
+                                           
                                         </div>
 
                                         <div class="mb-3">
