@@ -63,7 +63,7 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 10px;
-            font-size: 8px;
+            font-size: 11px;
         }
         .tabla-derecha th, .tabla-derecha td {
             border: 1px solid #000;
