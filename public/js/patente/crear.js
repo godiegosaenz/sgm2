@@ -2369,16 +2369,19 @@ function BuscaContribuyenteRL(){
 }
 
 function abrirModalParroquia(){
+    
+    let canton_txt=$("#canton_id option:selected").text();
+    let provincia_txt = $("#provincia option:selected").text().trim();
+  
+  
+    $("#provincia_contr").val(provincia_txt);
+    $("#canton_contr").val(canton_txt);
     $('#modalContri').modal('hide')
     $('#modalNuevaParroquia').modal('show')
 }
 
 function cerrarModalParroquia(){
-    let provincia_txt=$("#provincia option:selected").text();
-    let canton_txt=$("#canton_id option:selected").text();
-    
-    $("#provincia_contr").val(provincia_txt);
-    $("#canton_contr").val(canton_txt);
+   
 
     $('#modalContri').modal('show')
     $('#modalNuevaParroquia').modal('hide')

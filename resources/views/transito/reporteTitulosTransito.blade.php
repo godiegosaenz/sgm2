@@ -5,9 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reporte en PDF</title>
     <style>
-        @page {
-            margin: 10mm; /* Puedes ajustar aquí el margen de toda la hoja */
+       @page {
+            margin-top: 3mm;  /* <-- antes estaba 10mm */
+            margin-right: 10mm;
+            margin-bottom: 10mm;
+            margin-left: 10mm;
         }
+
         body {
             font-family: Arial, sans-serif;
             font-size: 10px;

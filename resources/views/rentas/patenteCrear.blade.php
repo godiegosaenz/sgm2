@@ -1857,9 +1857,10 @@
                         <div class="row">
                             <div class="col-md-12 mb-3">
 
+                               
                                 <div class="mb-3 row">
-                                    <label for="provincia_local" class="col-sm-3 col-form-label"
-                                        style="text-align: end;">Provincia</label>
+                                    <label for="canton_local" class="col-sm-3 col-form-label"
+                                        style="text-align: end;">Canton</label>
                                     <div class="col-sm-8">
                                         <div class="input-group">
                                             <input type="text" class="desabilita_txt form-control" name="provincia_contr"
