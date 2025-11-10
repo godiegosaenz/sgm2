@@ -67,7 +67,7 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 10px;
-            font-size: 11px;
+            font-size: 10px;
         }
         .tabla-derecha th, .tabla-derecha td {
             border: 1px solid #000;
@@ -88,7 +88,7 @@
     @php
         $impuesto = $item['TransitoImpuesto'];
     @endphp
-        <table class="cabecera" style="font-size:8px !important">
+        <table class="cabecera" style="font-size:10px !important">
             <tr>
                 <td class="logo">
                     <img src="{{ asset('img/logo4.png') }}" alt="Logo" width="60">
