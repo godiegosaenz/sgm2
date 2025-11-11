@@ -176,11 +176,13 @@
 
                         <th width="20%" style="border: 0px; ;border-color: #D3D3D3; text-align: center">Cliente</th>
 
+                        <th width="10%" style="border: 0px; ;border-color: #D3D3D3; text-align: center">Num Titulo</th>
+
                         <th width="10%" style="border: 0px; ;border-color: #D3D3D3; text-align: center; line-height:15px">Placa/CPN/RAMV</th>
 
                         <th width="10%" style="border: 0px; ;border-color: #D3D3D3; text-align: center; line-height:15px">Clase</th>
 
-                        <th width="40%" style="border: 0px; ;border-color: #D3D3D3; text-align: center">Cuadro Tarifario RTV</th>
+                        <th width="30%" style="border: 0px; ;border-color: #D3D3D3; text-align: center">Cuadro Tarifario RTV</th>
 
                         
 
@@ -218,6 +220,12 @@
 
                                     <td align="left" style="border-left: 0px; border-center:0px;border-color: #D3D3D3">
                                        {{$item->nombre_propietario}} {{$item->apellido_propietario}}
+                                        
+                                        
+                                    </td>
+
+                                     <td align="left" style="border-left: 0px; border-center:0px;border-color: #D3D3D3">
+                                       {{$item->numero_titulo}}
                                         
                                         
                                     </td>
@@ -293,7 +301,7 @@
                     <tfoot >
                     <tr style="font-size:10px !important;line-height:5px" style="">
 
-                        <td  colspan="6"style="font-size:9px;border: 0px; border-color: #D3D3D3;  text-align: right;">
+                        <td  colspan="7"style="font-size:9px;border: 0px; border-color: #D3D3D3;  text-align: right;">
                             <b>TOTAL</b>
                         </td>
 
