@@ -1851,57 +1851,89 @@
                     <h5 class="modal-title" id="modalLocalLabel">Nueva Parroquia</h5>
                     <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
                 </div>
-                @csrf
-                <div class="modal-body">
-                    <div class="col-md-12">
-                        <div class="row">
-                            <div class="col-md-12 mb-3">
-
-                               
-                                <div class="mb-3 row">
-                                    <label for="canton_local" class="col-sm-3 col-form-label"
-                                        style="text-align: end;">Canton</label>
-                                    <div class="col-sm-8">
-                                        <div class="input-group">
-                                            <input type="text" class="desabilita_txt form-control" name="provincia_contr"
-                                                id="provincia_contr" >
+                <form method="POST" action="" id="form_parroquia">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                
+                                    <div class="mb-3 row">
+                                        <label for="canton_local" class="col-sm-3 col-form-label"
+                                            style="text-align: end;">Provincia</label>
+                                        <div class="col-sm-8">
+                                            <div class="input-group">
+                                                <input type="text" class="desabilita_txt form-control" name="provincia_contr"
+                                                    id="provincia_contr" >
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div class="mb-3 row">
-                                    <label for="canton_local" class="col-sm-3 col-form-label"
-                                        style="text-align: end;">Canton</label>
-                                    <div class="col-sm-8">
-                                        <div class="input-group">
-                                            <input type="text" class="desabilita_txt form-control" name="canton_contr"
-                                                id="canton_contr" >
+                                    <div class="mb-3 row">
+                                        <label for="canton_local" class="col-sm-3 col-form-label"
+                                            style="text-align: end;">Canton</label>
+                                        <div class="col-sm-8">
+                                            <div class="input-group">
+                                                <input type="text" class="desabilita_txt form-control" name="canton_contr"
+                                                    id="canton_contr" >
+                                                <input type="hidden" class="desabilita_txt form-control" name="id_canton_contr"
+                                                    id="id_canton_contr" >
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div class="mb-3 row">
-                                    <label for="parroquia_local" class="col-sm-3 col-form-label"
-                                        style="text-align: end;">Parroquia</label>
-                                    <div class="col-sm-8">
-                                        <div class="input-group">
-                                            <input type="text" class="desabilita_txt form-control" name="parroquia_contr"
-                                                id="parroquia_contr" >
+                                    <div class="mb-3 row">
+                                        <label for="parroquia_local" class="col-sm-3 col-form-label"
+                                            style="text-align: end;">Parroquia</label>
+                                        <div class="col-sm-8">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" name="parroquia_contr"
+                                                    id="parroquia_contr" >
+                                            </div>
                                         </div>
                                     </div>
+
+                                    <div class="mb-3 row">
+                                        <label for="parroquia_local" class="col-sm-3 col-form-label"
+                                            style="text-align: end;">Codigo</label>
+                                        <div class="col-sm-8">
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" name="parroquia_contr_codigo"
+                                                    id="parroquia_contr_codigo" >
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <label for="parroquia_local" class="col-sm-3 col-form-label"
+                                            style="text-align: end;">Urbano/Rural</label>
+                                        <div class="col-sm-8">
+                                            <div class="input-group">
+                                                
+                                                <select class="form-select modal_new_cont" id="urbano_rural"
+                                                    name="urbano_rural" >
+                                                    <option value="">Seleccione un tipo</option>
+                                                    <option value="U">
+                                                        Urbano</option>
+                                                    <option value="R">
+                                                        Rural</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
 
                             </div>
-
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success" onclick="guardaLocal()">
-                       Guardar
-                    </button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"  onclick="cerrarModalParroquia()">Cerrar</button>
-                </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" onclick="guardaParroquia()">
+                        Guardar
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"  onclick="cerrarModalParroquia()">Cerrar</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

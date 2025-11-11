@@ -1946,4 +1946,27 @@ class PatenteController extends Controller
         }
     }
 
+    public function guardaParroquia(Request $request){
+        try {
+
+            $existe=PsqlParroquia::where('id_canton',$request->canton_id_selecc)
+            ->where('descripcion',$request->parroqui_cont)
+            ->first();
+            if(!is_null($existe)){
+                return ["mensaje"=>"Ya existe esa parroquia, para ese canton", "error"=>true];
+
+            }
+            $guardaParroquia=new PsqlParroquia();
+            $guardaParroquia->codigo_parroquia=$request->parroquia_contr_codigo;
+            $guardaParroquia->descripcion=$request->parroqui_cont;
+            $guardaParroquia->save();
+
+            return ["mensaje"=>'Parroquia agregada exitosamente', "error"=>false];
+
+        } catch (\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+
+        }
+    }
+
 }

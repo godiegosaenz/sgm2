@@ -220,8 +220,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('patente/baja-titulo-patente', [PatenteController::class, 'bajaTituloPatente'])->name('bajaTituloPatente.patente');
 
     Route::get('patente/reportes', [PatenteController::class, 'vistaReportePatente'])->name('vistaReportePatente.patente');
-     Route::post('patente/pago-consulta', [PatenteController::class, 'consultarPagos'])->name('consultarPagos.patente');
+    Route::post('patente/pago-consulta', [PatenteController::class, 'consultarPagos'])->name('consultarPagos.patente');
     Route::post('patente/reporte-diario', [PatenteController::class, 'ReporteTransito'])->name('ReporteTransito.patente');
+    Route::post('patente/agregar-parroquia', [PatenteController::class, 'guardaParroquia'])->name('guardaParroquia.patente');
     // Route::get('transito/test-reportes', [AnaliticaContribuyenteController::class, 'testReporteTransito'])->name('testReporteTransito.transito');
 
 

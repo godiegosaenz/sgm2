@@ -410,18 +410,26 @@ class TransitoImpuestoController extends Controller
            
             if($vehiculo->tipo_identif=="PLACA"){
                 $placa=$vehiculo->placa_cpn_ramv;
-                $lastChar = substr($placa, -1);
+                //$lastChar = substr($placa, -1);
                 $mes = date("n");
+                //$lastChar=(int)$lastChar;
+                //$valor=$lastChar+1;
 
-                $lastChar=(int)$lastChar;
-                $valor=$lastChar+1;
+                if (preg_match_all('/\d/', $placa, $matches)) {
+                    $lastDigit = end($matches[0]);   // '9' como string
+                    $lastDigitInt = (int) $lastDigit; // 9 como entero, si lo necesitas
+                } else {
+                    $lastDigit = null; // no hay dígitos
+                }
+
+                $valor=$lastDigit;
                 
                 if($valor<$mes && $valor>1){
                     $aplica_recargo=1;
                 }
                 
             }
-           
+                       
             $ultimo_anio_matriculacion=$request->last_year_declaracion;
 
             $ultimo_5_anio=date('Y')-5;
@@ -433,7 +441,7 @@ class TransitoImpuestoController extends Controller
             if($ultimo_anio_matriculacion < date('Y')){
                 $diferencia=(date('Y')-1) - (int)$ultimo_anio_matriculacion;
             }
-           
+            // dd($diferencia);
             $tarifa = null;
             $valortipoclase = null;
             if ($vehiculo) {

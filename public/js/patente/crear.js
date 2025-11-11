@@ -2372,8 +2372,20 @@ function abrirModalParroquia(){
     
     let canton_txt=$("#canton_id option:selected").text();
     let provincia_txt = $("#provincia option:selected").text().trim();
-  
-  
+
+    let id_canton_txt=$("#canton_id").val();
+    let id_provincia_txt = $("#provincia").val();
+    
+    if(id_provincia_txt=="" || id_provincia_txt==null){
+        alertNotificar("Debe seleccionar una provincia", "error")
+        return
+    }
+
+    if(id_canton_txt=="" || id_canton_txt==null){
+        alertNotificar("Debe seleccionar un canton", "error")
+        return
+    }
+    $('#id_canton_contr').val(id_canton_txt)
     $("#provincia_contr").val(provincia_txt);
     $("#canton_contr").val(canton_txt);
     $('#modalContri').modal('hide')
@@ -2382,7 +2394,70 @@ function abrirModalParroquia(){
 
 function cerrarModalParroquia(){
    
-
     $('#modalContri').modal('show')
     $('#modalNuevaParroquia').modal('hide')
+    $("#id_canton_contr").val('')
+    $("#provincia_contr").val('')
+    $("#canton_contr").val('')
+    $("#parroquia_contr").val('')
+    $("#parroquia_contr_codigo").val('')
+}
+
+function guardaParroquia(){
+  
+    var canton_id_selecc=$('#id_canton_contr').val()
+    var parroqui_cont=$('#parroquia_contr').val()
+    var parroquia_contr_codigo=$('#parroquia_contr_codigo').val()
+    
+    if(canton_id_selecc==null || canton_id_selecc==""){
+        alertNotificar("Debe primero seleccionar el canton","error")
+        return
+    }
+
+    if(parroqui_cont==null || parroqui_cont==""){
+        alertNotificar("Debe ingresar el nombre de la parroquia","error")
+        return
+    }
+
+    if(parroquia_contr_codigo==null || parroquia_contr_codigo==""){
+        alertNotificar("Debe ingresar el codigo de la parroquia","error")
+        return
+    }
+
+    vistacargando("m","Espere por favor")
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    var tipo='POST'
+    $.ajax({
+        
+        type: tipo,
+        url: "patente/agregar-parroquia",
+        method: tipo,             
+        data: {
+            canton_id_selecc: canton_id_selecc,
+            parroqui_cont: parroqui_cont,
+            parroquia_contr_codigo: parroquia_contr_codigo
+        },
+        
+        // processData:false, 
+
+        success: function(response) {
+            vistacargando("")
+            if(response.error==true){
+                alertNotificar(response.mensaje,"error")
+                return
+            }
+            alertNotificar(response.mensaje,"success")
+            cargarparroquiaLocal(canton_id_selecc)
+            cerrarModalParroquia()
+           
+        },
+        error: function(xhr, status, error) {
+            vistacargando("")
+            console.error("Error al obtener los datos:", error);
+        }
+    });
 }
