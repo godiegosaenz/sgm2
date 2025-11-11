@@ -491,6 +491,9 @@ class TransitoImpuestoController extends Controller
                         $valor_recargo=0;
                     }
                     $valor_recargo=$valor_recargo + $valor_recargo_ant;
+                    if($request->solo_duplicado!="no"){
+                        $valor_recargo=0;
+                    }
                     array_push($array,["id"=>$data["id"], "nuevo_valor"=>(float)$valor_recargo, "codigo"=>"REC"]);
                 }
 

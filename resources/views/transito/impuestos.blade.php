@@ -174,7 +174,7 @@
             <legend class="float-none w-auto px-3 fs-5">Detalle de impuesto</legend>
             <div class="row align-items-end mb-3">
 
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <label for="nombresRepresentante" class="form-label"> Proceso de Matriculacion Vehicular </label>
                     <select class="form-select {{ $errors->has('year_declaracion') ? 'is-invalid' : '' }}"
                         id="year_declaracion" name="year_declaracion" onchange="calcularImpuesto()">
@@ -186,7 +186,7 @@
                     <div class="invalid-feedback" id="error_year_declaracion"></div>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <label for="nombresRepresentante" class="form-label">Ultimo Año Matriculacion</label>
                     <select class="form-select {{ $errors->has('last_year_declaracion') ? 'is-invalid' : '' }}"
                         id="last_year_declaracion" name="last_year_declaracion" onchange="calcularImpuesto()">
@@ -196,8 +196,18 @@
                     </select>
                     <div class="invalid-feedback" id="error_last_year_declaracion"></div>
                 </div>
+                <div class="col-md-3">
+                    <label for="nombresRepresentante" class="form-label">¿Es solo un duplicado?</label>
+                    <select class="form-select {{ $errors->has('solo_duplicado') ? 'is-invalid' : '' }}"
+                        id="solo_duplicado" name="solo_duplicado" onchange="calcularImpuesto()">
+                        <option value="no">No</option>
+                        <option value="sticker">Sí, duplicado de Sticker</option>
+                        <option value="matricula">Sí, duplicado de Matrícula</option>
+                    </select>
+                  
+                </div>
 
-                <div class="col-md-4 d-grid gap-2">
+                <div class="col-md-3 d-grid gap-2">
                     <button class="btn btn-primary" id="btn-calcular">
                         <span id="btn-text">Calcular</span>
                         <span id="spinner-btn" class="spinner-border spinner-border-sm d-none" role="status"
@@ -1042,6 +1052,7 @@
             const cliente_id = document.getElementById('cliente_id_2').value;
             const year = document.getElementById('year_declaracion').value;
             const last_year_declaracion = document.getElementById('last_year_declaracion').value;
+            const solo_duplicado = document.getElementById('solo_duplicado').value;
 
             // alert(year)
 
@@ -1072,7 +1083,8 @@
                     vehiculo_id: vehiculo_id,
                     cliente_id: cliente_id,
                     year: year,
-                    last_year_declaracion: last_year_declaracion
+                    last_year_declaracion: last_year_declaracion,
+                    solo_duplicado: solo_duplicado
                 }).then(function (res) {
                     console.log("txt")
                     console.log(res)
@@ -1098,8 +1110,27 @@
                         $('#check_valor_RTV').prop('checked',true)
                        
                         if(res.data.desmarca_rtv=="S"){
-                           
+                           $('#check_valor_RTV').prop('checked',false)
+                        }
+                       
+                        if(solo_duplicado=='matricula'){
+                            
+                            $('#check_valor_IAV').prop('checked',false)
                             $('#check_valor_RTV').prop('checked',false)
+                            $('#check_valor_SRV').prop('checked',false)
+                            $('#check_valor_DE').prop('checked',false)
+                            $('#check_valor_RTV').prop('checked',false)
+                            $('#check_valor_DM').prop('checked',true)
+                        }
+
+                        if(solo_duplicado=='sticker'){
+                           
+                            $('#check_valor_IAV').prop('checked',false)
+                            $('#check_valor_RTV').prop('checked',false)
+                            $('#check_valor_SRV').prop('checked',false)
+                            $('#check_valor_DM').prop('checked',false)
+                            $('#check_valor_RTV').prop('checked',false)
+                            $('#check_valor_DE').prop('checked',true)
                         }
 
                         // Mostrar el total con dos decimales
