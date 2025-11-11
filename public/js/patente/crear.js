@@ -767,7 +767,7 @@ function cargarparroquiaLocal(idcanton){
         idcanton:idcanton
     }).then(function(res) {
         if(res.status==200) {
-            console.log("cargando parroquia");
+            console.log("cargando parroquiaX");
             parroquia_id.innerHTML = res.data;
         }
     }).catch(function(err) {
@@ -2401,6 +2401,7 @@ function cerrarModalParroquia(){
     $("#canton_contr").val('')
     $("#parroquia_contr").val('')
     $("#parroquia_contr_codigo").val('')
+    $('#urbano_rural').val('')
 }
 
 function guardaParroquia(){
@@ -2408,6 +2409,7 @@ function guardaParroquia(){
     var canton_id_selecc=$('#id_canton_contr').val()
     var parroqui_cont=$('#parroquia_contr').val()
     var parroquia_contr_codigo=$('#parroquia_contr_codigo').val()
+    var urbano_rural=$('#urbano_rural').val()
     
     if(canton_id_selecc==null || canton_id_selecc==""){
         alertNotificar("Debe primero seleccionar el canton","error")
@@ -2421,6 +2423,11 @@ function guardaParroquia(){
 
     if(parroquia_contr_codigo==null || parroquia_contr_codigo==""){
         alertNotificar("Debe ingresar el codigo de la parroquia","error")
+        return
+    }
+
+    if(urbano_rural==null || urbano_rural==""){
+        alertNotificar("Debe seleccionar el tipo","error")
         return
     }
 
@@ -2439,7 +2446,8 @@ function guardaParroquia(){
         data: {
             canton_id_selecc: canton_id_selecc,
             parroqui_cont: parroqui_cont,
-            parroquia_contr_codigo: parroquia_contr_codigo
+            parroquia_contr_codigo: parroquia_contr_codigo,
+            urbano_rural: urbano_rural
         },
         
         // processData:false, 
@@ -2451,7 +2459,7 @@ function guardaParroquia(){
                 return
             }
             alertNotificar(response.mensaje,"success")
-            cargarparroquiaLocal(canton_id_selecc)
+            cargarparroquia(canton_id_selecc)
             cerrarModalParroquia()
            
         },

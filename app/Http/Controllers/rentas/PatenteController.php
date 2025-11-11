@@ -1959,6 +1959,8 @@ class PatenteController extends Controller
             $guardaParroquia=new PsqlParroquia();
             $guardaParroquia->codigo_parroquia=$request->parroquia_contr_codigo;
             $guardaParroquia->descripcion=$request->parroqui_cont;
+            $guardaParroquia->id_canton=$request->canton_id_selecc;
+            $guardaParroquia->tipo=$request->urbano_rural;
             $guardaParroquia->save();
 
             return ["mensaje"=>'Parroquia agregada exitosamente', "error"=>false];

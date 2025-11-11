@@ -11,6 +11,7 @@ class PsqlParroquia extends Model
 
     protected $connection = 'pgsql'; // Nombre de la conexión configurada
     protected $table = 'sgm_app.cat_parroquia';
+    public $timestamps = false;
 
     public function contribuyentes()
     {
