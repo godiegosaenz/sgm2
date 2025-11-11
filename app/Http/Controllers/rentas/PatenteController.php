@@ -991,7 +991,8 @@ class PatenteController extends Controller
             $rangos = DB::connection('pgsql')
             ->table('sgm_patente.pa_base_imponible')
             ->selectRaw('MIN(desde) as minimo, MAX(desde) as maximo')
-            ->where('anio', $obtener_anio->year_declaracion)
+            // ->where('anio', $obtener_anio->year_declaracion)
+            ->where('anio', date('Y'))
             ->where('estado','A')
             ->first();
             // dd($rangos);
@@ -1014,7 +1015,8 @@ class PatenteController extends Controller
                 $calcular= DB::connection('pgsql')->table('sgm_patente.pa_base_imponible as bi')
                 ->where('desde','=',$maximo)
                 ->select('dolares','imp_sobre_fraccion_exec','desde','hasta','codigo')
-                ->where('anio',$obtener_anio->year_declaracion)
+                // ->where('anio',$obtener_anio->year_declaracion)
+                ->where('anio', date('Y'))
                 ->where('estado','A')
                 ->first();
             }else{
@@ -1022,7 +1024,8 @@ class PatenteController extends Controller
                 ->where('desde','<=',$valor)
                 ->where('hasta','>=',$valor)
                 ->select('dolares','imp_sobre_fraccion_exec','desde','hasta','codigo')
-                ->where('anio',$obtener_anio->year_declaracion)
+                // ->where('anio',$obtener_anio->year_declaracion)
+                ->where('anio', date('Y'))
                 ->where('estado','A')
                 ->first();
             }
@@ -1041,9 +1044,12 @@ class PatenteController extends Controller
 
             $valor_intereses=0;
             $porcentaje_intereses=0;
+            //dd($obtener_anio->year_declaracion);
             if($obtener_anio->year_declaracion < date('Y')){
+                
                 $intereses= DB::connection('pgsql')->table('sgm_financiero.ren_intereses as i')
-                ->where('anio', $obtener_anio->year_declaracion)
+                // ->where('anio', $obtener_anio->year_declaracion)
+                ->where('anio', date('Y'))
                 ->select('porcentaje')
                 ->first();
                 $porcentaje_intereses= $intereses->porcentaje;
