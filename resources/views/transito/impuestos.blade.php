@@ -893,7 +893,7 @@
 @push('scripts')
     <script>
         
-        $('#check_valor_REC').prop('disabled', true)
+        // $('#check_valor_REC').prop('disabled', true)
         let token = "{{csrf_token()}}";
         document.getElementById('vehiculo_id').addEventListener('keypress', function (event) {
             // Verificar si la tecla presionada es 'Enter' (keyCode 13)
@@ -1107,11 +1107,11 @@
                         });
 
                         
-                        $('#check_valor_RTV').prop('checked',true)
-                        $('#check_valor_IAV').prop('checked',true)
-                        $('#check_valor_SRV').prop('checked',true)
-                        $('#check_valor_DM').prop('checked',false)
-                        $('#check_valor_DE').prop('checked',false)
+                        // $('#check_valor_RTV').prop('checked',true)
+                        // $('#check_valor_IAV').prop('checked',true)
+                        // $('#check_valor_SRV').prop('checked',true)
+                        // $('#check_valor_DM').prop('checked',false)
+                        // $('#check_valor_DE').prop('checked',false)
                        
                         if(res.data.desmarca_rtv=="S"){
                            $('#check_valor_RTV').prop('checked',false)
@@ -1124,6 +1124,7 @@
                             $('#check_valor_SRV').prop('checked',false)
                             $('#check_valor_DE').prop('checked',false)
                             $('#check_valor_RTV').prop('checked',false)
+                            $('#check_valor_REC').prop('checked',false)
                             $('#check_valor_DM').prop('checked',true)
                         }
 
@@ -1134,6 +1135,7 @@
                             $('#check_valor_SRV').prop('checked',false)
                             $('#check_valor_DM').prop('checked',false)
                             $('#check_valor_RTV').prop('checked',false)
+                            $('#check_valor_REC').prop('checked',false)
                             $('#check_valor_DE').prop('checked',true)
                         }
 
