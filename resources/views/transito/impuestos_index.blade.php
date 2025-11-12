@@ -445,7 +445,7 @@
 
     function registrarCobro(){
         var id=$('#id_impuesto').val()
-        alert(id)
+        //alert(id)
        
         if(confirm('¿Estas seguro que quieres realizar el cobro?'))
         {

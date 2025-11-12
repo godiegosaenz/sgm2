@@ -208,6 +208,7 @@
                             @foreach($item['transitoimpuestoconcepto'] as $r)
                                 @php
                                     $concepto=$r->concepto;
+                                    $quitar=0;
                                     if($r->codigo=='RTV'){
                                         //$concepto=$r->concepto ." (".implode(', ', $r->agrupado). ")";
                                         $concepto=$r->concepto ." (".$item['vehiculo']->tipo_vehiculo->descripcion. ")";
@@ -216,14 +217,19 @@
                                     if($r->codigo=='REC' && !is_null($impuesto['calendarizacion'])){
                                         $concepto=$r->concepto ." (CALENDARIZACION ".$impuesto['calendarizacion'].")";
                                     }
+
+                                    if($concepto=="RECARGO POR CALENDARIZACIÓN" && $r->pivot->valor==0){
+                                        $quitar=1;
+                                    }
                                 @endphp
-                                
-                                <tr>
-                                    <td>
-                                        {{$concepto}}
-                                    </td>
-                                    <td style="text-align: right; vertical-align:middle">$ {{$r->pivot->valor}}</td>
-                                </tr>
+                                @if($quitar==0)
+                                    <tr>
+                                        <td>
+                                            {{$concepto}}
+                                        </td>
+                                        <td style="text-align: right; vertical-align:middle">$ {{$r->pivot->valor}}</td>
+                                    </tr>
+                                @endif
                             @endforeach
 
                         </tbody>

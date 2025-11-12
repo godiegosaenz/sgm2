@@ -1108,6 +1108,10 @@
 
                         
                         $('#check_valor_RTV').prop('checked',true)
+                        $('#check_valor_IAV').prop('checked',true)
+                        $('#check_valor_SRV').prop('checked',true)
+                        $('#check_valor_DM').prop('checked',false)
+                        $('#check_valor_DE').prop('checked',false)
                        
                         if(res.data.desmarca_rtv=="S"){
                            $('#check_valor_RTV').prop('checked',false)

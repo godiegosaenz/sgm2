@@ -122,6 +122,9 @@ class TransitoImpuestoController extends Controller
             if($cadena==null){
                 $cadena=date('Y');
             }
+            if($request->solo_duplicado!="no"){
+                $cadena=null;
+            }
            
             $qr_Rentas = DB::connection('mysql')
                         ->table('area as a')
@@ -1258,6 +1261,7 @@ class TransitoImpuestoController extends Controller
         $vehiculo =  $TransitoImpuesto->vehiculo;
         $cliente = $TransitoImpuesto->cliente;
         $transitoimpuestoconcepto = $TransitoImpuesto->conceptos;
+        
         // $clase=\DB::connection('psql')->table('clase_vehiculo')-
 
         foreach($transitoimpuestoconcepto as $key => $data){
@@ -1273,6 +1277,7 @@ class TransitoImpuestoController extends Controller
             }           
 
         }
+        // dd($TransitoImpuesto);
        
         $fecha_documento=$TransitoImpuesto->created_at;
         $fecha_hoy=date('d-m-Y', strtotime($fecha_documento));
@@ -1285,6 +1290,7 @@ class TransitoImpuestoController extends Controller
         $liquidacion['vehiculo'] = $vehiculo;
         $liquidacion['cliente'] = $cliente;
         $liquidacion['transitoimpuestoconcepto'] = $transitoimpuestoconcepto;
+        
         array_push($dataArray, $liquidacion);
 
         // $qr_Rentas = DB::connection('mysql')
@@ -1402,7 +1408,7 @@ class TransitoImpuestoController extends Controller
         //     ];
         // }
 
-        
+        // dd($dataArray);
         $data = [
             'title' => 'Reporte de liquidacion',
             'date' => date('m/d/Y'),

@@ -26,7 +26,7 @@ class TransitoImpuesto extends Model
 
     public function conceptos(): BelongsToMany
     {
-        return $this->belongsToMany(TransitoConcepto::class, 'sgm_transito.concepto_impuesto','impuesto_matriculacion_id','concepto_id')->withPivot('id','valor')->withTimestamps();
+        return $this->belongsToMany(TransitoConcepto::class, 'sgm_transito.concepto_impuesto','impuesto_matriculacion_id','concepto_id')->withPivot('id','valor')->withTimestamps()->orderBy('orden','asc');
     }
 
     public function vehiculo()
