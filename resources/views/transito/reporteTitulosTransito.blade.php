@@ -218,18 +218,18 @@
                                         $concepto=$r->concepto ." (CALENDARIZACION ".$impuesto['calendarizacion'].")";
                                     }
 
-                                    if($concepto=="RECARGO POR CALENDARIZACIÓN" && $r->pivot->valor==0){
+                                    /*if($concepto=="RECARGO POR CALENDARIZACIÓN" && $r->pivot->valor==0){
                                         $quitar=1;
-                                    }
+                                    }*/
                                 @endphp
-                                @if($quitar==0)
+                                <!-- @if($quitar==0) -->
                                     <tr>
                                         <td>
                                             {{$concepto}}
                                         </td>
                                         <td style="text-align: right; vertical-align:middle">$ {{$r->pivot->valor}}</td>
                                     </tr>
-                                @endif
+                                <!-- @endif -->
                             @endforeach
 
                         </tbody>
