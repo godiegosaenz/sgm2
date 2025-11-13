@@ -122,7 +122,7 @@
                     <table class="table table-bordered table-hover" id="tableCita" style="width: 100%">
                         <thead>
                             <tr>
-                            <th scope="col">*</th>
+                            <th scope="col">Num Predio</th>
                            
                             <th scope="col">Año</th>
                             <th>Liquidación</th>
