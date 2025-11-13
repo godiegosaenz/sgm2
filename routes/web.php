@@ -118,8 +118,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('remision/datatables', [RemisionInteresController::class, 'datatables'])->name('datatables.remision');
     Route::get('remision/lista', [RemisionInteresController::class, 'index'])->name('index.remision');
     Route::get('remision/detalle/{id}', [RemisionInteresController::class, 'show'])->name('show.remision');
+    Route::get('remision/consulta/liquidacion1', [RemisionInteresController::class, 'consultaLiquidacionConRemision'])->name('consulta.liquidacion.remision1');
+    Route::post('remision/consulta/liquidacion1', [RemisionInteresController::class, 'storeConsultaLiquiadacionesConRemision'])->name('store.liquidacion.remision1');
+
     Route::get('remision/consulta/liquidacion', [RemisionInteresController::class, 'consultaLiquidacionConRemision'])->name('consulta.liquidacion.remision');
     Route::post('remision/consulta/liquidacion', [RemisionInteresController::class, 'storeConsultaLiquiadacionesConRemision'])->name('store.liquidacion.remision');
+    Route::post('remision/consulta/liquidacion-reporte', [RemisionInteresController::class, 'reporteLiquidacion'])->name('reporteLiquidacion.remision');
     Route::get('remision/descargar/resolucion/{id}', [RemisionInteresController::class, 'download'])->name('descargar.remision');
     Route::post('remision/consulta', [RemisionInteresController::class, 'consulta'])->name('consulta.exoneracion.remision');
 

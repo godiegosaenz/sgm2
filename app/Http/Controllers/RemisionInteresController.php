@@ -305,15 +305,17 @@ class RemisionInteresController extends Controller
     }
 
     public function consultaLiquidacionConRemision(Request $r){
-        //Gate::authorize('reporte_liquidaciones', PsqlLiquidacion::class);
+       
         if(!Auth()->user()->hasPermissionTo('Reporte de liquidaciones'))
         {
             abort(403, 'No tienes acceso a esta seccion.');
         }
-        return view('tesoreria.consultaLiquidacionConRemision');
+        // return view('tesoreria.consultaLiquidacionConRemision');
+        $num_predio = 0;
+        return view('tesoreria.liquidacionRemision',compact('num_predio'));
     }
 
-    public function storeConsultaLiquiadacionesConRemision(Request $r){
+    public function storeConsultaLiquiadacionesConRemision1(Request $r){
         $attributes = [
             'inputMatricula' => 'Matricula inmobiliaria',
         ];
@@ -405,6 +407,332 @@ class RemisionInteresController extends Controller
         }
 
     }
+
+    public function storeConsultaLiquiadacionesConRemision(Request $r)
+    {   
+       
+        try {
+        $data = array();
+        $tipo=$r->tipo;
+        $num_predio=$r->num_predio;
+        $clave=$r->clave;
+        $nombre=$r->cmb_nombres;
+        
+        if($tipo!=3){
+            $predio_id = DB::connection('pgsql')->table('sgm_app.cat_predio')->select('id')
+            // ->where('num_predio', '=', $r->num_predio)
+            ->where(function($query) use($tipo, $num_predio, $clave, $nombre) {
+                if($tipo==1){
+                    $query->where('num_predio', '=', $num_predio);
+                }else if($tipo==2){
+                    $query->where('clave_cat', '=', $clave);
+                }else{
+                    // $query->where('clave_cat', '=', $clave);
+                }
+            })
+            ->first();
+           $num_predio = $predio_id->id;
+        }else{
+            $num_predio = $r->num_predio;
+        }
+        
+        //se obtiene las liquidaciones urbanas
+        // $num_predio = $r->num_predio;
+        // dd($num_predio);
+
+        $liquidacionUrbana = DB::connection('pgsql')->table('sgm_financiero.ren_liquidacion')
+        ->join('sgm_app.cat_predio', 'sgm_financiero.ren_liquidacion.predio', '=', 'sgm_app.cat_predio.id')
+        ->leftJoin('sgm_app.cat_ente', 'sgm_financiero.ren_liquidacion.comprador', '=', 'sgm_app.cat_ente.id')
+        ->select('sgm_financiero.ren_liquidacion.id','sgm_financiero.ren_liquidacion.id_liquidacion','sgm_financiero.ren_liquidacion.total_pago','sgm_financiero.ren_liquidacion.estado_liquidacion','sgm_financiero.ren_liquidacion.predio','sgm_financiero.ren_liquidacion.anio','sgm_financiero.ren_liquidacion.nombre_comprador','sgm_app.cat_predio.clave_cat','sgm_app.cat_ente.nombres','sgm_app.cat_ente.apellidos','sgm_app.cat_ente.ci_ruc','sgm_app.cat_predio.num_predio',
+        
+                    DB::raw('
+                    (
+                        SELECT
+                            ROUND((
+                                COALESCE(ren_liquidacion.saldo, 0)
+                                +
+                                COALESCE((
+                                    CASE
+                                        WHEN (ren_liquidacion.anio = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM NOW()) < 7) THEN
+                                            ROUND(d.valor * (
+                                                SELECT porcentaje
+                                                FROM sgm_app.ctlg_descuento_emision
+                                                WHERE num_mes = EXTRACT(MONTH FROM NOW())
+                                                AND num_quincena = (CASE WHEN EXTRACT(DAY FROM NOW()) > 15 THEN 2 ELSE 1 END)
+                                                LIMIT 1
+                                            ) / 100, 2) * (-1)
+                                        ELSE 0
+                                    END
+                                ), 0)
+                                +
+                                COALESCE((
+                                    CASE
+                                    WHEN (ren_liquidacion.anio < EXTRACT(YEAR FROM NOW())) THEN                                        
+                                        ROUND((ren_liquidacion.saldo * (
+                                            SELECT ROUND((porcentaje / 100), 2) 
+                                            FROM sgm_financiero.ren_intereses i
+                                            WHERE i.anio = ren_liquidacion.anio
+                                            LIMIT 1
+                                        )), 2)
+                                        ELSE 0
+                                    END
+                                ), 0)
+                                +
+                                COALESCE((
+                                    CASE
+                                        WHEN ren_liquidacion.anio = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM NOW()) > 7 THEN
+                                            ROUND((d.valor * 0.10), 2)
+                                        WHEN ren_liquidacion.anio < EXTRACT(YEAR FROM NOW()) THEN
+                                            ROUND((d.valor * 0.10), 2)
+                                        ELSE 0
+                                    END
+                                ), 0)
+                            ), 2)
+                        FROM sgm_financiero.ren_det_liquidacion d
+                        WHERE d.liquidacion = ren_liquidacion.id 
+                        AND d.rubro = 2
+                        LIMIT 1
+                    ) AS total_complemento'))
+        ->where(function($query) use($tipo, $num_predio, $nombre) {
+            if($tipo!=3){
+                $query->where('predio','=',$num_predio);
+            }else{
+                $query->where('comprador','=',$nombre);
+            }   
+        })
+        
+        // ->whereNot(function($query){
+        //     $query->where('estado_liquidacion', 4)
+        //     ->orWhere('estado_liquidacion', '=', 5);
+        // })
+        ->whereNotIN('estado_liquidacion',[1,3,4,5])
+        ->orderby('clave_cat','desc')
+        ->orderBy('anio', 'desc')
+        ->get();
+
+                                        // dd($liquidacionUrbana);
+        if(count($liquidacionUrbana) >= 1) {
+            // $num_predio=$r->num_predio;
+            $num_predio=$liquidacionUrbana[0]->num_predio;
+            return view('tesoreria.liquidacionRemision',compact('liquidacionUrbana','num_predio'));
+        }else{
+            return redirect('remision/consulta/liquidacion/')->with('status', 'No existe liquidaciones pendientes');
+        }
+
+        } catch (Exception $e) {
+            // Log the message locally OR use a tool like Bugsnag/Flare to log the error
+            return redirect('remision/consulta/liquidacion/')->with('status', 'Problema de conexion '.$e->getMessage());
+
+        }
+    }
+
+     public function reporteLiquidacion(Request $r)
+    {   
+       
+        try {
+        $data = array();
+        $tipo=$r->tipo;
+        $num_predio=$r->num_predio;
+        $clave=$r->clave;
+        $nombre=$r->cmb_nombres;
+        
+        if($tipo!=3){
+            $predio_id = DB::connection('pgsql')->table('sgm_app.cat_predio')->select('id')
+            // ->where('num_predio', '=', $r->num_predio)
+            ->where(function($query) use($tipo, $num_predio, $clave, $nombre) {
+                if($tipo==1){
+                    $query->where('num_predio', '=', $num_predio);
+                }else if($tipo==2){
+                    $query->where('clave_cat', '=', $clave);
+                }else{
+                    // $query->where('clave_cat', '=', $clave);
+                }
+            })
+            ->first();
+           $num_predio = $predio_id->id;
+        }else{
+            $num_predio = $r->num_predio;
+        }
+        
+        //se obtiene las liquidaciones urbanas
+        // $num_predio = $r->num_predio;
+        // dd($num_predio);
+
+        $liquidacionUrbana = DB::connection('pgsql')->table('sgm_financiero.ren_liquidacion')
+        ->join('sgm_app.cat_predio', 'sgm_financiero.ren_liquidacion.predio', '=', 'sgm_app.cat_predio.id')
+        ->leftJoin('sgm_app.cat_ente', 'sgm_financiero.ren_liquidacion.comprador', '=', 'sgm_app.cat_ente.id')
+        ->select('sgm_financiero.ren_liquidacion.id','sgm_financiero.ren_liquidacion.id_liquidacion','sgm_financiero.ren_liquidacion.total_pago','sgm_financiero.ren_liquidacion.estado_liquidacion','sgm_financiero.ren_liquidacion.predio','sgm_financiero.ren_liquidacion.anio','sgm_financiero.ren_liquidacion.nombre_comprador','sgm_app.cat_predio.clave_cat','sgm_app.cat_ente.nombres','sgm_app.cat_ente.apellidos','sgm_app.cat_ente.ci_ruc','sgm_app.cat_predio.num_predio','sgm_financiero.ren_liquidacion.saldo',
+        
+                    DB::raw('
+                    (
+                        SELECT
+                            ROUND((
+                                COALESCE(ren_liquidacion.saldo, 0)
+                                +
+                                COALESCE((
+                                    CASE
+                                        WHEN (ren_liquidacion.anio = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM NOW()) < 7) THEN
+                                            ROUND(d.valor * (
+                                                SELECT porcentaje
+                                                FROM sgm_app.ctlg_descuento_emision
+                                                WHERE num_mes = EXTRACT(MONTH FROM NOW())
+                                                AND num_quincena = (CASE WHEN EXTRACT(DAY FROM NOW()) > 15 THEN 2 ELSE 1 END)
+                                                LIMIT 1
+                                            ) / 100, 2) * (-1)
+                                        ELSE 0
+                                    END
+                                ), 0)
+                                +
+                                COALESCE((
+                                    CASE
+                                    WHEN (ren_liquidacion.anio < EXTRACT(YEAR FROM NOW())) THEN                                        
+                                        ROUND((ren_liquidacion.saldo * (
+                                            SELECT ROUND((porcentaje / 100), 2) 
+                                            FROM sgm_financiero.ren_intereses i
+                                            WHERE i.anio = ren_liquidacion.anio
+                                            LIMIT 1
+                                        )), 2)
+                                        ELSE 0
+                                    END
+                                ), 0)
+                                +
+                                COALESCE((
+                                    CASE
+                                        WHEN ren_liquidacion.anio = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM NOW()) > 7 THEN
+                                            ROUND((d.valor * 0.10), 2)
+                                        WHEN ren_liquidacion.anio < EXTRACT(YEAR FROM NOW()) THEN
+                                            ROUND((d.valor * 0.10), 2)
+                                        ELSE 0
+                                    END
+                                ), 0)
+                            ), 2)
+                        FROM sgm_financiero.ren_det_liquidacion d
+                        WHERE d.liquidacion = ren_liquidacion.id 
+                        AND d.rubro = 2
+                        LIMIT 1
+                    ) AS total_complemento'), DB::raw("
+                        (
+                            SELECT
+                                CASE
+                                    WHEN (ren_liquidacion.anio = EXTRACT(YEAR FROM NOW())) AND (EXTRACT(MONTH FROM NOW()) < 7) THEN
+                                        ROUND(d.valor * (
+                                            SELECT porcentaje
+                                            FROM sgm_app.ctlg_descuento_emision
+                                            WHERE num_mes = EXTRACT(MONTH FROM NOW())
+                                            AND num_quincena = (CASE WHEN EXTRACT(DAY FROM NOW()) > 15 THEN 2 ELSE 1 END)
+                                            LIMIT 1
+                                        ) / 100, 2) * (-1)
+                                    ELSE
+                                        0.00
+                                END
+                            FROM sgm_financiero.ren_det_liquidacion d
+                            WHERE d.liquidacion = ren_liquidacion.id AND d.rubro = 2
+                            LIMIT 1
+                        ) AS desc
+                    "),
+                    
+                    DB::raw("
+                        (
+                            SELECT
+                                CASE
+                                     WHEN (ren_liquidacion.anio < EXTRACT(YEAR FROM NOW())) THEN                                        
+                                        ROUND((ren_liquidacion.saldo * (
+                                            SELECT ROUND((porcentaje / 100), 2) 
+                                            FROM sgm_financiero.ren_intereses i
+                                            WHERE i.anio = ren_liquidacion.anio
+                                            LIMIT 1
+                                        )), 2)
+                                    ELSE
+                                        0.00
+                                    END
+                            FROM sgm_financiero.ren_det_liquidacion d
+                            WHERE d.liquidacion = ren_liquidacion.id AND d.rubro = 2
+                            LIMIT 1
+                        ) AS interes
+                    "),
+
+                    DB::raw("
+                        (
+                            SELECT
+                                CASE
+                                    WHEN ren_liquidacion.anio = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM NOW()) > 7 THEN
+                                        ROUND((d.valor * 0.10), 2)
+                                    WHEN ren_liquidacion.anio < EXTRACT(YEAR FROM NOW()) THEN
+                                        ROUND((d.valor * 0.10), 2)
+                                    ELSE
+                                        0.00
+                                END
+                            FROM sgm_financiero.ren_det_liquidacion d
+                            WHERE d.liquidacion = ren_liquidacion.id AND d.rubro = 2
+                            LIMIT 1
+                        ) AS recargos
+                    "))
+        ->where(function($query) use($tipo, $num_predio, $nombre) {
+            if($tipo!=3){
+                $query->where('predio','=',$num_predio);
+            }else{
+                $query->where('comprador','=',$nombre);
+            }   
+        })
+        
+        // ->whereNot(function($query){
+        //     $query->where('estado_liquidacion', 4)
+        //     ->orWhere('estado_liquidacion', '=', 5);
+        // })
+        ->whereNotIN('estado_liquidacion',[1,3,4,5])
+        ->orderby('clave_cat','desc')
+        ->orderBy('anio', 'desc')
+        ->get();
+
+        $nombrePDF="Liquidacion.pdf";                                // dd($liquidacionUrbana);
+        $pdf = \PDF::loadView('reportes.reporteLiquidacionRemision', ['DatosLiquidacion'=>$liquidacionUrbana]);
+
+        // return $pdf->download('reporteLiquidacion.pdf');
+        $pdf->setPaper("A4", "landscape");
+        $estadoarch = $pdf->stream();
+
+        //lo guardamos en el disco temporal
+        \Storage::disk('public')->put(str_replace("", "",$nombrePDF), $estadoarch);
+        $exists_destino = \Storage::disk('public')->exists($nombrePDF);
+        if($exists_destino){
+            return response()->json([
+                'error'=>false,
+                'pdf'=>$nombrePDF
+            ]);
+        }else{
+            return response()->json([
+                'error'=>true,
+                'mensaje'=>'No se pudo crear el documento'
+            ]);
+        }
+
+        } catch (Exception $e) {
+            // Log the message locally OR use a tool like Bugsnag/Flare to log the error
+             return response()->json([
+                'error'=>true,
+                'mensaje'=>'No se pudo crear el documento'.$e
+            ]);
+
+        }
+    }
+
+    public function descargarPdf($archivo){
+        try{
+
+            $exists_destino = \Storage::disk('public')->exists($archivo);
+
+            if($exists_destino){
+                return response()->download( storage_path('app/public/'.$archivo))->deleteFileAfterSend(true);
+            }else{
+                return back()->with(['error'=>'Ocurrió un error','estadoP'=>'danger']);
+            }
+
+        } catch (\Throwable $th) {
+            // Log::error(__CLASS__." => ".__FUNCTION__." => Mensaje =>".$e->getMessage()." Linea =>".$e->getLine());
+            return back()->with(['error'=>'Ocurrió un error','estadoP'=>'danger']);
+        }
+    }
+
 
     public function download($id){
         $RemisionInteres = RemisionInteres::find($id);

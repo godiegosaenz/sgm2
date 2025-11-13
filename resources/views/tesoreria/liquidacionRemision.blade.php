@@ -11,7 +11,7 @@
 @endpush
 @section('content')
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h4 class="h2">Impresion titulos de credito (Coactiva)</h4>
+    <h4 class="h2">Liquidacion</h4>
     <div class="btn-toolbar mb-2 mb-md-0">
     <div class="btn-group me-2">
         <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
@@ -34,7 +34,7 @@
             @endif
         </div>
     </div>
-    <form id="formConsulta" action="{{route('consulta.titulocredito')}}" method="post">
+    <form id="formConsulta" action="{{route('store.liquidacion.remision')}}" method="post">
         @csrf
         <div class="row justify-content-md-center">
             <div class="col-3">
@@ -86,7 +86,7 @@
                    
                 </div>
             </div>
-
+            
             <div class="col-3">
                 <div class="mb-3">
                     <br>
@@ -94,6 +94,12 @@
                         <span id="spanConsulta" class="bi bi-search" role="status" aria-hidden="true"></span>
                         Consultar
                     </button>
+
+                    <button id="btnImprimir" class="btn btn-success" type="button" onclick="descargarPdfLiquidacion()" disabled>
+                        <span id="spanConsulta" class="bi bi-filetype-pdf" role="status" aria-hidden="true"></span>
+                        Imprimir
+                    </button>
+
                 </div>
             </div>
 
@@ -101,26 +107,8 @@
 
     </form>
 
-    <form class="" action="{{route('reportecoactiva.titulos')}}" id="formExonerar" name="formExonerar" method="post" enctype="multipart/form-data">
-        <div class="row">
-            <div class="col-12">
-                <div class="mb-3">
-                    <a id="reporteLiquidacion" class="btn btn-secondary" rel="noopener noreferrer">
-                        <i class="bi bi-filetype-pdf"></i>
-                        General titulos
-                    </a>
-
-                    <button type="button" onclick="actualizarContribuyente()" class="btn btn-success" rel="noopener noreferrer">
-                        <i class="fa fa-edit"></i>
-                        Actualizar Contribuyente
-                    </button>
-               
-                </div>
-
-                
-                  
-            </div>
-        </div>
+   
+        
         <div class="row mt-3">
             @if ($num_predio > 0)
             <input type="hidden" class="form-control {{$errors->has('inputMatricula') ? 'is-invalid' : ''}}" id="inputMatricula" name="inputMatricula" value="{{$num_predio}}" autofocus required>
@@ -135,7 +123,7 @@
                         <thead>
                             <tr>
                             <th scope="col">*</th>
-                            <th scope="col">Seleccionar</th>
+                           
                             <th scope="col">Año</th>
                             <th>Liquidación</th>
                             <th scope="col">Cod. Catastral</th>
@@ -144,17 +132,12 @@
                             <th scope="col">Total de pago</th>
                             </tr>
                         </thead>
-                        <tbody id="tbodyurban">
+                        <tbody id="tbodyLiquidacion">
 
                             @isset($liquidacionUrbana)
                                 @foreach ($liquidacionUrbana as $it )
                                     <tr>
-                                        @if ($it->estado_liquidacion == 1)
-                                        <td><i class="bi bi-circle-fill" style="color:green;"></i></td>
-                                        @else
-                                        <td><i class="bi bi-circle-fill" style="color:red;"></i></td>
-                                        @endif
-                                        <td><input class="form-check-input" type="checkbox" value="{{$it->id}}" name="checkLiquidacion[]"></td>
+                                        <td>{{$it->num_predio}}</td>
                                         <td>{{$it->anio}}</td>
                                         <td>{{$it->id_liquidacion}}</td>
                                         <td>{{$it->clave_cat}}</td>
@@ -233,7 +216,12 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
 <script>
-
+    let tamanio=$('#tbodyLiquidacion tr').length
+    if(tamanio>0){
+        $('#btnImprimir').prop('disabled',false)
+    }else{
+         $('#btnImprimir').prop('disabled',true)
+    }
     const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
     if(isDarkMode){
         applyDarkModeStyles('D')
@@ -375,6 +363,6 @@
 </script>
 <script src="{{asset('bower_components/sweetalert/sweetalert.js')}}"></script>
 
-<script src="{{ asset('js/titulocredito/reporte.js?v='.rand())}}"></script>
+<script src="{{ asset('js/coactiva/reporte.js?v='.rand())}}"></script>
 
 @endpush

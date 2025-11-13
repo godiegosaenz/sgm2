@@ -114,25 +114,74 @@ class TituloCreditoCoactivaController extends Controller
         // dd($num_predio);
 
         $liquidacionUrbana = DB::connection('pgsql')->table('sgm_financiero.ren_liquidacion')
-                                        ->join('sgm_app.cat_predio', 'sgm_financiero.ren_liquidacion.predio', '=', 'sgm_app.cat_predio.id')
-                                        ->leftJoin('sgm_app.cat_ente', 'sgm_financiero.ren_liquidacion.comprador', '=', 'sgm_app.cat_ente.id')
-                                        ->select('sgm_financiero.ren_liquidacion.id','sgm_financiero.ren_liquidacion.id_liquidacion','sgm_financiero.ren_liquidacion.total_pago','sgm_financiero.ren_liquidacion.estado_liquidacion','sgm_financiero.ren_liquidacion.predio','sgm_financiero.ren_liquidacion.anio','sgm_financiero.ren_liquidacion.nombre_comprador','sgm_app.cat_predio.clave_cat','sgm_app.cat_ente.nombres','sgm_app.cat_ente.apellidos','sgm_app.cat_ente.ci_ruc')
-                                        ->where(function($query) use($tipo, $num_predio, $nombre) {
-                                            if($tipo!=3){
-                                                $query->where('predio','=',$num_predio);
-                                            }else{
-                                                $query->where('comprador','=',$nombre);
-                                            }   
-                                        })
-                                        
-                                        // ->whereNot(function($query){
-                                        //     $query->where('estado_liquidacion', 4)
-                                        //     ->orWhere('estado_liquidacion', '=', 5);
-                                        // })
-                                        ->whereNotIN('estado_liquidacion',[1,3,4,5])
-                                        ->orderby('clave_cat','desc')
-                                        ->orderBy('anio', 'desc')
-                                        ->get();
+        ->join('sgm_app.cat_predio', 'sgm_financiero.ren_liquidacion.predio', '=', 'sgm_app.cat_predio.id')
+        ->leftJoin('sgm_app.cat_ente', 'sgm_financiero.ren_liquidacion.comprador', '=', 'sgm_app.cat_ente.id')
+        ->select('sgm_financiero.ren_liquidacion.id','sgm_financiero.ren_liquidacion.id_liquidacion','sgm_financiero.ren_liquidacion.total_pago','sgm_financiero.ren_liquidacion.estado_liquidacion','sgm_financiero.ren_liquidacion.predio','sgm_financiero.ren_liquidacion.anio','sgm_financiero.ren_liquidacion.nombre_comprador','sgm_app.cat_predio.clave_cat','sgm_app.cat_ente.nombres','sgm_app.cat_ente.apellidos','sgm_app.cat_ente.ci_ruc',
+        
+                    DB::raw('
+                    (
+                        SELECT
+                            ROUND((
+                                COALESCE(ren_liquidacion.saldo, 0)
+                                +
+                                COALESCE((
+                                    CASE
+                                        WHEN (ren_liquidacion.anio = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM NOW()) < 7) THEN
+                                            ROUND(d.valor * (
+                                                SELECT porcentaje
+                                                FROM sgm_app.ctlg_descuento_emision
+                                                WHERE num_mes = EXTRACT(MONTH FROM NOW())
+                                                AND num_quincena = (CASE WHEN EXTRACT(DAY FROM NOW()) > 15 THEN 2 ELSE 1 END)
+                                                LIMIT 1
+                                            ) / 100, 2) * (-1)
+                                        ELSE 0
+                                    END
+                                ), 0)
+                                +
+                                COALESCE((
+                                    CASE
+                                    WHEN (ren_liquidacion.anio < EXTRACT(YEAR FROM NOW())) THEN                                        
+                                        ROUND((ren_liquidacion.saldo * (
+                                            SELECT ROUND((porcentaje / 100), 2) 
+                                            FROM sgm_financiero.ren_intereses i
+                                            WHERE i.anio = ren_liquidacion.anio
+                                            LIMIT 1
+                                        )), 2)
+                                        ELSE 0
+                                    END
+                                ), 0)
+                                +
+                                COALESCE((
+                                    CASE
+                                        WHEN ren_liquidacion.anio = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM NOW()) > 7 THEN
+                                            ROUND((d.valor * 0.10), 2)
+                                        WHEN ren_liquidacion.anio < EXTRACT(YEAR FROM NOW()) THEN
+                                            ROUND((d.valor * 0.10), 2)
+                                        ELSE 0
+                                    END
+                                ), 0)
+                            ), 2)
+                        FROM sgm_financiero.ren_det_liquidacion d
+                        WHERE d.liquidacion = ren_liquidacion.id 
+                        AND d.rubro = 2
+                        LIMIT 1
+                    ) AS total_complemento'))
+        ->where(function($query) use($tipo, $num_predio, $nombre) {
+            if($tipo!=3){
+                $query->where('predio','=',$num_predio);
+            }else{
+                $query->where('comprador','=',$nombre);
+            }   
+        })
+        
+        // ->whereNot(function($query){
+        //     $query->where('estado_liquidacion', 4)
+        //     ->orWhere('estado_liquidacion', '=', 5);
+        // })
+        ->whereNotIN('estado_liquidacion',[1,3,4,5])
+        ->orderby('clave_cat','desc')
+        ->orderBy('anio', 'desc')
+        ->get();
 
                                         // dd($liquidacionUrbana);
         if(count($liquidacionUrbana) >= 1) {
