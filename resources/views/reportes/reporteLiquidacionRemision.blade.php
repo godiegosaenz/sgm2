@@ -114,7 +114,8 @@
                     @endforeach
                      <tfoot >
                     @php
-                        $total_final= $total_final+$total;
+                        $total_final= $total_emi + $total_int + $total_rec;
+                        $total_final=$total_final -$total_des;
 
                     @endphp
                     <tr style="font-size:13px !important;line-height:5px" style="">
