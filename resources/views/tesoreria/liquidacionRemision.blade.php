@@ -43,7 +43,7 @@
                     <select class="form-select" aria-label="Default select example" id="tipo" name="tipo" onchange="cambiaTipo()">
                         <option value="1" {{ old('tipo') == '1' ? 'selected' : '' }}>Matricula</option>
                         <option value="2" {{ old('tipo') == '2' ? 'selected' : '' }}>Clave Catastral</option>
-                        <option value="3" {{ old('tipo') == '3' ? 'selected' : '' }}>Nombres</option>
+                        <!-- <option value="3" {{ old('tipo') == '3' ? 'selected' : '' }}>Nombres</option> -->
                     </select>
 
                 </div>
