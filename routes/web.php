@@ -35,6 +35,7 @@ use App\Http\Controllers\FirmaElectronicaController;
 use App\Http\Controllers\ParteDiarioController;
 use App\Http\Controllers\CambiarContraseniaController;
 use App\Http\Controllers\PermisosController;
+use App\Http\Controllers\TitulosPredial\CobroTituloRuralController;
 
 use App\Models\TransitoEnte;
 use App\Models\TransitoTarifaAnual;
@@ -377,6 +378,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/ver-permisos-roles/{id}', [PermisosController::class, 'verPermisos']);
     Route::get('/eliminar-permiso/{idpermiso}/{idrol}', [PermisosController::class, 'eliminarPermiso']);
     Route::post('/guardar-permiso', [PermisosController::class, 'guardarPermiso']);
+
+
+    //cobro rural
+    Route::get('cobro-titulo-rural', [CobroTituloRuralController::class, 'index'])->name('index.cobroTituloRural');
 
 });
 

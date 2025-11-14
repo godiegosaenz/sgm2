@@ -342,8 +342,14 @@
                         'permission' => 'Parte Diario',
                         'active' => request()->routeIs('index.parte_diario')
                     ],
+                    [
+                        'name' => 'Cobro Titulo Rural',
+                        'route' => 'index.cobroTituloRural',
+                        'permission' => 'Cobro Titulo Rural',
+                        'active' => request()->routeIs('index.cobroTituloRural')
+                    ],
                 ],
-                'active' => request()->routeIs('lista.exoneracion') || request()->routeIs('create.remision') || request()->routeIs('index.remision') || request()->routeIs('index.titulocredito') || request()->routeIs('index.TitulosRural')  || request()->routeIs('consulta.liquidacion.remision') || request()->routeIs('index.parte_diario')
+                'active' => request()->routeIs('lista.exoneracion') || request()->routeIs('create.remision') || request()->routeIs('index.remision') || request()->routeIs('index.titulocredito') || request()->routeIs('index.TitulosRural')  || request()->routeIs('consulta.liquidacion.remision') || request()->routeIs('index.parte_diario') || request()->routeIs('index.cobroTituloRural')
             ],
             [
                 'name' => 'RENTAS',

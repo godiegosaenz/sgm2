@@ -194,7 +194,7 @@ class TransitoImpuestoController extends Controller
                 if($verificaTitulo->estado==1){
                     return (['error' => true, 'mensaje'=>'Ya existe un titulo pendiente de pago para este vehiculo en este año']);
                 }else{
-                    return (['error' => true, 'mensaje'=>'Ya existe un pago realizado para este vehiculo en este año']);
+                    // return (['error' => true, 'mensaje'=>'Ya existe un pago realizado para este vehiculo en este año']);
                 }
                 
             }
