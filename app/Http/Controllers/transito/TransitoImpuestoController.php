@@ -426,13 +426,14 @@ class TransitoImpuestoController extends Controller
                 }
 
                 $valor=$lastDigit;
+                // dd($valor);
                 
-                if($valor<$mes && $valor>1){
+                if($valor<$mes && $valor>=1){
                     $aplica_recargo=1;
                 }
                 
             }
-                       
+            // dd($aplica_recargo);          
             $ultimo_anio_matriculacion=$request->last_year_declaracion;
 
             $ultimo_5_anio=date('Y')-5;
