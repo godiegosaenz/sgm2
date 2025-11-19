@@ -368,7 +368,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     //parte-diario
     Route::get('parte-diario', [ParteDiarioController::class, 'index'])->name('index.parte_diario');
-    Route::get('generar-parte-diario/{fecha}', [ParteDiarioController::class, 'consultar'])->name('consultar.parte_diario');
+    // Route::get('generar-parte-diario/{fecha}', [ParteDiarioController::class, 'consultar'])->name('consultar.parte_diario');
+     Route::get('generar-parte-diario/{fecha}', [ParteDiarioController::class, 'pdfParte']);
     Route::get('descargar-parte/{pdf}', [ParteDiarioController::class, 'descargarPdf'])->name('descargarPdf.parte_diario');
 
 
@@ -382,6 +383,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     //cobro rural
     Route::get('cobro-titulo-rural', [CobroTituloRuralController::class, 'index'])->name('index.cobroTituloRural');
+    Route::post('buscar-contribuyente-rural', [CobroTituloRuralController::class, 'buscar']);
+    Route::get('buscar-titulos-rurales/{codigo}', [CobroTituloRuralController::class, 'consultarTitulos']);
 
 });
 

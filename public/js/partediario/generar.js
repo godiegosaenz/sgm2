@@ -9,7 +9,8 @@ function generarParte(){
             return;   
         }
 
-        alertNotificar(data.mensaje,"success");
+        // alertNotificar(data.mensaje,"success");
+        alertNotificar('El documento se descargara en unos segundos...',"success");
 
         window.location.href="descargar-parte/"+data.pdf
 
