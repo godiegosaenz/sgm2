@@ -408,7 +408,7 @@ class TransitoImpuestoController extends Controller
             $anio_modelo=$vehiculo->year;
             $desmarca_rtv="";
             if($anio_modelo>$ultimo_4_anio){
-                $desmarca_rtv='S';
+                // $desmarca_rtv='S';
             }          
            
             if($vehiculo->tipo_identif=="PLACA"){
