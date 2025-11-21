@@ -36,6 +36,7 @@ use App\Http\Controllers\ParteDiarioController;
 use App\Http\Controllers\CambiarContraseniaController;
 use App\Http\Controllers\PermisosController;
 use App\Http\Controllers\TitulosPredial\CobroTituloRuralController;
+use App\Http\Controllers\TitulosPredial\ContribuyenteUrbanoController;
 
 use App\Models\TransitoEnte;
 use App\Models\TransitoTarifaAnual;
@@ -386,6 +387,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('buscar-contribuyente-rural', [CobroTituloRuralController::class, 'buscar']);
     Route::get('buscar-titulos-rurales/{codigo}', [CobroTituloRuralController::class, 'consultarTitulos']);
 
+    //dato-contribuyente
+    Route::get('contribuyente-info', [ContribuyenteUrbanoController::class, 'index'])->name('index.contribuyente_urbano');
+    Route::post('datos-contribuyente', [ContribuyenteUrbanoController::class, 'informacion']);
+     Route::get('carga-predios/{id}', [ContribuyenteUrbanoController::class, 'cargaPredios']);
+    
 });
 
 Route::get('/clear', function() {
