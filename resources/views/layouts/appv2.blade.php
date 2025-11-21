@@ -348,8 +348,15 @@
                         'permission' => 'Cobro Titulo Rural',
                         'active' => request()->routeIs('index.cobroTituloRural')
                     ],
+                    [
+                        'name' => 'Contribuyente',
+                        'route' => 'index.contribuyente_urbano',
+                        'permission' => 'Info Contribuyente',
+                        'active' => request()->routeIs('index.contribuyente_urbano')
+                    ],
                 ],
                 'active' => request()->routeIs('lista.exoneracion') || request()->routeIs('create.remision') || request()->routeIs('index.remision') || request()->routeIs('index.titulocredito') || request()->routeIs('index.TitulosRural')  || request()->routeIs('consulta.liquidacion.remision') || request()->routeIs('index.parte_diario') || request()->routeIs('index.cobroTituloRural')
+                || request()->routeIs('index.contribuyente_urbano')
             ],
             [
                 'name' => 'RENTAS',

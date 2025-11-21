@@ -13,10 +13,10 @@ class ContribuyenteUrbanoController extends Controller
      */
     public function index()
     {
-        // if(!Auth()->user()->hasPermissionTo('Cobro Titulo Rural'))
-        // {
-        //     abort(403, 'No tienes acceso a esta seccion.');
-        // }
+        if(!Auth()->user()->hasPermissionTo('Info Contribuyente'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
         $num_predio=0;
         return view('contribuyente_urbano.index',[
             "num_predio"=>$num_predio
