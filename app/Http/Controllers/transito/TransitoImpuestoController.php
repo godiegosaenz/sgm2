@@ -553,6 +553,7 @@ class TransitoImpuestoController extends Controller
         if($r->ajax()){
             $listaimpuesto = TransitoImpuesto::with('cliente')->orderBy('id','desc')
             ->whereIN('estado',[1,3])//generado, pagado
+            ->where('created_at', '>=', now()->subDays(7))
             ->get();
             return Datatables($listaimpuesto)
             ->addColumn('cc_ruc', function ($listaimpuesto) {
