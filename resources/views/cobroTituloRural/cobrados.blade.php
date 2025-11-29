@@ -26,7 +26,7 @@
 @endpush
 @section('content')
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h4 class="h2">Cobro Titulo Rural</h4>
+    <h4 class="h2">Titulos Cobrados Rural</h4>
     <div class="btn-toolbar mb-2 mb-md-0">
     
     <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center gap-1">
@@ -141,7 +141,7 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalContribuyenteLabel">Cobro de Titulos de Credito</h5>
+                    <h5 class="modal-title" id="modalContribuyenteLabel">Copia de Titulos de Credito Pagados</h5>
                     <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
                 </div>
                 
@@ -161,9 +161,6 @@
                                     <b>Clave Catastral:</b> <span id="clave_contr"></span>
                                 </div>
 
-                                <div class="col-md-12" style="margin-top:15px">
-                                    <input type="checkbox" id="selectRemision"> Aplicar Remision
-                                </div>
                         </div>
 
                         <div class="col-md-12" style="margin-top: 20px;">
@@ -174,14 +171,12 @@
                                             <center><input type="checkbox" id="selectAll"></center>
                                         </th>
                                         <th scope="col">Tipo</th>
-                                        <th scope="col">Año</th>
+                                        <th scope="col">Num Titulo</th>
                                         <th>Codigo</th>
                                         <th scope="col">Direccion</th>
-                                        <th scope="col">Subtotal</th>
-                                        <th scope="col">Descuento</th>
-                                        <th scope="col">Recarga</th>
-                                        <th scope="col">Interes</th>
-                                        <th scope="col">Total</th>
+                                        <th scope="col">Fecha de Cobro</th>
+                                        <th scope="col">V. Cobrado</th>
+                                        
                                     </tr>
                                 </thead>
                                 <tbody id="tbodyRuralDetalle">
@@ -193,18 +188,18 @@
                         </div>
 
                         <div class="col-md-12 row">
-                            <div class="col-md-6" >
-                               <center><b>Total Deuda: </b><span id="total_deuda"></span></center>
+                            <div class="col-md-12" >
+                               <center><b>Total Cobrado: </b><span id="total_cobrado"></span></center>
                                
                             </div>
 
-                            <div class="col-md-6" >
+                            <!-- <div class="col-md-6" >
                                 <center><b>Total Seleccionado: </b><span id="total_seleccionado"></span></center>                               
-                            </div>
+                            </div> -->
 
-                            <div class="col-md-12">
+                            <div class="col-md-12" style="margin-top:20px">
                                 <center>
-                                    <button type="button" class="btn btn-sm btn-success" onclick="cobrarTituloUrbano()">Cobrar</button>
+                                    <button type="button" class="btn btn-sm btn-success" onclick="cobrarTituloUrbano()">Descargar</button>
                                     <button type="button" class="btn btn-sm btn-danger" onclick="cerrarModalPago()">Cerrar</button>
                                 </center>
                             </div>
@@ -348,6 +343,6 @@
 </script>
 <script src="{{asset('bower_components/sweetalert/sweetalert.js')}}"></script>
 
-<script src="{{ asset('js/titulocredito/cobrotitulorural.js?v='.rand())}}"></script>
+<script src="{{ asset('js/titulocredito/tituloruralcobrado.js?v='.rand())}}"></script>
 
 @endpush

@@ -386,11 +386,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('cobro-titulo-rural', [CobroTituloRuralController::class, 'index'])->name('index.cobroTituloRural');
     Route::post('buscar-contribuyente-rural', [CobroTituloRuralController::class, 'buscar']);
     Route::get('buscar-titulos-rurales/{codigo}', [CobroTituloRuralController::class, 'consultarTitulos']);
+    Route::get('pdf-titulo-rural/{id}/{copia}', [CobroTituloRuralController::class, 'pdfTitulo']);
+    Route::post('pago-rural-titulo', [CobroTituloRuralController::class, 'pagaRuralTitulo']);
+
+    //cobrados rurales
+    Route::get('titulos-cobrados-rurales', [CobroTituloRuralController::class, 'vistaCobrados'])->name('index.vistaCobrados');
+    Route::get('buscar-titulos-rurales-cobrados/{codigo}', [CobroTituloRuralController::class, 'consultarTitulosCobrados']);
 
     //dato-contribuyente
     Route::get('contribuyente-info', [ContribuyenteUrbanoController::class, 'index'])->name('index.contribuyente_urbano');
     Route::post('datos-contribuyente', [ContribuyenteUrbanoController::class, 'informacion']);
-     Route::get('carga-predios/{id}', [ContribuyenteUrbanoController::class, 'cargaPredios']);
+    Route::get('carga-predios/{id}', [ContribuyenteUrbanoController::class, 'cargaPredios']);
+
+
+    Route::get('predio-contribuyente-rural', [ContribuyenteUrbanoController::class, 'buscaPrediosContribuyente']);
     
 });
 

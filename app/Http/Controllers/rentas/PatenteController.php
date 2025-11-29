@@ -922,7 +922,7 @@ class PatenteController extends Controller
         }
     }
 
-    public function verDocumento($documentName){
+    public function verDocumento1($documentName){
         try {
             $info = new \SplFileInfo($documentName);
             $extension = $info->getExtension();
@@ -943,6 +943,35 @@ class PatenteController extends Controller
         }
 
     }
+
+    public function verDocumento($documentName)
+{
+    try {
+        $info = new \SplFileInfo($documentName);
+        $extension = strtolower($info->getExtension());
+
+        // Si NO es PDF → descargar normalmente
+        if ($extension != "pdf") {
+            return \Storage::disk('disksDocumentoRenta')->download($documentName);
+        }
+
+        // SI ES PDF → devolverlo como archivo real, no base64, no vista
+        $pdfPath = \Storage::disk('disksDocumentoRenta')->path($documentName);
+
+        if (!file_exists($pdfPath)) {
+            abort(404, "Archivo no encontrado");
+        }
+
+        return response()->file($pdfPath, [
+            'Content-Type'        => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="'.$documentName.'"',
+        ]);
+
+    } catch (\Throwable $th) {
+        abort(404);
+    }
+}
+
 
     public function descargarArchivo($archivo){
         try{

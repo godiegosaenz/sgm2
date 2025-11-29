@@ -384,7 +384,7 @@ function llenarData(data){
 
 globalThis.AplicaRemiGlobal=0
 function buscarTitulos(clave){
-    $('#total_deuda').html('')
+    $('#total_cobrado').html('')
     $('#total_seleccionado').html('')
     
     AplicaRemiGlobal=0
@@ -394,7 +394,7 @@ function buscarTitulos(clave){
     $('#tbodyRuralDetalle').empty(); 
     var num_col = $("#tableDetalleRural thead tr th").length;
     vistacargando("m", "Espere por favor")
-    $.get('buscar-titulos-rurales/'+clave, function(data){
+    $.get('buscar-titulos-rurales-cobrados/'+clave, function(data){
         console.log(data)
        
         vistacargando("")
@@ -405,56 +405,52 @@ function buscarTitulos(clave){
             // cancelar()
 			return;   
 		}
-        
+        let total_cobrado=0;
         $.each(data.resultado,function(i, item){
-            let recar = item.recargo !=null ? item.recargo : '0.00';
-            let descu = item.descuento !=null ? item.descuento : '0.00';
+           
             $('#tbodyRuralDetalle').append(`<tr>
                     <td style="width:5%; text-align:center; vertical-align:middle">
-                        <input type="checkbox" name="predio_valor" id="predio_valor" value="${item.total_pagar}" data-num-titulo="${item.num_titulo}"  data-orden="${i+1}" data-valor-cobrado="${item.total_pagar}" data-valor-interes="${item.intereses} "data-valor-descuento="${descu}" data-valor-recarga="${recar}" >                
+                        <input type="checkbox" name="predio_valor" id="predio_valor" value="${item.total_cobrado}" data-num-titulo="${item.num_titulo}"  data-orden="${i+1}" data-valor-cobrado="${item.total_cobrado}">                
                     </td>
-                    <td style="width:10%; text-align:center; vertical-align:middle">
+                    <td style="width:5%; text-align:center; vertical-align:middle">
                         Rural                    
                     </td>
-                    <td style="width:20%; text-align:center; vertical-align:middle">
+                    <td style="width:15%; text-align:center; vertical-align:middle">
                         ${item.num_titulo}                     
                     </td>
-                    <td style="width:25%; text-align:center; vertical-align:middle">
+                    <td style="width:20%; text-align:center; vertical-align:middle">
                         ${item.clave}                      
                     </td>
-                    <td style="width:30%; text-align:center; vertical-align:middle">
+                    <td style="width:25%; text-align:center; vertical-align:middle">
                         ${item.direcc_cont !=null ? item.direcc_cont : '*'}                   
                     </td>
                     <td style="width:15%; text-align:center; vertical-align:middle">
-                        ${item.subtotal_emi}                     
+                        ${item.fecha_recaudacion}                     
                     </td>
                     <td style="width:15%; text-align:center; vertical-align:middle">
-                        ${descu}                     
+                        ${item.total_cobrado}                     
                     </td>
-                    <td style="width:15%; text-align:center; vertical-align:middle">
-                        ${recar}                     
-                    </td>
-                     <td style="width:15%; text-align:center; vertical-align:middle">
-                        ${item.intereses}                     
-                    </td>
-                    <td style="width:15%; text-align:center; vertical-align:middle">
-                        ${item.total_pagar}                     
-                    </td>
+                    
                 
             </tr>`);
+
+            total_cobrado += parseFloat(
+                ((item.total_cobrado ?? "0").toString().trim()).replace(",", ".")
+            ) || 0;
         })
-        $('#total_deuda').html(data.total_valor);
+        console.log(total_cobrado.toFixed(2))
+        $('#total_cobrado').html(total_cobrado.toFixed(2));
         let tamanio=data.resultado.length
         $('#nombre_contr').html(data.resultado[tamanio-1].Ciu_Apellidos +" "+ data.resultado[tamanio-1].Ciu_Nombres)
         $('#num_ident_contr').html(data.resultado[tamanio-1].num_ident)
         $('#direccion_contr').html(data.resultado[tamanio-1].direcc_cont)
         $('#clave_contr').html(data.resultado[tamanio-1].clave)
 
-        $('#selectRemision').prop('checked',false)
-        if(data.aplica_remision==1){
-            $('#selectRemision').prop('checked',true)
-            AplicaRemiGlobal=1
-        }
+        // $('#selectRemision').prop('checked',false)
+        // if(data.aplica_remision==1){
+        //     $('#selectRemision').prop('checked',true)
+        //     AplicaRemiGlobal=1
+        // }
 
     }).fail(function(){
         vistacargando("")
@@ -506,7 +502,12 @@ function actualizarTotalGeneral() {
     valorCobrado=[]
     // Iterar sobre cada checkbox marcado y sumar el valor correspondiente
     $('#tbodyRuralDetalle input[type="checkbox"]:checked').each(function() {
-        totalGeneral += parseFloat($(this).val());
+        
+        // totalGeneral += parseFloat($(this).val());
+        //  totalGeneral += parseFloat(
+        //         ((parseFloat($(this).val()) ?? "0").toString().trim()).replace(",", ".")
+        //     ) || 0
+        totalGeneral=totalGeneral+parseFloat($(this).val())
         numTitulosSeleccionados.push($(this).data('num-titulo'));
         ordenTitulosSeleccionados.push($(this).data('orden'));
         valorCobrado.push($(this).data('valor-cobrado'));
@@ -514,9 +515,9 @@ function actualizarTotalGeneral() {
         valorDescuento.push($(this).data('valor-descuento'));
         valorRecarga.push($(this).data('valor-recarga'));
     });
-    
+//    (totalGeneral)
     // Actualizar el total general en un lugar específico (ej. un div o campo)
-    $('#total_seleccionado').text(totalGeneral.toFixed(2));  // Actualiza el total con 2 decimales
+    // $('#total_seleccionado').text(totalGeneral.toFixed(2));  // Actualiza el total con 2 decimales
 
     console.log('Num Titulos Seleccionados:', numTitulosSeleccionados);
 }
@@ -568,11 +569,7 @@ function cobrarTituloUrbano(){
                     numTitulosSeleccionados:numTitulosSeleccionados,
                     ordenTitulosSeleccionados:ordenTitulosSeleccionados,
                     clave_cat:clave_cat,
-                    valorCobrado:valorCobrado,
-                    valorInteres:valorInteres,
-                    valorDescuento:valorDescuento,
-                    valorRecarga:valorRecarga,
-                    chequeadoRemision:AplicaRemiGlobal,
+                    valorCobrado:valorCobrado
                     
                 },
                 success: function(data){

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\TitulosPredial;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\TituloRural;
 
 class ContribuyenteUrbanoController extends Controller
 {
@@ -79,7 +80,6 @@ class ContribuyenteUrbanoController extends Controller
         } 
 
     }
-
     public function cargaPredios($id){
         try{
             $dataContribuyente=\DB::connection('pgsql')->table('sgm_app.cat_predio as p')
@@ -94,4 +94,67 @@ class ContribuyenteUrbanoController extends Controller
             return (['mensaje'=>'Ocurrió un error,intentelo más tarde '.$th->getLine(),'error'=>true]); 
         } 
     }
+
+    public function buscaPrediosContribuyente(){
+        try{
+            $prediosContribuyente=\DB::connection('sqlsrv')->table('TITULOS_PREDIO as pago')
+            ->select('Pre_CodigoCatastral','Titpr_RUC_CI','TitPr_NumTitulo')
+            ->where('pago.TitPr_Estado','E')
+            ->distinct()
+            ->get();
+
+
+            foreach($prediosContribuyente as $key=>$data){
+                $verificaRebaja=\DB::connection('sqlsrv')->table('REBAJA_VALOR as r')
+                ->where('r.TitPrCarVe_NumTitulo', $data->TitPr_NumTitulo)
+                // ->where('RebVal_Valor','>',0)
+                ->first();
+
+                if(!is_null($verificaRebaja)){
+                    $tieneMasDeUnPredio=\DB::connection('sqlsrv')->table('TITULOS_PREDIO as pago')
+                    ->where('pago.TitPr_Estado','E') 
+                    ->where('Titpr_RUC_CI',$data->Titpr_RUC_CI)       
+                    ->get();
+                    
+                    if(sizeof($tieneMasDeUnPredio)==0){
+                        $prediosContribuyente[$key]->aplica_exoneracion='S';
+                        $prediosContribuyente[$key]->tipo_exoneracion=$verificaRebaja->Reb_Codigo;
+                    }else{
+                        $prediosContribuyente[$key]->aplica_exoneracion='N';
+                        $prediosContribuyente[$key]->tipo_exoneracion='';
+                    }                   
+                }else{
+                    $prediosContribuyente[$key]->aplica_exoneracion='N';
+                    $prediosContribuyente[$key]->tipo_exoneracion='';
+                }
+            }
+
+            $valor_seguridad=\DB::connection('sqlsrv')->table('ordenanzas')
+            ->where('codigo','SEGURIDAD')
+            ->where('estado','A')
+            ->first(); 
+            $valor_seg=$valor_seguridad->valor;
+
+            foreach($prediosContribuyente as $data){
+                if($data->TitPr_NumTitulo=='2025-000001-PR'){
+                    $actualizaRural=TituloRural::where('TitPr_NumTitulo',$data->TitPr_NumTitulo)
+                    ->where('TitPr_Estado','E')->first();
+                   
+                    $sumaValorEmitido=$actualizaRural->TitPr_ValorEmitido + $valor_seg;
+                                        
+                    $update=TituloRural::where('TitPr_NumTitulo',$data->TitPr_NumTitulo)
+                    ->where('TitPr_Estado','E')->update(["TitPr_Seguridad"=>number_format($valor_seg,2), "TitPr_ValorEmitido"=>number_format($sumaValorEmitido,2)]);
+                }
+            }
+           
+
+            return (['resultado'=>$prediosContribuyente,'false'=>true]); 
+
+        } catch (\Throwable $th) {
+            // Log::error(__CLASS__." => ".__FUNCTION__." => Mensaje =>".$e->getMessage()." Linea =>".$e->getLine());
+            return (['mensaje'=>'Ocurrió un error,intentelo más tarde '.$th->getMessage(),'error'=>true]); 
+        } 
+    }
+
+
 }
