@@ -878,8 +878,9 @@
                 </div>
                 <div class="modal-footer"> 
                     <center>
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" >Salir</button>
-                            <a href=""id="vinculo"><button  type="button" id="descargar"class="btn btn-primary"><i class="fa fa-mail"></i> Descargar</button> </a>                                 
+                            <button class="btn btn-success" onclick="printIframe()">Imprimir</button>
+                            <a href=""id="vinculo"><button  type="button" id="descargar"class="btn btn-primary"><i class="fa fa-mail"></i> Descargar</button> </a>    
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" >Salir</button>                             
                     </center>               
                 </div>
             </div>
@@ -1420,6 +1421,12 @@
                 labelApellidos.textContent = 'Apellidos *';
             }
         });
+
+        function printIframe() {
+            const iframe = document.getElementById('iframePdf');
+            iframe.contentWindow.focus();
+            iframe.contentWindow.print();
+        }
     </script>
     <script src="{{ asset('js/transito/impuesto.js?v=' . rand())}}"></script>
 @endpush

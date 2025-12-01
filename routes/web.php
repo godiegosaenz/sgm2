@@ -392,6 +392,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //cobrados rurales
     Route::get('titulos-cobrados-rurales', [CobroTituloRuralController::class, 'vistaCobrados'])->name('index.vistaCobrados');
     Route::get('buscar-titulos-rurales-cobrados/{codigo}', [CobroTituloRuralController::class, 'consultarTitulosCobrados']);
+    Route::post('descarga-titulo-rural', [CobroTituloRuralController::class, 'descargarTitulosRural']);
 
     //dato-contribuyente
     Route::get('contribuyente-info', [ContribuyenteUrbanoController::class, 'index'])->name('index.contribuyente_urbano');

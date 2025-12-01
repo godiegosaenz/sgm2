@@ -585,7 +585,8 @@ function cobrarTituloUrbano(){
 
                     alertNotificar(data.mensaje,'success');
                     $('#modalContri').modal('hide')
-                    window.location.href="descargar-reporte/"+data.pdf
+                    //window.location.href="descargar-reporte/"+data.pdf
+                    verpdf(data.pdf)
                     
                 }, error:function (data) {
                     vistacargando("");
@@ -596,6 +597,13 @@ function cobrarTituloUrbano(){
         }
         sweetAlert.close();   // ocultamos la ventana de pregunta
     });
+}
+
+function verpdf(ruta){
+    var iframe=$('#iframePdf');
+    iframe.attr("src", "../patente/documento/"+ruta);   
+    $("#vinculo").attr("href", '../patente/descargar-documento/'+ruta);
+    $("#documentopdf").modal("show");
 }
 
 function validarSeleccionCorrelativa(ordenTitulosSeleccionados) {

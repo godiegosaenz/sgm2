@@ -199,7 +199,7 @@
 
                             <div class="col-md-12" style="margin-top:20px">
                                 <center>
-                                    <button type="button" class="btn btn-sm btn-success" onclick="cobrarTituloUrbano()">Descargar</button>
+                                    <button type="button" class="btn btn-sm btn-success" onclick="descargarTituloRural()">Descargar</button>
                                     <button type="button" class="btn btn-sm btn-danger" onclick="cerrarModalPago()">Cerrar</button>
                                 </center>
                             </div>

@@ -7,6 +7,7 @@ use App\Models\TransitoVehiculo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use DB;
+use PDF;
 class CobroTituloRuralController extends Controller
 {
     /**
@@ -28,8 +29,8 @@ class CobroTituloRuralController extends Controller
             $valor=$request->valor;
 
             $liquidacionRuralAct=DB::connection('sqlsrv')->table('TITULOS_PREDIO as tp')
-            ->leftJoin('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'tp.Titpr_RUC_CI')
-            ->leftJoin('PREDIO as p', 'p.Pre_CodigoCatastral', '=', 'tp.Pre_CodigoCatastral')
+            ->Join('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'tp.Titpr_RUC_CI')
+            ->Join('PREDIO as p', 'p.Pre_CodigoCatastral', '=', 'tp.Pre_CodigoCatastral')
             ->select('tp.Pre_CodigoCatastral','c.Ciu_Apellidos','c.Ciu_Nombres','tp.Titpr_RUC_CI'
             ,'tp.Titpr_RUC_CI','p.Pre_NombrePredio','tp.TitPr_DireccionCont')
             ->where(function($query)use($tipo,$valor, $tipo_per) {
@@ -68,8 +69,8 @@ class CobroTituloRuralController extends Controller
     {
         try {
             $liquidacionRural=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
-            ->leftJoin('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'cv.CarVe_CI')
-            ->leftJoin('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
+            ->Join('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'cv.CarVe_CI')
+            ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
             ->select('cv.Pre_CodigoCatastral as clave','cv.CarVe_FechaEmision as fecha_emi','cv.CarVe_NumTitulo as num_titulo','cv.CarVe_CI as num_ident','cv.CarVe_Estado','c.Ciu_Apellidos','c.Ciu_Nombres','cv.CarVe_Nombres as nombre_per','cv.CarVe_ValorEmitido as valor_emitido','cv.CarVe_TasaAdministrativa as tasa','CarVe_Calle as direcc_cont','cv.Carve_Recargo as recargo','cv.Carve_Descuento as descuento')
             ->where('cv.Pre_CodigoCatastral', '=', $clave)            
             ->whereIn('cv.CarVe_Estado',['E'])
@@ -116,8 +117,8 @@ class CobroTituloRuralController extends Controller
             $liquidacionActual=[];
 
             $liquidacionActual=DB::connection('sqlsrv')->table('TITULOS_PREDIO as tp')
-            ->leftJoin('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'tp.Titpr_RUC_CI')
-            ->leftJoin('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'tp.Pre_CodigoCatastral')
+            ->Join('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'tp.Titpr_RUC_CI')
+            ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'tp.Pre_CodigoCatastral')
             ->select('tp.Pre_CodigoCatastral as clave','tp.TitPr_FechaEmision as fecha_emi','tp.TitPr_NumTitulo as num_titulo','tp.Titpr_RUC_CI as num_ident' ,'tp.TitPr_Estado','c.Ciu_Apellidos','c.Ciu_Nombres','tp.TitPr_Nombres as nombre_per','tp.TitPr_ValorEmitido as valor_emitido','tp.TitPr_TasaAdministrativa as tasa','TitPr_DireccionCont as direcc_cont','tp.TitPr_Descuento as descuento'
             ,'tp.TitPr_Recargo as recargo')
             ->where('tp.Pre_CodigoCatastral', '=', $clave)
@@ -228,8 +229,8 @@ class CobroTituloRuralController extends Controller
     public function pdfTitulo($titulos, $copia){
         try{
             //$titulos=['2018-000001-PR','2019-000001-PR','2025-000001-PR','2024-003798-PR'];
-            $anio_actual=[];
-            $vencido=[];
+            $anio_actual=[''];
+            $vencido=[''];
             foreach($titulos as $item){
                 $solo_anio=explode("-",$item);
                 if($solo_anio[0]==date('Y')){
@@ -243,8 +244,8 @@ class CobroTituloRuralController extends Controller
             $liquidacionRural=[];
            
             $liquidacionRural=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
-            ->leftJoin('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'cv.CarVe_CI')
-            ->leftJoin('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
+            ->Join('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'cv.CarVe_CI')
+            ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
             ->select('cv.Pre_CodigoCatastral as clave'
             ,'cv.CarVe_FechaEmision as fecha_emi',
             'cv.CarVe_NumTitulo as num_titulo',
@@ -270,13 +271,14 @@ class CobroTituloRuralController extends Controller
             DB::raw("FORMAT(cv.CarVe_FechaEmision,'dd/MM/yyyy') as fecha_emi"),
             DB::raw("FORMAT(cv.CarVe_FechaRecaudacion,'dd/MM/yyyy') as fecha_recaudacion"))
             ->whereIn('cv.CarVe_NumTitulo', $vencido)                    
-            // ->whereIn('cv.CarVe_Estado',['C'])
+            ->where('cv.CarVe_Estado','C')
             ->orderby('CarVe_NumTitulo','asc')
             ->get();
+            //dd($anio_actual);
            
             $actual=DB::connection('sqlsrv')->table('TITULOS_PREDIO as tp')
-            ->leftJoin('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'tp.Titpr_RUC_CI')
-            ->leftJoin('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'tp.Pre_CodigoCatastral')
+            ->Join('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'tp.Titpr_RUC_CI')
+            ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'tp.Pre_CodigoCatastral')
             ->select('tp.Pre_CodigoCatastral as clave',
             'tp.TitPr_NumTitulo as num_titulo',
             'tp.TitPr_FechaEmision as fecha_emi',           
@@ -303,7 +305,7 @@ class CobroTituloRuralController extends Controller
             DB::raw("FORMAT(tp.TitPr_FechaEmision,'dd/MM/yyyy') as fecha_emi"),
             DB::raw("FORMAT(tp.TitPr_FechaRecaudacion,'dd/MM/yyyy') as fecha_recaudacion"))
             ->whereIn('tp.TitPr_NumTitulo', [$anio_actual])            
-            // ->whereIn('tp.TitPr_Estado',['C'])
+            ->where('tp.TitPr_Estado','C')
             ->orderby('TitPr_NumTitulo','asc')
             ->get();
 
@@ -312,7 +314,7 @@ class CobroTituloRuralController extends Controller
 
             $nombrePDF="TituloRural".date('YmdHis').".pdf";
             // dd($copia);
-            $pdf = \PDF::loadView('reportes.TituloRural',["liquidacionRural"=>$resultado, "copia"=>$copia]);
+            $pdf = PDF::loadView('reportes.TituloRural',["liquidacionRural"=>$resultado, "copia"=>$copia]);
 
             // return $pdf->stream($nombrePDF);
 
@@ -335,7 +337,7 @@ class CobroTituloRuralController extends Controller
 
         }catch (\Exception $e) {
             
-            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e->getMessage(), "error"=>true];
         }
     }
 
@@ -366,8 +368,8 @@ class CobroTituloRuralController extends Controller
     {
         try {
             $liquidacionRural=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
-            ->leftJoin('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'cv.CarVe_CI')
-            ->leftJoin('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
+            ->Join('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'cv.CarVe_CI')
+            ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
             ->select('cv.Pre_CodigoCatastral as clave',
             'cv.CarVe_FechaEmision as fecha_emi',
             'cv.CarVe_NumTitulo as num_titulo',
@@ -386,8 +388,8 @@ class CobroTituloRuralController extends Controller
             ->get();
 
             $liquidacionActual=DB::connection('sqlsrv')->table('TITULOS_PREDIO as tp')
-            ->leftJoin('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'tp.Titpr_RUC_CI')
-            ->leftJoin('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'tp.Pre_CodigoCatastral')
+            ->Join('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'tp.Titpr_RUC_CI')
+            ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'tp.Pre_CodigoCatastral')
             ->select('tp.Pre_CodigoCatastral as clave',
             'tp.TitPr_FechaEmision as fecha_emi',
             'tp.TitPr_NumTitulo as num_titulo',
@@ -411,5 +413,24 @@ class CobroTituloRuralController extends Controller
             return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
 
         }
+    }
+
+    public function descargarTitulosRural(Request $request){
+        
+        $transaction=DB::transaction(function() use($request){ 
+            try{ 
+                $crearPdf=$this->pdfTitulo($request->numTitulosSeleccionados,'copia');
+                if($crearPdf['error']==true){
+                    DB::Rollback();
+                    return ["mensaje"=>$crearPdf["mensaje"], "error"=>true];
+                }
+                return ["mensaje"=>"Pago procesado exitosamente", "error"=>false, "pdf"=>$crearPdf['pdf']];               
+
+            }catch (\Exception $e) {
+                DB::Rollback();
+                return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e->getMessage(), "error"=>true];
+            }
+         });
+        return $transaction;
     }
 }

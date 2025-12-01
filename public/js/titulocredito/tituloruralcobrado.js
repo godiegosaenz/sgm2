@@ -523,7 +523,7 @@ function actualizarTotalGeneral() {
 }
 
 
-function cobrarTituloUrbano(){
+function descargarTituloRural(){
     let clave_cat=$('#clave_contr').html()
      // Obtener los checkboxes seleccionados
     let selectedRows = $('#tbodyRuralDetalle input[type="checkbox"]:checked');
@@ -532,67 +532,45 @@ function cobrarTituloUrbano(){
     if (selectedRows.length === 0) {
         alertNotificar('Por favor, seleccione al menos un título de crédito.','error');
         return;  // Detener la ejecución si no hay ninguna selección
-    }
-
-
-    if (!validarSeleccionCorrelativa(ordenTitulosSeleccionados)) {
-        return; // ❌ Detener si está mal
-    }
-    // alert(valorCobrado)
-    swal({
-        title: '¿Desea realizar el pago?',
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonClass: "btn-danger",
-        confirmButtonText: "Si, continuar",
-        cancelButtonText: "No, cancelar",
-        closeOnConfirm: false,
-        closeOnCancel: false
-    },
-    function(isConfirm) {
-        if (isConfirm) { 
-
-             // Validar
+    } 
        
-            vistacargando("m","Espere por favor");           
+    vistacargando("m","Espere por favor");           
 
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            
-            $.ajax({
-                type:'POST',
-                url: "pago-rural-titulo",
-                data: { _token: $('meta[name="csrf-token"]').attr('content'),
-                    numTitulosSeleccionados:numTitulosSeleccionados,
-                    ordenTitulosSeleccionados:ordenTitulosSeleccionados,
-                    clave_cat:clave_cat,
-                    valorCobrado:valorCobrado
-                    
-                },
-                success: function(data){
-                    console.log(data)
-                    vistacargando("");                
-                    if(data.error==true){                       
-                        alertNotificar(data.mensaje,'error');
-                        return;                      
-                    }
-
-                    alertNotificar(data.mensaje,'success');
-                    $('#modalContri').modal('hide')
-                    window.location.href="descargar-reporte/"+data.pdf
-                    
-                }, error:function (data) {
-                    vistacargando("");
-                    alertNotificar('Ocurrió un error','error');
-                }
-            });
-
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
-        sweetAlert.close();   // ocultamos la ventana de pregunta
     });
+    
+    $.ajax({
+        type:'POST',
+        url: "descarga-titulo-rural",
+        data: { _token: $('meta[name="csrf-token"]').attr('content'),
+            numTitulosSeleccionados:numTitulosSeleccionados,
+            ordenTitulosSeleccionados:ordenTitulosSeleccionados,
+            clave_cat:clave_cat,
+            valorCobrado:valorCobrado
+            
+        },
+        success: function(data){
+            console.log(data)
+            vistacargando("");                
+            if(data.error==true){                       
+                alertNotificar(data.mensaje,'error');
+                return;                      
+            }
+
+            alertNotificar(data.mensaje,'success');
+            $('#modalContri').modal('hide')
+            window.location.href="descargar-reporte/"+data.pdf
+            
+        }, error:function (data) {
+            vistacargando("");
+            alertNotificar('Ocurrió un error','error');
+        }
+    });
+
+       
 }
 
 function validarSeleccionCorrelativa(ordenTitulosSeleccionados) {
