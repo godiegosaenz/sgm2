@@ -522,7 +522,7 @@ function actualizarTotalGeneral() {
 }
 
 
-function cobrarTituloUrbano(){
+function cobrarTituloRural(){
     let clave_cat=$('#clave_contr').html()
      // Obtener los checkboxes seleccionados
     let selectedRows = $('#tbodyRuralDetalle input[type="checkbox"]:checked');
@@ -601,8 +601,8 @@ function cobrarTituloUrbano(){
 
 function verpdf(ruta){
     var iframe=$('#iframePdf');
-    iframe.attr("src", "../patente/documento/"+ruta);   
-    $("#vinculo").attr("href", '../patente/descargar-documento/'+ruta);
+    iframe.attr("src", "ver-documento/"+ruta);   
+    $("#vinculo").attr("href", 'descargar-reporte/'+ruta);
     $("#documentopdf").modal("show");
 }
 

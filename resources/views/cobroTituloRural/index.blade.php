@@ -204,7 +204,7 @@
 
                             <div class="col-md-12">
                                 <center>
-                                    <button type="button" class="btn btn-sm btn-success" onclick="cobrarTituloUrbano()">Cobrar</button>
+                                    <button type="button" class="btn btn-sm btn-success" onclick="cobrarTituloRural()">Cobrar</button>
                                     <button type="button" class="btn btn-sm btn-danger" onclick="cerrarModalPago()">Cerrar</button>
                                 </center>
                             </div>
@@ -217,7 +217,8 @@
         </div>
     </div>
 
-     <div class="modal fade" id="documentopdf" tabindex="-1" aria-labelledby="ContribuyenteModalLabel" aria-hidden="true">
+     <div class="modal fade" id="documentopdf" tabindex="-1" aria-labelledby="ContribuyenteModalLabel" aria-hidden="true"
+     data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">

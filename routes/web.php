@@ -388,6 +388,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('buscar-titulos-rurales/{codigo}', [CobroTituloRuralController::class, 'consultarTitulos']);
     Route::get('pdf-titulo-rural/{id}/{copia}', [CobroTituloRuralController::class, 'pdfTitulo']);
     Route::post('pago-rural-titulo', [CobroTituloRuralController::class, 'pagaRuralTitulo']);
+    Route::get('ver-documento/{ruta}', [CobroTituloRuralController::class, 'verDocumento']);
 
     //cobrados rurales
     Route::get('titulos-cobrados-rurales', [CobroTituloRuralController::class, 'vistaCobrados'])->name('index.vistaCobrados');

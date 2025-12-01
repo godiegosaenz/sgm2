@@ -426,9 +426,13 @@ class TransitoImpuestoController extends Controller
                 }
 
                 $valor=$lastDigit;
-                // dd($valor);
+                // dd($mes);
                 
                 if($valor<$mes && $valor>=1){
+                    $aplica_recargo=1;
+                }
+
+                if($valor==0 && $mes==12){
                     $aplica_recargo=1;
                 }
                 

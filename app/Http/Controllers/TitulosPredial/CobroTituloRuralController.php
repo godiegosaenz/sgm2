@@ -52,7 +52,7 @@ class CobroTituloRuralController extends Controller
                 }
                 
             })            
-            ->whereIn('tp.TitPr_Estado',['E'])
+            ->whereIn('tp.TitPr_Estado',['C'])
             ->distinct()
             ->limit(10)
             ->get();
@@ -177,6 +177,22 @@ class CobroTituloRuralController extends Controller
                 if($request->chequeadoRemision==1 && date('m')>=7){
                     return ["mensaje"=>"Ocurrio un error, con respecto a la aplicacion de remision", "error"=>true];
                 }  
+
+                $obtenerRecaudador=auth()->user()->persona->cedula;
+                $es_tesoreria=DB::connection('sqlsrv')->table('USUARIOSIC')
+                ->where('USU_CEDULA', $obtenerRecaudador)
+                ->where('USU_ACTIVO',1)
+                ->select('USU_PERFIL','USU_NICK')
+                ->first();
+
+                if(is_null($es_tesoreria)){
+                    return ["mensaje"=>"El usuario actual no esta registrado en el SISTEMA AME", "error"=>true];
+                }
+                
+                if($es_tesoreria->USU_PERFIL!="TESORERIA"){
+                    return ["mensaje"=>"El usuario actual no tiene asignado el perfil TESORERIA en el SISTEMA AME", "error"=>true];
+                }
+               
                 
                 $cont=0;
                 $valor_cobrado=$request->valorCobrado;
@@ -188,16 +204,29 @@ class CobroTituloRuralController extends Controller
                 
                     $solo_anio=explode("-", $tit);
                     if (date('Y') == (int)$solo_anio[0]) {
+                        $titulo=DB::connection('sqlsrv')->table('TITULOS_PREDIO')
+                        ->where('TitPr_NumTitulo',$tit)
+                        ->where('TitPr_Estado','E')
+                        ->update([
+                            "TitPr_FechaRecaudacion" => date('Y-d-m 00:00:00.000'), // ✔ Fecha automática correcta
+                            "TitPr_Estado" => "C",
+                            "Usu_usuario" => $es_tesoreria->USU_NICK,
+                            "TitPr_ValorTCobrado" => round($valor_cobrado[$key], 2),
+                            "TitPr_Interes" => round($valor_interes[$key], 2),
+                            "TitPr_Recargo" => round($valor_recarga[$key], 2),
+                            "TitPr_Descuento" => round($valor_descuento[$key], 2) // ✔ formato numérico válido
+                        ]);
+                        $cont=$cont+1;
                         
                     }else{                    
                         //cartera vencida
-                        $carteraVencida=\DB::connection('sqlsrv')->table('CARTERA_VENCIDA')
+                        $carteraVencida=DB::connection('sqlsrv')->table('CARTERA_VENCIDA')
                         ->where('CarVe_NumTitulo',$tit)
                         ->where('Carve_Estado','E')
                         ->update([
                             "CarVe_FechaRecaudacion" => date('Y-d-m 00:00:00.000'), // ✔ Fecha automática correcta
                             "Carve_Estado" => "C",
-                            "Usu_usuario" => "ADMINISTRADOR",
+                            "Usu_usuario" => $es_tesoreria->USU_NICK,
                             "CarVe_ValorTCobrado" => round($valor_cobrado[$key], 2),
                             "CarVe_Interes" => round($valor_interes[$key], 2),
                             "CarVe_Recargo" => round($valor_recarga[$key], 2),
@@ -234,13 +263,15 @@ class CobroTituloRuralController extends Controller
             foreach($titulos as $item){
                 $solo_anio=explode("-",$item);
                 if($solo_anio[0]==date('Y')){
+                    $anio_actual=[];
                     array_push($anio_actual,$item);
                 }else{
+                    $vencido=[];
                     array_push($vencido,$item);
                 }
 
             }
-           
+            // dd($vencido);
             $liquidacionRural=[];
            
             $liquidacionRural=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
@@ -337,7 +368,7 @@ class CobroTituloRuralController extends Controller
 
         }catch (\Exception $e) {
             
-            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e->getMessage(), "error"=>true];
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
         }
     }
 
@@ -357,6 +388,33 @@ class CobroTituloRuralController extends Controller
             dd($th);
             // Log::error(__CLASS__." => ".__FUNCTION__." => Mensaje =>".$e->getMessage()." Linea =>".$e->getLine());
             return back()->with(['error'=>'Ocurrió un error','estadoP'=>'danger']);
+        }
+    }
+
+    public function verDocumento($documentName){
+        try {
+            $info = new \SplFileInfo($documentName);
+            $extension = strtolower($info->getExtension());
+
+            // Si NO es PDF → descargar normalmente
+            if ($extension != "pdf") {
+                return \Storage::disk('public')->download($documentName);
+            }
+
+            // SI ES PDF → devolverlo como archivo real, no base64, no vista
+            $pdfPath = \Storage::disk('public')->path($documentName);
+
+            if (!file_exists($pdfPath)) {
+                abort(404, "Archivo no encontrado");
+            }
+
+            return response()->file($pdfPath, [
+                'Content-Type'        => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="'.$documentName.'"',
+            ]);
+
+        } catch (\Throwable $th) {
+            abort(404);
         }
     }
 
