@@ -37,6 +37,7 @@ use App\Http\Controllers\CambiarContraseniaController;
 use App\Http\Controllers\PermisosController;
 use App\Http\Controllers\TitulosPredial\CobroTituloRuralController;
 use App\Http\Controllers\TitulosPredial\ContribuyenteUrbanoController;
+use App\Http\Controllers\TitulosPredial\PredioRuralController;
 
 use App\Models\TransitoEnte;
 use App\Models\TransitoTarifaAnual;
@@ -399,6 +400,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('contribuyente-info', [ContribuyenteUrbanoController::class, 'index'])->name('index.contribuyente_urbano');
     Route::post('datos-contribuyente', [ContribuyenteUrbanoController::class, 'informacion']);
     Route::get('carga-predios/{id}', [ContribuyenteUrbanoController::class, 'cargaPredios']);
+
+    //seguridad-ciudadana-rural
+    Route::get('seguridad-ciudadana-rural', [PredioRuralController::class, 'index'])->name('index.rural');
 
 
     Route::get('predio-contribuyente-rural', [ContribuyenteUrbanoController::class, 'buscaPrediosContribuyente']);

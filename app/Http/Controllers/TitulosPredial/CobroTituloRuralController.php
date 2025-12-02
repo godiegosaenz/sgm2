@@ -258,12 +258,12 @@ class CobroTituloRuralController extends Controller
     public function pdfTitulo($titulos, $copia){
         try{
             //$titulos=['2018-000001-PR','2019-000001-PR','2025-000001-PR','2024-003798-PR'];
-            $anio_actual=[];
+            $anio_actual=[''];
             $vencido=[''];
             foreach($titulos as $item){
                 $solo_anio=explode("-",$item);
                 if($solo_anio[0]==date('Y')){
-                    // $anio_actual=[];
+                    $anio_actual=[];
                     array_push($anio_actual,$item);
                 }else{
                     // $vencido=[];
