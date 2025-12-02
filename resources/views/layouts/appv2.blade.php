@@ -349,6 +349,13 @@
                         'active' => request()->routeIs('index.cobroTituloRural')
                     ],
                     [
+                        'name' => 'Titulos Cobrados Rural',
+                        'route' => 'index.vistaCobrados',
+                        'permission' => 'Titulos Rurales Cobrados',
+                        'active' => request()->routeIs('index.vistaCobrados')
+                    ],
+
+                    [
                         'name' => 'Contribuyente',
                         'route' => 'index.contribuyente_urbano',
                         'permission' => 'Info Contribuyente',
@@ -356,7 +363,7 @@
                     ],
                 ],
                 'active' => request()->routeIs('lista.exoneracion') || request()->routeIs('create.remision') || request()->routeIs('index.remision') || request()->routeIs('index.titulocredito') || request()->routeIs('index.TitulosRural')  || request()->routeIs('consulta.liquidacion.remision') || request()->routeIs('index.parte_diario') || request()->routeIs('index.cobroTituloRural')
-                || request()->routeIs('index.contribuyente_urbano')
+                || request()->routeIs('index.contribuyente_urbano') || request()->routeIs('index.vistaCobrados')
             ],
             [
                 'name' => 'RENTAS',

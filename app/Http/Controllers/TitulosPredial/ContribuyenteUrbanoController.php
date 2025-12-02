@@ -129,6 +129,7 @@ class ContribuyenteUrbanoController extends Controller
                 }
             }
 
+            //dd($prediosContribuyente);
             $valor_seguridad=\DB::connection('sqlsrv')->table('ordenanzas')
             ->where('codigo','SEGURIDAD')
             ->where('estado','A')
@@ -143,7 +144,7 @@ class ContribuyenteUrbanoController extends Controller
                     $sumaValorEmitido=$actualizaRural->TitPr_ValorEmitido + $valor_seg;
                                         
                     $update=TituloRural::where('TitPr_NumTitulo',$data->TitPr_NumTitulo)
-                    ->where('TitPr_Estado','E')->update(["TitPr_Seguridad"=>number_format($valor_seg,2), "TitPr_ValorEmitido"=>number_format($sumaValorEmitido,2)]);
+                    ->where('TitPr_Estado','E')->update(["TitPr_Valor1"=>number_format($valor_seg,2), "TitPr_ValorEmitido"=>number_format($sumaValorEmitido,2)]);
                 }
             }
            

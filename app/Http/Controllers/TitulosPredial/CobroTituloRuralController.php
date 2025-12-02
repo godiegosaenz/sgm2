@@ -52,7 +52,7 @@ class CobroTituloRuralController extends Controller
                 }
                 
             })            
-            ->whereIn('tp.TitPr_Estado',['C'])
+            ->whereIn('tp.TitPr_Estado',['E','C'])
             ->distinct()
             ->limit(10)
             ->get();
@@ -258,15 +258,15 @@ class CobroTituloRuralController extends Controller
     public function pdfTitulo($titulos, $copia){
         try{
             //$titulos=['2018-000001-PR','2019-000001-PR','2025-000001-PR','2024-003798-PR'];
-            $anio_actual=[''];
+            $anio_actual=[];
             $vencido=[''];
             foreach($titulos as $item){
                 $solo_anio=explode("-",$item);
                 if($solo_anio[0]==date('Y')){
-                    $anio_actual=[];
+                    // $anio_actual=[];
                     array_push($anio_actual,$item);
                 }else{
-                    $vencido=[];
+                    // $vencido=[];
                     array_push($vencido,$item);
                 }
 
@@ -299,6 +299,7 @@ class CobroTituloRuralController extends Controller
             'cv.CarVe_IPU as ipu',
             'cv.CarVe_TasaAdministrativa as tasa_adm',
             'cv.CarVe_Bomberos as bomberos',
+            'cv.Carve_Valor1 as seguridad',
             DB::raw("FORMAT(cv.CarVe_FechaEmision,'dd/MM/yyyy') as fecha_emi"),
             DB::raw("FORMAT(cv.CarVe_FechaRecaudacion,'dd/MM/yyyy') as fecha_recaudacion"))
             ->whereIn('cv.CarVe_NumTitulo', $vencido)                    
@@ -333,6 +334,7 @@ class CobroTituloRuralController extends Controller
             'tp.TitPr_IPU as ipu',
             'tp.TitPr_TasaAdministrativa as tasa_adm',
             'tp.TitPr_Bomberos as bomberos',
+            'tp.TitPr_Valor1 as seguridad',
             DB::raw("FORMAT(tp.TitPr_FechaEmision,'dd/MM/yyyy') as fecha_emi"),
             DB::raw("FORMAT(tp.TitPr_FechaRecaudacion,'dd/MM/yyyy') as fecha_recaudacion"))
             ->whereIn('tp.TitPr_NumTitulo', [$anio_actual])            
@@ -419,6 +421,10 @@ class CobroTituloRuralController extends Controller
     }
 
     public function vistaCobrados(){
+        if(!Auth()->user()->hasPermissionTo('Titulos Rurales Cobrados'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
         return view('cobroTituloRural.cobrados');
     }
 

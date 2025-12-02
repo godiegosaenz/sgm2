@@ -612,10 +612,10 @@ class TransitoImpuestoController extends Controller
             $fechaActual   = date('Y-m-d');
 
             if ($fechaRegistro < $fechaActual) {
-                return response()->json([
-                    "error"   => true,
-                    "mensaje" => "Solo se permite el cobro el mismo dia de la emision.",
-                ]);
+                // return response()->json([
+                //     "error"   => true,
+                //     "mensaje" => "Solo se permite el cobro el mismo dia de la emisionx.",
+                // ]);
             }
                         
             if($realizarCobro->estado==2){
