@@ -250,21 +250,23 @@ class AnaliticaContribuyenteController extends Controller
                     $query->where(' usuario',$tipo);
                 }
             })
-            ->whereBetween('i.created_at', [$desde, $hasta])
+            // ->whereBetween('i.created_at', [$desde, $hasta])
+            ->whereBetween('i.fecha_cobro', [$desde, $hasta])
             ->where('i.estado',3)
-            ->select('v.placa_cpn_ramv','v.chasis','v.avaluo','v.year','mv.descripcion as marca_veh','cv.descripcion as clase','en.nombres as nombre_propietario','en.apellidos as apellido_propietario','en.ci_ruc as identificacion_propietario' ,'i.year_impuesto','i.numero_titulo','i.total_pagar','i.usuario','i.created_at','i.id as identificador','clv.descripcion as clase_desc')
+            ->select('v.placa_cpn_ramv','v.chasis','v.avaluo','v.year','mv.descripcion as marca_veh','cv.descripcion as clase','en.nombres as nombre_propietario','en.apellidos as apellido_propietario','en.ci_ruc as identificacion_propietario' ,'i.year_impuesto','i.numero_titulo','i.total_pagar','i.usuario','i.created_at','i.id as identificador','clv.descripcion as clase_desc','i.id_usuario_cobra','i.fecha_cobro')
             ->orderBy('i.id','desc')
             ->get();
 
             foreach($consultar as $key=> $data){
                 $usuarioRegistra=DB::connection('mysql')->table('users as u')
                 ->leftJoin('personas as p', 'p.id', '=', 'u.idpersona')
-                ->where('u.id',$data->usuario)
+                ->where('u.id',$data->id_usuario_cobra)
                 ->select('p.nombres','p.apellidos','p.cedula')
                 ->first();
                 if(is_null($usuarioRegistra)){
                     $consultar[$key]->nombre_usuario=$data->usuario;
                 }else{
+                    // dd($data);
                     $consultar[$key]->nombre_usuario=$usuarioRegistra->nombres." ".$usuarioRegistra->apellidos;
                     $consultar[$key]->cedula_usuario=$usuarioRegistra->cedula;
                 }

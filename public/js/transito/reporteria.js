@@ -110,7 +110,7 @@ $("#formReporteria").submit(function(e){
     
                                                      <td style="width:20%; text-align:left; vertical-align:middle">
                                                         <p style="margin-bottom:0px !important"><b>Usuario:</b> ${item.nombre_usuario}</p>
-                                                        <p style="margin-bottom:0px !important"><b>Fecha Pago:</b> ${item.created_at}</p>
+                                                        <p style="margin-bottom:0px !important"><b>Fecha Pago:</b> ${item.fecha_cobro}</p>
                                                        
                                                     </td>
     
