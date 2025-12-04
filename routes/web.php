@@ -402,7 +402,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('carga-predios/{id}', [ContribuyenteUrbanoController::class, 'cargaPredios']);
 
     //seguridad-ciudadana-rural
-    Route::get('seguridad-ciudadana-rural', [PredioRuralController::class, 'index'])->name('index.rural');
+    Route::get('seguridad-ciudadana-rural', [PredioRuralController::class, 'index'])->name('index.seguridad_ciudadana');
+    Route::post('seguridad/datatables', [PredioRuralController::class, 'datatable']);
 
 
     Route::get('predio-contribuyente-rural', [ContribuyenteUrbanoController::class, 'buscaPrediosContribuyente']);

@@ -154,14 +154,14 @@
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label for="nombresRepresentante" class="form-label">Cuadro Tarifario RTV</label>
+                    <label for="nombresRepresentante" class="form-label">RTV Cuadro Tarifario</label>
                     <input type="text" class="form-control" id="tipo" maxlength="255"
                         value="{{old('nombresRepresentante2')}}" disabled>
 
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label for="nombresRepresentante" class="form-label">Tipo</label>
+                    <label for="nombresRepresentante" class="form-label">Tipo Servicio</label>
                     <input type="text" class="form-control" id="tipo_vehi" maxlength="255"
                         value="{{old('nombresRepresentante2')}}" disabled>
 
@@ -399,9 +399,9 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="placa_v" class="form-label">Tipo Vehiculo</label>
+                                    <label for="placa_v" class="form-label">Tipo de servicio</label>
                                     <select class="form-select {{ $errors->has('tipo_vehiculo') ? 'is-invalid' : '' }}" id="tipo_vehiculo"name="tipo_vehiculo" required >
-                                        <option value="">Seleccione tipo</option>
+                                        <option value="">Seleccione un tipo servicio </option>
                                         <option value="PUBLICO">PUBLICO</option>
                                         <option value="PARTICULAR">PARTICULAR</option>
                                         
@@ -436,7 +436,7 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="tipo_v" class="form-label">Cuadro Tarifario RTV</label>
+                                    <label for="tipo_v" class="form-label">RTV Cuadro Tarifario</label>
                                     <select class="form-select {{ $errors->has('tipo_v') ? 'is-invalid' : '' }}" id="tipo_v"
                                         name="tipo_v" required >
                                         
@@ -584,7 +584,7 @@
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button"
                                 role="tab" aria-controls="tab2" aria-selected="false">
-                                Cuadro Tarifario RTV  {{date('Y')  }}
+                                RTV Cuadro Tarifario {{date('Y')  }}
                             </button>
                         </li>
 
@@ -894,7 +894,7 @@
 @push('scripts')
     <script>
         
-        // $('#check_valor_REC').prop('disabled', true)
+        $('#check_valor_TSA').prop('disabled', true)
         let token = "{{csrf_token()}}";
         document.getElementById('vehiculo_id').addEventListener('keypress', function (event) {
             // Verificar si la tecla presionada es 'Enter' (keyCode 13)
@@ -1054,6 +1054,18 @@
             const year = document.getElementById('year_declaracion').value;
             const last_year_declaracion = document.getElementById('last_year_declaracion').value;
             const solo_duplicado = document.getElementById('solo_duplicado').value;
+            const tipo_serv = document.getElementById('tipo_vehi').value;
+            const year_modelo = document.getElementById('year_modelo').value;
+
+            const currentYear = new Date().getFullYear();
+            let menos3=currentYear-3
+            
+            if(tipo_serv=="PARTICULAR" && year_modelo > menos3){
+              
+                $('#check_valor_RTV').prop('checked',false)
+            }else{
+                $('#check_valor_RTV').prop('checked',true)
+            }
 
             // alert(year)
 
@@ -1085,7 +1097,8 @@
                     cliente_id: cliente_id,
                     year: year,
                     last_year_declaracion: last_year_declaracion,
-                    solo_duplicado: solo_duplicado
+                    solo_duplicado: solo_duplicado,
+                    tipo_serv:tipo_serv
                 }).then(function (res) {
                     console.log("txt")
                     console.log(res)
@@ -1113,10 +1126,15 @@
                         // $('#check_valor_SRV').prop('checked',true)
                         // $('#check_valor_DM').prop('checked',false)
                         // $('#check_valor_DE').prop('checked',false)
-                       
-                        if(res.data.desmarca_rtv=="S"){
-                           $('#check_valor_RTV').prop('checked',false)
-                        }
+                        // $('#check_valor_TSA').prop('readonly',true)
+                        // $('#check_valor_RTV').prop('checked',true)
+
+
+                        // if(res.data.desmarca_rtv=="S"){
+                        //    $('#check_valor_RTV').prop('checked',false)
+                        // }else{
+                        //     $('#check_valor_RTV').prop('checked',true)
+                        // }
                        
                         if(solo_duplicado=='matricula'){
                             

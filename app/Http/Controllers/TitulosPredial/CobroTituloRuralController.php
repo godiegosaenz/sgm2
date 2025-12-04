@@ -52,7 +52,7 @@ class CobroTituloRuralController extends Controller
                 }
                 
             })            
-            ->whereIn('tp.TitPr_Estado',['E','C'])
+            ->whereIn('tp.TitPr_Estado',['E','C','Q','N']) //E=Emitidos, C=Cancelado, Q=Cancelado Nueva Emitido, N=Nueva Emision
             ->distinct()
             ->limit(10)
             ->get();
@@ -73,7 +73,7 @@ class CobroTituloRuralController extends Controller
             ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
             ->select('cv.Pre_CodigoCatastral as clave','cv.CarVe_FechaEmision as fecha_emi','cv.CarVe_NumTitulo as num_titulo','cv.CarVe_CI as num_ident','cv.CarVe_Estado','c.Ciu_Apellidos','c.Ciu_Nombres','cv.CarVe_Nombres as nombre_per','cv.CarVe_ValorEmitido as valor_emitido','cv.CarVe_TasaAdministrativa as tasa','CarVe_Calle as direcc_cont','cv.Carve_Recargo as recargo','cv.Carve_Descuento as descuento')
             ->where('cv.Pre_CodigoCatastral', '=', $clave)            
-            ->whereIn('cv.CarVe_Estado',['E'])
+            ->whereIn('cv.CarVe_Estado',['E','N']) //E=Emitidos, N=Nueva Emision
             // ->where('Pre_Tipo','Rural')
             ->orderby('CarVe_NumTitulo','asc')
             ->get();
@@ -338,7 +338,7 @@ class CobroTituloRuralController extends Controller
             DB::raw("FORMAT(tp.TitPr_FechaEmision,'dd/MM/yyyy') as fecha_emi"),
             DB::raw("FORMAT(tp.TitPr_FechaRecaudacion,'dd/MM/yyyy') as fecha_recaudacion"))
             ->whereIn('tp.TitPr_NumTitulo', [$anio_actual])            
-            ->where('tp.TitPr_Estado','C')
+            ->whereIn('tp.TitPr_Estado',['C','Q'])
             ->orderby('TitPr_NumTitulo','asc')
             ->get();
 
@@ -466,7 +466,7 @@ class CobroTituloRuralController extends Controller
             'TitPr_DireccionCont as direcc_cont',
             DB::raw("FORMAT(tp.TitPr_ValorTCobrado, 'N2') as total_cobrado"))
             ->where('tp.Pre_CodigoCatastral', '=', $clave)            
-            ->whereIn('tp.TitPr_Estado',['C'])
+            ->whereIn('tp.TitPr_Estado',['C','Q'])
             ->orderby('TitPr_NumTitulo','asc')
             ->get();
 

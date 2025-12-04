@@ -405,7 +405,13 @@ function buscarTitulos(clave){
             // cancelar()
 			return;   
 		}
-        
+        if(data.resultado.length==0){
+            $("#tbodyRuralDetalle").html('');
+			$("#tbodyRuralDetalle").html(`<tr><td colspan="${num_col}" style="text-align:center>No existen registros</td></tr>`);
+            alert(num_col)
+            return
+        }
+       
         $.each(data.resultado,function(i, item){
             let recar = item.recargo !=null ? item.recargo : '0.00';
             let descu = item.descuento !=null ? item.descuento : '0.00';

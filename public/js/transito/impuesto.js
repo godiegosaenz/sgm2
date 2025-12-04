@@ -885,7 +885,7 @@ function cargaComboMarca(){
 		}
         $('#marca_v').html('');	
         $('#marca_v').find('option').remove().end();
-        $('#marca_v').append('<option value="">Selecccione un  tipo</option>');
+        $('#marca_v').append('<option value="">Selecccione una marca</option>');
         $.each(data.resultado, function(i,item){
           			
             $('#marca_v').append('<option class="" value="'+item.id+'">'+item.descripcion+'</option>');

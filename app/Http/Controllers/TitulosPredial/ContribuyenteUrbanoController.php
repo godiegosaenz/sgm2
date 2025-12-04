@@ -107,7 +107,7 @@ class ContribuyenteUrbanoController extends Controller
             foreach($prediosContribuyente as $key=>$data){
                 $verificaRebaja=\DB::connection('sqlsrv')->table('REBAJA_VALOR as r')
                 ->where('r.TitPrCarVe_NumTitulo', $data->TitPr_NumTitulo)
-                // ->where('RebVal_Valor','>',0)
+                ->where('RebVal_Valor','>',0)
                 ->first();
 
                 if(!is_null($verificaRebaja)){
@@ -129,7 +129,7 @@ class ContribuyenteUrbanoController extends Controller
                 }
             }
 
-            //dd($prediosContribuyente);
+            dd($prediosContribuyente);
             $valor_seguridad=\DB::connection('sqlsrv')->table('ordenanzas')
             ->where('codigo','SEGURIDAD')
             ->where('estado','A')

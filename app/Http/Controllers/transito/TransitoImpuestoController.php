@@ -404,11 +404,12 @@ class TransitoImpuestoController extends Controller
             
             $vehiculo = TransitoVehiculo::where('id',$request->input('vehiculo_id'))->first();
             $aplica_recargo=0;
-            $ultimo_4_anio=date('Y')-4;
+            $ultimo_3_anio=date('Y')-3;
             $anio_modelo=$vehiculo->year;
+            $tipo_servicio=$request->tipo_serv;
             $desmarca_rtv="";
-            if($anio_modelo>$ultimo_4_anio){
-                // $desmarca_rtv='S';
+            if($anio_modelo>$ultimo_3_anio && $tipo_servicio=="PARTICULAR"){
+                $desmarca_rtv='S';
             }          
            
             if($vehiculo->tipo_identif=="PLACA"){
