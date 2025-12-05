@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use DB;
 use PDF;
-class CobroTituloRuralController extends Controller
+class CobroTituloRural2Controller extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -29,16 +29,25 @@ class CobroTituloRuralController extends Controller
             $valor=$request->valor;
 
             $liquidacionRuralAct=DB::connection('sqlsrv')->table('TITULOS_PREDIO as tp')
-            // ->Join('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'tp.Titpr_RUC_CI')
+            ->Join('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'tp.Titpr_RUC_CI')
             ->Join('PREDIO as p', 'p.Pre_CodigoCatastral', '=', 'tp.Pre_CodigoCatastral')
-            ->select('tp.Pre_CodigoCatastral','t.Titpr_Nombres as nombres','tp.Titpr_RUC_CI','p.Pre_NombrePredio','tp.TitPr_DireccionCont','tp.TitPr_Estado as ruc')
+            ->select('tp.Pre_CodigoCatastral','c.Ciu_Apellidos','c.Ciu_Nombres','tp.Titpr_RUC_CI','p.Pre_NombrePredio','tp.TitPr_DireccionCont','tp.TitPr_Estado as ruc')
             ->where(function($query)use($tipo,$valor, $tipo_per) {
                 if($tipo==1){
                     $query->where('Titpr_RUC_CI', '=', $valor);
                 }else if($tipo==2){
                     $query->where('tp.Pre_CodigoCatastral', '=', $valor);
                 }else{
-                    $query->where('t.Titpr_Nombres', 'LIKE', "%$valor%");
+                    $query->where('c.Ciu_Apellidos', 'LIKE', "%$valor%")
+
+                    // O por nombre
+                    ->orWhere('c.Ciu_Nombres', 'LIKE', "%$valor%")
+
+                    // O por nombre + apellido
+                    ->orWhereRaw("LOWER(c.Ciu_Nombres + ' ' + c.Ciu_Apellidos) LIKE LOWER(?)", ["%$valor%"])
+
+                    // O por apellido + nombre
+                    ->orWhereRaw("LOWER(c.Ciu_Apellidos + ' ' + c.Ciu_Nombres) LIKE LOWER(?)", ["%$valor%"]);
                 }
                 
             })            
@@ -49,9 +58,9 @@ class CobroTituloRuralController extends Controller
             // dd($liquidacionRuralAct);
            
             $liquidacionRuralAct=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
-            // ->leftJoin('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'cv.carVe_RUC')
+            ->leftJoin('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'cv.carVe_RUC')
             ->leftJoin('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
-            ->select('cv.Pre_CodigoCatastral','cv.CarVe_Nombres as nombres','cv.CarVe_CI as Titpr_RUC_CI'
+            ->select('cv.Pre_CodigoCatastral','c.Ciu_Apellidos','c.Ciu_Nombres','cv.CarVe_CI as Titpr_RUC_CI'
             ,'p.Pre_NombrePredio','cv.CarVe_Calle as TitPr_DireccionCont','cv.carVe_RUC as ruc')
             ->where(function($query)use($tipo,$valor, $tipo_per) {
                 if($tipo==1){
@@ -60,8 +69,18 @@ class CobroTituloRuralController extends Controller
                 }else if($tipo==2){
                     $query->where('tp.Pre_CodigoCatastral', '=', $valor);
                 }else{
-                    $query->where('cv.CarVe_Nombres', 'LIKE', "%$valor%");
+                    $query->where('c.Ciu_Apellidos', 'LIKE', "%$valor%")
 
+                    // O por nombre
+                    ->orWhere('c.Ciu_Nombres', 'LIKE', "%$valor%")
+
+                    // O por nombre + apellido
+                    ->orWhereRaw("LOWER(c.Ciu_Nombres + ' ' + c.Ciu_Apellidos) LIKE LOWER(?)", ["%$valor%"])
+
+                    // O por apellido + nombre
+                    ->orWhereRaw("LOWER(c.Ciu_Apellidos + ' ' + c.Ciu_Nombres) LIKE LOWER(?)", ["%$valor%"])
+
+                    ->orWhere('cv.CarVe_Nombres', 'LIKE', "%$valor%");
                 }
                 
             })            

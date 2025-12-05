@@ -1064,7 +1064,9 @@
               
                 $('#check_valor_RTV').prop('checked',false)
             }else{
-                $('#check_valor_RTV').prop('checked',true)
+                if(solo_duplicado=='no'){
+                    $('#check_valor_RTV').prop('checked',true)
+                }
             }
 
             // alert(year)

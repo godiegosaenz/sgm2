@@ -358,7 +358,7 @@ function llenarData(data){
     $.each(data,function(i, item){
         $('#tbodyRural').append(`<tr>
                 <td style="width:5%; text-align:center; vertical-align:middle">
-                    <button type="button" class="btn btn-success btn-sm" onclick="buscarTitulos(${item.Pre_CodigoCatastral})">
+                    <button type="button" class="btn btn-success btn-sm" onclick="buscarTitulos('${item.Pre_CodigoCatastral}','${item.Titpr_RUC_CI}')">
                         <i class="fa fa-money"></i>
                     </button>                    
                 </td>
@@ -383,7 +383,7 @@ function llenarData(data){
 }
 
 globalThis.AplicaRemiGlobal=0
-function buscarTitulos(clave){
+function buscarTitulos(clave,cedula){
     $('#total_deuda').html('')
     $('#total_seleccionado').html('')
     
@@ -394,7 +394,7 @@ function buscarTitulos(clave){
     $('#tbodyRuralDetalle').empty(); 
     var num_col = $("#tableDetalleRural thead tr th").length;
     vistacargando("m", "Espere por favor")
-    $.get('buscar-titulos-rurales/'+clave, function(data){
+    $.get('buscar-titulos-rurales/'+clave+'/'+cedula, function(data){
         console.log(data)
        
         vistacargando("")
@@ -408,7 +408,7 @@ function buscarTitulos(clave){
         if(data.resultado.length==0){
             $("#tbodyRuralDetalle").html('');
 			$("#tbodyRuralDetalle").html(`<tr><td colspan="${num_col}" style="text-align:center>No existen registros</td></tr>`);
-            alert(num_col)
+            // alert(num_col)
             return
         }
        

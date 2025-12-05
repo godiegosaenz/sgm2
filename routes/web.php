@@ -386,14 +386,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //cobro rural
     Route::get('cobro-titulo-rural', [CobroTituloRuralController::class, 'index'])->name('index.cobroTituloRural');
     Route::post('buscar-contribuyente-rural', [CobroTituloRuralController::class, 'buscar']);
-    Route::get('buscar-titulos-rurales/{codigo}', [CobroTituloRuralController::class, 'consultarTitulos']);
+    Route::get('buscar-titulos-rurales/{codigo}/{cedula}', [CobroTituloRuralController::class, 'consultarTitulos']);
     Route::get('pdf-titulo-rural/{id}/{copia}', [CobroTituloRuralController::class, 'pdfTitulo']);
     Route::post('pago-rural-titulo', [CobroTituloRuralController::class, 'pagaRuralTitulo']);
     Route::get('ver-documento/{ruta}', [CobroTituloRuralController::class, 'verDocumento']);
 
     //cobrados rurales
     Route::get('titulos-cobrados-rurales', [CobroTituloRuralController::class, 'vistaCobrados'])->name('index.vistaCobrados');
-    Route::get('buscar-titulos-rurales-cobrados/{codigo}', [CobroTituloRuralController::class, 'consultarTitulosCobrados']);
+    Route::get('buscar-titulos-rurales-cobrados/{codigo}/{cedula}', [CobroTituloRuralController::class, 'consultarTitulosCobrados']);
     Route::post('descarga-titulo-rural', [CobroTituloRuralController::class, 'descargarTitulosRural']);
 
     //dato-contribuyente
