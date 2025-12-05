@@ -355,10 +355,15 @@ function buscaContribuyente(){
 }
 
 function llenarData(data){
+    
     $.each(data,function(i, item){
+        let cedula=item.Titpr_RUC_CI
+        if(item.Titpr_RUC_CI<=0){
+            cedula=item.ruc
+        }   
         $('#tbodyRural').append(`<tr>
                 <td style="width:5%; text-align:center; vertical-align:middle">
-                    <button type="button" class="btn btn-success btn-sm" onclick="buscarTitulos('${item.Pre_CodigoCatastral}','${item.Titpr_RUC_CI}')">
+                    <button type="button" class="btn btn-success btn-sm" onclick="buscarTitulos('${item.Pre_CodigoCatastral}','${cedula}')">
                         <i class="fa fa-money"></i>
                     </button>                    
                 </td>
@@ -372,10 +377,10 @@ function llenarData(data){
                     ${item.TitPr_DireccionCont}                     
                 </td>
                 <td style="width:30%; text-align:center; vertical-align:middle">
-                    ${item.Ciu_Apellidos} ${item.Ciu_Nombres}                    
+                    ${item.nombres}                    
                 </td>
                 <td style="width:15%; text-align:center; vertical-align:middle">
-                    ${item.Titpr_RUC_CI}                     
+                    ${cedula}                     
                 </td>
             
         </tr>`);
@@ -451,8 +456,8 @@ function buscarTitulos(clave,cedula){
         })
         $('#total_deuda').html(data.total_valor);
         let tamanio=data.resultado.length
-        $('#nombre_contr').html(data.resultado[tamanio-1].Ciu_Apellidos +" "+ data.resultado[tamanio-1].Ciu_Nombres)
-        $('#num_ident_contr').html(data.resultado[tamanio-1].num_ident)
+        $('#nombre_contr').html(data.resultado[tamanio-1].nombre_per)
+        $('#num_ident_contr').html(cedula)
         $('#direccion_contr').html(data.resultado[tamanio-1].direcc_cont)
         $('#clave_contr').html(data.resultado[tamanio-1].clave)
 

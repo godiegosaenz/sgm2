@@ -14,6 +14,22 @@
             font-family: Arial, sans-serif;
             font-size: 12px;
         }
+
+        /* Imagen de fondo en la mitad superior */
+        .watermark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%; /* Solo ocupa la mitad superior */
+            background-image: url('{{ asset('img/logo4.png') }}');
+            background-repeat: no-repeat;
+            background-size: contain;
+            background-position: center;
+            opacity: 0.05; /* Opacidad muy baja */
+            z-index: -1; /* La imagen queda detrás del contenido */
+        }
+
         .cabecera {
             width: 100%;
             border-collapse: collapse;
@@ -94,6 +110,7 @@
             $color='black';
         }
     @endphp
+    <div class="watermark"></div>
     @foreach ($liquidacionRural as $key=>$data )
        
         <table class="cabecera" style="font-size:10px !important"  width="100%" >
@@ -129,7 +146,7 @@
                 </td>
             </tr>
             <tr style="font-size: 11px; line-height: 20px;">
-                <td><b>Contribuyente:</b> {{ $data->apellidos }} {{ $data->nombres }}</td>
+                <td><b>Contribuyente:</b> {{ $data->nombres }}</td>
             
                 <td style="width: 1%; text-align:left"></td>
 

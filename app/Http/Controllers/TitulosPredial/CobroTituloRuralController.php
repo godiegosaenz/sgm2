@@ -31,14 +31,14 @@ class CobroTituloRuralController extends Controller
             $liquidacionRuralAct=DB::connection('sqlsrv')->table('TITULOS_PREDIO as tp')
             // ->Join('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'tp.Titpr_RUC_CI')
             ->Join('PREDIO as p', 'p.Pre_CodigoCatastral', '=', 'tp.Pre_CodigoCatastral')
-            ->select('tp.Pre_CodigoCatastral','t.Titpr_Nombres as nombres','tp.Titpr_RUC_CI','p.Pre_NombrePredio','tp.TitPr_DireccionCont','tp.TitPr_Estado as ruc')
+            ->select('tp.Pre_CodigoCatastral','tp.Titpr_Nombres as nombres','tp.Titpr_RUC_CI','p.Pre_NombrePredio','tp.TitPr_DireccionCont','tp.TitPr_Estado as ruc')
             ->where(function($query)use($tipo,$valor, $tipo_per) {
                 if($tipo==1){
                     $query->where('Titpr_RUC_CI', '=', $valor);
                 }else if($tipo==2){
                     $query->where('tp.Pre_CodigoCatastral', '=', $valor);
                 }else{
-                    $query->where('t.Titpr_Nombres', 'LIKE', "%$valor%");
+                    $query->where('tp.Titpr_Nombres', 'LIKE', "%$valor%");
                 }
                 
             })            
@@ -55,16 +55,17 @@ class CobroTituloRuralController extends Controller
             ,'p.Pre_NombrePredio','cv.CarVe_Calle as TitPr_DireccionCont','cv.carVe_RUC as ruc')
             ->where(function($query)use($tipo,$valor, $tipo_per) {
                 if($tipo==1){
-                    $query->where('carVe_RUC', '=', $valor);
-                    // ->orWhere('carVe_RUC',$valor);
+                    $query->where('CarVe_CI', '=', $valor)
+                    ->orWhere('carVe_RUC',$valor);
                 }else if($tipo==2){
-                    $query->where('tp.Pre_CodigoCatastral', '=', $valor);
+                    $query->where('cv.Pre_CodigoCatastral', '=', $valor);
                 }else{
                     $query->where('cv.CarVe_Nombres', 'LIKE', "%$valor%");
 
                 }
                 
-            })            
+            }) 
+            ->whereNotNull('CarVe_Nombres')           
             ->whereIn('cv.CarVe_Estado',['E','C','Q','N']) //E=Emitidos, C=Cancelado, Q=Cancelado Nueva Emitido, N=Nueva Emision
             ->distinct()
             ->limit(10)
@@ -83,9 +84,9 @@ class CobroTituloRuralController extends Controller
     {
         try {
             $liquidacionRural=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
-            ->Join('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'cv.CarVe_CI')
+            // ->Join('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'cv.CarVe_CI')
             ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
-            ->select('cv.Pre_CodigoCatastral as clave','cv.CarVe_FechaEmision as fecha_emi','cv.CarVe_NumTitulo as num_titulo','cv.CarVe_CI as num_ident','cv.CarVe_Estado','c.Ciu_Apellidos','c.Ciu_Nombres','cv.CarVe_Nombres as nombre_per','cv.CarVe_ValorEmitido as valor_emitido','cv.CarVe_TasaAdministrativa as tasa','CarVe_Calle as direcc_cont','cv.Carve_Recargo as recargo','cv.Carve_Descuento as descuento')
+            ->select('cv.Pre_CodigoCatastral as clave','cv.CarVe_FechaEmision as fecha_emi','cv.CarVe_NumTitulo as num_titulo','cv.CarVe_CI as num_ident','cv.CarVe_Estado','cv.CarVe_Nombres as nombre_per','cv.CarVe_ValorEmitido as valor_emitido','cv.CarVe_TasaAdministrativa as tasa','CarVe_Calle as direcc_cont','cv.Carve_Recargo as recargo','cv.Carve_Descuento as descuento')
             ->where('cv.Pre_CodigoCatastral', '=', $clave)
             ->where(function ($query) use($cedula){
                 $query->where('carVe_CI',$cedula)
@@ -136,9 +137,9 @@ class CobroTituloRuralController extends Controller
             $liquidacionActual=[];
 
             $liquidacionActual=DB::connection('sqlsrv')->table('TITULOS_PREDIO as tp')
-            ->Join('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'tp.Titpr_RUC_CI')
+            // ->Join('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'tp.Titpr_RUC_CI')
             ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'tp.Pre_CodigoCatastral')
-            ->select('tp.Pre_CodigoCatastral as clave','tp.TitPr_FechaEmision as fecha_emi','tp.TitPr_NumTitulo as num_titulo','tp.Titpr_RUC_CI as num_ident' ,'tp.TitPr_Estado','c.Ciu_Apellidos','c.Ciu_Nombres','tp.TitPr_Nombres as nombre_per','tp.TitPr_ValorEmitido as valor_emitido','tp.TitPr_TasaAdministrativa as tasa','TitPr_DireccionCont as direcc_cont','tp.TitPr_Descuento as descuento'
+            ->select('tp.Pre_CodigoCatastral as clave','tp.TitPr_FechaEmision as fecha_emi','tp.TitPr_NumTitulo as num_titulo','tp.Titpr_RUC_CI as num_ident' ,'tp.TitPr_Estado','tp.TitPr_Nombres as nombre_per','tp.TitPr_ValorEmitido as valor_emitido','tp.TitPr_TasaAdministrativa as tasa','TitPr_DireccionCont as direcc_cont','tp.TitPr_Descuento as descuento'
             ,'tp.TitPr_Recargo as recargo')
             ->where('tp.Pre_CodigoCatastral', '=', $clave)
             ->where('tp.Titpr_RUC_CI',$cedula)
@@ -295,14 +296,15 @@ class CobroTituloRuralController extends Controller
             $liquidacionRural=[];
            
             $liquidacionRural=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
-            ->Join('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'cv.CarVe_CI')
+            // ->Join('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'cv.CarVe_CI')
             ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
             ->select('cv.Pre_CodigoCatastral as clave'
             ,'cv.CarVe_FechaEmision as fecha_emi',
             'cv.CarVe_NumTitulo as num_titulo',
             'cv.CarVe_CI as num_ident',
-            'c.Ciu_Apellidos as apellidos',
-            'c.Ciu_Nombres as nombres',
+            'cv.CarVe_Nombres as nombres',
+            // 'c.Ciu_Apellidos as apellidos',
+            // 'c.Ciu_Nombres as nombres',
             'cv.CarVe_ValorEmitido as valor_emitido',
             'cv.Carve_Recargo as recargo',
             'cv.Carve_Descuento as descuento',
@@ -329,14 +331,15 @@ class CobroTituloRuralController extends Controller
             //dd($anio_actual);
            
             $actual=DB::connection('sqlsrv')->table('TITULOS_PREDIO as tp')
-            ->Join('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'tp.Titpr_RUC_CI')
+            // ->Join('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'tp.Titpr_RUC_CI')
             ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'tp.Pre_CodigoCatastral')
             ->select('tp.Pre_CodigoCatastral as clave',
             'tp.TitPr_NumTitulo as num_titulo',
             'tp.TitPr_FechaEmision as fecha_emi',           
             'tp.Titpr_RUC_CI as num_ident',
-            'c.Ciu_Apellidos as apellidos',
-            'c.Ciu_Nombres as nombres',
+            'tp.TitPr_Nombres as nombres',
+            // 'c.Ciu_Apellidos as apellidos',
+            // 'c.Ciu_Nombres as nombres',
             'tp.TitPr_ValorEmitido as valor_emitido',
             'tp.TitPr_Recargo as recargo',
             'tp.TitPr_Descuento as descuento',
@@ -452,15 +455,15 @@ class CobroTituloRuralController extends Controller
     {
         try {
             $liquidacionRural=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
-            ->Join('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'cv.CarVe_CI')
+            // ->Join('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'cv.CarVe_CI')
             ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
             ->select('cv.Pre_CodigoCatastral as clave',
             'cv.CarVe_FechaEmision as fecha_emi',
             'cv.CarVe_NumTitulo as num_titulo',
             'cv.CarVe_CI as num_ident',
             'cv.CarVe_Estado',
-            'c.Ciu_Apellidos',
-            'c.Ciu_Nombres',
+            // 'c.Ciu_Apellidos',
+            // 'c.Ciu_Nombres',
             'cv.CarVe_Nombres as nombre_per',
             DB::raw("FORMAT(cv.CarVe_FechaRecaudacion,'dd/MM/yyyy') as fecha_recaudacion"),
             'cv.CarVe_TasaAdministrativa as tasa',
@@ -476,16 +479,16 @@ class CobroTituloRuralController extends Controller
             ->get();
 
             $liquidacionActual=DB::connection('sqlsrv')->table('TITULOS_PREDIO as tp')
-            ->Join('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'tp.Titpr_RUC_CI')
+            // ->Join('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'tp.Titpr_RUC_CI')
             ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'tp.Pre_CodigoCatastral')
             ->select('tp.Pre_CodigoCatastral as clave',
             'tp.TitPr_FechaEmision as fecha_emi',
             'tp.TitPr_NumTitulo as num_titulo',
             'tp.Titpr_RUC_CI as num_ident',
             'tp.TitPr_Estado',
-            'c.Ciu_Apellidos',
+            // 'c.Ciu_Apellidos',
             DB::raw("FORMAT(tp.TitPr_FechaRecaudacion,'dd/MM/yyyy') as fecha_recaudacion"),
-            'c.Ciu_Nombres',
+            // 'c.Ciu_Nombres',
             'tp.TitPr_Nombres as nombre_per',
             'TitPr_DireccionCont as direcc_cont',
             DB::raw("FORMAT(tp.TitPr_ValorTCobrado, 'N2') as total_cobrado"))
