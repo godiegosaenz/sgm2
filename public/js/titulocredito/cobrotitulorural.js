@@ -394,7 +394,7 @@ function buscarTitulos(clave,cedula){
     
     AplicaRemiGlobal=0
     $('#selectAll').prop('checked',false)
-    $('#modalContri').modal('show')
+   
     $("#tbodyRuralDetalle").html('');
     $('#tbodyRuralDetalle').empty(); 
     var num_col = $("#tableDetalleRural thead tr th").length;
@@ -412,8 +412,8 @@ function buscarTitulos(clave,cedula){
 		}
         if(data.resultado.length==0){
             $("#tbodyRuralDetalle").html('');
-			$("#tbodyRuralDetalle").html(`<tr><td colspan="${num_col}" style="text-align:center>No existen registros</td></tr>`);
-            // alert(num_col)
+			$("#tbodyRuralDetalle").append(`<tr><td colspan="${num_col}" style="text-align:center>No existen registros</td></tr>`);
+            alertNotificar('No existen deuda para esta persona/empresa',"error");
             return
         }
        
@@ -454,6 +454,8 @@ function buscarTitulos(clave,cedula){
                 
             </tr>`);
         })
+
+        $('#modalContri').modal('show')
         $('#total_deuda').html(data.total_valor);
         let tamanio=data.resultado.length
         $('#nombre_contr').html(data.resultado[tamanio-1].nombre_per)
@@ -608,6 +610,68 @@ function cobrarTituloRural(){
         }
         sweetAlert.close();   // ocultamos la ventana de pregunta
     });
+}
+
+function verTituloRural(){
+    let clave_cat=$('#clave_contr').html()
+     // Obtener los checkboxes seleccionados
+    let selectedRows = $('#tbodyRuralDetalle input[type="checkbox"]:checked');
+
+    // Validar que al menos un checkbox esté seleccionado
+    if (selectedRows.length === 0) {
+        alertNotificar('Por favor, seleccione al menos un título de crédito.','error');
+        return;  // Detener la ejecución si no hay ninguna selección
+    }
+
+
+    // if (!validarSeleccionCorrelativa(ordenTitulosSeleccionados)) {
+    //     return; // ❌ Detener si está mal
+    // }
+    // alert(valorCobrado)
+   
+       
+    vistacargando("m","Espere por favor");           
+
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    
+    $.ajax({
+        type:'POST',
+        url: "ver-titulo-rural-sin-pagar",
+        data: { _token: $('meta[name="csrf-token"]').attr('content'),
+            numTitulosSeleccionados:numTitulosSeleccionados,
+            ordenTitulosSeleccionados:ordenTitulosSeleccionados,
+            clave_cat:clave_cat,
+            valorCobrado:valorCobrado,
+            valorInteres:valorInteres,
+            valorDescuento:valorDescuento,
+            valorRecarga:valorRecarga,
+            chequeadoRemision:AplicaRemiGlobal,
+            
+        },
+        success: function(data){
+            console.log(data)
+            vistacargando("");                
+            if(data.error==true){                       
+                alertNotificar(data.mensaje,'error');
+                return;                      
+            }
+
+            alertNotificar(data.mensaje,'success');
+            //$('#modalContri').modal('hide')
+            //window.location.href="descargar-reporte/"+data.pdf
+            verpdf(data.pdf)
+            
+        }, error:function (data) {
+            vistacargando("");
+            alertNotificar('Ocurrió un error','error');
+        }
+    });
+
+       
 }
 
 function verpdf(ruta){

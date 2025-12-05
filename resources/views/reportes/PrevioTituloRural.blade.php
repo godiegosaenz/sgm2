@@ -22,11 +22,11 @@
             left: 0;
             width: 100%;
             height: 50%; /* Solo ocupa la mitad superior */
-            background-image: url('{{ asset('img/logo4.png') }}');
+            background-image: url('{{ asset('img/novalido.png') }}');
             background-repeat: no-repeat;
             background-size: contain;
             background-position: center;
-            opacity: 0.05; /* Opacidad muy baja */
+            opacity: 0.08; /* Opacidad muy baja */
             z-index: -1; /* La imagen queda detrás del contenido */
         }
 
@@ -224,24 +224,24 @@
 
                         <tr>
                             <td style="text-align:right">Fecha de Emision:</td>
-                            <td style="color:white">$</td>
+                            <td style="color:white"></td>
                             <td style="text-align:left">{{ $data->fecha_emi }}</td>
                         </tr>
 
                         <tr>
-                            <td style="text-align:right">Fecha de Recaudacion:</td>
-                            <td style="color:white">$</td>
-                            <td style="text-align:left">{{ $data->fecha_recaudacion }}</td>
+                            <td style="text-align:right">Fecha de Consulta:</td>
+                            <td style="color:white"></td>
+                            <td style="text-align:left">{{ date('d/m/Y')}}</td>
                         </tr>
 
                         <tr>
-                            <td style="text-align:right; color:white">Fecha de Recaudacion:</td>
-                            <td style="color:white">$</td>
-                            <td style="text-align:left; color:white">{{ $data->fecha_recaudacion }}</td>
+                            <td style="text-align:right; color:  ">&nbsp;</td>
+                            <td style="color:red">&nbsp;</td>
+                            <td style="text-align:left; color:white">&nbsp;</td>
                         </tr>
 
                         <tr>
-                            <td colspan="3" style="font-size:16px;text:align:center; color:{{ $color }}"><b>FIEL COPIA DEL TITULO ORIGINAL</b></td>
+                            <td colspan="3" style="font-size:16px;text:align:center; color:{{ $color }}"><b>&nbsp;</b></td>
                         </tr>
                         
 
@@ -311,13 +311,13 @@
                         <tr>
                             <td style="text-align:right">INTERESES:</td>
                             <td>$</td>
-                            <td style="text-align:right">{{ number_format($data->interes,2) }}</td>
+                            <td style="text-align:right">{{ number_format($data->intereses,2) }}</td>
                         </tr>
 
                         <tr>
                             <td style="text-align:right">TOTAL A PAGAR:</td>
                             <td>$</td>
-                            <td style="text-align:right">{{ number_format($data->valor_cobrado,2) }}</td>
+                            <td style="text-align:right">{{ number_format($data->total_pagar,2) }}</td>
                         </tr>
 
                     </table>
@@ -331,41 +331,7 @@
         
         </table>
 
-        <table width="100%" style="margin-top:35px">
         
-                <tr style="line-height: 5px;">
-                    <td style="text-align: center">
-                        ______________________
-                    </td>
-
-                    <td style="text-align: center">
-                        ______________________
-                    </td>
-                    <td style="text-align: center">
-                        ______________________
-                    </td>
-                <td style="text-align: center">
-                        ______________________
-                    </td>
-                </tr>
-            
-                <tr>
-                    <td style="text-align: center">
-                        <b>DIRECTOR FINANCIERO</b>
-                    </td>
-                    <td style="text-align: center">
-                        <b>JEFE DE RENTAS</b>
-                    </td>
-                    <td style="text-align: center">
-                        <b>TESORERO</b>
-                    </td>
-                    <td style="text-align: center">
-                        <b>RECAUDADOR</b>
-                    </td>
-                </tr>
-        
-        </table>
-       
         @if ($key != $menos1)
             <div style="page-break-after: always;"></div>
         @endif

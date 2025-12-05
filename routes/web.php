@@ -390,6 +390,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('pdf-titulo-rural/{id}/{copia}', [CobroTituloRuralController::class, 'pdfTitulo']);
     Route::post('pago-rural-titulo', [CobroTituloRuralController::class, 'pagaRuralTitulo']);
     Route::get('ver-documento/{ruta}', [CobroTituloRuralController::class, 'verDocumento']);
+    Route::get('previo-pdf-titulo-rural/{id}/{copia}', [CobroTituloRuralController::class, 'pdfTituloPrevio']);
+    Route::post('ver-titulo-rural-sin-pagar', [CobroTituloRuralController::class, 'verTituloRuralSinPagar']);
 
     //cobrados rurales
     Route::get('titulos-cobrados-rurales', [CobroTituloRuralController::class, 'vistaCobrados'])->name('index.vistaCobrados');

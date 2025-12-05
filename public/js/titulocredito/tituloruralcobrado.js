@@ -393,7 +393,7 @@ function buscarTitulos(clave, cedula){
     
     AplicaRemiGlobal=0
     $('#selectAll').prop('checked',false)
-    $('#modalContri').modal('show')
+   
     $("#tbodyRuralDetalle").html('');
     $('#tbodyRuralDetalle').empty(); 
     var num_col = $("#tableDetalleRural thead tr th").length;
@@ -409,6 +409,13 @@ function buscarTitulos(clave, cedula){
             // cancelar()
 			return;   
 		}
+
+        if(data.resultado.length==0){
+            $("#tbodyRuralDetalle").html('');
+			$("#tbodyRuralDetalle").append(`<tr><td colspan="${num_col}" style="text-align:center>No existen registros</td></tr>`);
+            alertNotificar('No existen deuda para esta persona/empresa',"error");
+            return
+        }
         let total_cobrado=0;
         $.each(data.resultado,function(i, item){
            
@@ -455,6 +462,7 @@ function buscarTitulos(clave, cedula){
         //     $('#selectRemision').prop('checked',true)
         //     AplicaRemiGlobal=1
         // }
+        $('#modalContri').modal('show')
 
     }).fail(function(){
         vistacargando("")

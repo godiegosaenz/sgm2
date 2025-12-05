@@ -204,6 +204,7 @@
 
                             <div class="col-md-12">
                                 <center>
+                                    <button type="button" class="btn btn-sm btn-primary" onclick="verTituloRural()">Visualizar</button>
                                     <button type="button" class="btn btn-sm btn-success" onclick="cobrarTituloRural()">Cobrar</button>
                                     <button type="button" class="btn btn-sm btn-danger" onclick="cerrarModalPago()">Cerrar</button>
                                 </center>
