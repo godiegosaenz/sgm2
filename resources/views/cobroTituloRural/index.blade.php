@@ -20,6 +20,39 @@
     height: 36px !important;
 }
 
+.fa-custom-border {
+    border: 2px solid #28a745; /* verde */
+    padding: 5px;              /* espacio interno para que se vea el borde */
+    border-radius: 4px;        /* opcional, esquinas redondeadas */
+}
+
+.badge-green {
+    display: inline-block;
+    padding: 4px 10px;
+    border: 2px solid #28a745; /* verde */
+    color: #28a745;
+    border-radius: 8px; /* estilo badge */
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge-blue-low {
+    display: inline-block;
+    padding: 4px 10px;
+    border: 2px solid #4da3ff; /* azul claro / azul bajo */
+    color: #4da3ff;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.fila-verde{
+    background-color: #28a745 !important;
+}
+
+.fila-azul{
+    background-color: #4da3ff !important;
+}
 
 
 </style>
@@ -153,7 +186,8 @@
                                 
                                 <div class="col-md-6">
                                    <b>Contribuyente:</b> <span id="nombre_contr"></span><br>
-                                   <b>Direccion:</b> <span id="direccion_contr"></span>
+                                   <b>Direccion:</b> <span id="direccion_contr"></span><br>
+                                   <b>Exoneracion:</b> <span id="exon_contr"></span>
                                 </div>
 
                                 <div class="col-md-6">

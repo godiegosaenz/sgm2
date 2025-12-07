@@ -385,13 +385,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     //cobro rural
     Route::get('cobro-titulo-rural', [CobroTituloRuralController::class, 'index'])->name('index.cobroTituloRural');
-    Route::post('buscar-contribuyente-rural', [CobroTituloRuralController::class, 'buscar']);
+    Route::post('buscar-deuda-contribuyente-rural', [CobroTituloRuralController::class, 'buscarDeudaPredio']);
     Route::get('buscar-titulos-rurales/{codigo}/{cedula}', [CobroTituloRuralController::class, 'consultarTitulos']);
     Route::get('pdf-titulo-rural/{id}/{copia}', [CobroTituloRuralController::class, 'pdfTitulo']);
     Route::post('pago-rural-titulo', [CobroTituloRuralController::class, 'pagaRuralTitulo']);
     Route::get('ver-documento/{ruta}', [CobroTituloRuralController::class, 'verDocumento']);
     Route::get('previo-pdf-titulo-rural/{id}/{copia}', [CobroTituloRuralController::class, 'pdfTituloPrevio']);
     Route::post('ver-titulo-rural-sin-pagar', [CobroTituloRuralController::class, 'verTituloRuralSinPagar']);
+    Route::post('buscar-pagos-contribuyente-rural', [CobroTituloRuralController::class, 'buscarPagosPredio']);
 
     //cobrados rurales
     Route::get('titulos-cobrados-rurales', [CobroTituloRuralController::class, 'vistaCobrados'])->name('index.vistaCobrados');

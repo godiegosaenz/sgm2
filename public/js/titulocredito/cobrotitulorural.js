@@ -304,7 +304,7 @@ function buscaContribuyente(){
     });
 
   
-    url_form="buscar-contribuyente-rural"
+    url_form="buscar-deuda-contribuyente-rural"
 
     let FrmData = {
         tipo_per:tipo_per,
@@ -391,6 +391,7 @@ globalThis.AplicaRemiGlobal=0
 function buscarTitulos(clave,cedula){
     $('#total_deuda').html('')
     $('#total_seleccionado').html('')
+    $('#exon_contr').html('')
     
     AplicaRemiGlobal=0
     $('#selectAll').prop('checked',false)
@@ -420,8 +421,14 @@ function buscarTitulos(clave,cedula){
         $.each(data.resultado,function(i, item){
             let recar = item.recargo !=null ? item.recargo : '0.00';
             let descu = item.descuento !=null ? item.descuento : '0.00';
-            $('#tbodyRuralDetalle').append(`<tr>
-                    <td style="width:5%; text-align:center; vertical-align:middle">
+            let clase=""
+            if(item.exoneracion=='Mayor'){
+                clase = "fila-azul";
+            }else if (item.exoneracion=='Discapacidad'){
+                clase = "fila-azul";
+            }
+            $('#tbodyRuralDetalle').append(`<tr >
+                    <td class="${clase}" style="width:5%; text-align:center; vertical-align:middle">
                         <input type="checkbox" name="predio_valor" id="predio_valor" value="${item.total_pagar}" data-num-titulo="${item.num_titulo}"  data-orden="${i+1}" data-valor-cobrado="${item.total_pagar}" data-valor-interes="${item.intereses} "data-valor-descuento="${descu}" data-valor-recarga="${recar}" >                
                     </td>
                     <td style="width:10%; text-align:center; vertical-align:middle">
@@ -462,6 +469,25 @@ function buscarTitulos(clave,cedula){
         $('#num_ident_contr').html(cedula)
         $('#direccion_contr').html(data.resultado[tamanio-1].direcc_cont)
         $('#clave_contr').html(data.resultado[tamanio-1].clave)
+
+        let es_3era_Edad=data.exoneracion_3era_edad.length
+        let disc=data.exoneracion_discapacidad
+
+        if(es_3era_Edad>0 && disc>0){
+            $('#exon_contr').append(`<span class="badge badge-green"> Adulto Mayor </span>
+                     <span class="badge badge-blue-low"> Discapacidad </span>
+                `)
+           
+        }else{
+            if(es_3era_Edad>0){
+                $('#exon_contr').append(`<span class="badge badge-green"> Adulto Mayor </span>`)
+            } 
+
+            if(disc>0){
+                $('#exon_contr').append(`<span class="badge badge-green"> Discapacidad </span>`)
+            }
+            $('#exon_contr').html('No') 
+        }
 
         $('#selectRemision').prop('checked',false)
         if(data.aplica_remision==1){

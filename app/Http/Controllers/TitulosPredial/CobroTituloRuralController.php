@@ -22,14 +22,13 @@ class CobroTituloRuralController extends Controller
         return view('cobroTituloRural.index');
     }
 
-    public function buscar(Request $request){ 
+    public function buscarDeudaPredio(Request $request){ 
         try{
             $tipo=$request->tipo;
             $tipo_per=$request->tipo_per;
             $valor=$request->valor;
 
             $liquidacionRuralAct=DB::connection('sqlsrv')->table('TITULOS_PREDIO as tp')
-            // ->Join('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'tp.Titpr_RUC_CI')
             ->Join('PREDIO as p', 'p.Pre_CodigoCatastral', '=', 'tp.Pre_CodigoCatastral')
             ->select('tp.Pre_CodigoCatastral','tp.Titpr_Nombres as nombres','tp.Titpr_RUC_CI','p.Pre_NombrePredio','tp.TitPr_DireccionCont','tp.TitPr_Estado as ruc')
             ->where(function($query)use($tipo,$valor, $tipo_per) {
@@ -42,14 +41,16 @@ class CobroTituloRuralController extends Controller
                 }
                 
             })            
-            ->whereIn('tp.TitPr_Estado',['E','C','Q','N']) //E=Emitidos, C=Cancelado, Q=Cancelado Nueva Emitido, N=Nueva Emision
+            ->whereIn('tp.TitPr_Estado',['E','N']) //E=Emitidos, C=Cancelado, Q=Cancelado Nueva Emitido, N=Nueva Emision
             ->distinct()
             ->limit(10)
             ->get();
-            // dd($liquidacionRuralAct);
+            
+            if(sizeof($liquidacionRuralAct)>0){
+                return (['data'=>$liquidacionRuralAct,'error'=>false]); 
+            }
            
             $liquidacionRuralAct=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
-            // ->leftJoin('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'cv.carVe_RUC')
             ->leftJoin('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
             ->select('cv.Pre_CodigoCatastral','cv.CarVe_Nombres as nombres','cv.CarVe_CI as Titpr_RUC_CI'
             ,'p.Pre_NombrePredio','cv.CarVe_Calle as TitPr_DireccionCont','cv.carVe_RUC as ruc')
@@ -66,11 +67,10 @@ class CobroTituloRuralController extends Controller
                 
             }) 
             ->whereNotNull('CarVe_Nombres')           
-            ->whereIn('cv.CarVe_Estado',['E','C','Q','N']) //E=Emitidos, C=Cancelado, Q=Cancelado Nueva Emitido, N=Nueva Emision
+            ->whereIn('cv.CarVe_Estado',['E']) //E=Emitidos, C=Cancelado, Q=Cancelado Nueva Emitido, N=Nueva Emision
             ->distinct()
             ->limit(10)
-            ->get();
-            
+            ->get();            
                
             return (['data'=>$liquidacionRuralAct,'error'=>false]); 
 
@@ -79,12 +79,9 @@ class CobroTituloRuralController extends Controller
             return (['mensaje'=>'Ocurrió un error,intentelo más tarde '.$th,'error'=>true]); 
         } 
     }
-
-    public function consultarTitulos($clave,$cedula)
-    {
+    public function consultarTitulos($clave,$cedula){
         try {
             $liquidacionRural=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
-            // ->Join('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'cv.CarVe_CI')
             ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
             ->select('cv.Pre_CodigoCatastral as clave','cv.CarVe_FechaEmision as fecha_emi','cv.CarVe_NumTitulo as num_titulo','cv.CarVe_CI as num_ident','cv.CarVe_Estado','cv.CarVe_Nombres as nombre_per','cv.CarVe_ValorEmitido as valor_emitido','cv.CarVe_TasaAdministrativa as tasa','CarVe_Calle as direcc_cont','cv.Carve_Recargo as recargo','cv.Carve_Descuento as descuento')
             ->where('cv.Pre_CodigoCatastral', '=', $clave)
@@ -93,7 +90,7 @@ class CobroTituloRuralController extends Controller
                 ->orWhere('carVe_RUC',$cedula);
             })
 
-            ->whereIn('cv.CarVe_Estado',['E','N']) //E=Emitidos, N=Nueva Emision
+            ->whereIn('cv.CarVe_Estado',['E']) //E=Emitidos, N=Nueva Emision
             // ->where('Pre_Tipo','Rural')
             ->orderby('CarVe_NumTitulo','asc')
             ->get();
@@ -104,6 +101,8 @@ class CobroTituloRuralController extends Controller
                 $aplica_remision=1;
             }
             $total_valor=0;
+            $exoneracion_3era_edad=[];
+            $exoneracion_discapacidad=[];
             foreach($liquidacionRural as $key=> $data){
                 $valor=0;
                 $subtotal=0;
@@ -111,7 +110,7 @@ class CobroTituloRuralController extends Controller
 
                 if($aplica_remision==0){
                     $anio=explode("-",$data->num_titulo);
-                    $consultaInteresMora=\DB::connection('sqlsrv')->table('INTERES_MORA as im')
+                    $consultaInteresMora=DB::connection('sqlsrv')->table('INTERES_MORA as im')
                     ->where('IntMo_Año',$anio)
                     ->select('IntMo_Valor')
                     ->first();
@@ -125,7 +124,7 @@ class CobroTituloRuralController extends Controller
                     $liquidacionRural[$key]->porcentaje_intereses=number_format($cero,2);
                 }
                 $liquidacionRural[$key]->subtotal_emi=$subtotal;
-                // $liquidacionRural[$key]->porcentaje_intereses=$consultaInteresMora->IntMo_Valor;
+                
                 $liquidacionRural[$key]->intereses=$valor;
 
                 $total_pago=($valor + $data->valor_emitido + $data->recargo) - $data->descuento;
@@ -133,18 +132,37 @@ class CobroTituloRuralController extends Controller
 
                 $total_valor=$total_valor+$total_pago;
                 $total_valor=number_format($total_valor,2);
+
+                $buscar_exon=DB::connection('sqlsrv')->table('REBAJA_VALOR')
+                ->where('TitPrCarVe_NumTitulo',$data->num_titulo)
+                ->select('Reb_Codigo')
+                ->first();
+
+                if(!is_null($buscar_exon)){
+                    if($buscar_exon->Reb_Codigo=='01'){
+                        array_push($exoneracion_3era_edad, $data->num_titulo);
+                        $liquidacionRural[$key]->exoneracion='Mayor';
+                    }else if ($buscar_exon->Reb_Codigo=='02'){
+                        array_push($exoneracion_discapacidad, $data->num_titulo);
+                        $liquidacionRural[$key]->exoneracion='Discapacidad';
+                    }else{
+                        $liquidacionRural[$key]->exoneracion='No';
+                    }
+                }else{
+                    $liquidacionRural[$key]->exoneracion='No';
+                }
+
             }
             $liquidacionActual=[];
 
             $liquidacionActual=DB::connection('sqlsrv')->table('TITULOS_PREDIO as tp')
-            // ->Join('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'tp.Titpr_RUC_CI')
             ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'tp.Pre_CodigoCatastral')
             ->select('tp.Pre_CodigoCatastral as clave','tp.TitPr_FechaEmision as fecha_emi','tp.TitPr_NumTitulo as num_titulo','tp.Titpr_RUC_CI as num_ident' ,'tp.TitPr_Estado','tp.TitPr_Nombres as nombre_per','tp.TitPr_ValorEmitido as valor_emitido','tp.TitPr_TasaAdministrativa as tasa','TitPr_DireccionCont as direcc_cont','tp.TitPr_Descuento as descuento'
             ,'tp.TitPr_Recargo as recargo')
             ->where('tp.Pre_CodigoCatastral', '=', $clave)
             ->where('tp.Titpr_RUC_CI',$cedula)
             
-            ->whereIn('tp.TitPr_Estado',['E'])
+            ->whereIn('tp.TitPr_Estado',['E','N'])
             // ->where('Pre_Tipo','Rural')
             ->orderby('TitPr_NumTitulo','asc')
             ->get();
@@ -181,10 +199,35 @@ class CobroTituloRuralController extends Controller
 
                 $total_valor=$total_valor+$total_pago;
                 $total_valor=number_format($total_valor,2);
+
+                $buscar_exon=DB::connection('sqlsrv')->table('REBAJA_VALOR')
+                ->where('TitPrCarVe_NumTitulo',$data->num_titulo)
+                ->select('Reb_Codigo')
+                ->first();
+
+                if(!is_null($buscar_exon)){
+                    if($buscar_exon->Reb_Codigo=='01'){
+                        array_push($exoneracion_3era_edad, $data->num_titulo);
+                        $liquidacionActual[$key]->exoneracion='Mayor';
+                    }else if ($buscar_exon->Reb_Codigo=='02'){
+                        array_push($exoneracion_discapacidad, $data->num_titulo);
+                        $liquidacionActual[$key]->exoneracion='Discapacidad';
+                    }else{
+                        $liquidacionActual[$key]->exoneracion='No';
+                    }
+                }else{
+                    $liquidacionActual[$key]->exoneracion='No';
+                }
             }
             $resultado = $liquidacionRural->merge($liquidacionActual);
 
-            return ["resultado"=>$resultado, "total_valor"=>$total_valor, "error"=>false, "aplica_remision"=>$aplica_remision];
+            return ["resultado"=>$resultado, 
+                    "total_valor"=>$total_valor,
+                    "exoneracion_3era_edad"=>$exoneracion_3era_edad,
+                    "exoneracion_discapacidad"=>$exoneracion_discapacidad,
+                    "error"=>false,
+                    "aplica_remision"=>$aplica_remision
+            ];
         } catch (\Exception $e) {
             return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
 
@@ -222,15 +265,28 @@ class CobroTituloRuralController extends Controller
                 $valor_recarga=$request->valorRecarga;
 
                 foreach($request->numTitulosSeleccionados as $key=>$tit){
-                
+                                    
                     $solo_anio=explode("-", $tit);
                     if (date('Y') == (int)$solo_anio[0]) {
+                        $es_nueva_emi=DB::connection('sqlsrv')->table('TITULOS_PREDIO')
+                        ->where('TitPr_NumTitulo',$tit)
+                        ->whereIn('TitPr_Estado',['E','N'])
+                        ->select('TitPr_Estado')
+                        ->first();
+                      
+                        $estado_pagado='C';
+                        $estado_actual='E';
+                        if($es_nueva_emi->TitPr_Estado=='N'){
+                            $estado_pagado='Q';
+                            $estado_actual='N';
+                        }
+                       
                         $titulo=DB::connection('sqlsrv')->table('TITULOS_PREDIO')
                         ->where('TitPr_NumTitulo',$tit)
-                        ->where('TitPr_Estado','E')
+                        ->where('TitPr_Estado',$estado_actual)
                         ->update([
                             "TitPr_FechaRecaudacion" => date('Y-d-m 00:00:00.000'), // ✔ Fecha automática correcta
-                            "TitPr_Estado" => "C",
+                            "TitPr_Estado" => $estado_pagado,
                             "Usu_usuario" => $es_tesoreria->USU_NICK,
                             "TitPr_ValorTCobrado" => round($valor_cobrado[$key], 2),
                             "TitPr_Interes" => round($valor_interes[$key], 2),
@@ -729,5 +785,63 @@ class CobroTituloRuralController extends Controller
             }
          });
         return $transaction;
+    }
+
+     public function buscarPagosPredio(Request $request){ 
+        try{
+            $tipo=$request->tipo;
+            $tipo_per=$request->tipo_per;
+            $valor=$request->valor;
+
+            $liquidacionRuralAct=DB::connection('sqlsrv')->table('TITULOS_PREDIO as tp')
+            ->Join('PREDIO as p', 'p.Pre_CodigoCatastral', '=', 'tp.Pre_CodigoCatastral')
+            ->select('tp.Pre_CodigoCatastral','tp.Titpr_Nombres as nombres','tp.Titpr_RUC_CI','p.Pre_NombrePredio','tp.TitPr_DireccionCont','tp.TitPr_Estado as ruc')
+            ->where(function($query)use($tipo,$valor, $tipo_per) {
+                if($tipo==1){
+                    $query->where('Titpr_RUC_CI', '=', $valor);
+                }else if($tipo==2){
+                    $query->where('tp.Pre_CodigoCatastral', '=', $valor);
+                }else{
+                    $query->where('tp.Titpr_Nombres', 'LIKE', "%$valor%");
+                }
+                
+            })            
+            ->whereIn('tp.TitPr_Estado',['C','Q']) //E=Emitidos, C=Cancelado, Q=Cancelado Nueva Emitido, N=Nueva Emision
+            ->distinct()
+            ->limit(10)
+            ->get();
+            
+            if(sizeof($liquidacionRuralAct)>0){
+                return (['data'=>$liquidacionRuralAct,'error'=>false]); 
+            }
+           
+            $liquidacionRuralAct=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
+            ->leftJoin('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
+            ->select('cv.Pre_CodigoCatastral','cv.CarVe_Nombres as nombres','cv.CarVe_CI as Titpr_RUC_CI'
+            ,'p.Pre_NombrePredio','cv.CarVe_Calle as TitPr_DireccionCont','cv.carVe_RUC as ruc')
+            ->where(function($query)use($tipo,$valor, $tipo_per) {
+                if($tipo==1){
+                    $query->where('CarVe_CI', '=', $valor)
+                    ->orWhere('carVe_RUC',$valor);
+                }else if($tipo==2){
+                    $query->where('cv.Pre_CodigoCatastral', '=', $valor);
+                }else{
+                    $query->where('cv.CarVe_Nombres', 'LIKE', "%$valor%");
+
+                }
+                
+            }) 
+            ->whereNotNull('CarVe_Nombres')           
+            ->whereIn('cv.CarVe_Estado',['C']) //E=Emitidos, C=Cancelado, Q=Cancelado Nueva Emitido, N=Nueva Emision
+            ->distinct()
+            ->limit(10)
+            ->get();            
+               
+            return (['data'=>$liquidacionRuralAct,'error'=>false]); 
+
+
+        } catch (\Throwable $th) {
+            return (['mensaje'=>'Ocurrió un error,intentelo más tarde '.$th,'error'=>true]); 
+        } 
     }
 }

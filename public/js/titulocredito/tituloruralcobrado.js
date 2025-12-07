@@ -304,7 +304,7 @@ function buscaContribuyente(){
     });
 
   
-    url_form="buscar-contribuyente-rural"
+    url_form="buscar-pagos-contribuyente-rural"
 
     let FrmData = {
         tipo_per:tipo_per,
