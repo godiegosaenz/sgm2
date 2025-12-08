@@ -128,11 +128,12 @@ class CobroTituloRuralController extends Controller
                 $liquidacionRural[$key]->intereses=$valor;
 
                 $total_pago=($valor + $data->valor_emitido + $data->recargo) - $data->descuento;
+
                 $liquidacionRural[$key]->total_pagar=number_format($total_pago,2);
 
                 $total_valor=$total_valor+$total_pago;
-                $total_valor=number_format($total_valor,2);
-
+                //$total_valor=$total_valor;
+              
                 $buscar_exon=DB::connection('sqlsrv')->table('REBAJA_VALOR')
                 ->where('TitPrCarVe_NumTitulo',$data->num_titulo)
                 ->select('Reb_Codigo')
@@ -198,7 +199,7 @@ class CobroTituloRuralController extends Controller
                 $liquidacionActual[$key]->subtotal_emi=$subtotal;
 
                 $total_valor=$total_valor+$total_pago;
-                $total_valor=number_format($total_valor,2);
+                //$total_valor=number_format($total_valor,2);
 
                 $buscar_exon=DB::connection('sqlsrv')->table('REBAJA_VALOR')
                 ->where('TitPrCarVe_NumTitulo',$data->num_titulo)
@@ -222,13 +223,14 @@ class CobroTituloRuralController extends Controller
             $resultado = $liquidacionRural->merge($liquidacionActual);
 
             return ["resultado"=>$resultado, 
-                    "total_valor"=>$total_valor,
+                    "total_valor"=>number_format($total_valor,2),
                     "exoneracion_3era_edad"=>$exoneracion_3era_edad,
                     "exoneracion_discapacidad"=>$exoneracion_discapacidad,
                     "error"=>false,
                     "aplica_remision"=>$aplica_remision
             ];
         } catch (\Exception $e) {
+             //\Log::error($e);
             return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
 
         }
