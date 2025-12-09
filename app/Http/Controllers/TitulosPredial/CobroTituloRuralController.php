@@ -555,8 +555,8 @@ class CobroTituloRuralController extends Controller
                 $liquidacionRural[$key]->intereses=$valor;
 
                 $total_pago=($valor + $data->valor_emitido + $data->recargo) - $data->descuento;
-                $liquidacionRural[$key]->total_pagar=number_format($total_pago,2);
-
+                // $liquidacionRural[$key]->total_pagar=number_format($total_pago,2);
+                $liquidacionRural[$key]->total_pagar=$total_pago;
                 $total_valor=$total_valor+$total_pago;
                 // $total_valor=number_format($total_valor,2);
             }
