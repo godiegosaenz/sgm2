@@ -93,6 +93,7 @@ class CobroTituloRuralController extends Controller
             ->whereIn('cv.CarVe_Estado',['E']) //E=Emitidos, N=Nueva Emision
             // ->where('Pre_Tipo','Rural')
             ->orderby('CarVe_NumTitulo','asc')
+            ->distinct()
             ->get();
 
             $mes_Actual=date('m');
