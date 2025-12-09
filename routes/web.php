@@ -39,6 +39,7 @@ use App\Http\Controllers\TitulosPredial\CobroTituloRuralController;
 use App\Http\Controllers\TitulosPredial\ContribuyenteUrbanoController;
 use App\Http\Controllers\TitulosPredial\PredioRuralController;
 use App\Http\Controllers\TitulosPredial\LiquidacionesController;
+use App\Http\Controllers\TitulosPredial\UrbanoLiquidacionController;
 
 use App\Models\TransitoEnte;
 use App\Models\TransitoTarifaAnual;
@@ -420,6 +421,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('pdf-liquidacion-rural-urb/{cedula}/{lugar}', [LiquidacionesController::class, 'pdfLiquidacion']);
     Route::post('buscar-deudas-contribuyente-urb', [LiquidacionesController::class, 'buscarDeudaPrediourb']);
     Route::get('buscar-liquidacion-urbanos/{cedula}', [LiquidacionesController::class, 'consultarTitulosUrb']);
+
+    //predios-urbano
+    // Route::get('predio-urbano-liquidar', [UrbanoLiquidacionController::class, 'index'])->name('index.liquidacion');
     
 
     

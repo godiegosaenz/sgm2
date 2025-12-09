@@ -85,10 +85,10 @@ class CobroTituloRuralController extends Controller
             ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
             ->select('cv.Pre_CodigoCatastral as clave','cv.CarVe_FechaEmision as fecha_emi','cv.CarVe_NumTitulo as num_titulo','cv.CarVe_CI as num_ident','cv.CarVe_Estado','cv.CarVe_Nombres as nombre_per','cv.CarVe_ValorEmitido as valor_emitido','cv.CarVe_TasaAdministrativa as tasa','CarVe_Calle as direcc_cont','cv.Carve_Recargo as recargo','cv.Carve_Descuento as descuento')
             ->where('cv.Pre_CodigoCatastral', '=', $clave)
-            ->where(function ($query) use($cedula){
-                $query->where('carVe_CI',$cedula)
-                ->orWhere('carVe_RUC',$cedula);
-            })
+            // ->where(function ($query) use($cedula){
+            //     $query->where('carVe_CI',$cedula)
+            //     ->orWhere('carVe_RUC',$cedula);
+            // })
 
             ->whereIn('cv.CarVe_Estado',['E']) //E=Emitidos, N=Nueva Emision
             // ->where('Pre_Tipo','Rural')
@@ -520,7 +520,9 @@ class CobroTituloRuralController extends Controller
             ->whereIn('cv.CarVe_NumTitulo', $vencido)                    
             // ->where('cv.CarVe_Estado','C')
             ->orderby('CarVe_NumTitulo','asc')
+            ->distinct()
             ->get();
+            
 
             $mes_Actual=date('m');
             $aplica_remision=0;
@@ -556,9 +558,10 @@ class CobroTituloRuralController extends Controller
                 $liquidacionRural[$key]->total_pagar=number_format($total_pago,2);
 
                 $total_valor=$total_valor+$total_pago;
-                $total_valor=number_format($total_valor,2);
+                // $total_valor=number_format($total_valor,2);
             }
             //dd($anio_actual);
+            // dd($liquidacionRural);
            
             $actual=DB::connection('sqlsrv')->table('TITULOS_PREDIO as tp')
             // ->Join('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'tp.Titpr_RUC_CI')
@@ -734,10 +737,10 @@ class CobroTituloRuralController extends Controller
             'CarVe_Calle as direcc_cont',
             DB::raw("FORMAT(cv.CarVe_ValorTCobrado, 'N2') as total_cobrado"))
             ->where('cv.Pre_CodigoCatastral', '=', $clave)  
-            ->where(function ($query) use($cedula){
-                $query->where('carVe_CI',$cedula)
-                ->orWhere('carVe_RUC',$cedula);
-            })          
+            // ->where(function ($query) use($cedula){
+            //     $query->where('carVe_CI',$cedula)
+            //     ->orWhere('carVe_RUC',$cedula);
+            // })          
             ->whereIn('cv.CarVe_Estado',['C'])
             ->orderby('CarVe_NumTitulo','asc')
             ->get();
