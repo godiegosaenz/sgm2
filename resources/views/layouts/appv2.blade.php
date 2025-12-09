@@ -330,12 +330,20 @@
                         'permission' => 'Impresion de titulos Rural',
                         'active' => request()->routeIs('index.TitulosRural')
                     ],
+                    // [
+                    //     'name' => 'Reporte de liquidaciones',
+                    //     'route' => 'consulta.liquidacion.remision',
+                    //     'permission' => 'Reporte de liquidaciones',
+                    //     'active' => request()->routeIs('consulta.liquidacion.remision')
+                    // ],
+
                     [
                         'name' => 'Reporte de liquidaciones',
-                        'route' => 'consulta.liquidacion.remision',
+                        'route' => 'index.liquidacion',
                         'permission' => 'Reporte de liquidaciones',
-                        'active' => request()->routeIs('consulta.liquidacion.remision')
+                        'active' => request()->routeIs('index.liquidacion')
                     ],
+
                     [
                         'name' => 'Parte Diario',
                         'route' => 'index.parte_diario',
@@ -362,7 +370,7 @@
                         'active' => request()->routeIs('index.contribuyente_urbano')
                     ],
                 ],
-                'active' => request()->routeIs('lista.exoneracion') || request()->routeIs('create.remision') || request()->routeIs('index.remision') || request()->routeIs('index.titulocredito') || request()->routeIs('index.TitulosRural')  || request()->routeIs('consulta.liquidacion.remision') || request()->routeIs('index.parte_diario') || request()->routeIs('index.cobroTituloRural')
+                'active' => request()->routeIs('lista.exoneracion') || request()->routeIs('create.remision') || request()->routeIs('index.remision') || request()->routeIs('index.titulocredito') || request()->routeIs('index.TitulosRural')  || request()->routeIs('index.liquidacion') || request()->routeIs('index.parte_diario') || request()->routeIs('index.cobroTituloRural')
                 || request()->routeIs('index.contribuyente_urbano') || request()->routeIs('index.vistaCobrados')
             ],
             [

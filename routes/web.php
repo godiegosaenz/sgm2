@@ -38,6 +38,7 @@ use App\Http\Controllers\PermisosController;
 use App\Http\Controllers\TitulosPredial\CobroTituloRuralController;
 use App\Http\Controllers\TitulosPredial\ContribuyenteUrbanoController;
 use App\Http\Controllers\TitulosPredial\PredioRuralController;
+use App\Http\Controllers\TitulosPredial\LiquidacionesController;
 
 use App\Models\TransitoEnte;
 use App\Models\TransitoTarifaAnual;
@@ -410,6 +411,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
     Route::get('predio-contribuyente-rural', [ContribuyenteUrbanoController::class, 'buscaPrediosContribuyente']);
+
+
+    //new liquidacion
+    Route::get('consulta-liquidacion', [LiquidacionesController::class, 'index'])->name('index.liquidacion');
+    Route::post('buscar-deudas-contribuyente', [LiquidacionesController::class, 'buscarDeudaPredio']);
+    Route::get('buscar-liquidacion-rurales/{cedula}', [LiquidacionesController::class, 'consultarTitulos']);
+    Route::get('pdf-liquidacion-rural-urb/{cedula}/{lugar}', [LiquidacionesController::class, 'pdfLiquidacion']);
+    Route::post('buscar-deudas-contribuyente-urb', [LiquidacionesController::class, 'buscarDeudaPrediourb']);
+    Route::get('buscar-liquidacion-urbanos/{cedula}', [LiquidacionesController::class, 'consultarTitulosUrb']);
+    
+
     
 });
 
