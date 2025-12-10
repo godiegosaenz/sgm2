@@ -95,7 +95,9 @@ class LiquidacionesController extends Controller
 
             ->whereIn('cv.CarVe_Estado',['E']) //E=Emitidos, N=Nueva Emision
             // ->where('Pre_Tipo','Rural')
-            ->orderby('CarVe_NumTitulo','asc')
+            // ->orderby('cv.CarVe_NumTitulo','desc')
+            ->orderby('cv.Pre_CodigoCatastral','asc')
+            
             ->distinct()
             ->get();
             // dd($liquidacionRural);
@@ -170,8 +172,11 @@ class LiquidacionesController extends Controller
             
             ->whereIn('tp.TitPr_Estado',['E','N'])
             // ->where('Pre_Tipo','Rural')
-            ->orderby('TitPr_NumTitulo','asc')
+            // ->orderby('tp.TitPr_NumTitulo','desc')
+            ->orderby('tp.Pre_CodigoCatastral','asc')
+            
             ->get();
+            // dd("a");
 
             foreach($liquidacionActual as $key=> $data){
                 $subtotal=0;
@@ -226,6 +231,8 @@ class LiquidacionesController extends Controller
                 }
             }
             $resultado = $liquidacionRural->merge($liquidacionActual);
+            // $resultado = $liquidacionRural->merge($liquidacionActual)->sortByDesc('Pre_CodigoCatastral')->values();
+            // dd("s"); 
 
             return ["resultado"=>$resultado, 
                     "total_valor"=>number_format($total_valor,2),

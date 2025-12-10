@@ -318,12 +318,12 @@
                         'permission' => 'Lista de remisiones',
                         'active' => request()->routeIs('index.remision')
                     ],
-                    // [
-                    //     'name' => 'Impresion de titulos Urbanos',
-                    //     'route' => 'index.titulocredito',
-                    //     'permission' => 'Impresion de titulos Urbanos',
-                    //     'active' => request()->routeIs('index.titulocredito')
-                    // ],
+                    [
+                        'name' => 'Impresion de titulos Urbanos',
+                        'route' => 'index.titulocredito',
+                        'permission' => 'Impresion de titulos Urbanos',
+                        'active' => request()->routeIs('index.titulocredito')
+                    ],
                     // [
                     //     'name' => 'Impresion de titulos Rural',
                     //     'route' => 'index.TitulosRural',

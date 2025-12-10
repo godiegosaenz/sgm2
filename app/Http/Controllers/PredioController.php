@@ -367,7 +367,7 @@ class PredioController extends Controller
             ->where('t.TitPr_Estado', '=', 'E') // o el estado correspondiente
             ->get();
 
-            $liquidacion = $liquidacion->merge($titulos)->sortByDesc('CarVe_NumTitulo')->values();
+            $liquidacion = $liquidacion->merge($titulos)->sortByDesc('CarVe_NumTitulo')->values(); 
 
 
             foreach($liquidacion as $key=> $data){
