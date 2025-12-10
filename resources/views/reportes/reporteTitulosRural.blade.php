@@ -249,6 +249,12 @@
                         </tr>
 
                         <tr>
+                            <td><b>Recargos:</b> </td>
+                            <td>$</td>
+                            <td style="text-align:right">{{number_format($d[0]->recargo,2)}}</td>
+                        </tr>
+
+                        <tr>
                             <td><b>Total Deuda:</b> </td>
                             <td>$</td>
                             <td style="text-align:right">{{number_format($d[0]->total_pagar,2)}}</td>
@@ -270,9 +276,7 @@
         <b>Ley COA Aticulo 268</b></center>
         <br>
         <br>
-        <br>
-        <br>
-        <br>
+       
         <hr style="border:Dotted;"/>
         <br>
         <br>

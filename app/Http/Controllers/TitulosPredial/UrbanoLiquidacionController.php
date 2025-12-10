@@ -11,7 +11,29 @@ class UrbanoLiquidacionController extends Controller
 {
     public function index()
     {
-        // $consultaData=DB::connection('sqlsrv')->table('sgm_financiero.ren_liquidacion as tp')
+        
+        $consultaData=DB::connection('pgsql')->table('sgm_financiero.ren_liquidacion as rl')
+        ->leftJoin('sgm_app.cat_predio_propietario as pp','rl.predio','pp.predio')
+        ->leftJoin('sgm_app.cat_predio as p','pp.predio','p.id')
+        ->leftJoin('sgm_app.cat_ente as e','pp.ente','e.id')
+        ->where('pp.estado','A')
+        ->where('rl.estado_liquidacion',2)
+        ->where('rl.tipo_liquidacion',13)
+        ->where('rl.anio',2025)
+        ->select('e.ci_ruc','e.nombres','e.apellidos','p.num_predio','p.clave_cat','rl.id_liquidacion','rl.predio')
+        ->limit(100)
+        ->get();
+
+        foreach($consultaData as $key=> $data){
+            $verificaExon=DB::connection('pgsql')->table('sgm_financiero.fn_solicitud_exoneracion as se')
+            ->where('se.predio',$data->predio)
+            ->where('anio_inicio','>=',date('Y'))
+            ->where('anio_fin','<=',date('Y'))
+            ->where('');
+        }
+
+        return [$consultaData];
+        // dd($consultaData);
         // return view('liquidacion_urbano.index');
     }
 

@@ -63,7 +63,7 @@ class TituloRuralController extends Controller
             $liquidacionRural=\DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
             ->leftJoin('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'cv.CarVe_CI')
             ->leftJoin('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
-            ->select('cv.Pre_CodigoCatastral','cv.CarVe_FechaEmision','cv.CarVe_NumTitulo','cv.CarVe_CI'
+            ->select('cv.Pre_CodigoCatastral','cv.CarVe_FechaEmision','cv.CarVe_NumTitulo as CarVe_NumTitulo','cv.CarVe_CI'
             ,'cv.CarVe_Estado','c.Ciu_Apellidos','c.Ciu_Nombres','cv.CarVe_Nombres','cv.CarVe_ValorEmitido'
             ,'cv.CarVe_TasaAdministrativa')
             ->where(function($query)use($tipo,$valor) {
@@ -76,9 +76,10 @@ class TituloRuralController extends Controller
             })
             
             ->whereIn('cv.CarVe_Estado',['E'])
-            // ->where('Pre_Tipo','Rural')
             ->orderby('CarVe_NumTitulo','desc')
             ->get();
+
+            $codigo=$valor;
 
             foreach($liquidacionRural as $key=> $data){
                 $anio=explode("-",$data->CarVe_NumTitulo);
@@ -98,7 +99,54 @@ class TituloRuralController extends Controller
                 $liquidacionRural[$key]->total_pagar=number_format($total_pago,2);
             }
 
-            return ["resultado"=>$liquidacionRural, "error"=>false];
+            $liquidacionActual=\DB::connection('sqlsrv')->table('TITULOS_PREDIO as tp')
+            ->leftJoin('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'tp.Titpr_RUC_CI')
+            ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'tp.Pre_CodigoCatastral')
+            ->select('tp.Pre_CodigoCatastral','tp.TitPr_FechaEmision as CarVe_FechaEmision','tp.TitPr_NumTitulo as CarVe_NumTitulo','tp.Titpr_RUC_CI as CarVe_CI' ,'tp.TitPr_Estado as CarVe_Estado','c.Ciu_Apellidos','c.Ciu_Nombres','tp.TitPr_Nombres as CarVe_Nombres','tp.TitPr_ValorEmitido as CarVe_ValorEmitido','tp.TitPr_TasaAdministrativa as CarVe_TasaAdministrativa')
+            ->where('tp.Pre_CodigoCatastral', '=', $codigo)            
+            ->whereIn('tp.TitPr_Estado',['E','N'])
+            ->orderby('TitPr_NumTitulo','asc')
+            ->get();
+
+            foreach($liquidacionActual as $key=> $data){
+                $subtotal=0;
+                $subtotal=number_format($data->CarVe_ValorEmitido,2);
+                $valor=0;
+                $anio=explode("-",$data->CarVe_NumTitulo);
+                $consultaInteresMora=\DB::connection('sqlsrv')->table('INTERES_MORA as im')
+                ->where('IntMo_Año',$anio)
+                ->select('IntMo_Valor')
+                ->first();
+                
+                if(!is_null($consultaInteresMora)){
+                    $valor=(($consultaInteresMora->IntMo_Valor/100) * ($data->CarVe_ValorEmitido - $data->CarVe_TasaAdministrativa));
+                    
+                    $valor=number_format($valor,2);
+
+                    $liquidacionActual[$key]->porcentaje_intereses=$consultaInteresMora->IntMo_Valor;
+                    $liquidacionActual[$key]->intereses=$valor;
+
+                    $total_pago=$valor +$data->CarVe_ValorEmitido;
+                    $liquidacionActual[$key]->total_pagar=number_format($total_pago,2);
+                }else{
+                    $cero=0;
+                    $liquidacionActual[$key]->porcentaje_intereses=number_format($cero,2);
+                    $liquidacionActual[$key]->intereses=number_format($cero,2);
+
+                    $total_pago=$valor +$data->CarVe_ValorEmitido;
+                    $liquidacionActual[$key]->total_pagar=number_format($total_pago,2);
+                }
+                
+            }
+            $resultado = $liquidacionRural->merge($liquidacionActual);
+            $resultado = $resultado->sortByDesc(function ($item) {
+                return $item->CarVe_NumTitulo;
+            })->values();
+
+            // dd($resultado);
+            
+
+            return ["resultado"=>$resultado, "error"=>false];
 
         } catch (Exception $e) {
             return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
@@ -124,42 +172,139 @@ class TituloRuralController extends Controller
             //         'mensaje'=>'Ocurrió un error al consultar la informacion'
             //     ];
             // }
-
+            // dd($r);
             $dataArray = array();
-            foreach($r->checkLiquidacion as $clave => $valor){
-                $liquidacionRural=\DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
-                ->leftJoin('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'cv.CarVe_CI')
-                ->leftJoin('PROPIETARIO as pr', 'pr.Ciu_Cedula', '=', 'cv.CarVe_CI')
-                ->leftJoin('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
-                ->select('cv.Pre_CodigoCatastral','cv.CarVe_FechaEmision','cv.CarVe_NumTitulo','cv.CarVe_CI'
-                ,'cv.CarVe_Estado','c.Ciu_Apellidos','c.Ciu_Nombres','p.Pre_NombrePredio','cv.CarVe_ValTotalTerrPredio'
-                ,'cv.CarVe_ValTotalEdifPredio','cv.CarVe_ValOtrasInver','cv.CarVe_ValComerPredio','cv.CarVe_RebajaHipotec'
-                ,'cv.CarVe_BaseImponible','cv.CarVe_IPU','cv.CarVe_TasaAdministrativa','cv.CarVe_Bomberos'
-                ,'cv.CarVe_ValorEmitido','pr.Pro_DireccionDomicilio' ,'cv.CarVe_TasaAdministrativa')
-                ->where('CarVe_NumTitulo', '=', $valor)
-                ->get();
+            // $liquidacionActual="";
+            $existe=0;
+            foreach($r->checkLiquidacion as $clave => $valor_num){
+               
+                
+                $solo_anio=explode("-", $valor_num);
+                if (date('Y') == (int)$solo_anio[0]) {
+                    $existe=1;
+                    $liquidacionActual=\DB::connection('sqlsrv')->table('TITULOS_PREDIO as tp')
+                    ->leftJoin('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'tp.Titpr_RUC_CI')
+                    ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'tp.Pre_CodigoCatastral')
+                    ->select('tp.Pre_CodigoCatastral',
+                    'tp.TitPr_FechaEmision as CarVe_FechaEmision',
+                    'tp.TitPr_NumTitulo as CarVe_NumTitulo',
+                    'tp.Titpr_RUC_CI as CarVe_CI',
+                    'tp.TitPr_Estado as CarVe_Estado',
+                    'c.Ciu_Apellidos',
+                    'c.Ciu_Nombres',
+                    'tp.TitPr_DireccionCont as Pre_NombrePredio',
+                    'tp.TitPr_ValTotalTerrPredio as CarVe_ValTotalTerrPredio',
+                    'tp.TitPr_ValTotalEdifPredio as CarVe_ValTotalEdifPredio',
+                    'tp.TitPr_ValOtrasInver as CarVe_ValOtrasInver',
+                    'tp.TitPr_ValComerPredio as CarVe_ValComerPredio',
+                    'tp.TitPr_RebajaHipotec as CarVe_RebajaHipotec',
+                    'tp.TitPr_BaseImponible as CarVe_BaseImponible',
+                    'tp.TitPr_IPU as CarVe_IPU',
+                    'tp.TitPr_TasaAdministrativa as CarVe_TasaAdministrativa',
+                    'tp.TitPr_Bomberos as CarVe_Bomberos', 
+                    'tp.TitPr_ValorEmitido as CarVe_ValorEmitido',              
+                    'tp.TitPr_DireccionCont as Pro_DireccionDomicilio',
+                    'tp.TitPr_Recargo as recargo')
+                    ->where('tp.TitPr_NumTitulo', '=', $valor_num)            
+                    ->whereIn('tp.TitPr_Estado',['E','N'])
+                    ->orderby('TitPr_NumTitulo','asc')
+                    ->get();
 
-                foreach($liquidacionRural as $key=> $data){
-                    $anio=explode("-",$data->CarVe_NumTitulo);
-                    $consultaInteresMora=\DB::connection('sqlsrv')->table('INTERES_MORA as im')
-                    ->where('IntMo_Año',$anio)
-                    ->select('IntMo_Valor')
-                    ->first();
+                    foreach($liquidacionActual as $key=> $data){
+                        $subtotal=0;
+                        $subtotal=number_format($data->CarVe_ValorEmitido,2);
+                        $valor=0;
+                        $anio=explode("-",$data->CarVe_NumTitulo);
+                        $consultaInteresMora=\DB::connection('sqlsrv')->table('INTERES_MORA as im')
+                        ->where('IntMo_Año',$anio)
+                        ->select('IntMo_Valor')
+                        ->first();
+                        
+                        if(!is_null($consultaInteresMora)){
+                            $valor=(($consultaInteresMora->IntMo_Valor/100) * ($data->CarVe_ValorEmitido + $data->recargo - $data->CarVe_TasaAdministrativa));
+                            
+                            $valor=number_format($valor,2);
 
-                    $valor=(($consultaInteresMora->IntMo_Valor/100) * ($data->CarVe_ValorEmitido - $data->CarVe_TasaAdministrativa));
-                    
-                    $valor=number_format($valor,2);
+                            $liquidacionActual[$key]->porcentaje_intereses=$consultaInteresMora->IntMo_Valor;
+                            $liquidacionActual[$key]->intereses=$valor;
 
-                    $liquidacionRural[$key]->porcentaje_intereses=$consultaInteresMora->IntMo_Valor;
-                    $liquidacionRural[$key]->intereses=$valor;
+                            $total_pago=$valor +$data->CarVe_ValorEmitido;
+                            $liquidacionActual[$key]->total_pagar=number_format($total_pago,2);
+                        }else{
+                            $cero=0;
+                            $liquidacionActual[$key]->porcentaje_intereses=number_format($cero,2);
+                            $liquidacionActual[$key]->intereses=number_format($cero,2);
 
-                    $total_pago=$valor +$data->CarVe_ValorEmitido;
-                    $liquidacionRural[$key]->total_pagar=number_format($total_pago,2);
+                            $total_pago=$valor +$data->CarVe_ValorEmitido;
+                            $liquidacionActual[$key]->total_pagar=number_format($total_pago,2);
+                        }
+                        //  dd($liquidacionActual);
+                    }
+                    array_push($dataArray, $liquidacionActual);
+                   
+                }else{
+                    $liquidacionRural=\DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
+                    ->leftJoin('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'cv.CarVe_CI')
+                    ->leftJoin('PROPIETARIO as pr', 'pr.Ciu_Cedula', '=', 'cv.CarVe_CI')
+                    ->leftJoin('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
+                    ->select('cv.Pre_CodigoCatastral',
+                    'cv.CarVe_FechaEmision',
+                    'cv.CarVe_NumTitulo',
+                    'cv.CarVe_CI',
+                    'cv.CarVe_Estado',
+                    'c.Ciu_Apellidos',
+                    'c.Ciu_Nombres',
+                    'p.Pre_NombrePredio',
+                    'cv.CarVe_ValTotalTerrPredio',
+                    'cv.CarVe_ValTotalEdifPredio',
+                    'cv.CarVe_ValOtrasInver',
+                    'cv.CarVe_ValComerPredio',
+                    'cv.CarVe_RebajaHipotec',
+                    'cv.CarVe_BaseImponible',
+                    'cv.CarVe_IPU',
+                    'cv.CarVe_TasaAdministrativa',
+                    'cv.CarVe_Bomberos'
+                    ,'cv.CarVe_ValorEmitido',
+                    'pr.Pro_DireccionDomicilio',
+                    'cv.Carve_Recargo as recargo')
+                    ->where('CarVe_NumTitulo', '=', $valor_num)
+                    ->get();
+                   
+
+                    foreach($liquidacionRural as $key=> $data){
+                        $anio=explode("-",$data->CarVe_NumTitulo);
+                        $consultaInteresMora=\DB::connection('sqlsrv')->table('INTERES_MORA as im')
+                        ->where('IntMo_Año',$anio)
+                        ->select('IntMo_Valor')
+                        ->first();
+
+                        $valor=(($consultaInteresMora->IntMo_Valor/100) * ($data->CarVe_ValorEmitido +$data->recargo - $data->CarVe_TasaAdministrativa));
+                        
+                        $valor=number_format($valor,2);
+
+                        $liquidacionRural[$key]->porcentaje_intereses=$consultaInteresMora->IntMo_Valor;
+                        $liquidacionRural[$key]->intereses=$valor;
+
+                        $total_pago=$valor +$data->CarVe_ValorEmitido;
+                        $liquidacionRural[$key]->total_pagar=number_format($total_pago,2);
+                    }
+                     array_push($dataArray, $liquidacionRural);
                 }
-                         
-                array_push($dataArray, $liquidacionRural);
-            }
 
+                // if($existe==1){
+                //     // $resultado = $liquidacionRural->merge($liquidacionActual);
+                //     array_push($dataArray, $liquidacionActual);
+                // }else{
+                //     array_push($dataArray, $liquidacionRural);
+                // }        
+                
+               
+
+
+                         
+               
+            }
+            // dd($liquidacionRural);
             $fecha_hoy=date('Y-m-d');
             setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES@euro', 'es_ES', 'esp');
             $fecha_timestamp = strtotime($fecha_hoy);
@@ -197,7 +342,7 @@ class TituloRuralController extends Controller
 
             return response()->json([
                 'error'=>true,
-                'mensaje'=>'Ocurrió un error'.$e
+                'mensaje'=>'Ocurrió un error'.$e->getMessage() .$e->getLine()
             ]);
 
         }

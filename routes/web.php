@@ -423,7 +423,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('buscar-liquidacion-urbanos/{cedula}', [LiquidacionesController::class, 'consultarTitulosUrb']);
 
     //predios-urbano
-    // Route::get('predio-urbano-liquidar', [UrbanoLiquidacionController::class, 'index'])->name('index.liquidacion');
+    Route::get('predio-urbano-liquidar', [UrbanoLiquidacionController::class, 'index']);
     
 
     
