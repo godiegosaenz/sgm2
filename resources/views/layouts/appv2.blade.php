@@ -318,18 +318,18 @@
                         'permission' => 'Lista de remisiones',
                         'active' => request()->routeIs('index.remision')
                     ],
-                    [
-                        'name' => 'Impresion de titulos Urbanos',
-                        'route' => 'index.titulocredito',
-                        'permission' => 'Impresion de titulos Urbanos',
-                        'active' => request()->routeIs('index.titulocredito')
-                    ],
-                    [
-                        'name' => 'Impresion de titulos Rural',
-                        'route' => 'index.TitulosRural',
-                        'permission' => 'Impresion de titulos Rural',
-                        'active' => request()->routeIs('index.TitulosRural')
-                    ],
+                    // [
+                    //     'name' => 'Impresion de titulos Urbanos',
+                    //     'route' => 'index.titulocredito',
+                    //     'permission' => 'Impresion de titulos Urbanos',
+                    //     'active' => request()->routeIs('index.titulocredito')
+                    // ],
+                    // [
+                    //     'name' => 'Impresion de titulos Rural',
+                    //     'route' => 'index.TitulosRural',
+                    //     'permission' => 'Impresion de titulos Rural',
+                    //     'active' => request()->routeIs('index.TitulosRural')
+                    // ],
                     // [
                     //     'name' => 'Reporte de liquidaciones',
                     //     'route' => 'consulta.liquidacion.remision',
@@ -338,7 +338,7 @@
                     // ],
 
                     [
-                        'name' => 'Reporte de liquidaciones',
+                        'name' => 'Liquidaciones Urbanas/Rural',
                         'route' => 'index.liquidacion',
                         'permission' => 'Reporte de liquidaciones',
                         'active' => request()->routeIs('index.liquidacion')
