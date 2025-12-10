@@ -72,20 +72,33 @@ class LiquidacionesController extends Controller
 
     public function consultarTitulos($cedula){
         try {
+            $prediosRurales=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
+             ->where(function ($query) use($cedula){
+                $query->where('carVe_CI',$cedula)
+                ->orWhere('carVe_RUC',$cedula);
+            })
+            ->whereIn('cv.CarVe_Estado',['E'])
+            ->pluck('Pre_CodigoCatastral')
+            ->toArray();
+            // dd($prediosRurales);
+
+
             $liquidacionRural=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
             ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
             ->select('cv.Pre_CodigoCatastral as clave','cv.CarVe_FechaEmision as fecha_emi','cv.CarVe_NumTitulo as num_titulo','cv.CarVe_CI as num_ident','cv.CarVe_Estado','cv.CarVe_Nombres as nombre_per','cv.CarVe_ValorEmitido as valor_emitido','cv.CarVe_TasaAdministrativa as tasa','CarVe_Calle as direcc_cont','cv.Carve_Recargo as recargo','cv.Carve_Descuento as descuento')
             //->where('cv.Pre_CodigoCatastral', '=', $clave)
-            ->where(function ($query) use($cedula){
-                $query->where('carVe_CI',$cedula)
-                ->orWhere('carVe_RUC',$cedula);
-            })
+            // ->where(function ($query) use($cedula){
+            //     $query->where('carVe_CI',$cedula)
+            //     ->orWhere('carVe_RUC',$cedula);
+            // })
+            ->whereIN('cv.Pre_CodigoCatastral',$prediosRurales)
 
             ->whereIn('cv.CarVe_Estado',['E']) //E=Emitidos, N=Nueva Emision
             // ->where('Pre_Tipo','Rural')
             ->orderby('CarVe_NumTitulo','asc')
             ->distinct()
             ->get();
+            // dd($liquidacionRural);
 
             $mes_Actual=date('m');
             $aplica_remision=0;

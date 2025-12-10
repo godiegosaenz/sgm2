@@ -529,11 +529,15 @@ function buscarTitulos(cedula, nombres){
             let descu = item.descuento !=null ? item.descuento : '0.00';
             let intereses = item.intereses !=null ? item.intereses : '0.00';
             let num_matricula=""
+            let codigo=item.num_titulo
             if(ubicacion==1){
                 num_matricula = item.num_predio;
+                codigo=item.id
             }
             $('#tbodyRuralDetalle').append(`<tr>
-                   
+                   <td style="width:5%; text-align:center; vertical-align:middle">
+                        <input type="checkbox" name="checkLiquidacion[]" id="predio_valor" value="${codigo}" >                
+                    </td>
                     <td style="width:10%; text-align:center; vertical-align:middle">
                         ${num_matricula}                      
                     </td>
@@ -583,7 +587,17 @@ function buscarTitulos(cedula, nombres){
     });
 }
 
-
+$(document).on('change', '#selectAll', function() {
+    // Obtener el estado del checkbox (marcado o desmarcado)
+    var isChecked = $(this).prop('checked');
+    
+    // Cambiar el estado de todos los checkboxes en el cuerpo de la tabla
+    $('#tbodyRuralDetalle input[type="checkbox"]').each(function() {
+        $(this).prop('checked', isChecked);
+    });
+    
+   
+});
 
 function cerrarModalPago(){
     $('#modalContri').modal('hide')
@@ -611,6 +625,54 @@ function descargarLiquidacion(){
         vistacargando("")
         alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
        
+    });
+}
+
+function generarTitulos(){
+    let urbano_rural=$('#lugar').val()
+    // alert(urbano_rural)
+    if ($('input[name="checkLiquidacion[]"]:checked').length === 0) {
+        alert("Debe seleccionar al menos una liquidación.");
+        return false; // Previene la acción, si estás dentro de un submit o evento
+    }
+
+    vistacargando("m","Espere por favor")
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    ruta="tituloscoactivarural/imprimir"
+    if(urbano_rural==1){
+        ruta="tituloscoactivaurb/imprimir"
+    }
+    var FrmData=$("#formExonerar").serialize();
+
+    $.ajax({
+            
+        type: 'POST',
+        url: ruta,
+        method: 'POST',             
+		data: FrmData,      
+		
+        processData:false, 
+
+        success: function(data){
+            vistacargando("");                
+            if(data.error==true){
+                alertNotificar(data.mensaje,'error');
+                return;                      
+            }
+           
+            alertNotificar("El documento se descargara en unos segundos...","success");
+            window.location.href="descargar-reporte/"+data.pdf
+                            
+        }, error:function (data) {
+            console.log(data)
+
+            vistacargando("");
+            alertNotificar('Ocurrió un error','error');
+        }
     });
 }
 

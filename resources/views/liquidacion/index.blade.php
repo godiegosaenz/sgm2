@@ -219,63 +219,67 @@
                 </div>
                 
                 <div class="modal-body">
-                    <div class="col-md-12">
-                        <div class="row">
-                            <!-- Columna izquierda -->
-                         
-                                
-                                <div class="col-md-6">
-                                   <b>Contribuyente:</b> <span id="nombre_contr"></span><br>
-                                 
-                                </div>
-
-                                <div class="col-md-6">
-                                    <b>C.I./RUC:</b> <span id="num_ident_contr"></span><br>
-                                  
-                                </div>
-
-                        </div>
-
-                        <div class="col-md-12" style="margin-top: 20px;">
-                            <table class="table table-bordered table-hover" id="tableDetalleRural" style="width: 100%">
-                                <thead>
-                                    <tr>
-                                       
-                                        <th scope="col">Matricula</th>
-                                        <th scope="col">Num Titulo</th>
-                                        <th>Codigo</th>
-                                        <th scope="col">Direccion</th>
-                                        <th scope="col">Subtotal</th>
-                                        <th scope="col">Descuento</th>
-                                        <th scope="col">Recarga</th>
-                                        <th scope="col">Interes</th>
-                                        <th scope="col">Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tbodyRuralDetalle">
-
-                                
-                                </tbody>
-                            </table>
-
-                        </div>
-
-                        <div class="col-md-12 row">
-                            <div class="col-md-12" >
-                               <center><b>Total Deuda: </b><span id="total_deuda"></span></center>
-                               
-                            </div>
-
+                    <form class="" action="tituloscoactivarural/imprimir" id="formExonerar" name="formExonerar" method="post" enctype="multipart/form-data">
+                         @csrf
+                        <div class="col-md-12">
+                            <div class="row">
+                                <!-- Columna izquierda -->
                             
-                            <div class="col-md-12">
-                                <center>
-                                    <button type="button" class="btn btn-sm btn-primary" onclick="descargarLiquidacion()">Descargar</button>
-                                    <button type="button" class="btn btn-sm btn-danger" onclick="cerrarModalPago()">Cerrar</button>
-                                </center>
-                            </div>
-                        </div>
+                                    
+                                    <div class="col-md-6">
+                                    <b>Contribuyente:</b> <span id="nombre_contr"></span><br>
+                                    
+                                    </div>
 
-                    </div>
+                                    <div class="col-md-6">
+                                        <b>C.I./RUC:</b> <span id="num_ident_contr"></span><br>
+                                    
+                                    </div>
+
+                            </div>
+
+                            <div class="col-md-12" style="margin-top: 20px;">
+                                <table class="table table-bordered table-hover" id="tableDetalleRural" style="width: 100%">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col"><center><input type="checkbox" id="selectAll"></center></th>
+                                            <th scope="col">Matricula</th>
+                                            <th scope="col">Num Titulo</th>
+                                            <th>Codigo</th>
+                                            <th scope="col">Direccion</th>
+                                            <th scope="col">Subtotal</th>
+                                            <th scope="col">Descuento</th>
+                                            <th scope="col">Recarga</th>
+                                            <th scope="col">Interes</th>
+                                            <th scope="col">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbodyRuralDetalle">
+
+                                    
+                                    </tbody>
+                                </table>
+
+                            </div>
+
+                            <div class="col-md-12 row">
+                                <div class="col-md-12" >
+                                <center><b>Total Deuda: </b><span id="total_deuda"></span></center>
+                                
+                                </div>
+
+                                
+                                <div class="col-md-12">
+                                    <center>
+                                        <button type="button" class="btn btn-sm btn-success" onclick="generarTitulos()">Generar Titulo(s)</button>
+                                        <button type="button" class="btn btn-sm btn-primary" onclick="descargarLiquidacion()">Descargar Liquidacion</button>
+                                        <button type="button" class="btn btn-sm btn-danger" onclick="cerrarModalPago()">Cerrar</button>
+                                    </center>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
                 </div>
                
             </div>

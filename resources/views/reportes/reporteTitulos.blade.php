@@ -212,7 +212,8 @@
     <br>
    
     @php
-        $sumatotal = $sumatotal + $d[0]->total_pago + $d[0]->valor_complemento;
+        // $sumatotal = $sumatotal + $d[0]->total_pago + $d[0]->valor_complemento;
+         $sumatotal = $sumatotal + $d[0]->total_complemento;
     @endphp
     @endforeach
     <h2 style="text-align: center">TOTAL DE TÍTULO DE CRÉDITO: <span class="badge text-bg-secondary">{{$sumatotal}};</span></h2>

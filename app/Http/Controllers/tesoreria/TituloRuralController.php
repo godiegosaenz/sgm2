@@ -107,6 +107,7 @@ class TituloRuralController extends Controller
             ->whereIn('tp.TitPr_Estado',['E','N'])
             ->orderby('TitPr_NumTitulo','asc')
             ->get();
+            // dd($liquidacionActual);
 
             foreach($liquidacionActual as $key=> $data){
                 $subtotal=0;
@@ -286,7 +287,7 @@ class TituloRuralController extends Controller
                         $liquidacionRural[$key]->intereses=$valor;
 
                         $total_pago=$valor +$data->CarVe_ValorEmitido;
-                        $liquidacionRural[$key]->total_pagar=number_format($total_pago,2);
+                        $liquidacionRural[$key]->total_pagar=$total_pago;
                     }
                      array_push($dataArray, $liquidacionRural);
                 }
@@ -342,7 +343,7 @@ class TituloRuralController extends Controller
 
             return response()->json([
                 'error'=>true,
-                'mensaje'=>'Ocurrió un error'.$e->getMessage() .$e->getLine()
+                'mensaje'=>'Ocurrió un error' .$e->getLine()
             ]);
 
         }
