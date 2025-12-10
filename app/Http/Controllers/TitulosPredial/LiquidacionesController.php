@@ -230,8 +230,17 @@ class LiquidacionesController extends Controller
                     $liquidacionActual[$key]->exoneracion='No';
                 }
             }
-            $resultado = $liquidacionRural->merge($liquidacionActual);
-            // $resultado = $liquidacionRural->merge($liquidacionActual)->sortByDesc('Pre_CodigoCatastral')->values();
+            // $resultado = $liquidacionRural->merge($liquidacionActual);
+            // $resultado = $liquidacionRural->merge($liquidacionActual)->sortByDesc('num_titulo')->values();
+            $resultado = $liquidacionRural
+            ->merge($liquidacionActual)
+            ->sortBy([
+                // ['num_titulo', 'desc'],
+                ['clave', 'desc'],
+                ['num_titulo', 'desc'],
+            ])
+            ->values();
+
             // dd("s"); 
 
             return ["resultado"=>$resultado, 
@@ -487,7 +496,7 @@ class LiquidacionesController extends Controller
             
             ->whereNotIN('estado_liquidacion',[1,3,4,5])
             ->orderby('clave_cat','desc')
-            ->orderBy('anio', 'desc')
+            ->orderBy('anio', 'asc')
             ->get();
             $total_valor=0;
             foreach($liquidacionUrbana as $key=>$data){
