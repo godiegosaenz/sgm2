@@ -493,7 +493,7 @@ class LiquidacionesController extends Controller
                     "))
             
             ->whereIn('sgm_financiero.ren_liquidacion.predio',$predios_contribuyente)
-            
+            ->where('sgm_app.cat_predio.estado','A')
             ->whereNotIN('estado_liquidacion',[1,3,4,5])
             ->orderby('clave_cat','desc')
             ->orderBy('anio', 'asc')
