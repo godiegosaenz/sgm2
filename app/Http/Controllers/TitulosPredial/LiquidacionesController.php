@@ -237,7 +237,7 @@ class LiquidacionesController extends Controller
             ->sortBy([
                 // ['num_titulo', 'desc'],
                 ['clave', 'desc'],
-                ['num_titulo', 'desc'],
+                ['num_titulo', 'asc'],
             ])
             ->values();
 
@@ -259,18 +259,43 @@ class LiquidacionesController extends Controller
 
     public function pdfLiquidacion($cedula, $lugar){
         try{
+            $tipo_agrupado="";
             if($lugar==1){
                 $consulta=$this->consultarTitulosUrb($cedula);
+                if($consulta["error"]==true){
+                    return ["mensaje"=>$consulta["mensaje"], "error"=>true];
+                }               
+
+                #agrupamos
+                $listado_final=[];
+                foreach ($consulta["resultado"] as $key => $item){                
+                    if(!isset($listado_final[$item->num_predio])) {
+                        $listado_final[$item->num_predio]=array($item);
+                
+                    }else{
+                        array_push($listado_final[$item->num_predio], $item);
+                    }
+                } 
             }else{
                 $consulta=$this->consultarTitulos($cedula);
+                if($consulta["error"]==true){
+                    return ["mensaje"=>$consulta["mensaje"], "error"=>true];
+                }
+
+                #agrupamos
+                $listado_final=[];
+                foreach ($consulta["resultado"] as $key => $item){                
+                    if(!isset($listado_final[$item->clave])) {
+                        $listado_final[$item->clave]=array($item);
+                
+                    }else{
+                        array_push($listado_final[$item->clave], $item);
+                    }
+                } 
             }
            
-            if($consulta["error"]==true){
-                return ["mensaje"=>$consulta["mensaje"], "error"=>true];
-            }
-            // dd($consulta["resultado"]);
-            $nombrePDF="Liquidacion.pdf";                               
-            $pdf = \PDF::loadView('reportes.reporteLiquidacionRemisionRural', ['DatosLiquidacion'=>$consulta["resultado"],"ubicacion"=>$lugar]);
+            $nombrePDF="Liquidacion".date('YmdHis').".pdf";                               
+            $pdf = \PDF::loadView('reportes.reporteLiquidacionRemisionRural', ['DatosLiquidacion'=>$listado_final,"ubicacion"=>$lugar]);
 
             // return $pdf->download('reporteLiquidacion.pdf');
             $pdf->setPaper("A4", "landscape");
@@ -502,6 +527,8 @@ class LiquidacionesController extends Controller
             foreach($liquidacionUrbana as $key=>$data){
                 $total_valor=$total_valor+$data->total_pagar;
             }
+
+           
             return ["resultado"=>$liquidacionUrbana, 
                     "total_valor"=>number_format($total_valor,2),
                     "exoneracion_3era_edad"=>0,
