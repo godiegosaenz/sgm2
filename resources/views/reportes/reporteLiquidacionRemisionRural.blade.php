@@ -108,7 +108,7 @@
             <h3 style="margin: 4px 0 0 0; padding: 0;">
                 Fecha liquidación {{date('d/m/Y')}}
             </h3>
-
+ 
             </center>
         </div>
     </div>
@@ -157,13 +157,17 @@
                             if($ubicacion==1){
                                 $num_matricula = $item->num_predio;
                             }
+                            $nombre_persona=$item->nombre_per;
+                            if(is_null($item->nombre_per)){
+                                $nombre_persona=$item->nombre_contr1;
+                            }
                         @endphp
                         <tr>
                             <td style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{$num_matricula}}</td>
                             <td style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{$anio[0]}}</td>
                             <td style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{$item->clave}}</td>
                         
-                            <td style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{$item->nombre_per}}</td>
+                            <td style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{$nombre_persona}}</td>
                             
                             <td style="text-align:right;border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{$item->subtotal_emi}}</td>
                             <td style="text-align:right;border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{ number_format($item->descuento ?? 0.00, 2) }}</td>

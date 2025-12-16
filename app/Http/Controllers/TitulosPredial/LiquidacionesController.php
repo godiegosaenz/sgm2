@@ -533,7 +533,7 @@ class LiquidacionesController extends Controller
                 $total_valor=$total_valor+$data->total_pagar;
             }
 
-           
+        //    dd($liquidacionUrbana);
             return ["resultado"=>$liquidacionUrbana, 
                     "total_valor"=>number_format($total_valor,2),
                     "exoneracion_3era_edad"=>0,
