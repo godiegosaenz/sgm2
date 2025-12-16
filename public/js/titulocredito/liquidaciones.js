@@ -455,10 +455,17 @@ function llenarData(data){
         }  
         
         let telefono=""
-        if (typeof item.telefono !== 'undefined') {
+        if (typeof item.telf !== 'undefined') {
             // La variable está definida
-            telefono=item.telefono
+            telefono=item.telf
         }
+
+        let correos=""
+        if (typeof item.email !== 'undefined') {
+            // La variable está definida
+            correos=item.email
+        }
+
         $('#tbodyRural').append(`<tr>
                 <td style="width:5%; text-align:center; vertical-align:middle">
                     <button type="button" class="btn btn-success btn-sm" onclick="buscarTitulos('${cedula}', '${item.nombres}')">
@@ -475,7 +482,7 @@ function llenarData(data){
                     ${telefono}            
                 </td>
                 <td style="width:10%; text-align:center; vertical-align:middle">
-                                    
+                    ${correos}              
                 </td>
                 <td style="width:20%; text-align:center; vertical-align:middle">
                      ${item.direccion}                     

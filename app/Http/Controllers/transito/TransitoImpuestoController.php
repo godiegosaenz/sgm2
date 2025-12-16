@@ -1189,13 +1189,13 @@ class TransitoImpuestoController extends Controller
     }
 
     public function generar_firma_qr($nombre_firma,$nombre_img){
-        //$nombre_firma="RAFAEL ANTONIO ESPINOZA CASTRO";
-        //$nombre_img="juridico";       
-        // $fecha = "2025-10-07 17:30:50";
-        // $textoQR = "FIRMADO POR: $nombre_firma\nRAZON: \nLOCALIZACION: \nFECHA: $fecha \nVALIDAR CON: https://www.firmadigital.gob.ec \nFirmado digitalmente con FirmaEC 4.0.1 Windows 11 10.0";
+        $nombre_firma="DIEGO ANDRES BERMUDEZ SAENZ";
+        $nombre_img="juridico9";       
+        $fecha = "2025-12-12 16:20:50";
+        $textoQR = "FIRMADO POR: $nombre_firma\nRAZON: \nLOCALIZACION: \nFECHA: $fecha \nVALIDAR CON: https://www.firmadigital.gob.ec \nFirmado digitalmente con FirmaEC 4.0.1 Windows 11 10.0";
 
-        $fecha = date('Y-m-d H:i:s');       
-        $textoQR = "GADM SAN VICENTE\nFirmado por: $nombre_firma\nFecha: $fecha";
+        // $fecha = date('Y-m-d H:i:s');       
+        // $textoQR = "GADM SAN VICENTE\nFirmado por: $nombre_firma\nFecha: $fecha";
 
         // 1. Generar el QR
         $qr = Builder::create()

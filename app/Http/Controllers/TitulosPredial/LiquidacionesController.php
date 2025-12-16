@@ -371,6 +371,7 @@ class LiquidacionesController extends Controller
                     ->select('email')
                     ->where('ente', $item->id)
                     ->pluck('email');
+                    // DD($correos);
                     
                     $dataContribuyente[$key]->email=$correos;
                 }
@@ -395,7 +396,9 @@ class LiquidacionesController extends Controller
             
             $liquidacionUrbana = DB::connection('pgsql')->table('sgm_financiero.ren_liquidacion')
             ->join('sgm_app.cat_predio', 'sgm_financiero.ren_liquidacion.predio', '=', 'sgm_app.cat_predio.id')
-            ->leftJoin('sgm_app.cat_ente', 'sgm_financiero.ren_liquidacion.comprador', '=', 'sgm_app.cat_ente.id')
+            ->join('sgm_app.cat_predio_propietario', 'sgm_app.cat_predio_propietario.predio', '=', 'sgm_app.cat_predio.id')
+           
+            ->leftJoin('sgm_app.cat_ente', 'sgm_app.cat_predio_propietario.ente', '=', 'sgm_app.cat_ente.id')
             ->select('sgm_financiero.ren_liquidacion.id',
             'sgm_financiero.ren_liquidacion.id_liquidacion as num_titulo',
             'sgm_financiero.ren_liquidacion.total_pago',
@@ -519,6 +522,8 @@ class LiquidacionesController extends Controller
             
             ->whereIn('sgm_financiero.ren_liquidacion.predio',$predios_contribuyente)
             ->where('sgm_app.cat_predio.estado','A')
+            ->where('sgm_app.cat_predio_propietario.estado','A')
+            // ->where('sgm_app.cat_predio_propietario.estado','A')
             ->whereNotIN('estado_liquidacion',[1,3,4,5])
             ->orderby('clave_cat','desc')
             ->orderBy('anio', 'asc')

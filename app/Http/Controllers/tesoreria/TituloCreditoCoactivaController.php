@@ -411,10 +411,14 @@ class TituloCreditoCoactivaController extends Controller
     {
         try{
             $dataArray = array();
+            
             foreach($r->checkLiquidacion as $clave => $valor){
                 $liquidacion = DB::connection('pgsql')->table('sgm_financiero.ren_liquidacion as liq')
-                ->leftJoin('sgm_app.cat_ente as en', 'en.id', '=', 'liq.comprador')
+
+                // ->leftJoin('sgm_app.cat_ente as en', 'en.id', '=', 'liq.comprador')
                 ->leftJoin('sgm_app.cat_predio as pre', 'pre.id', '=', 'liq.predio')
+                ->join('sgm_app.cat_predio_propietario as pp', 'pp.predio', '=', 'pre.id')           
+                ->leftJoin('sgm_app.cat_ente as en', 'pp.ente', '=', 'en.id')
                 ->leftJoin('sgm_app.cat_ciudadela as cdla', 'cdla.id', '=', 'pre.ciudadela')
                 ->select(
                     'liq.num_liquidacion',
@@ -429,6 +433,7 @@ class TituloCreditoCoactivaController extends Controller
                     'liq.id',
                     'liq.anio',
                     'en.direccion',
+                    'en.ci_ruc as cedula',
                     DB::raw("
                         CASE
                             WHEN liq.comprador IS NULL THEN liq.nombre_comprador
@@ -438,12 +443,12 @@ class TituloCreditoCoactivaController extends Controller
                             END
                         END AS nombres
                     "),
-                    DB::raw("
-                        CASE
-                            WHEN liq.comprador IS NULL THEN 'S/N'
-                            ELSE (SELECT ci_ruc FROM sgm_app.cat_ente WHERE cat_ente.id = liq.comprador)
-                        END AS cedula
-                    "),
+                    // DB::raw("
+                    //     CASE
+                    //         WHEN liq.comprador IS NULL THEN 'S/N'
+                    //         ELSE (SELECT ci_ruc FROM sgm_app.cat_ente WHERE cat_ente.id = liq.comprador)
+                    //     END AS cedula
+                    // "),
                     DB::raw("cdla.nombre || ' MZ: ' || pre.urb_mz || ' SL: ' || pre.urb_solarnew AS direccion1"),
                     'pre.clave_cat as cod_predial',
                     DB::raw("(SELECT razon_social FROM sgm_application.empresa) AS empresa"),
@@ -579,6 +584,7 @@ class TituloCreditoCoactivaController extends Controller
                     'liq.id_liquidacion'
                 )
                 ->where('liq.id', $valor)
+                ->where('pp.estado','A')
                 ->get();
                 //dd($liquidacion);
             

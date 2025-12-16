@@ -40,6 +40,7 @@ use App\Http\Controllers\TitulosPredial\ContribuyenteUrbanoController;
 use App\Http\Controllers\TitulosPredial\PredioRuralController;
 use App\Http\Controllers\TitulosPredial\LiquidacionesController;
 use App\Http\Controllers\TitulosPredial\UrbanoLiquidacionController;
+use App\Http\Controllers\TitulosPredial\NotificacionContribuyenteController;
 
 use App\Models\TransitoEnte;
 use App\Models\TransitoTarifaAnual;
@@ -425,6 +426,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     //predios-urbano
     Route::get('predio-urbano-liquidar', [UrbanoLiquidacionController::class, 'index']);
+
+    //notificacion-correo
+     Route::get('notifica', [NotificacionContribuyenteController::class, 'index']);
     
 
     
