@@ -30,9 +30,9 @@
 
         @page {
             margin-top: 7em;
-            margin-left:5em;
-            margin-right:5em;
-            margin-bottom: 10em;
+            margin-left:4em;
+            margin-right:4em;
+            margin-bottom: 12em;
         }
         header { position: fixed;  top: -115px; left: -80px; right: -50px; background-color: white; height: 60px; margin-right: 99px}
 
@@ -57,6 +57,16 @@
             padding-left:5px;
             padding-right:5px;
         }
+
+        footer {
+            position: fixed;
+            bottom: -212px;   /* ⬅️ BAJA el footer */
+            left: -80px;
+            right: -50px;
+            height: 140px;
+        }
+
+
     </style>
 </head>
 <body>
@@ -71,6 +81,16 @@
                 </tr>             
             </table>
     </header>
+    <footer>
+    <table width="112.5%" class="ltable">
+        <tr>
+            <td style="border:0;" align="left">
+                <img src="fonfopiecoa.png" width="800px" height="120px">
+            </td>
+        </tr>
+    </table>
+</footer>
+
 
 
 
@@ -146,8 +166,7 @@
             <p>
                 La obligación corresponde al predio con matrícula inmobiliaria
                 <strong>{{ $key  }}</strong>, cuya deuda asciende a la cantidad de
-                <strong>{{ numeroEnLetras($total) }}</strong>
-               , correspondiente a los ejercicios fiscales <b>{{ $anio_uno }} - {{ $info->anio }}</b>.
+                <strong>{{ numeroEnLetras($total) }}</strong>, correspondiente a los ejercicios fiscales <b>{{ $anio_uno }} - {{ $info->anio }}</b>.
             </p>
          @endforeach
         <p>
