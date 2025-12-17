@@ -423,6 +423,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('pdf-liquidacion-rural-urb/{cedula}/{lugar}', [LiquidacionesController::class, 'pdfLiquidacion']);
     Route::post('buscar-deudas-contribuyente-urb', [LiquidacionesController::class, 'buscarDeudaPrediourb']);
     Route::get('buscar-liquidacion-urbanos/{cedula}', [LiquidacionesController::class, 'consultarTitulosUrb']);
+    Route::get('pago-voluntario-rural-urb/{cedula}/{lugar}', [LiquidacionesController::class, 'pagoVoluntario']);
 
     //predios-urbano
     Route::get('predio-urbano-liquidar', [UrbanoLiquidacionController::class, 'index']);

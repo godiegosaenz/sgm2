@@ -465,7 +465,7 @@ function llenarData(data){
             // La variable está definida
             correos=item.email
         }
-
+ 
         $('#tbodyRural').append(`<tr>
                 <td style="width:5%; text-align:center; vertical-align:middle">
                     <button type="button" class="btn btn-success btn-sm" onclick="buscarTitulos('${cedula}', '${item.nombres}')">
@@ -613,6 +613,31 @@ function cerrarModalPago(){
 function descargarLiquidacion(){
     let ubicacion=$('#lugar').val()
     let rutapdf="pdf-liquidacion-rural-urb"
+   
+    vistacargando("m", "Espere por favor")
+    $.get(rutapdf+'/'+CedulaGlobal+'/'+ubicacion, function(data){
+        console.log(data)
+       
+        vistacargando("")
+        if(data.error==true){
+			alertNotificar(data.mensaje,"error");
+            // cancelar()
+			return;   
+		}
+        alertNotificar("El documento se descargara en unos segundos...","success");
+        window.location.href="descargar-reporte/"+data.pdf
+       
+       
+    }).fail(function(){
+        vistacargando("")
+        alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+       
+    });
+}
+
+function descargaPagoVolutario(){
+    let ubicacion=$('#lugar').val()
+    let rutapdf="pago-voluntario-rural-urb"
    
     vistacargando("m", "Espere por favor")
     $.get(rutapdf+'/'+CedulaGlobal+'/'+ubicacion, function(data){

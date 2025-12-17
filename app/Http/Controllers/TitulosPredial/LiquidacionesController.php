@@ -103,6 +103,7 @@ class LiquidacionesController extends Controller
             // dd($liquidacionRural);
 
             $mes_Actual=date('m');
+           
             $aplica_remision=0;
             if($mes_Actual<7){
                 $aplica_remision=1;
@@ -137,6 +138,7 @@ class LiquidacionesController extends Controller
                 $total_pago=($valor + $data->valor_emitido + $data->recargo) - $data->descuento;
 
                 $liquidacionRural[$key]->total_pagar=number_format($total_pago,2);
+                $liquidacionRural[$key]->anio=$anio[0];
 
                 $total_valor=$total_valor+$total_pago;
                 //$total_valor=$total_valor;
@@ -207,6 +209,7 @@ class LiquidacionesController extends Controller
                     $liquidacionActual[$key]->total_pagar=number_format($total_pago,2);
                 }
                 $liquidacionActual[$key]->subtotal_emi=$subtotal;
+                $liquidacionActual[$key]->anio=$anio[0];
 
                 $total_valor=$total_valor+$total_pago;
                 //$total_valor=number_format($total_valor,2);
@@ -319,6 +322,88 @@ class LiquidacionesController extends Controller
         } catch (\Exception $e) {
             //\Log::error($e);
             return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+
+        }
+    }
+
+    public function pagoVoluntario($cedula, $lugar){
+        try{
+            $tipo_agrupado="";
+            $nombre_persona="";
+            $direcc_cont="";
+            if($lugar==1){
+                $consulta=$this->consultarTitulosUrb($cedula);
+                if($consulta["error"]==true){
+                    return ["mensaje"=>$consulta["mensaje"], "error"=>true];
+                }               
+
+                #agrupamos
+                $listado_final=[];
+                foreach ($consulta["resultado"] as $key => $item){                
+                    if(!isset($listado_final[$item->num_predio])) {
+                        $listado_final[$item->num_predio]=array($item);
+                
+                    }else{
+                        array_push($listado_final[$item->num_predio], $item);
+                    }
+
+                    $nombre_persona=$item->nombre_per;
+                    $direcc_cont=$item->direcc_cont;
+                    if(is_null($item->nombre_per)){
+                        $nombre_persona=$item->nombre_contr1;
+                    }
+                } 
+            }else{
+                $consulta=$this->consultarTitulos($cedula);
+                if($consulta["error"]==true){
+                    return ["mensaje"=>$consulta["mensaje"], "error"=>true];
+                }
+
+                #agrupamos
+                $listado_final=[];
+                               
+                foreach ($consulta["resultado"] as $key => $item){                
+                    if(!isset($listado_final[$item->clave])) {
+                        $listado_final[$item->clave]=array($item);
+                
+                    }else{
+                        array_push($listado_final[$item->clave], $item);
+                    }
+
+                    $nombre_persona=$item->nombre_per;
+                    $direcc_cont=$item->direcc_cont;
+                    if(is_null($item->nombre_per)){
+                        $nombre_persona=$item->nombre_contr1;
+                    }
+                } 
+            }
+           
+            // dd($listado_final);
+            $nombrePDF="PagoVoluntario".date('YmdHis').".pdf";                               
+            $pdf = \PDF::loadView('reportes.pagoVoluntarioPredio', ['DatosLiquidacion'=>$listado_final,"ubicacion"=>$lugar,"nombre_persona"=>$nombre_persona, "direcc_cont"=>$direcc_cont]);
+
+            // return $pdf->download('reporteLiquidacion.pdf');
+            // $pdf->setPaper("A4", "landscape");
+            $estadoarch = $pdf->stream();
+
+            //lo guardamos en el disco temporal
+            \Storage::disk('public')->put(str_replace("", "",$nombrePDF), $estadoarch);
+            $exists_destino = \Storage::disk('public')->exists($nombrePDF);
+            if($exists_destino){
+                return response()->json([
+                    'error'=>false,
+                    'pdf'=>$nombrePDF
+                ]);
+            }else{
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'No se pudo crear el documento'
+                ]);
+            }
+
+        } catch (\Exception $e) {
+            //\Log::error($e);
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e->getMessage(), "error"=>true];
 
         }
     }

@@ -271,8 +271,10 @@
                                 
                                 <div class="col-md-12">
                                     <center>
+                                       
                                         <button type="button" class="btn btn-sm btn-success" onclick="generarTitulos()">Generar Titulo(s)</button>
                                         <button type="button" class="btn btn-sm btn-primary" onclick="descargarLiquidacion()">Descargar Liquidacion</button>
+                                         <button type="button" class="btn btn-sm btn-warning" onclick="descargaPagoVolutario()">Generar Documento</button>
                                         <button type="button" class="btn btn-sm btn-danger" onclick="cerrarModalPago()">Cerrar</button>
                                     </center>
                                 </div>
