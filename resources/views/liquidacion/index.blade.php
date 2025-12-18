@@ -54,8 +54,9 @@
     background-color: #4da3ff !important;
 }
 
-
 </style>
+
+
 @endpush
 @section('content')
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -210,85 +211,276 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modalContri" tabindex="-1" aria-labelledby="ContribuyenteModalLabel" aria-hidden="true"  data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal fade" id="modalContri" tabindex="-1"
+     aria-labelledby="ContribuyenteModalLabel"
+     aria-hidden="true"
+     data-bs-backdrop="static"
+     data-bs-keyboard="false">
+
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
+
+                <!-- HEADER -->
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalContribuyenteLabel">Liquidaciones</h5>
-                    <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+                    <h5 class="modal-title" id="modalContribuyenteLabel">
+                        Liquidaciones
+                    </h5>
+                    <button type="button" class="btn-close" onclick="cerrarModalPago()"></button>
                 </div>
-                
+
+                <!-- BODY -->
                 <div class="modal-body">
-                    <form class="" action="tituloscoactivarural/imprimir" id="formExonerar" name="formExonerar" method="post" enctype="multipart/form-data">
-                         @csrf
-                        <div class="col-md-12">
-                            <div class="row">
-                                <!-- Columna izquierda -->
-                            
-                                    
-                                    <div class="col-md-6">
-                                    <b>Contribuyente:</b> <span id="nombre_contr"></span><br>
-                                    
-                                    </div>
 
-                                    <div class="col-md-6">
-                                        <b>C.I./RUC:</b> <span id="num_ident_contr"></span><br>
-                                    
-                                    </div>
+                    <!-- TABS -->
+                    <ul class="nav nav-tabs mb-3" role="tablist">
+                        <li class="nav-item">
+                            <button class="nav-link active"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#tab-actual"
+                                    type="button">
+                                <i class="bi bi-list-check text-success"></i> Listado
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#tab-vacio"
+                                    type="button">
+                                <i class="bi bi-bell-fill text-danger"></i> Notificación
+                            </button>
+                        </li>
+                    </ul>
 
-                            </div>
+                    <!-- TAB CONTENT -->
+                    <div class="tab-content">
 
-                            <div class="col-md-12" style="margin-top: 20px;">
-                                <table class="table table-bordered table-hover" id="tableDetalleRural" style="width: 100%">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col"><center><input type="checkbox" id="selectAll"></center></th>
-                                            <th scope="col">Matricula</th>
-                                            <th scope="col">Num Titulo</th>
-                                            <th>Codigo</th>
-                                            <th scope="col">Direccion</th>
-                                            <th scope="col">Subtotal</th>
-                                            <th scope="col">Descuento</th>
-                                            <th scope="col">Recarga</th>
-                                            <th scope="col">Interes</th>
-                                            <th scope="col">Total</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tbodyRuralDetalle">
+                        <!-- TAB 1: CONTENIDO ACTUAL (SIN CAMBIOS) -->
+                        <div class="tab-pane fade show active" id="tab-actual">
 
-                                    
-                                    </tbody>
-                                </table>
+                            <form class=""
+                                action="tituloscoactivarural/imprimir"
+                                id="formExonerar"
+                                name="formExonerar"
+                                method="post"
+                                enctype="multipart/form-data">
+                                @csrf
 
-                            </div>
-
-                            <div class="col-md-12 row">
-                                <div class="col-md-12" >
-                                <center><b>Total Deuda: </b><span id="total_deuda"></span></center>
-                                
-                                </div>
-
-                                
                                 <div class="col-md-12">
-                                    <center>
-                                       
-                                        <button type="button" class="btn btn-sm btn-success" onclick="generarTitulos()">Generar Titulo(s)</button>
-                                        <button type="button" class="btn btn-sm btn-primary" onclick="descargarLiquidacion()">Descargar Liquidacion</button>
-                                         <button type="button" class="btn btn-sm btn-warning" onclick="descargaPagoVolutario()">Generar Documento</button>
-                                        <button type="button" class="btn btn-sm btn-danger" onclick="cerrarModalPago()">Cerrar</button>
-                                    </center>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <b>Contribuyente:</b>
+                                            <span id="nombre_contr"></span><br>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <b>C.I./RUC:</b>
+                                            <span id="num_ident_contr"></span><br>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12 mt-3">
+                                        <table class="table table-bordered table-hover"
+                                            id="tableDetalleRural"
+                                            style="width:100%">
+                                            <thead>
+                                                <tr>
+                                                    <th><center>
+                                                        <input type="checkbox" id="selectAll">
+                                                    </center></th>
+                                                    <th>Matricula</th>
+                                                    <th>Num Titulo</th>
+                                                    <th>Codigo</th>
+                                                    <th>Direccion</th>
+                                                    <th>Subtotal</th>
+                                                    <th>Descuento</th>
+                                                    <th>Recarga</th>
+                                                    <th>Interes</th>
+                                                    <th>Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tbodyRuralDetalle"></tbody>
+                                        </table>
+                                    </div>
+
+                                    <div class="row mt-3">
+                                        <div class="col-md-12 text-center">
+                                            <b>Total Deuda:</b>
+                                            <span id="total_deuda"></span>
+                                        </div>
+
+                                        <div class="col-md-12 text-center mt-2">
+                                            <button type="button"
+                                                    class="btn btn-sm btn-success"
+                                                    onclick="generarTitulos()">
+                                                Generar Titulo(s)
+                                            </button>
+
+                                            <button type="button"
+                                                    class="btn btn-sm btn-primary"
+                                                    onclick="descargarLiquidacion()">
+                                                Descargar Liquidación
+                                            </button>
+
+                                            <button type="button"
+                                                    class="btn btn-sm btn-warning"
+                                                    onclick="descargaPagoVolutario()">
+                                                Generar Documento
+                                            </button>
+
+                                            <button type="button"
+                                                    class="btn btn-sm btn-danger"
+                                                    onclick="cerrarModalPago()">
+                                                Cerrar
+                                            </button>
+                                        </div>
+                                    </div>
+
                                 </div>
-                            </div>
+                            </form>
 
                         </div>
-                    </form>
+
+                        <!-- TAB 2: VACÍO -->
+                        <div class="tab-pane fade" id="tab-vacio">
+                            <div class="text-center text-muted p-4">
+                                <i class="bi bi-info-circle"></i><br>
+                                
+                                <div class="p-4" style="background:#2f363d;border-radius:8px;">
+
+                                    <form id="formPersona">
+
+                                        <!-- CÉDULA -->
+                                        <div class="row mb-3 align-items-center">
+                                            <label class="col-md-2 col-form-label text-white">
+                                                <span class="text-danger">*</span> Cédula
+                                            </label>
+                                            <div class="col-md-7">
+                                                <input type="text"
+                                                    class="form-control bg-dark text-white border-secondary"
+                                                    placeholder="Ejemplo 1314801349">
+                                            </div>
+                                            <div class="col-md-3">
+                                                <button type="button" class="btn btn-primary w-100">
+                                                    Verificar
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- NOMBRES -->
+                                        <div class="row mb-3 align-items-center">
+                                            <label class="col-md-2 col-form-label text-white">
+                                                <span class="text-danger">*</span> Nombres
+                                            </label>
+                                            <div class="col-md-10">
+                                                <input type="text"
+                                                    class="form-control bg-dark text-white border-secondary"
+                                                    placeholder="Ejemplo Juan">
+                                            </div>
+                                        </div>
+
+                                        <!-- APELLIDOS -->
+                                        <div class="row mb-3 align-items-center">
+                                            <label class="col-md-2 col-form-label text-white">
+                                                <span class="text-danger">*</span> Apellidos
+                                            </label>
+                                            <div class="col-md-10">
+                                                <input type="text"
+                                                    class="form-control bg-dark text-white border-secondary"
+                                                    placeholder="Ejemplo Solorzano">
+                                            </div>
+                                        </div>
+
+                                        <!-- FECHA NACIMIENTO -->
+                                        <div class="row mb-3 align-items-center">
+                                            <label class="col-md-2 col-form-label text-white">
+                                                <span class="text-danger">*</span> Fecha Nacimiento
+                                            </label>
+                                            <div class="col-md-10">
+                                                <input type="date"
+                                                    class="form-control bg-dark text-white border-secondary">
+                                            </div>
+                                        </div>
+
+                                        <!-- ESTADO CIVIL -->
+                                        <div class="row mb-3 align-items-center">
+                                            <label class="col-md-2 col-form-label text-white">
+                                                <span class="text-danger">*</span> Estado Civil
+                                            </label>
+                                            <div class="col-md-10">
+                                                <select class="form-select bg-dark text-white border-secondary">
+                                                    <option value="">Seleccione Estado</option>
+                                                    <option>Soltero</option>
+                                                    <option>Casado</option>
+                                                    <option>Divorciado</option>
+                                                    <option>Viudo</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <!-- OCUPACIÓN -->
+                                        <div class="row mb-3 align-items-center">
+                                            <label class="col-md-2 col-form-label text-white">
+                                                <span class="text-danger">*</span> Ocupación
+                                            </label>
+                                            <div class="col-md-10">
+                                                <input type="text"
+                                                    class="form-control bg-dark text-white border-secondary"
+                                                    placeholder="Ejemplo Contador">
+                                            </div>
+                                        </div>
+
+                                        <!-- PROVINCIA -->
+                                        <div class="row mb-3 align-items-center">
+                                            <label class="col-md-2 col-form-label text-white">
+                                                <span class="text-danger">*</span> Provincia
+                                            </label>
+                                            <div class="col-md-10">
+                                                <select class="form-select bg-dark text-white border-secondary">
+                                                    <option value="">Seleccione provincia</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <!-- CANTÓN -->
+                                        <div class="row mb-3 align-items-center">
+                                            <label class="col-md-2 col-form-label text-white">
+                                                <span class="text-danger">*</span> Cantón
+                                            </label>
+                                            <div class="col-md-10">
+                                                <select class="form-select bg-dark text-white border-secondary">
+                                                    <option value="">Seleccione cantón</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <!-- CIUDAD -->
+                                        <div class="row mb-3 align-items-center">
+                                            <label class="col-md-2 col-form-label text-white">
+                                                Ciudad
+                                            </label>
+                                            <div class="col-md-10">
+                                                <input type="text"
+                                                    class="form-control bg-dark text-white border-secondary"
+                                                    placeholder="Ejemplo Bahía de Caráquez">
+                                            </div>
+                                        </div>
+
+                                    </form>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
-               
+
             </div>
         </div>
     </div>
 
-     <div class="modal fade" id="documentopdf" tabindex="-1" aria-labelledby="ContribuyenteModalLabel" aria-hidden="true"
+
+    <div class="modal fade" id="documentopdf" tabindex="-1" aria-labelledby="ContribuyenteModalLabel" aria-hidden="true"
      data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">

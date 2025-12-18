@@ -13,7 +13,7 @@
         .titulo {
             text-align: center;
             font-weight: bold;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             text-transform: uppercase;
         }
         .fecha {
@@ -82,20 +82,20 @@
             </table>
     </header>
     <footer>
-    <table width="112.5%" class="ltable">
-        <tr>
-            <td style="border:0;" align="left">
-                <img src="fonfopiecoa.png" width="800px" height="120px">
-            </td>
-        </tr>
-    </table>
-</footer>
-
-
-
+        <table width="112.5%" class="ltable">
+            <tr>
+                <td style="border:0;" align="left">
+                    <img src="fonfopiecoa.png" width="800px" height="120px">
+                </td>
+            </tr>
+        </table>
+    </footer>
 
     <div class="titulo" style="font-size:13px !important">
-        REQUERIMIENTO DE PAGO VOLUNTARIO
+        <br>
+        <p style="margin: 0; line-height: 0.8;">ORGANO EJECUTOR DE COACTIVA DEL GAD MUNICIPAL DEL CANTÓN<br>
+        SAN VICENTE</p>
+        <p style="margin: 0; line-height: 1.2;">REQUERIMIENTO DE PAGO VOLUNTARIO</p>
     </div>
 
     <div class="fecha">
