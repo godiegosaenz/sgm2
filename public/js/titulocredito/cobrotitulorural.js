@@ -426,7 +426,7 @@ function buscarTitulos(clave,cedula){
                 clase = "fila-azul";
             }else if (item.exoneracion=='Discapacidad'){
                 clase = "fila-azul";
-            }
+            } 
             $('#tbodyRuralDetalle').append(`<tr >
                     <td class="${clase}" style="width:5%; text-align:center; vertical-align:middle">
                         <input type="checkbox" name="predio_valor" id="predio_valor" value="${item.total_pagar}" data-num-titulo="${item.num_titulo}"  data-orden="${i+1}" data-valor-cobrado="${item.total_pagar}" data-valor-interes="${item.intereses} "data-valor-descuento="${descu}" data-valor-recarga="${recar}" >                
@@ -543,6 +543,9 @@ function actualizarTotalGeneral() {
     numTitulosSeleccionados = [];
     ordenTitulosSeleccionados=[]
     valorCobrado=[]
+    valorInteres=[]
+    valorDescuento=[]
+    valorRecarga=[]
     // Iterar sobre cada checkbox marcado y sumar el valor correspondiente
     $('#tbodyRuralDetalle input[type="checkbox"]:checked').each(function() {
         totalGeneral += parseFloat($(this).val());
