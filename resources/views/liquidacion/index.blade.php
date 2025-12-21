@@ -54,6 +54,10 @@
     background-color: #4da3ff !important;
 }
 
+.p-4 {
+    padding: 0.5rem !important;
+}
+
 </style>
 
 
@@ -237,7 +241,7 @@
                             <button class="nav-link active"
                                     data-bs-toggle="tab"
                                     data-bs-target="#tab-actual"
-                                    type="button">
+                                    type="button" onclick="ejecuta()">
                                 <i class="bi bi-list-check text-success"></i> Listado
                             </button>
                         </li>
@@ -342,130 +346,97 @@
 
                         <!-- TAB 2: VACÍO -->
                         <div class="tab-pane fade" id="tab-vacio">
-                            <div class="text-center text-muted p-4">
-                                <i class="bi bi-info-circle"></i><br>
+                            <div class="text-center text-muted p-4" style="paddin: 0.5em !important;">
                                 
-                                <div class="p-4" style="background:#2f363d;border-radius:8px;">
+                                <div class="p-4" style="border-radius:8px;">
 
-                                    <form id="formPersona">
+                                    <form id="formNotifica" method="POST" action="" enctype="multipart/form-data">
 
                                         <!-- CÉDULA -->
                                         <div class="row mb-3 align-items-center">
-                                            <label class="col-md-2 col-form-label text-white">
-                                                <span class="text-danger">*</span> Cédula
+                                            <label class="col-md-2 col-form-label " style="text-align: right;">
+                                                Cédula<span class="text-danger"> *</span> 
                                             </label>
-                                            <div class="col-md-7">
+                                            <div class="col-md-10">
                                                 <input type="text"
-                                                    class="form-control bg-dark text-white border-secondary"
-                                                    placeholder="Ejemplo 1314801349">
+                                                    class="form-control "
+                                                    placeholder="Ejemplo 1314801349" name="ci_ruc_notifica"
+                                                    id="ci_ruc_notifica" readonly>
                                             </div>
-                                            <div class="col-md-3">
-                                                <button type="button" class="btn btn-primary w-100">
-                                                    Verificar
-                                                </button>
-                                            </div>
+                                           
                                         </div>
 
                                         <!-- NOMBRES -->
                                         <div class="row mb-3 align-items-center">
-                                            <label class="col-md-2 col-form-label text-white">
-                                                <span class="text-danger">*</span> Nombres
+                                            <label class="col-md-2 col-form-label " style="text-align: right;">
+                                                Nombres<span class="text-danger"> *</span> 
                                             </label>
                                             <div class="col-md-10">
                                                 <input type="text"
-                                                    class="form-control bg-dark text-white border-secondary"
-                                                    placeholder="Ejemplo Juan">
+                                                    class="form-control "
+                                                    placeholder="Ejemplo Juan" name="nombres_notifica"
+                                                    id="nombres_notifica" readonly>
                                             </div>
                                         </div>
 
-                                        <!-- APELLIDOS -->
+                                        <!-- ARCHIVO -->
                                         <div class="row mb-3 align-items-center">
-                                            <label class="col-md-2 col-form-label text-white">
-                                                <span class="text-danger">*</span> Apellidos
+                                            <label class="col-md-2 col-form-label "  style="text-align: right;">
+                                                Archivo<span class="text-danger"> *</span> 
+                                            </label>
+                                            <div class="col-md-10">
+                                                <input type="file" multiple
+                                                    class="form-control "
+                                                    name="archivo_notifica[]"
+                                                    id="archivo_notifica">
+                                            </div>
+                                        </div>
+
+                                         <!-- CORREO -->
+                                        <div class="row mb-3 align-items-center">
+                                            <label class="col-md-2 col-form-label " style="text-align: right;">
+                                                Correo<span class="text-danger"> </span> 
                                             </label>
                                             <div class="col-md-10">
                                                 <input type="text"
-                                                    class="form-control bg-dark text-white border-secondary"
-                                                    placeholder="Ejemplo Solorzano">
+                                                    class="form-control "
+                                                    name="correos_notifica"
+                                                    id="correos_notifica">
+
+                                                <input type="hidden" name="lugar_not" id="lugar_not">
                                             </div>
                                         </div>
 
-                                        <!-- FECHA NACIMIENTO -->
                                         <div class="row mb-3 align-items-center">
-                                            <label class="col-md-2 col-form-label text-white">
-                                                <span class="text-danger">*</span> Fecha Nacimiento
-                                            </label>
-                                            <div class="col-md-10">
-                                                <input type="date"
-                                                    class="form-control bg-dark text-white border-secondary">
-                                            </div>
-                                        </div>
-
-                                        <!-- ESTADO CIVIL -->
-                                        <div class="row mb-3 align-items-center">
-                                            <label class="col-md-2 col-form-label text-white">
-                                                <span class="text-danger">*</span> Estado Civil
-                                            </label>
-                                            <div class="col-md-10">
-                                                <select class="form-select bg-dark text-white border-secondary">
-                                                    <option value="">Seleccione Estado</option>
-                                                    <option>Soltero</option>
-                                                    <option>Casado</option>
-                                                    <option>Divorciado</option>
-                                                    <option>Viudo</option>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <!-- OCUPACIÓN -->
-                                        <div class="row mb-3 align-items-center">
-                                            <label class="col-md-2 col-form-label text-white">
-                                                <span class="text-danger">*</span> Ocupación
-                                            </label>
-                                            <div class="col-md-10">
-                                                <input type="text"
-                                                    class="form-control bg-dark text-white border-secondary"
-                                                    placeholder="Ejemplo Contador">
-                                            </div>
-                                        </div>
-
-                                        <!-- PROVINCIA -->
-                                        <div class="row mb-3 align-items-center">
-                                            <label class="col-md-2 col-form-label text-white">
-                                                <span class="text-danger">*</span> Provincia
-                                            </label>
-                                            <div class="col-md-10">
-                                                <select class="form-select bg-dark text-white border-secondary">
-                                                    <option value="">Seleccione provincia</option>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <!-- CANTÓN -->
-                                        <div class="row mb-3 align-items-center">
-                                            <label class="col-md-2 col-form-label text-white">
-                                                <span class="text-danger">*</span> Cantón
-                                            </label>
-                                            <div class="col-md-10">
-                                                <select class="form-select bg-dark text-white border-secondary">
-                                                    <option value="">Seleccione cantón</option>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <!-- CIUDAD -->
-                                        <div class="row mb-3 align-items-center">
-                                            <label class="col-md-2 col-form-label text-white">
-                                                Ciudad
-                                            </label>
-                                            <div class="col-md-10">
-                                                <input type="text"
-                                                    class="form-control bg-dark text-white border-secondary"
-                                                    placeholder="Ejemplo Bahía de Caráquez">
+                                            
+                                            <div class="col-md-12">
+                                                <center>    
+                                                    <button type="submit" class="btn bt-sm btn-primary" id="btn_enviar">Enviar</button>
+                                                    <button type="button" onclick="cancelarNotifica()" class="btn bt-sm btn-danger"  id="btn_cancelar">Cancelar</button>
+                                                </center>
                                             </div>
                                         </div>
 
                                     </form>
+
+                                    <div class="col-md-12 mt-3">
+                                        <table class="table table-bordered table-hover"
+                                            id="tableNotifica"
+                                            style="width:100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Predio</th>
+                                                    <th>Responsable</th>
+                                                    <th>Fecha</th>
+                                                    <th>Correo(s)</th>
+                                                    <th>Archivo</th>
+                                                   
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tbodyNotifica"></tbody>
+                                        </table>
+                                    </div>
 
                                 </div>
 

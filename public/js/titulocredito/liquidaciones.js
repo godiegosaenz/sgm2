@@ -445,7 +445,7 @@ function buscaContribuyente(){
     });
    
 }
-
+globalThis.CorreosContr=[""]
 function llenarData(data){
     
     $.each(data,function(i, item){
@@ -465,10 +465,10 @@ function llenarData(data){
             // La variable está definida
             correos=item.email
         }
- 
+        
         $('#tbodyRural').append(`<tr>
                 <td style="width:5%; text-align:center; vertical-align:middle">
-                    <button type="button" class="btn btn-success btn-sm" onclick="buscarTitulos('${cedula}', '${item.nombres}')">
+                    <button type="button" class="btn btn-success btn-sm" onclick="buscarTitulos('${cedula}', '${item.nombres}','${correos}')">
                         <i class="fa fa-money"></i>
                     </button>                    
                 </td>
@@ -494,26 +494,31 @@ function llenarData(data){
 
 globalThis.AplicaRemiGlobal=0
 globalThis.CedulaGlobal=""
-function buscarTitulos(cedula, nombres){
+function buscarTitulos(cedula, nombres, correos){
     CedulaGlobal=cedula
     $('#total_deuda').html('')
     $('#total_seleccionado').html('')
     $('#exon_contr').html('')
+
+    $('#correos_notifica').val('')
+    $('#archivo_notifica').val('')
+    $('#nombres_notifica').val('')
+    $('#ci_ruc_notifica').val('')
     
     AplicaRemiGlobal=0
     $('#selectAll').prop('checked',false)
 
-    let ruta_busqueda='buscar-liquidacion-rurales/'
+    let ruta_busqueda='buscar-liquidacion-rurales/'+cedula+'/'
     let ubicacion=$('#lugar').val()
     if(ubicacion==1){
-        ruta_busqueda='buscar-liquidacion-urbanos/'
+        ruta_busqueda='buscar-liquidacion-urbanos/'+cedula+'/'
     }
    
     $("#tbodyRuralDetalle").html('');
     $('#tbodyRuralDetalle').empty(); 
     var num_col = $("#tableDetalleRural thead tr th").length;
     vistacargando("m", "Espere por favor")
-    $.get(ruta_busqueda+''+cedula, function(data){
+    $.get(ruta_busqueda, function(data){
         console.log(data)
        
         vistacargando("")
@@ -575,7 +580,9 @@ function buscarTitulos(cedula, nombres){
                 
             </tr>`);
         })
-
+        const firstTab = document.querySelector('#tab-actual-btn');
+        //const tab = new bootstrap.Tab(firstTab);
+        //tab.show();
         $('#modalContri').modal('show')
         $('#total_deuda').html(data.total_valor);
         let tamanio=data.resultado.length
@@ -584,14 +591,136 @@ function buscarTitulos(cedula, nombres){
         $('#direccion_contr').html(data.resultado[tamanio-1].direcc_cont)
         $('#clave_contr').html(data.resultado[tamanio-1].clave)
 
+        $('#nombres_notifica').val(nombres)
+        $('#ci_ruc_notifica').val(cedula)
+        $('#correos_notifica').val(correos)
        
+        const lugarTexto = (ubicacion == 1) ? 'Urbano' : 'Rural';
+        $("#lugar_not").val(lugarTexto)
 
+
+        llenarTablaNotificacion(data.notificaciones)
+        ejecuta()
     }).fail(function(){
         vistacargando("")
         alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
         $("#tbodyRuralDetalle").html('');
 		$("#tbodyRuralDetalle").html(`<tr><td colspan="${num_col}" style="text-align:center">Se produjo un error, por favor intentelo más tarde</td></tr>`);
     });
+}
+
+function ejecuta(){
+   $('#modalContri button[data-bs-target="#tab-actual"]').tab('show');
+}
+
+function llenarTablaNotificacion(data){
+    $("#tbodyNotifica").html('');
+    $('#tbodyNotifica').empty(); 
+    var num_col = $("#tableNotifica thead tr th").length;
+    if(data.length==0){
+        
+        $("#tbodyNotifica").html('');
+        $("#tbodyNotifica").append(`<tr><td colspan="${num_col}" style="text-align:center">No existen registros</td></tr>`);
+        return
+    }
+    $.each(data,function(i, item){
+
+        let archivos = [];
+
+        if (item.archivo) {
+            try {
+                // decodifica doblemente si es string anidado
+                let parsed = JSON.parse(item.archivo);
+                if (typeof parsed === 'string') {
+                    archivos = JSON.parse(parsed);
+                } else {
+                    archivos = parsed;
+                }
+            } catch (e) {
+                archivos = [];
+            }
+        }
+        let id_notifica = item.id
+        // construir la lista de archivos
+        let listaArchivos = '';
+        if (archivos.length > 0) {
+            listaArchivos = '<ul>';
+            $.each(archivos, function (i2, archivo) {
+                
+                let url = 'notificacion/' + id_notifica + '/' + i2;
+                listaArchivos += `
+                    <li>
+                        <a href="${url}" target="_blank" >
+                            ${archivo.nombre}
+                        </a>
+                    </li>
+                `;
+
+               
+            });
+            listaArchivos += '</ul>';
+        } else {
+            listaArchivos = '<p><i>No hay archivos adjuntos</i></p>';
+        }
+
+        let correos = [];
+
+        if (item.correo) {
+            try {
+                // decodifica doblemente si es string anidado
+                let parsed = JSON.parse(item.correo);
+                if (typeof parsed === 'string') {
+                    correos = JSON.parse(parsed);
+                } else {
+                    correos = parsed;
+                }
+            } catch (e) {
+                correos = [];
+            }
+        }
+        
+        // construir la lista de archivos
+        let listaCorreos = '';
+        if (archivos.length > 0) {
+            listaCorreos = '<ul>';
+            $.each(correos, function (i3, correo) {
+                
+                
+                listaCorreos += `
+                    <li>                      
+                        ${correo}                      
+                    </li>
+                `;
+
+               
+            });
+            listaCorreos += '</ul>';
+        } else {
+            listaCorreos = '<p><i></i></p>';
+        }
+
+        $('#tbodyNotifica').append(`<tr>
+                <td style="width:5%; text-align:center; vertical-align:middle">
+                    ${i+1}               
+                </td>
+                <td style="width:10%; text-align:center; vertical-align:middle">
+                    ${item.lugar}               
+                </td>
+                <td style="width:25%; text-align:center; vertical-align:middle">
+                    ${item.nombre_usuario}               
+                </td>
+                <td style="width:10%; text-align:center; vertical-align:middle">
+                    ${item.created_at}                        
+                </td>
+                <td style="width:25%; text-align:center; vertical-align:middle">
+                    ${listaCorreos}                     
+                </td>
+                <td style="width:30%; text-align:center; vertical-align:middle">
+                    ${listaArchivos}                       
+                </td>
+            
+        </tr>`);
+    })
 }
 
 $(document).on('change', '#selectAll', function() {
@@ -708,3 +837,84 @@ function generarTitulos(){
     });
 }
 
+function cancelarNotifica(){
+    //$('#correos_notifica').val('')
+    $('#archivo_notifica').val('')
+} 
+
+$("#formNotifica").submit(function(e){
+    e.preventDefault();
+    
+    //validamos los campos obligatorios
+    let cedula=$('#ci_ruc_notifica').val()
+    let archivo_notifica=$('#archivo_notifica').val()
+    let correo=$('#correos_notifica').val()
+   
+    if(archivo_notifica=="" || archivo_notifica==null){
+        alertNotificar("Seleccione el archivo","error")
+        return
+    } 
+     var FrmData = new FormData(this);
+    swal({
+        title: '¿Desea realizar la notificacion?',
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonClass: "btn-danger",
+        confirmButtonText: "Si, continuar",
+        cancelButtonText: "No, cancelar",
+        closeOnConfirm: false,
+        closeOnCancel: false
+    },
+    function(isConfirm) {
+        if (isConfirm) { 
+            $('#btn_enviar').prop('disabled',true)
+            $('#btn_cancelar').prop('disabled',true)
+            
+            vistacargando("m","Espere por favor")
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            //comprobamos si es registro o edicion
+            let tipo="POST"
+            let url_form="notifica-contribuyente"
+             //var FrmData=$("#formNotifica").serialize();
+           
+
+            $.ajax({
+                    
+                type: tipo,
+                url: url_form,
+                method: tipo,             
+                data: FrmData,      
+                contentType:false,
+                cache:false,
+                processData:false, 
+
+                success: function(data){
+                    $('#btn_enviar').prop('disabled',false)
+                    $('#btn_cancelar').prop('disabled',false)
+                    vistacargando("");                
+                    if(data.error==true){
+                        alertNotificar(data.mensaje,'error');
+                        return;                      
+                    }
+                
+                    alertNotificar("Notificacion creada exitosamente","success");
+                    llenarTablaNotificacion(data.resultado)
+                    cancelarNotifica()               
+                }, error:function (data) {
+                    console.log(data)
+
+                    vistacargando("");
+                    alertNotificar('Ocurrió un error','error');
+                    $('#btn_enviar').prop('disabled',false)
+                    $('#btn_cancelar').prop('disabled',false)
+                }
+            });
+         }
+        sweetAlert.close();   // ocultamos la ventana de pregunta
+    });
+})

@@ -6,7 +6,11 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\TituloRural;
+use App\Models\NotificacionCoactiva;
 use DB;
+use Storage;
+use Mail;
+use Illuminate\Support\Str;
 class LiquidacionesController extends Controller
 {
     public function index()
@@ -70,7 +74,7 @@ class LiquidacionesController extends Controller
         } 
     }
 
-    public function consultarTitulos($cedula){
+    public function consultarTitulos($cedula, $notifica=1){
         try {
             $prediosRurales=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
              ->where(function ($query) use($cedula){
@@ -243,8 +247,22 @@ class LiquidacionesController extends Controller
                 ['num_titulo', 'asc'],
             ])
             ->values();
+           
+           if(!is_null($notifica)){
+                $buscarNotificacion=$this->notificacionContribuyente($cedula,'R', $resultado[0]->nombre_per);
+                if($buscarNotificacion["error"]==true){
+                    return ["mensaje"=>$buscarNotificacion["mensaje"], "error"=>true];
+                }
 
-            // dd("s"); 
+                return ["resultado"=>$resultado, 
+                    "total_valor"=>number_format($total_valor,2),
+                    "exoneracion_3era_edad"=>$exoneracion_3era_edad,
+                    "exoneracion_discapacidad"=>$exoneracion_discapacidad,
+                    "error"=>false,
+                    "aplica_remision"=>$aplica_remision,
+                    "notificaciones"=>$buscarNotificacion["resultado"]
+                ];
+            }
 
             return ["resultado"=>$resultado, 
                     "total_valor"=>number_format($total_valor,2),
@@ -264,7 +282,7 @@ class LiquidacionesController extends Controller
         try{
             $tipo_agrupado="";
             if($lugar==1){
-                $consulta=$this->consultarTitulosUrb($cedula);
+                $consulta=$this->consultarTitulosUrb($cedula, null);
                 if($consulta["error"]==true){
                     return ["mensaje"=>$consulta["mensaje"], "error"=>true];
                 }               
@@ -280,7 +298,7 @@ class LiquidacionesController extends Controller
                     }
                 } 
             }else{
-                $consulta=$this->consultarTitulos($cedula);
+                $consulta=$this->consultarTitulos($cedula, null);
                 if($consulta["error"]==true){
                     return ["mensaje"=>$consulta["mensaje"], "error"=>true];
                 }
@@ -332,7 +350,7 @@ class LiquidacionesController extends Controller
             $nombre_persona="";
             $direcc_cont="";
             if($lugar==1){
-                $consulta=$this->consultarTitulosUrb($cedula);
+                $consulta=$this->consultarTitulosUrb($cedula, null);
                 if($consulta["error"]==true){
                     return ["mensaje"=>$consulta["mensaje"], "error"=>true];
                 }               
@@ -354,7 +372,7 @@ class LiquidacionesController extends Controller
                     }
                 } 
             }else{
-                $consulta=$this->consultarTitulos($cedula);
+                $consulta=$this->consultarTitulos($cedula, null);
                 if($consulta["error"]==true){
                     return ["mensaje"=>$consulta["mensaje"], "error"=>true];
                 }
@@ -470,7 +488,7 @@ class LiquidacionesController extends Controller
         } 
     }
 
-     public function consultarTitulosUrb($cedula){
+    public function consultarTitulosUrb($cedula, $notifica=1){
         try {
             $predios_contribuyente= DB::connection('pgsql')->table('sgm_app.cat_ente as e')
             ->join('sgm_app.cat_predio_propietario as pp', 'pp.ente', '=', 'e.id')
@@ -618,7 +636,21 @@ class LiquidacionesController extends Controller
                 $total_valor=$total_valor+$data->total_pagar;
             }
 
-        //    dd($liquidacionUrbana);
+            if(!is_null($notifica)){
+                $buscarNotificacion=$this->notificacionContribuyente($cedula,'U', null);
+                if($buscarNotificacion["error"]==true){
+                    return ["mensaje"=>$buscarNotificacion["mensaje"], "error"=>true];
+                }
+
+                return ["resultado"=>$liquidacionUrbana, 
+                    "total_valor"=>number_format($total_valor,2),
+                    "exoneracion_3era_edad"=>0,
+                    "exoneracion_discapacidad"=>0,
+                    "error"=>false,
+                    "notificaciones"=>$buscarNotificacion["resultado"]
+                ];
+            }
+      
             return ["resultado"=>$liquidacionUrbana, 
                     "total_valor"=>number_format($total_valor,2),
                     "exoneracion_3era_edad"=>0,
@@ -626,10 +658,188 @@ class LiquidacionesController extends Controller
                     "error"=>false,
                     "aplica_remision"=>0
             ];
+
         } catch (\Exception $e) {
              //\Log::error($e);
             return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
 
         }
+    }
+
+    private function notificacionContribuyente($cedula, $lugar, $persona){
+        try{
+            if($lugar=='U'){
+                $notificacion = DB::connection('pgsql')->table('sgm_coactiva.notificacion as n')
+                ->Join('sgm_app.cat_ente as e', 'e.ci_ruc', '=', 'n.cedula_ruc')
+                ->select(DB::raw("CONCAT(e.apellidos, ' ', e.nombres) AS nombres"),'e.ci_ruc','n.created_at',
+                'n.correo','n.archivo','n.idusuario','n.lugar','n.id')
+                ->where('n.estado', 'A')
+                ->where('n.cedula_ruc', $cedula)
+                ->orderBy('n.created_at','desc')
+                ->get();
+                foreach($notificacion as $key=> $data){
+                    $usuarioRegistra=DB::connection('mysql')->table('personas as p')
+                    ->where('p.id',$data->idusuario)
+                    ->select('p.nombres','p.apellidos','p.cedula')
+                    ->first();
+                    if(is_null($usuarioRegistra)){
+                        $notificacion[$key]->nombre_usuario=$data->usuario;
+                    }else{
+                        $notificacion[$key]->nombre_usuario=$usuarioRegistra->nombres." ".$usuarioRegistra->apellidos;
+                        $notificacion[$key]->cedula_usuario=$usuarioRegistra->cedula;
+                    }
+                }
+            }else{
+               
+                $notificacion = DB::connection('pgsql')->table('sgm_coactiva.notificacion as n')
+                ->select('n.created_at','n.correo','n.archivo','n.idusuario','n.id','n.lugar')
+                ->where('n.estado', 'A')
+                ->where('n.cedula_ruc', $cedula)
+                ->orderBy('n.created_at','desc')
+                ->get();
+                foreach($notificacion as $key=> $data){
+                    $usuarioRegistra=DB::connection('mysql')->table('personas as p')
+                    ->where('p.id',$data->idusuario)
+                    ->select('p.nombres','p.apellidos','p.cedula')
+                    ->first();
+                    if(is_null($usuarioRegistra)){
+                        $notificacion[$key]->nombre_usuario=$data->usuario;
+                    }else{
+                        $notificacion[$key]->nombre_usuario=$usuarioRegistra->nombres." ".$usuarioRegistra->apellidos;
+                        $notificacion[$key]->cedula_usuario=$usuarioRegistra->cedula;
+                    }
+                    $notificacion[$key]->nombres=$persona;
+                    $notificacion[$key]->ci_ruc=$cedula;
+                }
+                return ["resultado"=>$notificacion,"error"=>false];
+             }
+           
+            return ["resultado"=>$notificacion,
+                    "error"=>false
+            ];
+
+        } catch (\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+        }
+    }
+
+    public function notificaContribuyente(Request $request){
+        try{
+          
+            $archivosInfo = [];
+            $archivosAdjuntos=[];
+            if ($request->hasFile('archivo_notifica')) {
+                foreach ($request->file('archivo_notifica') as $archivo) {
+                  
+                    $nombreOriginal = $archivo->getClientOriginalName();
+                    $nombreSinExtension = pathinfo($nombreOriginal, PATHINFO_FILENAME);
+                    
+                    $extension = pathinfo($archivo->getClientOriginalName(), PATHINFO_EXTENSION);
+                    $nombreLimpio="Doc".time().".".$extension;
+                   
+                    Storage::disk('disksDocumentoCoactiva')->putFileAs('', $archivo, $nombreLimpio);
+
+                    $archivosInfo[] = [
+                        'nombre' => $nombreLimpio
+                    ];
+
+                    $archivosAdjuntos[] = [
+                        'ruta'   => Storage::disk('disksDocumentoCoactiva')->path($nombreLimpio),
+                        'nombre' => $nombreLimpio
+                    ];
+                }
+            }
+
+            $correos = array_filter(
+                array_map('trim', explode(';', $request->correos_notifica))
+            );
+            
+            $envioExitoso = false; // 
+            $resultadoCorreos = [];
+            foreach ($correos as $correo) {
+
+                try {
+
+                    Mail::send('email_documentos.notificacion_liquidacion', [], function ($message) use ($correo, $archivosAdjuntos) {
+
+                        $message->to($correo)
+                                ->subject('Notificación de deuda pendiente de pago');
+
+                        foreach ($archivosAdjuntos as $adjunto) {
+                            $message->attach($adjunto['ruta'], [
+                                'as' => $adjunto['nombre']
+                            ]);
+                        }
+                    });
+
+                    $envioExitoso = true;
+                    /*$resultadoCorreos[] = [
+                       $correo
+                        
+                    ];*/
+                    array_push($resultadoCorreos, $correo);
+                   
+                } catch (\Exception $e) {
+                    //dd($e);
+                     /*$resultadoCorreos[] =[
+                        'correo'   => $correo,
+                        'enviado'  => false,
+                        'mensaje'  => $e->getMessage()
+                    ];*/
+                }
+            }
+    
+           
+            $guardaNotificacion=new NotificacionCoactiva();
+            $guardaNotificacion->cedula_ruc=$request->ci_ruc_notifica;
+            $guardaNotificacion->correo = json_encode($resultadoCorreos);
+            $guardaNotificacion->archivo=json_encode($archivosInfo);
+            $guardaNotificacion->estado='A';
+            $guardaNotificacion->envia_correo=$envioExitoso ? 'S' : 'N';
+            $guardaNotificacion->idusuario=auth()->user()->idpersona;
+            $guardaNotificacion->lugar=$request->lugar_not;
+            $guardaNotificacion->save();
+
+            $notifica=$this->notificacionContribuyente($guardaNotificacion->cedula_ruc, $guardaNotificacion->lugar,$request->nombres_notifica);
+            if($notifica["error"]!=true){
+                return ["resultado"=>$notifica["resultado"], "error"=>false];
+            }     
+            return ["mensaje"=>$notifica["mensaje"], "error"=>true];  
+
+        } catch (\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+        }
+    }
+
+    public function descargarArchivo($id, $archivoIndex){
+        $notifica = NotificacionCoactiva::find($id);
+       
+       
+        // Verificar que la actividad exista y tenga un archivo
+        if (!$notifica || !$notifica->archivo) {
+            return response()->json(['error' => 'Archivo no encontrado'], 404);
+        }
+
+        // Decodificar la lista de archivos de la actividad
+        $archivos = json_decode($notifica->archivo, true);
+
+        $archivo = $archivos[$archivoIndex];
+
+        // Construir ruta física completa en public/archivos
+        // $ruta = public_path('storage/archivos/' . $archivo['nombre']);
+        $ruta = storage_path('app/documentosCoactiva/' . $archivo['nombre']);
+        
+        // Verificar existencia del archivo
+        if (!file_exists($ruta)) {
+            return response()->json(['error' => 'Archivo no encontrado en el servidor'], 404);
+        }
+
+        // Generar nombre limpio para descarga
+        $nombreDescarga = Str::slug($archivo['nombre']);
+        // dd($nombreDescarga);
+        $nombreDescarga="";
+
+        // Descargar el archivo directamente desde public
+        return response()->download($ruta, $nombreDescarga);
     }
 }
