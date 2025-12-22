@@ -630,6 +630,7 @@ class LiquidacionesController extends Controller
             ->whereNotIN('estado_liquidacion',[1,3,4,5])
             ->orderby('clave_cat','desc')
             ->orderBy('anio', 'asc')
+            ->distinct('num_titulo','clave_cat','anio')
             ->get();
             $total_valor=0;
             foreach($liquidacionUrbana as $key=>$data){
