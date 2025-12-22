@@ -112,6 +112,33 @@
         padding: 2px 8px;
         border-radius: 5px;
         }
+        .cabecera {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1px;
+        }
+
+        .cabecera td {
+            vertical-align: middle;
+        }
+
+        .cabecera .logo {
+            width: 10%;
+            text-align: left;
+        }
+
+        .cabecera .encabezado {
+            width: 90%;
+            text-align: center;
+            font-size: 12px;
+        
+        }
+
+        .cabecera .subtitulo {
+            font-size: 10px;
+            font-weight: normal;
+            margin-top: 2px;
+        }
 
     </style>
 </head>
@@ -223,13 +250,81 @@
         </p>
         <p>
             <strong>En el evento de no proceder a la cancelación de lo adeudado se iniciará coactiva y en efecto se dictaran las medidas precautelares correspondientes, entre estas:</strong> Bloquear y retener fondos de cuentas corrientes y/o ahorros, prohibir la enagenación de los vehículos, bienes inmuebles que se hallaren inscritos a nombre que tuviere la/el coactivado que adeude al, <strong> GAD MUNICIPAL DEL CANTÓN SAN VICENTE.</strong> 
+        </p> 
+        <p>Atentamente,</p>
+        <table style="
+            border-collapse: collapse;
+            width: 55%;
+            margin-left: auto;
+        ">
+            <tr>
+                <td width=45% style="border:1px solid black; padding:2px; line-height:1;font: size 8px;">
+                    <b>Firma</b>
+                </td>
+                <td style="border:1px solid black; padding:2px; line-height:1;">
+                    &nbsp;
+                </td>
+            </tr>
+            <tr>
+                <td style="border:1px solid black; padding:2px; line-height:1;font: size 8px;">
+                    <b>Nombres y Apellidos</b>
+                </td>
+                <td style="border:1px solid black; padding:2px; line-height:1;">
+                    &nbsp;
+                </td>
+            </tr>
+            <tr>
+                <td style="border:1px solid black; padding:2px; line-height:1;font: size 8px;">
+                    <b>Cédula</b>
+                </td>
+                <td style="border:1px solid black; padding:2px; line-height:1;">
+                    &nbsp;
+                </td>
+            </tr>
+            <tr>
+                <td style="border:1px solid black; padding:2px; line-height:1;font: size 8px;">
+                    <b>Teléfono</b>
+                </td>
+                <td style="border:1px solid black; padding:2px; line-height:1;">
+                    &nbsp;
+                </td>
+            </tr>
+        </table>
+         <p style="margin: 0; line-height: 1.2;">
+            <strong>Ab. Jessica Karina Zambrano Pincay</strong>
         </p>
-
-        
+        <p style="margin: 0; line-height: 1.2;">
+            <strong>ANALISTA JURÍDICO Y COACTIVAS DEL GAD MUNICIPAL DEL CANTÓN SAN VICENTE</strong>
+        </p>
     </div>
+    
+    <table class="cabecera" style="font-family: Arial;font-size:12px !important">
+        <tr>
+            <td class="logo">
+                <img src="{{ asset('img/logo4.png') }}" alt="Logo" width="100">
+            </td>
+            <td class="encabezado">
+                <p style="font-size:16px !important"><b>GAD MUNICIPAL DEL CANTÓN SAN VICENTE<br> DIRECCION FINANCIERA TESORERIA
+                <br> SAN VICENTE - MANABI - ECUADOR </b></p>
+            </td>
+                <td class="logo">
+            </td>
+        </tr>
+    </table>
+    <div class="" style="font-family: Arial; font-size:11;">
+        <div class="">
+            <center>
+               
+              <h3 style="margin: 0; padding: 0;">
+                 Liquidación de predios {{ $ubicacion == 1 ? 'urbanos' : 'rurales' }}
+            </h3>
 
-    <div class="liquidaciones">
-
+            <h3 style="margin: 4px 0 0 0; padding: 0;">
+                Fecha liquidación {{date('d/m/Y')}}
+            </h3>
+ 
+            </center>
+        </div>
     </div>
     <div style="width:100%;margin-top:10px;margin-bottom:5px;" class="liquidaciones">
       
@@ -389,57 +484,7 @@
            
     </div>
 
-    <div class="firma">
-        <p>Atentamente,</p>
-        <table style="
-            border-collapse: collapse;
-            width: 55%;
-            margin-left: auto;
-        ">
-            <tr>
-                <td width=45% style="border:1px solid black; padding:2px; line-height:1;font: size 8px;">
-                    <b>Firma</b>
-                </td>
-                <td style="border:1px solid black; padding:2px; line-height:1;">
-                    &nbsp;
-                </td>
-            </tr>
-            <tr>
-                <td style="border:1px solid black; padding:2px; line-height:1;font: size 8px;">
-                    <b>Nombres y Apellidos</b>
-                </td>
-                <td style="border:1px solid black; padding:2px; line-height:1;">
-                    &nbsp;
-                </td>
-            </tr>
-            <tr>
-                <td style="border:1px solid black; padding:2px; line-height:1;font: size 8px;">
-                    <b>Cédula</b>
-                </td>
-                <td style="border:1px solid black; padding:2px; line-height:1;">
-                    &nbsp;
-                </td>
-            </tr>
-            <tr>
-                <td style="border:1px solid black; padding:2px; line-height:1;font: size 8px;">
-                    <b>Teléfono</b>
-                </td>
-                <td style="border:1px solid black; padding:2px; line-height:1;">
-                    &nbsp;
-                </td>
-            </tr>
-        </table>
-         <br><br>
-    
    
-        <p style="margin: 0; line-height: 1.2;">
-            <strong>Ab. Jessica Karina Zambrano Pincay</strong>
-        </p>
-        <p style="margin: 0; line-height: 1.2;">
-            <strong>ANALISTA JURÍDICO Y COACTIVAS DEL GAD MUNICIPAL DEL CANTÓN SAN VICENTE</strong>
-        </p>
-    </div>
-
 <!-- 
     <div class="firma." style="margin-botton:50px !important">
        
