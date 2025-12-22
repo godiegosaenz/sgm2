@@ -122,10 +122,10 @@ class TransitoImpuestoController extends Controller
             if($cadena==null){
                 $cadena=date('Y');
             }
-            if($request->solo_duplicado!="no"){
+            if($request->solo_dupli!="no"){
                 $cadena=null;
             }
-           
+            
             $qr_Rentas = DB::connection('mysql')
                         ->table('area as a')
                         ->leftJoin('jefe_area as ja', 'ja.id_area', '=', 'a.id_area')
@@ -265,7 +265,9 @@ class TransitoImpuestoController extends Controller
 
     public function comboMarca(){
         try{
-            $marcas = TransitoMarca::where('estado','A')->get();
+            $marcas = TransitoMarca::where('estado','A')
+            ->orderBy('descripcion','asc')
+            ->get();
             return["error"=>false, "resultado"=>$marcas];
 
         } catch (Exception $e) {
@@ -558,7 +560,7 @@ class TransitoImpuestoController extends Controller
         if($r->ajax()){
             $listaimpuesto = TransitoImpuesto::with('cliente')->orderBy('id','desc')
             ->whereIN('estado',[1,3])//generado, pagado
-            ->where('created_at', '>=', now()->subDays(7))
+            // ->where('created_at', '>=', now()->subDays(7))
             ->get();
             return Datatables($listaimpuesto)
             ->addColumn('cc_ruc', function ($listaimpuesto) {
@@ -1190,8 +1192,8 @@ class TransitoImpuestoController extends Controller
 
     public function generar_firma_qr($nombre_firma,$nombre_img){
         $nombre_firma="DIEGO ANDRES BERMUDEZ SAENZ";
-        $nombre_img="01DIC";       
-        $fecha = "2025-12-01 11:33:33";
+        $nombre_img="02DIC-2";       
+        $fecha = "2025-12-02 09:44:55";
         $textoQR = "FIRMADO POR: $nombre_firma\nRAZON: \nLOCALIZACION: \nFECHA: $fecha \nVALIDAR CON: https://www.firmadigital.gob.ec \nFirmado digitalmente con FirmaEC 4.0.1 Windows 11 10.0";
 
         // $fecha = date('Y-m-d H:i:s');       

@@ -301,7 +301,12 @@
                                 <input type="number" class="form-control" id="ci_ruc" name="ci_ruc" onblur="capturaInfoPersona()" onkeyup="bloqueaInpust(this)">
                                 <div class="invalid-feedback" id="error-ci_ruc"></div>
                             </div>
-                           
+                            <div class="col-md-6">
+                                <label for="apellidos" class="form-label" id="label-apellidos">Apellidos <span
+                                        class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="apellidos" name="apellidos" autocomplete="of">
+                                <div class="invalid-feedback" id="error-apellidos"></div>
+                            </div>
                             <div class="col-md-6">
                                 <label for="nombres" class="form-label" id="label-nombres">Nombres <span
                                         class="text-danger">*</span></label>
@@ -309,12 +314,7 @@
                                 <input type="text" class="form-control" id="nombres" name="nombres" autocomplete="of">
                                 <div class="invalid-feedback" id="error-nombres"></div>
                             </div>
-                            <div class="col-md-6">
-                                <label for="apellidos" class="form-label" id="label-apellidos">Apellidos <span
-                                        class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="apellidos" name="apellidos" autocomplete="of">
-                                <div class="invalid-feedback" id="error-apellidos"></div>
-                            </div>
+                           
                             <div class="col-md-6">
                                 <label for="direccion" class="form-label">Dirección </label>
                                 <input type="text" class="form-control" id="direccion" name="direccion" autocomplete="of">
@@ -1002,7 +1002,7 @@
                         console.log(res)
                         //propietario.value = res.data.ci_ruc;
                         if (res.status == 200) {
-                            nombrescliente.value = res.data.nombres + ' ' + res.data.apellidos;
+                            nombrescliente.value = res.data.apellidos + ' ' + res.data.nombres;
                             correocliente.value = res.data.correo ?? 'S/N';
                             telefonocliente.value = res.data.telefono ?? 'S/N';
                             direccioncliente.value = res.data.direccion ?? 'S/N';
@@ -1225,6 +1225,7 @@
             const cliente_id_2 = document.getElementById('cliente_id_2').value;
             const year_declaracion = document.getElementById('year_declaracion').value;
             const last_year_declaracion = document.getElementById('last_year_declaracion').value;
+            const solo_dupli = document.getElementById('solo_duplicado').value;
             const btn = document.getElementById('btn-guardar');
             const spinner = btn.querySelector('.spinner-border');
             btn.disabled = true;
@@ -1256,7 +1257,8 @@
                 vehiculo_id_2: vehiculo_id_2,
                 cliente_id_2: cliente_id_2,
                 year_declaracion: year_declaracion,
-                last_year_declaracion: last_year_declaracion
+                last_year_declaracion: last_year_declaracion,
+                solo_dupli:solo_dupli
             })
                 .then(function (res) {
                     // limpiar errores
