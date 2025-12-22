@@ -90,7 +90,7 @@
                 </td>
                 <td class="encabezado">
                     <p style="font-size:16px !important"><b>GAD MUNICIPAL DEL CANTÓN SAN VICENTE<br> DIRECCION FINANCIERA TESORERIA
-                   <br> SAN VICENTE - MANABI - ECUADOR</b></p>
+                   <br> SAN VICENTE - MANABI - ECUADOR </b></p>
                 </td>
                  <td class="logo">
                 </td>

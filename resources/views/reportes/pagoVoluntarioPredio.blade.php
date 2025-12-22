@@ -23,6 +23,11 @@
         .contenido {
             text-align: justify;
         }
+
+        .liquidaciones {
+            text-align: justify;
+        }
+
         .firma {
             /* margin-top: 40px; */
             margin-bottom: 200px !important;
@@ -66,6 +71,47 @@
             height: 140px;
         }
 
+        table.blueTable {
+        /*border: 1px solid #1C6EA4;*/
+        background-color: #FFFFFF;
+        width: 100%;
+        text-align: left;
+        border-collapse: collapse;
+        }
+        table.blueTable td, table.blueTable th {
+        border: 1px solid #AAAAAA;
+        padding: 3px 2px;
+        }
+        table.blueTable tbody td {
+        font-size: 10px;
+        }
+        table.blueTable thead {
+        background: #BCDCF9;
+        border-bottom: 1px solid #444444;
+        border-top: 1px solid #444444;
+        }
+        table.blueTable thead th {
+        font-size: 12px;
+        font-weight: bold;
+        color: #262626;
+        border-left: 1px solid #586168;
+        }
+        table.blueTable thead th:first-child {
+        border-left: none;
+        }
+        table.blueTable tfoot td {
+        font-size: 14px;
+        }
+        table.blueTable tfoot .links {
+        text-align: right;
+        }
+        table.blueTable tfoot .links a{
+        display: inline-block;
+        background: #1C6EA4;
+        color: #FFFFFF;
+        padding: 2px 8px;
+        border-radius: 5px;
+        }
 
     </style>
 </head>
@@ -180,6 +226,167 @@
         </p>
 
         
+    </div>
+
+    <div class="liquidaciones">
+
+    </div>
+    <div style="width:100%;margin-top:10px;margin-bottom:5px;" class="liquidaciones">
+      
+        <table class="blueTable">
+            <thead>
+            <tr>
+            <th style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">No. Predio </th>
+            <th style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">Año</th>
+            <th style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">Cod. Predial</th>
+            <th style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">Contribuyente</th>
+            <th style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">Emisión</th>
+            <th style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">Descuento</th>
+            <th style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">Interes</th>
+            <th style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">Recargo</th>
+
+            <th style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">Total</th>
+            </tr>
+            </thead>
+            <tbody>
+                @isset($DatosLiquidacion)
+                    @php
+                        $total_final_emi=0;
+                        $total_final_des=0;
+                        $total_final_int=0;
+                        $total_final_rec=0;
+                        $total_final_deuda=0
+                    @endphp
+                    @foreach ($DatosLiquidacion as $key=> $data)
+            
+                        @php
+                            $total_emi=0;
+                            $total_des=0;
+                            $total_int=0;
+                            $total_rec=0;
+                            $total_final=0
+                        @endphp
+                        @foreach ($data as $item)
+                        @php
+                            $total=$item->subtotal_emi+$item->intereses+$item->recargo;
+                            $total=$total- $item->descuento;
+                            $anio=explode("-",$item->num_titulo);
+
+                            $num_matricula="";
+                            if($ubicacion==1){
+                                $num_matricula = $item->num_predio;
+                            }
+                            $nombre_persona=$item->nombre_per;
+                            if(is_null($item->nombre_per)){
+                                $nombre_persona=$item->nombre_contr1;
+                            }
+                        @endphp
+                        <tr>
+                            <td style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{$num_matricula}}</td>
+                            <td style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{$anio[0]}}</td>
+                            <td style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{$item->clave}}</td>
+                        
+                            <td style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{$nombre_persona}}</td>
+                            
+                            <td style="text-align:right;border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{$item->subtotal_emi}}</td>
+                            <td style="text-align:right;border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{ number_format($item->descuento ?? 0.00, 2) }}</td>
+                            <td style="text-align:right;border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{number_format($item->intereses ?? 0.00, 2) }}</td>
+                            <td style="text-align:right;border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{ number_format($item->recargo ?? 0.00, 2) }}</td>
+                            <td style="text-align:right;border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{number_format($total,2)}}    </td>
+                            </tr>
+                            @php
+                                $total_emi=$total_emi +$item->subtotal_emi;
+                                $total_des=$total_des +$item->descuento;
+                                $total_int=$total_int +$item->intereses;
+                                $total_rec=$total_rec +$item->recargo;
+
+                            @endphp
+                        @endforeach
+                        <tfoot>
+                            @php
+                                $total_final= $total_emi + $total_int + $total_rec;
+                                $total_final=$total_final -$total_des;
+
+                            @endphp
+                            <tr style="font-size:9px !important;line-height:5px" style="">
+
+                                <td  colspan="4"style="font-size:9px;border: 0px; border-color: #D3D3D3;  text-align: right;">
+                                    <b></b>
+                                </td>
+
+                                <td style="border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;; border-color:black;text-align: right; font-size:9px">
+                                    <b>$ {{number_format($total_emi,2)}}</b>                            
+                                </td>
+
+                                <td style="border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;; border-color:black;text-align: right; font-size:9px">
+                                    <b>$ {{number_format($total_des,2)}}</b>                            
+                                </td>
+
+                                <td style="border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;; border-color:black;text-align: right; font-size:9px">
+                                    <b>$ {{number_format($total_int,2)}}</b>                            
+                                </td>
+
+                                <td style="border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;; border-color:black; text-align: right; font-size:9px">
+                                    <b>$ {{number_format($total_rec,2)}}</b>                            
+                                </td>
+                            
+                            
+                                <td style="border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;; border-color:black;text-align: right; font-size:9px">
+                                    <b>$ {{number_format($total_final,2)}}</b>                            
+                                </td>
+                                
+                            
+                            </tr>
+                            <tr>
+                                <td colspan="9" style="height:9px;border:0;"></td>
+                            </tr>
+                             @php
+                                $total_final_emi=$total_final_emi + $total_emi;
+                                $total_final_des=$total_final_des+$total_des;
+                                $total_final_int=$total_final_int+$total_int;
+                                $total_final_rec=$total_final_rec+$total_rec;
+                                $total_final_deuda=$total_final_deuda+$total_final;
+
+                            @endphp
+                        </tfoot>
+                
+                    @endforeach
+                @endisset
+            </tbody>
+            <tfoot>
+                 <tr style="font-size:10px !important;line-height:5px" style="">
+
+                    <td  colspan="4"style="font-size:9px;border: 0px; border-color: #D3D3D3;  text-align: right;">
+                        <b>TOTALES</b>
+                    </td>
+
+                    <td style="border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;border-top:0px;text-align: right; font-size:9px">
+                        <b>$ {{number_format($total_final_emi,2)}}</b>                            
+                    </td>
+
+                    <td style="border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px; border-top:0px;text-align: right; font-size:9px">
+                        <b>$ {{number_format($total_final_des,2)}}</b>                            
+                    </td>
+
+                    <td style="border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;border-top:0pxk;text-align: right; font-size:9px">
+                        <b>$ {{number_format($total_final_int,2)}}</b>                            
+                    </td>
+
+                    <td style="border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px; border-top:0px; text-align: right; font-size:9px">
+                        <b>$ {{number_format($total_final_rec,2)}}</b>                            
+                    </td>
+                
+                
+                    <td style="border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;border-top:0px;text-align: right; font-size:9px">
+                        <b>$ {{number_format($total_final_deuda,2)}}</b>                            
+                    </td>
+                    
+                
+                </tr>
+
+            </tfoot>
+        </table>
+           
     </div>
 
     <div class="firma">
