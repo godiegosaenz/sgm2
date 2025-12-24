@@ -298,7 +298,7 @@
         </p>
     </div>
     
-    <table class="cabecera" style="font-family: Arial;font-size:12px !important">
+    <!-- <table class="cabecera" style="font-family: Arial;font-size:12px !important">
         <tr>
             <td class="logo">
                 <img src="{{ asset('img/logo4.png') }}" alt="Logo" width="100">
@@ -310,8 +310,8 @@
                 <td class="logo">
             </td>
         </tr>
-    </table>
-    <div class="" style="font-family: Arial; font-size:11;">
+    </table> -->
+    <div class="" style="font-family: Arial; font-size:11; margin-top: 20px;">
         <div class="">
             <center>
                
@@ -334,7 +334,7 @@
             <th style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">No. Predio </th>
             <th style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">Año</th>
             <th style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">Cod. Predial</th>
-            <th style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">Contribuyente</th>
+           
             <th style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">Emisión</th>
             <th style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">Descuento</th>
             <th style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">Interes</th>
@@ -381,8 +381,7 @@
                             <td style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{$anio[0]}}</td>
                             <td style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{$item->clave}}</td>
                         
-                            <td style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{$nombre_persona}}</td>
-                            
+                           
                             <td style="text-align:right;border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{$item->subtotal_emi}}</td>
                             <td style="text-align:right;border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{ number_format($item->descuento ?? 0.00, 2) }}</td>
                             <td style="text-align:right;border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{number_format($item->intereses ?? 0.00, 2) }}</td>
@@ -405,7 +404,7 @@
                             @endphp
                             <tr style="font-size:9px !important;line-height:5px" style="">
 
-                                <td  colspan="4"style="font-size:9px;border: 0px; border-color: #D3D3D3;  text-align: right;">
+                                <td  colspan="3"style="font-size:9px;border: 0px; border-color: #D3D3D3;  text-align: right;">
                                     <b></b>
                                 </td>
 
@@ -433,7 +432,7 @@
                             
                             </tr>
                             <tr>
-                                <td colspan="9" style="height:9px;border:0;"></td>
+                                <td colspan="8" style="height:9px;border:0;"></td>
                             </tr>
                              @php
                                 $total_final_emi=$total_final_emi + $total_emi;
@@ -451,7 +450,7 @@
             <tfoot>
                  <tr style="font-size:10px !important;line-height:5px" style="">
 
-                    <td  colspan="4"style="font-size:9px;border: 0px; border-color: #D3D3D3;  text-align: right;">
+                    <td  colspan="3"style="font-size:9px;border: 0px; border-color: #D3D3D3;  text-align: right;">
                         <b>TOTALES</b>
                     </td>
 
