@@ -1191,9 +1191,9 @@ class TransitoImpuestoController extends Controller
     }
 
     public function generar_firma_qr($nombre_firma,$nombre_img){
-        $nombre_firma="DIEGO ANDRES BERMUDEZ SAENZ";
-        $nombre_img="02DIC-2";       
-        $fecha = "2025-12-02 09:44:55";
+        $nombre_firma="ROBERT FABRICIO LARA LOOR";
+        $nombre_img="18SEP";       
+        $fecha = "2025-09-18 11:44:55";
         $textoQR = "FIRMADO POR: $nombre_firma\nRAZON: \nLOCALIZACION: \nFECHA: $fecha \nVALIDAR CON: https://www.firmadigital.gob.ec \nFirmado digitalmente con FirmaEC 4.0.1 Windows 11 10.0";
 
         // $fecha = date('Y-m-d H:i:s');       
