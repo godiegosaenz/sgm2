@@ -444,6 +444,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //predios-contribuyente
     Route::get('predio-contribuyente', [PrediosContribuyenteUrb::class, 'index'])->name('predios.urbanos');
     Route::post('predios/datatables', [PrediosContribuyenteUrb::class, 'datatable']);
+
+    Route::get('predio-rural-contribuyente', [PrediosContribuyenteUrb::class, 'rural'])->name('predios.rural');
+    Route::post('predios-rurales/datatables', [PrediosContribuyenteUrb::class, 'datatableRural']);
     
 });
 

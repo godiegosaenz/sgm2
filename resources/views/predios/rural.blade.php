@@ -6,7 +6,7 @@
 @endpush
 @section('content')
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h4 class="h2">Predios Urbanos</h4>
+        <h4 class="h2">Predios Rurales</h4>
         <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group me-2">
             
@@ -92,7 +92,7 @@
             serverSide: true,
             order: [],
             ajax: {
-                url: '{{ url("/predios/datatables") }}',
+                url: '{{ url("/predios-rurales/datatables") }}',
                 type: "post",
                 data: function (d) {
                     d._token = $("input[name=_token]").val();
@@ -107,7 +107,7 @@
                 {
                     extend: 'excelHtml5',
                     text: '📥 Descargar Excel',
-                    title: 'Listado_Predios_Urbano',
+                    title: 'Listado_Predios_Rural',
                     exportOptions: {
                         columns: [0, 1] // columnas a exportar
                     }

@@ -386,9 +386,16 @@
                         'active' => request()->routeIs('predios.urbanos')
                         
                     ],
+                    [
+                        'name' => 'Predios Rurales',
+                        'route' => 'predios.rural',
+                        'permission' => 'Predios Rurales',
+                        'active' => request()->routeIs('predios.rural')
+                        
+                    ],
                   
                 ],
-                'active' => request()->routeIs('predios.urbanos') 
+                'active' => request()->routeIs('predios.urbanos') || request()->routeIs('predios.rural')
             ],
             
             [

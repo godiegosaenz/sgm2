@@ -33,7 +33,6 @@ class PrediosContribuyenteUrb extends Controller
                     ]);
                 }
             ])
-            // ->limit(50)
             ->get();
 
             return Datatables($obtener)
@@ -53,6 +52,36 @@ class PrediosContribuyenteUrb extends Controller
                     ->implode('<br>'); // uno debajo del otro
             })
             ->rawColumns(['contribuyente']) // importante para <br>
+            ->make(true);
+        }
+    }
+
+    public function rural()
+    {
+        if(!Auth()->user()->hasPermissionTo('Predios Rurales'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
+        return view('predios.rural');
+    }
+
+    public function datatableRural(Request $r)
+    {
+        if($r->ajax()){
+            $obtener = DB::connection('sqlsrv')->table('TITULOS_PREDIO as pago')
+            ->select('Pre_CodigoCatastral',DB::raw("CONCAT(Titpr_RUC_CI,' - ',TitPr_Nombres) AS nombre"))
+            ->distinct()
+            ->get();
+
+            return Datatables($obtener)
+            ->addColumn('clave', function ($obtener) {
+                return $obtener->Pre_CodigoCatastral;
+            })
+           ->addColumn('contribuyente', function ($obtener) {
+
+                return $obtener->nombre;
+            })
+            // ->rawColumns(['contribuyente']) // importante para <br>
             ->make(true);
         }
     }
