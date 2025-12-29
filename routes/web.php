@@ -442,7 +442,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('buscar-predios-rurales/{cedula}', [LiquidacionesController::class, 'consultarPrediosRurales']);
 
     //predios-contribuyente
-    Route::get('predio-contribuyente', [PrediosContribuyenteUrb::class, 'index']);
+    Route::get('predio-contribuyente', [PrediosContribuyenteUrb::class, 'index'])->name('predios.urbanos');
     Route::post('predios/datatables', [PrediosContribuyenteUrb::class, 'datatable']);
     
 });

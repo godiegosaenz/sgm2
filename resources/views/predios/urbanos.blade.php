@@ -1,5 +1,5 @@
 @extends('layouts.appv2')
-@section('title', 'Lista de Impuesto de transito')
+@section('title', 'Lista de Predios')
 @push('styles')
 <link href="{{ asset('css/dataTables.bootstrap5.min.css') }}" rel="stylesheet">
 <link href="{{ asset('css/rowReorder.bootstrap5.min.css') }}" rel="stylesheet">

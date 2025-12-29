@@ -11,6 +11,10 @@ class PrediosContribuyenteUrb extends Controller
 {
     public function index()
     {
+         if(!Auth()->user()->hasPermissionTo('Predios Urbanos'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
         return view('predios.urbanos');
     }
 

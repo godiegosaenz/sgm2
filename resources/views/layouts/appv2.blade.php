@@ -373,6 +373,24 @@
                 'active' => request()->routeIs('lista.exoneracion') || request()->routeIs('create.remision') || request()->routeIs('index.remision') || request()->routeIs('index.titulocredito') || request()->routeIs('index.TitulosRural')  || request()->routeIs('index.liquidacion') || request()->routeIs('index.parte_diario') || request()->routeIs('index.cobroTituloRural')
                 || request()->routeIs('index.contribuyente_urbano') || request()->routeIs('index.vistaCobrados')
             ],
+            
+            [
+                'name' => 'CATASTRO',
+                'icon' => 'calculator-icon',
+                'permission' => 'menu catastro',
+                'subMenu' => [
+                    [
+                        'name' => 'Predios Urbanos',
+                        'route' => 'predios.urbanos',
+                        'permission' => 'Predios Urbanos',
+                        'active' => request()->routeIs('predios.urbanos')
+                        
+                    ],
+                  
+                ],
+                'active' => request()->routeIs('predios.urbanos') 
+            ],
+            
             [
                 'name' => 'RENTAS',
                 'icon' => 'calculator-icon',
