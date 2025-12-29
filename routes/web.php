@@ -1,5 +1,6 @@
 <?php
  
+use App\Http\Controllers\TitulosPredial\PrediosContribuyenteUrb;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\ConsultaPredioController;
@@ -429,11 +430,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     //predios-urbano
     Route::get('predio-urbano-liquidar', [UrbanoLiquidacionController::class, 'index']);
+    Route::get('buscar-predios-urbanos/{cedula}', [LiquidacionesController::class, 'consultarPrediosUrb']);
 
     //notificacion-correo
-     Route::get('notifica', [NotificacionContribuyenteController::class, 'index']);
+    Route::get('notifica', [NotificacionContribuyenteController::class, 'index']);
     
 
+    //actualizacion datos urb/rural
+    Route::get('actualizacion-data', [LiquidacionesController::class, 'vistaActualizacion'])->name('actualizacion.liquidacion');
+    Route::post('actualiza-contribuyente', [LiquidacionesController::class, 'actualizaContribuyente']);
+    Route::get('buscar-predios-rurales/{cedula}', [LiquidacionesController::class, 'consultarPrediosRurales']);
+
+    //predios-contribuyente
+    Route::get('predio-contribuyente', [PrediosContribuyenteUrb::class, 'index']);
+    Route::post('predios/datatables', [PrediosContribuyenteUrb::class, 'datatable']);
     
 });
 

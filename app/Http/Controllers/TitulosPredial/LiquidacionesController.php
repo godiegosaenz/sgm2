@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\TitulosPredial;
 
 use App\Http\Controllers\Controller;
+use App\Models\RuralEnteCorreo;
+use App\Models\RuralEnteTelefono;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\TituloRural;
@@ -11,6 +13,9 @@ use DB;
 use Storage;
 use Mail;
 use Illuminate\Support\Str;
+use App\Models\PsqlEnte;
+use App\Models\PsqlEnteTelefono;
+use App\Models\PsqlEnteCorreo;
 class LiquidacionesController extends Controller
 {
     public function index()
@@ -25,7 +30,7 @@ class LiquidacionesController extends Controller
             $valor=$request->valor;
 
             $liquidacionRuralAct=DB::connection('sqlsrv')->table('TITULOS_PREDIO as tp')
-            ->select('tp.Titpr_Nombres as nombres','tp.Titpr_RUC_CI','tp.TitPr_DireccionCont as direccion','tp.TitPr_Estado as ruc')
+            ->select('tp.Titpr_Nombres as nombres','tp.Titpr_RUC_CI','tp.TitPr_DireccionCont as direccion_p','tp.TitPr_Estado as ruc')
             ->where(function($query)use($tipo,$valor, $tipo_per) {
                 if($tipo==1){
                     $query->where('Titpr_RUC_CI', '=', $valor);
@@ -42,16 +47,51 @@ class LiquidacionesController extends Controller
             ->get();
             
             if(sizeof($liquidacionRuralAct)>0){
+                foreach($liquidacionRuralAct as $key=>$data){
+                    if(strlen($data->Titpr_RUC_CI)==10){
+                        $direccion=DB::connection('sqlsrv')->table('PROPIETARIO')
+                        ->select('Pro_CiudadDomicilio','Pro_DireccionDomicilio')
+                        ->where('Ciu_Cedula',$data->Titpr_RUC_CI)
+                        ->first();
+                        if(!is_null($direccion)){
+                            $liquidacionRuralAct[$key]->direccion=$direccion->Pro_CiudadDomicilio."-".$direccion->Pro_DireccionDomicilio;
+                        }
+                    }else{
+                        $direccion=DB::connection('sqlsrv')->table('PROPIETARIO')
+                        ->select('Pro_CiudadDomicilio','Pro_DireccionDomicilio')
+                        ->where('Ins_Ruc',$data->Titpr_RUC_CI)
+                        ->first();
+                        if(!is_null($direccion)){
+                            $liquidacionRuralAct[$key]->direccion=$direccion->Pro_CiudadDomicilio."-".$direccion->Pro_DireccionDomicilio;
+                        }
+                    }
+
+                    
+                    $telefonos = DB::connection('sqlsrv')->table('TELEFONO_CONTRIBUYENTE')
+                    ->select('telefono')
+                    ->where('cedula_ruc', $data->Titpr_RUC_CI)
+                    ->pluck('telefono');
+                    
+                    $liquidacionRuralAct[$key]->telf=$telefonos;
+
+                    $correos = DB::connection('sqlsrv')->table('CORREO_CONTRIBUYENTE')
+                    ->select('correo as email')
+                    ->where('cedula_ruc', $data->Titpr_RUC_CI)
+                    ->pluck('email');
+                 
+                    $liquidacionRuralAct[$key]->email=$correos;
+                
+                }
                 return (['data'=>$liquidacionRuralAct,'error'=>false]); 
             }
            
             $liquidacionRuralAct=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
             ->select('cv.CarVe_Nombres as nombres','cv.CarVe_CI as Titpr_RUC_CI'
-           ,'cv.CarVe_Calle as TitPr_DireccionCont','cv.carVe_RUC as ruc')
+           ,'cv.CarVe_Calle as TitPr_DireccionCont','cv.CarVe_RUC as ruc')
             ->where(function($query)use($tipo,$valor, $tipo_per) {
                 if($tipo==1){
                     $query->where('CarVe_CI', '=', $valor)
-                    ->orWhere('carVe_RUC',$valor);
+                    ->orWhere('CarVe_RUC',$valor);
                 }else if($tipo==2){
                     $query->where('cv.Pre_CodigoCatastral', '=', $valor);
                 }else{
@@ -78,34 +118,22 @@ class LiquidacionesController extends Controller
         try {
             $prediosRurales=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
              ->where(function ($query) use($cedula){
-                $query->where('carVe_CI',$cedula)
-                ->orWhere('carVe_RUC',$cedula);
+                $query->where('CarVe_CI',$cedula)
+                ->orWhere('CarVe_RUC',$cedula);
             })
             ->whereIn('cv.CarVe_Estado',['E'])
             ->pluck('Pre_CodigoCatastral')
             ->toArray();
-            // dd($prediosRurales);
-
-
+            
             $liquidacionRural=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
             ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
             ->select('cv.Pre_CodigoCatastral as clave','cv.CarVe_FechaEmision as fecha_emi','cv.CarVe_NumTitulo as num_titulo','cv.CarVe_CI as num_ident','cv.CarVe_Estado','cv.CarVe_Nombres as nombre_per','cv.CarVe_ValorEmitido as valor_emitido','cv.CarVe_TasaAdministrativa as tasa','CarVe_Calle as direcc_cont','cv.Carve_Recargo as recargo','cv.Carve_Descuento as descuento')
-            //->where('cv.Pre_CodigoCatastral', '=', $clave)
-            // ->where(function ($query) use($cedula){
-            //     $query->where('carVe_CI',$cedula)
-            //     ->orWhere('carVe_RUC',$cedula);
-            // })
             ->whereIN('cv.Pre_CodigoCatastral',$prediosRurales)
-
             ->whereIn('cv.CarVe_Estado',['E']) //E=Emitidos, N=Nueva Emision
-            // ->where('Pre_Tipo','Rural')
-            // ->orderby('cv.CarVe_NumTitulo','desc')
-            ->orderby('cv.Pre_CodigoCatastral','asc')
-            
+            ->orderby('cv.Pre_CodigoCatastral','asc')            
             ->distinct()
             ->get();
-            // dd($liquidacionRural);
-
+          
             $mes_Actual=date('m');
            
             $aplica_remision=0;
@@ -126,7 +154,7 @@ class LiquidacionesController extends Controller
                     ->where('IntMo_Año',$anio)
                     ->select('IntMo_Valor')
                     ->first();
-
+                    
                     $valor=(($consultaInteresMora->IntMo_Valor/100) * ($data->valor_emitido - $data->tasa));                
                     $valor=number_format($valor,2);
                     $liquidacionRural[$key]->porcentaje_intereses=$consultaInteresMora->IntMo_Valor;
@@ -145,7 +173,6 @@ class LiquidacionesController extends Controller
                 $liquidacionRural[$key]->anio=$anio[0];
 
                 $total_valor=$total_valor+$total_pago;
-                //$total_valor=$total_valor;
               
                 $buscar_exon=DB::connection('sqlsrv')->table('REBAJA_VALOR')
                 ->where('TitPrCarVe_NumTitulo',$data->num_titulo)
@@ -173,17 +200,11 @@ class LiquidacionesController extends Controller
             ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'tp.Pre_CodigoCatastral')
             ->select('tp.Pre_CodigoCatastral as clave','tp.TitPr_FechaEmision as fecha_emi','tp.TitPr_NumTitulo as num_titulo','tp.Titpr_RUC_CI as num_ident' ,'tp.TitPr_Estado','tp.TitPr_Nombres as nombre_per','tp.TitPr_ValorEmitido as valor_emitido','tp.TitPr_TasaAdministrativa as tasa','TitPr_DireccionCont as direcc_cont','tp.TitPr_Descuento as descuento'
             ,'tp.TitPr_Recargo as recargo')
-            //->where('tp.Pre_CodigoCatastral', '=', $clave)
-            ->where('tp.Titpr_RUC_CI',$cedula)
-            
+            ->where('tp.Titpr_RUC_CI',$cedula)            
             ->whereIn('tp.TitPr_Estado',['E','N'])
-            // ->where('Pre_Tipo','Rural')
-            // ->orderby('tp.TitPr_NumTitulo','desc')
-            ->orderby('tp.Pre_CodigoCatastral','asc')
-            
+            ->orderby('tp.Pre_CodigoCatastral','asc')            
             ->get();
-            // dd("a");
-
+           
             foreach($liquidacionActual as $key=> $data){
                 $subtotal=0;
                 $subtotal=number_format($data->valor_emitido,2);
@@ -216,8 +237,7 @@ class LiquidacionesController extends Controller
                 $liquidacionActual[$key]->anio=$anio[0];
 
                 $total_valor=$total_valor+$total_pago;
-                //$total_valor=number_format($total_valor,2);
-
+               
                 $buscar_exon=DB::connection('sqlsrv')->table('REBAJA_VALOR')
                 ->where('TitPrCarVe_NumTitulo',$data->num_titulo)
                 ->select('Reb_Codigo')
@@ -237,12 +257,10 @@ class LiquidacionesController extends Controller
                     $liquidacionActual[$key]->exoneracion='No';
                 }
             }
-            // $resultado = $liquidacionRural->merge($liquidacionActual);
-            // $resultado = $liquidacionRural->merge($liquidacionActual)->sortByDesc('num_titulo')->values();
+           
             $resultado = $liquidacionRural
             ->merge($liquidacionActual)
             ->sortBy([
-                // ['num_titulo', 'desc'],
                 ['clave', 'desc'],
                 ['num_titulo', 'asc'],
             ])
@@ -272,9 +290,7 @@ class LiquidacionesController extends Controller
                     "aplica_remision"=>$aplica_remision
             ];
         } catch (\Exception $e) {
-             //\Log::error($e);
-            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
-
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e->getLine(), "error"=>true];
         }
     }
 
@@ -318,7 +334,6 @@ class LiquidacionesController extends Controller
             $nombrePDF="Liquidacion".date('YmdHis').".pdf";                               
             $pdf = \PDF::loadView('reportes.reporteLiquidacionRemisionRural', ['DatosLiquidacion'=>$listado_final,"ubicacion"=>$lugar]);
 
-            // return $pdf->download('reporteLiquidacion.pdf');
             $pdf->setPaper("A4", "landscape");
             $estadoarch = $pdf->stream();
 
@@ -338,7 +353,6 @@ class LiquidacionesController extends Controller
             }
 
         } catch (\Exception $e) {
-            //\Log::error($e);
             return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
 
         }
@@ -396,12 +410,9 @@ class LiquidacionesController extends Controller
                 } 
             }
            
-            // dd($listado_final);
             $nombrePDF="PagoVoluntario".date('YmdHis').".pdf";                               
             $pdf = \PDF::loadView('reportes.pagoVoluntarioPredio', ['DatosLiquidacion'=>$listado_final,"ubicacion"=>$lugar,"nombre_persona"=>$nombre_persona, "direcc_cont"=>$direcc_cont]);
 
-            // return $pdf->download('reporteLiquidacion.pdf');
-            // $pdf->setPaper("A4", "landscape");
             $estadoarch = $pdf->stream();
 
             //lo guardamos en el disco temporal
@@ -420,7 +431,6 @@ class LiquidacionesController extends Controller
             }
 
         } catch (\Exception $e) {
-            //\Log::error($e);
             return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e->getMessage(), "error"=>true];
 
         }
@@ -436,7 +446,7 @@ class LiquidacionesController extends Controller
                 $dataContribuyente=DB::connection('pgsql')->table('sgm_app.cat_predio as p')
                 ->leftJoin('sgm_app.cat_predio_propietario as pp','pp.predio','p.id')
                 ->leftJoin('sgm_app.cat_ente as e','e.id','pp.ente')
-                ->select('e.id','ci_ruc as Titpr_RUC_CI',DB::raw("CONCAT(e.apellidos, ' ', e.nombres) AS nombres"),'direccion')
+                ->select('e.id','ci_ruc as Titpr_RUC_CI',DB::raw("CONCAT(e.apellidos, ' ', e.nombres) AS nombres"),DB::raw("CONCAT(e.ciudad, '-', e.direccion) AS direccion"))
                 ->where('p.num_predio',$matricula)
                 ->where('pp.estado','A')
                 ->get();
@@ -446,7 +456,7 @@ class LiquidacionesController extends Controller
                 $dataContribuyente=DB::connection('pgsql')->table('sgm_app.cat_predio as p')
                 ->leftJoin('sgm_app.cat_predio_propietario as pp','pp.predio','p.id')
                 ->leftJoin('sgm_app.cat_ente as e','e.id','pp.ente')
-                ->select('e.id','ci_ruc as Titpr_RUC_CI',DB::raw("CONCAT(e.apellidos, ' ', e.nombres) AS nombres"),'direccion')
+                ->select('e.id','ci_ruc as Titpr_RUC_CI',DB::raw("CONCAT(e.apellidos, ' ', e.nombres) AS nombres"),DB::raw("CONCAT(e.ciudad, '-', e.direccion) AS direccion"))
                 ->where('p.clave_cat',$clave)
                 ->where('pp.estado','A')
                 ->get();
@@ -454,8 +464,7 @@ class LiquidacionesController extends Controller
                 $valor=$request->valor;
                
                 $dataContribuyente=DB::connection('pgsql')->table('sgm_app.cat_ente as e')
-                ->select('id','ci_ruc as Titpr_RUC_CI','direccion',DB::raw("CONCAT(e.apellidos, ' ', e.nombres) AS nombres"))
-                // ->where('e.id',$id_contr)
+                ->select('id','ci_ruc as Titpr_RUC_CI',DB::raw("CONCAT(e.apellidos, ' ', e.nombres) AS nombres"),DB::raw("CONCAT(e.ciudad, '-', e.direccion) AS direccion"))
                 ->WhereRaw("LOWER(nombres) LIKE LOWER(?)", ["%$valor%"])
                 ->orWhereRaw("LOWER(apellidos) LIKE LOWER(?)", ["%$valor%"])
                 ->limit(10)
@@ -474,8 +483,7 @@ class LiquidacionesController extends Controller
                     ->select('email')
                     ->where('ente', $item->id)
                     ->pluck('email');
-                    // DD($correos);
-                    
+                 
                     $dataContribuyente[$key]->email=$correos;
                 }
             }
@@ -483,7 +491,6 @@ class LiquidacionesController extends Controller
             return (['data'=>$dataContribuyente,'false'=>true]); 
 
         } catch (\Throwable $th) {
-            // Log::error(__CLASS__." => ".__FUNCTION__." => Mensaje =>".$e->getMessage()." Linea =>".$e->getLine());
             return (['mensaje'=>'Ocurrió un error,intentelo más tarde '.$th->getMessage(),'error'=>true]); 
         } 
     }
@@ -626,7 +633,6 @@ class LiquidacionesController extends Controller
             ->whereIn('sgm_financiero.ren_liquidacion.predio',$predios_contribuyente)
             ->where('sgm_app.cat_predio.estado','A')
             ->where('sgm_app.cat_predio_propietario.estado','A')
-            // ->where('sgm_app.cat_predio_propietario.estado','A')
             ->whereNotIN('estado_liquidacion',[1,3,4,5])
             ->orderby('clave_cat','desc')
             ->orderBy('anio', 'asc')
@@ -661,7 +667,6 @@ class LiquidacionesController extends Controller
             ];
 
         } catch (\Exception $e) {
-             //\Log::error($e);
             return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
 
         }
@@ -774,19 +779,11 @@ class LiquidacionesController extends Controller
                     });
 
                     $envioExitoso = true;
-                    /*$resultadoCorreos[] = [
-                       $correo
-                        
-                    ];*/
+                   
                     array_push($resultadoCorreos, $correo);
                    
                 } catch (\Exception $e) {
-                    //dd($e);
-                     /*$resultadoCorreos[] =[
-                        'correo'   => $correo,
-                        'enviado'  => false,
-                        'mensaje'  => $e->getMessage()
-                    ];*/
+                   
                 }
             }
     
@@ -827,7 +824,6 @@ class LiquidacionesController extends Controller
         $archivo = $archivos[$archivoIndex];
 
         // Construir ruta física completa en public/archivos
-        // $ruta = public_path('storage/archivos/' . $archivo['nombre']);
         $ruta = storage_path('app/documentosCoactiva/' . $archivo['nombre']);
         
         // Verificar existencia del archivo
@@ -842,5 +838,295 @@ class LiquidacionesController extends Controller
 
         // Descargar el archivo directamente desde public
         return response()->download($ruta, $nombreDescarga);
+    }
+
+    public function vistaActualizacion()
+    {
+        return view('liquidacion.actualizacion');
+    }
+
+     public function consultarPrediosUrb($cedula, $notifica=1){
+        try {
+            $predios_contribuyente= DB::connection('pgsql')->table('sgm_app.cat_ente as e')
+            ->join('sgm_app.cat_predio_propietario as pp', 'pp.ente', '=', 'e.id')
+            ->where('pp.estado','A')
+            ->where('e.ci_ruc',$cedula)
+            ->select('e.id','pp.predio')
+            ->get();
+
+            $id_predio=[];
+            $id_cont="";
+            foreach($predios_contribuyente as $data){
+                array_push($id_predio, $data->predio);
+                $id_cont=$data->id;
+            }
+            
+            $liquidacionUrbana = DB::connection('pgsql')->table('sgm_financiero.ren_liquidacion')
+            ->join('sgm_app.cat_predio', 'sgm_financiero.ren_liquidacion.predio', '=', 'sgm_app.cat_predio.id')
+            ->join('sgm_app.cat_predio_propietario', 'sgm_app.cat_predio_propietario.predio', '=', 'sgm_app.cat_predio.id')
+            ->leftJoin('sgm_app.cat_ente', 'sgm_app.cat_predio_propietario.ente', '=', 'sgm_app.cat_ente.id')
+            ->select('sgm_financiero.ren_liquidacion.id',
+            'sgm_app.cat_predio.clave_cat as clave',
+            'sgm_app.cat_ente.apellidos',
+            'sgm_app.cat_ente.nombres',
+            DB::raw("CONCAT(sgm_app.cat_ente.apellidos, ' ', sgm_app.cat_ente.nombres) AS nombre_contr1"),
+            'sgm_app.cat_ente.ci_ruc',
+            'sgm_app.cat_predio.num_predio',
+            DB::raw("CONCAT(sgm_app.cat_predio.calle, ' y ', sgm_app.cat_predio.calle_s) AS direcc_cont"))            
+            ->whereIn('sgm_financiero.ren_liquidacion.predio',$id_predio)
+            ->where('sgm_app.cat_predio.estado','A')
+            ->where('sgm_app.cat_predio_propietario.estado','A')
+            ->whereNotIN('estado_liquidacion',[1,3,4,5])
+            ->orderby('clave_cat','desc')            
+            ->distinct('clave_cat')
+            ->get();
+            
+            return ["resultado"=>$liquidacionUrbana, "id_cont"=>$id_cont,                    
+                    "error"=>false,
+            ];
+
+        } catch (\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e->getLine(), "error"=>true];
+        }
+    }
+
+     public function consultarPrediosRurales($cedula){
+        try {
+            $prediosRurales=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
+            ->where(function ($query) use($cedula){
+                $query->where('CarVe_CI',$cedula)
+                ->orWhere('CarVe_RUC',$cedula);
+            })
+            ->whereIn('cv.CarVe_Estado',['E'])
+            ->pluck('Pre_CodigoCatastral')
+            ->toArray();
+            
+            $liquidacionRural=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
+            ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
+            ->select(
+                'cv.Pre_CodigoCatastral as clave',
+                DB::raw("
+                    CASE 
+                        WHEN cv.CarVe_CI > 0 THEN cv.CarVe_CI 
+                        ELSE cv.CarVe_RUC 
+                    END AS num_ident
+                "),
+                'cv.CarVe_Nombres as nombre_per',
+                'cv.CarVe_Calle as direcc_cont'
+            )
+            ->whereIN('cv.Pre_CodigoCatastral',$prediosRurales)
+            ->whereIn('cv.CarVe_Estado',['E']) //E=Emitidos, N=Nueva Emision
+            ->orderby('cv.Pre_CodigoCatastral','asc')            
+            ->distinct('cv.Pre_CodigoCatastral')
+            ->get();
+           
+                                   
+            $liquidacionActual=DB::connection('sqlsrv')->table('TITULOS_PREDIO as tp')
+            ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'tp.Pre_CodigoCatastral')
+            ->select('tp.Pre_CodigoCatastral as clave','tp.Titpr_RUC_CI as num_ident','tp.TitPr_Nombres as nombre_per','TitPr_DireccionCont as direcc_cont')
+            ->where('tp.Titpr_RUC_CI',$cedula)            
+            ->whereIn('tp.TitPr_Estado',['E','N'])
+            ->orderby('tp.Pre_CodigoCatastral','asc')   
+            ->distinct('tp.Pre_CodigoCatastral')         
+            ->get();            
+            
+            $resultado = $liquidacionRural
+            ->merge($liquidacionActual)
+            ->unique('clave')
+            ->sortBy([
+                ['clave', 'desc'],
+                ['num_titulo', 'asc'],
+            ])
+            ->values();
+                      
+            return ["resultado"=>$resultado,"id_cont"=>$cedula, 
+                    "error"=>false
+            ];
+        } catch (\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+
+        }
+    }
+
+    public function actualizaContribuyente(Request $request){
+        $transaction=DB::transaction(function() use($request){
+            try{
+                if($request->lugar_not=='Urbano'){
+                    $ci_ruc=$request->ci_ruc_contribuyente;
+                    $verificaContrib=PsqlEnte::where(function($query)use($ci_ruc){
+                        $query->where('ci_ruc', $ci_ruc)
+                        ->orWhere('ci_ruc', substr($ci_ruc, 0, 10));
+                    })
+                    ->where('id','!=',$request->id_cont)
+                    ->first();
+                    if(!is_null($verificaContrib)){                   
+                        return ["mensaje"=>"El numero de cedula o ruc ya existe en otra persona => ".$verificaContrib->nombres." ".$verificaContrib->apellidos, "error"=>true];  
+                    }
+                    $actualizaContrib=PsqlEnte::find($request->id_cont);
+                    $actualizaContrib->ci_ruc=$request->ci_ruc_contribuyente;
+                    $actualizaContrib->nombres=$request->nombre_contribuyente;
+                    $actualizaContrib->apellidos=$request->apellido_contribuyente;
+                    $actualizaContrib->direccion=$request->direccion_contribuyente;
+                    $actualizaContrib->ciudad=$request->ciudad_contribuyente;
+                    $actualizaContrib->save();
+                
+                    $verificaTlfo=PsqlEnteTelefono::where('ente',$actualizaContrib->id)->delete();
+                
+                    $verificaCorreo=PsqlEnteCorreo::where('ente',$actualizaContrib->id)->delete();
+                    foreach($request->correo as $correo){
+                    
+                        $guardaCorreo=new PsqlEnteCorreo();
+                        $guardaCorreo->email=$correo;
+                        $guardaCorreo->ente=$actualizaContrib->id;
+                        $guardaCorreo->save();
+
+                    }
+
+                    foreach($request->telefono as $telefono){
+                        $guardaTlfo=new PsqlEnteTelefono();
+                        $guardaTlfo->telefono=$telefono;
+                        $guardaTlfo->ente=$actualizaContrib->id;
+                        $guardaTlfo->save();
+                    }
+                        
+                return ["mensaje"=>"Datos actualizados exitosamente", "error"=>false];  
+
+                }else{
+                    $cedula=$request->id_cont;
+                                                
+                    $prediosRurales=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
+                    ->where(function ($query) use($cedula){
+                        $query->where('CarVe_CI',$cedula)
+                        ->orWhere('CarVe_RUC',$cedula);
+                    })
+                    ->whereIn('cv.CarVe_Estado',['E'])
+                    ->distinct()
+                    ->pluck('Pre_CodigoCatastral')
+                    ->toArray();
+                
+                    $titulo=DB::connection('sqlsrv')->table('CARTERA_VENCIDA')
+                    ->where('Carve_Estado','E')
+                    ->whereIn('Pre_CodigoCatastral',$prediosRurales)
+                    ->where(function ($query) use($cedula){
+                        $query->where('CarVe_CI',$cedula)
+                        ->orWhere('CarVe_RUC',$cedula);
+                    })
+                    ->get();
+                    
+                    foreach($titulo as $data){
+                        
+                        if($data->CarVe_CI>0){
+                        
+                            $actualiza=DB::connection('sqlsrv')->table('CARTERA_VENCIDA')
+                            ->where('Carve_Estado','E')
+                            ->where('Pre_CodigoCatastral',$data->Pre_CodigoCatastral)
+                            ->where('CarVe_NumTitulo',$data->CarVe_NumTitulo)
+                            ->where('CarVe_CI',$data->CarVe_CI)
+                            ->update([
+                                "CarVe_Nombres" => $request->apellido_contribuyente." - ".$request->nombre_contribuyente,
+                                "CarVe_CI" => $request->ci_ruc_contribuyente                      
+                            ]);
+
+                           
+                            
+                        }else if($data->CarVe_RUC>0){
+                        
+                            /*$actualiza=DB::connection('sqlsrv')->table('CARTERA_VENCIDA')
+                            ->where('Carve_Estado','E')
+                            ->where('Pre_CodigoCatastral',$data->Pre_CodigoCatastral)
+                            ->where('CarVe_NumTitulo',$data->CarVe_NumTitulo)
+                            ->where('CarVe_RUC',$data->CarVe_RUC)
+                            ->update([
+                                "CarVe_RUC" => $request->ci_ruc_contribuyente                      
+                            ]);*/
+
+                           
+                        }
+                                            
+                    }
+
+                   
+
+                    if(strlen($cedula)==10){
+
+                        $predio_titulo=DB::connection('sqlsrv')->table('TITULOS_PREDIO')
+                        ->whereIN('TitPr_Estado',['E','N'])
+                        ->whereIn('Pre_CodigoCatastral',$prediosRurales)
+                        ->where('Titpr_RUC_CI',$cedula)
+                        ->update([
+                            "TitPr_Nombres" => $request->apellido_contribuyente." - ".$request->nombre_contribuyente,
+                            "Titpr_RUC_CI" => $request->ci_ruc_contribuyente                      
+                        ]);
+
+                        $ciudadano=DB::connection('sqlsrv')->table('CIUDADANO')
+                        ->where('Ciu_Cedula',$cedula)
+                        ->update([
+                            "Ciu_Cedula" => $request->ci_ruc_contribuyente,
+                            "Ciu_Apellidos" => $request->apellido_contribuyente,
+                            "Ciu_Nombres" => $request->nombre_contribuyente
+                        ]);
+
+                        $domicilio=DB::connection('sqlsrv')->table('PROPIETARIO')
+                        ->where('Ciu_Cedula',$cedula)
+                        ->update([
+                            "Ciu_Cedula" => $request->ci_ruc_contribuyente,
+                            "Pro_CiudadDomicilio" => $request->ciudad_contribuyente,
+                            "Pro_DireccionDomicilio" => $request->direccion_contribuyente
+                        ]);
+                    }else{
+                        /*$predio_titulo=DB::connection('sqlsrv')->table('TITULOS_PREDIO')
+                        ->whereIN('TitPr_Estado',['E','N'])
+                        ->whereIn('Pre_CodigoCatastral',$prediosRurales)
+                        ->where('Titpr_RUC_CI',$cedula)
+                        ->update([
+                            "Titpr_RUC_CI" => $request->ci_ruc_contribuyente                      
+                        ]);
+
+                        $institucion=DB::connection('sqlsrv')->table('INSTITUCION')
+                        ->where('Ins_Ruc',$cedula)
+                        ->update([
+                            "Ins_Ruc" => $request->ci_ruc_contribuyente,
+                            "Ins_Nombre" => $request->nombre_contribuyente
+                            
+                        ]);*/
+
+                        $domicilio=DB::connection('sqlsrv')->table('PROPIETARIO')
+                        ->where('Ins_Ruc',$cedula)
+                        ->update([
+                           /* "Ins_Ruc" => $request->ci_ruc_contribuyente,*/
+                            "Pro_CiudadDomicilio" => $request->ciudad_contribuyente,
+                            "Pro_DireccionDomicilio" => $request->direccion_contribuyente
+                        ]);
+                    }
+
+                    $verificaTlfo=RuralEnteTelefono::where('cedula_ruc',$cedula)->delete();              
+                    $verificaCorreo=RuralEnteCorreo::where('cedula_ruc',$cedula)->delete();
+
+                    foreach($request->correo as $correo){
+                    
+                        $guardaCorreo=new RuralEnteCorreo();
+                        $guardaCorreo->correo=$correo;
+                        $guardaCorreo->cedula_ruc=$request->ci_ruc_contribuyente;
+                        $guardaCorreo->save();
+
+                    }
+
+                    foreach($request->telefono as $telefono){
+                        $guardaTlfo=new RuralEnteTelefono();
+                        $guardaTlfo->telefono=$telefono;
+                        $guardaTlfo->cedula_ruc=$request->ci_ruc_contribuyente;
+                        $guardaTlfo->save();
+                    }
+                    
+                    return ["mensaje"=>"Datos actualizados exitosamente", "error"=>false];  
+                }
+                
+            
+            } catch (\Exception $e) {
+                DB::Rollback();
+                return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e->getMessage(), "error"=>true];
+            }
+        });
+        return $transaction;
     }
 }

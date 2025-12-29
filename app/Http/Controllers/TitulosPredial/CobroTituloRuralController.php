@@ -53,11 +53,11 @@ class CobroTituloRuralController extends Controller
             $liquidacionRuralAct=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
             ->leftJoin('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
             ->select('cv.Pre_CodigoCatastral','cv.CarVe_Nombres as nombres','cv.CarVe_CI as Titpr_RUC_CI'
-            ,'p.Pre_NombrePredio','cv.CarVe_Calle as TitPr_DireccionCont','cv.carVe_RUC as ruc')
+            ,'p.Pre_NombrePredio','cv.CarVe_Calle as TitPr_DireccionCont','cv.CarVe_RUC as ruc')
             ->where(function($query)use($tipo,$valor, $tipo_per) {
                 if($tipo==1){
                     $query->where('CarVe_CI', '=', $valor)
-                    ->orWhere('carVe_RUC',$valor);
+                    ->orWhere('CarVe_RUC',$valor);
                 }else if($tipo==2){
                     $query->where('cv.Pre_CodigoCatastral', '=', $valor);
                 }else{
@@ -824,11 +824,11 @@ class CobroTituloRuralController extends Controller
             $liquidacionRuralAct=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
             ->leftJoin('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
             ->select('cv.Pre_CodigoCatastral','cv.CarVe_Nombres as nombres','cv.CarVe_CI as Titpr_RUC_CI'
-            ,'p.Pre_NombrePredio','cv.CarVe_Calle as TitPr_DireccionCont','cv.carVe_RUC as ruc')
+            ,'p.Pre_NombrePredio','cv.CarVe_Calle as TitPr_DireccionCont','cv.CarVe_RUC as ruc')
             ->where(function($query)use($tipo,$valor, $tipo_per) {
                 if($tipo==1){
                     $query->where('CarVe_CI', '=', $valor)
-                    ->orWhere('carVe_RUC',$valor);
+                    ->orWhere('CarVe_RUC',$valor);
                 }else if($tipo==2){
                     $query->where('cv.Pre_CodigoCatastral', '=', $valor);
                 }else{
