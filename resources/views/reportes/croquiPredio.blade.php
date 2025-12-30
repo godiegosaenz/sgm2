@@ -171,16 +171,23 @@
         
     </div>
     <div class="contenido">
-       
-        @foreach ($DatosLiquidacion as $key=>$data)            
-            @foreach ($data as $key2=>$info)
-                @if($key2==0)
-                    <center><p><b>{{ $key }}</b> -- {{$info->direcc_cont}}</p></center>
-                    <img src="http://192.168.0.175:8080/geoapi/rest/predio/croquis/{{ $key }}" alt="" width="100%">
-                    <div style="page-break-after: always;"></div>
+  
+        @foreach ($DatosLiquidacion as $key => $data)
+            @foreach ($data as $key2 => $info)
+                @if($key2 == 0)
+                    <center>
+                        <p><b>{{ $key }}</b> -- {{ $info->direcc_cont }}</p>
+                    </center>
+
+                    <img src="http://192.168.0.175:8080/geoapi/rest/predio/croquis/{{ $key }}" width="100%">
+
+                    @if (! $loop->parent->last)
+                        <div style="page-break-after: always;"></div>
+                    @endif
                 @endif
             @endforeach
         @endforeach
+
         
            
     </div>
