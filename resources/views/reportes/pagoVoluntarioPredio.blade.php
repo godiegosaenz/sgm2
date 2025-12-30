@@ -217,6 +217,7 @@
         </p>
         @php
             $total_final=0;
+            $coordenas_txt="";
         @endphp
         @foreach ($DatosLiquidacion as $key=>$data)
             @php
@@ -230,15 +231,18 @@
                     $valor = str_replace(',', '', $valor);
                     // Convertir a número y sumar
                     $total += (float) $valor;
-                    
+                    // $coordenas_txt=" Coordenadas X ".$info->coordx." Y ".$info->coordy;
+                    $coordenas_txt = ' (coordenadas <strong>X</strong> ' . $info->coordx . ' <strong>Y</strong> ' . $info->coordy.'),';
+
                 }
                 // $total_final=$total_final+$total;
-                  $total_final = ($total_final ?? 0) + $total;
+                $total_final = ($total_final ?? 0) + $total;
+                
             @endphp
        
             <p>
                 La obligación corresponde al predio con matrícula inmobiliaria
-                <strong>{{ $key  }}</strong>, cuya deuda asciende a la cantidad de
+                <strong>{{ $key  }}</strong>,{!! $coordenas_txt !!} cuya deuda asciende a la cantidad de
                 <strong>{{ numeroEnLetras($total) }}</strong>, correspondiente a los ejercicios fiscales <b>{{ $anio_uno }} - {{ $info->anio }}</b>.
             </p>
          @endforeach

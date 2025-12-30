@@ -789,6 +789,31 @@ function descargaPagoVolutario(){
     });
 }
 
+function croquisPredio(){
+    let ubicacion=$('#lugar').val()
+    let rutapdf="croquis-predio"
+   
+    vistacargando("m", "Espere por favor")
+    $.get(rutapdf+'/'+CedulaGlobal+'/'+ubicacion, function(data){
+        console.log(data)
+       
+        vistacargando("")
+        if(data.error==true){
+			alertNotificar(data.mensaje,"error");
+            // cancelar()
+			return;   
+		}
+        alertNotificar("El documento se descargara en unos segundos...","success");
+        window.location.href="descargar-reporte/"+data.pdf
+       
+       
+    }).fail(function(){
+        vistacargando("")
+        alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+       
+    });
+}
+
 function generarTitulos(){
     let urbano_rural=$('#lugar').val()
     // alert(urbano_rural)

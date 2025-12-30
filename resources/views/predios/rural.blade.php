@@ -43,7 +43,7 @@
                         <tr>
                             <th scope="col">Clave catastral</th>
                             <th scope="col">Contribuyente</th>
-                           
+                            <th scope="col">Exoneracion</th>
                             
                         </tr>
                     </thead>
@@ -100,7 +100,8 @@
             },
             columns: [
                 { data: 'clave', title: 'Clave catastral' },
-                { data: 'contribuyente', title: 'Propietario(s)', orderable: false, searchable: false }
+                { data: 'contribuyente', title: 'Propietario(s)'}, 
+                { data: 'exoneracion', title: 'Exoneracion',orderable: false, searchable: false }
             ],
             // dom: 'Blfrtip', // 👈 activa botones
             buttons: [
@@ -109,7 +110,7 @@
                     text: '📥 Descargar Excel',
                     title: 'Listado_Predios_Rural',
                     exportOptions: {
-                        columns: [0, 1] // columnas a exportar
+                        columns: [0, 1, 2] // columnas a exportar
                     }
                 }
             ]

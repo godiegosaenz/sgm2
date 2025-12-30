@@ -870,6 +870,8 @@ function descargaPagoVolutario(){
     });
 }
 
+
+
 function generarTitulos(){
     let urbano_rural=$('#lugar').val()
     // alert(urbano_rural)

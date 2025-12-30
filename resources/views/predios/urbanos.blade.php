@@ -43,6 +43,8 @@
                         <tr>
                             <th scope="col">Clave catastral</th>
                             <th scope="col">Contribuyente</th>
+                            <th scope="col">Tercera Edad</th>
+                            <th scope="col">%</th>
                            
                             
                         </tr>
@@ -100,7 +102,9 @@
             },
             columns: [
                 { data: 'clave', title: 'Clave catastral' },
-                { data: 'contribuyente', title: 'Propietario(s)', orderable: false, searchable: false }
+                { data: 'contribuyente', title: 'Propietario(s)'},
+                {data: 'tercera_edad', title: 'Exoneracion'},
+                {data: 'porcentaje', title: '%',orderable: false, searchable: false }
             ],
             // dom: 'Blfrtip', // 👈 activa botones
             buttons: [
@@ -109,7 +113,7 @@
                     text: '📥 Descargar Excel',
                     title: 'Listado_Predios_Urbano',
                     exportOptions: {
-                        columns: [0, 1] // columnas a exportar
+                        columns: [0, 1,2,3] // columnas a exportar
                     }
                 }
             ]

@@ -332,6 +332,12 @@
                                             </button>
 
                                             <button type="button"
+                                                    class="btn btn-sm btn-success"
+                                                    onclick="croquisPredio()">
+                                                Descargar Croquis
+                                            </button>
+
+                                            <button type="button"
                                                     class="btn btn-sm btn-danger"
                                                     onclick="cerrarModalPago()">
                                                 Cerrar

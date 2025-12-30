@@ -425,6 +425,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('buscar-deudas-contribuyente-urb', [LiquidacionesController::class, 'buscarDeudaPrediourb']);
     Route::get('buscar-liquidacion-urbanos/{cedula}', [LiquidacionesController::class, 'consultarTitulosUrb']);
     Route::get('pago-voluntario-rural-urb/{cedula}/{lugar}', [LiquidacionesController::class, 'pagoVoluntario']);
+    Route::get('croquis-predio/{cedula}/{lugar}', [LiquidacionesController::class, 'croquisPredio']);
     Route::post('notifica-contribuyente', [LiquidacionesController::class, 'notificaContribuyente']);
     Route::get('/notificacion/{id}/{archivoIndex}', [LiquidacionesController::class, 'descargarArchivo']);
 

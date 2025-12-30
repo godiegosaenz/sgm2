@@ -385,6 +385,7 @@ class LiquidacionesController extends Controller
                         $nombre_persona=$item->nombre_contr1;
                     }
                 } 
+              
             }else{
                 $consulta=$this->consultarTitulos($cedula, null);
                 if($consulta["error"]==true){
@@ -412,6 +413,85 @@ class LiquidacionesController extends Controller
            
             $nombrePDF="PagoVoluntario".date('YmdHis').".pdf";                               
             $pdf = \PDF::loadView('reportes.pagoVoluntarioPredio', ['DatosLiquidacion'=>$listado_final,"ubicacion"=>$lugar,"nombre_persona"=>$nombre_persona, "direcc_cont"=>$direcc_cont]);
+
+            $estadoarch = $pdf->stream();
+
+            //lo guardamos en el disco temporal
+            \Storage::disk('public')->put(str_replace("", "",$nombrePDF), $estadoarch);
+            $exists_destino = \Storage::disk('public')->exists($nombrePDF);
+            if($exists_destino){
+                return response()->json([
+                    'error'=>false,
+                    'pdf'=>$nombrePDF
+                ]);
+            }else{
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'No se pudo crear el documento'
+                ]);
+            }
+
+        } catch (\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e->getMessage(), "error"=>true];
+
+        }
+    }
+
+     public function croquisPredio($cedula, $lugar){
+        try{
+            $tipo_agrupado="";
+            $nombre_persona="";
+            $direcc_cont="";
+            if($lugar==1){
+                $consulta=$this->consultarTitulosUrb($cedula, null);
+                if($consulta["error"]==true){
+                    return ["mensaje"=>$consulta["mensaje"], "error"=>true];
+                }               
+
+                #agrupamos
+                $listado_final=[];
+                foreach ($consulta["resultado"] as $key => $item){                
+                    if(!isset($listado_final[$item->num_predio])) {
+                        $listado_final[$item->num_predio]=array($item);
+                
+                    }else{
+                        array_push($listado_final[$item->num_predio], $item);
+                    }
+
+                    $nombre_persona=$item->nombre_per;
+                    $direcc_cont=$item->direcc_cont;
+                    if(is_null($item->nombre_per)){
+                        $nombre_persona=$item->nombre_contr1;
+                    }
+                } 
+              
+            }else{
+                $consulta=$this->consultarTitulos($cedula, null);
+                if($consulta["error"]==true){
+                    return ["mensaje"=>$consulta["mensaje"], "error"=>true];
+                }
+
+                #agrupamos
+                $listado_final=[];
+                               
+                foreach ($consulta["resultado"] as $key => $item){                
+                    if(!isset($listado_final[$item->clave])) {
+                        $listado_final[$item->clave]=array($item);
+                
+                    }else{
+                        array_push($listado_final[$item->clave], $item);
+                    }
+
+                    $nombre_persona=$item->nombre_per;
+                    $direcc_cont=$item->direcc_cont;
+                    if(is_null($item->nombre_per)){
+                        $nombre_persona=$item->nombre_contr1;
+                    }
+                } 
+            }
+            // dd($listado_final);
+            $nombrePDF="CroquisPredios".date('YmdHis').".pdf";                               
+            $pdf = \PDF::loadView('reportes.croquiPredio', ['DatosLiquidacion'=>$listado_final,"ubicacion"=>$lugar,"nombre_persona"=>$nombre_persona, "direcc_cont"=>$direcc_cont]);
 
             $estadoarch = $pdf->stream();
 
@@ -517,6 +597,8 @@ class LiquidacionesController extends Controller
             'sgm_financiero.ren_liquidacion.anio',
             'sgm_financiero.ren_liquidacion.nombre_comprador AS nombre_per',
             'sgm_app.cat_predio.clave_cat as clave',
+            'sgm_app.cat_predio.coordx',
+            'sgm_app.cat_predio.coordy',
             'sgm_app.cat_ente.nombres',
             'sgm_app.cat_ente.apellidos',
             DB::raw("CONCAT(sgm_app.cat_ente.apellidos, ' ', sgm_app.cat_ente.nombres) AS nombre_contr1"),
