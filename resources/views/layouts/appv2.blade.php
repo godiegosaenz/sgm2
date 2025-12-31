@@ -397,6 +397,23 @@
                 ],
                 'active' => request()->routeIs('predios.urbanos') || request()->routeIs('predios.rural')
             ],
+
+             [
+                'name' => 'CONTRIBUYENTE',
+                'icon' => 'calculator-icon',
+                'permission' => 'menu contribuyente',
+                'subMenu' => [
+                    [
+                        'name' => 'Actualizacion Datos',
+                        'permission' => 'Actualizacion Datos Contribuyente',
+                        'active' => request()->routeIs('actualizacion.liquidacion')
+                        
+                    ],
+                   
+                  
+                ],
+                'active' => request()->routeIs('actualizacion.liquidacion')
+            ],
             
             [
                 'name' => 'RENTAS',

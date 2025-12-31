@@ -112,7 +112,7 @@
         }
         p{
             margin-left: 20px;
-            font-size: 14px;
+            font-size: 13px;
         }
 
     </style>
@@ -144,16 +144,16 @@
         <p><b>DIRECCION DOMICILIARIA: </b>{{ $Datos->direccion_domiciliaria }}</p>
         <p><b>CORREO: </b>
         @foreach (json_decode($Datos->correo, true) as $correo)
-             <li style="margin-left:60px !important; font-size: 14px !important;">{{ $correo }}</li>
+             <li style="margin-left:60px !important; font-size: 13px !important;">{{ $correo }}</li>
         @endforeach
         </p>
 
         <p><b>TELEFONO: </b>
         @foreach (json_decode($Datos->telefono, true) as $telefono)
-             <li style="margin-left:60px !important; font-size: 14px !important;">{{ $telefono }}</li>
+             <li style="margin-left:60px !important; font-size: 13px !important;">{{ $telefono }}</li>
         @endforeach
         </p>
-
+        <p><b>PREDIO: </b>{{ $Datos->predio }}</p>
         <p><b>USUARIO ACTUALIZA: </b>{{ $Datos->usuario_nombre }}</p>
         <p><b>FECHA ACTUALIZACION: </b>{{ $Datos->fecha_actualizacion }}</p>
 </body>

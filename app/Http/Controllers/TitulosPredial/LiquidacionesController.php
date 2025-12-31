@@ -926,6 +926,10 @@ class LiquidacionesController extends Controller
 
     public function vistaActualizacion()
     {
+        if(!Auth()->user()->hasPermissionTo('Actualizacion Datos Contribuyente'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
         return view('liquidacion.actualizacion');
     }
 
@@ -1073,39 +1077,12 @@ class LiquidacionesController extends Controller
                         $guardaTlfo->save();
                     }
                     
-                    $guardaAuditoria=new ActualizaData();
-                    $guardaAuditoria->cedula_ruc=$request->ci_ruc_contribuyente;
-                    $guardaAuditoria->nombres=$request->nombre_contribuyente;
-                    $guardaAuditoria->apellidos=$request->apellido_contribuyente;
-                    $guardaAuditoria->ciudad_domiciliaria=$request->ciudad_contribuyente;
-                    $guardaAuditoria->direccion_domiciliaria=$request->direccion_contribuyente;
-                    $guardaAuditoria->correo=json_encode($request->correo);
-                    $guardaAuditoria->telefono=json_encode($request->telefono);
-                    $guardaAuditoria->id_usuario_registra=auth()->user()->id;
-                    $guardaAuditoria->fecha_actualizacion=date('Y-m-d H:i:s');
-                    $guardaAuditoria->predio='Urbano';
-                    $guardaAuditoria->usuario_nombre=auth()->user()->persona->apellidos." ".auth()->user()->persona->nombres;
-                    $guardaAuditoria->save();
-
-                    $nombrePDF="Actualizacion".date('YmdHis').".pdf";                               
-                    $pdf = PDF::loadView('reportes.reporteActualizacion', ['Datos'=>$guardaAuditoria]);
-
-                    // $pdf->setPaper("A4", "landscape");
-                    $estadoarch = $pdf->stream();
-
-                    //lo guardamos en el disco temporal
-                    Storage::disk('public')->put(str_replace("", "",$nombrePDF), $estadoarch);
-                    $exists_destino = Storage::disk('public')->exists($nombrePDF);
-                    if($exists_destino){
-                       return ["mensaje"=>"Datos actualizados exitosamente", "error"=>false, "pdf"=>$nombrePDF];  
-                    }else{
-                        return response()->json([
-                            'error'=>true,
-                            'mensaje'=>'No se pudo crear el documento'
-                        ]);
+                    $auditoria=$this->guardaAuditoriaActualizacion($request->all(),'URBANO');
+                    if($auditoria['error']==true){
+                        return ["mensaje"=>$auditoria['mensaje'], "error"=>true];
                     }
-
                     
+                    return ["mensaje"=>"Datos actualizados exitosamente", "error"=>false, "pdf"=>$auditoria['pdf']];           
 
                 }else{
                     $cedula=$request->id_cont;
@@ -1234,21 +1211,12 @@ class LiquidacionesController extends Controller
                         $guardaTlfo->save();
                     }
 
-                    $guardaAuditoria=new ActualizaData();
-                    $guardaAuditoria->cedula_ruc=$request->ci_ruc_contribuyente;
-                    $guardaAuditoria->nombres=$request->nombre_contribuyente;
-                    $guardaAuditoria->apellidos=$request->apellido_contribuyente;
-                    $guardaAuditoria->ciudad_domiciliaria=$request->ci_ruc_contribuyente;
-                    $guardaAuditoria->direccion_domiciliaria=$request->direccion_contribuyente;
-                    $guardaAuditoria->correo=json_encode($request->correo);
-                    $guardaAuditoria->telefono=json_encode($request->telefono);
-                    $guardaAuditoria->id_usuario_registra=auth()->user()->id;
-                    $guardaAuditoria->fecha_actualizacion=date('Y-m-d H:i:s');
-                    $guardaAuditoria->predio='Rural';
-                    $guardaAuditoria->save();
-
+                    $auditoria=$this->guardaAuditoriaActualizacion($request->all(),'RURAL');
+                    if($auditoria['error']==true){
+                        return ["mensaje"=>$auditoria['mensaje'], "error"=>true];
+                    }
                     
-                    return ["mensaje"=>"Datos actualizados exitosamente", "error"=>false];  
+                    return ["mensaje"=>"Datos actualizados exitosamente", "error"=>false, "pdf"=>$auditoria['pdf']];  
                 }
                 
             
@@ -1258,5 +1226,44 @@ class LiquidacionesController extends Controller
             }
         });
         return $transaction;
+    }
+
+    public function guardaAuditoriaActualizacion($request, $lugar){
+        try{
+           
+            $guardaAuditoria=new ActualizaData();
+            $guardaAuditoria->cedula_ruc=$request['ci_ruc_contribuyente'];
+            $guardaAuditoria->nombres=$request['nombre_contribuyente'];
+            $guardaAuditoria->apellidos=$request['apellido_contribuyente'];
+            $guardaAuditoria->ciudad_domiciliaria=$request['ciudad_contribuyente'];
+            $guardaAuditoria->direccion_domiciliaria=$request['direccion_contribuyente'];
+            $guardaAuditoria->correo=json_encode($request['correo']);
+            $guardaAuditoria->telefono=json_encode($request['telefono']);
+            $guardaAuditoria->id_usuario_registra=auth()->user()->id;
+            $guardaAuditoria->fecha_actualizacion=date('Y-m-d H:i:s');
+            $guardaAuditoria->predio=$lugar;
+            $guardaAuditoria->usuario_nombre=auth()->user()->persona->apellidos." ".auth()->user()->persona->nombres;
+            $guardaAuditoria->save();
+
+            $nombrePDF="Actualizacion".date('YmdHis').".pdf";                               
+            $pdf = PDF::loadView('reportes.reporteActualizacion', ['Datos'=>$guardaAuditoria]);
+
+            // $pdf->setPaper("A4", "landscape");
+            $estadoarch = $pdf->stream();
+
+            //lo guardamos en el disco temporal
+            Storage::disk('public')->put(str_replace("", "",$nombrePDF), $estadoarch);
+            $exists_destino = Storage::disk('public')->exists($nombrePDF);
+            if($exists_destino){
+                return ["mensaje"=>"Datos actualizados exitosamente", "error"=>false, "pdf"=>$nombrePDF];  
+            }else{
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'No se pudo crear el documento'
+                ]);
+            }       
+        }catch (\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e->getLine(), "error"=>true];
+        }
     }
 }
