@@ -398,7 +398,23 @@
                 'active' => request()->routeIs('predios.urbanos') || request()->routeIs('predios.rural')
             ],
 
-             
+             [
+                'name' => 'CONTRIBUYENTE',
+                'icon' => 'gear-wide-connected',
+                'permission' => 'menu contribuyente',
+                'subMenu' => [
+                    [
+                        'name' => 'Actualizacion Datos',
+                        'route' => 'actualizacion.liquidacion',
+                        'permission' => 'Actualizacion Datos Contribuyente',
+                        'active' => request()->routeIs('actualizacion.liquidacion')
+                        
+                    ],
+                   
+                  
+                ],
+                'active' => request()->routeIs('actualizacion.liquidacion')
+            ],
             
             [
                 'name' => 'RENTAS',
