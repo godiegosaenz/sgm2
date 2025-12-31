@@ -410,7 +410,7 @@ class TransitoImpuestoController extends Controller
             $anio_modelo=$vehiculo->year;
             $tipo_servicio=$request->tipo_serv;
             $desmarca_rtv="";
-            if($anio_modelo>$ultimo_3_anio && $tipo_servicio=="PARTICULAR"){
+            if($anio_modelo>=$ultimo_3_anio && $tipo_servicio=="PARTICULAR"){
                 $desmarca_rtv='S';
             }          
            
@@ -1191,9 +1191,9 @@ class TransitoImpuestoController extends Controller
     }
 
     public function generar_firma_qr($nombre_firma,$nombre_img){
-        $nombre_firma="JULIO RONALD MENDOZA VELEZ";
-        $nombre_img="29OCTUBRE";       
-        $fecha = "2025-10-29 16:37:29";
+        $nombre_firma="ROSA MARGARITA PLAZA VERA";
+        $nombre_img="07 noviembre ro";       
+        $fecha = "2025-11-07 09:55:25";
         $textoQR = "FIRMADO POR: $nombre_firma\nRAZON: \nLOCALIZACION: \nFECHA: $fecha \nVALIDAR CON: https://www.firmadigital.gob.ec \nFirmado digitalmente con FirmaEC 4.0.1 Windows 11 10.0";
 
         // $fecha = date('Y-m-d H:i:s');       

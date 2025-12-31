@@ -48,20 +48,24 @@ class PrediosContribuyenteUrb extends Controller
                 // ->value('solicitante');
                 
                 foreach($data->propietario as $key2=>$prop){
-                    $prop->tercera_edad = 'NO';
+                    // $prop->tercera_edad = 'NO';
                     $prop->porcentaje = '';
 
                     if (!is_null($es_tercera_edad) && $prop->ente == $es_tercera_edad->solicitante) {
                         if($es_tercera_edad->exoneracion_tipo==17){
+                            $prop->tercera_edad = '';
                             $prop->tercera_edad = 'LEY DEL ANCIANO';
                            
                         }else if($es_tercera_edad->exoneracion_tipo==18){
+                            $prop->tercera_edad = '';
                             $prop->tercera_edad = 'LEY DEL ANCIANO PORCENTAJE';
                             $prop->porcentaje = $es_tercera_edad->valor;
                         }else if($es_tercera_edad->exoneracion_tipo==37){
+                            $prop->tercera_edad = '';
                             $prop->tercera_edad = 'LEY DEL DISCAPACITADO';
                             $prop->porcentaje = $es_tercera_edad->valor;
                         }else{
+                            $prop->tercera_edad = '';
                             $prop->tercera_edad = 'LEY ORGANICA DE DISCAPACIDADES';
                            
                         }
