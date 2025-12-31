@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\TitulosPredial;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActualizaData;
 use App\Models\RuralEnteCorreo;
 use App\Models\RuralEnteTelefono;
 use Illuminate\Http\Request;
@@ -16,6 +17,7 @@ use Illuminate\Support\Str;
 use App\Models\PsqlEnte;
 use App\Models\PsqlEnteTelefono;
 use App\Models\PsqlEnteCorreo;
+use PDF;
 class LiquidacionesController extends Controller
 {
     public function index()
@@ -1070,8 +1072,40 @@ class LiquidacionesController extends Controller
                         $guardaTlfo->ente=$actualizaContrib->id;
                         $guardaTlfo->save();
                     }
-                        
-                return ["mensaje"=>"Datos actualizados exitosamente", "error"=>false];  
+                    
+                    $guardaAuditoria=new ActualizaData();
+                    $guardaAuditoria->cedula_ruc=$request->ci_ruc_contribuyente;
+                    $guardaAuditoria->nombres=$request->nombre_contribuyente;
+                    $guardaAuditoria->apellidos=$request->apellido_contribuyente;
+                    $guardaAuditoria->ciudad_domiciliaria=$request->ciudad_contribuyente;
+                    $guardaAuditoria->direccion_domiciliaria=$request->direccion_contribuyente;
+                    $guardaAuditoria->correo=json_encode($request->correo);
+                    $guardaAuditoria->telefono=json_encode($request->telefono);
+                    $guardaAuditoria->id_usuario_registra=auth()->user()->id;
+                    $guardaAuditoria->fecha_actualizacion=date('Y-m-d H:i:s');
+                    $guardaAuditoria->predio='Urbano';
+                    $guardaAuditoria->usuario_nombre=auth()->user()->persona->apellidos." ".auth()->user()->persona->nombres;
+                    $guardaAuditoria->save();
+
+                    $nombrePDF="Actualizacion".date('YmdHis').".pdf";                               
+                    $pdf = PDF::loadView('reportes.reporteActualizacion', ['Datos'=>$guardaAuditoria]);
+
+                    // $pdf->setPaper("A4", "landscape");
+                    $estadoarch = $pdf->stream();
+
+                    //lo guardamos en el disco temporal
+                    Storage::disk('public')->put(str_replace("", "",$nombrePDF), $estadoarch);
+                    $exists_destino = Storage::disk('public')->exists($nombrePDF);
+                    if($exists_destino){
+                       return ["mensaje"=>"Datos actualizados exitosamente", "error"=>false, "pdf"=>$nombrePDF];  
+                    }else{
+                        return response()->json([
+                            'error'=>true,
+                            'mensaje'=>'No se pudo crear el documento'
+                        ]);
+                    }
+
+                    
 
                 }else{
                     $cedula=$request->id_cont;
@@ -1199,6 +1233,20 @@ class LiquidacionesController extends Controller
                         $guardaTlfo->cedula_ruc=$request->ci_ruc_contribuyente;
                         $guardaTlfo->save();
                     }
+
+                    $guardaAuditoria=new ActualizaData();
+                    $guardaAuditoria->cedula_ruc=$request->ci_ruc_contribuyente;
+                    $guardaAuditoria->nombres=$request->nombre_contribuyente;
+                    $guardaAuditoria->apellidos=$request->apellido_contribuyente;
+                    $guardaAuditoria->ciudad_domiciliaria=$request->ci_ruc_contribuyente;
+                    $guardaAuditoria->direccion_domiciliaria=$request->direccion_contribuyente;
+                    $guardaAuditoria->correo=json_encode($request->correo);
+                    $guardaAuditoria->telefono=json_encode($request->telefono);
+                    $guardaAuditoria->id_usuario_registra=auth()->user()->id;
+                    $guardaAuditoria->fecha_actualizacion=date('Y-m-d H:i:s');
+                    $guardaAuditoria->predio='Rural';
+                    $guardaAuditoria->save();
+
                     
                     return ["mensaje"=>"Datos actualizados exitosamente", "error"=>false];  
                 }

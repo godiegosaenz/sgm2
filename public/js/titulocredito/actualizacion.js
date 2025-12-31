@@ -1034,6 +1034,7 @@ $("#formActualiza").submit(function(e){
                     }
                 
                     alertNotificar(data.mensaje,"success");
+                    window.location.href="descargar-reporte/"+data.pdf
                     setTimeout(() => {
                         location.reload();     
                     }, 900);
