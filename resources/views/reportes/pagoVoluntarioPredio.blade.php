@@ -231,8 +231,9 @@
                     $valor = str_replace(',', '', $valor);
                     // Convertir a número y sumar
                     $total += (float) $valor;
-                    // $coordenas_txt=" Coordenadas X ".$info->coordx." Y ".$info->coordy;
-                    $coordenas_txt = ' (coordenadas <strong>X</strong> ' . $info->coordx . ' <strong>Y</strong> ' . $info->coordy.'),';
+                    if($ubicacion==1){
+                        $coordenas_txt = ' (coordenadas <strong>X</strong> ' . $info->coordx . ' <strong>Y</strong> ' . $info->coordy.'),';
+                    }
 
                 }
                 // $total_final=$total_final+$total;

@@ -271,41 +271,50 @@ class TituloRuralController extends Controller
                     ->where('CarVe_NumTitulo', '=', $valor_num)
                     ->get();
                    
-
+                    //volver
+                    $mes_Actual=date('m');
+           
+                    $aplica_remision=0;
+                    if($mes_Actual<7){
+                        $aplica_remision=1;
+                    }
                     foreach($liquidacionRural as $key=> $data){
                         $anio=explode("-",$data->CarVe_NumTitulo);
-                        $consultaInteresMora=\DB::connection('sqlsrv')->table('INTERES_MORA as im')
-                        ->where('IntMo_Año',$anio)
-                        ->select('IntMo_Valor')
-                        ->first();
+                        $valor=0;
+                        if($aplica_remision==0){
+                            $consultaInteresMora=\DB::connection('sqlsrv')->table('INTERES_MORA as im')
+                            ->where('IntMo_Año',$anio)
+                            ->select('IntMo_Valor')
+                            ->first();
+                            if(!is_null($consultaInteresMora)){
+                                
+                                $valor=(($consultaInteresMora->IntMo_Valor/100) * ($data->CarVe_ValorEmitido +$data->recargo - $data->CarVe_TasaAdministrativa));
+                            
+                                $valor=number_format($valor,2);
 
-                        $valor=(($consultaInteresMora->IntMo_Valor/100) * ($data->CarVe_ValorEmitido +$data->recargo - $data->CarVe_TasaAdministrativa));
+                                $liquidacionRural[$key]->porcentaje_intereses=$consultaInteresMora->IntMo_Valor;
+                                
+                            }else{
+                                $cero=0;
+                                $liquidacionRural[$key]->porcentaje_intereses=number_format($cero,2);
+                            }
+                        }else  {
+                            $cero=0;
+                            $valor=number_format($cero,2);
+                            $liquidacionRural[$key]->porcentaje_intereses=number_format($cero,2);
+                            
+                        }  
                         
-                        $valor=number_format($valor,2);
-
-                        $liquidacionRural[$key]->porcentaje_intereses=$consultaInteresMora->IntMo_Valor;
                         $liquidacionRural[$key]->intereses=$valor;
-
                         $total_pago=$valor +$data->CarVe_ValorEmitido;
-                        $liquidacionRural[$key]->total_pagar=$total_pago;
+                        $liquidacionRural[$key]->total_pagar=number_format($total_pago,2);
+
                     }
-                     array_push($dataArray, $liquidacionRural);
+                    array_push($dataArray, $liquidacionRural);
                 }
 
-                // if($existe==1){
-                //     // $resultado = $liquidacionRural->merge($liquidacionActual);
-                //     array_push($dataArray, $liquidacionActual);
-                // }else{
-                //     array_push($dataArray, $liquidacionRural);
-                // }        
-                
-               
-
-
-                         
-               
             }
-            // dd($liquidacionRural);
+            //dd($liquidacionRural);
             $fecha_hoy=date('Y-m-d');
             setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES@euro', 'es_ES', 'esp');
             $fecha_timestamp = strtotime($fecha_hoy);
@@ -343,7 +352,7 @@ class TituloRuralController extends Controller
 
             return response()->json([
                 'error'=>true,
-                'mensaje'=>'Ocurrió un error' .$e->getLine()
+                'mensaje'=>'Ocurrió un error' .$e->getMessage()
             ]);
 
         }

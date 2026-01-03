@@ -288,7 +288,7 @@ class TituloCreditoCoactivaController extends Controller
                                         ROUND((liq.saldo * (
                                             SELECT ROUND((porcentaje / 100), 2) 
                                             FROM sgm_financiero.ren_intereses i
-                                            WHERE i.anio = 2024
+                                            WHERE i.anio = liq.anio
                                             LIMIT 1
                                         )), 2)
                                     ELSE
@@ -502,7 +502,7 @@ class TituloCreditoCoactivaController extends Controller
                                             ROUND((liq.saldo * (
                                                 SELECT ROUND((porcentaje / 100), 2) 
                                                 FROM sgm_financiero.ren_intereses i
-                                                WHERE i.anio = 2024
+                                                WHERE i.anio = liq.anio
                                                 LIMIT 1
                                             )), 2)
                                         ELSE
@@ -606,7 +606,7 @@ class TituloCreditoCoactivaController extends Controller
                 array_push($dataArray, $liquidacion);
             }
         
-
+            //dd($dataArray);
             $data = [
                 'title' => 'Reporte de liquidacion',
                 'date' => date('m/d/Y'),

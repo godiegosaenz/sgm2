@@ -149,9 +149,9 @@ class LiquidacionesController extends Controller
                 $valor=0;
                 $subtotal=0;
                 $subtotal=number_format($data->valor_emitido,2);
-
+                $anio=explode("-",$data->num_titulo);
                 if($aplica_remision==0){
-                    $anio=explode("-",$data->num_titulo);
+                   
                     $consultaInteresMora=DB::connection('sqlsrv')->table('INTERES_MORA as im')
                     ->where('IntMo_Año',$anio)
                     ->select('IntMo_Valor')
@@ -292,7 +292,7 @@ class LiquidacionesController extends Controller
                     "aplica_remision"=>$aplica_remision
             ];
         } catch (\Exception $e) {
-            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e->getLine(), "error"=>true];
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e->getMessage(), "error"=>true];
         }
     }
 
