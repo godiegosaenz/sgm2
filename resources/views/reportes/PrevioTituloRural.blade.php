@@ -275,7 +275,7 @@
                             <td>$</td>
                             <td style="text-align:right">{{ number_format($data->bomberos,2) }}</td>
                         </tr>
-                        @if(date('Y')>2025)
+                        @if($data->anio>2025)
                             <tr>
                                 <td style="text-align:right">Seguridad Ciudadana:</td>
                                 <td>$</td>

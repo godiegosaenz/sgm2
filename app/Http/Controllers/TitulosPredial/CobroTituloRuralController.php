@@ -351,19 +351,15 @@ class CobroTituloRuralController extends Controller
                 }
 
             }
-            // dd($vencido);
-            $liquidacionRural=[];
-           
+
+            $liquidacionRural=[];           
             $liquidacionRural=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
-            // ->Join('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'cv.CarVe_CI')
             ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
             ->select('cv.Pre_CodigoCatastral as clave'
             ,'cv.CarVe_FechaEmision as fecha_emi',
             'cv.CarVe_NumTitulo as num_titulo',
             'cv.CarVe_CI as num_ident',
             'cv.CarVe_Nombres as nombres',
-            // 'c.Ciu_Apellidos as apellidos',
-            // 'c.Ciu_Nombres as nombres',
             'cv.CarVe_ValorEmitido as valor_emitido',
             'cv.Carve_Recargo as recargo',
             'cv.Carve_Descuento as descuento',
@@ -387,18 +383,14 @@ class CobroTituloRuralController extends Controller
             ->where('cv.CarVe_Estado','C')
             ->orderby('CarVe_NumTitulo','asc')
             ->get();
-            //dd($anio_actual);
-           
+                      
             $actual=DB::connection('sqlsrv')->table('TITULOS_PREDIO as tp')
-            // ->Join('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'tp.Titpr_RUC_CI')
             ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'tp.Pre_CodigoCatastral')
             ->select('tp.Pre_CodigoCatastral as clave',
             'tp.TitPr_NumTitulo as num_titulo',
             'tp.TitPr_FechaEmision as fecha_emi',           
             'tp.Titpr_RUC_CI as num_ident',
             'tp.TitPr_Nombres as nombres',
-            // 'c.Ciu_Apellidos as apellidos',
-            // 'c.Ciu_Nombres as nombres',
             'tp.TitPr_ValorEmitido as valor_emitido',
             'tp.TitPr_Recargo as recargo',
             'tp.TitPr_Descuento as descuento',
@@ -425,13 +417,10 @@ class CobroTituloRuralController extends Controller
             ->get();
 
             $resultado = $liquidacionRural->merge($actual);
-
-
+          
             $nombrePDF="TituloRural".date('YmdHis').".pdf";
-            // dd($copia);
+           
             $pdf = PDF::loadView('reportes.TituloRural',["liquidacionRural"=>$resultado, "copia"=>$copia]);
-
-            // return $pdf->stream($nombrePDF);
 
             $estadoarch = $pdf->stream();
 
@@ -463,7 +452,7 @@ class CobroTituloRuralController extends Controller
                 DB::Rollback();
                 return ["mensaje"=>$crearPdf["mensaje"], "error"=>true];
             }
-            return ["mensaje"=>"Pago procesado exitosamente", "error"=>false, "pdf"=>$crearPdf['pdf']];
+            return ["mensaje"=>"Documentos generados exitosamente", "error"=>false, "pdf"=>$crearPdf['pdf']];
         }catch (\Exception $e) {
             return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
         }
@@ -479,29 +468,23 @@ class CobroTituloRuralController extends Controller
                     $anio_actual=[];
                     array_push($anio_actual,$item);
                 }else{
-                    // $vencido=[];
                     array_push($vencido,$item);
                 }
 
             }
-            // dd($vencido);
-            $liquidacionRural=[];
            
+            $liquidacionRural=[];           
             $liquidacionRural=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
-            // ->Join('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'cv.CarVe_CI')
             ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
             ->select('cv.Pre_CodigoCatastral as clave'
             ,'cv.CarVe_FechaEmision as fecha_emi',
             'cv.CarVe_NumTitulo as num_titulo',
             'cv.CarVe_CI as num_ident',
             'cv.CarVe_Nombres as nombres',
-            // 'c.Ciu_Apellidos as apellidos',
-            // 'c.Ciu_Nombres as nombres',
             'cv.CarVe_ValorEmitido as valor_emitido',
             'cv.Carve_Recargo as recargo',
             'cv.Carve_Descuento as descuento',
             'cv.CarVe_ValorTCobrado as valor_cobrado',
-            // 'cv.CarVe_Interes as interes',
             'cv.CarVe_TasaAdministrativa as tasa',
             'CarVe_direccPropietario as direccion',
             'cv.CarVe_Calle as calle',
@@ -518,12 +501,10 @@ class CobroTituloRuralController extends Controller
             DB::raw("FORMAT(cv.CarVe_FechaEmision,'dd/MM/yyyy') as fecha_emi"),
             DB::raw("FORMAT(cv.CarVe_FechaRecaudacion,'dd/MM/yyyy') as fecha_recaudacion"))
             ->whereIn('cv.CarVe_NumTitulo', $vencido)                    
-            // ->where('cv.CarVe_Estado','C')
             ->orderby('CarVe_NumTitulo','asc')
             ->distinct()
             ->get();
             
-
             $mes_Actual=date('m');
             $aplica_remision=0;
             if($mes_Actual<7){
@@ -534,9 +515,10 @@ class CobroTituloRuralController extends Controller
                 $valor=0;
                 $subtotal=0;
                 $subtotal=number_format($data->valor_emitido,2);
-
+                $anio=explode("-",$data->num_titulo);
+                $liquidacionRural[$key]->anio=$anio[0];
                 if($aplica_remision==0){
-                    $anio=explode("-",$data->num_titulo);
+                    
                     $consultaInteresMora=DB::connection('sqlsrv')->table('INTERES_MORA as im')
                     ->where('IntMo_Año',$anio)
                     ->select('IntMo_Valor')
@@ -551,28 +533,22 @@ class CobroTituloRuralController extends Controller
                     $liquidacionRural[$key]->porcentaje_intereses=number_format($cero,2);
                 }
                 $liquidacionRural[$key]->subtotal_emi=$subtotal;
-                // $liquidacionRural[$key]->porcentaje_intereses=$consultaInteresMora->IntMo_Valor;
                 $liquidacionRural[$key]->intereses=$valor;
 
                 $total_pago=($valor + $data->valor_emitido + $data->recargo) - $data->descuento;
-                // $liquidacionRural[$key]->total_pagar=number_format($total_pago,2);
+               
                 $liquidacionRural[$key]->total_pagar=$total_pago;
                 $total_valor=$total_valor+$total_pago;
-                // $total_valor=number_format($total_valor,2);
+               
             }
-            //dd($anio_actual);
-            // dd($liquidacionRural);
-           
+          
             $actual=DB::connection('sqlsrv')->table('TITULOS_PREDIO as tp')
-            // ->Join('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'tp.Titpr_RUC_CI')
             ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'tp.Pre_CodigoCatastral')
             ->select('tp.Pre_CodigoCatastral as clave',
             'tp.TitPr_NumTitulo as num_titulo',
             'tp.TitPr_FechaEmision as fecha_emi',           
             'tp.Titpr_RUC_CI as num_ident',
             'tp.TitPr_Nombres as nombres',
-            // 'c.Ciu_Apellidos as apellidos',
-            // 'c.Ciu_Nombres as nombres',
             'tp.TitPr_ValorEmitido as valor_emitido',
             'tp.TitPr_Recargo as recargo',
             'tp.TitPr_Descuento as descuento',
@@ -594,7 +570,6 @@ class CobroTituloRuralController extends Controller
             DB::raw("FORMAT(tp.TitPr_FechaEmision,'dd/MM/yyyy') as fecha_emi"),
             DB::raw("FORMAT(tp.TitPr_FechaRecaudacion,'dd/MM/yyyy') as fecha_recaudacion"))
             ->whereIn('tp.TitPr_NumTitulo', [$anio_actual])            
-            // ->whereIn('tp.TitPr_Estado',['C','Q'])
             ->orderby('TitPr_NumTitulo','asc')
             ->get();
 
@@ -603,6 +578,7 @@ class CobroTituloRuralController extends Controller
                 $subtotal=number_format($data->valor_emitido,2);
                 $valor=0;
                 $anio=explode("-",$data->num_titulo);
+                $actual[$key]->anio=$anio[0];
                 $consultaInteresMora=DB::connection('sqlsrv')->table('INTERES_MORA as im')
                 ->where('IntMo_Año',$anio)
                 ->select('IntMo_Valor')
@@ -633,13 +609,10 @@ class CobroTituloRuralController extends Controller
             }
 
             $resultado = $liquidacionRural->merge($actual);
-
-
+           
             $nombrePDF="PrevioTituloRural".date('YmdHis').".pdf";
-            // dd($copia);
+            
             $pdf = PDF::loadView('reportes.PrevioTituloRural',["liquidacionRural"=>$resultado, "copia"=>$copia]);
-
-            // return $pdf->stream($nombrePDF);
 
             $estadoarch = $pdf->stream();
 
@@ -783,7 +756,7 @@ class CobroTituloRuralController extends Controller
                     DB::Rollback();
                     return ["mensaje"=>$crearPdf["mensaje"], "error"=>true];
                 }
-                return ["mensaje"=>"Pago procesado exitosamente", "error"=>false, "pdf"=>$crearPdf['pdf']];               
+                return ["mensaje"=>"El documento se descargara en unos segundos", "error"=>false, "pdf"=>$crearPdf['pdf']];               
 
             }catch (\Exception $e) {
                 DB::Rollback();

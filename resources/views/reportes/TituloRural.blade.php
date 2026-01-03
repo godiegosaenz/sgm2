@@ -112,6 +112,10 @@
     @endphp
     
     @foreach ($liquidacionRural as $key=>$data )
+        @php
+            $anio=explode("-",$data->num_titulo);
+            $anio_titulo=$anio[0];
+        @endphp
         <div class="watermark"></div>
         <table class="cabecera" style="font-size:10px !important"  width="100%" >
             <tr>
@@ -275,7 +279,7 @@
                             <td>$</td>
                             <td style="text-align:right">{{ number_format($data->bomberos,2) }}</td>
                         </tr>
-                        @if(date('Y')>2025)
+                        @if($anio_titulo>2025)
                             <tr>
                                 <td style="text-align:right">Seguridad Ciudadana:</td>
                                 <td>$</td>
