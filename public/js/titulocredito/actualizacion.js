@@ -818,7 +818,10 @@ $(document).on('change', '#selectAll', function() {
 
 function cerrarModalPago(){
     $('#modalContri').modal('hide')
+    location.reload(); 
 }
+
+
 
 function descargarLiquidacion(){
     let ubicacion=$('#lugar').val()

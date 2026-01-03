@@ -387,10 +387,10 @@
                                                 Direccion Domiciliaria<span class="text-danger"> *</span> 
                                             </label>
                                             <div class="col-md-9">
-                                                <input type="text"
+                                                <textarea
                                                     class="form-control "
                                                     name="direccion_contribuyente"
-                                                    id="direccion_contribuyente" >
+                                                    id="direccion_contribuyente" ></textarea>
                                             </div>
                                         </div>
 
