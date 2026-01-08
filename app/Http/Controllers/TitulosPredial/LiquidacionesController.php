@@ -336,7 +336,7 @@ class LiquidacionesController extends Controller
             $nombrePDF="Liquidacion".date('YmdHis').".pdf";                               
             $pdf = \PDF::loadView('reportes.reporteLiquidacionRemisionRural', ['DatosLiquidacion'=>$listado_final,"ubicacion"=>$lugar]);
 
-            $pdf->setPaper("A4", "landscape");
+            $pdf->setPaper("A4", "portrait");
             $estadoarch = $pdf->stream();
 
             //lo guardamos en el disco temporal
