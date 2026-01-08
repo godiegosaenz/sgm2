@@ -317,7 +317,7 @@
                         <tr>
                             <td style="text-align:right">TOTAL A PAGAR:</td>
                             <td>$</td>
-                            <td style="text-align:right">{{ number_format($data->total_pagar,2) }}</td>
+                            <td style="text-align:right">{{ $data->total_pagar}}</td>
                         </tr>
 
                     </table>

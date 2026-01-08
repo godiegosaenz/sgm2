@@ -640,7 +640,7 @@ class CobroTituloRuralController extends Controller
 
         }catch (\Exception $e) {
             
-            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e->getMessage(), "error"=>true];
         }
     }
 

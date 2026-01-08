@@ -32,6 +32,7 @@ class LiquidacionesController extends Controller
             $valor=$request->valor;
 
             $liquidacionRuralAct=DB::connection('sqlsrv')->table('TITULOS_PREDIO as tp')
+            ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'tp.Pre_CodigoCatastral')
             ->select('tp.Titpr_Nombres as nombres','tp.Titpr_RUC_CI','tp.TitPr_DireccionCont as direccion_p','tp.TitPr_Estado as ruc')
             ->where(function($query)use($tipo,$valor, $tipo_per) {
                 if($tipo==1){
@@ -44,10 +45,11 @@ class LiquidacionesController extends Controller
                 
             })            
             ->whereIn('tp.TitPr_Estado',['E','N']) //E=Emitidos, C=Cancelado, Q=Cancelado Nueva Emitido, N=Nueva Emision
+            ->where('p.Pre_Tipo','Rural')
             ->distinct()
             ->limit(10)
             ->get();
-            
+            // dd($liquidacionRuralAct);
             if(sizeof($liquidacionRuralAct)>0){
                 foreach($liquidacionRuralAct as $key=>$data){
                     if(strlen($data->Titpr_RUC_CI)==10){
@@ -88,6 +90,7 @@ class LiquidacionesController extends Controller
             }
            
             $liquidacionRuralAct=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
+            ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
             ->select('cv.CarVe_Nombres as nombres','cv.CarVe_CI as Titpr_RUC_CI'
            ,'cv.CarVe_Calle as TitPr_DireccionCont','cv.CarVe_RUC as ruc')
             ->where(function($query)use($tipo,$valor, $tipo_per) {
@@ -104,6 +107,7 @@ class LiquidacionesController extends Controller
             }) 
             ->whereNotNull('CarVe_Nombres')           
             ->whereIn('cv.CarVe_Estado',['E']) //E=Emitidos, C=Cancelado, Q=Cancelado Nueva Emitido, N=Nueva Emision
+            ->where('p.Pre_Tipo','Rural')
             ->distinct()
             ->limit(10)
             ->get();            
@@ -1004,6 +1008,7 @@ class LiquidacionesController extends Controller
                 'cv.CarVe_Calle as direcc_cont'
             )
             ->whereIN('cv.Pre_CodigoCatastral',$prediosRurales)
+            ->where('p.Pre_Tipo','Rural')
             ->whereIn('cv.CarVe_Estado',['E']) //E=Emitidos, N=Nueva Emision
             ->orderby('cv.Pre_CodigoCatastral','asc')            
             ->distinct('cv.Pre_CodigoCatastral')
