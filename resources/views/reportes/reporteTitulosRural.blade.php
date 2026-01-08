@@ -232,7 +232,7 @@
                             <td colspan="3" style="border: 1px solid #000; border-left:0px; border-bottom:0px;border-right:0px"></td>
                         
                         </tr>
-
+ 
 
                     
 
@@ -257,7 +257,7 @@
                         <tr>
                             <td><b>Total Deuda:</b> </td>
                             <td>$</td>
-                            <td style="text-align:right">{{number_format($d[0]->total_pagar,2)}}</td>
+                            <td style="text-align:right">{{$d[0]->total_pagar}}</td>
                         </tr>
 
                     </table>
@@ -282,7 +282,9 @@
         <br>
 
         @php
-            $sumatotal = $sumatotal + $d[0]->total_pagar;
+            // $sumatotal = $sumatotal + $d[0]->total_pagar;
+            $sumatotal += (float) str_replace(',', '', $d[0]->total_pagar);
+
         @endphp
        
     @endforeach 

@@ -278,6 +278,7 @@ class TituloRuralController extends Controller
                     if($mes_Actual<7){
                         $aplica_remision=1;
                     }
+                    $aplica_remision=0;
                     foreach($liquidacionRural as $key=> $data){
                         $anio=explode("-",$data->CarVe_NumTitulo);
                         $valor=0;
@@ -326,7 +327,7 @@ class TituloRuralController extends Controller
                 'DatosLiquidacion' => $dataArray,
                 'fecha_formateada'=>$fecha_formateada
             ];
-
+            // dd($dataArray);
             $nombrePDF="reporteTituloRural.pdf";
 
             $pdf = PDF::loadView('reportes.reporteTitulosRural',$data);
@@ -352,7 +353,7 @@ class TituloRuralController extends Controller
 
             return response()->json([
                 'error'=>true,
-                'mensaje'=>'Ocurrió un error' .$e->getMessage()
+                'mensaje'=>'Ocurrió un error' .$e->getLine()
             ]);
 
         }

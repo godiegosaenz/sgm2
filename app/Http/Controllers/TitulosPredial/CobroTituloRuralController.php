@@ -101,6 +101,7 @@ class CobroTituloRuralController extends Controller
             if($mes_Actual<7){
                 $aplica_remision=1;
             }
+            $aplica_remision=0;
             $total_valor=0;
             $exoneracion_3era_edad=[];
             $exoneracion_discapacidad=[];
@@ -268,7 +269,9 @@ class CobroTituloRuralController extends Controller
                 $valor_recarga=$request->valorRecarga;
 
                 foreach($request->numTitulosSeleccionados as $key=>$tit){
-                                    
+                    $valor_cobrado[$key] = (float) str_replace(',', '', $valor_cobrado[$key]);
+                    $valor_interes[$key] = (float) str_replace(',', '', $valor_interes[$key]);
+               
                     $solo_anio=explode("-", $tit);
                     if (date('Y') == (int)$solo_anio[0]) {
                         $es_nueva_emi=DB::connection('sqlsrv')->table('TITULOS_PREDIO')
@@ -291,8 +294,8 @@ class CobroTituloRuralController extends Controller
                             "TitPr_FechaRecaudacion" => date('Y-d-m 00:00:00.000'), // ✔ Fecha automática correcta
                             "TitPr_Estado" => $estado_pagado,
                             "Usu_usuario" => $es_tesoreria->USU_NICK,
-                            "TitPr_ValorTCobrado" => round($valor_cobrado[$key], 2),
-                            "TitPr_Interes" => round($valor_interes[$key], 2),
+                            "TitPr_ValorTCobrado" => $valor_cobrado[$key],
+                            "TitPr_Interes" => $valor_interes[$key],
                             "TitPr_Recargo" => round($valor_recarga[$key], 2),
                             "TitPr_Descuento" => round($valor_descuento[$key], 2) // ✔ formato numérico válido
                         ]);
@@ -307,8 +310,8 @@ class CobroTituloRuralController extends Controller
                             "CarVe_FechaRecaudacion" => date('Y-d-m 00:00:00.000'), // ✔ Fecha automática correcta
                             "Carve_Estado" => "C",
                             "Usu_usuario" => $es_tesoreria->USU_NICK,
-                            "CarVe_ValorTCobrado" => round($valor_cobrado[$key], 2),
-                            "CarVe_Interes" => round($valor_interes[$key], 2),
+                            "CarVe_ValorTCobrado" => $valor_cobrado[$key],
+                            "CarVe_Interes" => $valor_interes[$key],
                             "CarVe_Recargo" => round($valor_recarga[$key], 2),
                             "CarVe_Descuento" => round($valor_descuento[$key], 2) // ✔ formato numérico válido
                         ]);
@@ -498,6 +501,7 @@ class CobroTituloRuralController extends Controller
             'cv.CarVe_TasaAdministrativa as tasa_adm',
             'cv.CarVe_Bomberos as bomberos',
             'cv.Carve_Valor1 as seguridad',
+            'P.Pre_NombrePredio',
             DB::raw("FORMAT(cv.CarVe_FechaEmision,'dd/MM/yyyy') as fecha_emi"),
             DB::raw("FORMAT(cv.CarVe_FechaRecaudacion,'dd/MM/yyyy') as fecha_recaudacion"))
             ->whereIn('cv.CarVe_NumTitulo', $vencido)                    
@@ -510,6 +514,7 @@ class CobroTituloRuralController extends Controller
             if($mes_Actual<7){
                 $aplica_remision=1;
             }
+            $aplica_remision=0;
             $total_valor=0;
             foreach($liquidacionRural as $key=> $data){
                 $valor=0;
@@ -567,6 +572,7 @@ class CobroTituloRuralController extends Controller
             'tp.TitPr_TasaAdministrativa as tasa_adm',
             'tp.TitPr_Bomberos as bomberos',
             'tp.TitPr_Valor1 as seguridad',
+            'P.Pre_NombrePredio',
             DB::raw("FORMAT(tp.TitPr_FechaEmision,'dd/MM/yyyy') as fecha_emi"),
             DB::raw("FORMAT(tp.TitPr_FechaRecaudacion,'dd/MM/yyyy') as fecha_recaudacion"))
             ->whereIn('tp.TitPr_NumTitulo', [$anio_actual])            
@@ -609,6 +615,7 @@ class CobroTituloRuralController extends Controller
             }
 
             $resultado = $liquidacionRural->merge($actual);
+            
            
             $nombrePDF="PrevioTituloRural".date('YmdHis').".pdf";
             

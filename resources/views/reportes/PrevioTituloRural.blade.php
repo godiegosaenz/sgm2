@@ -165,7 +165,7 @@
                 <td><b>Direccion Domicilio:</b> {{ $data->direccion }}</td>
             
                 <td></td>
-                <td><b>Nombre del predio:</b> {{ $data->calle }}</td>
+                <td><b>Nombre del predio:</b> {{ $data->Pre_NombrePredio }}</td> 
                 
             </tr>
         </table>

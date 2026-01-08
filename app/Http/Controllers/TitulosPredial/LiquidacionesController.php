@@ -142,6 +142,7 @@ class LiquidacionesController extends Controller
             if($mes_Actual<7){
                 $aplica_remision=1;
             }
+            $aplica_remision=0;
             $total_valor=0;
             $exoneracion_3era_edad=[];
             $exoneracion_discapacidad=[];

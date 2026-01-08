@@ -548,7 +548,9 @@ function actualizarTotalGeneral() {
     valorRecarga=[]
     // Iterar sobre cada checkbox marcado y sumar el valor correspondiente
     $('#tbodyRuralDetalle input[type="checkbox"]:checked').each(function() {
-        totalGeneral += parseFloat($(this).val());
+        // totalGeneral += parseFloat($(this).val());
+        let valor = $(this).val().replace(/,/g, '');
+        totalGeneral += parseFloat(valor) || 0;
         numTitulosSeleccionados.push($(this).data('num-titulo'));
         ordenTitulosSeleccionados.push($(this).data('orden'));
         valorCobrado.push($(this).data('valor-cobrado'));
