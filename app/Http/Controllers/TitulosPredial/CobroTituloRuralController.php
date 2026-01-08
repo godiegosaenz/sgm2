@@ -40,7 +40,8 @@ class CobroTituloRuralController extends Controller
                     $query->where('tp.Titpr_Nombres', 'LIKE', "%$valor%");
                 }
                 
-            })            
+            })
+            ->where('P.Pre_Tipo','Rural')            
             ->whereIn('tp.TitPr_Estado',['E','N']) //E=Emitidos, C=Cancelado, Q=Cancelado Nueva Emitido, N=Nueva Emision
             ->distinct()
             ->limit(10)
@@ -66,6 +67,7 @@ class CobroTituloRuralController extends Controller
                 }
                 
             }) 
+            ->where('P.Pre_Tipo','Rural')
             ->whereNotNull('CarVe_Nombres')           
             ->whereIn('cv.CarVe_Estado',['E']) //E=Emitidos, C=Cancelado, Q=Cancelado Nueva Emitido, N=Nueva Emision
             ->distinct()
@@ -91,7 +93,7 @@ class CobroTituloRuralController extends Controller
             // })
 
             ->whereIn('cv.CarVe_Estado',['E']) //E=Emitidos, N=Nueva Emision
-            // ->where('Pre_Tipo','Rural')
+            ->where('P.Pre_Tipo','Rural')
             ->orderby('CarVe_NumTitulo','asc')
             ->distinct()
             ->get();
@@ -166,6 +168,7 @@ class CobroTituloRuralController extends Controller
             ->where('tp.Titpr_RUC_CI',$cedula)
             
             ->whereIn('tp.TitPr_Estado',['E','N'])
+            ->where('P.Pre_Tipo','Rural')
             // ->where('Pre_Tipo','Rural')
             ->orderby('TitPr_NumTitulo','asc')
             ->get();
@@ -382,6 +385,7 @@ class CobroTituloRuralController extends Controller
             'cv.Carve_Valor1 as seguridad',
             DB::raw("FORMAT(cv.CarVe_FechaEmision,'dd/MM/yyyy') as fecha_emi"),
             DB::raw("FORMAT(cv.CarVe_FechaRecaudacion,'dd/MM/yyyy') as fecha_recaudacion"))
+            ->where('P.Pre_Tipo','Rural')
             ->whereIn('cv.CarVe_NumTitulo', $vencido)                    
             ->where('cv.CarVe_Estado','C')
             ->orderby('CarVe_NumTitulo','asc')
@@ -414,6 +418,7 @@ class CobroTituloRuralController extends Controller
             'tp.TitPr_Valor1 as seguridad',
             DB::raw("FORMAT(tp.TitPr_FechaEmision,'dd/MM/yyyy') as fecha_emi"),
             DB::raw("FORMAT(tp.TitPr_FechaRecaudacion,'dd/MM/yyyy') as fecha_recaudacion"))
+            ->where('P.Pre_Tipo','Rural')
             ->whereIn('tp.TitPr_NumTitulo', [$anio_actual])            
             ->whereIn('tp.TitPr_Estado',['C','Q'])
             ->orderby('TitPr_NumTitulo','asc')

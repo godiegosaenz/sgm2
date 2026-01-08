@@ -45,7 +45,7 @@ class LiquidacionesController extends Controller
                 
             })            
             ->whereIn('tp.TitPr_Estado',['E','N']) //E=Emitidos, C=Cancelado, Q=Cancelado Nueva Emitido, N=Nueva Emision
-            ->where('p.Pre_Tipo','Rural')
+            ->where('P.Pre_Tipo','Rural')
             ->distinct()
             ->limit(10)
             ->get();
@@ -107,7 +107,7 @@ class LiquidacionesController extends Controller
             }) 
             ->whereNotNull('CarVe_Nombres')           
             ->whereIn('cv.CarVe_Estado',['E']) //E=Emitidos, C=Cancelado, Q=Cancelado Nueva Emitido, N=Nueva Emision
-            ->where('p.Pre_Tipo','Rural')
+            ->where('P.Pre_Tipo','Rural')
             ->distinct()
             ->limit(10)
             ->get();            
@@ -134,6 +134,7 @@ class LiquidacionesController extends Controller
             $liquidacionRural=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
             ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
             ->select('cv.Pre_CodigoCatastral as clave','cv.CarVe_FechaEmision as fecha_emi','cv.CarVe_NumTitulo as num_titulo','cv.CarVe_CI as num_ident','cv.CarVe_Estado','cv.CarVe_Nombres as nombre_per','cv.CarVe_ValorEmitido as valor_emitido','cv.CarVe_TasaAdministrativa as tasa','CarVe_Calle as direcc_cont','cv.Carve_Recargo as recargo','cv.Carve_Descuento as descuento')
+            ->where('P.Pre_Tipo','Rural')
             ->whereIN('cv.Pre_CodigoCatastral',$prediosRurales)
             ->whereIn('cv.CarVe_Estado',['E']) //E=Emitidos, N=Nueva Emision
             ->orderby('cv.Pre_CodigoCatastral','asc')            
@@ -207,6 +208,7 @@ class LiquidacionesController extends Controller
             ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'tp.Pre_CodigoCatastral')
             ->select('tp.Pre_CodigoCatastral as clave','tp.TitPr_FechaEmision as fecha_emi','tp.TitPr_NumTitulo as num_titulo','tp.Titpr_RUC_CI as num_ident' ,'tp.TitPr_Estado','tp.TitPr_Nombres as nombre_per','tp.TitPr_ValorEmitido as valor_emitido','tp.TitPr_TasaAdministrativa as tasa','TitPr_DireccionCont as direcc_cont','tp.TitPr_Descuento as descuento'
             ,'tp.TitPr_Recargo as recargo')
+            ->where('P.Pre_Tipo','Rural')
             ->where('tp.Titpr_RUC_CI',$cedula)            
             ->whereIn('tp.TitPr_Estado',['E','N'])
             ->orderby('tp.Pre_CodigoCatastral','asc')            
@@ -1008,7 +1010,7 @@ class LiquidacionesController extends Controller
                 'cv.CarVe_Calle as direcc_cont'
             )
             ->whereIN('cv.Pre_CodigoCatastral',$prediosRurales)
-            ->where('p.Pre_Tipo','Rural')
+            ->where('P.Pre_Tipo','Rural')
             ->whereIn('cv.CarVe_Estado',['E']) //E=Emitidos, N=Nueva Emision
             ->orderby('cv.Pre_CodigoCatastral','asc')            
             ->distinct('cv.Pre_CodigoCatastral')
@@ -1018,7 +1020,8 @@ class LiquidacionesController extends Controller
             $liquidacionActual=DB::connection('sqlsrv')->table('TITULOS_PREDIO as tp')
             ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'tp.Pre_CodigoCatastral')
             ->select('tp.Pre_CodigoCatastral as clave','tp.Titpr_RUC_CI as num_ident','tp.TitPr_Nombres as nombre_per','TitPr_DireccionCont as direcc_cont')
-            ->where('tp.Titpr_RUC_CI',$cedula)            
+            ->where('tp.Titpr_RUC_CI',$cedula)  
+            ->where('P.Pre_Tipo','Rural')          
             ->whereIn('tp.TitPr_Estado',['E','N'])
             ->orderby('tp.Pre_CodigoCatastral','asc')   
             ->distinct('tp.Pre_CodigoCatastral')         
