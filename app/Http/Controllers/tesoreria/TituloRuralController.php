@@ -205,7 +205,8 @@ class TituloRuralController extends Controller
                     'tp.TitPr_Bomberos as CarVe_Bomberos', 
                     'tp.TitPr_ValorEmitido as CarVe_ValorEmitido',              
                     'tp.TitPr_DireccionCont as Pro_DireccionDomicilio',
-                    'tp.TitPr_Recargo as recargo')
+                    'tp.TitPr_Recargo as recargo',
+                    'P.Ubi_Codigo',)
                     ->where('tp.TitPr_NumTitulo', '=', $valor_num)            
                     ->whereIn('tp.TitPr_Estado',['E','N'])
                     ->orderby('TitPr_NumTitulo','asc')
@@ -239,6 +240,13 @@ class TituloRuralController extends Controller
                             $total_pago=$valor +$data->CarVe_ValorEmitido;
                             $liquidacionActual[$key]->total_pagar=number_format($total_pago,2);
                         }
+
+                        $sitioBarrio=\DB::connection('sqlsrv')
+                        ->table('UBICACION as hijo')
+                        ->join('UBICACION as padre', 'padre.Ubi_Codigo', '=', 'hijo.Ubi_CodigoPadre')
+                        ->where('hijo.Ubi_Codigo', $data->Ubi_Codigo)
+                        ->value('padre.Ubi_Descripcion');
+                        $liquidacionActual[$key]->nombre_sitio=$sitioBarrio;
                         //  dd($liquidacionActual);
                     }
                     array_push($dataArray, $liquidacionActual);
@@ -267,7 +275,8 @@ class TituloRuralController extends Controller
                     'cv.CarVe_Bomberos'
                     ,'cv.CarVe_ValorEmitido',
                     'cv.CarVe_direccPropietario as Pro_DireccionDomicilio',
-                    'cv.Carve_Recargo as recargo')
+                    'cv.Carve_Recargo as recargo',
+                    'P.Ubi_Codigo',)
                     ->where('CarVe_NumTitulo', '=', $valor_num)
                     ->get();
                    
@@ -310,6 +319,12 @@ class TituloRuralController extends Controller
                         $total_pago=$valor +$data->CarVe_ValorEmitido;
                         $liquidacionRural[$key]->total_pagar=number_format($total_pago,2);
 
+                        $sitioBarrio=\DB::connection('sqlsrv')
+                        ->table('UBICACION as hijo')
+                        ->join('UBICACION as padre', 'padre.Ubi_Codigo', '=', 'hijo.Ubi_CodigoPadre')
+                        ->where('hijo.Ubi_Codigo', $data->Ubi_Codigo)
+                        ->value('padre.Ubi_Descripcion');
+                        $liquidacionRural[$key]->nombre_sitio=$sitioBarrio;
                     }
                     array_push($dataArray, $liquidacionRural);
                 }
