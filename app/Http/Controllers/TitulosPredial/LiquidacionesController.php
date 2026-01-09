@@ -208,11 +208,33 @@ class LiquidacionesController extends Controller
             ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'tp.Pre_CodigoCatastral')
             ->select('tp.Pre_CodigoCatastral as clave','tp.TitPr_FechaEmision as fecha_emi','tp.TitPr_NumTitulo as num_titulo','tp.Titpr_RUC_CI as num_ident' ,'tp.TitPr_Estado','tp.TitPr_Nombres as nombre_per','tp.TitPr_ValorEmitido as valor_emitido','tp.TitPr_TasaAdministrativa as tasa','TitPr_DireccionCont as direcc_cont','tp.TitPr_Descuento as descuento'
             ,'tp.TitPr_Recargo as recargo')
+            /*->select(
+                'tp.Pre_CodigoCatastral as clave',
+                'tp.TitPr_FechaEmision as fecha_emi',
+                'tp.TitPr_NumTitulo as num_titulo',
+                'tp.Titpr_RUC_CI as num_ident',
+                'tp.TitPr_Estado',
+                'tp.TitPr_Nombres as nombre_per',
+                'tp.TitPr_DireccionCont as direcc_cont'
+            )
+            ->selectRaw("
+                CAST(REPLACE(tp.TitPr_ValorEmitido, ',', '') AS DECIMAL(12,2)) AS valor_emitido
+            ")
+            ->selectRaw("
+                CAST(REPLACE(tp.TitPr_TasaAdministrativa, ',', '') AS DECIMAL(12,2)) AS tasa
+            ")
+            ->selectRaw("
+                CAST(REPLACE(tp.TitPr_Descuento, ',', '') AS DECIMAL(12,2)) AS descuento
+            ")
+            ->selectRaw("
+                CAST(REPLACE(tp.TitPr_Recargo, ',', '') AS DECIMAL(12,2)) AS recargo
+            ")*/
             ->where('P.Pre_Tipo','Rural')
             ->where('tp.Titpr_RUC_CI',$cedula)            
             ->whereIn('tp.TitPr_Estado',['E','N'])
             ->orderby('tp.Pre_CodigoCatastral','asc')            
             ->get();
+            //dd($liquidacionActual);
            
             foreach($liquidacionActual as $key=> $data){
                 $subtotal=0;
@@ -299,7 +321,7 @@ class LiquidacionesController extends Controller
                     "aplica_remision"=>$aplica_remision
             ];
         } catch (\Exception $e) {
-            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e->getMessage(), "error"=>true];
+            return ["mensaje"=>"Ocurrio un error intentelo mas tardexx ".$e->getLine(), "error"=>true];
         }
     }
 
@@ -339,7 +361,7 @@ class LiquidacionesController extends Controller
                     }
                 } 
             }
-           
+           //dd($listado_final);
             $nombrePDF="Liquidacion".date('YmdHis').".pdf";                               
             $pdf = \PDF::loadView('reportes.reporteLiquidacionRemisionRural', ['DatosLiquidacion'=>$listado_final,"ubicacion"=>$lugar]);
 

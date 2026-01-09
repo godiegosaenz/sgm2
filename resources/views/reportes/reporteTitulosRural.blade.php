@@ -128,7 +128,7 @@
                 <td><b>Ruc/CC:</b> {{$d[0]->CarVe_CI}}</td>
             
                 <td></td>
-                <td><b>Sitio Barrio:</b> </td>
+                <td><b>Sitio Barrio:</b> {{$d[0]->Pro_DireccionDomicilio}}</td>
                 
             </tr>
             <tr style="font-size: 11px;">
@@ -138,7 +138,7 @@
                 <td><b>Nombre del predio:</b> {{$d[0]->Pre_NombrePredio}}</td>
                 
             </tr>
-        </table>
+        </table> 
         
         <table style="border-collapse: collapse; width: 100%;">
             <tr style="font-size: 11px;">

@@ -149,7 +149,16 @@
                         @endphp
                         @foreach ($data as $item)
                         @php
-                            $total=$item->subtotal_emi+$item->intereses+$item->recargo;
+                            $subtotal_emi = (float) str_replace(',', '', $item->subtotal_emi);
+                            $intereses = (float) str_replace(',', '',$item->intereses);
+                            $total=$subtotal_emi+$intereses+$item->recargo;
+
+                            $total_final=(float) str_replace(',', '', $total);
+                            //$total=$item->subtotal_emi+$item->intereses+$item->recargo;
+                            /*$total = (float)$item->subtotal_emi 
+                            + (float)$item->intereses 
+                            + (float)$item->recargo;*/
+
                             $total=$total+ $item->descuento;
                             $anio=explode("-",$item->num_titulo);
 
@@ -169,16 +178,16 @@
                         
                             <td style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{$nombre_persona}}</td>
                             
-                            <td style="text-align:right;border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{$item->subtotal_emi}}</td>
+                            <td style="text-align:right;border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{number_format($subtotal_emi,2)}}</td>
                             <td style="text-align:right;border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{ number_format($item->descuento ?? 0.00, 2) }}</td>
-                            <td style="text-align:right;border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{number_format($item->intereses ?? 0.00, 2) }}</td>
+                            <td style="text-align:right;border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{number_format($intereses ?? 0.00, 2) }}</td>
                             <td style="text-align:right;border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{ number_format($item->recargo ?? 0.00, 2) }}</td>
-                            <td style="text-align:right;border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{number_format($total,2)}}    </td>
+                            <td style="text-align:right;border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{number_format($total,2)}}</td>
                             </tr>
                             @php
-                                $total_emi=$total_emi +$item->subtotal_emi;
+                                $total_emi=$total_emi + (float)$subtotal_emi;
                                 $total_des=$total_des +$item->descuento;
-                                $total_int=$total_int +$item->intereses;
+                                $total_int=$total_int +$intereses;
                                 $total_rec=$total_rec +$item->recargo;
 
                             @endphp

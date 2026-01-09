@@ -185,7 +185,7 @@ class TituloRuralController extends Controller
                     $existe=1;
                     $liquidacionActual=\DB::connection('sqlsrv')->table('TITULOS_PREDIO as tp')
                     ->leftJoin('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'tp.Titpr_RUC_CI')
-                    ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'tp.Pre_CodigoCatastral')
+                    ->Join('PREDIO as P', 'P.Pre_CodigoCatastral', '=', 'tp.Pre_CodigoCatastral')
                     ->select('tp.Pre_CodigoCatastral',
                     'tp.TitPr_FechaEmision as CarVe_FechaEmision',
                     'tp.TitPr_NumTitulo as CarVe_NumTitulo',
@@ -193,7 +193,7 @@ class TituloRuralController extends Controller
                     'tp.TitPr_Estado as CarVe_Estado',
                     'c.Ciu_Apellidos',
                     'c.Ciu_Nombres',
-                    'tp.TitPr_DireccionCont as Pre_NombrePredio',
+                    'P.Pre_NombrePredio',
                     'tp.TitPr_ValTotalTerrPredio as CarVe_ValTotalTerrPredio',
                     'tp.TitPr_ValTotalEdifPredio as CarVe_ValTotalEdifPredio',
                     'tp.TitPr_ValOtrasInver as CarVe_ValOtrasInver',
@@ -247,7 +247,7 @@ class TituloRuralController extends Controller
                     $liquidacionRural=\DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
                     ->leftJoin('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'cv.CarVe_CI')
                     ->leftJoin('PROPIETARIO as pr', 'pr.Ciu_Cedula', '=', 'cv.CarVe_CI')
-                    ->leftJoin('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
+                    ->leftJoin('PREDIO as P', 'P.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
                     ->select('cv.Pre_CodigoCatastral',
                     'cv.CarVe_FechaEmision',
                     'cv.CarVe_NumTitulo',
@@ -255,7 +255,7 @@ class TituloRuralController extends Controller
                     'cv.CarVe_Estado',
                     'c.Ciu_Apellidos',
                     'c.Ciu_Nombres',
-                    'p.Pre_NombrePredio',
+                    'P.Pre_NombrePredio',
                     'cv.CarVe_ValTotalTerrPredio',
                     'cv.CarVe_ValTotalEdifPredio',
                     'cv.CarVe_ValOtrasInver',
@@ -266,7 +266,7 @@ class TituloRuralController extends Controller
                     'cv.CarVe_TasaAdministrativa',
                     'cv.CarVe_Bomberos'
                     ,'cv.CarVe_ValorEmitido',
-                    'pr.Pro_DireccionDomicilio',
+                    'cv.CarVe_direccPropietario as Pro_DireccionDomicilio',
                     'cv.Carve_Recargo as recargo')
                     ->where('CarVe_NumTitulo', '=', $valor_num)
                     ->get();
@@ -327,7 +327,7 @@ class TituloRuralController extends Controller
                 'DatosLiquidacion' => $dataArray,
                 'fecha_formateada'=>$fecha_formateada
             ];
-            // dd($dataArray);
+            // dd($dataArray); 
             $nombrePDF="reporteTituloRural.pdf";
 
             $pdf = PDF::loadView('reportes.reporteTitulosRural',$data);
