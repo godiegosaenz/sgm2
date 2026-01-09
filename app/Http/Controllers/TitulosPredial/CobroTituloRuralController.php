@@ -383,6 +383,7 @@ class CobroTituloRuralController extends Controller
             'cv.CarVe_TasaAdministrativa as tasa_adm',
             'cv.CarVe_Bomberos as bomberos',
             'cv.Carve_Valor1 as seguridad',
+            'P.Ubi_Codigo',
             DB::raw("FORMAT(cv.CarVe_FechaEmision,'dd/MM/yyyy') as fecha_emi"),
             DB::raw("FORMAT(cv.CarVe_FechaRecaudacion,'dd/MM/yyyy') as fecha_recaudacion"))
             ->where('P.Pre_Tipo','Rural')
@@ -416,6 +417,7 @@ class CobroTituloRuralController extends Controller
             'tp.TitPr_TasaAdministrativa as tasa_adm',
             'tp.TitPr_Bomberos as bomberos',
             'tp.TitPr_Valor1 as seguridad',
+            'P.Ubi_Codigo',
             DB::raw("FORMAT(tp.TitPr_FechaEmision,'dd/MM/yyyy') as fecha_emi"),
             DB::raw("FORMAT(tp.TitPr_FechaRecaudacion,'dd/MM/yyyy') as fecha_recaudacion"))
             ->where('P.Pre_Tipo','Rural')
@@ -425,7 +427,17 @@ class CobroTituloRuralController extends Controller
             ->get();
 
             $resultado = $liquidacionRural->merge($actual);
-          
+
+            foreach($resultado as $key =>$data){
+
+                $sitioBarrio=DB::connection('sqlsrv')
+                ->table('UBICACION as hijo')
+                ->join('UBICACION as padre', 'padre.Ubi_Codigo', '=', 'hijo.Ubi_CodigoPadre')
+                ->where('hijo.Ubi_Codigo', $data->Ubi_Codigo)
+                ->value('padre.Ubi_Descripcion');
+                $resultado[$key]->nombre_sitio=$sitioBarrio;
+            }
+               
             $nombrePDF="TituloRural".date('YmdHis').".pdf";
            
             $pdf = PDF::loadView('reportes.TituloRural',["liquidacionRural"=>$resultado, "copia"=>$copia]);
