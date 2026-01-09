@@ -369,7 +369,7 @@
                         @foreach ($data as $item)
                         @php
                             $total=$item->subtotal_emi+$item->intereses+$item->recargo;
-                            $total=$total- $item->descuento;
+                            $total=$total + $item->descuento;
                             $anio=explode("-",$item->num_titulo);
 
                             $num_matricula="";
@@ -404,7 +404,7 @@
                         <tfoot>
                             @php
                                 $total_final= $total_emi + $total_int + $total_rec;
-                                $total_final=$total_final -$total_des;
+                                $total_final=$total_final +$total_des;
 
                             @endphp
                             <tr style="font-size:9px !important;line-height:5px" style="">

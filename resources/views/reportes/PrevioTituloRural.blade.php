@@ -158,7 +158,7 @@
                 <td><b>Ruc/CC:</b> {{ $data->num_ident }}</td>
             
                 <td></td>
-                <td><b>Sitio Barrio:</b> {{ $data->direccion }} </td>
+                <td><b>Sitio Barrio:</b> {{ $data->nombre_sitio }} </td>
                 
             </tr>
             <tr style="font-size: 11px;">

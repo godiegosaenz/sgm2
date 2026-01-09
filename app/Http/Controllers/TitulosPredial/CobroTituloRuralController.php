@@ -507,6 +507,7 @@ class CobroTituloRuralController extends Controller
             'cv.CarVe_Bomberos as bomberos',
             'cv.Carve_Valor1 as seguridad',
             'P.Pre_NombrePredio',
+            'P.Ubi_Codigo',
             DB::raw("FORMAT(cv.CarVe_FechaEmision,'dd/MM/yyyy') as fecha_emi"),
             DB::raw("FORMAT(cv.CarVe_FechaRecaudacion,'dd/MM/yyyy') as fecha_recaudacion"))
             ->whereIn('cv.CarVe_NumTitulo', $vencido)                    
@@ -549,6 +550,14 @@ class CobroTituloRuralController extends Controller
                
                 $liquidacionRural[$key]->total_pagar=$total_pago;
                 $total_valor=$total_valor+$total_pago;
+
+                $sitioBarrio=DB::connection('sqlsrv')
+                ->table('UBICACION as hijo')
+                ->join('UBICACION as padre', 'padre.Ubi_Codigo', '=', 'hijo.Ubi_CodigoPadre')
+                ->where('hijo.Ubi_Codigo', $data->Ubi_Codigo)
+                ->value('padre.Ubi_Descripcion');
+
+                $liquidacionRural[$key]->nombre_sitio=$sitioBarrio;
                
             }
           
@@ -578,6 +587,7 @@ class CobroTituloRuralController extends Controller
             'tp.TitPr_Bomberos as bomberos',
             'tp.TitPr_Valor1 as seguridad',
             'P.Pre_NombrePredio',
+            'P.Ubi_Codigo',
             DB::raw("FORMAT(tp.TitPr_FechaEmision,'dd/MM/yyyy') as fecha_emi"),
             DB::raw("FORMAT(tp.TitPr_FechaRecaudacion,'dd/MM/yyyy') as fecha_recaudacion"))
             ->whereIn('tp.TitPr_NumTitulo', [$anio_actual])            
@@ -617,10 +627,18 @@ class CobroTituloRuralController extends Controller
 
                 $total_valor=$total_valor+$total_pago;
                 $total_valor=number_format($total_valor,2);
+
+                $sitioBarrio=DB::connection('sqlsrv')
+                ->table('UBICACION as hijo')
+                ->join('UBICACION as padre', 'padre.Ubi_Codigo', '=', 'hijo.Ubi_CodigoPadre')
+                ->where('hijo.Ubi_Codigo', $data->Ubi_Codigo)
+                ->value('padre.Ubi_Descripcion');
+
+                $actual[$key]->nombre_sitio=$sitioBarrio;
+                
             }
 
-            $resultado = $liquidacionRural->merge($actual);
-            
+            $resultado = $liquidacionRural->merge($actual);            
            
             $nombrePDF="PrevioTituloRural".date('YmdHis').".pdf";
             
