@@ -369,9 +369,16 @@
                         'permission' => 'Info Contribuyente',
                         'active' => request()->routeIs('index.contribuyente_urbano')
                     ],
+
+                    [
+                        'name' => 'Recaudacion Rural',
+                        'route' => 'index.recaudaciones',
+                        'permission' => 'Recaudacion Rural',
+                        'active' => request()->routeIs('index.recaudaciones')
+                    ],
                 ],
                 'active' => request()->routeIs('lista.exoneracion') || request()->routeIs('create.remision') || request()->routeIs('index.remision') || request()->routeIs('index.titulocredito') || request()->routeIs('index.TitulosRural')  || request()->routeIs('index.liquidacion') || request()->routeIs('index.parte_diario') || request()->routeIs('index.cobroTituloRural')
-                || request()->routeIs('index.contribuyente_urbano') || request()->routeIs('index.vistaCobrados')
+                || request()->routeIs('index.contribuyente_urbano') || request()->routeIs('index.vistaCobrados') || request()->routeIs('index.recaudaciones')
             ],
             
             [

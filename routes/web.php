@@ -450,7 +450,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('predios-rurales/datatables', [PrediosContribuyenteUrbController::class, 'datatableRural']);
 
 
-    Route::get('recaudaciones', [RecaudacionesController::class, 'index'])->name('predios.urbanos');
+    Route::get('recaudaciones', [RecaudacionesController::class, 'index'])->name('index.recaudaciones');
     Route::post('valores-recaudados', [RecaudacionesController::class, 'pagosRecaudados']);
     Route::post('reporte-recaudacion', [RecaudacionesController::class, 'generarReporte']);
     

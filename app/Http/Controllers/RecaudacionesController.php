@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\Gate;
 class RecaudacionesController extends Controller
 {
     public function index(){
+        if(!Auth()->user()->hasPermissionTo('Recaudacion Rural'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
         return view('recaudaciones.index');
     }
 
