@@ -1,6 +1,6 @@
 <?php
  
-use App\Http\Controllers\TitulosPredial\PrediosContribuyenteUrb;
+use App\Http\Controllers\TitulosPredial\PrediosContribuyenteUrbController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\ConsultaPredioController;
@@ -42,10 +42,10 @@ use App\Http\Controllers\TitulosPredial\PredioRuralController;
 use App\Http\Controllers\TitulosPredial\LiquidacionesController;
 use App\Http\Controllers\TitulosPredial\UrbanoLiquidacionController;
 use App\Http\Controllers\TitulosPredial\NotificacionContribuyenteController;
-
 use App\Models\TransitoEnte;
 use App\Models\TransitoTarifaAnual;
 use App\Models\TransitoVehiculo;
+use App\Http\Controllers\RecaudacionesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -443,11 +443,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('buscar-predios-rurales/{cedula}', [LiquidacionesController::class, 'consultarPrediosRurales']);
 
     //predios-contribuyente
-    Route::get('predio-contribuyente', [PrediosContribuyenteUrb::class, 'index'])->name('predios.urbanos');
-    Route::post('predios/datatables', [PrediosContribuyenteUrb::class, 'datatable']);
+    Route::get('predio-contribuyente', [PrediosContribuyenteUrbController::class, 'index'])->name('predios.urbanos');
+    Route::post('predios/datatables', [PrediosContribuyenteUrbController::class, 'datatable']);
 
-    Route::get('predio-rural-contribuyente', [PrediosContribuyenteUrb::class, 'rural'])->name('predios.rural');
-    Route::post('predios-rurales/datatables', [PrediosContribuyenteUrb::class, 'datatableRural']);
+    Route::get('predio-rural-contribuyente', [PrediosContribuyenteUrbController::class, 'rural'])->name('predios.rural');
+    Route::post('predios-rurales/datatables', [PrediosContribuyenteUrbController::class, 'datatableRural']);
+
+
+    Route::get('recaudaciones', [RecaudacionesController::class, 'index'])->name('predios.urbanos');
+    Route::post('valores-recaudados', [RecaudacionesController::class, 'pagosRecaudados']);
+    Route::post('reporte-recaudacion', [RecaudacionesController::class, 'generarReporte']);
     
 });
 

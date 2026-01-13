@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\PsqlPredio;
 use DB;
-class PrediosContribuyenteUrb extends Controller
+class PrediosContribuyenteUrbController extends Controller
 {
     public function index()
     {
