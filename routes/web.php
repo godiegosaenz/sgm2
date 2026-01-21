@@ -46,6 +46,7 @@ use App\Models\TransitoEnte;
 use App\Models\TransitoTarifaAnual;
 use App\Models\TransitoVehiculo;
 use App\Http\Controllers\RecaudacionesController;
+use App\Http\Controllers\Consultorio\PacienteEmpleadoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -453,6 +454,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('recaudaciones', [RecaudacionesController::class, 'index'])->name('index.recaudaciones');
     Route::post('valores-recaudados', [RecaudacionesController::class, 'pagosRecaudados']);
     Route::post('reporte-recaudacion', [RecaudacionesController::class, 'generarReporte']);
+
+
+    //*******HISTORIA CLINICA EMPLEADOS *********************/
+    Route::get('evaluacion-medica-ocupacional', [PacienteEmpleadoController::class, 'index'])->name('index.recaudaciones');
+    Route::post('guardar-empleado-paciente', [PacienteEmpleadoController::class, 'guardaEmpleadoPaciente']);
+    Route::get('carga-info-paciente/{cedula}', [PacienteEmpleadoController::class, 'infoEmpleadoPaciente']);
+    Route::get('carga-info-paciente-evolucion/{id}', [PacienteEmpleadoController::class, 'evolucionEmpleadoPaciente']);
+    Route::post('buscar-info-empleado', [PacienteEmpleadoController::class, 'dataEmpleadoPaciente']);
     
 });
 

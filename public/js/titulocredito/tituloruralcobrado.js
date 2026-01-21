@@ -534,8 +534,8 @@ function actualizarTotalGeneral() {
     console.log('Num Titulos Seleccionados:', numTitulosSeleccionados);
 }
 
-
-function descargarTituloRural(){
+ 
+function descargarTituloRural(origina_copia){
     let clave_cat=$('#clave_contr').html()
      // Obtener los checkboxes seleccionados
     let selectedRows = $('#tbodyRuralDetalle input[type="checkbox"]:checked');
@@ -561,7 +561,8 @@ function descargarTituloRural(){
             numTitulosSeleccionados:numTitulosSeleccionados,
             ordenTitulosSeleccionados:ordenTitulosSeleccionados,
             clave_cat:clave_cat,
-            valorCobrado:valorCobrado
+            valorCobrado:valorCobrado,
+            origina_copia:origina_copia
             
         },
         success: function(data){

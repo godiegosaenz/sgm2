@@ -788,12 +788,16 @@ class CobroTituloRuralController extends Controller
 
         }
     }
-
+ 
     public function descargarTitulosRural(Request $request){
         
         $transaction=DB::transaction(function() use($request){ 
             try{ 
-                $crearPdf=$this->pdfTitulo($request->numTitulosSeleccionados,'copia');
+                $copia='copia';
+                if($request->origina_copia=="O"){
+                    $copia='nocopia';
+                }
+                $crearPdf=$this->pdfTitulo($request->numTitulosSeleccionados,$copia);
                 if($crearPdf['error']==true){
                     DB::Rollback();
                     return ["mensaje"=>$crearPdf["mensaje"], "error"=>true];
