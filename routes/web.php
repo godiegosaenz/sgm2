@@ -457,7 +457,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
     //*******HISTORIA CLINICA EMPLEADOS *********************/
-    Route::get('evaluacion-medica-ocupacional', [PacienteEmpleadoController::class, 'index'])->name('index.recaudaciones');
+    Route::get('evaluacion-medica-ocupacional', [PacienteEmpleadoController::class, 'index']);
     Route::post('guardar-empleado-paciente', [PacienteEmpleadoController::class, 'guardaEmpleadoPaciente']);
     Route::get('carga-info-paciente/{cedula}', [PacienteEmpleadoController::class, 'infoEmpleadoPaciente']);
     Route::get('carga-info-paciente-evolucion/{id}', [PacienteEmpleadoController::class, 'evolucionEmpleadoPaciente']);
