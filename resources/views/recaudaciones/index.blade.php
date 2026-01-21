@@ -48,7 +48,7 @@
                 <center>
                     <h3 style="text-align:center">TOTAL RECAUDADO</h3>
                     <h3 style="text-align:center"><span id="total_recaudado"></span></h3>
-                    <button type="button" class="btn btn-sm btn-success" onclick="verDetalle()">Descargar</button>
+                    <button type="button" class="btn btn-sm btn-success" onclick="verDetalle()">Detalle</button>
                 </center>
             </div>
             <!-- <div class="col-md-12" id="tabla_listado" style="display:none"> -->
