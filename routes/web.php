@@ -429,6 +429,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('croquis-predio/{cedula}/{lugar}', [LiquidacionesController::class, 'croquisPredio']);
     Route::post('notifica-contribuyente', [LiquidacionesController::class, 'notificaContribuyente']);
     Route::get('/notificacion/{id}/{archivoIndex}', [LiquidacionesController::class, 'descargarArchivo']);
+    Route::get('buscar-detalles-liquidacion-urbanos/{cedula}', [LiquidacionesController::class, 'consultarTitulosUrbDetalle']);
 
     //predios-urbano
     Route::get('predio-urbano-liquidar', [UrbanoLiquidacionController::class, 'index']);
@@ -459,9 +460,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //*******HISTORIA CLINICA EMPLEADOS *********************/
     Route::get('evaluacion-medica-ocupacional', [PacienteEmpleadoController::class, 'index']);
     Route::post('guardar-empleado-paciente', [PacienteEmpleadoController::class, 'guardaEmpleadoPaciente']);
+    Route::post('actualiza-seccion-a', [PacienteEmpleadoController::class, 'actualizaSeccionA']);
     Route::get('carga-info-paciente/{cedula}', [PacienteEmpleadoController::class, 'infoEmpleadoPaciente']);
     Route::get('carga-info-paciente-evolucion/{id}', [PacienteEmpleadoController::class, 'evolucionEmpleadoPaciente']);
     Route::post('buscar-info-empleado', [PacienteEmpleadoController::class, 'dataEmpleadoPaciente']);
+    Route::get('calcula-edad/{fecha}', [PacienteEmpleadoController::class, 'calculaEdad']);
+    Route::post('guardar-puesto', [PacienteEmpleadoController::class, 'guardaPuesto']);
+    Route::post('guardar-motivo', [PacienteEmpleadoController::class, 'guardaMotivo']);
+    Route::get('carga-combo-puesto', [PacienteEmpleadoController::class, 'comboPuesto']);
+    Route::post('guardar-antecedentes', [PacienteEmpleadoController::class, 'guardaAntecedentes']);
+    Route::post('guardar-enfermedad', [PacienteEmpleadoController::class, 'guardaEnfemedadProblemaActual']);
+    Route::post('guardar-constantes', [PacienteEmpleadoController::class, 'guardaConstantesVitales']);
+    Route::post('guardar-examen-fisico', [PacienteEmpleadoController::class, 'guardaExamenFisico']);
     
 });
 

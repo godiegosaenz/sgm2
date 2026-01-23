@@ -429,23 +429,31 @@ function atencionPaciente(id){
             // alertNotificar(data.mensaje,"error");
             return;   
         }
-        
-        $('#cedula_empleado').val(data.resultado.cedula)
+      
+        $('#id_empleado').val(id)
+        $('#num_cedula_empleado').val(data.resultado.cedula)
         $('#primer_apellido_empleado').val(data.resultado.primer_apellido)
-        $('#segundo_apellido').val(data.resultado.segundo_apellido)
+        $('#segundo_apellido_empleado').val(data.resultado.segundo_apellido)
         $('#primer_nombre_empleado').val(data.resultado.primer_nombre)
         $('#segundo_nombre_empleado').val(data.resultado.segundo_nombre)
         $('#fecha_nacimiento_empleado').val(data.resultado.fecha_nacimiento)
-        $('#correo').val(data.resultado.correo)
-        $('#telefono').val(data.resultado.telefono)
-        $('#sexo').val(data.resultado.sexo)
-        $('#grupo_sanguineo').val(data.resultado.grupo_sanguinedad)
-        $('#lateridad').val(data.resultado.lateralidad)
+        $('#edad_empleado').val(data.resultado.edad)
+        $('#sexo_empleado').val(data.resultado.sexo)
+        $('#grupo_sanguineo_empleado').val(data.resultado.grupo_sanguinedad)
+        $('#lateralidad_empleado').val(data.resultado.lateralidad)
+
+        // $('#puesto_cmb').val(data.motivo.id_puesto)
+        $('#fecha_atencion').val(data.fecha_atencion)
+        $('#fecha_ingreso').val(data.motivo.fecha_ingreso_trabajo)
+        $('#fecha_reingreso').val(data.motivo.fecha_reintegro)
+        $('#fecha_ultimo_dia').val(data.motivo.fecha_ultimo_dia_laboral)
+        cargaComboPuesto(data.motivo.id_puesto)
+
         console.log(data)
 
         $('#busqueda_paciente').hide(200)
         $('#atencion_paciente').show(200)
-       
+        seleccionSexo()
          
     }).fail(function(){
         vistacargando("")
@@ -615,3 +623,624 @@ function cambioTipo(select) {
     console.log('Ocultar campos de consumo');
   }
 }
+
+$("#formActualizaSeccionA").submit(function(e){
+    e.preventDefault();
+    let cedula=$('#num_cedula_empleado').val()
+    let primer_apellido=$('#primer_apellido_empleado').val()
+    let segundo_apellido=$('#segundo_apellido_empleado').val()
+    let primer_nombre=$('#primer_nombre_empleado').val()
+    let segundo_nombre=$('#segundo_nombre_empleado').val()
+    let fecha_nacimiento=$('#fecha_nacimiento_empleado').val()
+    let sexo=$('#sexo_empleado').val()
+    let grupo_sanguineo=$('#grupo_sanguineo_empleado').val()
+    let lateridad=$('#lateralidad_empleado').val()
+
+    if(cedula=="" || cedula==null){
+        alertNotificar("Debe ingresar la cedula","error")
+        $('#num_cedula_empleado').focus()
+        return
+    } 
+
+    if(primer_apellido=="" || primer_apellido==null){
+        alertNotificar("Debe ingresar el primer apellido","error")
+        $('#primer_apellido_empleado').focus()
+        return
+    } 
+
+    if(segundo_apellido=="" || segundo_apellido==null){
+        alertNotificar("Debe ingresar el segundo apellido","error")
+        $('#segundo_apellido_empleado').focus()
+        return
+    } 
+
+    if(primer_nombre=="" || primer_nombre==null){
+        alertNotificar("Debe ingresar el primer nombre","error")
+        $('#primer_nombre_empleado').focus()
+        return
+    } 
+
+    if(segundo_nombre=="" || segundo_nombre==null){
+        alertNotificar("Debe ingresar el segundo nombre","error")
+        $('#segundo_nombre_empleado').focus()
+        return
+    } 
+
+    if(fecha_nacimiento=="" || fecha_nacimiento==null){
+        alertNotificar("Debe ingresar la fecha nacimiento","error")
+        $('#fecha_nacimiento_empleado').focus()
+        return
+    } 
+
+    if(sexo=="" || sexo==null){
+        alertNotificar("Debe seleccionar el  sexo","error")
+        return
+    } 
+
+    if(grupo_sanguineo=="" || grupo_sanguineo==null){
+        alertNotificar("Debe ingresar grupo_sanguineo","error")
+        $('#grupo_sanguineo_empleado').focus()
+        return
+    } 
+    
+    if(lateridad=="" || lateridad==null){
+        alertNotificar("Debe ingresar lateridad","error")
+        $('#lateralidad_empleado').focus()
+        return
+    } 
+
+    vistacargando("m","Actualizando...")
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    //comprobamos si es registro o edicion
+    let tipo="POST"
+    let url_form="actualiza-seccion-a"
+    
+    var FrmData=$("#formActualizaSeccionA").serialize();
+
+    $.ajax({
+            
+        type: tipo,
+        url: url_form,
+        method: tipo,             
+		data: FrmData,      
+		
+        processData:false, 
+
+        success: function(data){
+            vistacargando("");                
+            if(data.error==true){
+                alertNotificar(data.mensaje,'error');
+                return;                      
+            }
+            alertNotificar(data.mensaje,'success');
+           
+                            
+        }, error:function (data) {
+            console.log(data)
+
+            vistacargando("");
+            alertNotificar('Ocurrió un error','error');
+        }
+    });
+})
+
+function calculaEdad(){
+    let fecha_nacimiento=$('#fecha_nacimiento_empleado').val()
+   
+    $.get("calcula-edad/"+fecha_nacimiento, function(data){
+        vistacargando("")
+        if(data.error==true){
+            alertNotificar(data.mensaje,"error");          
+            return;   
+        }
+        
+        $('#edad_empleado').val(data.edad)
+       
+    }).fail(function(){
+        // vistacargando("")
+        alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+    });
+}
+
+function abrirModalPuesto(){
+    $('#modalCrearPuesto').modal('show')
+}
+
+function guardarPuesto(){
+    let nombre_puesto=$('#nombre_puesto').val()
+    
+    if(nombre_puesto=="" || nombre_puesto==null){
+        alertNotificar("Debe ingresar el nombre_puesto","error")
+        $('#nombre_puesto').focus()
+        return
+    } 
+
+    vistacargando("m","Espere por favor")
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    //comprobamos si es registro o edicion
+    let tipo="POST"
+    let url_form="guardar-puesto"
+    
+    var FrmData=$("#formPuesto").serialize();
+
+    $.ajax({
+            
+        type: tipo,
+        url: url_form,
+        method: tipo,             
+		data: FrmData,      
+		
+        processData:false, 
+
+        success: function(data){
+            vistacargando("");                
+            if(data.error==true){
+                alertNotificar(data.mensaje,'error');
+                return;                      
+            }
+            alertNotificar(data.mensaje,'success');
+            $('#nombre_puesto').val('')
+            cargaComboPuesto()               
+        }, error:function (data) {
+            console.log(data)
+
+            vistacargando("");
+            alertNotificar('Ocurrió un error','error');
+        }
+    });
+}
+
+$('#modalCrearPuesto').on('hidden.bs.modal', function (e) {
+    $('#nombre_puesto').val('')
+    
+});
+
+function cargaComboPuesto(seleccionado=null){
+    vistacargando("m","");
+    $.get('carga-combo-puesto', function(data){
+        console.log(data)
+        vistacargando("")
+        if(data.error==true){
+			alertNotificar(data.mensaje,"error");
+			return;   
+		}
+        $('#puesto_cmb').html('');	
+        $('#puesto_cmb').find('option').remove().end();
+        $('#puesto_cmb').append('<option value="">Selecccione un puesto</option>');
+        $.each(data.resultado, function(i,item){
+          	if(seleccionado != null && seleccionado == item.id){
+                $('#puesto_cmb').append('<option value="'+item.id+'" selected>'+item.descripcion+'</option>');
+            } else {
+                // Si 'seleccionado' es null, añadimos todas las opciones sin seleccionar
+                $('#puesto_cmb').append('<option value="'+item.id+'">'+item.descripcion+'</option>');
+            }
+        })
+         $("#puesto_cmb").trigger("chosen:updated"); // actualizamos el combo 
+          
+        
+    }).fail(function(){
+        alertNotificar("Ocurrio un error","error");
+        vistacargando("")
+       
+    }); 
+}
+
+function seleccionSexo(){
+    var seleccion=$('#sexo_empleado').val()
+    if(seleccion=='Hombre'){
+        $('#seccion_masculino').show()
+        $('#seccion_femenino').hide()
+    }else{
+        $('#seccion_femenino').show()
+        $('#seccion_masculino').hide()
+    }
+}
+function limpiarSeccionMotivo(){
+    $('#id_empleado').val('')
+    $('#puesto_cmb').val('')
+    $('#fecha_atencion').val('')
+    $('#fecha_ingreso').val('')
+    $('#fecha_reingreso').val('')
+    $('#fecha_ultimo_dia').val('')
+    $('#tipo_atencion').val('')
+    $('#motivo').val('')
+}
+$("#formMotivo").submit(function(e){
+    e.preventDefault();
+    let id_empleado=$('#id_empleado').val()
+    let puesto_cmb=$('#puesto_cmb').val()
+    let fecha_atencion=$('#fecha_atencion').val()
+ 
+    if(puesto_cmb=="" || puesto_cmb==null){
+        alertNotificar("Debe seleccionar el puesto_cmb","error")
+        return
+    } 
+
+    if(fecha_atencion=="" || fecha_atencion==null){
+        alertNotificar("Debe ingresar la fecha_atencion","error")
+        $('#fecha_atencion').focus()
+        return
+    } 
+
+    if(tipo_atencion=="" || tipo_atencion==null){
+        alertNotificar("Debe ingresar seleccionar el tipo_atencion","error")
+        $('#segundo_apellido_empleado').focus()
+        return
+    } 
+
+    vistacargando("m","Registrando...")
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    //comprobamos si es registro o edicion
+    let tipo="POST"
+    let url_form="guardar-motivo"
+    
+    var FrmData=$("#formMotivo").serialize();
+    FrmData += "&id_empleado=" + id_empleado;
+
+    $.ajax({
+            
+        type: tipo,
+        url: url_form,
+        method: tipo,             
+		data: FrmData,      
+		
+        processData:false, 
+
+        success: function(data){
+            vistacargando("");                
+            if(data.error==true){
+                alertNotificar(data.mensaje,'error');
+                return;                      
+            }
+            alertNotificar(data.mensaje,'success');
+           
+                            
+        }, error:function (data) {
+            console.log(data)
+
+            vistacargando("");
+            alertNotificar('Ocurrió un error','error');
+        }
+    });
+})
+
+globalThis.IdAntecedentesRegistrado=0
+$("#formAntecedentes").submit(function(e){
+    e.preventDefault();
+    let id_empleado=$('#id_empleado').val()
+    let antecedente_cq=$('#antecedente_cq').val()
+    let antecedente_familiares=$('#antecedente_familiares').val()
+    let autoriza_transfusion=$('#tratamiento_ormonal').val()
+    let tratamiento_ormonal=$('#antecedente_familiares').val()
+    let observacion_antecedentes=$('#observacion_antecedentes').val()
+ 
+    if(antecedente_cq=="" || antecedente_cq==null){
+        alertNotificar("Debe ingresar el antecedentes clinicos quirurgicos","error")
+        $('#antecedente_cq').focus()
+        return
+    } 
+
+    if(antecedente_familiares=="" || antecedente_familiares==null){
+        alertNotificar("Debe ingresar la antecedente_familiares","error")
+        $('#antecedente_familiares').focus()
+        return
+    } 
+
+    if(autoriza_transfusion=="" || autoriza_transfusion==null){
+        alertNotificar("Debe seleccionar autoriza_transfusion","error")
+        return
+    }
+    
+    if(tratamiento_ormonal=="" || tratamiento_ormonal==null){
+        alertNotificar("Debe seleccionar tratamiento_ormonal","error")
+        return
+    }
+
+    var seleccion=$('#sexo_empleado').val()
+    
+    if(seleccion=='Hombre'){
+        var metodo_planificacion_masculino=$('#metodo_planificacion_masculino').val()
+        var cual_metodo=$('#txt_metodo_planificcion_familiar_masculino').val()
+        if(metodo_planificacion_masculino=="" || metodo_planificacion_masculino==null){
+            alertNotificar("Debe seleccionar metodo_planificacion_masculino","error")
+            return
+        }
+        if(metodo_planificacion_masculino=='Si'){
+            if(cual_metodo=="" || cual_metodo==null){
+                alertNotificar("Debe ingresar cual_metodo","error")
+                $('#txt_metodo_planificcion_familiar_masculino').focus()
+                return
+            }
+        }
+    }else{
+        var metodo_planificacion=$('#metodo_planificacion').val()
+        var cual_metodo=$('#txt_metodo_planificcion_familiar').val()
+        var fecha_ultima_menstruacion=$('#fecha_ultima_menstruacion').val() 
+        if(fecha_ultima_menstruacion=="" || fecha_ultima_menstruacion==null){
+            alertNotificar("Debe seleccionar fecha_ultima_menstruacion","error")
+            return
+        }  
+        if(metodo_planificacion=="" || metodo_planificacion==null){
+            alertNotificar("Debe seleccionar metodo_planificacion","error")
+            return
+        }
+        if(metodo_planificacion=='Si'){
+            if(cual_metodo=="" || cual_metodo==null){
+                alertNotificar("Debe ingresar cual_metodo","error")
+                $('#txt_metodo_planificcion_familiar').focus()
+                return
+            }
+        }
+
+        if(observacion_antecedentes=="" || observacion_antecedentes==null){
+            alertNotificar("Debe ingresar observacion_antecedentes","error")
+            $('#observacion_antecedentes').focus()
+            return
+        }
+       
+    }
+
+    vistacargando("m","Registrando...")
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    //comprobamos si es registro o edicion
+    let tipo="POST"
+    let url_form="guardar-antecedentes"
+    
+    var FrmData=$("#formAntecedentes").serialize();
+    FrmData += "&id_empleado=" + id_empleado;
+    FrmData += "&hombre_mujer=" + seleccion;
+
+    $.ajax({
+            
+        type: tipo,
+        url: url_form,
+        method: tipo,             
+		data: FrmData,      
+		
+        processData:false, 
+
+        success: function(data){
+            vistacargando("");                
+            if(data.error==true){
+                alertNotificar(data.mensaje,'error');
+                return;                      
+            }
+            alertNotificar(data.mensaje,'success');
+            IdAntecedentesRegistrado=data.id_antecedentes
+                            
+        }, error:function (data) {
+            console.log(data)
+
+            vistacargando("");
+            alertNotificar('Ocurrió un error','error');
+        }
+    });
+})
+
+globalThis.IdEnfermedadregistrada=0
+$("#formEnfermedad").submit(function(e){
+    e.preventDefault();
+    let enfermedad_problema_actual=$('#enfermedad_problema_actual').val()
+    let id_empleado=$('#id_empleado').val()
+    if(enfermedad_problema_actual=="" || enfermedad_problema_actual==null){
+        alertNotificar("Debe ingresar enfermedad_problema_actual","error")
+        $('#enfermedad_problema_actual').focus()
+        return
+    } 
+
+    vistacargando("m","Registrando...")
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    //comprobamos si es registro o edicion
+    let tipo="POST"
+    let url_form="guardar-enfermedad"
+    
+    var FrmData=$("#formEnfermedad").serialize();
+    FrmData += "&id_empleado=" + id_empleado;
+    FrmData += "&IdAntecedentesRegistrado=" + IdAntecedentesRegistrado;
+    
+   
+    $.ajax({
+            
+        type: tipo,
+        url: url_form,
+        method: tipo,             
+		data: FrmData,      
+		
+        processData:false, 
+
+        success: function(data){
+            vistacargando("");                
+            if(data.error==true){
+                alertNotificar(data.mensaje,'error');
+                return;                      
+            }
+            alertNotificar(data.mensaje,'success');
+            IdEnfermedadregistrada=data.idenfermedad
+                            
+        }, error:function (data) {
+            console.log(data)
+
+            vistacargando("");
+            alertNotificar('Ocurrió un error','error');
+        }
+    });
+})
+
+globalThis.IdConstantesVitale=0,
+$("#formConstanteVitales").submit(function(e){
+    e.preventDefault();
+    let temperatura=$('#temperatura').val()
+    let presion_arterial=$('#presion_arterial').val()
+    let frecuencia_cardiaca=$('#frecuencia_cardiaca').val()
+    let frecuencia_respiratoria=$('#frecuencia_respiratoria').val()
+    let saturacion=$('#saturacion').val()
+    let peso=$('#peso').val()
+    let talla=$('#talla').val()
+    let imc=$('#imc').val()
+
+    let id_empleado=$('#id_empleado').val()
+    if(temperatura=="" || temperatura==null){
+        alertNotificar("Debe ingresar temperatura","error")
+        $('#temperatura').focus()
+        return
+    }
+    
+    if(presion_arterial=="" || presion_arterial==null){
+        alertNotificar("Debe ingresar presion_arterial","error")
+        $('#presion_arterial').focus()
+        return
+    }
+
+    if(frecuencia_cardiaca=="" || frecuencia_cardiaca==null){
+        alertNotificar("Debe ingresar frecuencia_cardiaca","error")
+        $('#frecuencia_cardiaca').focus()
+        return
+    }
+
+    if(frecuencia_respiratoria=="" || frecuencia_respiratoria==null){
+        alertNotificar("Debe ingresar frecuencia_respiratoria","error")
+        $('#frecuencia_respiratoria').focus()
+        return
+    }
+
+    if(saturacion=="" || saturacion==null){
+        alertNotificar("Debe ingresar saturacion","error")
+        $('#saturacion').focus()
+        return
+    }
+
+    if(peso=="" || peso==null){
+        alertNotificar("Debe ingresar peso","error")
+        $('#peso').focus()
+        return
+    }
+
+    if(talla=="" || talla==null){
+        alertNotificar("Debe ingresar talla","error")
+        $('#talla').focus()
+        return
+    }
+
+    if(imc=="" || imc==null){
+        alertNotificar("Debe ingresar temperatura","error")
+        $('#imc').focus()
+        return
+    }
+
+    vistacargando("m","Registrando...")
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    //comprobamos si es registro o edicion
+    let tipo="POST"
+    let url_form="guardar-constantes"
+    
+    var FrmData=$("#formConstanteVitales").serialize();
+    FrmData += "&id_empleado=" + id_empleado;
+    FrmData += "&IdEnfermedadregistrada=" + IdEnfermedadregistrada;    
+   
+    $.ajax({
+            
+        type: tipo,
+        url: url_form,
+        method: tipo,             
+		data: FrmData,      
+		
+        processData:false, 
+
+        success: function(data){
+            vistacargando("");                
+            if(data.error==true){
+                alertNotificar(data.mensaje,'error');
+                return;                      
+            }
+            alertNotificar(data.mensaje,'success');
+            IdConstantesVitale=data.idconstante
+                            
+        }, error:function (data) {
+            console.log(data)
+
+            vistacargando("");
+            alertNotificar('Ocurrió un error','error');
+        }
+    });
+})
+
+$("#formExamenFisico").submit(function(e){
+    e.preventDefault();
+    let motivo_examen=$('#motivo_examen').val()
+    let id_empleado=$('#id_empleado').val()
+    if(motivo_examen=="" || motivo_examen==null){
+        alertNotificar("Debe ingresar motivo_examen","error")
+        $('#motivo_examen').focus()
+        return
+    }
+    
+    vistacargando("m","Registrando...")
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    //comprobamos si es registro o edicion
+    let tipo="POST"
+    let url_form="guardar-examen-fisico"
+    
+    var FrmData=$("#formExamenFisico").serialize();
+    FrmData += "&id_empleado=" + id_empleado;
+    FrmData += "&IdConstantesVitale=" + IdConstantesVitale;    
+   
+    $.ajax({
+            
+        type: tipo,
+        url: url_form,
+        method: tipo,             
+		data: FrmData,      
+		
+        processData:false, 
+
+        success: function(data){
+            vistacargando("");                
+            if(data.error==true){
+                alertNotificar(data.mensaje,'error');
+                return;                      
+            }
+            alertNotificar(data.mensaje,'success');
+           
+        }, error:function (data) {
+            console.log(data)
+
+            vistacargando("");
+            alertNotificar('Ocurrió un error','error');
+        }
+    });
+})

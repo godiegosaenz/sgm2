@@ -386,7 +386,6 @@
 
         <div class="row">
            
-
             <div class="col-md-12" style="margin-bottom:7px">
                 <div class="container mt-2">
 
@@ -403,7 +402,7 @@
                             <div id="collapseCero" class="accordion-collapse collapse" aria-labelledby="headingCero"
                                 data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
-                                    <form id="formActualiza" method="POST" action="" enctype="multipart/form-data">
+                                    <form id="formActualizaSeccionA">
 
                                         <div class="row mb-3 align-items-center">
                                             <label class="col-md-3 col-form-label " style="text-align: right;">
@@ -411,8 +410,12 @@
                                             </label>
                                             <div class="col-md-9">
                                                 <input type="text" class="form-control seccion_a"
-                                                    placeholder="Ingrese el numero de cedula" name="cedula_empleado"
-                                                    id="cedula_empleado">
+                                                    placeholder="Ingrese el numero de cedula" name="num_cedula_empleado"
+                                                    id="num_cedula_empleado">
+                                                <input type="hidden" class="form-control seccion_a"
+                                                    placeholder="Ingrese el numero de cedula" name="id_empleado"
+                                                    id="id_empleado">
+
 
                                             </div>
 
@@ -474,7 +477,7 @@
                                             </label>
                                             <div class="col-md-9">
                                                 <input type="date" class="form-control seccion_a" name="fecha_nacimiento_empleado"
-                                                    id="fecha_nacimiento_empleado">
+                                                    id="fecha_nacimiento_empleado" onchange="calculaEdad()">
                                             </div>
                                         </div>
 
@@ -485,7 +488,7 @@
                                             <div class="col-md-9">
                                                 <input type="text" class="form-control seccion_a"
                                                     name="edad_empleado"
-                                                    id="edad_empleado">
+                                                    id="edad_empleado" readonly>
 
                                             </div>
 
@@ -496,12 +499,11 @@
                                                 Sexo<span class="text-danger"> *</span>
                                             </label>
                                             <div class="col-md-9">
-                                                <select class="form-select seccion_a" id="tipo_atencion" name="tipo_atencion">
+                                                <select class="form-select seccion_a" id="sexo_empleado" name="sexo_empleado" onchange="seleccionSexo()">
                                                     <option value="">Seleccione una opción</option>
-                                                    <option value="ingreso">Ingreso</option>
-                                                    <option value="periodico">Periódico</option>
-                                                    <option value="reintegro">Reintegro</option>
-                                                    <option value="retiro">Retiro</option>
+                                                    <option value="Hombre">Hombre</option>
+                                                    <option value="Mujer">Mujer</option>
+                                                    
                                                 </select>
                                             </div>
                                         </div>
@@ -512,8 +514,8 @@
                                             </label>
                                             <div class="col-md-9">
                                                 <input type="text" class="form-control "
-                                                    placeholder="Ejemplo ASISTENTE ADMINISTRATIVO " name="puesto_trabajo"
-                                                    id="puesto_trabajo">
+                                                    placeholder="Ingrese grupo sanguineo " name="grupo_sanguineo_empleado"
+                                                    id="grupo_sanguineo_empleado">
 
                                             </div>
 
@@ -525,13 +527,18 @@
                                             </label>
                                             <div class="col-md-9">
                                                 <input type="text" class="form-control "
-                                                    placeholder="Ejemplo ASISTENTE ADMINISTRATIVO " name="puesto_trabajo"
-                                                    id="puesto_trabajo">
+                                                    placeholder="Ingrese grupo lateralidad" name="lateralidad_empleado"
+                                                    id="lateralidad_empleado">
 
                                             </div>
 
                                         </div>
-
+                                        <center>
+                                            <button type="submit" class="btn btn-sm btn-outline-success d-flex align-items-center"
+                                                style="margin-right:5px">
+                                            <i class="fa fa-refresh"> </i> &nbsp; Actualizar
+                                            </button>
+                                        </center>
                                        
                                     </form>
                                 </div>
@@ -549,17 +556,21 @@
                             <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
                                 data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
-                                    <form id="formActualiza" method="POST" action="" enctype="multipart/form-data">
+                                    <form id="formMotivo"  enctype="multipart/form-data">
 
                                         <div class="row mb-3 align-items-center">
                                             <label class="col-md-3 col-form-label " style="text-align: right;">
                                                 Puesto de Trabajo CIUO<span class="text-danger"> *</span>
                                             </label>
-                                            <div class="col-md-9">
-                                                <input type="text" class="form-control "
-                                                    placeholder="Ejemplo ASISTENTE ADMINISTRATIVO " name="puesto_trabajo"
-                                                    id="puesto_trabajo">
-
+                                            <div class="col-md-8">
+                                                <select class="form-select"                                                   id="puesto_cmb" name="puesto_cmb" required>
+                                       
+                                    </select>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <button type="button" onclick="abrirModalPuesto()" class="btn btn-sm btn-outline-success d-flex align-items-center">
+                                                    <i class="fa fa-plus"></i>
+                                                </button>
                                             </div>
 
                                         </div>
@@ -570,13 +581,13 @@
                                             </label>
                                             <div class="col-md-9">
                                                 <input type="date" class="form-control " name="fecha_atencion"
-                                                    id="fecha_atencion">
+                                                    id="fecha_atencion" readonly>
                                             </div>
                                         </div>
 
                                         <div class="row mb-3 align-items-center" id="div_apellidos">
                                             <label class="col-md-3 col-form-label " style="text-align: right;">
-                                                Fecha de Ingreso al trabajo<span class="text-danger"> *</span>
+                                                Fecha de Ingreso al trabajo
                                             </label>
                                             <div class="col-md-9">
                                                 <input type="date" class="form-control " name="fecha_ingreso"
@@ -586,7 +597,8 @@
 
                                         <div class="row mb-3 align-items-center">
                                             <label class="col-md-3 col-form-label " style="text-align: right;">
-                                                Fecha de Reintegro<span class="text-danger"> *</span>
+                                                Fecha de Reintegro
+                                                
                                             </label>
                                             <div class="col-md-9">
                                                 <input type="date" class="form-control " name="fecha_reingreso"
@@ -596,7 +608,8 @@
 
                                         <div class="row mb-3 align-items-center">
                                             <label class="col-md-3 col-form-label " style="text-align: right;">
-                                                Fecha del Último día laboral/salida<span class="text-danger"> *</span>
+                                                Fecha del Último día laboral/salida
+                                                
                                             </label>
                                             <div class="col-md-9">
                                                 <input type="date" class="form-control " name="fecha_ultimo_dia"
@@ -611,10 +624,10 @@
                                             <div class="col-md-9">
                                                 <select class="form-select" id="tipo_atencion" name="tipo_atencion">
                                                     <option value="">Seleccione una opción</option>
-                                                    <option value="ingreso">Ingreso</option>
-                                                    <option value="periodico">Periódico</option>
-                                                    <option value="reintegro">Reintegro</option>
-                                                    <option value="retiro">Retiro</option>
+                                                    <option value="Ingreso">Ingreso</option>
+                                                    <option value="Periódico">Periódico</option>
+                                                    <option value="Reintegro">Reintegro</option>
+                                                    <option value="Retiro">Retiro</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -627,6 +640,14 @@
                                                 <textarea class="form-control " name="motivo" id="motivo"></textarea>
                                             </div>
                                         </div>
+
+                                        <center>
+                                            <button type="submit" class="btn btn-sm btn-outline-success d-flex align-items-center"
+                                                style="margin-right:5px">
+                                            <i class="fa fa-floppy-o"> </i> &nbsp;&nbsp;Guardar
+                                            </button>
+                                        </center>
+
                                     </form>
                                 </div>
                             </div>
@@ -643,7 +664,7 @@
                             <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
                                 data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
-                                    <form id="formActualiza" method="POST" action="" enctype="multipart/form-data">
+                                    <form id="formAntecedentes" method="POST" action="" enctype="multipart/form-data">
                                         <hr>
                                         <div class="row mb-3 align-items-center">
                                             <label class="col-md-3 col-form-label " style="text-align: right;">
@@ -715,446 +736,450 @@
                                             </div>
                                         </div>
                                         <hr>
-                                        <div class="row mb-3 align-items-center">
-                                            <label class="col-md-12 col-form-label " style="margin-left:50px">
-                                                <b>ANTECEDENTES GINECO OBSTÉTRICOS</b>
-                                            </label>
+                                        <div id="seccion_femenino">
+                                            <div class="row mb-3 align-items-center">
+                                                <label class="col-md-12 col-form-label " style="margin-left:50px">
+                                                    <b>ANTECEDENTES GINECO OBSTÉTRICOS</b>
+                                                </label>
 
-                                        </div>
-
-                                        <div class="row mb-3 align-items-center">
-                                            <label class="col-md-3 col-form-label " style="text-align: right;">
-                                                Fecha de Última menstruacion<span class="text-danger"> *</span>
-                                            </label>
-                                            <div class="col-md-9">
-                                                <input type="date" class="form-control " name="fecha_ultima_menstruacion"
-                                                    id="fecha_ultima_menstruacion">
                                             </div>
-                                        </div>
-                                        <div class="row">
-                                            <label class="col-md-3 col-form-label " style="text-align: right;">
-                                                <span class="text-danger"> </span>
-                                            </label>
-                                            <div class="col-md-2">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="gestas"
-                                                        name="gineco_obs[]" value="gestas">
-                                                    <label class="form-check-label" for="-">Gestas</label>
+
+                                            <div class="row mb-3 align-items-center">
+                                                <label class="col-md-3 col-form-label " style="text-align: right;">
+                                                    Fecha de Última menstruacion<span class="text-danger"> *</span>
+                                                </label>
+                                                <div class="col-md-9">
+                                                    <input type="date" class="form-control " name="fecha_ultima_menstruacion"
+                                                        id="fecha_ultima_menstruacion">
                                                 </div>
                                             </div>
-
-                                            <div class="col-md-2">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="partos"
-                                                        name="gineco_obs[]" value="partos">
-                                                    <label class="form-check-label" for="partos">Partos</label>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-2">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="cesareas"
-                                                        name="gineco_obs[]" value="cesareas">
-                                                    <label class="form-check-label" for="cesareas">Cesáreas</label>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-2">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="abortos"
-                                                        name="gineco_obs[]" value="abortos">
-                                                    <label class="form-check-label" for="abortos">Abortos</label>
-                                                </div>
-                                            </div>
-                                        </div>
-
-
-
-                                        <!-- CONTENEDOR GENERAL -->
-                                        <div id="examenes-container" style="margin-top:12px">
-
-                                            <!-- PRIMER BLOQUE -->
-                                            <div class="examen-item">
-
-                                                <!-- Exámenes realizados -->
-                                                <div class="row mb-3 align-items-center">
-                                                    <label class="col-md-3 col-form-label" style="text-align: right;">
-                                                        Exámenes realizados
-                                                    </label>
-                                                    <div class="col-md-9 d-flex gap-2">
-                                                        <input type="text" class="form-control" name="examenes[]">
-                                                        <!-- SOLO EL PRIMERO TIENE AGREGAR -->
-                                                        <button type="button" class="btn btn-success btnAgregar">+</button>
+                                            <div class="row">
+                                                <label class="col-md-3 col-form-label " style="text-align: right;">
+                                                    <span class="text-danger"> </span>
+                                                </label>
+                                                <div class="col-md-2">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="gestas"
+                                                            name="gestas" value="gestas">
+                                                        <label class="form-check-label" for="-">Gestas</label>
                                                     </div>
                                                 </div>
 
-                                                <!-- Tiempo -->
-                                                <div class="row mb-3 align-items-center">
-                                                    <label class="col-md-3 col-form-label" style="text-align: right;">
-                                                        Tiempo
-                                                    </label>
-                                                    <div class="col-md-9">
-                                                        <input type="text" class="form-control" name="tiempo[]">
+                                                <div class="col-md-2">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="partos"
+                                                            name="partos" value="partos">
+                                                        <label class="form-check-label" for="partos">Partos</label>
                                                     </div>
                                                 </div>
 
-                                                <!-- Resultado -->
-                                                <div class="row mb-3 align-items-center">
-                                                    <label class="col-md-3 col-form-label" style="text-align: right;">
-                                                        Registrar resultado únicamente si interfiere con la actividad
-                                                        laboral y previa autorización del titular
-                                                    </label>
-                                                    <div class="col-md-9">
-                                                        <textarea class="form-control" rows="3"
-                                                            name="resultado[]"></textarea>
+                                                <div class="col-md-2">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="cesareas"
+                                                            name="cesareas" value="cesareas">
+                                                        <label class="form-check-label" for="cesareas">Cesáreas</label>
                                                     </div>
                                                 </div>
 
+                                                <div class="col-md-2">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="abortos"
+                                                            name="abortos" value="abortos">
+                                                        <label class="form-check-label" for="abortos">Abortos</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+
+                                            <!-- CONTENEDOR GENERAL -->
+                                            <div id="examenes-container" style="margin-top:12px">
+
+                                                <!-- PRIMER BLOQUE -->
+                                                <div class="examen-item">
+
+                                                    <!-- Exámenes realizados -->
+                                                    <div class="row mb-3 align-items-center">
+                                                        <label class="col-md-3 col-form-label" style="text-align: right;">
+                                                            Exámenes realizados
+                                                        </label>
+                                                        <div class="col-md-9 d-flex gap-2">
+                                                            <input type="text" class="form-control" name="examenes[]">
+                                                            <!-- SOLO EL PRIMERO TIENE AGREGAR -->
+                                                            <button type="button" class="btn btn-success btnAgregar">+</button>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Tiempo -->
+                                                    <div class="row mb-3 align-items-center">
+                                                        <label class="col-md-3 col-form-label" style="text-align: right;">
+                                                            Tiempo
+                                                        </label>
+                                                        <div class="col-md-9">
+                                                            <input type="text" class="form-control" name="tiempo_exa[]">
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Resultado -->
+                                                    <div class="row mb-3 align-items-center">
+                                                        <label class="col-md-3 col-form-label" style="text-align: right;">
+                                                            Registrar resultado únicamente si interfiere con la actividad
+                                                            laboral y previa autorización del titular
+                                                        </label>
+                                                        <div class="col-md-9">
+                                                            <textarea class="form-control" rows="3"
+                                                                name="resultado[]"></textarea>
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
 
                                             </div>
 
-                                        </div>
+                                            <div class="row mb-3 align-items-center" style="margin-top: 10px;">
+                                                <label class="col-md-3 col-form-label " style="text-align: right;">
+                                                    Metodo de planificacion familiar<span class="text-danger"> *</span>
+                                                </label>
+                                                <div class="col-md-9">
+                                                    <select class="form-select" id="metodo_planificacion"
+                                                        name="metodo_planificacion"
+                                                        onchange="seleccionMetodoPlanificacionFamiliar()">
+                                                        <option value="">Seleccione una opción</option>
+                                                        <option value="Si">Si</option>
+                                                        <option value="No">No</option>
+                                                        <option value="No Responde">No Responde</option>
 
-                                        <div class="row mb-3 align-items-center" style="margin-top: 10px;">
-                                            <label class="col-md-3 col-form-label " style="text-align: right;">
-                                                Metodo de planificacion familiar<span class="text-danger"> *</span>
-                                            </label>
-                                            <div class="col-md-9">
-                                                <select class="form-select" id="metodo_planificacion"
-                                                    name="metodo_planificacion"
-                                                    onchange="seleccionMetodoPlanificacionFamiliar()">
-                                                    <option value="">Seleccione una opción</option>
-                                                    <option value="Si">Si</option>
-                                                    <option value="No">No</option>
-                                                    <option value="No Responde">No Responde</option>
-
-                                                </select>
+                                                    </select>
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        <div class="row mb-3 align-items-center" style="display:none"
-                                            id="seccion_txt_metodo_planificcion_familiar">
-                                            <label class="col-md-3 col-form-label " style="text-align: right;">
-                                                ¿Cual?<span class="text-danger"> *</span>
-                                            </label>
-                                            <div class="col-md-9">
-                                                <textarea class="form-control " name="txt_metodo_planificcion_familiar"
-                                                    id="txt_metodo_planificcion_familiar"></textarea>
+                                            <div class="row mb-3 align-items-center" style="display:none"
+                                                id="seccion_txt_metodo_planificcion_familiar">
+                                                <label class="col-md-3 col-form-label " style="text-align: right;">
+                                                    ¿Cual?<span class="text-danger"> *</span>
+                                                </label>
+                                                <div class="col-md-9">
+                                                    <textarea class="form-control " name="txt_metodo_planificcion_familiar"
+                                                        id="txt_metodo_planificcion_familiar"></textarea>
+                                                </div>
                                             </div>
                                         </div>
 
                                         <hr>
-                                        <div class="row mb-3 align-items-center">
-                                            <label class="col-md-12 col-form-label " style="margin-left:50px">
-                                                <b>ANTECEDENTES REPRODUCTIVOS MASCULINOS</b>
-                                            </label>
-
-                                        </div>
-
-                                        <div id="examenes-container-masculino">
-
-                                            <!-- PRIMER BLOQUE -->
-                                            <div class="examen-item-masculino">
-
-                                                <!-- Exámenes realizados -->
-                                                <div class="row mb-3 align-items-center">
-                                                    <label class="col-md-3 col-form-label" style="text-align: right;">
-                                                        Exámenes realizados
-                                                    </label>
-                                                    <div class="col-md-9 d-flex gap-2">
-                                                        <input type="text" class="form-control" name="examenes_masculino[]">
-                                                        <!-- SOLO EL PRIMERO TIENE AGREGAR -->
-                                                        <button type="button"
-                                                            class="btn btn-success btnAgregarMasculino">+</button>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Tiempo -->
-                                                <div class="row mb-3 align-items-center">
-                                                    <label class="col-md-3 col-form-label" style="text-align: right;">
-                                                        Tiempo
-                                                    </label>
-                                                    <div class="col-md-9">
-                                                        <input type="text" class="form-control" name="tiempo_masculino[]">
-                                                    </div>
-                                                </div>
-
-                                                <!-- Resultado -->
-                                                <div class="row mb-3 align-items-center">
-                                                    <label class="col-md-3 col-form-label" style="text-align: right;">
-                                                        Registrar resultado únicamente si interfiere con la actividad
-                                                        laboral y previa autorización del titular
-                                                    </label>
-                                                    <div class="col-md-9">
-                                                        <textarea class="form-control" rows="3"
-                                                            name="resultado_masculino[]"></textarea>
-                                                    </div>
-                                                </div>
-
+                                        <div id="seccion_masculino">
+                                            <div class="row mb-3 align-items-center">
+                                                <label class="col-md-12 col-form-label " style="margin-left:50px">
+                                                    <b>ANTECEDENTES REPRODUCTIVOS MASCULINOS</b>
+                                                </label>
 
                                             </div>
 
-                                        </div>
+                                            <div id="examenes-container-masculino">
 
-                                        <div class="row mb-3 align-items-center" style="margin-top: 10px;">
-                                            <label class="col-md-3 col-form-label " style="text-align: right;">
-                                                Metodo de planificacion familiar<span class="text-danger"> *</span>
-                                            </label>
-                                            <div class="col-md-9">
-                                                <select class="form-select" id="metodo_planificacion_masculino"
-                                                    name="metodo_planificacion_masculino"
-                                                    onchange="seleccionMetodoPlanificacionFamiliarMasculino()">
-                                                    <option value="">Seleccione una opción</option>
-                                                    <option value="Si">Si</option>
-                                                    <option value="No">No</option>
-                                                    <option value="No Responde">No Responde</option>
+                                                <!-- PRIMER BLOQUE -->
+                                                <div class="examen-item-masculino">
 
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="row mb-3 align-items-center" style="display:none"
-                                            id="seccion_txt_metodo_planificcion_familiar_masculino">
-                                            <label class="col-md-3 col-form-label " style="text-align: right;">
-                                                ¿Cual?<span class="text-danger"> *</span>
-                                            </label>
-                                            <div class="col-md-9">
-                                                <textarea class="form-control "
-                                                    name="txt_metodo_planificcion_familiar_masculino"
-                                                    id="txt_metodo_planificcion_familiar_masculino"></textarea>
-                                            </div>
-                                        </div>
-                                        <hr>
-
-                                        <div class="row align-items-center">
-                                            <label class="col-md-12 col-form-label " style="margin-left:50px">
-                                                <b>CONSUMO DE SUSTANCIAS</b>
-                                            </label>
-
-                                        </div>
-
-                                        
-                                        <div class="col-md-12">
-                                            <table width="100%">
-                                                <tr>
-                                                    <td colspan="2">
-                                                        TABACO
-                                                    </td>
-
-                                                    <td>
-                                                        <div class="row " id="seccion_txt_metodo_planificcion_familiar_masculino">
-                                                            <div class="col-md-12">
-                                                                <label class="form-label">
-                                                                Tiempo de consumo (meses)
-                                                                </label>
-
-                                                                <input type="text"
-                                                                class="form-control"
-                                                                name="txt_metodo_planificcion_familiar_masculino"
-                                                                id="txt_metodo_planificcion_familiar_masculino"
-                                                              >
-                                                            </div>
+                                                    <!-- Exámenes realizados -->
+                                                    <div class="row mb-3 align-items-center">
+                                                        <label class="col-md-3 col-form-label" style="text-align: right;">
+                                                            Exámenes realizados
+                                                        </label>
+                                                        <div class="col-md-9 d-flex gap-2">
+                                                            <input type="text" class="form-control" name="examenes_masculino[]">
+                                                            <!-- SOLO EL PRIMERO TIENE AGREGAR -->
+                                                            <button type="button"
+                                                                class="btn btn-success btnAgregarMasculino">+</button>
                                                         </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="row " id="seccion_txt_metodo_planificcion_familiar_masculino">
-                                                            <div class="col-md-12">
-                                                                <label class="form-label">
-                                                                Ex consumidor &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                </label>
+                                                    </div>
 
-                                                                <input type="text"
-                                                                class="form-control"
-                                                                name="txt_metodo_planificcion_familiar_masculino"
-                                                                id="txt_metodo_planificcion_familiar_masculino"
-                                                              >
-                                                            </div>
+                                                    <!-- Tiempo -->
+                                                    <div class="row mb-3 align-items-center">
+                                                        <label class="col-md-3 col-form-label" style="text-align: right;">
+                                                            Tiempo
+                                                        </label>
+                                                        <div class="col-md-9">
+                                                            <input type="text" class="form-control" name="tiempo_masculino[]">
                                                         </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="row " id="seccion_txt_metodo_planificcion_familiar_masculino">
-                                                            <div class="col-md-12">
-                                                                <label class="form-label">
-                                                                Tiempo de abstenencia (meses)
-                                                                </label>
+                                                    </div>
 
-                                                                <input type="text"
-                                                                class="form-control"
-                                                                name="txt_metodo_planificcion_familiar_masculino"
-                                                                id="txt_metodo_planificcion_familiar_masculino"
+                                                    <!-- Resultado -->
+                                                    <div class="row mb-3 align-items-center">
+                                                        <label class="col-md-3 col-form-label" style="text-align: right;">
+                                                            Registrar resultado únicamente si interfiere con la actividad
+                                                            laboral y previa autorización del titular
+                                                        </label>
+                                                        <div class="col-md-9">
+                                                            <textarea class="form-control" rows="3"
+                                                                name="resultado_masculino[]"></textarea>
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
+
+                                            </div>
+
+                                            <div class="row mb-3 align-items-center" style="margin-top: 10px;">
+                                                <label class="col-md-3 col-form-label " style="text-align: right;">
+                                                    Metodo de planificacion familiar<span class="text-danger"> *</span>
+                                                </label>
+                                                <div class="col-md-9">
+                                                    <select class="form-select" id="metodo_planificacion_masculino"
+                                                        name="metodo_planificacion_masculino"
+                                                        onchange="seleccionMetodoPlanificacionFamiliarMasculino()">
+                                                        <option value="">Seleccione una opción</option>
+                                                        <option value="Si">Si</option>
+                                                        <option value="No">No</option>
+                                                        <option value="No Responde">No Responde</option>
+
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-3 align-items-center" style="display:none"
+                                                id="seccion_txt_metodo_planificcion_familiar_masculino">
+                                                <label class="col-md-3 col-form-label " style="text-align: right;">
+                                                    ¿Cual?<span class="text-danger"> *</span>
+                                                </label>
+                                                <div class="col-md-9">
+                                                    <textarea class="form-control "
+                                                        name="txt_metodo_planificcion_familiar_masculino"
+                                                        id="txt_metodo_planificcion_familiar_masculino"></textarea>
+                                                </div>
+                                            </div>
+                                            <hr>
+
+                                            <div class="row align-items-center">
+                                                <label class="col-md-12 col-form-label " style="margin-left:50px">
+                                                    <b>CONSUMO DE SUSTANCIAS</b>
+                                                </label>
+
+                                            </div>
+
+                                            
+                                            <div class="col-md-12">
+                                                <table width="100%">
+                                                    <tr>
+                                                        <td colspan="2">
+                                                            TABACO
+                                                        </td>
+
+                                                        <td>
+                                                            <div class="row " id="seccion_txt_metodo_planificcion_familiar_masculino">
+                                                                <div class="col-md-12">
+                                                                    <label class="form-label">
+                                                                    Tiempo de consumo (meses)
+                                                                    </label>
+
+                                                                    <input type="text"
+                                                                    class="form-control"
+                                                                    name="txt_metodo_planificcion_familiar_masculino"
+                                                                    id="txt_metodo_planificcion_familiar_masculino"
                                                                 >
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
+                                                        </td>
+                                                        <td>
+                                                            <div class="row " id="seccion_txt_metodo_planificcion_familiar_masculino">
+                                                                <div class="col-md-12">
+                                                                    <label class="form-label">
+                                                                    Ex consumidor &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                    </label>
 
-                                                    <td>
-                                                        <div class="row" id="seccion_txt_metodo_planificcion_familiar_masculino">
-                                                            <div class="col-md-12">
-                                                                <label class="form-label">
-                                                                No consume &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                </label>
-
-                                                                <input type="text"
-                                                                class="form-control"
-                                                                name="txt_metodo_planificcion_familiar_masculino"
-                                                                id="txt_metodo_planificcion_familiar_masculino"
-                                                              >
+                                                                    <input type="text"
+                                                                    class="form-control"
+                                                                    name="txt_metodo_planificcion_familiar_masculino"
+                                                                    id="txt_metodo_planificcion_familiar_masculino"
+                                                                >
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                </tr>
+                                                        </td>
+                                                        <td>
+                                                            <div class="row " id="seccion_txt_metodo_planificcion_familiar_masculino">
+                                                                <div class="col-md-12">
+                                                                    <label class="form-label">
+                                                                    Tiempo de abstenencia (meses)
+                                                                    </label>
 
-                                                <tr>
-                                                    <td colspan="2">
-                                                        ALCOHOL
-                                                    </td>
-
-                                                    <td>
-                                                        <div class="row" id="seccion_txt_metodo_planificcion_familiar_masculino">
-                                                            <div class="col-md-12">
-                                                                <label class="form-label">
-
-                                                                </label>
-
-                                                                <input type="text"
-                                                                class="form-control"
-                                                                name="txt_metodo_planificcion_familiar_masculino"
-                                                                id="txt_metodo_planificcion_familiar_masculino"
-                                                                rows="3">
+                                                                    <input type="text"
+                                                                    class="form-control"
+                                                                    name="txt_metodo_planificcion_familiar_masculino"
+                                                                    id="txt_metodo_planificcion_familiar_masculino"
+                                                                    >
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="row" id="seccion_txt_metodo_planificcion_familiar_masculino">
-                                                            <div class="col-md-12">
-                                                                <label class="form-label">
+                                                        </td>
 
-                                                                </label>
+                                                        <td>
+                                                            <div class="row" id="seccion_txt_metodo_planificcion_familiar_masculino">
+                                                                <div class="col-md-12">
+                                                                    <label class="form-label">
+                                                                    No consume &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                    </label>
 
-                                                                <input type="text"
-                                                                class="form-control"
-                                                                name="txt_metodo_planificcion_familiar_masculino"
-                                                                id="txt_metodo_planificcion_familiar_masculino"
-                                                                rows="3">
+                                                                    <input type="text"
+                                                                    class="form-control"
+                                                                    name="txt_metodo_planificcion_familiar_masculino"
+                                                                    id="txt_metodo_planificcion_familiar_masculino"
+                                                                >
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="row " id="seccion_txt_metodo_planificcion_familiar_masculino">
-                                                            <div class="col-md-12">
-                                                                <label class="form-label">
+                                                        </td>
+                                                    </tr>
 
-                                                                </label>
+                                                    <tr>
+                                                        <td colspan="2">
+                                                            ALCOHOL
+                                                        </td>
 
-                                                                <input type="text"
-                                                                class="form-control"
-                                                                name="txt_metodo_planificcion_familiar_masculino"
-                                                                id="txt_metodo_planificcion_familiar_masculino"
-                                                                rows="3">
+                                                        <td>
+                                                            <div class="row" id="seccion_txt_metodo_planificcion_familiar_masculino">
+                                                                <div class="col-md-12">
+                                                                    <label class="form-label">
+
+                                                                    </label>
+
+                                                                    <input type="text"
+                                                                    class="form-control"
+                                                                    name="txt_metodo_planificcion_familiar_masculino"
+                                                                    id="txt_metodo_planificcion_familiar_masculino"
+                                                                    rows="3">
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="row" id="seccion_txt_metodo_planificcion_familiar_masculino">
-                                                            <div class="col-md-12">
-                                                                <label class="form-label">
+                                                        </td>
+                                                        <td>
+                                                            <div class="row" id="seccion_txt_metodo_planificcion_familiar_masculino">
+                                                                <div class="col-md-12">
+                                                                    <label class="form-label">
 
-                                                                </label>
+                                                                    </label>
 
-                                                                <input type="text"
-                                                                class="form-control"
-                                                                name="txt_metodo_planificcion_familiar_masculino"
-                                                                id="txt_metodo_planificcion_familiar_masculino"
-                                                                rows="3">
+                                                                    <input type="text"
+                                                                    class="form-control"
+                                                                    name="txt_metodo_planificcion_familiar_masculino"
+                                                                    id="txt_metodo_planificcion_familiar_masculino"
+                                                                    rows="3">
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                </tr>
+                                                        </td>
+                                                        <td>
+                                                            <div class="row " id="seccion_txt_metodo_planificcion_familiar_masculino">
+                                                                <div class="col-md-12">
+                                                                    <label class="form-label">
 
-                                                <tr>
-                                                    <td>
-                                                        OTROS
-                                                    </td>
-                                                    <td>
-                                                        <div class="row" id="seccion_txt_metodo_planificcion_familiar_masculino">
-                                                            <div class="col-md-12">
-                                                                <label class="form-label">
+                                                                    </label>
 
-                                                                </label>
-
-                                                                <input type="text"
-                                                                class="form-control"
-                                                                name="txt_metodo_planificcion_familiar_masculino"
-                                                                id="txt_metodo_planificcion_familiar_masculino"
-                                                                rows="3">
+                                                                    <input type="text"
+                                                                    class="form-control"
+                                                                    name="txt_metodo_planificcion_familiar_masculino"
+                                                                    id="txt_metodo_planificcion_familiar_masculino"
+                                                                    rows="3">
+                                                                </div>
                                                             </div>
-                                                        </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="row" id="seccion_txt_metodo_planificcion_familiar_masculino">
+                                                                <div class="col-md-12">
+                                                                    <label class="form-label">
 
-                                                    </td>
-                                                    <td>
-                                                        <div class="row" id="seccion_txt_metodo_planificcion_familiar_masculino">
-                                                            <div class="col-md-12">
-                                                                <label class="form-label">
+                                                                    </label>
 
-                                                                </label>
-
-                                                                <input type="text"
-                                                                class="form-control"
-                                                                name="txt_metodo_planificcion_familiar_masculino"
-                                                                id="txt_metodo_planificcion_familiar_masculino"
-                                                                rows="3">
+                                                                    <input type="text"
+                                                                    class="form-control"
+                                                                    name="txt_metodo_planificcion_familiar_masculino"
+                                                                    id="txt_metodo_planificcion_familiar_masculino"
+                                                                    rows="3">
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="row " id="seccion_txt_metodo_planificcion_familiar_masculino">
-                                                            <div class="col-md-12">
-                                                                <label class="form-label">
+                                                        </td>
+                                                    </tr>
 
-                                                                </label>
+                                                    <tr>
+                                                        <td>
+                                                            OTROS
+                                                        </td>
+                                                        <td>
+                                                            <div class="row" id="seccion_txt_metodo_planificcion_familiar_masculino">
+                                                                <div class="col-md-12">
+                                                                    <label class="form-label">
 
-                                                                <input type="text"
-                                                                class="form-control"
-                                                                name="txt_metodo_planificcion_familiar_masculino"
-                                                                id="txt_metodo_planificcion_familiar_masculino"
-                                                                rows="3">
+                                                                    </label>
+
+                                                                    <input type="text"
+                                                                    class="form-control"
+                                                                    name="txt_metodo_planificcion_familiar_masculino"
+                                                                    id="txt_metodo_planificcion_familiar_masculino"
+                                                                    rows="3">
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="row " id="seccion_txt_metodo_planificcion_familiar_masculino">
-                                                            <div class="col-md-12">
-                                                                <label class="form-label">
 
-                                                                </label>
+                                                        </td>
+                                                        <td>
+                                                            <div class="row" id="seccion_txt_metodo_planificcion_familiar_masculino">
+                                                                <div class="col-md-12">
+                                                                    <label class="form-label">
 
-                                                                <input type="text"
-                                                                class="form-control"
-                                                                name="txt_metodo_planificcion_familiar_masculino"
-                                                                id="txt_metodo_planificcion_familiar_masculino"
-                                                                rows="3">
+                                                                    </label>
+
+                                                                    <input type="text"
+                                                                    class="form-control"
+                                                                    name="txt_metodo_planificcion_familiar_masculino"
+                                                                    id="txt_metodo_planificcion_familiar_masculino"
+                                                                    rows="3">
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="row " id="seccion_txt_metodo_planificcion_familiar_masculino">
-                                                            <div class="col-md-12">
-                                                                <label class="form-label">
+                                                        </td>
+                                                        <td>
+                                                            <div class="row " id="seccion_txt_metodo_planificcion_familiar_masculino">
+                                                                <div class="col-md-12">
+                                                                    <label class="form-label">
 
-                                                                </label>
+                                                                    </label>
 
-                                                                <input type="text"
-                                                                class="form-control"
-                                                                name="txt_metodo_planificcion_familiar_masculino"
-                                                                id="txt_metodo_planificcion_familiar_masculino"
-                                                                rows="3">
+                                                                    <input type="text"
+                                                                    class="form-control"
+                                                                    name="txt_metodo_planificcion_familiar_masculino"
+                                                                    id="txt_metodo_planificcion_familiar_masculino"
+                                                                    rows="3">
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                </tr>
+                                                        </td>
+                                                        <td>
+                                                            <div class="row " id="seccion_txt_metodo_planificcion_familiar_masculino">
+                                                                <div class="col-md-12">
+                                                                    <label class="form-label">
+
+                                                                    </label>
+
+                                                                    <input type="text"
+                                                                    class="form-control"
+                                                                    name="txt_metodo_planificcion_familiar_masculino"
+                                                                    id="txt_metodo_planificcion_familiar_masculino"
+                                                                    rows="3">
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="row " id="seccion_txt_metodo_planificcion_familiar_masculino">
+                                                                <div class="col-md-12">
+                                                                    <label class="form-label">
+
+                                                                    </label>
+
+                                                                    <input type="text"
+                                                                    class="form-control"
+                                                                    name="txt_metodo_planificcion_familiar_masculino"
+                                                                    id="txt_metodo_planificcion_familiar_masculino"
+                                                                    rows="3">
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
 
 
-                                            </table>
+                                                </table>
+                                            </div>
                                         </div>
                                         <hr>
                                         <div class="row align-items-center">
@@ -1188,8 +1213,8 @@
 
                                                             <input type="text"
                                                             class="form-control"
-                                                            name="txt_metodo_planificcion_familiar_masculino"
-                                                            id="txt_metodo_planificcion_familiar_masculino"
+                                                            name="activida_fisica[0]"
+                                                            id="activida_fisica_1"
                                                             rows="3">
                                                         </div>
                                                     </td>
@@ -1201,8 +1226,8 @@
 
                                                             <input type="text"
                                                             class="form-control"
-                                                            name="txt_metodo_planificcion_familiar_masculino"
-                                                            id="txt_metodo_planificcion_familiar_masculino"
+                                                            name="tiempo[0]"
+                                                            id="tiempo_1"
                                                             rows="3">
                                                         </div>
                                                     </td>
@@ -1217,8 +1242,8 @@
 
                                                             <input type="text"
                                                             class="form-control"
-                                                            name="txt_metodo_planificcion_familiar_masculino"
-                                                            id="txt_metodo_planificcion_familiar_masculino"
+                                                            name="activida_fisica[1]"
+                                                            id="activida_fisica_2"
                                                             rows="3">
                                                         </div>
                                                     </td>
@@ -1230,8 +1255,8 @@
 
                                                             <input type="text"
                                                             class="form-control"
-                                                            name="txt_metodo_planificcion_familiar_masculino"
-                                                            id="txt_metodo_planificcion_familiar_masculino"
+                                                            name="tiempo[1]"
+                                                            id="tiempo_2"
                                                             rows="3">
                                                         </div>
                                                     </td>
@@ -1248,8 +1273,8 @@
 
                                                             <input type="text"
                                                             class="form-control"
-                                                            name="txt_metodo_planificcion_familiar_masculino"
-                                                            id="txt_metodo_planificcion_familiar_masculino"
+                                                            name="activida_fisica[2]"
+                                                            id="activida_fisica_3"
                                                             rows="3">
                                                         </div>
                                                     </td>
@@ -1261,8 +1286,8 @@
 
                                                             <input type="text"
                                                             class="form-control"
-                                                            name="txt_metodo_planificcion_familiar_masculino"
-                                                            id="txt_metodo_planificcion_familiar_masculino"
+                                                            name="tiempo[2]"
+                                                            id="tiempo_3"
                                                             rows="3">
                                                         </div>
                                                     </td>
@@ -1304,8 +1329,8 @@
 
                                                             <input type="text"
                                                             class="form-control"
-                                                            name="txt_metodo_planificcion_familiar_masculino"
-                                                            id="txt_metodo_planificcion_familiar_masculino"
+                                                            name="medicacion[]"
+                                                            id="medicacion_1"
                                                             rows="3">
                                                         </div>
                                                     </td>
@@ -1317,8 +1342,8 @@
 
                                                             <input type="text"
                                                             class="form-control"
-                                                            name="txt_metodo_planificcion_familiar_masculino"
-                                                            id="txt_metodo_planificcion_familiar_masculino"
+                                                            name="tiempo_medicacion[]"
+                                                            id="tiempo_medicacion_1"
                                                             rows="3">
                                                         </div>
                                                     </td>
@@ -1333,8 +1358,8 @@
 
                                                             <input type="text"
                                                             class="form-control"
-                                                            name="txt_metodo_planificcion_familiar_masculino"
-                                                            id="txt_metodo_planificcion_familiar_masculino"
+                                                            name="medicacion[]"
+                                                            id="medicacion_2"
                                                             rows="3">
                                                         </div>
                                                     </td>
@@ -1346,8 +1371,8 @@
 
                                                             <input type="text"
                                                             class="form-control"
-                                                            name="txt_metodo_planificcion_familiar_masculino"
-                                                            id="txt_metodo_planificcion_familiar_masculino"
+                                                            name="tiempo_medicacion[]"
+                                                            id="tiempo_medicacion_2"
                                                             rows="3">
                                                         </div>
                                                     </td>
@@ -1364,8 +1389,8 @@
 
                                                             <input type="text"
                                                             class="form-control"
-                                                            name="txt_metodo_planificcion_familiar_masculino"
-                                                            id="txt_metodo_planificcion_familiar_masculino"
+                                                            name="medicacion[]"
+                                                            id="medicacion_3"
                                                             rows="3">
                                                         </div>
                                                     </td>
@@ -1377,8 +1402,8 @@
 
                                                             <input type="text"
                                                             class="form-control"
-                                                            name="txt_metodo_planificcion_familiar_masculino"
-                                                            id="txt_metodo_planificcion_familiar_masculino"
+                                                            name="tiempo_medicacion[]"
+                                                            id="tiempo_medicacion_3"
                                                             rows="3">
                                                         </div>
                                                     </td>
@@ -1393,12 +1418,17 @@
                                                 OBSERVACION<span class="text-danger"> *</span>
                                             </label>
                                             <div class="col-md-9">
-                                                <textarea class="form-control " name="antecedente_cq"
-                                                    id="antecedente_cq"></textarea>
+                                                <textarea class="form-control " name="observacion_antecedentes"
+                                                    id="observacion_antecedentes"></textarea>
                                             </div>
                                         </div>
                                         <hr>
-
+                                        <center>
+                                            <button type="submit" class="btn btn-sm btn-outline-success d-flex align-items-center"
+                                                style="margin-right:5px">
+                                            <i class="fa fa-floppy-o"> </i> &nbsp;&nbsp;Guardar
+                                            </button>
+                                        </center>
 
                                     </form>
                                 </div>
@@ -1416,15 +1446,24 @@
                             <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
                                 data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
-                                    <div class="row mb-3 align-items-center">
-                                        <label class="col-md-3 col-form-label " style="text-align: right;">
-                                            DESCRIPCION<span class="text-danger"> *</span>
-                                        </label>
-                                        <div class="col-md-9">
-                                            <textarea class="form-control " name="antecedente_cq"
-                                                id="antecedente_cq"></textarea>
+                                    <form id="formEnfermedad">
+                                        <div class="row mb-3 align-items-center">
+                                            <label class="col-md-3 col-form-label " style="text-align: right;">
+                                                DESCRIPCION<span class="text-danger"> *</span>
+                                            </label>
+                                            <div class="col-md-9">
+                                                <textarea class="form-control " name="enfermedad_problema_actual"
+                                                    id="enfermedad_problema_actual"></textarea>
+                                            </div>
                                         </div>
-                                    </div>
+                                        <center>
+                                            <button type="submit" class="btn btn-sm btn-outline-success d-flex align-items-center"
+                                                style="margin-right:5px">
+                                            <i class="fa fa-floppy-o"> </i> &nbsp;&nbsp;Guardar
+                                            </button>
+                                        </center>
+
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -1439,219 +1478,228 @@
                             <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour"
                                 data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
-                                    <div class="row mb-3 align-items-center">
-                                         <div class="col-md-12">
-                                            <table width="100%">
-                                                <tr>
-                                                    <td>
-                                                        <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
-                                                            <div class="col-md-12">
-                                                                <label class="form-label">
-                                                                TEMPERATURA (°C)
-                                                                </label>
+                                    <form id="formConstanteVitales">
+                                        <div class="row mb-3 align-items-center">
+                                            <div class="col-md-12">
+                                                <table width="100%">
+                                                    <tr>
+                                                        <td>
+                                                            <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
+                                                                <div class="col-md-12">
+                                                                    <label class="form-label">
+                                                                    TEMPERATURA (°C)
+                                                                    </label>
 
 
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                      <td>
-                                                        <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
-                                                            <div class="col-md-12">
-                                                                <label class="form-label">
-                                                                PRESIÓN ARTERIAL (mmHg)
-                                                                </label>
+                                                        </td>
+                                                        <td>
+                                                            <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
+                                                                <div class="col-md-12">
+                                                                    <label class="form-label">
+                                                                    PRESIÓN ARTERIAL (mmHg)
+                                                                    </label>
 
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                      <td>
-                                                        <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
-                                                            <div class="col-md-12">
-                                                                <label class="form-label">
-                                                                FRECUENCIA CARDIACA (Lat/min)
-                                                                </label>
+                                                        </td>
+                                                        <td>
+                                                            <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
+                                                                <div class="col-md-12">
+                                                                    <label class="form-label">
+                                                                    FRECUENCIA CARDIACA (Lat/min)
+                                                                    </label>
 
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                      <td>
-                                                        <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
-                                                            <div class="col-md-12">
-                                                                <label class="form-label">
-                                                                 FRECUENCIA RESPIRATORIA (fr/min)
-                                                                </label>
+                                                        </td>
+                                                        <td>
+                                                            <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
+                                                                <div class="col-md-12">
+                                                                    <label class="form-label">
+                                                                    FRECUENCIA RESPIRATORIA (fr/min)
+                                                                    </label>
 
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                      <td>
-                                                        <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
-                                                            <div class="col-md-12">
-                                                                <label class="form-label">
-                                                                 SATURACIÓN DE OXÍGENO (O2%)
-                                                                </label>
+                                                        </td>
+                                                        <td>
+                                                            <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
+                                                                <div class="col-md-12">
+                                                                    <label class="form-label">
+                                                                    SATURACIÓN DE OXÍGENO (O2%)
+                                                                    </label>
 
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                      <td>
-                                                        <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
-                                                            <div class="col-md-12">
-                                                                <label class="form-label">
-                                                                 PESO (Kg)
-                                                                </label>
+                                                        </td>
+                                                        <td>
+                                                            <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
+                                                                <div class="col-md-12">
+                                                                    <label class="form-label">
+                                                                    PESO (Kg)
+                                                                    </label>
 
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                      <td>
-                                                        <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
-                                                            <div class="col-md-12">
-                                                                <label class="form-label">
-                                                                TALLA (cm)
-                                                                </label>
+                                                        </td>
+                                                        <td>
+                                                            <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
+                                                                <div class="col-md-12">
+                                                                    <label class="form-label">
+                                                                    TALLA (cm)
+                                                                    </label>
 
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                      <td>
-                                                        <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
-                                                            <div class="col-md-12">
-                                                                <label class="form-label">
-                                                                 ÍNDICE DE MASA CORPORAL (kg/m2)
-                                                                </label>
+                                                        </td>
+                                                        <td>
+                                                            <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
+                                                                <div class="col-md-12">
+                                                                    <label class="form-label">
+                                                                    ÍNDICE DE MASA CORPORAL (kg/m2)
+                                                                    </label>
 
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                      <td>
-                                                        <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
-                                                            <div class="col-md-12">
-                                                                <label class="form-label">
-                                                                PERÍMETRO ABDOMINAL (cm)
-                                                                </label>
+                                                        </td>
+                                                        <td>
+                                                            <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
+                                                                <div class="col-md-12">
+                                                                    <label class="form-label">
+                                                                    PERÍMETRO ABDOMINAL (cm)
+                                                                    </label>
 
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
+                                                        </td>
 
-                                                </tr>
+                                                    </tr>
 
-                                                 <tr>
-                                                    <td>
-                                                        <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
-                                                            <div class="col-md-12">
+                                                    <tr>
+                                                        <td>
+                                                            <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
+                                                                <div class="col-md-12">
 
-                                                                <input type="text"
-                                                                class="form-control"
-                                                                name="txt_metodo_planificcion_familiar_masculino"
-                                                                id="txt_metodo_planificcion_familiar_masculino"
-                                                              >
+                                                                    <input type="text"
+                                                                    class="form-control"
+                                                                    name="temperatura"
+                                                                    id="temperatura"
+                                                                >
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                      <td>
-                                                        <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
-                                                            <div class="col-md-12">
+                                                        </td>
+                                                        <td>
+                                                            <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
+                                                                <div class="col-md-12">
 
-                                                                <input type="text"
-                                                                class="form-control"
-                                                                name="txt_metodo_planificcion_familiar_masculino"
-                                                                id="txt_metodo_planificcion_familiar_masculino"
-                                                              >
+                                                                    <input type="text"
+                                                                    class="form-control"
+                                                                    name="presion_arterial"
+                                                                    id="presion_arterial"
+                                                                >
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                      <td>
-                                                        <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
-                                                            <div class="col-md-12">
+                                                        </td>
+                                                        <td>
+                                                            <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
+                                                                <div class="col-md-12">
 
-                                                                <input type="text"
-                                                                class="form-control"
-                                                                name="txt_metodo_planificcion_familiar_masculino"
-                                                                id="txt_metodo_planificcion_familiar_masculino"
-                                                              >
+                                                                    <input type="text"
+                                                                    class="form-control"
+                                                                    name="frecuencia_cardiaca"
+                                                                    id="frecuencia_cardiaca"
+                                                                >
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                      <td>
-                                                        <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
-                                                            <div class="col-md-12">
+                                                        </td>
+                                                        <td>
+                                                            <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
+                                                                <div class="col-md-12">
 
-                                                                <input type="text"
-                                                                class="form-control"
-                                                                name="txt_metodo_planificcion_familiar_masculino"
-                                                                id="txt_metodo_planificcion_familiar_masculino"
-                                                              >
+                                                                    <input type="text"
+                                                                    class="form-control"
+                                                                    name="frecuencia_respiratoria"
+                                                                    id="frecuencia_respiratoria"
+                                                                >
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                      <td>
-                                                        <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
-                                                            <div class="col-md-12">
+                                                        </td>
+                                                        <td>
+                                                            <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
+                                                                <div class="col-md-12">
 
-                                                                <input type="text"
-                                                                class="form-control"
-                                                                name="txt_metodo_planificcion_familiar_masculino"
-                                                                id="txt_metodo_planificcion_familiar_masculino"
-                                                              >
+                                                                    <input type="text"
+                                                                    class="form-control"
+                                                                    name="saturacion"
+                                                                    id="saturacion"
+                                                                >
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                      <td>
-                                                        <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
-                                                            <div class="col-md-12">
+                                                        </td>
+                                                        <td>
+                                                            <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
+                                                                <div class="col-md-12">
 
-                                                                <input type="text"
-                                                                class="form-control"
-                                                                name="txt_metodo_planificcion_familiar_masculino"
-                                                                id="txt_metodo_planificcion_familiar_masculino"
-                                                              >
+                                                                    <input type="text"
+                                                                    class="form-control"
+                                                                    name="peso"
+                                                                    id="peso"
+                                                                >
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                      <td>
-                                                        <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
-                                                            <div class="col-md-12">
+                                                        </td>
+                                                        <td>
+                                                            <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
+                                                                <div class="col-md-12">
 
-                                                                <input type="text"
-                                                                class="form-control"
-                                                                name="txt_metodo_planificcion_familiar_masculino"
-                                                                id="txt_metodo_planificcion_familiar_masculino"
-                                                              >
+                                                                    <input type="text"
+                                                                    class="form-control"
+                                                                    name="talla"
+                                                                    id="talla"
+                                                                >
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                      <td>
-                                                        <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
-                                                            <div class="col-md-12">
+                                                        </td>
+                                                        <td>
+                                                            <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
+                                                                <div class="col-md-12">
 
-                                                                <input type="text"
-                                                                class="form-control"
-                                                                name="txt_metodo_planificcion_familiar_masculino"
-                                                                id="txt_metodo_planificcion_familiar_masculino"
-                                                              >
+                                                                    <input type="text"
+                                                                    class="form-control"
+                                                                    name="imc"
+                                                                    id="imc"
+                                                                >
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                      <td>
-                                                        <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
-                                                            <div class="col-md-12">
+                                                        </td>
+                                                        <td>
+                                                            <div class="row mb-3" id="seccion_txt_metodo_planificcion_familiar_masculino">
+                                                                <div class="col-md-12">
 
-                                                                <input type="text"
-                                                                class="form-control"
-                                                                name="txt_metodo_planificcion_familiar_masculino"
-                                                                id="txt_metodo_planificcion_familiar_masculino"
-                                                              >
+                                                                    <input type="text"
+                                                                    class="form-control"
+                                                                    name="perimetro_abdominal"
+                                                                    id="perimetro_abdominal"
+                                                                >
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
+                                                        </td>
 
-                                                </tr>
+                                                    </tr>
 
-                                            </table>
+                                                </table>
+                                            </div>
                                         </div>
-                                    </div>
+                                    <center>
+                                            <button type="submit" class="btn btn-sm btn-outline-success d-flex align-items-center"
+                                                style="margin-right:5px">
+                                            <i class="fa fa-floppy-o"> </i> &nbsp;&nbsp;Guardar
+                                            </button>
+                                        </center>
+
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -1665,270 +1713,281 @@
                             </h2>
                             <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive"
                                 data-bs-parent="#accordionExample">
-                                <div class="accordion-body">
-                                    <div class="row mb-3 align-items-center">
-                                        <div class="col-md-12">
+                                <form id="formExamenFisico">
+                                    <div class="accordion-body">
+                                        <div class="row mb-3 align-items-center">
+                                            <div class="col-md-12">
 
-                                            <table class="tabla-examen-fisico">
-                                                <tr>
-                                                    <td class="bg vertical">1. Piel</td>
-                                                    <td class="bg">
-                                                    a. Cicatríces <br>
-                                                    c. Piel  y Faneras
-                                                    </td>
+                                                <table class="tabla-examen-fisico">
+                                                    <tr>
+                                                        <td class="bg vertical">1. Piel</td>
+                                                        <td class="bg">
+                                                        a. Cicatríces <br>
+                                                        c. Piel  y Faneras
+                                                        </td>
 
-                                                    <td class="">
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="cicatrices" value="cicatrices"><br>
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="piel_fanera" value="piel_fanera">
+                                                        <td class="">
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="cicatrices" value="cicatrices"><br>
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="piel_fanera" value="piel_fanera">
 
-                                                    </td>
+                                                        </td>
 
-                                                    <td class="bg vertical">2. Ojos</td>
-                                                    <td class="bg">
-                                                    a. Párpados<br>
-                                                    b. Conjuntivas<br>
-                                                    c. Pupilas<br>
-                                                    d. Córneas<br>
-                                                    e. Motilidad<br>
-                                                    </td>
-                                                    <td class="">
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="cicatrices" value="cicatrices"><br>
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="piel_fanera" value="piel_fanera"><br>
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="cicatrices" value="cicatrices"><br>
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="piel_fanera" value="piel_fanera"><br>
+                                                        <td class="bg vertical">2. Ojos</td>
+                                                        <td class="bg">
+                                                        a. Párpados<br>
+                                                        b. Conjuntivas<br>
+                                                        c. Pupilas<br>
+                                                        d. Córneas<br>
+                                                        e. Motilidad<br>
+                                                        </td>
+                                                        <td class="">
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="parpados" value="parpados"><br>
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="conjuntiva" value="conjuntiva"><br>
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="pupila" value="pupila"><br>
+                                                            <input class="form-check-input" tcorneasype="checkbox" 
+                                                            name="corneas" value="corneas"><br>
+                                                            <input class="form-check-input" tcorneasype="checkbox" 
+                                                            name="motilidad" value="motilidad"><br>
 
-                                                    </td>
+                                                        </td>
 
-                                                    <td class="bg vertical">3. Oidos</td>
-                                                    <td class="bg">
-                                                    a. C. auditivo externo<br>
-                                                    b. Pabellón<br>
-                                                    c. Tímpanos
-                                                    </td>
+                                                        <td class="bg vertical">3. Oidos</td>
+                                                        <td class="bg">
+                                                        a. C. auditivo externo<br>
+                                                        b. Pabellón<br>
+                                                        c. Tímpanos
+                                                        </td>
 
-                                                     <td class="">
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="cicatrices" value="cicatrices"><br>
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="piel_fanera" value="piel_fanera"><br>
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="cicatrices" value="cicatrices"><br>
-
-
-                                                    </td>
-
-                                                    <td class="bg vertical">4. Oro faringe</td>
-                                                    <td class="bg">
-                                                    a. Labios<br>
-                                                    b. Lengua<br>
-                                                    c. Faringe<br>
-                                                    d. Amígdalas<br>
-                                                    e. Dentadura
-                                                    </td>
-
-                                                    <td class="">
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="cicatrices" value="cicatrices"><br>
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="piel_fanera" value="piel_fanera"><br>
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="cicatrices" value="cicatrices"><br>
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="piel_fanera" value="piel_fanera"><br>
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="cicatrices" value="cicatrices"><br>
+                                                        <td class="">
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="auditvo_externo" value="auditvo_externo"><br>
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="pabellon" value="pabellon"><br>
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="timpano" value="timpano"><br>
 
 
-                                                    </td>
+                                                        </td>
 
-                                                    <td class="bg vertical">5. Nariz</td>
-                                                    <td class="bg">
-                                                    a. Tabique<br>
-                                                    b. Cornetes<br>
-                                                    c. Mucosas<br>
-                                                    d. Senos paranasales
-                                                    </td>
+                                                        <td class="bg vertical">4. Oro faringe</td>
+                                                        <td class="bg">
+                                                        a. Labios<br>
+                                                        b. Lengua<br>
+                                                        c. Faringe<br>
+                                                        d. Amígdalas<br>
+                                                        e. Dentadura
+                                                        </td>
 
-                                                    <td class="">
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="cicatrices" value="cicatrices"><br>
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="piel_fanera" value="piel_fanera"><br>
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="cicatrices" value="cicatrices"><br>
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="cicatrices" value="cicatrices"><br>
-
-                                                    </td>
-
-
-                                                </tr>
-
-                                                <tr>
-                                                    <td class="bg vertical">6. Cuello</td>
-                                                    <td class="bg">
-                                                    a. Tiroides / masas <br>
-                                                    b. Movilidad
-                                                    </td>
-
-                                                    <td class="">
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="cicatrices" value="cicatrices"><br>
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="piel_fanera" value="piel_fanera">
-
-                                                    </td>
-
-                                                    <td class="bg vertical">7. Tórax</td>
-                                                    <td class="bg">
-                                                    a. Mamas<br>
-
-                                                    </td>
-                                                    <td class="">
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="cicatrices" value="cicatrices"><br>
-
-                                                    </td>
-
-                                                    <td class="bg vertical">8. Tórax</td>
-                                                    <td class="bg">
-                                                    a. Pulmones<br>
-                                                    b. Corazón<br>
-                                                    c. Parrilla costal
-                                                    </td>
-
-                                                     <td class="">
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="cicatrices" value="cicatrices"><br>
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="piel_fanera" value="piel_fanera"><br>
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="cicatrices" value="cicatrices"><br>
+                                                        <td class="">
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="labios" value="labios"><br>
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="lengua" value="lengua"><br>
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="faringe" value="faringe"><br>
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="amigdalas" value="amigdalas"><br>
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="dentadura" value="dentadura"><br>
 
 
-                                                    </td>
+                                                        </td>
 
-                                                    <td class="bg vertical">9. Abdomen</td>
-                                                    <td class="bg">
-                                                    a. Vísceras<br>
-                                                    b. Pared abdominal<br>
+                                                        <td class="bg vertical">5. Nariz</td>
+                                                        <td class="bg">
+                                                        a. Tabique<br>
+                                                        b. Cornetes<br>
+                                                        c. Mucosas<br>
+                                                        d. Senos paranasales
+                                                        </td>
 
-                                                    </td>
+                                                        <td class="">
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="tabique" value="tabique"><br>
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="cornete" value="cornete"><br>
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="mucosas" value="mucosas"><br>
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="senos_paranasales" value="senos_paranasales"><br>
 
-                                                    <td class="">
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="cicatrices" value="cicatrices"><br>
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="piel_fanera" value="piel_fanera"><br>
-
-                                                    </td>
-
-                                                    <td class="bg vertical">10. Columna</td>
-                                                    <td class="bg">
-                                                    a. Flexibilidad<br>
-                                                    b. Desviación<br>
-                                                    c. Dolor<br>
-
-                                                    </td>
-
-                                                    <td class="">
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="cicatrices" value="cicatrices"><br>
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="piel_fanera" value="piel_fanera"><br>
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="cicatrices" value="cicatrices"><br>
+                                                        </td>
 
 
-                                                    </td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td class="bg vertical">6. Cuello</td>
+                                                        <td class="bg">
+                                                        a. Tiroides / masas <br>
+                                                        b. Movilidad
+                                                        </td>
+
+                                                        <td class="">
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="tiroides" value="tiroides"><br>
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="movilidad" value="movilidad">
+
+                                                        </td>
+
+                                                        <td class="bg vertical">7. Tórax</td>
+                                                        <td class="bg">
+                                                        a. Mamas<br>
+
+                                                        </td>
+                                                        <td class="">
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="mamas" value="mamas"><br>
+
+                                                        </td>
+
+                                                        <td class="bg vertical">8. Tórax</td>
+                                                        <td class="bg">
+                                                        a. Pulmones<br>
+                                                        b. Corazón<br>
+                                                        c. Parrilla costal
+                                                        </td>
+
+                                                        <td class="">
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="pulmones" value="pulmones"><br>
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="corazon" value="corazon"><br>
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="parilla_costal" value="parilla_costal"><br>
 
 
-                                                </tr>
+                                                        </td>
 
-                                                <tr>
-                                                    <td class="bg vertical">11. Pelvis</td>
-                                                    <td class="bg">
-                                                    a. Pelvis <br>
-                                                    b. Genitales
-                                                    </td>
+                                                        <td class="bg vertical">9. Abdomen</td>
+                                                        <td class="bg">
+                                                        a. Vísceras<br>
+                                                        b. Pared abdominal<br>
 
-                                                    <td class="">
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="cicatrices" value="cicatrices"><br>
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="piel_fanera" value="piel_fanera">
+                                                        </td>
 
-                                                    </td>
+                                                        <td class="">
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="visceras" value="visceras"><br>
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="pared_abdominal" value="pared_abdominal"><br>
 
-                                                    <td class="bg vertical">12. Extremidades</td>
-                                                    <td class="bg">
-                                                    a. Vascular<br>
-                                                    b. Miembros superiores<br>
-                                                    c. Miembros inferiores<br>
+                                                        </td>
 
-                                                    </td>
-                                                    <td class="">
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="cicatrices" value="cicatrices"><br>
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="cicatrices" value="cicatrices"><br>
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="cicatrices" value="cicatrices"><br>
+                                                        <td class="bg vertical">10. Columna</td>
+                                                        <td class="bg">
+                                                        a. Flexibilidad<br>
+                                                        b. Desviación<br>
+                                                        c. Dolor<br>
 
-                                                    </td>
+                                                        </td>
 
-                                                    <td class="bg vertical">13. Neurológico</td>
-                                                    <td class="bg">
-                                                    a. Fuerza<br>
-                                                    b. Sensibilidad<br>
-                                                    c. Marcha<br>   
-                                                    d. Reflejos
-                                                    </td>
+                                                        <td class="">
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="flexibilidad" value="flexibilidad"><br>
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="desviacion" value="desviacion"><br>
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="dolor" value="dolor"><br>
 
-                                                     <td class="">
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="cicatrices" value="cicatrices"><br>
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="piel_fanera" value="piel_fanera"><br>
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="cicatrices" value="cicatrices"><br>
-                                                        <input class="form-check-input" type="checkbox" 
-                                                        name="cicatrices" value="cicatrices"><br>
 
-                                                    </td>
+                                                        </td>
 
-                                                    <td class="bg vertical" colspan="6"></td>
 
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="15">
-                                                        SI EXISTE EVIDENCIA DE PATOLOGÍA MARCAR CON "X" Y DESCRIBIR EN LA SIGUIENTE SECCIÓN COLOCANDO EL NUMERAL
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="15">
-                                                         <div class="row mb-3 align-items-center">
-                                                            <label class="col-md-2 col-form-label " style="text-align: right;">
-                                                                Observación:<span class="text-danger"> *</span>
-                                                            </label>
-                                                            <div class="col-md-10">
-                                                                <textarea class="form-control " name="motivo" id="motivo"></textarea>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td class="bg vertical">11. Pelvis</td>
+                                                        <td class="bg">
+                                                        a. Pelvis <br>
+                                                        b. Genitales
+                                                        </td>
+
+                                                        <td class="">
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="pelvis" value="pelvis"><br>
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="genitales" value="genitales">
+
+                                                        </td>
+
+                                                        <td class="bg vertical">12. Extremidades</td>
+                                                        <td class="bg">
+                                                        a. Vascular<br>
+                                                        b. Miembros superiores<br>
+                                                        c. Miembros inferiores<br>
+
+                                                        </td>
+                                                        <td class="">
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="vascular" value="vascular"><br>
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="miembros_superiores" value="miembros_superiores"><br>
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="miembros_inferiores" value="miembros_inferiores"><br>
+
+                                                        </td>
+
+                                                        <td class="bg vertical">13. Neurológico</td>
+                                                        <td class="bg">
+                                                        a. Fuerza<br>
+                                                        b. Sensibilidad<br>
+                                                        c. Marcha<br>   
+                                                        d. Reflejos
+                                                        </td>
+
+                                                        <td class="">
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="fuerza" value="fuerza"><br>
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="sensibilidad" value="sensibilidad"><br>
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="marcha" value="marcha"><br>
+                                                            <input class="form-check-input" type="checkbox" 
+                                                            name="reflejos" value="reflejos"><br>
+
+                                                        </td>
+
+                                                        <td class="bg vertical" colspan="6"></td>
+
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="15">
+                                                            SI EXISTE EVIDENCIA DE PATOLOGÍA MARCAR CON "X" Y DESCRIBIR EN LA SIGUIENTE SECCIÓN COLOCANDO EL NUMERAL
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="15">
+                                                            <div class="row mb-3 align-items-center">
+                                                                <label class="col-md-2 col-form-label " style="text-align: right;">
+                                                                    Observación:<span class="text-danger"> *</span>
+                                                                </label>
+                                                                <div class="col-md-10">
+                                                                    <textarea class="form-control" name="motivo_examen" id="motivo_examen"></textarea>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                </tr>
+                                                        </td>
+                                                    </tr>
 
-                                            </table>
+                                                </table>
 
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                    <center>
+                                        <button type="submit" class="btn btn-sm btn-outline-success d-flex align-items-center"
+                                            style="margin-right:5px">
+                                        <i class="fa fa-floppy-o"> </i> &nbsp;&nbsp;Guardar
+                                        </button>
+                                    </center>
+
+                                </form>
                             </div>
                         </div>
 
@@ -3146,6 +3205,8 @@
             </div>
             <hr>
         </div>
+    </div>
+    @include('consultorio.modal_puesto_trabajo')
 @endsection
     @push('scripts')
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
