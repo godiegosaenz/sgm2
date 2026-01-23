@@ -429,7 +429,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('croquis-predio/{cedula}/{lugar}', [LiquidacionesController::class, 'croquisPredio']);
     Route::post('notifica-contribuyente', [LiquidacionesController::class, 'notificaContribuyente']);
     Route::get('/notificacion/{id}/{archivoIndex}', [LiquidacionesController::class, 'descargarArchivo']);
-    Route::get('buscar-detalles-liquidacion-urbanos/{cedula}', [LiquidacionesController::class, 'consultarTitulosUrbDetalle']);
+    
 
     //predios-urbano
     Route::get('predio-urbano-liquidar', [UrbanoLiquidacionController::class, 'index']);
@@ -474,6 +474,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('guardar-examen-fisico', [PacienteEmpleadoController::class, 'guardaExamenFisico']);
     
 });
+
+Route::get('buscar-detalles-liquidacion-urbanos/{cedula}', [LiquidacionesController::class, 'consultarTitulosUrbDetalle']);
 
 Route::get('/clear', function() {
 
