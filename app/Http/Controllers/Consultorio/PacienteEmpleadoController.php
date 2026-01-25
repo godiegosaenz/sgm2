@@ -497,45 +497,170 @@ class PacienteEmpleadoController extends Controller
                 return ["mensaje"=>"Debe completar primero la seccion E. CONSTANTES VITALES Y ANTROPOMETRIA", "error"=>true];
             }
 
+            $cicatrices = $request->has('cicatrices') ? true : false;
+            $piel_fanera = $request->has('piel_fanera') ? true : false;
+
+            $parpados = $request->has('parpados') ? true : false;
+            $conjuntiva = $request->has('conjuntiva') ? true : false;
+            $pupila = $request->has('pupila') ? true : false;
+            $corneas = $request->has('corneas') ? true : false;
+            $motilidad = $request->has('motilidad') ? true : false;
+
+            $auditivo_externo = $request->has('auditvo_externo') ? true : false;
+            $pabellon = $request->has('pabellon') ? true : false;
+            $timpano = $request->has('timpano') ? true : false;
+
+            $labios = $request->has('labios') ? true : false;
+            $lengua = $request->has('lengua') ? true : false;
+            $faringe = $request->has('faringe') ? true : false;
+            $amigdalas = $request->has('amigdalas') ? true : false;
+            $dentadura = $request->has('dentadura') ? true : false;
+
+            $tabique = $request->has('tabique') ? true : false;
+            $cornete = $request->has('cornete') ? true : false;
+            $mucosas = $request->has('mucosas') ? true : false;
+            $senos_paranasales = $request->has('senos_paranasales') ? true : false;
+
+            $tiroides = $request->has('tiroides') ? true : false;
+            $movilidad = $request->has('movilidad') ? true : false;
+
+            $mamas = $request->has('mamas') ? true : false;
+
+            $pulmones = $request->has('pulmones') ? true : false;
+            $corazon = $request->has('corazon') ? true : false;
+            $parilla_costal = $request->has('parilla_costal') ? true : false;
+
+            $visceras = $request->has('visceras') ? true : false;
+            $pared_abdominal = $request->has('pared_abdominal') ? true : false;
+
+            $flexibilidad = $request->has('flexibilidad') ? true : false;
+            $desviacion = $request->has('desviacion') ? true : false;
+            $dolor = $request->has('dolor') ? true : false;
+
+            $pelvis = $request->has('pelvis') ? true : false;
+            $genitales = $request->has('genitales') ? true : false;
+
+            
+            $vascular = $request->has('vascular') ? true : false;
+            $miembros_superiores = $request->has('miembros_superiores') ? true : false;
+            $miembros_inferiores = $request->has('miembros_inferiores') ? true : false;
+
+            $fuerza = $request->has('fuerza') ? true : false;
+            $sensibilidad = $request->has('sensibilidad') ? true : false;
+            $marcha = $request->has('marcha') ? true : false;
+            $reflejos = $request->has('reflejos') ? true : false;
+     
+
             $buscaExamenFisico=ExamenFisicoRegional::where('id_constante',$request->IdConstantesVitale)
             ->where('estado','Borrador')
             ->orderBy('id','desc')
             ->first();
-            if(!is_null($buscaExamenFisico)){   
-                $cicatr = $request->has('cicatrices') ? true : false;
-     
-                // $buscaConstante->temperatura=$request->temperatura;
-                // $buscaConstante->id_empleado=$request->id_empleado;
-                // $buscaConstante->presion_arterial=$request->presion_arterial;
-                // $buscaConstante->frecuencia_cardiaca=$request->frecuencia_cardiaca;
-                // $buscaConstante->frecuencia_respiratoria=$request->frecuencia_respiratoria;
-                // $buscaConstante->saturacion=$request->saturacion;
-                // $buscaConstante->peso=$request->peso;
-                // $buscaConstante->talla=$request->talla;
-                // $buscaConstante->imc=$request->imc;
-                // $buscaConstante->perimetro_abdominal=$request->perimetro_abdominal;
-                // $buscaConstante->idusuario_actualiza=auth()->user()->persona->id;
-                // $buscaConstante->fecha_actualiza=date('Y-m-d H:i:s');
-                // $buscaConstante->save();
-                // return ["mensaje"=>"Informacion actualizada exitosamente ", "error"=>false, "idconstante"=>$buscaConstante->id];
+
+            if(!is_null($buscaExamenFisico)){ 
+                $buscaExamenFisico->cicatrices=$cicatrices;
+                $buscaExamenFisico->piel_fanera=$piel_fanera;
+                $buscaExamenFisico->parpados=$parpados;
+                $buscaExamenFisico->conjuntiva=$conjuntiva;
+                $buscaExamenFisico->pupila=$pupila;
+                $buscaExamenFisico->corneas=$corneas;
+                $buscaExamenFisico->motilidad=$motilidad;
+                $buscaExamenFisico->auditivo_externo=$auditivo_externo;
+                $buscaExamenFisico->pabellon=$pabellon;
+                $buscaExamenFisico->timpano=$timpano;
+
+                $buscaExamenFisico->labios=$labios;
+                $buscaExamenFisico->lengua=$lengua;
+                $buscaExamenFisico->faringe=$faringe;
+                $buscaExamenFisico->amigdalas=$amigdalas;
+                $buscaExamenFisico->dentadura=$dentadura;
+                $buscaExamenFisico->tabique=$tabique;
+                $buscaExamenFisico->cornete=$cornete;
+                $buscaExamenFisico->mucosas=$mucosas;
+                $buscaExamenFisico->senos_paranasales=$senos_paranasales;
+                $buscaExamenFisico->tiroides=$tiroides;
+                $buscaExamenFisico->movilidad=$movilidad;
+
+                $buscaExamenFisico->mamas=$mamas;
+                $buscaExamenFisico->pulmones=$pulmones;
+                $buscaExamenFisico->corazon=$corazon;
+                $buscaExamenFisico->parilla_costal=$parilla_costal;
+                $buscaExamenFisico->visceras=$visceras;
+                $buscaExamenFisico->pared_abdominal=$pared_abdominal;
+                $buscaExamenFisico->flexibilidad=$flexibilidad;
+                $buscaExamenFisico->desviacion=$desviacion;
+                $buscaExamenFisico->dolor=$dolor;
+                $buscaExamenFisico->pelvis=$pelvis;
+                $buscaExamenFisico->genitales=$genitales;
+
+                $buscaExamenFisico->vascular=$vascular;
+                $buscaExamenFisico->miembros_superiores=$miembros_superiores;
+                $buscaExamenFisico->miembros_inferiores=$miembros_inferiores;
+                $buscaExamenFisico->fuerza=$fuerza;
+                $buscaExamenFisico->sensibilidad=$sensibilidad;
+                $buscaExamenFisico->marcha=$marcha;
+                $buscaExamenFisico->reflejos=$reflejos;
+                
+                $buscaExamenFisico->observacion=$request->motivo_examen;
+                $buscaExamenFisico->idusuario_actualiza=auth()->user()->persona->id;
+                $buscaExamenFisico->fecha_actualiza=date('Y-m-d H:i:s');
+                $buscaExamenFisico->save();
+
+                return ["mensaje"=>"Informacion actualizada exitosamente ", "error"=>false, "idexamenfisico"=>$buscaExamenFisico->id];
+
             }else{
-                $nuevaConstante=new ConstantesVitales();
-                $nuevaConstante->id_seccion_enfermedad_problema=$request->IdEnfermedadregistrada;
-                $nuevaConstante->temperatura=$request->temperatura;
-                $nuevaConstante->id_empleado=$request->id_empleado;
-                $nuevaConstante->presion_arterial=$request->presion_arterial;
-                $nuevaConstante->frecuencia_cardiaca=$request->frecuencia_cardiaca;
-                $nuevaConstante->frecuencia_respiratoria=$request->frecuencia_respiratoria;
-                $nuevaConstante->saturacion=$request->saturacion;
-                $nuevaConstante->peso=$request->peso;
-                $nuevaConstante->talla=$request->talla;
-                $nuevaConstante->imc=$request->imc;
-                $nuevaConstante->perimetro_abdominal=$request->perimetro_abdominal;
-                $nuevaConstante->estado='Borrador';
-                $nuevaConstante->idusuario_registra=auth()->user()->persona->id;
-                $nuevaConstante->fecha_registro=date('Y-m-d H:i:s');
-                $nuevaConstante->save();
-                return ["mensaje"=>"Informacion registrada exitosamente ", "error"=>false, "idconstante"=>$nuevaConstante->id];
+                $nuevoExamen=new ExamenFisicoRegional();
+                $nuevoExamen->id_constante=$request->IdConstantesVitale;
+                $nuevoExamen->id_empleado=$request->id_empleado;
+                $nuevoExamen->cicatrices=$cicatrices;
+                $nuevoExamen->piel_fanera=$piel_fanera;
+                $nuevoExamen->parpados=$parpados;
+                $nuevoExamen->conjuntiva=$conjuntiva;
+                $nuevoExamen->pupila=$pupila;
+                $nuevoExamen->corneas=$corneas;
+                $nuevoExamen->motilidad=$motilidad;
+                $nuevoExamen->auditivo_externo=$auditivo_externo;
+                $nuevoExamen->pabellon=$pabellon;
+                $nuevoExamen->timpano=$timpano;
+
+                $nuevoExamen->labios=$labios;
+                $nuevoExamen->lengua=$lengua;
+                $nuevoExamen->faringe=$faringe;
+                $nuevoExamen->amigdalas=$amigdalas;
+                $nuevoExamen->dentadura=$dentadura;
+                $nuevoExamen->tabique=$tabique;
+                $nuevoExamen->cornete=$cornete;
+                $nuevoExamen->mucosas=$mucosas;
+                $nuevoExamen->senos_paranasales=$senos_paranasales;
+                $nuevoExamen->tiroides=$tiroides;
+                $nuevoExamen->movilidad=$movilidad;
+
+                $nuevoExamen->mamas=$mamas;
+                $nuevoExamen->pulmones=$pulmones;
+                $nuevoExamen->corazon=$corazon;
+                $nuevoExamen->parilla_costal=$parilla_costal;
+                $nuevoExamen->visceras=$visceras;
+                $nuevoExamen->pared_abdominal=$pared_abdominal;
+                $nuevoExamen->flexibilidad=$flexibilidad;
+                $nuevoExamen->desviacion=$desviacion;
+                $nuevoExamen->dolor=$dolor;
+                $nuevoExamen->pelvis=$pelvis;
+                $nuevoExamen->genitales=$genitales;
+
+                $nuevoExamen->vascular=$vascular;
+                $nuevoExamen->miembros_superiores=$miembros_superiores;
+                $nuevoExamen->miembros_inferiores=$miembros_inferiores;
+                $nuevoExamen->fuerza=$fuerza;
+                $nuevoExamen->sensibilidad=$sensibilidad;
+                $nuevoExamen->marcha=$marcha;
+                $nuevoExamen->reflejos=$reflejos;
+
+                $nuevoExamen->observacion=$request->motivo_examen;
+                $nuevoExamen->estado='Borrador';
+                $nuevoExamen->idusuario_registra=auth()->user()->persona->id;
+                $nuevoExamen->fecha_registro=date('Y-m-d H:i:s');
+                $nuevoExamen->save();
+
+                return ["mensaje"=>"Informacion registrada exitosamente ", "error"=>false, "idconstante"=>$nuevoExamen->id];
             }
         } catch (\Exception $e) {
             return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];

@@ -1,5 +1,5 @@
 @extends('layouts.appv2')
-@section('title', 'Catastro contribuyente')
+@section('title', 'Recaudaciones')
 @push('styles')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link href="{{ asset('css/dataTables.bootstrap5.min.css') }}" rel="stylesheet">
@@ -7,7 +7,7 @@
 @endpush
 @section('content')
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h4 class="h2">Reporte Recaudacion</h4>
+        <h4 class="h2" id="titulo_recaudacion">Reporte Recaudacion</h4>
         <div class="btn-toolbar mb-2 mb-md-0">
 
         </div>
@@ -26,6 +26,7 @@
                     <select id="filtroArea" class="form-select" onchange="cambioData()">
                     
                         <option value="Rural">Rural</option>
+                        <option value="Urbano">Urbano</option>
                     </select>
                 </div>
             
@@ -51,7 +52,7 @@
                     <button type="button" class="btn btn-sm btn-success" onclick="verDetalle()">Detalle</button>
                 </center>
             </div>
-            <!-- <div class="col-md-12" id="tabla_listado" style="display:none"> -->
+           
             <div class="col-md-12" id="tabla_listado" >
                 <h4 >Listado</h4>
 
@@ -69,7 +70,7 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td colspan="5"><center>No hay Datos Disponibles</td>
+                                <td colspan="5"><center>No hay Datos Disponibles</center></td>
                             </tr>
                             
                         </tbody>
@@ -91,7 +92,7 @@
                 <button type="button" class="btn btn-sm btn-danger" onclick="regresar()">Regresar</button>
             </center>
         </div>
-        <!-- <div class="col-md-12" id="tabla_listado" style="display:none"> -->
+        
         <div class="col-md-12" id="tabla_listado_detalle" >
             <h4 >Listado</h4>
 
@@ -123,6 +124,141 @@
             </div>
             
         </div>
+
+      
+    </div>
+
+
+    <div class="row" id="vista_detalle_urb" style="display:none">
+       
+       
+        <div class="col-md-12" id="tabla_listado_detalle_urb_predio" >
+            <h4 >Listado Predial Urbano</h4>
+
+            <div class="col-md-12"   id="btn_descargar_1">
+                <center>
+                    <button id="btnExcelUrb" class="btn btn-success btn-sm">
+                        <i class="bi bi-file-earmark-excel"></i> Exportar Excel
+                    </button>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="regresar()">Regresar</button>
+                </center>
+            </div>
+
+            <div class="table-responsive" style="margin-bottom:20px; margin-top:10px">
+                <table id="tabla_detalle_urb" width="100%" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Año</th>
+                            <th class="text-center">Num Titulo</th>
+                            <th class="text-center">Imp Predial Urbano</th>
+                            <th class="text-center">Interes</th>
+                            <th class="text-center">Descuentos</th>
+                            <th class="text-center">Recargos</th>
+                                                      
+                            <th class="text-center">Total</th>
+                           
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="7"><center>No hay Datos Disponibles</td>
+                        </tr>
+                        
+                    </tbody>
+                
+                </table>  
+            </div>
+            
+        </div>
+
+        
+       
+        <div class="col-md-12" id="tabla_listado_detalle_urb_predio_cem" >
+            <h4 >Listado CEM</h4>
+
+            <div class="col-md-12"   id="btn_descargar_1">
+                <center>
+                    <button id="btnExcelUrbCem" class="btn btn-success btn-sm">
+                        <i class="bi bi-file-earmark-excel"></i> Exportar Excel
+                    </button>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="regresar()">Regresar</button>
+                </center>
+            </div>
+
+            <div class="table-responsive" style="margin-bottom:20px; margin-top:10px">
+                <table id="tabla_detalle_urb_cem" width="100%" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Año</th>
+                            <th class="text-center">Num Titulo</th>
+                            <th class="text-center">CEM-ALCANTARILLADO SANITARIO PLUVIAL AAPP MALLA URBANA SV</th>
+                            <th class="text-center">CEM-ALCANTARILLADO SANTA MARTHA</th>
+                            <th class="text-center">CEM-ALCANTARILLADOS Y VIAS</th>
+                            <th class="text-center">CEM-AREA RECREACIONAL</th>
+
+                            <th class="text-center">CEM-MERCADO MUNICIPA</th>
+                            <th class="text-center">CEM-PARQUES Y PLAZAS</th>
+                            <th class="text-center">CEM-PAVIMENTACION MALLA URBANA SV</th>
+                            <th class="text-center">CEM REGENERACION MALECON SV</th>
+                                                      
+                            <th class="text-center">Total</th>
+                           
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="11"><center>No hay Datos Disponibles</td>
+                        </tr>
+                        
+                    </tbody>
+                
+                </table>  
+            </div>
+            
+        </div>
+
+      
+       
+        <div class="col-md-12" id="tabla_listado_detalle_urb_predio_otros" >
+            <h4 >Listado Otros</h4>
+
+            <div class="col-md-12"   id="btn_descargar_2">
+                <center>
+                    <button id="btnExcelUrbOtros" class="btn btn-success btn-sm">
+                        <i class="bi bi-file-earmark-excel"></i> Exportar Excel
+                    </button>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="regresar()">Regresar</button>
+                </center>
+            </div>
+
+            <div class="table-responsive" style="margin-bottom:20px; margin-top:10px">
+                <table id="tabla_detalle_urb_otros" width="100%" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Año</th>
+                            <th class="text-center">Num Titulo</th>
+                            <th class="text-center">Seguridad Ciudadana</th>
+                            <th class="text-center">Cuerpo Bomberos Urbanos</th>
+                            <th class="text-center">Servicios Administrativos Urbanos</th>
+                            
+                                                      
+                            <th class="text-center">Total</th>
+                           
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="6"><center>No hay Datos Disponibles</td>
+                        </tr>
+                        
+                    </tbody>
+                
+                </table>  
+            </div>
+            
+        </div>
+
+
     </div>
 
 @endsection

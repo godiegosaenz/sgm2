@@ -371,7 +371,7 @@
                     ],
 
                     [
-                        'name' => 'Recaudacion Rural',
+                        'name' => 'Recaudacion',
                         'route' => 'index.recaudaciones',
                         'permission' => 'Recaudacion Rural',
                         'active' => request()->routeIs('index.recaudaciones')

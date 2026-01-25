@@ -1749,9 +1749,9 @@
                                                             name="conjuntiva" value="conjuntiva"><br>
                                                             <input class="form-check-input" type="checkbox" 
                                                             name="pupila" value="pupila"><br>
-                                                            <input class="form-check-input" tcorneasype="checkbox" 
+                                                            <input class="form-check-input" type="checkbox" 
                                                             name="corneas" value="corneas"><br>
-                                                            <input class="form-check-input" tcorneasype="checkbox" 
+                                                            <input class="form-check-input" type="checkbox" 
                                                             name="motilidad" value="motilidad"><br>
 
                                                         </td>
@@ -2038,153 +2038,187 @@
                                                     </td>
 
                                                     <td colspan="2">Temperaturas altas</td>
-                                                    <td></td>
-                                                    <td>X</td>
-                                                    <td></td>
-                                                    <td>X</td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="temp_alta[{{ $i }}]"
+                                                                value="temp_alta[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                    
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Temperaturas bajas</td>
-                                                    <td></td>
-                                                    <td>X</td>
-                                                    <td></td>
-                                                    <td>X</td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="temp_baja[{{ $i }}]"
+                                                                value="temp_baja[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Radiación ionizante</td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-
-                                                    <td></td>
-                                                    <td></td>
-                                                    
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="radiacion_ionizante[{{ $i }}]"
+                                                                value="radiacion_ionizante[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Radiación no ionizante</td>
-                                                    <td></td>
-                                                    <td>X</td>
-                                                    <td></td>
-                                                    <td>X</td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="radiacion_no_ionizante[{{ $i }}]"
+                                                                value="radiacion_no_ionizante[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                    
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Ruido</td>
-                                                    <td></td>
-                                                    <td>X</td>
-                                                    <td></td>
-                                                    <td>X</td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="ruido[{{ $i }}]"
+                                                                value="ruido[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Vibración</td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="vibracion[{{ $i }}]"
+                                                                value="vibracion[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Iluminación</td>
-                                                    <td></td>
-                                                    <td>X</td>
-                                                    <td></td>
-                                                    <td>X</td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="iluminacion[{{ $i }}]"
+                                                                value="iluminacion[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                    
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Ventilación</td>
-                                                    <td></td>
-                                                    <td>X</td>
-                                                    <td></td>
-                                                    <td>X</td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="ventilacion[{{ $i }}]"
+                                                                value="ventilacion[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Fluido eléctrico</td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="fluido_electrico[{{ $i }}]"
+                                                                value="fluido_electrico[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                    
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Otros</td>
-                                                    <td></td>
-                                                   
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="otros_fisico[{{ $i }}]"
+                                                                value="otros_fisico[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                   
                                                 </tr>
 
 
-                                                 <tr>
+                                                <tr>
                                                     <!-- Columna FÍSICO con rowspan -->
                                                     <td rowspan="15" style="text-align:center; font-weight:bold; vertical-align:middle;">
                                                         DE SEGURIDAD
                                                     </td>
                                                     <td>Locativos</td>
                                                     <td colspan="1">Falta de señalización,aseo, desorden</td>
-                                                    <td></td>
-                                                    <td>X</td>
-                                                    <td></td>
-                                                    <td>X</td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="aseo_desorden[{{ $i }}]"
+                                                                value="aseo_desorden[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                    
                                                 </tr>
 
                                                 <tr>
                                                     <td rowspan="12"class="bg vertical">Mecánicos</td>
                                                     <td >Atrapamiento entre Máquinas y o superficies</td>
-                                                    <td></td>
-                                                    <td>X</td>
-                                                    <td></td>
-                                                    <td>X</td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="atrapamiento_maquinas[{{ $i }}]"
+                                                                value="atrapamiento_maquinas[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
@@ -2192,162 +2226,198 @@
 
                                                 <tr>
                                                     <td >Radiación ionizante</td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="radiacion_ionizante_seg[{{ $i }}]"
+                                                                value="radiacion_ionizante_seg[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
                                                 <tr>
                                                     <td >Radiación no ionizante</td>
-                                                    <td></td>
-                                                    <td>X</td>
-                                                    <td></td>
-                                                    <td>X</td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="radiacion_no_ionizante_seg[{{ $i }}]"
+                                                                value="radiacion_no_ionizante_seg[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                    
                                                 </tr>
 
                                                 <tr>
                                                     <td >Ruido</td>
-                                                    <td></td>
-                                                    <td>X</td>
-                                                    <td></td>
-                                                    <td>X</td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="ruido_seg[{{ $i }}]"
+                                                                value="ruido_seg[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
                                                 <tr>
                                                     <td >Vibración</td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="vibracion_seg[{{ $i }}]"
+                                                                value="vibracion_seg[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
                                                 <tr>
                                                     <td >Iluminación</td>
-                                                    <td></td>
-                                                    <td>X</td>
-                                                    <td></td>
-                                                    <td>X</td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="iluminacion_seg[{{ $i }}]"
+                                                                value="iluminacion_seg[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                    
                                                 </tr>
 
                                                 <tr>
                                                     <td >Ventilación</td>
-                                                    <td></td>
-                                                    <td>X</td>
-                                                    <td></td>
-                                                    <td>X</td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="ventilacion_seg[{{ $i }}]"
+                                                                value="ventilacion_seg[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
                                                 <tr>
                                                     <td>Fluido eléctrico</td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="fluido_elect_seg[{{ $i }}]"
+                                                                value="fluido_elect_seg[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                    
                                                 </tr>
 
                                                 <tr>
                                                     <td>Otros</td>
-                                                    <td></td>
-                                                   
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="otros_seg[{{ $i }}]"
+                                                                value="otros_seg[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                   
                                                 </tr>
 
                                                  <tr>
                                                     <td>Vibración</td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="vibracion_seg[{{ $i }}]"
+                                                                value="vibracion_seg[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
                                                 <tr>
                                                     <td>Iluminación</td>
-                                                    <td></td>
-                                                    <td>X</td>
-                                                    <td></td>
-                                                    <td>X</td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="iluminacion_seg[{{ $i }}]"
+                                                                value="iluminacion_seg[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                    
                                                 </tr>
 
                                                 <tr>
                                                     <td>Ventilación</td>
-                                                    <td></td>
-                                                    <td>X</td>
-                                                    <td></td>
-                                                    <td>X</td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="ventilacion_seg[{{ $i }}]"
+                                                                value="ventilacion_seg[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
                                                 <tr>
                                                     <td>Eléctrico</td>
                                                     <td >Contacto eléctrico</td>
-                                                    
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="contacto_elec_seg[{{ $i }}]"
+                                                                value="contacto_elec_seg[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                    
                                                 </tr>
 
                                                 <tr>
                                                     <td >Otros</td>
                                                     <td></td>
-                                                     <td></td>
-                                                   
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="otros_otros_seg[{{ $i }}]"
+                                                                value="otros_otros_seg[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                   
                                                 </tr>
 
@@ -2360,122 +2430,151 @@
                                                     </td>
 
                                                     <td colspan="2">Temperaturas altas</td>
-                                                    <td></td>
-                                                    <td>X</td>
-                                                    <td></td>
-                                                    <td>X</td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="quimico_tem_alta[{{ $i }}]"
+                                                                value="quimico_tem_alta[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                    
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Polvos</td>
-                                                    <td></td>
-                                                    <td>X</td>
-                                                    <td></td>
-                                                    <td>X</td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="quimico_polvo[{{ $i }}]"
+                                                                value="quimico_polvo[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Sólidos</td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="quimico_solidos[{{ $i }}]"
+                                                                value="quimico_solidos[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Humos</td>
-                                                    <td></td>
-                                                    <td>X</td>
-                                                    <td></td>
-                                                    <td>X</td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="quimico_humos[{{ $i }}]"
+                                                                value="quimico_humos[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                    
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Líquidos</td>
-                                                    <td></td>
-                                                    <td>X</td>
-                                                    <td></td>
-                                                    <td>X</td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="quimico_liquido[{{ $i }}]"
+                                                                value="quimico_liquido[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Vapores</td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="quimico_vapores[{{ $i }}]"
+                                                                value="quimico_vapores[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Aerosoles</td>
-                                                    <td></td>
-                                                    <td>X</td>
-                                                    <td></td>
-                                                    <td>X</td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="quimico_aerosoles[{{ $i }}]"
+                                                                value="quimico_aerosoles[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                    
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Neblinas</td>
-                                                    <td></td>
-                                                    <td>X</td>
-                                                    <td></td>
-                                                    <td>X</td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="quimico_neblinas[{{ $i }}]"
+                                                                value="quimico_neblinas[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Gaseosos</td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="quimico_gaseosos[{{ $i }}]"
+                                                                value="quimico_gaseosos[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                    
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Otros</td>
-                                                    <td></td>
-                                                   
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="quimico_otros[{{ $i }}]"
+                                                                value="quimico_otros[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                   
                                                 </tr>
 
@@ -2487,87 +2586,106 @@
                                                     </td>
 
                                                     <td colspan="2">Virus</td>
-                                                    <td></td>
-                                                    <td>X</td>
-                                                    <td></td>
-                                                    <td>X</td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="biologicos_virus[{{ $i }}]"
+                                                                value="biologicos_virus[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                    
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Hongos</td>
-                                                    <td></td>
-                                                    <td>X</td>
-                                                    <td></td>
-                                                    <td>X</td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                     @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="biologicos_hongos[{{ $i }}]"
+                                                                value="biologicos_hongos[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Bacterias</td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                     @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="biologicos_bacterias[{{ $i }}]"
+                                                                value="biologicos_bacterias[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Parásitos</td>
-                                                    <td></td>
-                                                    <td>X</td>
-                                                    <td></td>
-                                                    <td>X</td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                     @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="biologicos_parasistos[{{ $i }}]"
+                                                                value="biologicos_parasistos[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                    
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Exposición a vectores</td>
-                                                    <td></td>
-                                                    <td>X</td>
-                                                    <td></td>
-                                                    <td>X</td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="biologico_exposicion_vect[{{ $i }}]"
+                                                                value="biologico_exposicion_vect[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Exposición a animales selváticos </td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                     @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="biologicos_exposicion_anim_selvaticos[{{ $i }}]"
+                                                                value="biologicos_exposicion_anim_selvaticos[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Otros</td>
-                                                    <td></td>
-                                                   
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-
-                                                    <td></td>
-                                                    <td></td>
-                                                  
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="biologicos_otros[{{ $i }}]"
+                                                                value="biologicos_otros[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                 </tr>
 
 
@@ -2579,73 +2697,91 @@
                                                     </td>
 
                                                     <td colspan="2">Manejo manual de cargas</td>
-                                                    <td></td>
-                                                    <td>X</td>
-                                                    <td></td>
-                                                    <td>X</td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="engornomico_carga[{{ $i }}]"
+                                                                value="engornomico_carga[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                    
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Movimiento repetitivos</td>
-                                                    <td></td>
-                                                    <td>X</td>
-                                                    <td></td>
-                                                    <td>X</td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="engornomico_mov_repet[{{ $i }}]"
+                                                                value="engornomico_mov_repet[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Posturas forzadas</td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="engornomico_postura_forzadas[{{ $i }}]"
+                                                                value="engornomico_postura_forzadas[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Trabajos con PVD</td>
-                                                    <td></td>
-                                                    <td>X</td>
-                                                    <td></td>
-                                                    <td>X</td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="engornomico_trab_pvd[{{ $i }}]"
+                                                                value="engornomico_trab_pvd[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                    
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Diseño Inadecuado del puesto</td>
-                                                    <td></td>
-                                                    <td>X</td>
-                                                    <td></td>
-                                                    <td>X</td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="engornomico_disenio_inadecaudo_puesto[{{ $i }}]"
+                                                                value="engornomico_disenio_inadecaudo_puesto[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Otros</td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="engornomico_otros[{{ $i }}]"
+                                                                value="engornomico_otros[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
@@ -2658,171 +2794,213 @@
                                                     </td>
 
                                                     <td colspan="2">Monotonía del trabajo</td>
-                                                    <td></td>
-                                                    <td>X</td>
-                                                    <td></td>
-                                                    <td>X</td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="psicosocial_monotomia_trabajo[{{ $i }}]"
+                                                                value="psicosocial_monotomia_trabajo[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                    
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Sobrecarga laboral</td>
-                                                    <td></td>
-                                                    <td>X</td>
-                                                    <td></td>
-                                                    <td>X</td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="psicosocial_sobrecarga_laboral[{{ $i }}]"
+                                                                value="psicosocial_sobrecarga_laboral[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Minuciosidad de la tarea </td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="psicosocial_minuciosidad[{{ $i }}]"
+                                                                value="psicosocial_minuciosidad[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Alta responsabilidad</td>
-                                                    <td></td>
-                                                    <td>X</td>
-                                                    <td></td>
-                                                    <td>X</td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="psicosocial_alta_responsabilidad[{{ $i }}]"
+                                                                value="psicosocial_alta_responsabilidad[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                    
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Autonomía  en la toma de decisiones</td>
-                                                    <td></td>
-                                                    <td>X</td>
-                                                    <td></td>
-                                                    <td>X</td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="psicosocial_autonomia_decisiones[{{ $i }}]"
+                                                                value="psicosocial_autonomia_decisiones[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Supervisión y estilos de dirección deficiente</td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="psicosocial_supervision[{{ $i }}]"
+                                                                value="psicosocial_supervision[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Conflicto de rol</td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="psicosocial_conflicto_rol[{{ $i }}]"
+                                                                value="psicosocial_conflicto_rol[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Falta de Claridad en las funciones</td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="psicosocial_falta_claridad[{{ $i }}]"
+                                                                value="psicosocial_falta_claridad[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Incorrecta distribución del trabajo </td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="psicosocial_falta_claridad[{{ $i }}]"
+                                                                value="psicosocial_falta_claridad[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Turnos rotativos </td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="psicosocial_turnos_rotativos[{{ $i }}]"
+                                                                value="psicosocial_turnos_rotativos[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Relaciónes interpersonales </td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="psicosocial_relaciones_interpersonales[{{ $i }}]"
+                                                                value="psicosocial_relaciones_interpersonales[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
 
                                                 <tr>
                                                     <td colspan="2">Inestabilidad laboral </td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="psicosocial_inestabilidad_laboral[{{ $i }}]"
+                                                                value="psicosocial_inestabilidad_laboral[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
                                                 <tr>
                                                     <td colspan="2">Amenaza Delincuencial </td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="psicosocial_amenaza_delicuencial[{{ $i }}]"
+                                                                value="psicosocial_amenaza_delicuencial[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
                                                 
                                                 <tr>
                                                     <td colspan="2">Otros</td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-
-                                                    <td></td>
-                                                    <td></td>
+                                                    @for($i=0; $i<=5; $i++)
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="psicosocial_otros[{{ $i }}]"
+                                                                value="psicosocial_otros[{{ $i }}]"
+                                                            >
+                                                        </td>
+                                                    @endfor
                                                     
                                                 </tr>
 
@@ -2866,18 +3044,8 @@
                                                     <td></td>
 
                                                     <td></td>
-                                                 
-                                                   
                                                     
                                                 </tr>
-
-                                                
-
-
-                                                
-
-
-
                                             </table>
 
                                         </div>
