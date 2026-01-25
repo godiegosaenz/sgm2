@@ -568,8 +568,8 @@ function verDetalle(){
                 })
                 cargar_estilos_datatable_urb_otros('tabla_detalle_urb_otros', response.fecha);
 
-                $('#vista_buscador').hide(200)
-                $('#vista_detalle_urb').show(200)
+                $('#vista_buscador').hide()
+                $('#vista_detalle_urb').show()
             }
         },
         error: function(xhr, status, error) {
