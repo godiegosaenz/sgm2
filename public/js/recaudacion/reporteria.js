@@ -477,8 +477,7 @@ function verDetalle(){
                                             </tr>`);
                 })
                 cargar_estilos_datatable_urb('tabla_detalle_urb', response.fecha);
-                $('#vista_buscador').hide(200)
-                $('#vista_detalle_urb').show(200)
+                
 
 
                 $("#tabla_detalle_urb_cem tbody").html('');
@@ -568,6 +567,9 @@ function verDetalle(){
                                             </tr>`);
                 })
                 cargar_estilos_datatable_urb_otros('tabla_detalle_urb_otros', response.fecha);
+
+                $('#vista_buscador').hide(200)
+                $('#vista_detalle_urb').show(200)
             }
         },
         error: function(xhr, status, error) {
