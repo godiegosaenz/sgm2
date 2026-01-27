@@ -134,71 +134,122 @@ class ParteDiarioController extends Controller
             $anio_seleccionado = explode($fecha_ini,"-");
             $anio_seleccionado=$anio_seleccionado[0];                       
             
-            //PREDIAL URBANO
-            $datosPagoPredialUrb =  DB::connection('pgsql')->table('sgm_financiero.ren_rubros_liquidacion as rrl')
-            ->join('sgm_financiero.ren_pago_rubro as rpr', 'rrl.id', 'rpr.rubro')
-            ->join('sgm_financiero.ren_pago as pago', 'pago.id', 'rpr.pago')
+
+            $datosPagoPredialUrb = DB::connection('pgsql')
+            ->table('sgm_financiero.ren_pago as pago')
+            ->join('sgm_financiero.ren_pago_detalle as rpd', 'rpd.pago', '=', 'pago.id')
+            ->join('sgm_financiero.ren_pago_rubro as rpr', 'rpr.pago', '=', 'pago.id')
             ->join('sgm_financiero.ren_liquidacion as liq', 'liq.id', 'pago.liquidacion')
-            ->join('sgm_app.cat_predio as pred', 'pred.id', 'liq.predio')
-            ->where('rrl.cuenta_contable', '11.02.01.')
-            ->whereDate('pago.fecha_pago', $fecha_ini)  // Asegúrate de que $fecha_ini es una fecha válida
+            ->where('rpr.rubro', 2)
+            ->whereIn('rpd.tipo_pago',[1,2,3,4])
             ->where('pago.estado', true)
-            ->select(
-                DB::raw("
-                    '0' as orden,
-                    '0' as ordenlista,
-                    'PREDIAL URBANO' as tipo,
-                    '11.02.01.' as codigo,
-                    SUM(CASE WHEN liq.anio = 2025 THEN rpr.valor ELSE 0 END) as total_pago_2025,
-                    SUM(CASE WHEN liq.anio < 2025 THEN rpr.valor ELSE 0 END) as total_pago_anteriores,
-                    'IMPUESTO PREDIAL URBANO' as detalle_imp  
-                ")
-            )
-            ->get();
-            
-            $datosPagosDesc =  DB::connection('pgsql')->table('sgm_financiero.ren_pago as pago')
-            ->join('sgm_financiero.ren_liquidacion as liq', 'liq.id', '=', 'pago.liquidacion')
             ->whereDate('pago.fecha_pago', $fecha_ini)
-            ->where('pago.estado', true)
             ->selectRaw("
                 '0' as orden,
-                '1' as ordenlista,
+                '0' as ordenlista,
                 'PREDIAL URBANO' as tipo,
-                '11.02.01.' AS codigo,
-                SUM(CASE WHEN liq.anio = 2025 THEN -pago.descuento ELSE 0 END) as total_pago_2025,
-                SUM(CASE WHEN liq.anio < 2025 THEN -pago.descuento ELSE 0 END) as total_pago_anteriores,
-                'DESCUENTOS' as detalle_imp  
+                '11.02.02.' AS codigo,                    
+                SUM(
+                    CASE 
+                        WHEN liq.anio = EXTRACT(YEAR FROM CURRENT_DATE)
+                        THEN rpr.valor 
+                        ELSE 0 
+                    END
+                ) AS total_pago_anio_actual,
+                SUM(
+                    CASE 
+                        WHEN liq.anio < EXTRACT(YEAR FROM CURRENT_DATE)
+                        THEN rpr.valor 
+                        ELSE 0 
+                    END
+                ) AS total_pago_anteriores,
+                'IMPUESTO PREDIAL URBANO' as detalle_imp
             ")
             ->get();
             
-            $datosPagosRecargo =  DB::connection('pgsql')->table('sgm_financiero.ren_pago as pago')
-            ->join('sgm_financiero.ren_liquidacion as liq', 'liq.id', '=', 'pago.liquidacion')
-            ->whereDate('pago.fecha_pago', $fecha_ini)
+           
+            $datosPagosDesc = DB::connection('pgsql')
+            ->table('sgm_financiero.ren_pago as pago')
+            ->join('sgm_financiero.ren_liquidacion as liq', 'liq.id', 'pago.liquidacion')
             ->where('pago.estado', true)
+            ->whereDate('pago.fecha_pago', $fecha_ini)
             ->selectRaw("
                 '0' as orden,
-                '2' as ordenlista,
+                '0' as ordenlista,
+                'PREDIAL URBANO' as tipo,
+                '11.02.02.' AS codigo,                    
+                SUM(
+                    CASE 
+                        WHEN liq.anio = EXTRACT(YEAR FROM CURRENT_DATE)
+                        THEN pago.descuento 
+                        ELSE 0 
+                    END
+                ) AS total_pago_anio_actual,
+                SUM(
+                    CASE 
+                        WHEN liq.anio < EXTRACT(YEAR FROM CURRENT_DATE)
+                        THEN pago.descuento 
+                        ELSE 0 
+                    END
+                ) AS total_pago_anteriores,
+                'DESCUENTOS' as detalle_imp
+            ")
+            ->get();
+            
+             $datosPagosRecargo = DB::connection('pgsql')
+            ->table('sgm_financiero.ren_pago as pago')
+            ->join('sgm_financiero.ren_liquidacion as liq', 'liq.id', 'pago.liquidacion')
+            ->where('pago.estado', true)
+            ->whereDate('pago.fecha_pago', $fecha_ini)
+            ->selectRaw("
+                '0' as orden,
+                '0' as ordenlista,
                 'PREDIAL URBANO' as tipo,
                 '17.04.01.' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN pago.recargo ELSE 0 END) as total_pago_2025,
-                SUM(CASE WHEN liq.anio < 2025 THEN pago.recargo ELSE 0 END) as total_pago_anteriores,
-                'RECARGO (MULTA TRIBUTARIA)' AS detalle_imp
+                SUM(
+                    CASE 
+                        WHEN liq.anio = EXTRACT(YEAR FROM CURRENT_DATE)
+                        THEN pago.recargo 
+                        ELSE 0 
+                    END
+                ) AS total_pago_anio_actual,
+                SUM(
+                    CASE 
+                        WHEN liq.anio < EXTRACT(YEAR FROM CURRENT_DATE)
+                        THEN pago.recargo 
+                        ELSE 0 
+                    END
+                ) AS total_pago_anteriores,
+                'RECARGO (MULTA TRIBUTARIA)' as detalle_imp
             ")
             ->get();
             
 
-            $datosPagosInteres =  DB::connection('pgsql')->table('sgm_financiero.ren_pago as pago')
-            ->join('sgm_financiero.ren_liquidacion as liq', 'liq.id', '=', 'pago.liquidacion')
-            ->whereDate('pago.fecha_pago', $fecha_ini)
+            $datosPagosInteres = DB::connection('pgsql')
+            ->table('sgm_financiero.ren_pago as pago')
+            ->join('sgm_financiero.ren_liquidacion as liq', 'liq.id', 'pago.liquidacion')
             ->where('pago.estado', true)
+            ->whereDate('pago.fecha_pago', $fecha_ini)
             ->selectRaw("
                 '0' as orden,
-                '3' as ordenlista,
+                '0' as ordenlista,
                 'PREDIAL URBANO' as tipo,
                 '17.03.01.' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN pago.interes ELSE 0 END) as total_pago_2025,
-                SUM(CASE WHEN liq.anio < 2025 THEN pago.interes ELSE 0 END) as total_pago_anteriores,
-                'INTERES POR MORA TRIBUTARIA' AS detalle_imp
+                SUM(
+                    CASE 
+                        WHEN liq.anio = EXTRACT(YEAR FROM CURRENT_DATE)
+                        THEN pago.interes 
+                        ELSE 0 
+                    END
+                ) AS total_pago_anio_actual,
+                SUM(
+                    CASE 
+                        WHEN liq.anio < EXTRACT(YEAR FROM CURRENT_DATE)
+                        THEN pago.interes 
+                        ELSE 0 
+                    END
+                ) AS total_pago_anteriores,
+                'INTERES POR MORA TRIBUTARIA' as detalle_imp
             ")
             ->get();
 
@@ -217,7 +268,7 @@ class ParteDiarioController extends Controller
             //     '3' as ordenlista,
             //     'PREDIAL RUSTICO' as tipo,
             //     '11.02.02.' AS codigo,                    
-            //     SUM(pago.TItPr_IPU) as total_pago_2025,
+            //     SUM(pago.TItPr_IPU) as total_pago_anio_actual,
             //     SUM(cv.CarVe_IPU) as total_pago_anteriores,
             //     'IMPUESTO PREDIAL RUSTICO' AS detalle_imp
             // ")
@@ -231,7 +282,7 @@ class ParteDiarioController extends Controller
                 '3' as ordenlista,
                 'PREDIAL RUSTICO' as tipo,
                 '11.02.02.' AS codigo,                    
-                SUM(pago.TItPr_IPU) as total_pago_2025,
+                SUM(pago.TItPr_IPU) as total_pago_anio_actual,
                 
                 'IMPUESTO PREDIAL RUSTICO' AS detalle_imp
             ")
@@ -254,87 +305,102 @@ class ParteDiarioController extends Controller
             }
             
             
-            
 
-            // dd($datosPagoPredialRust);
-           
-           
             $datosPagosDescRust = DB::connection('sqlsrv')->table('TITULOS_PREDIO as pago')
             ->whereRaw("CAST(pago.TitPr_FechaRecaudacion AS DATE) = ?", [$fecha_ini])
-            ->where('pago.TitPr_Estado', 'C')
+            ->whereIn('pago.TitPr_Estado', ['C','Q'])
             ->selectRaw("
                 '0' as orden,
                 '3' as ordenlista,
                 'PREDIAL RUSTICO' as tipo,
                 '11.02.02.' AS codigo,                    
-                SUM(-pago.TitPr_Descuento) as total_pago_2025,
-                '0' as total_pago_anteriores,
+               
+                CAST(SUM(pago.TitPr_Descuento) AS DECIMAL(12,2)) AS total_pago_anio_actual,    
+                
                 'DESCUENTOS' AS detalle_imp
             ")
             ->get();
-            
-            // $datosPagosRecargoRust =  DB::connection('pgsql')->table('sgm_financiero.ren_pago as pago')
-            // ->join('sgm_financiero.ren_liquidacion as liq', 'liq.id', '=', 'pago.liquidacion')
-            // ->whereDate('pago.fecha_pago', $fecha_ini)
-            // ->where('pago.estado', true)
-            // ->where('estado_liquidacion',99999)
-            // ->selectRaw("
-            //     '1' as orden,
-            //     '2' as ordenlista,
-            //     'PREDIAL RUSTICO' as tipo,
-            //     '17.04.01.' AS codigo,                    
-            //     SUM(CASE WHEN liq.anio = 2025 THEN pago.recargo ELSE 0 END) as total_pago_2025,
-            //     SUM(CASE WHEN liq.anio < 2025 THEN pago.recargo ELSE 0 END) as total_pago_anteriores,
-            //     'RECARGO (MULTA TRIBUTARIA)' AS detalle_imp
-            // ")
-            // ->get();
 
-            $datosPagosRecargoRust = DB::connection('sqlsrv')->table('CARTERA_VENCIDA as pago')
-            ->whereRaw("CAST(pago.CarVe_FechaRecaudacion AS DATE) = ?", [$fecha_ini])
-            ->where('pago.CarVe_Estado', 'C')
+           $datosPagoDescuentoAnt = DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
+            ->whereRaw("CAST(cv.CarVe_FechaRecaudacion AS DATE) = ?", [$fecha_ini." 00:00:00.000" ])
+            ->where('cv.CarVe_Estado', 'C')
+            ->selectRaw("
+               
+                CAST(SUM(cv.CarVe_Descuento) AS DECIMAL(12,2)) AS total_pago_anteriores    
+            ")
+            ->get();
+
+            // Suponiendo que ambos resultados son colecciones con un solo elemento cada uno:
+            $total_ant = $datosPagoDescuentoAnt[0]->total_pago_anteriores ?? 0;
+
+            // Recorres el array principal y le agregas el campo adicional
+            foreach ($datosPagosDescRust as $item) {
+                $item->total_pago_anteriores = $total_ant;
+            };
+
+          
+            $datosPagosRecargoRust = DB::connection('sqlsrv')->table('TITULOS_PREDIO as pago')
+            ->whereRaw("CAST(pago.TitPr_FechaRecaudacion AS DATE) = ?", [$fecha_ini])
+            ->whereIn('pago.TitPr_Estado', ['C','Q'])
             ->selectRaw("
                 '0' as orden,
                 '3' as ordenlista,
                 'PREDIAL RUSTICO' as tipo,
                 '17.04.01.' AS codigo,                    
-                '0' as total_pago_2025,
-                SUM(pago.Carve_Recargo) as total_pago_anteriores,
-               
+              
+                CAST(SUM(pago.TitPr_Recargo) AS DECIMAL(12,2)) AS total_pago_anio_actual,    
                 'RECARGO (MULTA TRIBUTARIA)' AS detalle_imp
             ")
             ->get();
+
+           $datosPagoRecargosAnt = DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
+            ->whereRaw("CAST(cv.CarVe_FechaRecaudacion AS DATE) = ?", [$fecha_ini." 00:00:00.000" ])
+            ->where('cv.CarVe_Estado', 'C')
+            ->selectRaw("
+                
+                CAST(SUM(cv.Carve_Recargo) AS DECIMAL(12,2)) AS total_pago_anteriores
+            ")
+            ->get();
             
+             // Suponiendo que ambos resultados son colecciones con un solo elemento cada uno:
+            $total_ant = $datosPagoRecargosAnt[0]->total_pago_anteriores ?? 0;
 
-            // $datosPagosInteresRust =  DB::connection('pgsql')->table('sgm_financiero.ren_pago as pago')
-            // ->join('sgm_financiero.ren_liquidacion as liq', 'liq.id', '=', 'pago.liquidacion')
-            // ->whereDate('pago.fecha_pago', $fecha_ini)
-            // ->where('pago.estado', true)
-            // ->where('estado_liquidacion',99999)
-            // ->selectRaw("
-            //     '1' as orden,
-            //     '3' as ordenlista,
-            //     'PREDIAL RUSTICO' as tipo,
-            //     '17.03.01.' AS codigo,                    
-            //     SUM(CASE WHEN liq.anio = 2025 THEN pago.interes ELSE 0 END) as total_pago_2025,
-            //     SUM(CASE WHEN liq.anio < 2025 THEN pago.interes ELSE 0 END) as total_pago_anteriores,
-            //     'INTERES POR MORA TRIBUTARIA' AS detalle_imp
-            // ")
-            // ->get();
+            // Recorres el array principal y le agregas el campo adicional
+            foreach ($datosPagosRecargoRust as $item) {
+                $item->total_pago_anteriores = $total_ant;
+            };
 
-            $datosPagosInteresRust = DB::connection('sqlsrv')->table('CARTERA_VENCIDA as pago')
-            ->whereRaw("CAST(pago.CarVe_FechaRecaudacion AS DATE) = ?", [$fecha_ini])
-            ->where('pago.CarVe_Estado', 'C')
+
+            $datosPagosInteresRust = DB::connection('sqlsrv')->table('TITULOS_PREDIO as pago')
+            ->whereRaw("CAST(pago.TitPr_FechaRecaudacion AS DATE) = ?", [$fecha_ini])
+            ->whereIn('pago.TitPr_Estado', ['C','Q'])
             ->selectRaw("
                 '0' as orden,
                 '3' as ordenlista,
                 'PREDIAL RUSTICO' as tipo,
                 '17.03.01.' AS codigo,                    
-                '0' as total_pago_2025,
-                SUM(pago.CarVe_Interes) as total_pago_anteriores,
                
+                CAST(SUM(pago.TitPr_Interes) AS DECIMAL(12,2)) AS total_pago_anio_actual,    
                 'INTERES POR MORA TRIBUTARIA' AS detalle_imp
             ")
             ->get();
+
+           $datosPagoInteresesAnt = DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
+            ->whereRaw("CAST(cv.CarVe_FechaRecaudacion AS DATE) = ?", [$fecha_ini." 00:00:00.000" ])
+            ->where('cv.CarVe_Estado', 'C')
+            ->selectRaw("
+              
+                CAST(SUM(cv.CarVe_Interes) AS DECIMAL(12,2)) AS total_pago_anteriores
+            ")
+            ->get();
+
+            // Suponiendo que ambos resultados son colecciones con un solo elemento cada uno:
+            $total_ant = $datosPagoInteresesAnt[0]->total_pago_anteriores ?? 0;
+
+            // Recorres el array principal y le agregas el campo adicional
+            foreach ($datosPagosInteresRust as $item) {
+                $item->total_pago_anteriores = $total_ant;
+            };
 
             //otros ingresos  tributarios
 
@@ -351,7 +417,7 @@ class ParteDiarioController extends Controller
                 '0' as ordenlista,
                 'OTROS INGRESOS TRIBUTARIOS' as tipo,
                 '11.01.02' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'UTILIDAD EN LA VENTA DE PREDIOS URBANOS' AS detalle_imp
             ")
@@ -370,7 +436,7 @@ class ParteDiarioController extends Controller
                 '1' as ordenlista,
                 'OTROS INGRESOS TRIBUTARIOS' as tipo,
                 '11.02.05' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'IMPUESTO AL RODAJE DEL VEHICULO' AS detalle_imp
             ")
@@ -389,7 +455,7 @@ class ParteDiarioController extends Controller
                 '2' as ordenlista,
                 'OTROS INGRESOS TRIBUTARIOS' as tipo,
                 '11.02.06' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'ALCABALAS' AS detalle_imp
             ")
@@ -408,7 +474,7 @@ class ParteDiarioController extends Controller
                 '3' as ordenlista,
                 'OTROS INGRESOS TRIBUTARIOS' as tipo,
                 '11.02.07' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 '1.5 A LOS ACTIVOS TOTALES' AS detalle_imp
             ")
@@ -427,7 +493,7 @@ class ParteDiarioController extends Controller
                 '4' as ordenlista,
                 'OTROS INGRESOS TRIBUTARIOS' as tipo,
                 '11.02.99' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 '5% IMP. MUNICIPAL Y 1. MIL EDUCACION' AS detalle_imp
             ")
@@ -446,7 +512,7 @@ class ParteDiarioController extends Controller
                 '5' as ordenlista,
                 'OTROS INGRESOS TRIBUTARIOS' as tipo,
                 '11.02.99' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 '1,2,3 % ADICIONAL Y EDUCAC. ELEMENTAL' AS detalle_imp
             ")
@@ -465,7 +531,7 @@ class ParteDiarioController extends Controller
                 '6' as ordenlista,
                 'OTROS INGRESOS TRIBUTARIOS' as tipo,
                 '11.02.99' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'MEDICINA RURAL' AS detalle_imp
             ")
@@ -484,7 +550,7 @@ class ParteDiarioController extends Controller
                 '7' as ordenlista,
                 'OTROS INGRESOS TRIBUTARIOS' as tipo,
                 '11.07.04' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'PATENTE MUNICIPAL' AS detalle_imp
             ")
@@ -503,7 +569,7 @@ class ParteDiarioController extends Controller
                 '8' as ordenlista,
                 'OTROS INGRESOS TRIBUTARIOS' as tipo,
                 '13.01.12' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'PERMISO DE ESPECTACULOS PUBLICOS' AS detalle_imp
             ")
@@ -522,7 +588,7 @@ class ParteDiarioController extends Controller
                 '9' as ordenlista,
                 'OTROS INGRESOS TRIBUTARIOS' as tipo,
                 '13.01.12' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'PERMISO DE LETREROS Y AVISOS PUBLICITARIOS' AS detalle_imp
             ")
@@ -541,7 +607,7 @@ class ParteDiarioController extends Controller
                 '10' as ordenlista,
                 'OTROS INGRESOS TRIBUTARIOS' as tipo,
                 '13.01.12' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'PERMISO DE CONSTRUCCION' AS detalle_imp
             ")
@@ -560,7 +626,7 @@ class ParteDiarioController extends Controller
                 '11' as ordenlista,
                 'OTROS INGRESOS TRIBUTARIOS' as tipo,
                 '13.01.12' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'PERMISO DE FUNCIONAMIENTO' AS detalle_imp
             ")
@@ -579,7 +645,7 @@ class ParteDiarioController extends Controller
                 '12' as ordenlista,
                 'OTROS INGRESOS TRIBUTARIOS' as tipo,
                 '13.01.20' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'PERMISO DE CONEXION RED ALCANTARILLLADO' AS detalle_imp
             ")
@@ -598,7 +664,7 @@ class ParteDiarioController extends Controller
                 '13' as ordenlista,
                 'OTROS INGRESOS TRIBUTARIOS' as tipo,
                 '13.01.99.005' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'PERMISO DE IMPLATACION ESTRUCTURAS METALICAS' AS detalle_imp
             ")
@@ -617,7 +683,7 @@ class ParteDiarioController extends Controller
                 '14' as ordenlista,
                 'OTROS INGRESOS TRIBUTARIOS' as tipo,
                 '13.01.99.006' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'TASA POR INSPECCIONES' AS detalle_imp
             ")
@@ -636,7 +702,7 @@ class ParteDiarioController extends Controller
                 '15' as ordenlista,
                 'OTROS INGRESOS TRIBUTARIOS' as tipo,
                 '13.01.99.008' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'TASA POR SERV. MANT. Y LIMP. AA.SS Y PP.' AS detalle_imp
             ")
@@ -655,7 +721,7 @@ class ParteDiarioController extends Controller
                 '16' as ordenlista,
                 'OTROS INGRESOS TRIBUTARIOS' as tipo,
                 '13.01.99.014' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'TASA POR SERVICIOS DE CARACTER SOCIAL' AS detalle_imp
             ")
@@ -674,70 +740,77 @@ class ParteDiarioController extends Controller
                 '17' as ordenlista,
                 'OTROS INGRESOS TRIBUTARIOS' as tipo,
                 '13.01.99.007' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'TASA POR TRAMITE ADMINISTRATIVO' AS detalle_imp
             ")
             ->get();
-            
-            
-            $datosPagosServiciosAdm=  DB::connection('pgsql')->table('sgm_financiero.ren_pago as pago')
-            ->join('sgm_financiero.ren_liquidacion as liq', 'liq.id', '=', 'pago.liquidacion')
-            ->join('sgm_financiero.ren_det_liquidacion as det_liq', 'liq.id', '=', 'det_liq.liquidacion')
-            ->whereDate('pago.fecha_pago', $fecha_ini)
-            ->where('det_liq.rubro',3)
-            ->where('det_liq.estado',true)
-            ->where('liq.estado_liquidacion',1)
+           
+
+            $datosPagosServiciosAdm = DB::connection('pgsql')
+            ->table('sgm_financiero.ren_pago as pago')
+            ->join('sgm_financiero.ren_pago_detalle as rpd', 'rpd.pago', '=', 'pago.id')
+            ->join('sgm_financiero.ren_pago_rubro as rpr', 'rpr.pago', '=', 'pago.id')
+            ->join('sgm_financiero.ren_liquidacion as liq', 'liq.id', 'pago.liquidacion')
+            ->where('rpr.rubro', 3)
+            ->whereIn('rpd.tipo_pago',[1,2,3,4])
             ->where('pago.estado', true)
+            ->whereDate('pago.fecha_pago', $fecha_ini)
             ->selectRaw("
                 '2' as orden,
                 '18' as ordenlista,
                 'OTROS INGRESOS TRIBUTARIOS' as tipo,
-                '13.01.99.010' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
-                SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
-                'SERVICIOS ADMINISTRATIVOS URBANOS' AS detalle_imp
+                '13.01.99.010' AS codigo,                
+                SUM(
+                    CASE 
+                        WHEN liq.anio = EXTRACT(YEAR FROM CURRENT_DATE)
+                        THEN rpr.valor 
+                        ELSE 0 
+                    END
+                ) AS total_pago_anio_actual,
+                SUM(
+                    CASE 
+                        WHEN liq.anio < EXTRACT(YEAR FROM CURRENT_DATE)
+                        THEN rpr.valor 
+                        ELSE 0 
+                    END
+                ) AS total_pago_anteriores,
+                'SERVICIOS ADMINISTRATIVOS URBANOS' as detalle_imp
             ")
             ->get();
-            
 
-            // $datosServiciosAdmRurales = DB::connection('pgsql')->table('sgm_financiero.ren_pago as pago')
-            // ->join('sgm_financiero.ren_liquidacion as liq', 'liq.id', '=', 'pago.liquidacion')
-            // ->join('sgm_financiero.ren_det_liquidacion as det_liq', 'liq.id', '=', 'det_liq.liquidacion')
-            // ->whereDate('pago.fecha_pago', $fecha_ini)
-            // ->where('det_liq.rubro',223333333221)
-            // ->where('det_liq.estado',true)
-            // ->where('liq.estado_liquidacion',1)
-            // ->where('pago.estado', true)
-            // ->selectRaw("
-            //     '2' as orden,
-            //     '19' as ordenlista,
-            //     'OTROS INGRESOS TRIBUTARIOS' as tipo,
-            //     '13.01.99.011' AS codigo,                    
-            //     SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
-            //     SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
-            //     'SERVICIOS ADMINISTRATIVOS RURALES' AS detalle_imp
-            // ")
-            // ->get();
+           
+           
 
             $datosServiciosAdmRurales = DB::connection('sqlsrv')->table('TITULOS_PREDIO as pago')
-            // ->leftJoin('CARTERA_VENCIDA as cv', function($join) use ($fecha_ini) {
-            //     $join->on('cv.Pre_CodigoCatastral', '=', 'pago.Pre_CodigoCatastral')
-            //         ->whereRaw("CAST(cv.CarVe_FechaRecaudacion AS DATE) = ?", [$fecha_ini])
-            //         ->where('cv.CarVe_Estado', 'C'); // Mover la condición aquí
-            // })
             ->whereRaw("CAST(pago.TitPr_FechaRecaudacion AS DATE) = ?", [$fecha_ini])
-            ->where('pago.TitPr_Estado', 'C')
+            ->whereIn('pago.TitPr_Estado', ['C','Q'])
             ->selectRaw("
                 '2' as orden,
                 '19' as ordenlista,
                 'OTROS INGRESOS TRIBUTARIOS' as tipo,
-                '13.01.99.011' AS codigo,                    
-                SUM(pago.TitPr_TasaAdministrativa) as total_pago_2025,
-                
+                '13.01.99.011' AS codigo, 
+                CAST(SUM(pago.TitPr_TasaAdministrativa) AS DECIMAL(12,2)) AS total_pago_anio_actual,
                 'SERVICIOS ADMINISTRATIVOS RURALES' AS detalle_imp
             ")
             ->get();
+
+           $datosPagoServicioAdmAnt = DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
+            ->whereRaw("CAST(cv.CarVe_FechaRecaudacion AS DATE) = ?", [$fecha_ini." 00:00:00.000" ])
+            ->where('cv.CarVe_Estado', 'C')
+            ->selectRaw("
+               
+                CAST(SUM(cv.CarVe_TasaAdministrativa) AS DECIMAL(12,2)) AS total_pago_anteriores
+            ")
+            ->get();
+
+            // Suponiendo que ambos resultados son colecciones con un solo elemento cada uno:
+            $total_ant = $datosPagoServicioAdmAnt[0]->total_pago_anteriores ?? 0;
+
+            // Recorres el array principal y le agregas el campo adicional
+            foreach ($datosServiciosAdmRurales as $item) {
+                $item->total_pago_anteriores = $total_ant;
+            };
 
             $datosServiciosAdmRuralesAnt = DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
             ->whereRaw("CAST(cv.CarVe_FechaRecaudacion AS DATE) = ?", [$fecha_ini." 00:00:00.000" ])
@@ -769,7 +842,7 @@ class ParteDiarioController extends Controller
                 '20' as ordenlista,
                 'OTROS INGRESOS TRIBUTARIOS' as tipo,
                 '13.01.99.015' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'SERVICIOS TECNICOS -OO.PP Y PLANIFICACION' AS detalle_imp
             ")
@@ -788,7 +861,7 @@ class ParteDiarioController extends Controller
                 '21' as ordenlista,
                 'OTROS INGRESOS TRIBUTARIOS' as tipo,
                 '13.01.99.016' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'SERVICIOS TECNICOS - GESTION DE RIEGO' AS detalle_imp
             ")
@@ -807,7 +880,7 @@ class ParteDiarioController extends Controller
                 '22' as ordenlista,
                 'OTROS INGRESOS TRIBUTARIOS' as tipo,
                 '13.01.99.017' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'SERVICIO DE INFOR. CERTIF. DE BASE DATOS CATAS' AS detalle_imp
             ")
@@ -826,163 +899,295 @@ class ParteDiarioController extends Controller
                 '23' as ordenlista,
                 'OTROS INGRESOS TRIBUTARIOS' as tipo,
                 '13.04.99' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'CONTRIBUCION ESPEC. MEJORAS (AÑOS ANTER.)' AS detalle_imp
             ")
             ->get();
             
 
-            $datosPagosCemParquePlaza=  DB::connection('pgsql')->table('sgm_financiero.ren_pago as pago')
+            $datosPagosCemParquePlaza = DB::connection('pgsql')
+            ->table('sgm_financiero.ren_pago as pago')
+            ->join('sgm_financiero.ren_pago_detalle as rpd', 'rpd.pago', '=', 'pago.id')
+            ->join('sgm_financiero.ren_pago_rubro as rpr', 'rpr.pago', '=', 'pago.id')
             ->join('sgm_financiero.ren_liquidacion as liq', 'liq.id', '=', 'pago.liquidacion')
-            ->join('sgm_financiero.ren_det_liquidacion as det_liq', 'liq.id', '=', 'det_liq.liquidacion')
-            ->whereDate('pago.fecha_pago', $fecha_ini)
-            ->where('det_liq.rubro',640)
-            ->where('det_liq.estado',true)
-            ->where('liq.estado_liquidacion',1)
+            ->where('rpr.rubro', 640)
+            ->whereIn('rpd.tipo_pago',[1,2,3,4])
             ->where('pago.estado', true)
+            ->whereDate('pago.fecha_pago', $fecha_ini)
             ->selectRaw("
                 '2' as orden,
                 '24' as ordenlista,
                 'OTROS INGRESOS TRIBUTARIOS' as tipo,
-                '13.04.13.' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
-                SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
-                'CEM - PARQUES Y PLAZAS' AS detalle_imp
+                '13.04.13.' AS codigo,                            
+                COALESCE(
+                    SUM(
+                        CASE 
+                            WHEN liq.anio = EXTRACT(YEAR FROM CURRENT_DATE)
+                            THEN rpr.valor 
+                            ELSE 0 
+                        END
+                    ), 0
+                ) AS total_pago_anio_actual,
+                COALESCE(
+                    SUM(
+                        CASE 
+                            WHEN liq.anio < EXTRACT(YEAR FROM CURRENT_DATE)
+                            THEN rpr.valor 
+                            ELSE 0 
+                        END
+                    ), 0
+                ) AS total_pago_anteriores,
+                'CEM-PARQUES Y PLAZAS' as detalle_imp
             ")
             ->get();
 
-            $datosCEMAlcantarilladoVias = DB::connection('pgsql')->table('sgm_financiero.ren_pago as pago')
+            $datosCEMAlcantarilladoVias = DB::connection('pgsql')
+            ->table('sgm_financiero.ren_pago as pago')
+            ->join('sgm_financiero.ren_pago_detalle as rpd', 'rpd.pago', '=', 'pago.id')
+            ->join('sgm_financiero.ren_pago_rubro as rpr', 'rpr.pago', '=', 'pago.id')
             ->join('sgm_financiero.ren_liquidacion as liq', 'liq.id', '=', 'pago.liquidacion')
-            ->join('sgm_financiero.ren_det_liquidacion as det_liq', 'liq.id', '=', 'det_liq.liquidacion')
-            ->whereDate('pago.fecha_pago', $fecha_ini)
-            ->where('det_liq.rubro',641)
-            ->where('det_liq.estado',true)
-            ->where('liq.estado_liquidacion',1)
+            ->where('rpr.rubro', 641)
+            ->whereIn('rpd.tipo_pago',[1,2,3,4])
             ->where('pago.estado', true)
+            ->whereDate('pago.fecha_pago', $fecha_ini)
             ->selectRaw("
                 '2' as orden,
                 '25' as ordenlista,
                 'OTROS INGRESOS TRIBUTARIOS' as tipo,
-                '13.04.99' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
-                SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
-                'CEM - ALCANTARILLADOS Y VIAS' AS detalle_imp
+                '13.04.09.' AS codigo,                
+                COALESCE(
+                    SUM(
+                        CASE 
+                            WHEN liq.anio = EXTRACT(YEAR FROM CURRENT_DATE)
+                            THEN rpr.valor 
+                            ELSE 0 
+                        END
+                    ), 0
+                ) AS total_pago_anio_actual,
+                COALESCE(
+                    SUM(
+                        CASE 
+                            WHEN liq.anio < EXTRACT(YEAR FROM CURRENT_DATE)
+                            THEN rpr.valor 
+                            ELSE 0 
+                        END
+                    ), 0
+                ) AS total_pago_anteriores,
+                'CEM-ALCANTARILLADOS Y VIAS' as detalle_imp
             ")
             ->get();
-
-
-            $datosPagosCemMercadoMu=  DB::connection('pgsql')->table('sgm_financiero.ren_pago as pago')
+ 
+            
+            $datosPagosCemMercadoMu = DB::connection('pgsql')
+            ->table('sgm_financiero.ren_pago as pago')
+            ->join('sgm_financiero.ren_pago_detalle as rpd', 'rpd.pago', '=', 'pago.id')
+            ->join('sgm_financiero.ren_pago_rubro as rpr', 'rpr.pago', '=', 'pago.id')
             ->join('sgm_financiero.ren_liquidacion as liq', 'liq.id', '=', 'pago.liquidacion')
-            ->join('sgm_financiero.ren_det_liquidacion as det_liq', 'liq.id', '=', 'det_liq.liquidacion')
-            ->whereDate('pago.fecha_pago', $fecha_ini)
-            ->where('det_liq.rubro',706)
-            ->where('det_liq.estado',true)
-            ->where('liq.estado_liquidacion',1)
+            ->where('rpr.rubro', 706)
+            ->whereIn('rpd.tipo_pago',[1,2,3,4])
             ->where('pago.estado', true)
+            ->whereDate('pago.fecha_pago', $fecha_ini)
             ->selectRaw("
                 '2' as orden,
                 '26' as ordenlista,
                 'OTROS INGRESOS TRIBUTARIOS' as tipo,
-                '13.04.13.' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
-                SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
-                'CEM - MERCADO MUNICIPAL SV' AS detalle_imp
+                '13.04.13.' AS codigo,                            
+                COALESCE(
+                    SUM(
+                        CASE 
+                            WHEN liq.anio = EXTRACT(YEAR FROM CURRENT_DATE)
+                            THEN rpr.valor 
+                            ELSE 0 
+                        END
+                    ), 0
+                ) AS total_pago_anio_actual,
+                COALESCE(
+                    SUM(
+                        CASE 
+                            WHEN liq.anio < EXTRACT(YEAR FROM CURRENT_DATE)
+                            THEN rpr.valor 
+                            ELSE 0 
+                        END
+                    ), 0
+                ) AS total_pago_anteriores,
+                'CEM-MERCADO MUNICIPAL SV' as detalle_imp
             ")
-            ->get(); 
-            
-            $datosCEMAlcantarilladoStaMartha = DB::connection('pgsql')->table('sgm_financiero.ren_pago as pago')
-            ->join('sgm_financiero.ren_liquidacion as liq', 'liq.id', '=', 'pago.liquidacion')
-            ->join('sgm_financiero.ren_det_liquidacion as det_liq', 'liq.id', '=', 'det_liq.liquidacion')
-            ->whereDate('pago.fecha_pago', $fecha_ini)
-            ->where('det_liq.rubro',707)
-            ->where('det_liq.estado',true)
-            ->where('liq.estado_liquidacion',1)
+            ->get();
+           
+
+            $datosCEMAlcantarilladoStaMartha= DB::connection('pgsql')
+            ->table('sgm_financiero.ren_pago as pago')
+            ->join('sgm_financiero.ren_pago_detalle as rpd', 'rpd.pago', '=', 'pago.id')
+            ->join('sgm_financiero.ren_pago_rubro as rpr', 'rpr.pago', '=', 'pago.id')
+            ->join('sgm_financiero.ren_liquidacion as liq', 'liq.id', 'pago.liquidacion')
+            ->where('rpr.rubro', 707)
+            ->whereIn('rpd.tipo_pago',[1,2,3,4])
             ->where('pago.estado', true)
+            ->whereDate('pago.fecha_pago', $fecha_ini)
             ->selectRaw("
                 '2' as orden,
                 '27' as ordenlista,
                 'OTROS INGRESOS TRIBUTARIOS' as tipo,
-                '13.04.09' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
-                SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
-                'CEM - ALCANTARILLADO SANTA MARTHA' AS detalle_imp
+                '13.04.09' AS codigo,               
+                SUM(
+                    CASE 
+                        WHEN liq.anio = EXTRACT(YEAR FROM CURRENT_DATE)
+                        THEN rpr.valor 
+                        ELSE 0 
+                    END
+                ) AS total_pago_anio_actual,
+                SUM(
+                    CASE 
+                        WHEN liq.anio < EXTRACT(YEAR FROM CURRENT_DATE)
+                        THEN rpr.valor 
+                        ELSE 0 
+                    END
+                ) AS total_pago_anteriores,
+                'CEM-ALCANTARILLADO SANTA MARTHA' as detalle_imp
             ")
             ->get();
 
-            $datosCEMAreaRecreacional = DB::connection('pgsql')->table('sgm_financiero.ren_pago as pago')
+         
+            $datosCEMAreaRecreacional = DB::connection('pgsql')
+            ->table('sgm_financiero.ren_pago as pago')
+            ->join('sgm_financiero.ren_pago_detalle as rpd', 'rpd.pago', '=', 'pago.id')
+            ->join('sgm_financiero.ren_pago_rubro as rpr', 'rpr.pago', '=', 'pago.id')
             ->join('sgm_financiero.ren_liquidacion as liq', 'liq.id', '=', 'pago.liquidacion')
-            ->join('sgm_financiero.ren_det_liquidacion as det_liq', 'liq.id', '=', 'det_liq.liquidacion')
-            ->whereDate('pago.fecha_pago', $fecha_ini)
-            ->where('det_liq.rubro',705)
-            ->where('det_liq.estado',true)
-            ->where('liq.estado_liquidacion',1)
+            ->where('rpr.rubro', 705)
+            ->whereIn('rpd.tipo_pago',[1,2,3,4])
             ->where('pago.estado', true)
+            ->whereDate('pago.fecha_pago', $fecha_ini)
             ->selectRaw("
                 '2' as orden,
-                '28' as ordenlista,
+                '25' as ordenlista,
                 'OTROS INGRESOS TRIBUTARIOS' as tipo,
-                '13.04.13' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
-                SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
-                'CEM - AREA RECREACIONAL' AS detalle_imp
+                '13.04.13.' AS codigo,                
+                COALESCE(
+                    SUM(
+                        CASE 
+                            WHEN liq.anio = EXTRACT(YEAR FROM CURRENT_DATE)
+                            THEN rpr.valor 
+                            ELSE 0 
+                        END
+                    ), 0
+                ) AS total_pago_anio_actual,
+                COALESCE(
+                    SUM(
+                        CASE 
+                            WHEN liq.anio < EXTRACT(YEAR FROM CURRENT_DATE)
+                            THEN rpr.valor 
+                            ELSE 0 
+                        END
+                    ), 0
+                ) AS total_pago_anteriores,
+                'CEM-AREA RECREACIONAL CANOA' as detalle_imp
             ")
             ->get();
-            
-            $datosPagosCemrRegeneracionMalecon=  DB::connection('pgsql')->table('sgm_financiero.ren_pago as pago')
+                       
+
+            $datosPagosCemrRegeneracionMalecon= DB::connection('pgsql')
+            ->table('sgm_financiero.ren_pago as pago')
+            ->join('sgm_financiero.ren_pago_detalle as rpd', 'rpd.pago', '=', 'pago.id')
+            ->join('sgm_financiero.ren_pago_rubro as rpr', 'rpr.pago', '=', 'pago.id')
             ->join('sgm_financiero.ren_liquidacion as liq', 'liq.id', '=', 'pago.liquidacion')
-            ->join('sgm_financiero.ren_det_liquidacion as det_liq', 'liq.id', '=', 'det_liq.liquidacion')
-            ->whereDate('pago.fecha_pago', $fecha_ini)
-            ->where('det_liq.rubro',709)
-            ->where('det_liq.estado',true)
-            ->where('liq.estado_liquidacion',1)
+            ->where('rpr.rubro', 709)
+            ->whereIn('rpd.tipo_pago',[1,2,3,4])
             ->where('pago.estado', true)
+            ->whereDate('pago.fecha_pago', $fecha_ini)
             ->selectRaw("
                 '2' as orden,
                 '29' as ordenlista,
                 'OTROS INGRESOS TRIBUTARIOS' as tipo,
-                '13.04.13.' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
-                SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
-                'CEM - REGENERACION MALECON SV' AS detalle_imp
+                '13.04.13.' AS codigo,  
+                COALESCE(
+                    SUM(
+                        CASE 
+                            WHEN liq.anio = EXTRACT(YEAR FROM CURRENT_DATE)
+                            THEN rpr.valor 
+                            ELSE 0 
+                        END
+                    ), 0
+                ) AS total_pago_anio_actual,
+                COALESCE(
+                    SUM(
+                        CASE 
+                            WHEN liq.anio < EXTRACT(YEAR FROM CURRENT_DATE)
+                            THEN rpr.valor 
+                            ELSE 0 
+                        END
+                    ), 0
+                ) AS total_pago_anteriores,
+                'CEM REGENERACION MALECON SV' as detalle_imp
             ")
             ->get();
 
-            $datosPagosCemPavimentMallaUrbana=  DB::connection('pgsql')->table('sgm_financiero.ren_pago as pago')
+
+            $datosPagosCemPavimentMallaUrbana = DB::connection('pgsql')
+            ->table('sgm_financiero.ren_pago as pago')
+            ->join('sgm_financiero.ren_pago_detalle as rpd', 'rpd.pago', '=', 'pago.id')
+            ->join('sgm_financiero.ren_pago_rubro as rpr', 'rpr.pago', '=', 'pago.id')
             ->join('sgm_financiero.ren_liquidacion as liq', 'liq.id', '=', 'pago.liquidacion')
-            ->join('sgm_financiero.ren_det_liquidacion as det_liq', 'liq.id', '=', 'det_liq.liquidacion')
-            ->whereDate('pago.fecha_pago', $fecha_ini)
-            ->where('det_liq.rubro',710)
-            ->where('det_liq.estado',true)
-            ->where('liq.estado_liquidacion',1)
+            ->where('rpr.rubro', 710)
+            ->whereIn('rpd.tipo_pago',[1,2,3,4])
             ->where('pago.estado', true)
+            ->whereDate('pago.fecha_pago', $fecha_ini)
             ->selectRaw("
                 '2' as orden,
                 '30' as ordenlista,
                 'OTROS INGRESOS TRIBUTARIOS' as tipo,
-                '13.04.06.' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
-                SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
-                'CEM - PAVIMENTACION MALLA URBANA SV' AS detalle_imp
+                '13.04.06.' AS codigo, 
+                COALESCE(
+                    SUM(
+                        CASE 
+                            WHEN liq.anio = EXTRACT(YEAR FROM CURRENT_DATE)
+                            THEN rpr.valor 
+                            ELSE 0 
+                        END
+                    ), 0
+                ) AS total_pago_anio_actual,
+                COALESCE(
+                    SUM(
+                        CASE 
+                            WHEN liq.anio < EXTRACT(YEAR FROM CURRENT_DATE)
+                            THEN rpr.valor 
+                            ELSE 0 
+                        END
+                    ), 0
+                ) AS total_pago_anteriores,
+                'CEM-PAVIMENTACION MALLA URBANA SV' as detalle_imp
             ")
             ->get();
 
-            $datosPagosCemAAlcantarilladoSanit =  DB::connection('pgsql')->table('sgm_financiero.ren_pago as pago')
-            ->join('sgm_financiero.ren_liquidacion as liq', 'liq.id', '=', 'pago.liquidacion')
-            ->join('sgm_financiero.ren_det_liquidacion as det_liq', 'liq.id', '=', 'det_liq.liquidacion')
-            ->whereDate('pago.fecha_pago', $fecha_ini)
-            ->where('det_liq.rubro',71055555555)
-            ->where('det_liq.estado',true)
-            ->where('liq.estado_liquidacion',1)
+            $datosPagosCemAAlcantarilladoSanit= DB::connection('pgsql')
+            ->table('sgm_financiero.ren_pago as pago')
+            ->join('sgm_financiero.ren_pago_detalle as rpd', 'rpd.pago', '=', 'pago.id')
+            ->join('sgm_financiero.ren_pago_rubro as rpr', 'rpr.pago', '=', 'pago.id')
+            ->join('sgm_financiero.ren_liquidacion as liq', 'liq.id', 'pago.liquidacion')
+            ->where('rpr.rubro', 711)
+            ->whereIn('rpd.tipo_pago',[1,2,3,4])
             ->where('pago.estado', true)
+            ->whereDate('pago.fecha_pago', $fecha_ini)
             ->selectRaw("
                 '2' as orden,
-                '31' as ordenlista,
+                '18' as ordenlista,
                 'OTROS INGRESOS TRIBUTARIOS' as tipo,
-                '13.04.09.' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
-                SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
-                'CEM - ALCANTARILLADO SANITARIO, PLUVIAL SV' AS detalle_imp
+                '13.04.09' AS codigo,                
+                SUM(
+                    CASE 
+                        WHEN liq.anio = EXTRACT(YEAR FROM CURRENT_DATE)
+                        THEN rpr.valor 
+                        ELSE 0 
+                    END
+                ) AS total_pago_anio_actual,
+                SUM(
+                    CASE 
+                        WHEN liq.anio < EXTRACT(YEAR FROM CURRENT_DATE)
+                        THEN rpr.valor 
+                        ELSE 0 
+                    END
+                ) AS total_pago_anteriores,
+                'CEM-ALCANTARILLADO SANITARIO PLUVIAL SV' as detalle_imp
             ")
             ->get();
 
@@ -999,7 +1204,7 @@ class ParteDiarioController extends Controller
                 '32' as ordenlista,
                 'OTROS INGRESOS TRIBUTARIOS' as tipo,
                 '17.03.01.' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'INTERES POR MORA TRIBUTARIA (OTROS IMP.)' AS detalle_imp
             ")
@@ -1022,7 +1227,7 @@ class ParteDiarioController extends Controller
                 '0' as ordenlista,
                 'FONDOS AJENOS' as tipo,
                 '' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'ALCABALAS OTROS CANTONES' AS detalle_imp
             ")
@@ -1041,7 +1246,7 @@ class ParteDiarioController extends Controller
                 '1' as ordenlista,
                 'FONDOS AJENOS' as tipo,
                 '' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'SOLAR NO EDIFICADO (EPM-VCUVCSV)' AS detalle_imp
             ")
@@ -1060,7 +1265,7 @@ class ParteDiarioController extends Controller
                 '2' as ordenlista,
                 'FONDOS AJENOS' as tipo,
                 '' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'COLEGIOS MANABITAS' AS detalle_imp
             ")
@@ -1079,28 +1284,64 @@ class ParteDiarioController extends Controller
                 '3' as ordenlista,
                 'FONDOS AJENOS' as tipo,
                 '' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 '5% CEN. SALUD PECUARIA' AS detalle_imp
             ")
             ->get();
 
-            $datosPagosBomberoUrbano=  DB::connection('pgsql')->table('sgm_financiero.ren_pago as pago')
+            // $datosPagosBomberoUrbano=  DB::connection('pgsql')->table('sgm_financiero.ren_pago as pago')
+            // ->join('sgm_financiero.ren_liquidacion as liq', 'liq.id', '=', 'pago.liquidacion')
+            // ->join('sgm_financiero.ren_det_liquidacion as det_liq', 'liq.id', '=', 'det_liq.liquidacion')
+            // ->whereDate('pago.fecha_pago', $fecha_ini)
+            // ->where('det_liq.rubro',7)
+            // ->where('det_liq.estado',true)
+            // ->where('liq.estado_liquidacion',1)
+            // ->where('pago.estado', true)
+            // ->selectRaw("
+            //     '3' as orden,
+            //     '4' as ordenlista,
+            //     'FONDOS AJENOS' as tipo,
+            //     '' AS codigo,                    
+            //     SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
+            //     SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
+            //     'CUERPO DE BOMBEROS URBANOS' AS detalle_imp
+            // ")
+            // ->get();
+
+            $datosPagosBomberoUrbano= DB::connection('pgsql')
+            ->table('sgm_financiero.ren_pago as pago')
+            ->join('sgm_financiero.ren_pago_detalle as rpd', 'rpd.pago', '=', 'pago.id')
+            ->join('sgm_financiero.ren_pago_rubro as rpr', 'rpr.pago', '=', 'pago.id')
             ->join('sgm_financiero.ren_liquidacion as liq', 'liq.id', '=', 'pago.liquidacion')
-            ->join('sgm_financiero.ren_det_liquidacion as det_liq', 'liq.id', '=', 'det_liq.liquidacion')
-            ->whereDate('pago.fecha_pago', $fecha_ini)
-            ->where('det_liq.rubro',7)
-            ->where('det_liq.estado',true)
-            ->where('liq.estado_liquidacion',1)
+            ->where('rpr.rubro', 7)
+            ->whereIn('rpd.tipo_pago',[1,2,3,4])
             ->where('pago.estado', true)
+            ->whereDate('pago.fecha_pago', $fecha_ini)
             ->selectRaw("
                 '3' as orden,
                 '4' as ordenlista,
                 'FONDOS AJENOS' as tipo,
-                '' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
-                SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
-                'CUERPO DE BOMBEROS URBANOS' AS detalle_imp
+                '' AS codigo, 
+                COALESCE(
+                    SUM(
+                        CASE 
+                            WHEN liq.anio = EXTRACT(YEAR FROM CURRENT_DATE)
+                            THEN rpr.valor 
+                            ELSE 0 
+                        END
+                    ), 0
+                ) AS total_pago_anio_actual,
+                COALESCE(
+                    SUM(
+                        CASE 
+                            WHEN liq.anio < EXTRACT(YEAR FROM CURRENT_DATE)
+                            THEN rpr.valor 
+                            ELSE 0 
+                        END
+                    ), 0
+                ) AS total_pago_anteriores,
+                'CUERPO DE BOMBEROS URBANOS' as detalle_imp
             ")
             ->get();
 
@@ -1118,46 +1359,43 @@ class ParteDiarioController extends Controller
             //     '5' as ordenlista,
             //     'FONDOS AJENOS' as tipo,
             //     '' AS codigo,                    
-            //     SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+            //     SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
             //     SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
             //     'CUERPO DE BOMBEROS RURALES' AS detalle_imp
             // ")
             // ->get();
 
-             $datosPagosBomberoRural = DB::connection('sqlsrv')->table('TITULOS_PREDIO as pago')
-            ->leftJoin('CARTERA_VENCIDA as cv', function($join) use ($fecha_ini) {
-                $join->on('cv.Pre_CodigoCatastral', '=', 'pago.Pre_CodigoCatastral')
-                    ->whereRaw("CAST(cv.CarVe_FechaRecaudacion AS DATE) = ?", [$fecha_ini])
-                    ->where('cv.CarVe_Estado', 'C'); // Mover la condición aquí
-            })
+            
+            $datosPagosBomberoRural = DB::connection('sqlsrv')->table('TITULOS_PREDIO as pago')
             ->whereRaw("CAST(pago.TitPr_FechaRecaudacion AS DATE) = ?", [$fecha_ini])
-            ->where('pago.TitPr_Estado', 'C')
+            ->whereIn('pago.TitPr_Estado', ['C','Q'])
             ->selectRaw("
                 '3' as orden,
                 '5' as ordenlista,
                 'FONDOS AJENOS' as tipo,
                 '' AS codigo,                    
-                SUM(pago.TitPr_Bomberos) as total_pago_2025,
-                
+              
+                CAST(SUM(pago.TitPr_Bomberos) AS DECIMAL(12,2)) AS total_pago_anio_actual,
                 'CUERPO DE BOMBEROS RURALES' AS detalle_imp
             ")
             ->get();
 
-            $datosPagosBomberoRuralAnt = DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
+           $datosPagoBomberoRuralAnt = DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
             ->whereRaw("CAST(cv.CarVe_FechaRecaudacion AS DATE) = ?", [$fecha_ini." 00:00:00.000" ])
             ->where('cv.CarVe_Estado', 'C')
             ->selectRaw("
-                SUM(cv.CarVe_Bomberos) as total_pago_anteriores
+               
+                CAST(SUM(cv.CarVe_Bomberos) AS DECIMAL(12,2)) AS total_pago_anteriores
             ")
             ->get();
 
             // Suponiendo que ambos resultados son colecciones con un solo elemento cada uno:
-            $total_ant = $datosPagosBomberoRuralAnt[0]->total_pago_anteriores ?? 0;
+            $total_ant = $datosPagoBomberoRuralAnt[0]->total_pago_anteriores ?? 0;
 
             // Recorres el array principal y le agregas el campo adicional
             foreach ($datosPagosBomberoRural as $item) {
                 $item->total_pago_anteriores = $total_ant;
-            }
+            };
             // dd($datosPagosBomberoRural);
 
             $datosPagosViviendaRural=  DB::connection('pgsql')->table('sgm_financiero.ren_pago as pago')
@@ -1173,7 +1411,7 @@ class ParteDiarioController extends Controller
                 '6' as ordenlista,
                 'FONDOS AJENOS' as tipo,
                 '' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'VIVIENDA RURAL' AS detalle_imp
             ")
@@ -1193,7 +1431,7 @@ class ParteDiarioController extends Controller
                 '0' as ordenlista,
                 'INGRESOS NO TRIBUTARIOS' as tipo,
                 '13.01.03' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'OCUPACION DE LA VIA PUBICA' AS detalle_imp
             ")
@@ -1213,7 +1451,7 @@ class ParteDiarioController extends Controller
                 '1' as ordenlista,
                 'INGRESOS NO TRIBUTARIOS' as tipo,
                 '13.01.14' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'SERVICIOS DE CAMALES' AS detalle_imp
             ")
@@ -1232,7 +1470,7 @@ class ParteDiarioController extends Controller
                 '2' as ordenlista,
                 'INGRESOS NO TRIBUTARIOS' as tipo,
                 '13.01.99.001' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'TASA POR ADJUDICACIONES DE OBRAS' AS detalle_imp
             ")
@@ -1251,7 +1489,7 @@ class ParteDiarioController extends Controller
                 '3' as ordenlista,
                 'INGRESOS NO TRIBUTARIOS' as tipo,
                 '14.03.03' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'POR EL SERVICIO DE ALCANTARILLADO' AS detalle_imp
             ")
@@ -1270,7 +1508,7 @@ class ParteDiarioController extends Controller
                 '4' as ordenlista,
                 'INGRESOS NO TRIBUTARIOS' as tipo,
                 '17.02.02' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'ARRIENDOS DE MERCADOS Y EDIFICIOS -LETRAS C' AS detalle_imp
             ")
@@ -1289,7 +1527,7 @@ class ParteDiarioController extends Controller
                 '5' as ordenlista,
                 'INGRESOS NO TRIBUTARIOS' as tipo,
                 '17.02.02' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'ARRIENDOS DE MERCADOS Y EDIFICIOS -CCM-SV' AS detalle_imp
             ")
@@ -1308,7 +1546,7 @@ class ParteDiarioController extends Controller
                 '6' as ordenlista,
                 'INGRESOS NO TRIBUTARIOS' as tipo,
                 '17.04.02' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'MULTAS INFRACCION ORDENANZAS MCPAL' AS detalle_imp
             ")
@@ -1327,7 +1565,7 @@ class ParteDiarioController extends Controller
                 '7' as ordenlista,
                 'INGRESOS NO TRIBUTARIOS' as tipo,
                 '17.04.99' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'OTRAS MULTAS' AS detalle_imp
             ")
@@ -1346,7 +1584,7 @@ class ParteDiarioController extends Controller
                 '8' as ordenlista,
                 'INGRESOS NO TRIBUTARIOS' as tipo,
                 '19.04.99.001' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'OTROS INGRESOS NO ESPECIFICADOS' AS detalle_imp
             ")
@@ -1365,7 +1603,7 @@ class ParteDiarioController extends Controller
                 '9' as ordenlista,
                 'INGRESOS NO TRIBUTARIOS' as tipo,
                 '212.01' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'DEPOSITOS DE INTERMEDIACION' AS detalle_imp
             ")
@@ -1384,7 +1622,7 @@ class ParteDiarioController extends Controller
                 '10' as ordenlista,
                 'INGRESOS NO TRIBUTARIOS' as tipo,
                 '212.11' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'GARANTIAS RECIBIDAS' AS detalle_imp
             ")
@@ -1406,7 +1644,7 @@ class ParteDiarioController extends Controller
                 '0' as ordenlista,
                 'MATRICULACION Y REVISION VEHICULAR' as tipo,
                 '13.01.12.17' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'PERMISO DE OPERACION / RENOVACION' AS detalle_imp
             ")
@@ -1426,7 +1664,7 @@ class ParteDiarioController extends Controller
                 '1' as ordenlista,
                 'MATRICULACION Y REVISION VEHICULAR' as tipo,
                 '13.01.12.18' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'CONTRATO DE OPERACION / RENOVACION' AS detalle_imp
             ")
@@ -1445,7 +1683,7 @@ class ParteDiarioController extends Controller
                 '2' as ordenlista,
                 'MATRICULACION Y REVISION VEHICULAR' as tipo,
                 '13.01.11.24' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'INCREMENTO DE CUPO' AS detalle_imp
             ")
@@ -1464,7 +1702,7 @@ class ParteDiarioController extends Controller
                 '3' as ordenlista,
                 'MATRICULACION Y REVISION VEHICULAR' as tipo,
                 '13.01.06.01' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'INSCRIPCION DE GRAVAMEN' AS detalle_imp
             ")
@@ -1483,7 +1721,7 @@ class ParteDiarioController extends Controller
                 '4' as ordenlista,
                 'MATRICULACION Y REVISION VEHICULAR' as tipo,
                 '13.01.06.02' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'LEVANTAMIENTO DE GRAVAMEN' AS detalle_imp
             ")
@@ -1502,7 +1740,7 @@ class ParteDiarioController extends Controller
                 '5' as ordenlista,
                 'MATRICULACION Y REVISION VEHICULAR' as tipo,
                 '13.01.11.03' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'TRASPASO DE DOMINIO VEHICULAR' AS detalle_imp
             ")
@@ -1521,7 +1759,7 @@ class ParteDiarioController extends Controller
                 '6' as ordenlista,
                 'MATRICULACION Y REVISION VEHICULAR' as tipo,
                 '13.01.11.04' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'RESOLUCION-ADENDA POR HABILITACION' AS detalle_imp
             ")
@@ -1540,7 +1778,7 @@ class ParteDiarioController extends Controller
                 '7' as ordenlista,
                 'MATRICULACION Y REVISION VEHICULAR' as tipo,
                 '13.01.11.05' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'RESOLUCION-ADENDA POR DESHABILITACION' AS detalle_imp
             ")
@@ -1559,7 +1797,7 @@ class ParteDiarioController extends Controller
                 '8' as ordenlista,
                 'MATRICULACION Y REVISION VEHICULAR' as tipo,
                 '13.01.11.06' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'RESOLUCION-ADENDA POR CAMBIO DE SOCIO' AS detalle_imp
             ")
@@ -1578,7 +1816,7 @@ class ParteDiarioController extends Controller
                 '9' as ordenlista,
                 'MATRICULACION Y REVISION VEHICULAR' as tipo,
                 '13.01.11.13' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'MODIFICACION DE CARACTERISTICAS DEL VEHICULO' AS detalle_imp
             ")
@@ -1597,7 +1835,7 @@ class ParteDiarioController extends Controller
                 '10' as ordenlista,
                 'MATRICULACION Y REVISION VEHICULAR' as tipo,
                 '13.01.11.16' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'BLOQUEO Y DESBLOQUEO DEL SISTEMA' AS detalle_imp
             ")
@@ -1616,7 +1854,7 @@ class ParteDiarioController extends Controller
                 '11' as ordenlista,
                 'MATRICULACION Y REVISION VEHICULAR' as tipo,
                 '13.01.11.18' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'RESOLUCION FACTIBILIDAD (CONSTRUCCION JURIDICA)' AS detalle_imp
             ")
@@ -1636,7 +1874,7 @@ class ParteDiarioController extends Controller
                 '12' as ordenlista,
                 'MATRICULACION Y REVISION VEHICULAR' as tipo,
                 '13.01.11.22' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'CERTIFICADO UNICO VEHICULAR (CUV)' AS detalle_imp
             ")
@@ -1655,7 +1893,7 @@ class ParteDiarioController extends Controller
                 '13' as ordenlista,
                 'MATRICULACION Y REVISION VEHICULAR' as tipo,
                 '13.01.11.23' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'CERTIFICADO DE POSEER VEHICULO (CVP)' AS detalle_imp
             ")
@@ -1676,7 +1914,7 @@ class ParteDiarioController extends Controller
                 '14' as ordenlista,
                 'MATRICULACION Y REVISION VEHICULAR' as tipo,
                 '13.01.11.25' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'EMISIONES DE CERTIFICACIONES Y SALVOCONDUCTO' AS detalle_imp
             ")
@@ -1695,7 +1933,7 @@ class ParteDiarioController extends Controller
                 '15' as ordenlista,
                 'MATRICULACION Y REVISION VEHICULAR' as tipo,
                 '13.01.11.01' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'DUPLICADO DE MATRICULA' AS detalle_imp
             ")
@@ -1714,7 +1952,7 @@ class ParteDiarioController extends Controller
                 '16' as ordenlista,
                 'MATRICULACION Y REVISION VEHICULAR' as tipo,
                 '13.01.11.02' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'STICKER REVISION VEHICULAR' AS detalle_imp
             ")
@@ -1733,7 +1971,7 @@ class ParteDiarioController extends Controller
                 '17' as ordenlista,
                 'MATRICULACION Y REVISION VEHICULAR' as tipo,
                 '13.01.11.03' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'DUPLICADO DE REVISION VEHICULAR' AS detalle_imp
             ")
@@ -1752,7 +1990,7 @@ class ParteDiarioController extends Controller
                 '18' as ordenlista,
                 'MATRICULACION Y REVISION VEHICULAR' as tipo,
                 '17.04.99.22' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'RECARGO POR RETRASO MATRICULACION VEHICULAR-PARTICULARES' AS detalle_imp
             ")
@@ -1771,7 +2009,7 @@ class ParteDiarioController extends Controller
                 '19' as ordenlista,
                 'MATRICULACION Y REVISION VEHICULAR' as tipo,
                 '17.04.99.03' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'RECARGO POR RETRASO MATRICULACION VEHICULAR-PUBLICOS' AS detalle_imp
             ")
@@ -1792,7 +2030,7 @@ class ParteDiarioController extends Controller
                 '0' as ordenlista,
                 'INGRESOS DE CAPITAL' as tipo,
                 '24.02.01' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'VENTA DE TERRRENO MUNICIPAL' AS detalle_imp
             ")
@@ -1811,7 +2049,7 @@ class ParteDiarioController extends Controller
                 '1' as ordenlista,
                 'INGRESOS DE CAPITAL' as tipo,
                 '24.02.01' AS codigo,                    
-                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_2025,
+                SUM(CASE WHEN liq.anio = 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anio_actual,
                 SUM(CASE WHEN liq.anio < 2025 THEN det_liq.valor ELSE 0 END) as total_pago_anteriores,
                 'VENTA DE LOTE EN EL CEMENTERIO' AS detalle_imp
             ")

@@ -195,7 +195,7 @@
                             @foreach($dato as $info)
                                 @php
                                     $total_parcial=0;
-                                    $total_parcial=$info->total_pago_anteriores + $info->total_pago_2025;
+                                    $total_parcial=$info->total_pago_anteriores + $info->total_pago_anio_actual;
                                 @endphp
                                 <tr style="font-size: 9px !important;line-height:15px; "> 
 
@@ -217,7 +217,7 @@
 
                                     <td align="right" style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;border-color: #D3D3D3">
                                         
-                                        {{number_format($info->total_pago_2025,2)}}
+                                        {{number_format($info->total_pago_anio_actual,2)}}
                                     </td>
 
                                     <td align="right" style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-color: #D3D3D3">
@@ -228,9 +228,9 @@
 
                                 @php
                                
-                                    $total=$info->total_pago_anteriores+ $info->total_pago_2025;
+                                    $total=$info->total_pago_anteriores+ $info->total_pago_anio_actual;
                                     $total_anio_anteriores_tipo=$total_anio_anteriores_tipo + $info->total_pago_anteriores;
-                                    $total_anio_actual_tipo=$total_anio_actual_tipo + $info->total_pago_2025;
+                                    $total_anio_actual_tipo=$total_anio_actual_tipo + $info->total_pago_anio_actual;
                                     $total_tipo=$total_tipo + $total_parcial;
 
                                 @endphp
