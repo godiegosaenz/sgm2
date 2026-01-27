@@ -871,7 +871,8 @@ class RecaudacionesController extends Controller
                     CAST(pago.TitPr_Valor1 AS DECIMAL(12,2)) AS total_pago_anio_actual_seguridad,
                     CAST(pago.TitPr_Bomberos AS DECIMAL(12,2)) AS total_pago_anio_actual_bombero,
                     CAST(pago.TitPr_TasaAdministrativa AS DECIMAL(12,2)) AS total_pago_anio_actual_tasa,
-                    CAST(pago.TitPr_ValorTCobrado AS DECIMAL(12,2)) AS total_cobrado
+                    CAST(pago.TitPr_ValorTCobrado AS DECIMAL(12,2)) AS total_cobrado,
+                    '' as tipo_pago
                 ")
                 ->get();
 
@@ -888,8 +889,9 @@ class RecaudacionesController extends Controller
                     CAST(cv.CarVe_Interes AS DECIMAL(12,2)) AS total_pago_anio_actual_int,  
                     CAST(cv.Carve_Valor1 AS DECIMAL(12,2)) AS total_pago_anio_actual_seguridad,
                     CAST(cv.CarVe_Bomberos AS DECIMAL(12,2)) AS total_pago_anio_actual_bombero,
-                  CAST(cv.CarVe_TasaAdministrativa AS DECIMAL(12,2)) AS total_pago_anio_actual_tasa,
-                    CAST(cv.CarVe_ValorTCobrado AS DECIMAL(12,2)) AS total_cobrado
+                    CAST(cv.CarVe_TasaAdministrativa AS DECIMAL(12,2)) AS total_pago_anio_actual_tasa,
+                    CAST(cv.CarVe_ValorTCobrado AS DECIMAL(12,2)) AS total_cobrado,
+                    '' as tipo_pago
                     
                 ")
                 ->get();
@@ -906,6 +908,7 @@ class RecaudacionesController extends Controller
 
                 $datosPagosPredialUrb = DB::connection('pgsql')
                 ->table('sgm_financiero.ren_pago as pago')
+                ->join('sgm_financiero.ren_pago_detalle as rpd', 'rpd.pago', '=', 'pago.id')
                 ->join('sgm_financiero.ren_pago_rubro as rpr', 'rpr.pago', '=', 'pago.id')
                 ->join('sgm_financiero.ren_liquidacion as liq', 'liq.id', '=', 'pago.liquidacion')
                 ->whereIn('rpr.rubro', [2])  
@@ -928,13 +931,15 @@ class RecaudacionesController extends Controller
                         + SUM(pago.interes)
                         + SUM(pago.recargo)
                         - SUM(pago.descuento)
-                    ) AS total_cobrado
+                    ) AS total_cobrado,
+                    rpd.tipo_pago
                 ")
-                ->groupBy('liq.id_liquidacion','pago.descuento','pago.recargo','pago.interes','rpr.rubro','rpr.valor')
+                ->groupBy('liq.id_liquidacion','pago.descuento','pago.recargo','pago.interes','rpr.rubro','rpr.valor','rpd.tipo_pago')
                 ->get();
 
                 $datosPagosPredialUrbAnt = DB::connection('pgsql')
                 ->table('sgm_financiero.ren_pago as pago')
+                ->join('sgm_financiero.ren_pago_detalle as rpd', 'rpd.pago', '=', 'pago.id')
                 ->join('sgm_financiero.ren_pago_rubro as rpr', 'rpr.pago', '=', 'pago.id')
                 ->join('sgm_financiero.ren_liquidacion as liq', 'liq.id', '=', 'pago.liquidacion')
                 ->whereIn('rpr.rubro', [2])  
@@ -957,20 +962,22 @@ class RecaudacionesController extends Controller
                         + SUM(pago.interes)
                         + SUM(pago.recargo)
                         - SUM(pago.descuento)
-                    ) AS total_cobrado
+                    ) AS total_cobrado,
+                    rpd.tipo_pago
                 ")
-                ->groupBy('liq.id_liquidacion','pago.descuento','pago.recargo','pago.interes','rpr.rubro','rpr.valor')
+                ->groupBy('liq.id_liquidacion','pago.descuento','pago.recargo','pago.interes','rpr.rubro','rpr.valor','rpd.tipo_pago')
                 ->get();
 
                 $datosPagosPredialUrbCEM = DB::connection('pgsql')
                 ->table('sgm_financiero.ren_pago as pago')
+                ->join('sgm_financiero.ren_pago_detalle as rpd', 'rpd.pago', '=', 'pago.id')
                 ->join('sgm_financiero.ren_pago_rubro as rpr', 'rpr.pago', '=', 'pago.id')
                 ->join('sgm_financiero.ren_liquidacion as liq', 'liq.id', '=', 'pago.liquidacion')
                 ->whereIn('rpr.rubro', [711,707,641,705,706,640,710,709])
                 ->where('liq.anio', date('Y'))
                 ->where('pago.estado', true)
                 ->whereDate('pago.fecha_pago', $fecha_ini)
-                ->groupBy('liq.id_liquidacion')
+                ->groupBy('liq.id_liquidacion','rpd.tipo_pago')
                 ->selectRaw("
                     'ANIOS_ACTUAL' AS tipo_anio,
                     liq.id_liquidacion AS num_titulo,
@@ -993,19 +1000,21 @@ class RecaudacionesController extends Controller
                     + SUM(CASE WHEN rpr.rubro = 640 THEN rpr.valor ELSE 0 END)
                     + SUM(CASE WHEN rpr.rubro = 710 THEN rpr.valor ELSE 0 END)
                     + SUM(CASE WHEN rpr.rubro = 709 THEN rpr.valor ELSE 0 END)
-                    ) AS total_cobrado
+                    ) AS total_cobrado,
+                    rpd.tipo_pago
                 ")
                 ->get();
 
                 $datosPagosPredialUrbCEMAnt = DB::connection('pgsql')
                 ->table('sgm_financiero.ren_pago as pago')
+                ->join('sgm_financiero.ren_pago_detalle as rpd', 'rpd.pago', '=', 'pago.id')
                 ->join('sgm_financiero.ren_pago_rubro as rpr', 'rpr.pago', '=', 'pago.id')
                 ->join('sgm_financiero.ren_liquidacion as liq', 'liq.id', '=', 'pago.liquidacion')
                 ->whereIn('rpr.rubro', [711,707,641,705,706,640,710,709])
                 ->where('liq.anio','<', date('Y'))
                 ->where('pago.estado', true)
                 ->whereDate('pago.fecha_pago', $fecha_ini)
-                ->groupBy('liq.id_liquidacion')
+                ->groupBy('liq.id_liquidacion','rpd.tipo_pago')
                 ->selectRaw("
                     'ANIOS_ANTERIORES' AS tipo_anio,
                     liq.id_liquidacion AS num_titulo,
@@ -1028,19 +1037,21 @@ class RecaudacionesController extends Controller
                     + SUM(CASE WHEN rpr.rubro = 640 THEN rpr.valor ELSE 0 END)
                     + SUM(CASE WHEN rpr.rubro = 710 THEN rpr.valor ELSE 0 END)
                     + SUM(CASE WHEN rpr.rubro = 709 THEN rpr.valor ELSE 0 END)
-                    ) AS total_cobrado
+                    ) AS total_cobrado,
+                    rpd.tipo_pago
                 ")
                 ->get();
 
                 $datosPagosPredialUrbOtros = DB::connection('pgsql')
                 ->table('sgm_financiero.ren_pago as pago')
+                ->join('sgm_financiero.ren_pago_detalle as rpd', 'rpd.pago', '=', 'pago.id')
                 ->join('sgm_financiero.ren_pago_rubro as rpr', 'rpr.pago', '=', 'pago.id')
                 ->join('sgm_financiero.ren_liquidacion as liq', 'liq.id', '=', 'pago.liquidacion')
                 ->whereIn('rpr.rubro', [712,7,3])
                 ->where('liq.anio', date('Y'))
                 ->where('pago.estado', true)
                 ->whereDate('pago.fecha_pago', $fecha_ini)
-                ->groupBy('liq.id_liquidacion')
+                ->groupBy('liq.id_liquidacion','rpd.tipo_pago')
                 ->selectRaw("
                     'ANIOS_ACTUAL' AS tipo_anio,
                     liq.id_liquidacion AS num_titulo,
@@ -1055,19 +1066,21 @@ class RecaudacionesController extends Controller
                     + SUM(CASE WHEN rpr.rubro = 7 THEN rpr.valor ELSE 0 END)
                     + SUM(CASE WHEN rpr.rubro = 3 THEN rpr.valor ELSE 0 END)
                   
-                    ) AS total_cobrado
+                    ) AS total_cobrado,
+                    rpd.tipo_pago
                 ")
                 ->get();
 
                 $datosPagosPredialUrbOtrosAnt = DB::connection('pgsql')
                 ->table('sgm_financiero.ren_pago as pago')
+                ->join('sgm_financiero.ren_pago_detalle as rpd', 'rpd.pago', '=', 'pago.id')
                 ->join('sgm_financiero.ren_pago_rubro as rpr', 'rpr.pago', '=', 'pago.id')
                 ->join('sgm_financiero.ren_liquidacion as liq', 'liq.id', '=', 'pago.liquidacion')
                 ->whereIn('rpr.rubro', [712,7,3])
                 ->where('liq.anio','<', date('Y'))
                 ->where('pago.estado', true)
                 ->whereDate('pago.fecha_pago', $fecha_ini)
-                ->groupBy('liq.id_liquidacion')
+                ->groupBy('liq.id_liquidacion','rpd.tipo_pago')
                 ->selectRaw("
                     'ANIOS_ANTERIORES' AS tipo_anio,
                     liq.id_liquidacion AS num_titulo,
@@ -1082,7 +1095,8 @@ class RecaudacionesController extends Controller
                     + SUM(CASE WHEN rpr.rubro = 7 THEN rpr.valor ELSE 0 END)
                     + SUM(CASE WHEN rpr.rubro = 3 THEN rpr.valor ELSE 0 END)
                   
-                    ) AS total_cobrado
+                    ) AS total_cobrado,
+                    rpd.tipo_pago
                 ")
                 ->get();
                 
