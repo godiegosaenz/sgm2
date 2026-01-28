@@ -168,4 +168,46 @@ class PrediosContribuyenteUrbController extends Controller
             ->make(true);
         }
     }
+
+    public function ruralPoligono()
+    {
+        return view('predios.rural_poligono');
+    }
+
+    public function llenaTablaPoligono($poligono){
+        try{
+           
+            $obtener = DB::connection('sqlsrv')->table('PREDIO')
+            ->select('Pre_CodigoCatastral','Pre_NombrePredio as nombre')
+            ->whereRaw('SUBSTRING(Pre_CodigoCatastral, 9, 2) = ?', [$poligono])
+            ->get();
+
+            // $obtener = DB::connection('sqlsrv')
+            //  ->table('TITULOS_PREDIO as pago')
+            //  ->select('Pre_CodigoCatastral')
+            //  ->whereRaw('SUBSTRING(Pre_CodigoCatastral, 9, 2) = ?', [$poligono])
+            //  ->get();
+
+            // $obtener = DB::connection('sqlsrv')
+            // ->table('TITULOS_PREDIO as pago')
+            // ->select('Pre_CodigoCatastral')
+            // ->whereRaw('SUBSTRING(Pre_CodigoCatastral, 9, 2) = ?', ['07'])  // Usando el valor fijo '02'
+            // ->get();
+
+            // $poligono='01';
+
+            // $obtener = DB::connection('sqlsrv')
+            // ->table('TITULOS_PREDIO as pago')
+            // ->select('Pre_CodigoCatastral', DB::raw("CONCAT(Titpr_RUC_CI, ' - ', TitPr_Nombres) AS nombre"))
+            // ->where('Pre_CodigoCatastral', 'LIKE', '13225001' . $poligono . '%')  // Utilizando LIKE para filtrar por polígono
+            // ->get();
+
+
+
+            return ["resultado"=>$obtener, "error"=>false];
+
+        } catch (\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+        }
+    }
 }
