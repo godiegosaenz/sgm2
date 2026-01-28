@@ -481,11 +481,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('guardar-actividad-laboral', [PacienteEmpleadoController::class, 'guardaActividadLaboral']);
 
 
-    //**********POLIGONO RURAL */
-    Route::get('predio-rural-poligono', [PrediosContribuyenteUrbController::class, 'ruralPoligono'])->name('predios.rural_poligono');
-    Route::get('llenar-tabla-poligono/{valor}', [PrediosContribuyenteUrbController::class, 'llenaTablaPoligono']);
+   
     
 });
+
+ //**********POLIGONO RURAL */
+    Route::get('predio-rural-poligono', [PrediosContribuyenteUrbController::class, 'ruralPoligono'])->name('predios.rural_poligono');
+    Route::get('llenar-tabla-poligono/{valor}', [PrediosContribuyenteUrbController::class, 'llenaTablaPoligono']);
 
 Route::get('buscar-detalles-liquidacion-urbanos/{cedula}', [LiquidacionesController::class, 'consultarTitulosUrbDetalle']);
 
