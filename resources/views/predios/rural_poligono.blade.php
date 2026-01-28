@@ -39,15 +39,15 @@
                 <div class="mb-3">
                     <label for="num_predio">Poligono: </label>
                     <select class="form-select" aria-label="Default select example" id="poligono" name="poligono" onchange="consultarPredioR()">
-                        <option value="01">01</option>
-                        <option value='02'>02</option>
-                        <option value="03">03</option>
-                        <option value="04">04</option>
-                        <option value="05">05</option>
-                        <option value="06">06</option>
-                        <option value="07">07</option>
-                        <option value="08">08</option>
-                        <option value="09">09</option>
+                        <option value="001">001</option>
+                        <option value='002'>002</option>
+                        <option value="003">003</option>
+                        <option value="004">004</option>
+                        <option value="005">005</option>
+                        <option value="006">006</option>
+                        <option value="007">007</option>
+                        <option value="008">008</option>
+                        <option value="009">009</option>
                     </select>
 
                 </div>

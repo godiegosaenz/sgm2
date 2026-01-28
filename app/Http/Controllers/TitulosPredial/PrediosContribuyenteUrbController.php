@@ -176,32 +176,16 @@ class PrediosContribuyenteUrbController extends Controller
 
     public function llenaTablaPoligono($poligono){
         try{
-           
+            // $claveCatastral='1322506501002082000';
+            // $poligono = substr($claveCatastral, 10, 3);
+            // dd($poligono);
+
+            // $poligono='002';
             $obtener = DB::connection('sqlsrv')->table('PREDIO')
             ->select('Pre_CodigoCatastral','Pre_NombrePredio as nombre')
-            ->whereRaw('SUBSTRING(Pre_CodigoCatastral, 9, 2) = ?', [$poligono])
+            ->whereRaw('SUBSTRING(Pre_CodigoCatastral, 11, 3) = ?', [$poligono])
+            ->where('Pre_Tipo','Rural')
             ->get();
-
-            // $obtener = DB::connection('sqlsrv')
-            //  ->table('TITULOS_PREDIO as pago')
-            //  ->select('Pre_CodigoCatastral')
-            //  ->whereRaw('SUBSTRING(Pre_CodigoCatastral, 9, 2) = ?', [$poligono])
-            //  ->get();
-
-            // $obtener = DB::connection('sqlsrv')
-            // ->table('TITULOS_PREDIO as pago')
-            // ->select('Pre_CodigoCatastral')
-            // ->whereRaw('SUBSTRING(Pre_CodigoCatastral, 9, 2) = ?', ['07'])  // Usando el valor fijo '02'
-            // ->get();
-
-            // $poligono='01';
-
-            // $obtener = DB::connection('sqlsrv')
-            // ->table('TITULOS_PREDIO as pago')
-            // ->select('Pre_CodigoCatastral', DB::raw("CONCAT(Titpr_RUC_CI, ' - ', TitPr_Nombres) AS nombre"))
-            // ->where('Pre_CodigoCatastral', 'LIKE', '13225001' . $poligono . '%')  // Utilizando LIKE para filtrar por polígono
-            // ->get();
-
 
 
             return ["resultado"=>$obtener, "error"=>false];
