@@ -94,7 +94,7 @@
 <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
 <script src="{{ asset('js/predios/poligono_rural.js?v=' . rand())}}"></script>
 <script>
-   
+    consultarPredioR()
     $('#btnExcel').on('click', function () {
         tablaPredio.button('.buttons-excel').trigger();
     });
