@@ -256,51 +256,53 @@
         <p>
             <strong>En el evento de no proceder a la cancelación de lo adeudado se iniciará coactiva y en efecto se dictaran las medidas precautelares correspondientes, entre estas:</strong> Bloquear y retener fondos de cuentas corrientes y/o ahorros, prohibir la enagenación de los vehículos, bienes inmuebles que se hallaren inscritos a nombre que tuviere la/el coactivado que adeude al, <strong> GAD MUNICIPAL DEL CANTÓN SAN VICENTE.</strong> 
         </p> 
-        <p>Atentamente,</p>
-        <table style="
-            border-collapse: collapse;
-            width: 55%;
-            margin-left: auto;
-        ">
-            <tr>
-                <td width=45% style="border:1px solid black; padding:2px; line-height:1;font: size 8px;">
-                    <b>Firma</b>
-                </td>
-                <td style="border:1px solid black; padding:2px; line-height:1;">
-                    &nbsp;
-                </td>
-            </tr>
-            <tr>
-                <td style="border:1px solid black; padding:2px; line-height:1;font: size 8px;">
-                    <b>Nombres y Apellidos</b>
-                </td>
-                <td style="border:1px solid black; padding:2px; line-height:1;">
-                    &nbsp;
-                </td>
-            </tr>
-            <tr>
-                <td style="border:1px solid black; padding:2px; line-height:1;font: size 8px;">
-                    <b>Cédula</b>
-                </td>
-                <td style="border:1px solid black; padding:2px; line-height:1;">
-                    &nbsp;
-                </td>
-            </tr>
-            <tr>
-                <td style="border:1px solid black; padding:2px; line-height:1;font: size 8px;">
-                    <b>Teléfono</b>
-                </td>
-                <td style="border:1px solid black; padding:2px; line-height:1;">
-                    &nbsp;
-                </td>
-            </tr>
-        </table>
-         <p style="margin: 0; line-height: 1.2;">
-            <strong>Ab. Jessica Karina Zambrano Pincay</strong>
-        </p>
-        <p style="margin: 0; line-height: 1.2;">
-            <strong>ANALISTA JURÍDICO Y COACTIVAS DEL GAD MUNICIPAL DEL CANTÓN SAN VICENTE</strong>
-        </p>
+        <div style="margin-bottom:48px">
+            <p>Atentamente,</p>
+            <table style="
+                border-collapse: collapse;
+                width: 55%;
+                margin-left: auto;
+            ">
+                <tr>
+                    <td width=45% style="border:1px solid black; padding:2px; line-height:1;font: size 8px;">
+                        <b>Firma</b>
+                    </td>
+                    <td style="border:1px solid black; padding:2px; line-height:1;">
+                        &nbsp;
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border:1px solid black; padding:2px; line-height:1;font: size 8px;">
+                        <b>Nombres y Apellidos</b>
+                    </td>
+                    <td style="border:1px solid black; padding:2px; line-height:1;">
+                        &nbsp;
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border:1px solid black; padding:2px; line-height:1;font: size 8px;">
+                        <b>Cédula</b>
+                    </td>
+                    <td style="border:1px solid black; padding:2px; line-height:1;">
+                        &nbsp;
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border:1px solid black; padding:2px; line-height:1;font: size 8px;">
+                        <b>Teléfono</b>
+                    </td>
+                    <td style="border:1px solid black; padding:2px; line-height:1;">
+                        &nbsp;
+                    </td>
+                </tr>
+            </table>
+            <p style="margin: 0; line-height: 1.2;">
+                <strong>Ab. Jessica Karina Zambrano Pincay</strong>
+            </p>
+            <p style="margin: 0; line-height: 1.2;">
+                <strong>ANALISTA JURÍDICO Y COACTIVAS DEL GAD MUNICIPAL DEL CANTÓN SAN VICENTE</strong>
+            </p>
+        </div>
     </div>
     
     <!-- <table class="cabecera" style="font-family: Arial;font-size:12px !important">
@@ -368,7 +370,14 @@
                         @endphp
                         @foreach ($data as $item)
                         @php
-                            $total=$item->subtotal_emi+$item->intereses+$item->recargo;
+                            $subtotal_emi = (float) str_replace(',', '', $item->subtotal_emi);
+                            $intereses = (float) str_replace(',', '',$item->intereses);
+                            
+                            $total=$subtotal_emi+$intereses+$item->recargo;
+                            // $total = (float)$item->subtotal_emi
+                            // + (float)$item->intereses
+                            // + (float)$item->recargo;
+
                             $total=$total + $item->descuento;
                             $anio=explode("-",$item->num_titulo);
 
@@ -387,16 +396,16 @@
                             <td style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{$item->clave}}</td>
                         
                            
-                            <td style="text-align:right;border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{$item->subtotal_emi}}</td>
+                            <td style="text-align:right;border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{ number_format($subtotal_emi,2)}}</td>
                             <td style="text-align:right;border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{ number_format($item->descuento ?? 0.00, 2) }}</td>
-                            <td style="text-align:right;border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{number_format($item->intereses ?? 0.00, 2) }}</td>
+                            <td style="text-align:right;border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{number_format($intereses,2)}}</td>
                             <td style="text-align:right;border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{ number_format($item->recargo ?? 0.00, 2) }}</td>
                             <td style="text-align:right;border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;">{{number_format($total,2)}}    </td>
                             </tr>
                             @php
-                                $total_emi=$total_emi +$item->subtotal_emi;
+                                $total_emi=$total_emi +$subtotal_emi;
                                 $total_des=$total_des +$item->descuento;
-                                $total_int=$total_int +$item->intereses;
+                                $total_int=$total_int +$intereses;
                                 $total_rec=$total_rec +$item->recargo;
 
                             @endphp

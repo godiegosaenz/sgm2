@@ -441,7 +441,7 @@ class LiquidacionesController extends Controller
                     }
                 } 
             }
-           
+            // dd($listado_final);
             $nombrePDF="PagoVoluntario".date('YmdHis').".pdf";                               
             $pdf = \PDF::loadView('reportes.pagoVoluntarioPredio', ['DatosLiquidacion'=>$listado_final,"ubicacion"=>$lugar,"nombre_persona"=>$nombre_persona, "direcc_cont"=>$direcc_cont]);
 
@@ -463,7 +463,7 @@ class LiquidacionesController extends Controller
             }
 
         } catch (\Exception $e) {
-            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e->getMessage(), "error"=>true];
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
 
         }
     }

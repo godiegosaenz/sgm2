@@ -455,6 +455,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('recaudaciones', [RecaudacionesController::class, 'index'])->name('index.recaudaciones');
     Route::post('valores-recaudados', [RecaudacionesController::class, 'pagosRecaudados']);
     Route::post('reporte-recaudacion', [RecaudacionesController::class, 'generarReporte']);
+    Route::get('parte-diario-seleccion/{fecha}/{area}', [RecaudacionesController::class, 'index']);
 
 
     //*******HISTORIA CLINICA EMPLEADOS *********************/
@@ -472,6 +473,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('guardar-enfermedad', [PacienteEmpleadoController::class, 'guardaEnfemedadProblemaActual']);
     Route::post('guardar-constantes', [PacienteEmpleadoController::class, 'guardaConstantesVitales']);
     Route::post('guardar-examen-fisico', [PacienteEmpleadoController::class, 'guardaExamenFisico']);
+    Route::post('factores-riesgos', [PacienteEmpleadoController::class, 'guardarFactoresRiesgo']);
+    Route::post('factores-riesgos-eliminar', [PacienteEmpleadoController::class, 'eliminaFactoresRiesgo']);
+    Route::post('guardar-medidad-preventivas', [PacienteEmpleadoController::class, 'guardaMedidasPreventivas']);
+    Route::get('llenar-tabla-medida/{idempleado}', [PacienteEmpleadoController::class, 'llenaTablaMedida']);
+    Route::get('llenar-tabla-actividad/{idempleado}', [PacienteEmpleadoController::class, 'llenaTablaActividad']);
+    Route::post('guardar-actividad-laboral', [PacienteEmpleadoController::class, 'guardaActividadLaboral']);
     
 });
 

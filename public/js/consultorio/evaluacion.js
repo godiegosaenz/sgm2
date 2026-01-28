@@ -57,6 +57,10 @@ function abrirModalPaciente(){
     $('#modalCrearPaciente').modal('show')
 }
 
+function abrirModalMedidasPreventivas(){
+    $('#modalMedida').modal('show')
+}
+
 $('#cmb_nombres').select2({
     // dropdownParent: $('#actividadLocal'),
     ajax: {
@@ -419,7 +423,7 @@ function buscaContribuyente(){
 }
 
 function atencionPaciente(id){
-   
+    $('.check_riesgo').prop('checked',false)
     vistacargando("m","Espere por favor")
     $.get("carga-info-paciente-evolucion/"+id, function(data){
         vistacargando("")
@@ -454,6 +458,12 @@ function atencionPaciente(id){
         $('#busqueda_paciente').hide(200)
         $('#atencion_paciente').show(200)
         seleccionSexo()
+
+        $.each(data.factores_riesgo, function(i,item){
+          	$('#'+item.codigo).prop('checked',true)
+        })
+
+        llenarTablaMedida(id)
          
     }).fail(function(){
         vistacargando("")
@@ -1244,3 +1254,260 @@ $("#formExamenFisico").submit(function(e){
         }
     });
 })
+
+
+$(document).on('change', '.check_riesgo', function () {
+
+    let checkbox = $(this);
+
+    let payload = {
+        _token: $('meta[name="csrf-token"]').attr('content'),
+        indice: checkbox.val(),
+        tipo: checkbox.data('tipo'),
+        expo: checkbox.data('fisico'),
+        codigo: checkbox.data('codigo'),
+        paciente_id:  $('#id_empleado').val()
+    };
+
+    if (checkbox.is(':checked')) {
+        // ✅ GUARDAR
+        $.post('factores-riesgos', payload)
+            .done(res => {
+                console.log('Guardado', res);
+            })
+            .fail(() => {
+                alert('Error al guardar');
+                checkbox.prop('checked', false); // rollback
+            });
+
+    } else {
+        // ❌ ELIMINAR
+        $.post('factores-riesgos-eliminar', payload)
+            .done(res => {
+                console.log('Eliminado', res);
+            })
+            .fail(() => {
+                alert('Error al eliminar');
+                checkbox.prop('checked', true); // rollback
+            });
+    }
+});
+
+
+function guardarMedidaPreventiva(){
+    let charla_salud_empl=$('#charla_salud_empl').val()
+    let controles_med_empl=$('#controles_med_empl').val()
+    let prenda_proteccion_empl=$('#prenda_proteccion_empl').val()
+    let id_empleado=$('#id_empleado').val()
+    if(charla_salud_empl=="" || charla_salud_empl==null){
+        alertNotificar("Debe ingresar la charla_salud_empl","error")
+        $('#charla_salud_empl').focus()
+        return
+    } 
+
+    if(controles_med_empl=="" || controles_med_empl==null){
+        alertNotificar("Debe ingresar la controles_med_empl","error")
+        $('#controles_med_empl').focus()
+        return
+    } 
+
+    if(prenda_proteccion_empl=="" || prenda_proteccion_empl==null){
+        alertNotificar("Debe ingresar la prenda_proteccion_empl","error")
+        $('#prenda_proteccion_empl').focus()
+        return
+    } 
+
+    vistacargando("m","Espere por favor")
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    //comprobamos si es registro o edicion
+    let tipo="POST"
+    let url_form="guardar-medidad-preventivas"
+    
+    var FrmData=$("#formMedidas").serialize();
+    FrmData += "&id_empleado=" + id_empleado;
+
+    $.ajax({
+            
+        type: tipo,
+        url: url_form,
+        method: tipo,             
+		data: FrmData,      
+		
+        processData:false, 
+
+        success: function(data){
+            vistacargando("");                
+            if(data.error==true){
+                alertNotificar(data.mensaje,'error');
+                return;                      
+            }
+            alertNotificar(data.mensaje,'success');
+            llenarTablaMedida(id_empleado)  
+            limpiarCamposMedidas()          
+        }, error:function (data) {
+            console.log(data)
+
+            vistacargando("");
+            alertNotificar('Ocurrió un error','error');
+        }
+    });
+}
+function limpiarCamposMedidas(){
+    $('#charla_salud_empl').val('')
+    $('#controles_med_empl').val('')
+    $('#prenda_proteccion_empl').val('')
+}
+$('#modalCrearPuesto').on('hidden.bs.modal', function (e) {
+    limpiarCamposMedidas()
+});
+
+function llenarTablaMedida(id_empleado){
+    $("#tbodyMedida").html('');
+    $('#tbodyMedida').empty(); 
+    vistacargando("m","Espere por favor")
+    $.get("llenar-tabla-medida/"+id_empleado, function(data){
+        vistacargando("")
+        if(data.error==true){
+            alertNotificar(data.mensaje,"error");
+            // return;   
+        }
+
+        if(data.error==true){
+            $('#tbodyMedida').append(`<tr>
+            <td colspan="3" style="text-align:center">No hay datos disponibles</td>`);
+            alertNotificar(data.mensaje,'error');
+            return;                      
+        }
+        console.log(data)
+        if(data.resultado.length==0){
+            $('#tbodyMedida').append(`<tr>
+            <td colspan="3" style="text-align:center">No hay datos disponibles</td>`);
+            return; 
+        }
+  
+        $.each(data.resultado,function(i, item){
+            $('#tbodyMedida').append(`<tr>
+                
+                <td style="width:30%; text-align:center; vertical-align:middle">
+                    ${item.charla_salud}                    
+                </td>
+                <td style="width:30%; text-align:center; vertical-align:middle">
+                    ${item.controles_medicos_rutinarios}                     
+                </td>
+                <td style="width:30%; text-align:center; vertical-align:middle">
+                    ${item.uso_adecuado_prenda_prot}            
+                </td>
+                
+            
+            </tr>`);
+        })
+
+    }).fail(function(){
+        vistacargando("")
+        $('#tbodyMedida').append(`<tr>
+        <td colspan="3" style="text-align:center">No hay datos disponibles</td>`);
+        alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+    });
+}
+
+function abrirModalActividades(){
+    $('#modalActividad').modal('show')
+}
+
+function guardarActividad(){
+    
+    let id_empleado=$('#id_empleado').val()
+   
+    vistacargando("m","Espere por favor")
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    //comprobamos si es registro o edicion
+    let tipo="POST"
+    let url_form="guardar-actividad-laboral"
+    
+    var FrmData=$("#formActividad").serialize();
+    FrmData += "&id_empleado=" + id_empleado;
+
+    $.ajax({
+            
+        type: tipo,
+        url: url_form,
+        method: tipo,             
+		data: FrmData,     
+        processData:false, 
+
+        success: function(data){
+            vistacargando("");                
+            if(data.error==true){
+                alertNotificar(data.mensaje,'error');
+                return;                      
+            }
+            alertNotificar(data.mensaje,'success');
+            llenarTablaMedida(id_empleado)  
+            limpiarCamposMedidas()          
+        }, error:function (data) {
+            console.log(data)
+
+            vistacargando("");
+            alertNotificar('Ocurrió un error','error');
+        }
+    });
+}
+
+function llenarTablaActividad(id_empleado){
+    $("#tbodyActividadLaboral").html('');
+    $('#tbodyActividadLaboral').empty(); 
+    vistacargando("m","Espere por favor")
+    $.get("llenar-tabla-actividad/"+id_empleado, function(data){
+        vistacargando("")
+        if(data.error==true){
+            alertNotificar(data.mensaje,"error");
+            // return;   
+        }
+
+        if(data.error==true){
+            $('#tbodyActividadLaboral').append(`<tr>
+            <td colspan="13" style="text-align:center">No hay datos disponibles</td>`);
+            alertNotificar(data.mensaje,'error');
+            return;                      
+        }
+        console.log(data)
+        if(data.resultado.length==0){
+            $('#tbodyActividadLaboral').append(`<tr>
+            <td colspan="13" style="text-align:center">No hay datos disponibles</td>`);
+            return; 
+        }
+  
+        $.each(data.resultado,function(i, item){
+            $('#tbodyActividadLaboral').append(`<tr>
+                
+                <td style="width:30%; text-align:center; vertical-align:middle">
+                    ${item.charla_salud}                    
+                </td>
+                <td style="width:30%; text-align:center; vertical-align:middle">
+                    ${item.controles_medicos_rutinarios}                     
+                </td>
+                <td style="width:30%; text-align:center; vertical-align:middle">
+                    ${item.uso_adecuado_prenda_prot}            
+                </td>
+                
+            
+            </tr>`);
+        })
+
+    }).fail(function(){
+        vistacargando("")
+        $('#tbodyActividadLaboral').append(`<tr>
+        <td colspan="13" style="text-align:center">No hay datos disponibles</td>`);
+        alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+    });
+}

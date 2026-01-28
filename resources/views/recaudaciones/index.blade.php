@@ -15,14 +15,6 @@
         width: 100% !important;
     }
 
-    /* CLAVE para alinear thead y tbody */
-.dataTables_scrollHeadInner table,
-.dataTables_scrollBody table {
-    table-layout: fixed !important;
-    width: 100% !important;
-}
-
-
 
 </style>
 @endpush
