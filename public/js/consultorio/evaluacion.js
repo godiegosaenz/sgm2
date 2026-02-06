@@ -13,8 +13,18 @@ function cambiaTipo(){
     }else{
         $('#div_cedula').hide()
         $('#div_nombres').show()
-       alert("a")
+       
     }
+}
+
+function cancelaAtencion(){
+    if(confirm('¿Quiere cancelar la atencion?')){
+        location.reload()
+    }
+}
+
+function finalizarAtencion(){
+    formActualizaSeccionA()
 }
 
 function limpiarBusqueda(){
@@ -105,6 +115,8 @@ $('#modalCrearPaciente').on('hidden.bs.modal', function (e) {
     $('#sexo').val('')
     $('#grupo_sanguineo').val('')
     $('#lateridad').val('')
+
+    $('.check_atencion_prio').prop('checked',false)
 
     $('#nombre_btn_persona').html('Guardar')
 
@@ -266,6 +278,27 @@ function capturaInfoPersona(){
             $('#sexo').val(data.resultado.sexo)
             $('#grupo_sanguineo').val(data.resultado.grupo_sanguinedad)
             $('#lateridad').val(data.resultado.lateridad)
+            
+            if(data.resultado.embarazada){
+                $('#embarazada').prop('checked',true)
+            }
+
+            if(data.resultado.discapacidad){
+                $('#discapacidad').prop('checked',true)
+            }
+
+            if(data.resultado.ecatastrofica){
+                $('#ecatastrofica').prop('checked',true)
+            }
+
+            if(data.resultado.lactancia){
+                $('#lactancia').prop('checked',true)
+            }
+
+            if(data.resultado.mayor_edad){
+                $('#mayor_edad').prop('checked',true)
+            }
+          
             return;   
         }
         if(data.resultado!=null){
@@ -293,6 +326,26 @@ function capturaInfoPersona(){
         $('#sexo').val(data.resultado.sexo)
         $('#grupo_sanguineo').val(data.resultado.grupo_sanguinedad)
         $('#lateridad').val(data.resultado.lateralidad)
+
+        if(data.resultado.embarazada){
+            $('#embarazada').prop('checked',true)
+        }
+
+        if(data.resultado.discapacidad){
+            $('#discapacidad').prop('checked',true)
+        }
+
+        if(data.resultado.ecatastrofica){
+            $('#ecatastrofica').prop('checked',true)
+        }
+
+        if(data.resultado.lactancia){
+            $('#lactancia').prop('checked',true)
+        }
+
+        if(data.resultado.mayor_edad){
+            $('#mayor_edad').prop('checked',true)
+        }
         console.log(data)
        
          
@@ -423,6 +476,7 @@ function buscaContribuyente(){
 }
 
 function atencionPaciente(id){
+    $('.check_atencion_prio').prop('checked',false)
     $('.check_riesgo').prop('checked',false)
     vistacargando("m","Espere por favor")
     $.get("carga-info-paciente-evolucion/"+id, function(data){
@@ -451,6 +505,26 @@ function atencionPaciente(id){
         $('#fecha_ingreso').val(data.motivo.fecha_ingreso_trabajo)
         $('#fecha_reingreso').val(data.motivo.fecha_reintegro)
         $('#fecha_ultimo_dia').val(data.motivo.fecha_ultimo_dia_laboral)
+
+        if(data.resultado.embarazada){
+            $('#embarazada_e').prop('checked',true)
+        }
+
+        if(data.resultado.discapacidad){
+            $('#discapacidad_e').prop('checked',true)
+        }
+
+        if(data.resultado.ecatastrofica){
+            $('#ecatastrofica_e').prop('checked',true)
+        }
+
+        if(data.resultado.lactancia){
+            $('#lactancia_e').prop('checked',true)
+        }
+
+        if(data.resultado.mayor_edad){
+            $('#mayor_edad_e').prop('checked',true)
+        }
         cargaComboPuesto(data.motivo.id_puesto)
 
         console.log(data)
@@ -464,6 +538,10 @@ function atencionPaciente(id){
         })
 
         llenarTablaMedida(id)
+        llenarTablaActividad(id)
+        llenarTablaActividadExtras(id)
+        llenarTablaResultadoExamen(id)
+        llenarTablaDiagnostico(id)
          
     }).fail(function(){
         vistacargando("")
@@ -634,8 +712,7 @@ function cambioTipo(select) {
   }
 }
 
-$("#formActualizaSeccionA").submit(function(e){
-    e.preventDefault();
+function validaSeccionA(){
     let cedula=$('#num_cedula_empleado').val()
     let primer_apellido=$('#primer_apellido_empleado').val()
     let segundo_apellido=$('#segundo_apellido_empleado').val()
@@ -649,55 +726,62 @@ $("#formActualizaSeccionA").submit(function(e){
     if(cedula=="" || cedula==null){
         alertNotificar("Debe ingresar la cedula","error")
         $('#num_cedula_empleado').focus()
-        return
+        return true
     } 
 
     if(primer_apellido=="" || primer_apellido==null){
         alertNotificar("Debe ingresar el primer apellido","error")
         $('#primer_apellido_empleado').focus()
-        return
+        return true
     } 
 
     if(segundo_apellido=="" || segundo_apellido==null){
         alertNotificar("Debe ingresar el segundo apellido","error")
         $('#segundo_apellido_empleado').focus()
-        return
+        return true
     } 
 
     if(primer_nombre=="" || primer_nombre==null){
         alertNotificar("Debe ingresar el primer nombre","error")
         $('#primer_nombre_empleado').focus()
-        return
+        return true
     } 
 
     if(segundo_nombre=="" || segundo_nombre==null){
         alertNotificar("Debe ingresar el segundo nombre","error")
         $('#segundo_nombre_empleado').focus()
-        return
+        return true
     } 
 
     if(fecha_nacimiento=="" || fecha_nacimiento==null){
         alertNotificar("Debe ingresar la fecha nacimiento","error")
         $('#fecha_nacimiento_empleado').focus()
-        return
+        return true
     } 
 
     if(sexo=="" || sexo==null){
         alertNotificar("Debe seleccionar el  sexo","error")
-        return
+        return true
     } 
 
     if(grupo_sanguineo=="" || grupo_sanguineo==null){
         alertNotificar("Debe ingresar grupo_sanguineo","error")
         $('#grupo_sanguineo_empleado').focus()
-        return
+        return true
     } 
     
     if(lateridad=="" || lateridad==null){
         alertNotificar("Debe ingresar lateridad","error")
         $('#lateralidad_empleado').focus()
-        return
+        return true
     } 
+}
+
+$("#formActualizaSeccionA").submit(function(e){
+    e.preventDefault();
+
+    validaSeccionA()
+    
 
     vistacargando("m","Actualizando...")
     $.ajaxSetup({
@@ -1419,6 +1503,9 @@ function abrirModalActividades(){
     $('#modalActividad').modal('show')
 }
 
+function limpiarModalAntecedentes(){
+    $('.modal_act').val('')
+}
 function guardarActividad(){
     
     let id_empleado=$('#id_empleado').val()
@@ -1452,8 +1539,8 @@ function guardarActividad(){
                 return;                      
             }
             alertNotificar(data.mensaje,'success');
-            llenarTablaMedida(id_empleado)  
-            limpiarCamposMedidas()          
+            llenarTablaActividad(id_empleado)  
+            limpiarModalAntecedentes()          
         }, error:function (data) {
             console.log(data)
 
@@ -1488,16 +1575,71 @@ function llenarTablaActividad(id_empleado){
         }
   
         $.each(data.resultado,function(i, item){
+            let actual=""
+            let anterior=""
+            if(item.trabajo=="Anterior"){
+                anterior="X"
+            }else if(item.trabajo=="Actual"){
+                actual="X"
+            }
+
+            let si_califica=""
+            let no_califica=""
+            if(item.calificado_iess=="Si"){
+                si_califica="X"
+            }else if(item.calificado_iess=="No"){
+                no_califica="X"
+            }
+
             $('#tbodyActividadLaboral').append(`<tr>
                 
-                <td style="width:30%; text-align:center; vertical-align:middle">
-                    ${item.charla_salud}                    
+                <td style="text-align:center; vertical-align:middle">
+                    ${item.centro_trabajo ? item.centro_trabajo : ''}
+                   
                 </td>
-                <td style="width:30%; text-align:center; vertical-align:middle">
-                    ${item.controles_medicos_rutinarios}                     
+                <td style="text-align:center; vertical-align:middle">
+                    ${item.actividad_desempenia ? item.actividad_desempenia : ''}
+                    
                 </td>
-                <td style="width:30%; text-align:center; vertical-align:middle">
-                    ${item.uso_adecuado_prenda_prot}            
+                <td style="text-align:center; vertical-align:middle">
+                    ${anterior}            
+                </td>
+
+                <td style="text-align:center; vertical-align:middle">
+                    ${actual}                    
+                </td>
+                <td style="text-align:center; vertical-align:middle">
+                    ${item.tiempo_trabajo ? item.tiempo_trabajo : ''}                    
+                </td>
+                <td style="text-align:center; vertical-align:middle">
+                   ${item.incidente ? item.incidente : ''}                  
+                </td>
+
+                <td style="text-align:center; vertical-align:middle">
+                    ${item.accidente ? item.accidente : ''}         
+                </td>
+
+                <td style="text-align:center; vertical-align:middle">
+                    ${item.enfermedad_profesional ? item.enfermedad_profesional : ''}         
+                </td>
+
+                <td style="text-align:center; vertical-align:middle">
+                    ${si_califica}            
+                </td>
+                <td style="text-align:center; vertical-align:middle">
+                    ${no_califica}            
+                </td>
+
+                <td style="text-align:center; vertical-align:middle">
+                   ${item.fecha_calificacion ? item.fecha_calificacion : ''}    
+                </td>
+
+                <td style="text-align:center; vertical-align:middle">
+                   ${item.especificar ? item.especificar : ''}         
+                </td>
+
+                <td style="text-align:center; vertical-align:middle">
+                    ${item.observaciones ? item.observaciones : ''}    
                 </td>
                 
             
@@ -1509,5 +1651,619 @@ function llenarTablaActividad(id_empleado){
         $('#tbodyActividadLaboral').append(`<tr>
         <td colspan="13" style="text-align:center">No hay datos disponibles</td>`);
         alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+    });
+}
+
+
+function abrirModalActividadesExtras(){
+    $('#modalActividadExtra').modal('show')
+}
+
+function limpiarModalActExtras(){
+    $('.modal_ext').val('')
+}
+function guardarActividadExtras(){
+    
+    let id_empleado=$('#id_empleado').val()
+    let act_extra=$('#act_extra').val()
+    let fecha_act_extra=$('#fecha_act_extra').val()
+
+    if(act_extra=="" || act_extra==null){
+        alertNotificar("Debe ingresar la actividad","error")
+        $('#act_extra').focus()
+        return
+    } 
+
+    // if(fecha_act_extra=="" || fecha_act_extra==null){
+    //     alertNotificar("Debe seleccionar la fecha","error")
+    //     $('#fecha_act_extra').focus()
+    //     return
+    // } 
+   
+    vistacargando("m","Espere por favor")
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    //comprobamos si es registro o edicion
+    let tipo="POST"
+    let url_form="guardar-actividad-extra"
+    
+    var FrmData=$("#formActividadExtra").serialize();
+    FrmData += "&id_empleado=" + id_empleado;
+
+    $.ajax({
+            
+        type: tipo,
+        url: url_form,
+        method: tipo,             
+		data: FrmData,     
+        processData:false, 
+
+        success: function(data){
+            vistacargando("");                
+            if(data.error==true){
+                alertNotificar(data.mensaje,'error');
+                return;                      
+            }
+            alertNotificar(data.mensaje,'success');
+            llenarTablaActividadExtras(id_empleado)  
+            limpiarModalActExtras()          
+        }, error:function (data) {
+            console.log(data)
+
+            vistacargando("");
+            alertNotificar('Ocurrió un error','error');
+        }
+    });
+}
+
+function llenarTablaActividadExtras(id_empleado){
+    $("#tbodyActividadExtra").html('');
+    $('#tbodyActividadExtra').empty(); 
+    vistacargando("m","Espere por favor")
+    $.get("llenar-tabla-actividad-extra/"+id_empleado, function(data){
+        vistacargando("")
+        if(data.error==true){
+            alertNotificar(data.mensaje,"error");
+            // return;   
+        }
+
+        if(data.error==true){
+            $('#tbodyActividadExtra').append(`<tr>
+            <td colspan="2" style="text-align:center">No hay datos disponibles</td>`);
+            alertNotificar(data.mensaje,'error');
+            return;                      
+        }
+        console.log(data)
+        if(data.resultado.length==0){
+            $('#tbodyActividadExtra').append(`<tr>
+            <td colspan="2" style="text-align:center">No hay datos disponibles</td>`);
+            return; 
+        }
+  
+        $.each(data.resultado,function(i, item){
+            
+
+            $('#tbodyActividadExtra').append(`<tr>
+                
+                <td style="text-align:left; vertical-align:middle">
+                    ${item.actividad ? item.actividad : ''}
+                   
+                </td>
+                <td style="text-align:left; vertical-align:middle">
+                    ${item.fecha ? item.fecha : ''}
+                    
+                </td>
+               
+            
+            </tr>`);
+        })
+
+    }).fail(function(){
+        vistacargando("")
+        $('#tbodyActividadExtra').append(`<tr>
+        <td colspan="2" style="text-align:center">No hay datos disponibles</td>`);
+        alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+    });
+}
+
+
+
+function abrirModalResultadosExam(){
+    $('#modalResultadoExamen').modal('show')
+}
+
+function limpiarModalresultadoExam(){
+    $('.modal_exam').val('')
+}
+function guardarResultadoExamen(){
+    
+    let id_empleado=$('#id_empleado').val()
+    let nombre_examen=$('#nombre_examen').val()
+    let fecha_examen=$('#fecha_examen').val()
+    let resultados_exam=$('#resultados_exam').val()
+
+    if(nombre_examen=="" || nombre_examen==null){
+        alertNotificar("Debe ingresar el nombre del examen","error")
+        $('#nombre_examen').focus()
+        return
+    } 
+
+    if(fecha_examen=="" || fecha_examen==null){
+        alertNotificar("Debe ingresar la fecha","error")
+        $('#fecha_examen').focus()
+        return
+    } 
+
+    if(resultados_exam=="" || resultados_exam==null){
+        alertNotificar("Debe ingresar los resultados","error")
+        $('#resultados_exam').focus()
+        return
+    } 
+   
+    vistacargando("m","Espere por favor")
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    //comprobamos si es registro o edicion
+    let tipo="POST"
+    let url_form="guardar-resultados-examen"
+    
+    var FrmData=$("#formResultadoExamen").serialize();
+    FrmData += "&id_empleado=" + id_empleado;
+
+    $.ajax({
+            
+        type: tipo,
+        url: url_form,
+        method: tipo,             
+		data: FrmData,     
+        processData:false, 
+
+        success: function(data){
+            vistacargando("");                
+            if(data.error==true){
+                alertNotificar(data.mensaje,'error');
+                return;                      
+            }
+            alertNotificar(data.mensaje,'success');
+            llenarTablaResultadoExamen(id_empleado)  
+            limpiarModalresultadoExam()          
+        }, error:function (data) {
+            console.log(data)
+
+            vistacargando("");
+            alertNotificar('Ocurrió un error','error');
+        }
+    });
+}
+
+function llenarTablaResultadoExamen(id_empleado){
+    $("#tbodyResultadoExamen").html('');
+    $('#tbodyResultadoExamen').empty(); 
+    vistacargando("m","Espere por favor")
+    $.get("llenar-tabla-resultados-examen/"+id_empleado, function(data){
+        vistacargando("")
+        if(data.error==true){
+            alertNotificar(data.mensaje,"error");
+            // return;   
+        }
+
+        if(data.error==true){
+            $('#tbodyResultadoExamen').append(`<tr>
+            <td colspan="3" style="text-align:center">No hay datos disponibles</td>`);
+            alertNotificar(data.mensaje,'error');
+            return;                      
+        }
+        console.log(data)
+        if(data.resultado.length==0){
+            $('#tbodyResultadoExamen').append(`<tr>
+            <td colspan="3" style="text-align:center">No hay datos disponibles</td>`);
+            return; 
+        }
+  
+        $.each(data.resultado,function(i, item){
+            
+
+            $('#tbodyResultadoExamen').append(`<tr>
+                
+                <td style="text-align:left; vertical-align:middle">
+                    ${item.examen ? item.examen : ''}
+                   
+                </td>
+                <td style="text-align:left; vertical-align:middle">
+                    ${item.fecha ? item.fecha : ''}
+                    
+                </td>
+                <td style="text-align:left; vertical-align:middle">
+                    ${item.resultado ? item.resultado : ''}
+                    
+                </td>
+               
+            
+            </tr>`);
+        })
+
+    }).fail(function(){
+        vistacargando("")
+        $('#tbodyResultadoExamen').append(`<tr>
+        <td colspan="3" style="text-align:center">No hay datos disponibles</td>`);
+        alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+    });
+}
+
+
+$("#formObservacionResultados").submit(function(e){
+    e.preventDefault();
+    let observacion_resultados=$('#observacion_resultados').val()
+    let id_empleado=$('#id_empleado').val()
+    if(observacion_resultados=="" || observacion_resultados==null){
+        alertNotificar("Debe ingresar la observacion","error")
+        $('#observacion_resultados').focus()
+        return
+    }
+    
+    
+    vistacargando("m","Registrando...")
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    //comprobamos si es registro o edicion
+    let tipo="POST"
+    let url_form="guardar-observacion-resultados"
+    
+    var FrmData=$("#formObservacionResultados").serialize();
+    FrmData += "&id_empleado=" + id_empleado;
+     
+    $.ajax({
+            
+        type: tipo,
+        url: url_form,
+        method: tipo,             
+		data: FrmData,      
+		
+        processData:false, 
+
+        success: function(data){
+            vistacargando("");                
+            if(data.error==true){
+                alertNotificar(data.mensaje,'error');
+                return;                      
+            }
+            alertNotificar(data.mensaje,'success');
+           
+                            
+        }, error:function (data) {
+            console.log(data)
+
+            vistacargando("");
+            alertNotificar('Ocurrió un error','error');
+        }
+    });
+})
+
+
+function abrirModalDiagnostico(){
+    $('#modalDiagnostico').modal('show')
+}
+
+$('#modalDiagnostico').on('shown.bs.modal', function () {
+
+    // Evita doble inicialización
+    if ($.fn.select2 && $('#cmb_diagnostico').hasClass('select2-hidden-accessible')) {
+        $('#cmb_diagnostico').select2('destroy');
+    }
+
+    $('#cmb_diagnostico').select2({
+        dropdownParent: $('#modalDiagnostico'), // 🔑 CLAVE
+        width: '100%',
+        placeholder: 'Buscar diagnóstico CIE-10',
+        allowClear: true,
+        minimumInputLength: 2,
+        ajax: {
+            url: 'buscaCie10',
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return {
+                    q: params.term
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data.map(item => ({
+                        id: item.id,
+                        text: item.nombre
+                    }))
+                };
+            },
+            cache: true
+        }
+    });
+});
+
+function limpiarModalDiagnostico(){
+    $('.modal_diag').val('')
+}
+function guardarDiagnostico(){
+    
+    let id_empleado=$('#id_empleado').val()
+    let cmb_diagnostico=$('#cmb_diagnostico').val()
+    let prevent_defin=$('#prevent_defin').val()
+  
+    if(cmb_diagnostico=="" || cmb_diagnostico==null){
+        alertNotificar("Debe ingresar y seleccionar el diagnostico","error")
+        return
+    } 
+
+    if(prevent_defin=="" || prevent_defin==null){
+        alertNotificar("Debe seleccionar un tipo","error")
+        return
+    } 
+
+    vistacargando("m","Espere por favor")
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    //comprobamos si es registro o edicion
+    let tipo="POST"
+    let url_form="guardar-diagnostico"
+    
+    var FrmData=$("#formDiagnostico").serialize();
+    FrmData += "&id_empleado=" + id_empleado;
+
+    $.ajax({
+            
+        type: tipo,
+        url: url_form,
+        method: tipo,             
+		data: FrmData,     
+        processData:false, 
+
+        success: function(data){
+            vistacargando("");                
+            if(data.error==true){
+                alertNotificar(data.mensaje,'error');
+                return;                      
+            }
+            alertNotificar(data.mensaje,'success');
+            llenarTablaDiagnostico(id_empleado)  
+            limpiarModalDiagnostico()          
+        }, error:function (data) {
+            console.log(data)
+
+            vistacargando("");
+            alertNotificar('Ocurrió un error','error');
+        }
+    });
+}
+
+function llenarTablaDiagnostico(id_empleado){
+    $("#tbodyDiagnostico").html('');
+    $('#tbodyDiagnostico').empty(); 
+    vistacargando("m","Espere por favor")
+    $.get("llenar-tabla-diagnostico/"+id_empleado, function(data){
+        vistacargando("")
+        if(data.error==true){
+            alertNotificar(data.mensaje,"error");
+            // return;   
+        }
+
+        if(data.error==true){
+            $('#tbodyDiagnostico').append(`<tr>
+            <td colspan="4" style="text-align:center">No hay datos disponibles</td>`);
+            alertNotificar(data.mensaje,'error');
+            return;                      
+        }
+        console.log(data)
+        if(data.resultado.length==0){
+            $('#tbodyDiagnostico').append(`<tr>
+            <td colspan="4" style="text-align:center">No hay datos disponibles</td>`);
+            return; 
+        }
+  
+        $.each(data.resultado,function(i, item){
+            
+            let def=""
+            let prev=""
+            if(item.prev_def=="Preventiva"){
+                prev="X"
+                def=""
+                
+            }else{
+                def="X"
+                prev=""
+            }
+
+            $('#tbodyDiagnostico').append(`<tr>
+                
+                <td style="text-align:left; vertical-align:middle">
+                    ${item.cie10 ? item.cie10.codigo : ''}
+                   
+                </td>
+                <td style="text-align:left; vertical-align:middle">
+                    ${item.cie10 ? item.cie10.descripcion : ''}
+                    
+                </td>
+                <td style="text-align:left; vertical-align:middle">
+                    ${prev}
+                    
+                </td>
+                <td style="text-align:left; vertical-align:middle">
+                    ${def}
+                    
+                </td>
+               
+            
+            </tr>`);
+        })
+
+    }).fail(function(){
+        vistacargando("")
+        $('#tbodyDiagnostico').append(`<tr>
+        <td colspan="4" style="text-align:center">No hay datos disponibles</td>`);
+        alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+    });
+}
+
+function guardarAptitudesMedi(){
+    
+    let id_empleado=$('#id_empleado').val()
+    let observ_apt_med=$('#observ_apt_med').val()
+   
+    if(observ_apt_med=="" || observ_apt_med==null){
+        alertNotificar("Debe ingresar las observacion de aptitudes medicas","error")
+        return
+    } 
+
+   
+    vistacargando("m","Espere por favor")
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    //comprobamos si es registro o edicion
+    let tipo="POST"
+    let url_form="guardar-aptitudes-medicas"
+    
+    var FrmData=$("#formAptitudesMedicas").serialize();
+    FrmData += "&id_empleado=" + id_empleado;
+
+    $.ajax({
+            
+        type: tipo,
+        url: url_form,
+        method: tipo,             
+		data: FrmData,     
+        processData:false, 
+
+        success: function(data){
+            vistacargando("");                
+            if(data.error==true){
+                alertNotificar(data.mensaje,'error');
+                return;                      
+            }
+            alertNotificar(data.mensaje,'success');
+                  
+        }, error:function (data) {
+            console.log(data)
+
+            vistacargando("");
+            alertNotificar('Ocurrió un error','error');
+        }
+    });
+}
+
+function guardarRecomendaciones(){
+    
+    let id_empleado=$('#id_empleado').val()
+    let recomendacion_trata=$('#recomendacion_trata').val()
+   
+    if(recomendacion_trata=="" || recomendacion_trata==null){
+        alertNotificar("Debe ingresar la recomendacion tratamiento","error")
+        return
+    } 
+
+   
+    vistacargando("m","Espere por favor")
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    //comprobamos si es registro o edicion
+    let tipo="POST"
+    let url_form="guardar-recomendacion-tratamiento"
+    
+    var FrmData=$("#formRecomendacionTrat").serialize();
+    FrmData += "&id_empleado=" + id_empleado;
+
+    $.ajax({
+            
+        type: tipo,
+        url: url_form,
+        method: tipo,             
+		data: FrmData,     
+        processData:false, 
+
+        success: function(data){
+            vistacargando("");                
+            if(data.error==true){
+                alertNotificar(data.mensaje,'error');
+                return;                      
+            }
+            alertNotificar(data.mensaje,'success');
+                  
+        }, error:function (data) {
+            console.log(data)
+
+            vistacargando("");
+            alertNotificar('Ocurrió un error','error');
+        }
+    });
+}
+
+function guardarRetiro(){
+    
+    let id_empleado=$('#id_empleado').val()
+    let observ_retiro=$('#observ_retiro').val()
+   
+    if(observ_retiro=="" || observ_retiro==null){
+        alertNotificar("Debe ingresar la observacion retiro","error")
+        return
+    } 
+
+   
+    vistacargando("m","Espere por favor")
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    //comprobamos si es registro o edicion
+    let tipo="POST"
+    let url_form="guardar-retiro"
+    
+    var FrmData=$("#formRetiro").serialize();
+    FrmData += "&id_empleado=" + id_empleado;
+
+    $.ajax({
+            
+        type: tipo,
+        url: url_form,
+        method: tipo,             
+		data: FrmData,     
+        processData:false, 
+
+        success: function(data){
+            vistacargando("");                
+            if(data.error==true){
+                alertNotificar(data.mensaje,'error');
+                return;                      
+            }
+            alertNotificar(data.mensaje,'success');
+                  
+        }, error:function (data) {
+            console.log(data)
+
+            vistacargando("");
+            alertNotificar('Ocurrió un error','error');
+        }
     });
 }

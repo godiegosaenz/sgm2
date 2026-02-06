@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers\Consultorio;
 use App\Models\Consultorio\ActividadesExpo;
+use App\Models\Consultorio\ActividadesExtras;
 use App\Models\Consultorio\Antecedentes;
 use App\Models\Consultorio\AntecedentesEmpleo;
+use App\Models\Consultorio\AptitudMedica;
 use App\Models\Consultorio\ConstantesVitales;
+use App\Models\Consultorio\Diagnostico;
+use App\Models\Consultorio\DiagnosticoEmpleado;
 use App\Models\Consultorio\EmpleadoPaciente;
 use App\Http\Controllers\Controller;
 use App\Models\Consultorio\Enfermedad;
@@ -13,8 +17,12 @@ use App\Models\Consultorio\ExamenFisicoRegional;
 use App\Models\Consultorio\MedicacionHabitual;
 use App\Models\Consultorio\MedidasPreventivas;
 use App\Models\Consultorio\MotivoConsulta;
+use App\Models\Consultorio\ObservResultadosExamen;
 use App\Models\Consultorio\Puesto;
 use App\Models\Consultorio\Examenes;
+use App\Models\Consultorio\RecomendacionTratamiento;
+use App\Models\Consultorio\ResultadosExamen;
+use App\Models\Consultorio\Retiro;
 use Illuminate\Http\Request;
 use DB;
 use App\models\Cita;
@@ -26,7 +34,15 @@ class PacienteEmpleadoController extends Controller
     }
 
     public function guardaEmpleadoPaciente(Request $request){
+       
         try{
+
+            $embarazada = $request->has('embarazada') ? true : false;
+            $discapacidad = $request->has('discapacidad') ? true : false;
+            $ecatastrofica = $request->has('ecatastrofica') ? true : false;
+            $lactancia = $request->has('lactancia') ? true : false;
+            $mayor_edad = $request->has('mayor_edad') ? true : false;
+
             $buscaPaciente=EmpleadoPaciente::where('cedula',$request->cedula_empleado)
             ->first();
             if(!is_null($buscaPaciente)){
@@ -46,6 +62,13 @@ class PacienteEmpleadoController extends Controller
                 $buscaPaciente->sexo=$request->sexo;
                 $buscaPaciente->grupo_sanguinedad=$request->grupo_sanguineo;
                 $buscaPaciente->lateralidad=$request->lateridad;
+
+                $buscaPaciente->embarazada=$embarazada;
+                $buscaPaciente->discapacidad=$discapacidad;
+                $buscaPaciente->ecatastrofica=$ecatastrofica;
+                $buscaPaciente->lactancia=$lactancia;
+                $buscaPaciente->mayor_edad=$mayor_edad;
+
                 $buscaPaciente->estado='A';
                 $buscaPaciente->idusuario_actualiza=auth()->user()->persona->id;
                 $buscaPaciente->fecha_actualiza=date('Y-m-d H:i:s');
@@ -69,6 +92,13 @@ class PacienteEmpleadoController extends Controller
                 $nuevoPaciente->sexo=$request->sexo;
                 $nuevoPaciente->grupo_sanguinedad=$request->grupo_sanguineo;
                 $nuevoPaciente->lateralidad=$request->lateridad;
+
+                $nuevoPaciente->embarazada=$embarazada;
+                $nuevoPaciente->discapacidad=$discapacidad;
+                $nuevoPaciente->ecatastrofica=$ecatastrofica;
+                $nuevoPaciente->lactancia=$lactancia;
+                $nuevoPaciente->mayor_edad=$mayor_edad;
+
                 $nuevoPaciente->estado='A';
                 $nuevoPaciente->idusuario_registra=auth()->user()->persona->id;
                 $nuevoPaciente->fecha_registro=date('Y-m-d H:i:s');
@@ -82,7 +112,13 @@ class PacienteEmpleadoController extends Controller
 
     public function actualizaSeccionA(Request $request){
         try{
-           
+
+            $embarazada = $request->has('embarazada') ? true : false;
+            $discapacidad = $request->has('discapacidad') ? true : false;
+            $ecatastrofica = $request->has('ecatastrofica') ? true : false;
+            $lactancia = $request->has('lactancia') ? true : false;
+            $mayor_edad = $request->has('mayor_edad') ? true : false;
+
             $buscaPaciente=EmpleadoPaciente::where('id',$request->id_empleado)
             ->first();
             if(!is_null($buscaPaciente)){
@@ -96,6 +132,13 @@ class PacienteEmpleadoController extends Controller
                 $buscaPaciente->sexo=$request->sexo_empleado;
                 $buscaPaciente->grupo_sanguinedad=$request->grupo_sanguineo_empleado;
                 $buscaPaciente->lateralidad=$request->lateralidad_empleado;
+
+                $buscaPaciente->embarazada=$embarazada;
+                $buscaPaciente->discapacidad=$discapacidad;
+                $buscaPaciente->ecatastrofica=$ecatastrofica;
+                $buscaPaciente->lactancia=$lactancia;
+                $buscaPaciente->mayor_edad=$mayor_edad;
+
                 $buscaPaciente->estado='A';
                 $buscaPaciente->idusuario_actualiza=auth()->user()->persona->id;
                 $buscaPaciente->fecha_actualiza=date('Y-m-d H:i:s');
@@ -778,8 +821,8 @@ class PacienteEmpleadoController extends Controller
             $guardaAntecedente = new AntecedentesEmpleo();
             $guardaAntecedente->id_empleado=$request->id_empleado;
             $guardaAntecedente->centro_trabajo=$request->centro_trab_empl;
-            $guardaAntecedente->actividad_desempenia=$request->controles_med_empl;
-            $guardaAntecedente->trabajo=$request->prenda_proteccion_empl;
+            $guardaAntecedente->actividad_desempenia=$request->actividades_desempeniaba;
+            $guardaAntecedente->trabajo=$request->trabajo;
 
             $guardaAntecedente->tiempo_trabajo=$request->tiempo_trab_empl;
             $guardaAntecedente->incidente=$request->incidente_empl;
@@ -816,6 +859,156 @@ class PacienteEmpleadoController extends Controller
             return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
         }
     }
+
+    public function guardaActividadLabExtra(Request $request){
+        try{
+           
+            $existe=ActividadesExtras::where('id_empleado',$request->id_empleado)
+            ->where('actividad',$request->act_extra)
+            ->where('fecha',$request->fecha_act_extra)
+            ->first();
+            if(!is_null($existe)){
+                if($existe->estado=='A'){
+                    return ["mensaje"=>"Informacion ya se encuentra registrada ", "error"=>true];
+                }else{
+                    $existe->id_usuario_registra=auth()->user()->persona->id;
+                    $existe->fecha_registra=date('Y-m-d H:i:s');
+                    $existe->estado='A';
+                    $existe->save();
+                    return ["mensaje"=>"Informacion registrada exitosamente ", "error"=>true];
+                }
+                    
+            }
+            $guardaActExtra = new ActividadesExtras();
+            $guardaActExtra->id_empleado=$request->id_empleado;
+            $guardaActExtra->actividad=$request->act_extra;
+            $guardaActExtra->fecha=$request->fecha_act_extra;
+            $guardaActExtra->estado='A';
+            $guardaActExtra->id_usuario_registra=auth()->user()->persona->id;
+            $guardaActExtra->fecha_registra=date('Y-m-d H:i:s');
+            $guardaActExtra->save();
+         
+            return ["mensaje"=>"Informacion registrada exitosamentew ", "error"=>false];
+
+            
+        } catch (\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+        }
+    }
+
+    public function llenaTablaActividadExtra($idempleado){
+        try{
+            $data=ActividadesExtras::where('id_empleado',$idempleado)
+            ->where('estado','A')
+            ->get();
+
+            return ["resultado"=>$data, "error"=>false];
+
+        } catch (\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+        }
+    }
+
+    public function guardaResultadosExamen(Request $request){
+        try{
+           
+            $existe=ResultadosExamen::where('id_empleado',$request->id_empleado)
+            ->where('examen',$request->nombre_examen)
+            ->where('fecha',$request->fecha_examen)
+            ->where('resultado',$request->resultados_exam)
+            ->first();
+            if(!is_null($existe)){
+                if($existe->estado=='A'){
+                    return ["mensaje"=>"Informacion ya se encuentra registrada ", "error"=>true];
+                }else{
+                    $existe->id_usuario_registra=auth()->user()->persona->id;
+                    $existe->fecha_registra=date('Y-m-d H:i:s');
+                    $existe->estado='A';
+                    $existe->save();
+                    return ["mensaje"=>"Informacion registrada exitosamente ", "error"=>true];
+                }
+                    
+            }
+            $guardaActExtra = new ResultadosExamen();
+            $guardaActExtra->id_empleado=$request->id_empleado;
+            $guardaActExtra->examen=$request->nombre_examen;
+            $guardaActExtra->fecha=$request->fecha_examen;
+            $guardaActExtra->resultado=$request->resultados_exam;
+            $guardaActExtra->estado='A';
+            $guardaActExtra->id_usuario_registra=auth()->user()->persona->id;
+            $guardaActExtra->fecha_registra=date('Y-m-d H:i:s');
+            $guardaActExtra->save();
+         
+            return ["mensaje"=>"Informacion registrada exitosamentew ", "error"=>false];
+
+            
+        } catch (\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+        }
+    }
+
+    public function llenaTablaResultadoExamen($idempleado){
+        try{
+            $data=ResultadosExamen::where('id_empleado',$idempleado)
+            ->where('estado','A')
+            ->get();
+
+            return ["resultado"=>$data, "error"=>false];
+
+        } catch (\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+        }
+    }
+
+    public function guardaObservacionExamen(Request $request){
+        try{
+           
+            $existe=ObservResultadosExamen::where('id_empleado',$request->id_empleado)
+            ->where('observacion',$request->observacion_resultados)
+            ->where('fecha_atencion',date('Y-m-d'))
+            ->first();
+            if(!is_null($existe)){
+                if($existe->estado=='A'){
+                    return ["mensaje"=>"Informacion ya se encuentra registrada ", "error"=>true];
+                }else{
+                    $existe->estado='A';
+                    $existe->save();
+                    return ["mensaje"=>"Informacion registrada exitosamenteq ", "error"=>true];
+                }
+                    
+            }
+            $guardaObservacion = new ObservResultadosExamen();
+            $guardaObservacion->id_empleado=$request->id_empleado;
+            $guardaObservacion->observacion=$request->observacion_resultados;
+            $guardaObservacion->fecha_atencion=date('Y-m-d');
+            $guardaObservacion->estado='A';
+            $guardaObservacion->save();
+         
+            return ["mensaje"=>"Informacion registrada exitosamentew ", "error"=>false];
+
+            
+        } catch (\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+        }
+    }
+
+    public function buscarCie10(Request $request){
+        $data = [];
+        if($request->has('q')){
+            $search = $request->q;
+            $data=DB::connection('pgsql')->table('sgm_consultorio.cie10')
+            ->where(function($query)use($search){
+                $query->where('codigo', 'ilike', '%'.$search.'%')
+                ->orwhere('descripcion', 'ilike', '%'.$search.'%');
+            })
+            ->where('estado','A')
+            ->select('id',DB::raw("CONCAT(codigo,' - ',descripcion) AS nombre"))
+            ->take(10)->get();
+
+        }
+        return response()->json($data);
+    }
+
 
     public function eliminaFactoresRiesgo(Request $request){
         try{
@@ -891,6 +1084,11 @@ class PacienteEmpleadoController extends Controller
                 'sexo', 
                 'grupo_sanguinedad', 
                 'lateralidad',
+                'embarazada',
+                'discapacidad',
+                'ecatastrofica',
+                'lactancia',
+                'mayor_edad',
                 DB::raw('EXTRACT(YEAR FROM AGE(fecha_nacimiento)) AS edad')
             )
             ->where('estado', 'A')
@@ -941,6 +1139,194 @@ class PacienteEmpleadoController extends Controller
             
           
             return ["resultado"=>$data, "error"=>false];
+        } catch (\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+        }
+    }
+
+    public function guardaDiagnostico(Request $request){
+        try{
+           
+            $existe=DiagnosticoEmpleado::where('id_empleado',$request->id_empleado)
+            ->where('id_cie10',$request->cmb_diagnostico)
+            ->where('prev_def',$request->prevent_defin)
+            ->where('fecha_atencion',date('Y-m-d'))
+            ->first();
+            if(!is_null($existe)){
+                if($existe->estado=='A'){
+                    return ["mensaje"=>"Informacion ya se encuentra registrada ", "error"=>true];
+                }else{
+                    $existe->estado='A';
+                    $existe->id_usuario_registra=auth()->user()->persona->id;
+                    $existe->fecha_registra=date('Y-m-d H:i:s');
+                    $existe->save();
+                    return ["mensaje"=>"Informacion registrada exitosamenteq ", "error"=>true];
+                }
+                    
+            }
+            $guardaDiagnostico = new DiagnosticoEmpleado();
+            $guardaDiagnostico->id_empleado=$request->id_empleado;
+            $guardaDiagnostico->id_cie10=$request->cmb_diagnostico;
+            $guardaDiagnostico->fecha_atencion=date('Y-m-d');
+            $guardaDiagnostico->prev_def=$request->prevent_defin;
+            $guardaDiagnostico->estado='A';
+            $guardaDiagnostico->id_usuario_registra=auth()->user()->persona->id;
+            $guardaDiagnostico->fecha_registra=date('Y-m-d H:i:s');
+            $guardaDiagnostico->save();
+         
+            return ["mensaje"=>"Informacion registrada exitosamentew ", "error"=>false];
+
+            
+        } catch (\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+        }
+    }
+
+     public function llenaTablaDiagnostico($idempleado){
+        try{
+            $data=DiagnosticoEmpleado::with('cie10')
+            ->where('id_empleado',$idempleado)
+            ->where('estado','A')
+            ->get();
+
+            return ["resultado"=>$data, "error"=>false];
+
+        } catch (\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+        }
+    }
+
+    public function guardaAptitudesMedicas(Request $request){
+        try{
+            
+            $apto = $request->has('apto') ? true : false;
+            $apto_observ = $request->has('apto_observ') ? true : false;
+            $apto_con_limitacion = $request->has('apto_con_limitacion') ? true : false;
+            $no_apto = $request->has('no_apto') ? true : false;
+                       
+            $existe=AptitudMedica::where('id_empleado',$request->id_empleado)
+            ->where('apto',$apto)
+            ->where('apto_observ',$apto_observ)
+            ->where('apto_limitacion',$apto_con_limitacion)
+            ->where('no_apto',$no_apto)
+            ->where('observacion',$request->observ_apt_med)
+            ->where('fecha_atencion',date('Y-m-d'))
+            ->first();
+            if(!is_null($existe)){
+                if($existe->estado=='A'){
+                    return ["mensaje"=>"Informacion ya se encuentra registrada ", "error"=>true];
+                }else{
+                    $existe->estado='A';
+                    $existe->id_usuario_registra=auth()->user()->persona->id;
+                    $existe->fecha_registra=date('Y-m-d H:i:s');
+                    $existe->save();
+                    return ["mensaje"=>"Informacion registrada exitosamenteq ", "error"=>true];
+                }
+                    
+            }
+            $guardaAptitudMed = new AptitudMedica();
+            $guardaAptitudMed->id_empleado=$request->id_empleado;
+            $guardaAptitudMed->apto=$apto;
+            $guardaAptitudMed->fecha_atencion=date('Y-m-d');
+            $guardaAptitudMed->apto_observ=$apto_observ;
+            $guardaAptitudMed->apto_limitacion=$apto_con_limitacion;
+            $guardaAptitudMed->observacion=$request->observ_apt_med;
+            $guardaAptitudMed->no_apto=$no_apto;
+            $guardaAptitudMed->estado='A';
+            $guardaAptitudMed->id_usuario_registra=auth()->user()->persona->id;
+            $guardaAptitudMed->fecha_registra=date('Y-m-d H:i:s');
+            $guardaAptitudMed->save();
+         
+            return ["mensaje"=>"Informacion registrada exitosamentew ", "error"=>false];
+
+            
+        } catch (\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+        }
+    }
+
+    public function guardaRecomendacionTratamiento(Request $request){
+        try{
+                       
+            $existe=RecomendacionTratamiento::where('id_empleado',$request->id_empleado)
+            ->where('recomendacion_tratamiento',$request->recomendacion_trata)
+            ->where('fecha_atencion',date('Y-m-d'))
+            ->first();
+            if(!is_null($existe)){
+                if($existe->estado=='A'){
+                    return ["mensaje"=>"Informacion ya se encuentra registrada ", "error"=>true];
+                }else{
+                    $existe->estado='A';
+                    $existe->id_usuario_registra=auth()->user()->persona->id;
+                    $existe->fecha_registra=date('Y-m-d H:i:s');
+                    $existe->save();
+                    return ["mensaje"=>"Informacion registrada exitosamenteq ", "error"=>true];
+                }
+                    
+            }
+
+            $guardaRecomendacionTrata = new RecomendacionTratamiento();
+            $guardaRecomendacionTrata->id_empleado=$request->id_empleado;
+            $guardaRecomendacionTrata->recomendacion_tratamiento=$request->recomendacion_trata;
+            $guardaRecomendacionTrata->fecha_atencion=date('Y-m-d');
+            $guardaRecomendacionTrata->estado='A';
+            $guardaRecomendacionTrata->id_usuario_registra=auth()->user()->persona->id;
+            $guardaRecomendacionTrata->fecha_registra=date('Y-m-d H:i:s');
+            $guardaRecomendacionTrata->save();
+         
+            return ["mensaje"=>"Informacion registrada exitosamentew ", "error"=>false];
+
+
+        } catch (\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+        }
+    }
+
+    public function guardaRetiro(Request $request){
+        try{
+                       
+            $si_realiza_eva = $request->has('si_realiza_eva') ? true : false;
+            $no_realiza_eva = $request->has('no_realiza_eva') ? true : false;
+            $si_condicion_salud = $request->has('si_condicion_salud') ? true : false;
+            $no_condicion_salud = $request->has('no_condicion_salud') ? true : false;
+
+            $existe=Retiro::where('id_empleado',$request->id_empleado)
+            ->where('se_realiza_evaluacion',$si_realiza_eva)
+            ->where('no_se_realiza_evaluacion',$no_realiza_eva)
+            ->where('si_condicion_relacionada_trabajo',$si_condicion_salud)
+            ->where('no_condicion_relacionada_trabajo',$no_condicion_salud)
+            ->where('observacion_retiro',$request->observ_retiro)
+            ->where('fecha_atencion',date('Y-m-d'))
+            ->first();
+            if(!is_null($existe)){
+                if($existe->estado=='A'){
+                    return ["mensaje"=>"Informacion ya se encuentra registrada ", "error"=>true];
+                }else{
+                    $existe->estado='A';
+                    $existe->id_usuario_registra=auth()->user()->persona->id;
+                    $existe->fecha_registra=date('Y-m-d H:i:s');
+                    $existe->save();
+                    return ["mensaje"=>"Informacion registrada exitosamenteq ", "error"=>true];
+                }
+                    
+            }
+
+            $guardaRetiro = new Retiro();
+            $guardaRetiro->id_empleado=$request->id_empleado;
+            $guardaRetiro->se_realiza_evaluacion=$si_realiza_eva;
+            $guardaRetiro->no_se_realiza_evaluacion=$no_realiza_eva;
+            $guardaRetiro->si_condicion_relacionada_trabajo=$si_condicion_salud;
+            $guardaRetiro->no_condicion_relacionada_trabajo=$no_condicion_salud;
+            $guardaRetiro->observacion_retiro=$request->observ_retiro;
+            $guardaRetiro->fecha_atencion=date('Y-m-d');
+            $guardaRetiro->estado='A';
+            $guardaRetiro->id_usuario_registra=auth()->user()->persona->id;
+            $guardaRetiro->fecha_registra=date('Y-m-d H:i:s');
+            $guardaRetiro->save();
+         
+            return ["mensaje"=>"Informacion registrada exitosamentew ", "error"=>false];
+
+
         } catch (\Exception $e) {
             return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
         }

@@ -11,7 +11,7 @@ class PrediosContribuyenteUrbController extends Controller
 {
     public function index()
     {
-         if(!Auth()->user()->hasPermissionTo('Predios Urbanos'))
+        if(!Auth()->user()->hasPermissionTo('Predios Urbanos'))
         {
             abort(403, 'No tienes acceso a esta seccion.');
         }
@@ -171,16 +171,16 @@ class PrediosContribuyenteUrbController extends Controller
 
     public function ruralPoligono()
     {
+        /*if(!Auth()->user()->hasPermissionTo('Predios Rural Poligono'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }*/
         return view('predios.rural_poligono');
     }
 
     public function llenaTablaPoligono($poligono){
         try{
-            // $claveCatastral='1322506501002082000';
-            // $poligono = substr($claveCatastral, 10, 3);
-            // dd($poligono);
-
-            // $poligono='002';
+           
             $obtener = DB::connection('sqlsrv')->table('PREDIO')
             ->select('Pre_CodigoCatastral','Pre_NombrePredio as nombre')
             ->whereRaw('SUBSTRING(Pre_CodigoCatastral, 11, 3) = ?', [$poligono])

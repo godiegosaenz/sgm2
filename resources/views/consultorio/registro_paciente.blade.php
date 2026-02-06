@@ -94,6 +94,15 @@
         white-space: nowrap;
         }
 
+        .modal {
+            z-index: 2000 !important;
+        }
+
+        .modal-backdrop {
+            z-index: 1990 !important;
+        }
+
+
     </style>
 
 
@@ -109,6 +118,7 @@
                     <i class="bi bi-person-fill"></i>
                 </button>
 
+             
             </div>
         </div>
 
@@ -156,7 +166,6 @@
 
                     </div>
                 </div>
-
 
             </div>
 
@@ -351,6 +360,63 @@
                                     </div>
                                 </div>
 
+                                <div class="col-md-12" style="margin-top: 10px;">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-3 text-end">
+                                            <label for="marca_v" class="form-label mb-0">Atencion Prioritaria</label>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input check_atencion_prio" type="checkbox" id="embarazada"
+                                                    name="embarazada" value="embarazada">
+                                                <label class="form-check-label" for="-">Embarazada</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input check_atencion_prio" type="checkbox" id="discapacidad"
+                                                    name="discapacidad" value="discapacidad">
+                                                <label class="form-check-label" for="partos">Persona con discapacidad</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-3 text-end">
+                                           
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input check_atencion_prio" type="checkbox" id="ecatastrofica"
+                                                    name="ecatastrofica" value="ecatastrofica">
+                                                <label class="form-check-label" for="partos">E. Catastrofica</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input check_atencion_prio" type="checkbox" id="lactancia"
+                                                    name="lactancia" value="lactancia">
+                                                <label class="form-check-label" for="partos">Lactancia</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-3 text-end">
+                                           
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input check_atencion_prio" type="checkbox" id="mayor_edad"
+                                                    name="mayor_edad" value="mayor_edad">
+                                                <label class="form-check-label" for="partos">Adulto Mayor</label>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+
                             </div>
                         </form>
                     </div>
@@ -533,6 +599,57 @@
                                             </div>
 
                                         </div>
+
+                                         <div class="row mb-3 align-items-center">
+                                            <label class="col-md-3 col-form-label " style="text-align: right;">
+                                               Atencion Prioritaria
+                                            </label>
+                                            <div class="col-md-2">
+                                                <div class="form-check">
+                                                    <input class="form-check-input check_atencion_prio" type="checkbox" id="embarazada_e"
+                                                        name="embarazada" value="embarazada">
+                                                    <label class="form-check-label" for="-">Embarazada</label>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input check_atencion_prio" type="checkbox" id="discapacidad_e"
+                                                        name="discapacidad" value="discapacidad">
+                                                    <label class="form-check-label" for="partos">Persona con discapacidad</label>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-2">
+                                                <div class="form-check">
+                                                     <input class="form-check-input check_atencion_prio" type="checkbox" id="ecatastrofica_e"
+                                                    name="ecatastrofica" value="ecatastrofica">
+                                                    <label class="form-check-label" for="partos">E. Catastrofica</label>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-2">
+                                                <div class="form-check">
+                                                    <input class="form-check-input check_atencion_prio" type="checkbox" id="lactancia_e"
+                                                    name="lactancia" value="lactancia">
+                                                    <label class="form-check-label" for="partos">Lactancia</label>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-3 text-end">
+                                           
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input check_atencion_prio" type="checkbox" id="mayor_edad"
+                                                        name="mayor_edad" value="mayor_edad">
+                                                    <label class="form-check-label" for="partos">Adulto Mayor</label>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
                                         <center>
                                             <button type="submit" class="btn btn-sm btn-outline-success d-flex align-items-center"
                                                 style="margin-right:5px">
@@ -3390,16 +3507,29 @@
                                 data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
                                     <div class="row mb-3 align-items-center">
-
+                                                   
                                         <div class="col-md-12">
-
-                                            <table class="tabla-examen-fisico">
+                                            <center>                                                
+                                                <button type="button" class="btn btn-sm btn-success  align-items-center" onclick="abrirModalActividadesExtras()">
+                                                    <i class="fa fa-plus" aria-hidden="true"></i>
+                                                </button>
+                                            </center>
+                                            <table class="tabla-examen-fisico" style="margin-top:10px">
 
                                                 <tr>
-                                                    <td>TIPO DE ACTIVIDAD</td>
+                                                    <td>TIPO DE ACTIVIDAD </td>
                                                     <td>( FECHA)    aaaa/mm/dd</td>
 
                                                 </tr>
+
+                                                <tbody id="tbodyActividadExtra">
+                                                    <tr>
+                                                        <td colspan="2"><center>No hay Datos Disponibles</center></td>
+                                                        
+                                                    </tr>
+
+                                                </tbody>
+
                                             </table>
                                         </div>
                                     </div>
@@ -3421,14 +3551,48 @@
 
                                         <div class="col-md-12">
 
-                                            <table class="tabla-examen-fisico">
+                                            <center>                                                
+                                                <button type="button" class="btn btn-sm btn-success  align-items-center" onclick="abrirModalResultadosExam()">
+                                                    <i class="fa fa-plus" aria-hidden="true"></i>
+                                                </button>
+                                            </center>
+
+                                            <table class="tabla-examen-fisico" style="margin-top:10px">
 
                                                 <tr>
                                                     <td>NOMBRE DEL EXAMEN </td>
                                                     <td>FECHA</td>
                                                     <td>RESULTADOS</td>
                                                 </tr>
+
+                                                <tbody id="tbodyResultadoExamen">
+                                                    <tr>
+                                                        <td colspan="2"><center>No hay Datos Disponibles</center></td>
+                                                        
+                                                    </tr>
+
+                                                </tbody>
+
                                             </table>
+
+                                            <form id="formObservacionResultados" style="margin-top: 12px;">
+                                                <div class="row mb-3 align-items-center">
+                                                    <label class="col-md-2 col-form-label " style="text-align: right;">
+                                                        Observacion<span class="text-danger"> *</span>
+                                                    </label>
+                                                    <div class="col-md-9">
+                                                        <textarea class="form-control " name="observacion_resultados"
+                                                            id="observacion_resultados"></textarea>
+                                                    </div>
+                                                </div>
+                                                <center>
+                                                    <button type="submit" class="btn btn-sm btn-outline-success d-flex align-items-center"
+                                                        style="margin-right:5px">
+                                                    <i class="fa fa-floppy-o"> </i> &nbsp;&nbsp;Guardar
+                                                    </button>
+                                                </center>
+
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
@@ -3449,7 +3613,13 @@
 
                                         <div class="col-md-12">
 
-                                            <table class="tabla-examen-fisico">
+                                            <center>                                                
+                                                <button type="button" class="btn btn-sm btn-success  align-items-center" onclick="abrirModalDiagnostico()">
+                                                    <i class="fa fa-plus" aria-hidden="true"></i>
+                                                </button>
+                                            </center>
+
+                                            <table class="tabla-examen-fisico" style="margin-top:10px">
 
                                                 <tr>
                                                     <td>CIE-10 </td>
@@ -3457,6 +3627,15 @@
                                                     <td>PRE</td>
                                                     <td>DEF</td>
                                                 </tr>
+
+                                                <tbody id="tbodyDiagnostico">
+                                                    <tr>
+                                                        <td colspan="4"><center>No hay Datos Disponibles</center></td>
+                                                        
+                                                    </tr>
+
+                                                </tbody>
+
                                             </table>
                                         </div>
                                     </div>
@@ -3477,26 +3656,57 @@
                                     <div class="row mb-3 align-items-center">
 
                                         <div class="col-md-12">
+                                            <form id="formAptitudesMedicas" style="margin-top: 1px;">
+                                                <table class="tabla-examen-fisico" style="margin-bottom: 8px;">
 
-                                            <table class="tabla-examen-fisico">
+                                                    <tr>
+                                                        <td>APTO </td>
+                                                        <td><input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="apto"
+                                                                value="apto"                                                            
+                                                            >
+                                                        </td>
+                                                        <td>APTO EN OBSERVACIÓN</td>
+                                                        <td><input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="apto_observ"
+                                                                value="apto_observ"                                                            
+                                                            >
+                                                        </td>
+                                                        <td>APTO CON LIMITACIONES </td>
+                                                        <td><input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="apto_con_limitacion"
+                                                                value="apto_con_limitacion"                                                            
+                                                            ></td>
+                                                        <td>NO APTO</td>
+                                                        <td><input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="no_apto"
+                                                                value="no_apto"                                                            
+                                                            ></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="8">
+                                                            Observaciones<textarea name="observ_apt_med" id="observ_apt_med" class="form-control" rows="3"></textarea>
+                                                        </td>
 
-                                                <tr>
-                                                    <td>APTO </td>
-                                                    <td></td>
-                                                    <td>APTO EN OBSERVACIÓN</td>
-                                                    <td></td>
-                                                    <td>APTO CON LIMITACIONES </td>
-                                                    <td></td>
-                                                    <td>NO APTO</td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="8">
-                                                        Observaciones<input type="text" name="observ-apt-med" class="form-control">
-                                                    </td>
+                                                    </tr>
+                                                </table>
+                                                <center>
+                                                    <button type="button" onclick="guardarAptitudesMedi()" class="btn btn-sm btn-outline-success d-flex align-items-center"
+                                                        style="margin-right:5px">
+                                                    <i class="fa fa-floppy-o"> </i> &nbsp;&nbsp;Guardar
+                                                    </button>
+                                                </center>
 
-                                                </tr>
-                                            </table>
+                                            </form>
+
                                         </div>
                                     </div>
                                 </div>
@@ -3516,16 +3726,22 @@
                                     <div class="row mb-3 align-items-center">
 
                                         <div class="col-md-12">
+                                            <form id="formRecomendacionTrat" style="margin-top: 1px;">
+                                                <table class="tabla-examen-fisico" style="margin-bottom: 6px;">
 
-                                            <table class="tabla-examen-fisico">
+                                                    <tr>
+                                                        <td colspan="8">
+                                                            Descripción<textarea name="recomendacion_trata" id="recomendacion_trata" class="form-control" rows="5"></textarea>
+                                                        </td>
 
-                                                <tr>
-                                                    <td colspan="8">
-                                                        Descripción<textarea name="observ-apt-med" class="form-control" rows="5"></textarea>
-                                                    </td>
-
-                                                </tr>
-                                            </table>
+                                                    </tr>
+                                                </table>
+                                                <center>
+                                                    <button type="button" onclick="guardarRecomendaciones()" class="btn btn-sm btn-success">  
+                                                        Guardar
+                                                    </button>
+                                                </center>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
@@ -3545,55 +3761,84 @@
                                     <div class="row mb-3 align-items-center">
 
                                         <div class="col-md-12">
+                                            <form id="formRetiro" style="margin-top: 1px;">
+                                                <table class="tabla-examen-fisico">
 
-                                            <table class="tabla-examen-fisico">
+                                                    <tr>
+                                                        <td>
+                                                        SE REALIZA LA EVALUACIÓN
+                                                        </td>
+                                                        <td>
+                                                        SI
+                                                        </td>
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="si_realiza_eva"
+                                                                value="si_realiza_eva"                                                           
+                                                            >    
 
-                                                <tr>
-                                                    <td>
-                                                       SE REALIZA LA EVALUACIÓN
-                                                    </td>
-                                                    <td>
-                                                       SI
-                                                    </td>
-                                                    <td>
-
-                                                    </td>
-                                                     <td>
-                                                       NO
-                                                    </td>
-                                                    <td>
-
-                                                    </td>
-
-
-                                                </tr>
-
-                                                <tr>
-                                                    <td>
-                                                       LA CONDICIÓN DE SALUD ESTA RELACIONADA CON EL TRABAJO
-                                                    </td>
-                                                    <td>
-                                                       SI
-                                                    </td>
-                                                    <td>
-
-                                                    </td>
-                                                     <td>
-                                                       NO
-                                                    </td>
-                                                    <td>
-
-                                                    </td>
+                                                        </td>
+                                                        <td>
+                                                        NO
+                                                        </td>
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="no_realiza_eva"
+                                                                value="no_realiza_eva"                                                           
+                                                            >  
+                                                        </td>
 
 
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="5">
-                                                        Observación<textarea name="observ-apt-med" class="form-control" rows="5"></textarea>
-                                                    </td>
+                                                    </tr>
 
-                                                </tr>
-                                            </table>
+                                                    <tr>
+                                                        <td>
+                                                        LA CONDICIÓN DE SALUD ESTA RELACIONADA CON EL TRABAJO
+                                                        </td>
+                                                        <td>
+                                                        SI
+                                                        </td>
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="si_condicion_salud"
+                                                                value="si_condicion_salud"                                                           
+                                                            >
+
+                                                        </td>
+                                                        <td>
+                                                        NO
+                                                        </td>
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                name="no_condicion_salud"
+                                                                value="no_condicion_salud"                                                           
+                                                            >
+
+                                                        </td>
+
+
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="5">
+                                                            Observación<textarea name="observ_retiro" id="observ_retiro" class="form-control" rows="5"></textarea>
+                                                        </td>
+
+                                                    </tr>
+                                                </table>
+                                                <center>
+                                                    <button type="button" onclick="guardarRetiro()" class="btn btn-sm btn-success">  
+                                                        Guardar
+                                                    </button>
+                                                </center>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
@@ -3604,12 +3849,158 @@
                 </div>
 
             </div>
+            
+            <div class="col-md-12">
+                <center>
+                    <button type="button" class="btn btn-sm btn-primary" onclick="finalizarAtencion()">
+                        Finalizar Atencion
+                    </button>
+
+                    <button type="button" class="btn btn-sm btn-danger" onclick="cancelaAtencion()">
+                        Cancelar
+                    </button>
+
+                </center>
+            </div>
+
             <hr>
         </div>
     </div>
+
+    <div class="modal fade" id="modalActividadExtra" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Actividad Extra Laboral</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <form id="formActividadExtra">
+
+                        <div class="mb-3">
+                            <label class="form-label">Tipo de actividad</label>
+                            <input type="text" class="form-control modal_ext" name="act_extra" id="act_extra">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Fecha</label>
+                            <input type="date" class="form-control modal_ext" name="fecha_act_extra" id="fecha_act_extra">
+                        </div>
+
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="guardarActividadExtras()">
+                        Guardar
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalResultadoExamen" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">RESULTADOS DE EXÁMENES GENERALES Y ESPECÍFICOS DE ACUERDO AL RIESGO Y PUESTO DE TRABAJO (IMAGEN, LABORATORIO Y OTROS)</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <form id="formResultadoExamen">
+
+                        <div class="mb-3">
+                            <label class="form-label">Nombre del Examen</label>
+                            <input type="text" class="form-control modal_exam" name="nombre_examen" id="nombre_examen">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Fecha</label>
+                            <input type="date" class="form-control modal_exam" name="fecha_examen" id="fecha_examen">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Resultados</label>
+                            <textarea class="form-control modal_exam" name="resultados_exam" id="resultados_exam" rows="2"></textarea>
+                        </div>
+
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="guardarResultadoExamen()">
+                        Guardar
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalDiagnostico" tabindex="-1" aria-hidden="true"  data-bs-focus="false">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">DIAGNÓSTICO CIE-10</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <form id="formDiagnostico">
+
+                        <div class="mb-3">
+                            <label class="form-label">Diagnostico</label>
+                           
+                            <select id="cmb_diagnostico" name="cmb_diagnostico"
+                                class="form-control modal_diag" style="width: 100%;"
+                                data-bs-theme="dark" >
+                                <option value=""></option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Prev/Def</label>
+                            <select class="form-select modal_diag" name="prevent_defin" id="prevent_defin">
+                                <option value="">Seleccione una opción</option>
+                                <option value="Preventiva">Preventiva</option>
+                                <option value="Definitiva">Definitiva</option>
+                               
+                            </select>
+                        </div>
+
+                        
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="guardarDiagnostico()">
+                        Guardar
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     @include('consultorio.modal_puesto_trabajo')
     @include('consultorio.modal_medida_preventiva')
     @include('consultorio.modal_actividad')
+
 @endsection
     @push('scripts')
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>

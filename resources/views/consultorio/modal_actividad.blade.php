@@ -16,7 +16,7 @@
                                     <label for="marca_v" class="form-label mb-0">Centro de Trabajo</label>
                                 </div>
                                 <div class="col-md-7">
-                                    <input type="text"  autocomplete="of" class="form-control"
+                                    <input type="text"  autocomplete="of" class="form-control modal_act"
                                         id="centro_trab_empl" name="centro_trab_empl">
                             </div>
                         </div>
@@ -28,8 +28,8 @@
                                     <label for="marca_v" class="form-label mb-0">Actividades que desempeñaba </label>
                                 </div>
                                 <div class="col-md-7">
-                                    <textarea autocomplete="of" class="form-control"
-                                        id="actividades_desempeniaba" name="actividades_desempeniaba" rows="3"></textarea>
+                                    <textarea autocomplete="of" class="form-control modal_act"
+                                        id="actividades_desempeniaba" name="actividades_desempeniaba" rows="2"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -40,7 +40,7 @@
                                     <label for="marca_v" class="form-label mb-0">Trabajo</label>
                                 </div>
                                 <div class="col-md-7">
-                                    <select class="form-select" aria-label="Default select example" id="trabajo" name="trabajo">
+                                    <select class="form-select modal_act" aria-label="Default select example" id="trabajo" name="trabajo">
                                         <option value="Anterior" selected>Anterior</option>
                                         <option value="Actual">Actual</option>
                                     </select>
@@ -54,7 +54,7 @@
                                     <label for="marca_v" class="form-label mb-0">Tiempo de Trabajo </label>
                                 </div>
                                 <div class="col-md-7">
-                                    <input type="text"  autocomplete="of" class="form-control"
+                                    <input type="text"  autocomplete="of" class="form-control modal_act"
                                         id="tiempo_trab_empl" name="tiempo_trab_empl">
                             </div>
                         </div>
@@ -66,8 +66,8 @@
                                     <label for="marca_v" class="form-label mb-0">Incidente</label>
                                 </div>
                                 <div class="col-md-7">
-                                    <textarea autocomplete="of" class="form-control"
-                                        id="incidente_empl" name="incidente_empl" rows="3"></textarea>
+                                    <textarea autocomplete="of" class="form-control modal_act"
+                                        id="incidente_empl" name="incidente_empl" rows="2"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -78,8 +78,8 @@
                                     <label for="marca_v" class="form-label mb-0">Accidente</label>
                                 </div>
                                 <div class="col-md-7">
-                                    <textarea autocomplete="of" class="form-control"
-                                        id="accidente_empl" name="accidente_empl" rows="3"></textarea>
+                                    <textarea autocomplete="of" class="form-control modal_act"
+                                        id="accidente_empl" name="accidente_empl" rows="2"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -90,8 +90,8 @@
                                     <label for="marca_v" class="form-label mb-0">Enfermedad Profesional </label>
                                 </div>
                                 <div class="col-md-7">
-                                    <textarea autocomplete="of" class="form-control"
-                                        id="enfermedad_prof_empl" name="enfermedad_prof_empl" rows="3"></textarea>
+                                    <textarea autocomplete="of" class="form-control modal_act"
+                                        id="enfermedad_prof_empl" name="enfermedad_prof_empl" rows="2"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -102,7 +102,7 @@
                                     <label for="marca_v" class="form-label mb-0">Calificado por IESS</label>
                                 </div>
                                 <div class="col-md-7">
-                                    <select class="form-select" aria-label="Default select example" id="califica_iess" name="califica_iess">
+                                    <select class="form-select modal_act" aria-label="Default select example" id="califica_iess" name="califica_iess">
                                         <option value="Si" selected>Si</option>
                                         <option value="No">No</option>
                                     </select>
@@ -116,7 +116,7 @@
                                     <label for="marca_v" class="form-label mb-0">Fecha </label>
                                 </div>
                                 <div class="col-md-7">
-                                    <input type="date"  autocomplete="of" class="form-control"
+                                    <input type="date"  autocomplete="of" class="form-control modal_act"
                                         id="fecha_califica" name="fecha_califica">
                             </div>
                         </div>
@@ -127,8 +127,8 @@
                                     <label for="marca_v" class="form-label mb-0">Especificar</label>
                                 </div>
                                 <div class="col-md-7">
-                                    <textarea autocomplete="of" class="form-control"
-                                        id="especificar_calif_empl" name="especificar_calif_empl" rows="3"></textarea>
+                                    <textarea autocomplete="of" class="form-control modal_act"
+                                        id="especificar_calif_empl" name="especificar_calif_empl" rows="2"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -139,8 +139,8 @@
                                     <label for="marca_v" class="form-label mb-0">Observaciones</label>
                                 </div>
                                 <div class="col-md-7">
-                                    <textarea autocomplete="of" class="form-control"
-                                        id="observaciones_calif_empl" name="observaciones_calif_empl" rows="3"></textarea>
+                                    <textarea autocomplete="of" class="form-control modal_act"
+                                        id="observaciones_calif_empl" name="observaciones_calif_empl" rows="2"></textarea>
                                 </div>
                             </div>
                         </div>

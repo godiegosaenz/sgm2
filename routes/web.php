@@ -47,6 +47,7 @@ use App\Models\TransitoTarifaAnual;
 use App\Models\TransitoVehiculo;
 use App\Http\Controllers\RecaudacionesController;
 use App\Http\Controllers\Consultorio\PacienteEmpleadoController;
+use App\Http\Controllers\Recaudacion\TasaAseoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -479,6 +480,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('llenar-tabla-medida/{idempleado}', [PacienteEmpleadoController::class, 'llenaTablaMedida']);
     Route::get('llenar-tabla-actividad/{idempleado}', [PacienteEmpleadoController::class, 'llenaTablaActividad']);
     Route::post('guardar-actividad-laboral', [PacienteEmpleadoController::class, 'guardaActividadLaboral']);
+    Route::post('guardar-actividad-extra', [PacienteEmpleadoController::class, 'guardaActividadLabExtra']);
+    Route::get('llenar-tabla-actividad-extra/{idempleado}', [PacienteEmpleadoController::class, 'llenaTablaActividadExtra']);
+    Route::post('guardar-resultados-examen', [PacienteEmpleadoController::class, 'guardaResultadosExamen']);
+    Route::get('llenar-tabla-resultados-examen/{idempleado}', [PacienteEmpleadoController::class, 'llenaTablaResultadoExamen']);
+    Route::post('guardar-observacion-resultados', [PacienteEmpleadoController::class, 'guardaObservacionExamen']);
+    Route::get('buscaCie10', [PacienteEmpleadoController::class, 'buscarCie10']);
+    Route::get('llenar-tabla-diagnostico/{idempleado}', [PacienteEmpleadoController::class, 'llenaTablaDiagnostico']);
+    Route::post('guardar-diagnostico', [PacienteEmpleadoController::class, 'guardaDiagnostico']);
+    Route::post('guardar-aptitudes-medicas', [PacienteEmpleadoController::class, 'guardaAptitudesMedicas']);
+    Route::post('guardar-recomendacion-tratamiento', [PacienteEmpleadoController::class, 'guardaRecomendacionTratamiento']);
+    Route::post('guardar-retiro', [PacienteEmpleadoController::class, 'guardaRetiro']);
+
+
+    //*******TASA DE ASEO Y RECOLECCION DE DESECHOS*********************/
+    Route::get('tasa-aseo', [TasaAseoController::class, 'index'])->name('tasa_aseo.index');
+    Route::get('buscar-predios-urbanos-aseo/{cedula}', [TasaAseoController::class, 'buscaPrediosUrbanos']);
+    Route::post('obtener-deuda-aseo-urb', [TasaAseoController::class, 'buscaDeudaAseoUrb']);
+    Route::post('obtener-deuda-aseo-urb-parcial', [TasaAseoController::class, 'buscaDeudaAseoUrbParcial']);
 
 
    
