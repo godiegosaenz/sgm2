@@ -118,6 +118,17 @@
       <symbol id="sun-fill" viewBox="0 0 16 16">
         <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/>
       </symbol>
+
+      <symbol id="medical-icon" viewBox="0 0 24 24">
+        <rect x="10" y="4" width="4" height="16" fill="currentColor"/>
+        <rect x="4" y="10" width="16" height="4" fill="currentColor"/>
+    </symbol>
+
+      <symbol id="hospital-icon" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M3 21V5a2 2 0 0 1 2-2h6v4h2V3h6a2 2 0 0 1 2 2v16h-6v-4H9v4H3zm4-6h2v-2H7v2zm0-4h2V9H7v2zm4 4h2v-2h-2v2zm0-4h2V9h-2v2zm4 4h2v-2h-2v2zm0-4h2V9h-2v2z"/>
+      </symbol>
+
+
     </svg>
 
     <div class="dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle">
@@ -538,6 +549,24 @@
                 'icon' => 'report-icon',
                 'active' => false // Puedes agregar más lógica si necesitas submenús
             ],
+
+              [
+                'name' => 'CONSULTORIO',
+                'icon' => 'hospital-icon',
+                'permission' => 'menu consultorio',
+                'subMenu' => [
+                    [
+                        'name' => 'Evaluaciones Ocupacionales',
+                        'route' => 'consultorio.registro_paciente',
+                        'permission' => 'Evaluaciones Ocupacionales',
+                        'active' => request()->routeIs('consultorio.registro_paciente')
+                    ],
+
+
+                ],
+                'active' => request()->routeIs('consultorio.registro_paciente') 
+            ],
+
             [
                 'name' => 'ANALITICA',
                 'icon' => 'gear-wide-connected',

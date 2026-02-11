@@ -460,7 +460,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
     //*******HISTORIA CLINICA EMPLEADOS *********************/
-    Route::get('evaluacion-medica-ocupacional', [PacienteEmpleadoController::class, 'index']);
+    Route::get('evaluacion-medica-ocupacional', [PacienteEmpleadoController::class, 'index'])->name('consultorio.registro_paciente');
     Route::post('guardar-empleado-paciente', [PacienteEmpleadoController::class, 'guardaEmpleadoPaciente']);
     Route::post('actualiza-seccion-a', [PacienteEmpleadoController::class, 'actualizaSeccionA']);
     Route::get('carga-info-paciente/{cedula}', [PacienteEmpleadoController::class, 'infoEmpleadoPaciente']);
@@ -491,6 +491,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('guardar-aptitudes-medicas', [PacienteEmpleadoController::class, 'guardaAptitudesMedicas']);
     Route::post('guardar-recomendacion-tratamiento', [PacienteEmpleadoController::class, 'guardaRecomendacionTratamiento']);
     Route::post('guardar-retiro', [PacienteEmpleadoController::class, 'guardaRetiro']);
+
+    Route::get('historial-paciente-evolucion/{cedula}', [PacienteEmpleadoController::class, 'histoEvoEmpleadoPaciente']);
 
 
     //*******TASA DE ASEO Y RECOLECCION DE DESECHOS*********************/

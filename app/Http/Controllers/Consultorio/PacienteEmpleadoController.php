@@ -6,6 +6,7 @@ use App\Models\Consultorio\ActividadesExtras;
 use App\Models\Consultorio\Antecedentes;
 use App\Models\Consultorio\AntecedentesEmpleo;
 use App\Models\Consultorio\AptitudMedica;
+use App\Models\Consultorio\CabeceraAtencion;
 use App\Models\Consultorio\ConstantesVitales;
 use App\Models\Consultorio\Diagnostico;
 use App\Models\Consultorio\DiagnosticoEmpleado;
@@ -26,10 +27,16 @@ use App\Models\Consultorio\Retiro;
 use Illuminate\Http\Request;
 use DB;
 use App\models\Cita;
+use PHPUnit\Framework\Constraint\IsFalse;
+use PHPUnit\Logging\TestDox\TestFailedSubscriber;
 
 class PacienteEmpleadoController extends Controller
 {
     public function index(){
+        if(!Auth()->user()->hasPermissionTo('Evaluaciones Ocupacionales'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
         return view('consultorio.registro_paciente');
     }
 
@@ -177,9 +184,17 @@ class PacienteEmpleadoController extends Controller
 
     public function guardaMotivo(Request $request){
         try{
+
+            $cabeceraAtencion=new CabeceraAtencion();
+            $cabeceraAtencion->id_usuario_registra=auth()->user()->id;
+            $cabeceraAtencion->fecha_registro=date('Y-m-d H:i:s');
+            $cabeceraAtencion->estado='Pendiente';
+            $cabeceraAtencion->id_empleado=$request->id_empleado;
+            $cabeceraAtencion->save();
            
             $buscaMotivo=MotivoConsulta::where('fecha_atencion',$request->fecha_atencion)
             ->where('estado','Borrador')
+            ->where('id_cabecera_atencion',$cabeceraAtencion->id)
             ->orderBy('id','desc')
             ->first();
             if(!is_null($buscaMotivo)){             
@@ -193,8 +208,9 @@ class PacienteEmpleadoController extends Controller
                 $buscaMotivo->id_empleado=$request->id_empleado;
                 $buscaMotivo->idusuario_actualiza=auth()->user()->persona->id;
                 $buscaMotivo->fecha_actualiza=date('Y-m-d H:i:s');
+                $buscaMotivo->id_cabecera_atencion=$cabeceraAtencion->id;
                 $buscaMotivo->save();
-                return ["mensaje"=>"Informacion actualizada exitosamente ", "error"=>false];
+                return ["mensaje"=>"Informacion actualizada exitosamente ", "error"=>false, "idcabecera"=>$cabeceraAtencion->id];
             }else{
                 $nuevoMotivo=new MotivoConsulta();
                 $nuevoMotivo->id_puesto=$request->puesto_cmb;
@@ -208,8 +224,9 @@ class PacienteEmpleadoController extends Controller
                 $nuevoMotivo->id_empleado=$request->id_empleado;
                 $nuevoMotivo->idusuario_registra=auth()->user()->persona->id;
                 $nuevoMotivo->fecha_registro=date('Y-m-d H:i:s');
+                $nuevoMotivo->id_cabecera_atencion=$cabeceraAtencion->id;
                 $nuevoMotivo->save();
-                return ["mensaje"=>"Informacion registrada exitosamente ", "error"=>false];
+                return ["mensaje"=>"Informacion registrada exitosamente ", "error"=>false, "idcabecera"=>$cabeceraAtencion->id];
             }
         } catch (\Exception $e) {
             return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
@@ -218,20 +235,20 @@ class PacienteEmpleadoController extends Controller
 
     public function guardaAntecedentes(Request $request){
         try{
-            $verificaSeccionMotivo= MotivoConsulta::where('fecha_atencion',date('Y-m-d'))
-            ->where('estado','Borrador')
-            ->orderBy('id','desc')
-            ->first();
-            if(is_null($verificaSeccionMotivo)){
-                return ["mensaje"=>"Debe completar primero la seccion B. MOTIVO DE CONSULTA", "error"=>true];
-            }
+            // $verificaSeccionMotivo= MotivoConsulta::where('fecha_atencion',date('Y-m-d'))
+            // ->where('estado','Borrador')
+            // ->orderBy('id','desc')
+            // ->first();
+            // if(is_null($verificaSeccionMotivo)){
+            //     return ["mensaje"=>"Debe completar primero la seccion B. MOTIVO DE CONSULTA", "error"=>true];
+            // }
            
-            $buscaAntecedentes=Antecedentes::where('id_seccion_motivo',$verificaSeccionMotivo->id)
+            $buscaAntecedentes=Antecedentes::where('id_cabecera_atencion',$request->IdCabeceraAtencion)
             ->where('estado','Borrador')
             ->orderBy('id','desc')
             ->first();
             if(!is_null($buscaAntecedentes)){             
-                $buscaAntecedentes->id_seccion_motivo=$verificaSeccionMotivo->id;
+                $buscaAntecedentes->id_cabecera_atencion=$request->IdCabeceraAtencion;
                 $buscaAntecedentes->antecedentes_cq=$request->antecedente_cq;
                 $buscaAntecedentes->antecedentes_familiares=$request->antecedente_familiares;
                 $buscaAntecedentes->autoriza_transfusion=$request->autoriza_transfusion;
@@ -332,11 +349,11 @@ class PacienteEmpleadoController extends Controller
                     }
                 }
                
-                return ["mensaje"=>"Informacion actualizada exitosamente ", "error"=>false, "id_antecedentes"=>$buscaAntecedentes->id];
+                return ["mensaje"=>"Informacion actualizada exitosamente ", "error"=>IsFalse];
             }else{
 
                 $nuevoAntecedentes=new Antecedentes();
-                $nuevoAntecedentes->id_seccion_motivo=$verificaSeccionMotivo->id;
+                $nuevoAntecedentes->id_cabecera_atencion=$request->IdCabeceraAtencion;
                 $nuevoAntecedentes->antecedentes_cq=$request->antecedente_cq;
                 $nuevoAntecedentes->antecedentes_familiares=$request->antecedente_familiares;
                 $nuevoAntecedentes->autoriza_transfusion=$request->autoriza_transfusion;
@@ -434,7 +451,7 @@ class PacienteEmpleadoController extends Controller
                     }
                 }
                
-                return ["mensaje"=>"Informacion registrada exitosamente ", "error"=>false, "id_antecedentes"=>$nuevoAntecedentes->id];
+                return ["mensaje"=>"Informacion registrada exitosamente ", "error"=>false];
             }
         } catch (\Exception $e) {
             return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e->getMessage(), "error"=>true];
@@ -443,15 +460,15 @@ class PacienteEmpleadoController extends Controller
 
     public function guardaEnfemedadProblemaActual(Request $request){
         try{
-            $verificaAntecedente= Antecedentes::where('id',$request->IdAntecedentesRegistrado)
-            ->where('estado','Borrador')
-            ->orderBy('id','desc')
-            ->first();
-            if(is_null($verificaAntecedente)){
-                return ["mensaje"=>"Debe completar primero la seccion C. ANTECEDENTES PERSONALES", "error"=>true];
-            }
+            // $verificaAntecedente= Antecedentes::where('id',$request->IdAntecedentesRegistrado)
+            // ->where('estado','Borrador')
+            // ->orderBy('id','desc')
+            // ->first();
+            // if(is_null($verificaAntecedente)){
+            //     return ["mensaje"=>"Debe completar primero la seccion C. ANTECEDENTES PERSONALES", "error"=>true];
+            // }
 
-            $buscaEnfermedad=Enfermedad::where('id_seccion_antecedentes',$request->IdAntecedentesRegistrado)
+            $buscaEnfermedad=Enfermedad::where('id_cabecera_atencion',$request->IdCabeceraAtencion)
             ->where('estado','Borrador')
             ->orderBy('id','desc')
             ->first();
@@ -461,17 +478,17 @@ class PacienteEmpleadoController extends Controller
                 $buscaEnfermedad->idusuario_actualiza=auth()->user()->persona->id;
                 $buscaEnfermedad->fecha_actualiza=date('Y-m-d H:i:s');
                 $buscaEnfermedad->save();
-                return ["mensaje"=>"Informacion actualizada exitosamente ", "error"=>false, "idenfermedad"=>$buscaEnfermedad->id];
+                return ["mensaje"=>"Informacion actualizada exitosamente ", "error"=>false];
             }else{
                 $nuevaEnfermedad=new Enfermedad();
-                $nuevaEnfermedad->id_seccion_antecedentes=$request->IdAntecedentesRegistrado;
+                $nuevaEnfermedad->id_cabecera_atencion=$request->IdCabeceraAtencion;
                 $nuevaEnfermedad->enfermedad_problema=$request->enfermedad_problema_actual;
                 $nuevaEnfermedad->estado='Borrador';
                 $nuevaEnfermedad->id_empleado=$request->id_empleado;
                 $nuevaEnfermedad->idusuario_registra=auth()->user()->persona->id;
                 $nuevaEnfermedad->fecha_registro=date('Y-m-d H:i:s');
                 $nuevaEnfermedad->save();
-                return ["mensaje"=>"Informacion registrada exitosamente ", "error"=>false, "idenfermedad"=>$nuevaEnfermedad->id];
+                return ["mensaje"=>"Informacion registrada exitosamente ", "error"=>false];
             }
         } catch (\Exception $e) {
             return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
@@ -480,16 +497,16 @@ class PacienteEmpleadoController extends Controller
 
     public function guardaConstantesVitales(Request $request){
         try{
-            $verificaEnfermedad= Enfermedad::where('id',$request->IdEnfermedadregistrada)
-            ->where('estado','Borrador')
-            ->orderBy('id','desc')
-            ->first();
+            // $verificaEnfermedad= Enfermedad::where('id',$request->IdEnfermedadregistrada)
+            // ->where('estado','Borrador')
+            // ->orderBy('id','desc')
+            // ->first();
            
-            if(is_null($verificaEnfermedad)){
-                return ["mensaje"=>"Debe completar primero la seccion D. ENFERMEDAD O PROBLEMA ACTUAL", "error"=>true];
-            }
+            // if(is_null($verificaEnfermedad)){
+            //     return ["mensaje"=>"Debe completar primero la seccion D. ENFERMEDAD O PROBLEMA ACTUAL", "error"=>true];
+            // }
 
-            $buscaConstante=ConstantesVitales::where('id_seccion_enfermedad_problema',$request->IdEnfermedadregistrada)
+            $buscaConstante=ConstantesVitales::where('id_cabecera_atencion',$request->IdCabeceraAtencion)
             ->where('estado','Borrador')
             ->orderBy('id','desc')
             ->first();
@@ -507,10 +524,10 @@ class PacienteEmpleadoController extends Controller
                 $buscaConstante->idusuario_actualiza=auth()->user()->persona->id;
                 $buscaConstante->fecha_actualiza=date('Y-m-d H:i:s');
                 $buscaConstante->save();
-                return ["mensaje"=>"Informacion actualizada exitosamente ", "error"=>false, "idconstante"=>$buscaConstante->id];
+                return ["mensaje"=>"Informacion actualizada exitosamente ", "error"=>false];
             }else{
                 $nuevaConstante=new ConstantesVitales();
-                $nuevaConstante->id_seccion_enfermedad_problema=$request->IdEnfermedadregistrada;
+                $nuevaConstante->id_cabecera_atencion=$request->IdCabeceraAtencion;
                 $nuevaConstante->temperatura=$request->temperatura;
                 $nuevaConstante->id_empleado=$request->id_empleado;
                 $nuevaConstante->presion_arterial=$request->presion_arterial;
@@ -525,7 +542,7 @@ class PacienteEmpleadoController extends Controller
                 $nuevaConstante->idusuario_registra=auth()->user()->persona->id;
                 $nuevaConstante->fecha_registro=date('Y-m-d H:i:s');
                 $nuevaConstante->save();
-                return ["mensaje"=>"Informacion registrada exitosamente ", "error"=>false, "idconstante"=>$nuevaConstante->id];
+                return ["mensaje"=>"Informacion registrada exitosamente ", "error"=>false];
             }
         } catch (\Exception $e) {
             return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
@@ -534,14 +551,14 @@ class PacienteEmpleadoController extends Controller
 
     public function guardaExamenFisico(Request $request){
         try{
-            $verificaConstante= ConstantesVitales::where('id',$request->IdConstantesVitale)
-            ->where('estado','Borrador')
-            ->orderBy('id','desc')
-            ->first();
+            // $verificaConstante= ConstantesVitales::where('id',$request->IdConstantesVitale)
+            // ->where('estado','Borrador')
+            // ->orderBy('id','desc')
+            // ->first();
            
-            if(is_null($verificaConstante)){
-                return ["mensaje"=>"Debe completar primero la seccion E. CONSTANTES VITALES Y ANTROPOMETRIA", "error"=>true];
-            }
+            // if(is_null($verificaConstante)){
+            //     return ["mensaje"=>"Debe completar primero la seccion E. CONSTANTES VITALES Y ANTROPOMETRIA", "error"=>true];
+            // }
 
             $cicatrices = $request->has('cicatrices') ? true : false;
             $piel_fanera = $request->has('piel_fanera') ? true : false;
@@ -597,7 +614,7 @@ class PacienteEmpleadoController extends Controller
             $reflejos = $request->has('reflejos') ? true : false;
      
 
-            $buscaExamenFisico=ExamenFisicoRegional::where('id_constante',$request->IdConstantesVitale)
+            $buscaExamenFisico=ExamenFisicoRegional::where('id_cabecera_atencion',$request->IdCabeceraAtencion)
             ->where('estado','Borrador')
             ->orderBy('id','desc')
             ->first();
@@ -655,7 +672,7 @@ class PacienteEmpleadoController extends Controller
 
             }else{
                 $nuevoExamen=new ExamenFisicoRegional();
-                $nuevoExamen->id_constante=$request->IdConstantesVitale;
+                $nuevoExamen->id_cabecera_atencion=$request->IdCabeceraAtencion;
                 $nuevoExamen->id_empleado=$request->id_empleado;
                 $nuevoExamen->cicatrices=$cicatrices;
                 $nuevoExamen->piel_fanera=$piel_fanera;
@@ -721,6 +738,8 @@ class PacienteEmpleadoController extends Controller
             ->where('tipo',$request->tipo)
             ->where('codigo',$request->codigo)
             ->where('idpaciente',$request->paciente_id)
+            ->where('id_cabecera_atencion',$request->IdCabeceraAtencion)
+            ->where('fecha_atencion',date('Y-m-d'))
             ->first();
             if(!is_null($existe)){
                 return ["mensaje"=>"Informacion registrada exitosamente ", "error"=>false];
@@ -731,6 +750,8 @@ class PacienteEmpleadoController extends Controller
             $guardaActExpo->tipo=$request->tipo;
             $guardaActExpo->codigo=$request->codigo;
             $guardaActExpo->idpaciente=$request->paciente_id;
+            $guardaActExpo->fecha_atencion=date('Y-m-d');
+            $guardaActExpo->id_cabecera_atencion=$request->IdCabeceraAtencion;
             $guardaActExpo->save();
             return ["mensaje"=>"Informacion registrada exitosamente ", "error"=>false];
 
@@ -742,7 +763,8 @@ class PacienteEmpleadoController extends Controller
     public function llenaTablaMedida($idempleado){
         try{
             $data=MedidasPreventivas::where('id_empleado',$idempleado)
-            ->where('estado','A')
+            ->where('estado','P')
+            ->where('fecha_atencion',date('Y-m-d'))
             ->get();
 
             return ["resultado"=>$data, "error"=>false];
@@ -759,14 +781,17 @@ class PacienteEmpleadoController extends Controller
             ->where('charla_salud',$request->charla_salud_empl)
             ->where('controles_medicos_rutinarios',$request->controles_med_empl)
             ->where('uso_adecuado_prenda_prot',$request->prenda_proteccion_empl)
+            ->where('fecha_atencion',date('Y-m-d'))
+            // ->where('id_cabecera_atencion',$request->IdCabeceraAtencion)
             ->first();
             if(!is_null($existe)){
-                if($existe->estado=='A'){
+                if($existe->estado=='P'){
                     return ["mensaje"=>"Informacion ya se encuentra registrada ", "error"=>true];
                 }else{
                     $existe->id_usuario=auth()->user()->persona->id;
                     $existe->fecha_registro=date('Y-m-d H:i:s');
-                    $existe->estado='A';
+                    $existe->estado='P';
+                    $existe->fecha_atencion=date('Y-m-d');
                     $existe->save();
                     return ["mensaje"=>"Informacion registrada exitosamenteq ", "error"=>true];
                 }
@@ -779,7 +804,9 @@ class PacienteEmpleadoController extends Controller
             $guardaMedida->uso_adecuado_prenda_prot=$request->prenda_proteccion_empl;
             $guardaMedida->id_usuario=auth()->user()->persona->id;
             $guardaMedida->fecha_registro=date('Y-m-d H:i:s');
-            $guardaMedida->estado='A';
+            $guardaMedida->fecha_atencion=date('Y-m-d');
+            $guardaMedida->estado='P';
+            // $guardaMedida->id_cabecera_atencion=$request->IdCabeceraAtencion;
             $guardaMedida->save();
          
             return ["mensaje"=>"Informacion registrada exitosamentew ", "error"=>false];
@@ -805,20 +832,23 @@ class PacienteEmpleadoController extends Controller
             ->where('fecha_calificacion',$request->fecha_califica)
             ->where('especificar',$request->especificar_calif_empl)
             ->where('observaciones',$request->observaciones_calif_empl)
+            ->where('fecha_atencion',date('Y-m-d'))
             ->first();
             if(!is_null($existe)){
-                if($existe->estado=='A'){
+                if($existe->estado=='P'){
                     return ["mensaje"=>"Informacion ya se encuentra registrada ", "error"=>true];
                 }else{
                     $existe->id_usuario=auth()->user()->persona->id;
                     $existe->fecha_registro=date('Y-m-d H:i:s');
-                    $existe->estado='A';
+                    $existe->estado='P';
+                    $existe->fecha_atencion=date('Y-m-d');
                     $existe->save();
                     return ["mensaje"=>"Informacion registrada exitosamente ", "error"=>true];
                 }
                     
             }
             $guardaAntecedente = new AntecedentesEmpleo();
+            $guardaAntecedente->id_cabecera_atencion=$request->IdCabeceraAtencion;
             $guardaAntecedente->id_empleado=$request->id_empleado;
             $guardaAntecedente->centro_trabajo=$request->centro_trab_empl;
             $guardaAntecedente->actividad_desempenia=$request->actividades_desempeniaba;
@@ -836,7 +866,8 @@ class PacienteEmpleadoController extends Controller
 
             $guardaAntecedente->id_usuario=auth()->user()->persona->id;
             $guardaAntecedente->fecha_registro=date('Y-m-d H:i:s');
-            $guardaAntecedente->estado='A';
+            $guardaAntecedente->fecha_atencion=date('Y-m-d');
+            $guardaAntecedente->estado='P';
             $guardaAntecedente->save();
          
             return ["mensaje"=>"Informacion registrada exitosamentew ", "error"=>false];
@@ -850,7 +881,8 @@ class PacienteEmpleadoController extends Controller
     public function llenaTablaActividad($idempleado){
         try{
             $data=AntecedentesEmpleo::where('id_empleado',$idempleado)
-            ->where('estado','A')
+            ->where('estado','P')
+            ->where('fecha_atencion',date('Y-m-d'))
             ->get();
 
             return ["resultado"=>$data, "error"=>false];
@@ -866,14 +898,16 @@ class PacienteEmpleadoController extends Controller
             $existe=ActividadesExtras::where('id_empleado',$request->id_empleado)
             ->where('actividad',$request->act_extra)
             ->where('fecha',$request->fecha_act_extra)
+            ->where('fecha_atencion',date('Y-m-d'))
             ->first();
             if(!is_null($existe)){
-                if($existe->estado=='A'){
+                if($existe->estado=='P'){
                     return ["mensaje"=>"Informacion ya se encuentra registrada ", "error"=>true];
                 }else{
                     $existe->id_usuario_registra=auth()->user()->persona->id;
                     $existe->fecha_registra=date('Y-m-d H:i:s');
-                    $existe->estado='A';
+                    $existe->estado='P';
+                    $existe->fecha_atencion=date('Y-m-d');
                     $existe->save();
                     return ["mensaje"=>"Informacion registrada exitosamente ", "error"=>true];
                 }
@@ -883,9 +917,11 @@ class PacienteEmpleadoController extends Controller
             $guardaActExtra->id_empleado=$request->id_empleado;
             $guardaActExtra->actividad=$request->act_extra;
             $guardaActExtra->fecha=$request->fecha_act_extra;
-            $guardaActExtra->estado='A';
+            $guardaActExtra->id_cabecera_atencion=$request->IdCabeceraAtencion;
+            $guardaActExtra->estado='P';
             $guardaActExtra->id_usuario_registra=auth()->user()->persona->id;
             $guardaActExtra->fecha_registra=date('Y-m-d H:i:s');
+            $guardaActExtra->fecha_atencion=date('Y-m-d');
             $guardaActExtra->save();
          
             return ["mensaje"=>"Informacion registrada exitosamentew ", "error"=>false];
@@ -899,7 +935,8 @@ class PacienteEmpleadoController extends Controller
     public function llenaTablaActividadExtra($idempleado){
         try{
             $data=ActividadesExtras::where('id_empleado',$idempleado)
-            ->where('estado','A')
+            ->where('estado','P')
+            ->where('fecha_atencion',date('Y-m-d'))
             ->get();
 
             return ["resultado"=>$data, "error"=>false];
@@ -916,14 +953,16 @@ class PacienteEmpleadoController extends Controller
             ->where('examen',$request->nombre_examen)
             ->where('fecha',$request->fecha_examen)
             ->where('resultado',$request->resultados_exam)
+            ->where('fecha_atencion',date('Y-m-d'))
             ->first();
             if(!is_null($existe)){
-                if($existe->estado=='A'){
+                if($existe->estado=='P'){
                     return ["mensaje"=>"Informacion ya se encuentra registrada ", "error"=>true];
                 }else{
                     $existe->id_usuario_registra=auth()->user()->persona->id;
                     $existe->fecha_registra=date('Y-m-d H:i:s');
-                    $existe->estado='A';
+                    $existe->fecha_atencion=date('Y-m-d');
+                    $existe->estado='P';
                     $existe->save();
                     return ["mensaje"=>"Informacion registrada exitosamente ", "error"=>true];
                 }
@@ -934,9 +973,11 @@ class PacienteEmpleadoController extends Controller
             $guardaActExtra->examen=$request->nombre_examen;
             $guardaActExtra->fecha=$request->fecha_examen;
             $guardaActExtra->resultado=$request->resultados_exam;
-            $guardaActExtra->estado='A';
+            $guardaActExtra->id_cabecera_atencion=$request->IdCabeceraAtencion;
+            $guardaActExtra->estado='P';
             $guardaActExtra->id_usuario_registra=auth()->user()->persona->id;
             $guardaActExtra->fecha_registra=date('Y-m-d H:i:s');
+            $guardaActExtra->fecha_atencion=date('Y-m-d');
             $guardaActExtra->save();
          
             return ["mensaje"=>"Informacion registrada exitosamentew ", "error"=>false];
@@ -950,7 +991,8 @@ class PacienteEmpleadoController extends Controller
     public function llenaTablaResultadoExamen($idempleado){
         try{
             $data=ResultadosExamen::where('id_empleado',$idempleado)
-            ->where('estado','A')
+            ->where('estado','P')
+            ->where('fecha_atencion',date('Y-m-d'))
             ->get();
 
             return ["resultado"=>$data, "error"=>false];
@@ -966,12 +1008,14 @@ class PacienteEmpleadoController extends Controller
             $existe=ObservResultadosExamen::where('id_empleado',$request->id_empleado)
             ->where('observacion',$request->observacion_resultados)
             ->where('fecha_atencion',date('Y-m-d'))
+            ->where('id_cabecera_atencion',$request->IdCabeceraAtencion)
             ->first();
             if(!is_null($existe)){
-                if($existe->estado=='A'){
+                if($existe->estado=='P'){
                     return ["mensaje"=>"Informacion ya se encuentra registrada ", "error"=>true];
                 }else{
-                    $existe->estado='A';
+                    $existe->estado='P';
+                    $existe->fecha_atencion=date('Y-m-d');
                     $existe->save();
                     return ["mensaje"=>"Informacion registrada exitosamenteq ", "error"=>true];
                 }
@@ -980,8 +1024,9 @@ class PacienteEmpleadoController extends Controller
             $guardaObservacion = new ObservResultadosExamen();
             $guardaObservacion->id_empleado=$request->id_empleado;
             $guardaObservacion->observacion=$request->observacion_resultados;
+            $guardaObservacion->id_cabecera_atencion=$request->IdCabeceraAtencion;
             $guardaObservacion->fecha_atencion=date('Y-m-d');
-            $guardaObservacion->estado='A';
+            $guardaObservacion->estado='P';
             $guardaObservacion->save();
          
             return ["mensaje"=>"Informacion registrada exitosamentew ", "error"=>false];
@@ -1071,8 +1116,102 @@ class PacienteEmpleadoController extends Controller
         }
     }
 
+    public function limpiarDataBorrador($idpaciente){
+
+        try{
+            $actualizaFactoreRiego=ActividadesExpo::where('fecha_atencion',date('Y-m-d'))
+            ->where('idpaciente',$idpaciente)
+            ->delete();
+
+            $actualizaMedida=MedidasPreventivas::where('fecha_atencion',date('Y-m-d'))
+            ->where('id_empleado',$idpaciente)
+            ->delete();               
+
+            $actualizaAntecedenteEmpleo=AntecedentesEmpleo::where('fecha_atencion',date('Y-m-d'))
+            ->where('id_empleado',$idpaciente)
+            ->delete();  
+                
+            $actualizaActividadExtra=ActividadesExtras::where('fecha_atencion',date('Y-m-d'))
+            ->where('id_empleado',$idpaciente)
+            ->delete();                
+
+            $actualizaResultadoExam=ResultadosExamen::where('fecha_atencion',date('Y-m-d'))
+            ->where('id_empleado',$idpaciente)
+            ->delete();  
+
+            $actualizaDiagnostico=DiagnosticoEmpleado::where('fecha_atencion',date('Y-m-d'))
+            ->where('id_empleado',$idpaciente)
+            ->delete(); 
+            
+            return ["mensaje"=>"ok", "error"=>false];
+        } catch (\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+        }
+
+    }
+
+     public function histoEvoEmpleadoPaciente($id){
+        try{
+            $limpiaDataBorrador=$this->limpiarDataBorrador($id);
+            $info = EmpleadoPaciente::where('id', $id)
+            ->select(
+                'cedula', 
+                'primer_apellido', 
+                'segundo_apellido', 
+                'primer_nombre', 
+                'segundo_nombre', 
+                'fecha_nacimiento', 
+                'sexo', 
+                'grupo_sanguinedad', 
+                'lateralidad',
+                'embarazada',
+                'discapacidad',
+                'ecatastrofica',
+                'lactancia',
+                'mayor_edad',
+                DB::raw('EXTRACT(YEAR FROM AGE(fecha_nacimiento)) AS edad')
+            )
+            ->where('estado', 'A')
+            ->first();
+
+            $atenciones=DB::connection('pgsql')->table('sgm_consultorio.cabecera_atencion as ca')
+            ->leftJoin('sgm_consultorio.seccion_motivo_consulta as mot', 'mot.id_cabecera_atencion', '=', 'ca.id')
+            ->select('ca.id as idcab','mot.motivo','ca.id_usuario_registra','ca.fecha_registro')
+            ->where('ca.estado','Atendido')
+            ->where('mot.estado','Atendido')
+            ->get();
+
+            foreach($atenciones as $key=> $data){
+                $diag=DB::connection('pgsql')->table('sgm_consultorio.diagnostico_empleado')
+                ->where('estado','Atendido')
+                ->where('id_cabecera_atencion',$data->idcab)
+                ->get();
+
+                $usuarioRegistra=DB::connection('mysql')->table('users as u')
+                ->leftJoin('personas as p', 'p.id', '=', 'u.idpersona')
+                ->where('u.id',$data->id_usuario_registra)
+                ->select('p.nombres','p.apellidos','p.cedula')
+                ->first();
+                $atenciones[$key]->profesional=$usuarioRegistra->nombres." ".$usuarioRegistra->apellidos;
+
+                $atenciones[$key]->diagnostico=$diag;
+            }
+
+            
+            return ["resultado"=>$info, 
+                "motivo"=>$atenciones,
+                "error"=>false
+            ];
+
+        } catch (\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+        }
+    }
+
+
     public function evolucionEmpleadoPaciente($id){
         try{
+            $limpiaDataBorrador=$this->limpiarDataBorrador($id);
             $info = EmpleadoPaciente::where('id', $id)
             ->select(
                 'cedula', 
@@ -1106,7 +1245,9 @@ class PacienteEmpleadoController extends Controller
 
             $fecha_atencion=date('Y-m-d');
 
-            $factores_riesgo=ActividadesExpo::where('idpaciente',$id)->get();
+            $factores_riesgo=ActividadesExpo::where('idpaciente',$id)
+            ->where('fecha_atencion',date('Y-m-d'))
+            ->get();
           
             return ["resultado"=>$info, 
                 "motivo"=>$motivo,
@@ -1131,11 +1272,12 @@ class PacienteEmpleadoController extends Controller
                     $query->where(DB::raw("CONCAT(primer_nombre, ' ', segundo_nombre, ' ',primer_apellido, ' ', segundo_apellido)"), 'ilike', '%'.$valor.'%')
                     ->orwhere(DB::raw("CONCAT(primer_apellido, ' ', segundo_apellido, ' ', primer_nombre, ' ', segundo_nombre )"), 'ilike', '%'.$valor.'%');
                 }else{
-                    $query->where('estado','A')->get();
+                    $query->where('cedula',$valor);
                 }
             })            
             ->select('id','cedula',DB::raw("CONCAT(primer_apellido, ' ', segundo_apellido, ' ', primer_nombre, ' ', segundo_nombre) AS nombre"),'telefono','correo')
-            ->take(50)->get();
+            ->where('estado','A')
+            ->take(10)->get();
             
           
             return ["resultado"=>$data, "error"=>false];
@@ -1151,14 +1293,16 @@ class PacienteEmpleadoController extends Controller
             ->where('id_cie10',$request->cmb_diagnostico)
             ->where('prev_def',$request->prevent_defin)
             ->where('fecha_atencion',date('Y-m-d'))
+            // ->where('id_cabecera_atencion',$request->IdCabeceraAtencion)
             ->first();
             if(!is_null($existe)){
-                if($existe->estado=='A'){
+                if($existe->estado=='P'){
                     return ["mensaje"=>"Informacion ya se encuentra registrada ", "error"=>true];
                 }else{
-                    $existe->estado='A';
+                    $existe->estado='P';
                     $existe->id_usuario_registra=auth()->user()->persona->id;
                     $existe->fecha_registra=date('Y-m-d H:i:s');
+                    $existe->fecha_atencion=date('Y-m-d');                    
                     $existe->save();
                     return ["mensaje"=>"Informacion registrada exitosamenteq ", "error"=>true];
                 }
@@ -1166,10 +1310,11 @@ class PacienteEmpleadoController extends Controller
             }
             $guardaDiagnostico = new DiagnosticoEmpleado();
             $guardaDiagnostico->id_empleado=$request->id_empleado;
+            // $guardaDiagnostico->id_cabecera_atencion=$request->IdCabeceraAtencion;
             $guardaDiagnostico->id_cie10=$request->cmb_diagnostico;
             $guardaDiagnostico->fecha_atencion=date('Y-m-d');
             $guardaDiagnostico->prev_def=$request->prevent_defin;
-            $guardaDiagnostico->estado='A';
+            $guardaDiagnostico->estado='P';
             $guardaDiagnostico->id_usuario_registra=auth()->user()->persona->id;
             $guardaDiagnostico->fecha_registra=date('Y-m-d H:i:s');
             $guardaDiagnostico->save();
@@ -1186,7 +1331,8 @@ class PacienteEmpleadoController extends Controller
         try{
             $data=DiagnosticoEmpleado::with('cie10')
             ->where('id_empleado',$idempleado)
-            ->where('estado','A')
+            ->where('estado','P')
+            ->where('fecha_atencion',date('Y-m-d'))
             ->get();
 
             return ["resultado"=>$data, "error"=>false];
@@ -1210,6 +1356,7 @@ class PacienteEmpleadoController extends Controller
             ->where('apto_limitacion',$apto_con_limitacion)
             ->where('no_apto',$no_apto)
             ->where('observacion',$request->observ_apt_med)
+            ->where('id_cabecera_atencion',$request->IdCabeceraAtencion)
             ->where('fecha_atencion',date('Y-m-d'))
             ->first();
             if(!is_null($existe)){
@@ -1226,6 +1373,7 @@ class PacienteEmpleadoController extends Controller
             }
             $guardaAptitudMed = new AptitudMedica();
             $guardaAptitudMed->id_empleado=$request->id_empleado;
+            $guardaAptitudMed->id_cabecera_atencion=$request->IdCabeceraAtencion;
             $guardaAptitudMed->apto=$apto;
             $guardaAptitudMed->fecha_atencion=date('Y-m-d');
             $guardaAptitudMed->apto_observ=$apto_observ;
@@ -1250,6 +1398,7 @@ class PacienteEmpleadoController extends Controller
                        
             $existe=RecomendacionTratamiento::where('id_empleado',$request->id_empleado)
             ->where('recomendacion_tratamiento',$request->recomendacion_trata)
+            ->where('id_cabecera_atencion',$request->IdCabeceraAtencion)
             ->where('fecha_atencion',date('Y-m-d'))
             ->first();
             if(!is_null($existe)){
@@ -1268,6 +1417,7 @@ class PacienteEmpleadoController extends Controller
             $guardaRecomendacionTrata = new RecomendacionTratamiento();
             $guardaRecomendacionTrata->id_empleado=$request->id_empleado;
             $guardaRecomendacionTrata->recomendacion_tratamiento=$request->recomendacion_trata;
+            $guardaRecomendacionTrata->id_cabecera_atencion=$request->IdCabeceraAtencion;
             $guardaRecomendacionTrata->fecha_atencion=date('Y-m-d');
             $guardaRecomendacionTrata->estado='A';
             $guardaRecomendacionTrata->id_usuario_registra=auth()->user()->persona->id;
@@ -1296,6 +1446,7 @@ class PacienteEmpleadoController extends Controller
             ->where('si_condicion_relacionada_trabajo',$si_condicion_salud)
             ->where('no_condicion_relacionada_trabajo',$no_condicion_salud)
             ->where('observacion_retiro',$request->observ_retiro)
+            ->where('id_cabecera_atencion',$request->IdCabeceraAtencion)
             ->where('fecha_atencion',date('Y-m-d'))
             ->first();
             if(!is_null($existe)){
@@ -1318,13 +1469,89 @@ class PacienteEmpleadoController extends Controller
             $guardaRetiro->si_condicion_relacionada_trabajo=$si_condicion_salud;
             $guardaRetiro->no_condicion_relacionada_trabajo=$no_condicion_salud;
             $guardaRetiro->observacion_retiro=$request->observ_retiro;
+            $guardaRetiro->id_cabecera_atencion=$request->IdCabeceraAtencion;
             $guardaRetiro->fecha_atencion=date('Y-m-d');
             $guardaRetiro->estado='A';
             $guardaRetiro->id_usuario_registra=auth()->user()->persona->id;
             $guardaRetiro->fecha_registra=date('Y-m-d H:i:s');
-            $guardaRetiro->save();
+            if($guardaRetiro->save()){
+                $actualiza=CabeceraAtencion::where('id',$request->IdCabeceraAtencion)
+                ->first();
+                $actualiza->estado='Atendido';
+                $actualiza->save();
+
+                $guardaRetiro->estado='Atendido';
+                $guardaRetiro->save();
+
+                $actualizaMotivo=MotivoConsulta::where('id_cabecera_atencion',$request->IdCabeceraAtencion)
+                ->first();
+                $actualizaMotivo->estado='Atendido';
+                $actualizaMotivo->save();
+
+                $actualizaAntecedente=Antecedentes::where('id_cabecera_atencion',$request->IdCabeceraAtencion)
+                ->first();
+                $actualizaAntecedente->estado='Atendido';
+                $actualizaAntecedente->save();
+
+                $actualizaEnfermedad=Enfermedad::where('id_cabecera_atencion',$request->IdCabeceraAtencion)
+                ->first();
+                $actualizaEnfermedad->estado='Atendido';
+                $actualizaEnfermedad->save();
+
+                $actualizaConstante=ConstantesVitales::where('id_cabecera_atencion',$request->IdCabeceraAtencion)
+                ->first();
+                $actualizaConstante->estado='Atendido';
+                $actualizaConstante->save();
+
+                $actualizaExamen=ExamenFisicoRegional::where('id_cabecera_atencion',$request->IdCabeceraAtencion)
+                ->first();
+                $actualizaExamen->estado='Atendido';
+                $actualizaExamen->save();
+
+                $actualizaFactoreRiego=ActividadesExpo::where('fecha_atencion',date('Y-m-d'))
+                ->update(["estado"=>"Atendido", "id_cabecera_atencion"=>$request->IdCabeceraAtencion]);
+
+                $actualizaMedida=MedidasPreventivas::where('fecha_atencion',date('Y-m-d'))
+                ->update(["estado"=>"Atendido", "id_cabecera_atencion"=>$request->IdCabeceraAtencion]);               
+
+                $actualizaAntecedenteEmpleo=AntecedentesEmpleo::where('fecha_atencion',date('Y-m-d'))
+                ->update(["estado"=>"Atendido", "id_cabecera_atencion"=>$request->IdCabeceraAtencion]);
+               
+                $actualizaActividadExtra=ActividadesExtras::where('fecha_atencion',date('Y-m-d'))
+                ->update(["estado"=>"Atendido", "id_cabecera_atencion"=>$request->IdCabeceraAtencion]);               
+
+                $actualizaResultadoExam=ResultadosExamen::where('fecha_atencion',date('Y-m-d'))
+                ->update(["estado"=>"Atendido","id_cabecera_atencion"=>$request->IdCabeceraAtencion]);
+               
+                $actualizaObservRes=ObservResultadosExamen::where('id_cabecera_atencion',$request->IdCabeceraAtencion)
+                ->first();
+                $actualizaObservRes->estado='Atendido';
+                $actualizaObservRes->save();
+
+                $actualizaDiagnostico=DiagnosticoEmpleado::where('fecha_atencion',date('Y-m-d'))
+                ->update(["estado"=>"Atendido","id_cabecera_atencion"=>$request->IdCabeceraAtencion]);
+
+                $actualizaAptitudMed=AptitudMedica::where('id_cabecera_atencion',$request->IdCabeceraAtencion)
+                ->first();
+                $actualizaAptitudMed->estado='Atendido';
+                $actualizaAptitudMed->save();
+
+                $actualizaRecomend=RecomendacionTratamiento::where('id_cabecera_atencion',$request->IdCabeceraAtencion)
+                ->first();
+                $actualizaRecomend->estado='Atendido';
+                $actualizaRecomend->save();
+
+                $actualizaRetiro=Retiro::where('id_cabecera_atencion',$request->IdCabeceraAtencion)
+                ->first();
+                $actualizaRetiro->estado='Atendido';
+                $actualizaRetiro->save();
+
+
+                return ["mensaje"=>"Informacion registrada exitosamente ", "error"=>false];
+
+            }
          
-            return ["mensaje"=>"Informacion registrada exitosamentew ", "error"=>false];
+            return ["mensaje"=>"Informacion registrada exitosamente ", "error"=>false];
 
 
         } catch (\Exception $e) {

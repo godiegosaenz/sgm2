@@ -105,7 +105,8 @@
 
     </style>
 
-
+    <link href="{{ asset('css/dataTables.bootstrap5.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/rowReorder.bootstrap5.min.css') }}" rel="stylesheet">
 @endpush
 @section('content')
     <div id="busqueda_paciente">
@@ -187,12 +188,12 @@
                                     <th scope="col">Nombres</th>
                                     <th>Telefono</th>
                                     <th scope="col">Correo</th>
-                                    <th scope="col">Edad</th>
+                                    
                                 </tr>
                             </thead>
                             <tbody id="tbodyPaciente">
                                 <tr>
-                                    <td colspan="6" style="text-align:center">No hay datos disponibles</td>
+                                    <td colspan="5" style="text-align:center">No hay datos disponibles</td>
                                 </tr>
 
                             </tbody>
@@ -435,17 +436,13 @@
     <div id="atencion_paciente" style="display:none">
         <div
             class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-            <h4 class="h2">Atencion Paciente</h4>
+            <h4 class="h2 persona_evaluada">Evaluacion Ocupacional</h4>
             <div class="btn-toolbar mb-2 mb-md-0">
                 <button type="button" class="btn btn-sm btn-outline-danger d-flex align-items-center"
-                    onclick="volverBusqueda()" style="margin-right:5px">
+                    onclick="cancelaAtencion()" style="margin-right:5px">
                     <i class="fa fa-reply-all"></i>
                 </button>
-                <button type="button" class="btn btn-sm btn-outline-success d-flex align-items-center"
-                    onclick="abrirModalPaciente()">
-                    <i class="fa fa-refresh"></i>
-                </button>
-
+               
 
             </div>
         </div>
@@ -461,11 +458,11 @@
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingCero">
                                 <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseCero" aria-expanded="true" aria-controls="collapseCero">
+                                    data-bs-target="#collapseA" aria-expanded="true" aria-controls="collapseA">
                                     A. DATOS DEL PACIENTE
                                 </button>
                             </h2>
-                            <div id="collapseCero" class="accordion-collapse collapse" aria-labelledby="headingCero"
+                            <div id="collapseA" class="accordion-collapse collapse" aria-labelledby="headingCero"
                                 data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
                                     <form id="formActualizaSeccionA">
@@ -579,7 +576,7 @@
                                                Grupo Sanguineo<span class="text-danger"> *</span>
                                             </label>
                                             <div class="col-md-9">
-                                                <input type="text" class="form-control "
+                                                <input type="text" class="form-control seccion_a"
                                                     placeholder="Ingrese grupo sanguineo " name="grupo_sanguineo_empleado"
                                                     id="grupo_sanguineo_empleado">
 
@@ -592,7 +589,7 @@
                                                Lateralidad<span class="text-danger"> *</span>
                                             </label>
                                             <div class="col-md-9">
-                                                <input type="text" class="form-control "
+                                                <input type="text" class="form-control seccion_a"
                                                     placeholder="Ingrese grupo lateralidad" name="lateralidad_empleado"
                                                     id="lateralidad_empleado">
 
@@ -650,12 +647,12 @@
 
                                         </div>
 
-                                        <center>
+                                        <!-- <center>
                                             <button type="submit" class="btn btn-sm btn-outline-success d-flex align-items-center"
                                                 style="margin-right:5px">
                                             <i class="fa fa-refresh"> </i> &nbsp; Actualizar
                                             </button>
-                                        </center>
+                                        </center> -->
 
                                     </form>
                                 </div>
@@ -666,11 +663,11 @@
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingOne">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                    data-bs-target="#collapseB" aria-expanded="false" aria-controls="collapseB">
                                     B. MOTIVO DE CONSULTA
                                 </button>
                             </h2>
-                            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
+                            <div id="collapseB" class="accordion-collapse collapse" aria-labelledby="headingOne"
                                 data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
                                     <form id="formMotivo"  enctype="multipart/form-data">
@@ -758,12 +755,12 @@
                                             </div>
                                         </div>
 
-                                        <center>
+                                        <!-- <center>
                                             <button type="submit" class="btn btn-sm btn-outline-success d-flex align-items-center"
                                                 style="margin-right:5px">
                                             <i class="fa fa-floppy-o"> </i> &nbsp;&nbsp;Guardar
                                             </button>
-                                        </center>
+                                        </center> -->
 
                                     </form>
                                 </div>
@@ -774,11 +771,11 @@
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingTwo">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    data-bs-target="#collapseC" aria-expanded="false" aria-controls="collapseC">
                                     C. ANTECEDENTES PERSONALES
                                 </button>
                             </h2>
-                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+                            <div id="collapseC" class="accordion-collapse collapse" aria-labelledby="headingTwo"
                                 data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
                                     <form id="formAntecedentes" method="POST" action="" enctype="multipart/form-data">
@@ -788,7 +785,7 @@
                                                 ANTECEDENTES CLÍNICOS Y QUIRÚRGICOS<span class="text-danger"> *</span>
                                             </label>
                                             <div class="col-md-9">
-                                                <textarea class="form-control " name="antecedente_cq"
+                                                <textarea class="form-control seccion_c" name="antecedente_cq"
                                                     id="antecedente_cq"></textarea>
                                             </div>
                                         </div>
@@ -798,7 +795,7 @@
                                                 ANTECEDENTES FAMILIARES<span class="text-danger"> *</span>
                                             </label>
                                             <div class="col-md-9">
-                                                <textarea class="form-control " name="antecedente_familiares"
+                                                <textarea class="form-control seccion_c" name="antecedente_familiares"
                                                     id="antecedente_familiares"></textarea>
                                             </div>
                                         </div>
@@ -816,7 +813,7 @@
                                                     *</span>
                                             </label>
                                             <div class="col-md-9">
-                                                <select class="form-select" id="autoriza_transfusion"
+                                                <select class="form-select seccion_c" id="autoriza_transfusion"
                                                     name="autoriza_transfusion">
                                                     <option value="">Seleccione una opción</option>
                                                     <option value="Si">Si</option>
@@ -832,7 +829,7 @@
                                                     *</span>
                                             </label>
                                             <div class="col-md-9">
-                                                <select class="form-select" id="tratamiento_ormonal"
+                                                <select class="form-select seccion_c" id="tratamiento_ormonal"
                                                     name="tratamiento_ormonal" onchange="seleccionTratamientoOrmonal()">
                                                     <option value="">Seleccione una opción</option>
                                                     <option value="Si">Si</option>
@@ -848,7 +845,7 @@
                                                 ¿Cual Describir?<span class="text-danger"> *</span>
                                             </label>
                                             <div class="col-md-9">
-                                                <textarea class="form-control " name="txt_tratamiento_ormonal"
+                                                <textarea class="form-control seccion_c" name="txt_tratamiento_ormonal"
                                                     id="txt_tratamiento_ormonal"></textarea>
                                             </div>
                                         </div>
@@ -866,7 +863,7 @@
                                                     Fecha de Última menstruacion<span class="text-danger"> *</span>
                                                 </label>
                                                 <div class="col-md-9">
-                                                    <input type="date" class="form-control " name="fecha_ultima_menstruacion"
+                                                    <input type="date" class="form-control seccion_c" name="fecha_ultima_menstruacion"
                                                         id="fecha_ultima_menstruacion">
                                                 </div>
                                             </div>
@@ -876,7 +873,7 @@
                                                 </label>
                                                 <div class="col-md-2">
                                                     <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" id="gestas"
+                                                        <input class="form-check-inpu check_mujer" type="checkbox" id="gestas"
                                                             name="gestas" value="gestas">
                                                         <label class="form-check-label" for="-">Gestas</label>
                                                     </div>
@@ -884,7 +881,7 @@
 
                                                 <div class="col-md-2">
                                                     <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" id="partos"
+                                                        <input class="form-check-input check_mujer" type="checkbox" id="partos"
                                                             name="partos" value="partos">
                                                         <label class="form-check-label" for="partos">Partos</label>
                                                     </div>
@@ -892,7 +889,7 @@
 
                                                 <div class="col-md-2">
                                                     <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" id="cesareas"
+                                                        <input class="form-check-input check_mujer" type="checkbox" id="cesareas"
                                                             name="cesareas" value="cesareas">
                                                         <label class="form-check-label" for="cesareas">Cesáreas</label>
                                                     </div>
@@ -900,7 +897,7 @@
 
                                                 <div class="col-md-2">
                                                     <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" id="abortos"
+                                                        <input class="form-check-input check_mujer" type="checkbox" id="abortos"
                                                             name="abortos" value="abortos">
                                                         <label class="form-check-label" for="abortos">Abortos</label>
                                                     </div>
@@ -921,7 +918,7 @@
                                                             Exámenes realizados
                                                         </label>
                                                         <div class="col-md-9 d-flex gap-2">
-                                                            <input type="text" class="form-control" name="examenes[]">
+                                                            <input type="text" class="form-control seccion_c" name="examenes[]">
                                                             <!-- SOLO EL PRIMERO TIENE AGREGAR -->
                                                             <button type="button" class="btn btn-success btnAgregar">+</button>
                                                         </div>
@@ -933,7 +930,7 @@
                                                             Tiempo
                                                         </label>
                                                         <div class="col-md-9">
-                                                            <input type="text" class="form-control" name="tiempo_exa[]">
+                                                            <input type="text" class="form-control seccion_c" name="tiempo_exa[]">
                                                         </div>
                                                     </div>
 
@@ -944,7 +941,7 @@
                                                             laboral y previa autorización del titular
                                                         </label>
                                                         <div class="col-md-9">
-                                                            <textarea class="form-control" rows="3"
+                                                            <textarea class="form-control seccion_c" rows="3"
                                                                 name="resultado[]"></textarea>
                                                         </div>
                                                     </div>
@@ -959,7 +956,7 @@
                                                     Metodo de planificacion familiar<span class="text-danger"> *</span>
                                                 </label>
                                                 <div class="col-md-9">
-                                                    <select class="form-select" id="metodo_planificacion"
+                                                    <select class="form-select seccion_c" id="metodo_planificacion"
                                                         name="metodo_planificacion"
                                                         onchange="seleccionMetodoPlanificacionFamiliar()">
                                                         <option value="">Seleccione una opción</option>
@@ -977,7 +974,7 @@
                                                     ¿Cual?<span class="text-danger"> *</span>
                                                 </label>
                                                 <div class="col-md-9">
-                                                    <textarea class="form-control " name="txt_metodo_planificcion_familiar"
+                                                    <textarea class="form-control seccion_c " name="txt_metodo_planificcion_familiar"
                                                         id="txt_metodo_planificcion_familiar"></textarea>
                                                 </div>
                                             </div>
@@ -1003,7 +1000,7 @@
                                                             Exámenes realizados
                                                         </label>
                                                         <div class="col-md-9 d-flex gap-2">
-                                                            <input type="text" class="form-control" name="examenes_masculino[]">
+                                                            <input type="text" class="form-control seccion_c" name="examenes_masculino[]">
                                                             <!-- SOLO EL PRIMERO TIENE AGREGAR -->
                                                             <button type="button"
                                                                 class="btn btn-success btnAgregarMasculino">+</button>
@@ -1016,7 +1013,7 @@
                                                             Tiempo
                                                         </label>
                                                         <div class="col-md-9">
-                                                            <input type="text" class="form-control" name="tiempo_masculino[]">
+                                                            <input type="text" class="form-control seccion_c" name="tiempo_masculino[]">
                                                         </div>
                                                     </div>
 
@@ -1027,7 +1024,7 @@
                                                             laboral y previa autorización del titular
                                                         </label>
                                                         <div class="col-md-9">
-                                                            <textarea class="form-control" rows="3"
+                                                            <textarea class="form-control seccion_c" rows="3"
                                                                 name="resultado_masculino[]"></textarea>
                                                         </div>
                                                     </div>
@@ -1042,7 +1039,7 @@
                                                     Metodo de planificacion familiar<span class="text-danger"> *</span>
                                                 </label>
                                                 <div class="col-md-9">
-                                                    <select class="form-select" id="metodo_planificacion_masculino"
+                                                    <select class="form-select seccion_c" id="metodo_planificacion_masculino"
                                                         name="metodo_planificacion_masculino"
                                                         onchange="seleccionMetodoPlanificacionFamiliarMasculino()">
                                                         <option value="">Seleccione una opción</option>
@@ -1060,7 +1057,7 @@
                                                     ¿Cual?<span class="text-danger"> *</span>
                                                 </label>
                                                 <div class="col-md-9">
-                                                    <textarea class="form-control "
+                                                    <textarea class="form-control seccion_c"
                                                         name="txt_metodo_planificcion_familiar_masculino"
                                                         id="txt_metodo_planificcion_familiar_masculino"></textarea>
                                                 </div>
@@ -1090,7 +1087,7 @@
                                                                     </label>
 
                                                                     <input type="text"
-                                                                    class="form-control"
+                                                                    class="form-control seccion_c"
                                                                     name="txt_metodo_planificcion_familiar_masculino"
                                                                     id="txt_metodo_planificcion_familiar_masculino"
                                                                 >
@@ -1105,7 +1102,7 @@
                                                                     </label>
 
                                                                     <input type="text"
-                                                                    class="form-control"
+                                                                    class="form-control seccion_c"
                                                                     name="txt_metodo_planificcion_familiar_masculino"
                                                                     id="txt_metodo_planificcion_familiar_masculino"
                                                                 >
@@ -1120,7 +1117,7 @@
                                                                     </label>
 
                                                                     <input type="text"
-                                                                    class="form-control"
+                                                                    class="form-control seccion_c"
                                                                     name="txt_metodo_planificcion_familiar_masculino"
                                                                     id="txt_metodo_planificcion_familiar_masculino"
                                                                     >
@@ -1136,7 +1133,7 @@
                                                                     </label>
 
                                                                     <input type="text"
-                                                                    class="form-control"
+                                                                    class="form-control seccion_c"
                                                                     name="txt_metodo_planificcion_familiar_masculino"
                                                                     id="txt_metodo_planificcion_familiar_masculino"
                                                                 >
@@ -1158,7 +1155,7 @@
                                                                     </label>
 
                                                                     <input type="text"
-                                                                    class="form-control"
+                                                                    class="form-control seccion_c"
                                                                     name="txt_metodo_planificcion_familiar_masculino"
                                                                     id="txt_metodo_planificcion_familiar_masculino"
                                                                     rows="3">
@@ -1173,7 +1170,7 @@
                                                                     </label>
 
                                                                     <input type="text"
-                                                                    class="form-control"
+                                                                    class="form-control seccion_c"
                                                                     name="txt_metodo_planificcion_familiar_masculino"
                                                                     id="txt_metodo_planificcion_familiar_masculino"
                                                                     rows="3">
@@ -1188,7 +1185,7 @@
                                                                     </label>
 
                                                                     <input type="text"
-                                                                    class="form-control"
+                                                                    class="form-control seccion_c"
                                                                     name="txt_metodo_planificcion_familiar_masculino"
                                                                     id="txt_metodo_planificcion_familiar_masculino"
                                                                     rows="3">
@@ -1203,7 +1200,7 @@
                                                                     </label>
 
                                                                     <input type="text"
-                                                                    class="form-control"
+                                                                    class="form-control seccion_c"
                                                                     name="txt_metodo_planificcion_familiar_masculino"
                                                                     id="txt_metodo_planificcion_familiar_masculino"
                                                                     rows="3">
@@ -1224,7 +1221,7 @@
                                                                     </label>
 
                                                                     <input type="text"
-                                                                    class="form-control"
+                                                                    class="form-control seccion_c"
                                                                     name="txt_metodo_planificcion_familiar_masculino"
                                                                     id="txt_metodo_planificcion_familiar_masculino"
                                                                     rows="3">
@@ -1240,7 +1237,7 @@
                                                                     </label>
 
                                                                     <input type="text"
-                                                                    class="form-control"
+                                                                    class="form-control seccion_c"
                                                                     name="txt_metodo_planificcion_familiar_masculino"
                                                                     id="txt_metodo_planificcion_familiar_masculino"
                                                                     rows="3">
@@ -1255,7 +1252,7 @@
                                                                     </label>
 
                                                                     <input type="text"
-                                                                    class="form-control"
+                                                                    class="form-control seccion_c"
                                                                     name="txt_metodo_planificcion_familiar_masculino"
                                                                     id="txt_metodo_planificcion_familiar_masculino"
                                                                     rows="3">
@@ -1270,7 +1267,7 @@
                                                                     </label>
 
                                                                     <input type="text"
-                                                                    class="form-control"
+                                                                    class="form-control seccion_c"
                                                                     name="txt_metodo_planificcion_familiar_masculino"
                                                                     id="txt_metodo_planificcion_familiar_masculino"
                                                                     rows="3">
@@ -1285,7 +1282,7 @@
                                                                     </label>
 
                                                                     <input type="text"
-                                                                    class="form-control"
+                                                                    class="form-control seccion_c"
                                                                     name="txt_metodo_planificcion_familiar_masculino"
                                                                     id="txt_metodo_planificcion_familiar_masculino"
                                                                     rows="3">
@@ -1329,7 +1326,7 @@
                                                             </label>
 
                                                             <input type="text"
-                                                            class="form-control"
+                                                            class="form-control seccion_c"
                                                             name="activida_fisica[0]"
                                                             id="activida_fisica_1"
                                                             rows="3">
@@ -1342,7 +1339,7 @@
                                                             </label>
 
                                                             <input type="text"
-                                                            class="form-control"
+                                                            class="form-control seccion_c"
                                                             name="tiempo[0]"
                                                             id="tiempo_1"
                                                             rows="3">
@@ -1358,7 +1355,7 @@
                                                             </label>
 
                                                             <input type="text"
-                                                            class="form-control"
+                                                            class="form-control seccion_c"
                                                             name="activida_fisica[1]"
                                                             id="activida_fisica_2"
                                                             rows="3">
@@ -1371,7 +1368,7 @@
                                                             </label>
 
                                                             <input type="text"
-                                                            class="form-control"
+                                                            class="form-control seccion_c"
                                                             name="tiempo[1]"
                                                             id="tiempo_2"
                                                             rows="3">
@@ -1389,7 +1386,7 @@
                                                             </label>
 
                                                             <input type="text"
-                                                            class="form-control"
+                                                            class="form-control seccion_c"
                                                             name="activida_fisica[2]"
                                                             id="activida_fisica_3"
                                                             rows="3">
@@ -1402,7 +1399,7 @@
                                                             </label>
 
                                                             <input type="text"
-                                                            class="form-control"
+                                                            class="form-control seccion_c"
                                                             name="tiempo[2]"
                                                             id="tiempo_3"
                                                             rows="3">
@@ -1445,7 +1442,7 @@
                                                             </label>
 
                                                             <input type="text"
-                                                            class="form-control"
+                                                            class="form-control seccion_c"
                                                             name="medicacion[]"
                                                             id="medicacion_1"
                                                             rows="3">
@@ -1458,7 +1455,7 @@
                                                             </label>
 
                                                             <input type="text"
-                                                            class="form-control"
+                                                            class="form-control seccion_c"
                                                             name="tiempo_medicacion[]"
                                                             id="tiempo_medicacion_1"
                                                             rows="3">
@@ -1474,7 +1471,7 @@
                                                             </label>
 
                                                             <input type="text"
-                                                            class="form-control"
+                                                            class="form-control seccion_c"
                                                             name="medicacion[]"
                                                             id="medicacion_2"
                                                             rows="3">
@@ -1487,7 +1484,7 @@
                                                             </label>
 
                                                             <input type="text"
-                                                            class="form-control"
+                                                            class="form-control seccion_c"
                                                             name="tiempo_medicacion[]"
                                                             id="tiempo_medicacion_2"
                                                             rows="3">
@@ -1505,7 +1502,7 @@
                                                             </label>
 
                                                             <input type="text"
-                                                            class="form-control"
+                                                            class="form-control seccion_c"
                                                             name="medicacion[]"
                                                             id="medicacion_3"
                                                             rows="3">
@@ -1518,7 +1515,7 @@
                                                             </label>
 
                                                             <input type="text"
-                                                            class="form-control"
+                                                            class="form-control seccion_c"
                                                             name="tiempo_medicacion[]"
                                                             id="tiempo_medicacion_3"
                                                             rows="3">
@@ -1535,17 +1532,17 @@
                                                 OBSERVACION<span class="text-danger"> *</span>
                                             </label>
                                             <div class="col-md-9">
-                                                <textarea class="form-control " name="observacion_antecedentes"
+                                                <textarea class="form-control seccion_c" name="observacion_antecedentes"
                                                     id="observacion_antecedentes"></textarea>
                                             </div>
                                         </div>
                                         <hr>
-                                        <center>
+                                        <!-- <center>
                                             <button type="submit" class="btn btn-sm btn-outline-success d-flex align-items-center"
                                                 style="margin-right:5px">
                                             <i class="fa fa-floppy-o"> </i> &nbsp;&nbsp;Guardar
                                             </button>
-                                        </center>
+                                        </center> -->
 
                                     </form>
                                 </div>
@@ -1556,11 +1553,11 @@
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingThree">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    data-bs-target="#collapseD" aria-expanded="false" aria-controls="collapseD">
                                     D. ENFERMEDAD O PROBLEMA ACTUAL
                                 </button>
                             </h2>
-                            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
+                            <div id="collapseD" class="accordion-collapse collapse" aria-labelledby="headingThree"
                                 data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
                                     <form id="formEnfermedad">
@@ -1569,16 +1566,16 @@
                                                 DESCRIPCION<span class="text-danger"> *</span>
                                             </label>
                                             <div class="col-md-9">
-                                                <textarea class="form-control " name="enfermedad_problema_actual"
+                                                <textarea class="form-control seccion_d" name="enfermedad_problema_actual"
                                                     id="enfermedad_problema_actual"></textarea>
                                             </div>
                                         </div>
-                                        <center>
+                                        <!-- <center>
                                             <button type="submit" class="btn btn-sm btn-outline-success d-flex align-items-center"
                                                 style="margin-right:5px">
                                             <i class="fa fa-floppy-o"> </i> &nbsp;&nbsp;Guardar
                                             </button>
-                                        </center>
+                                        </center> -->
 
                                     </form>
                                 </div>
@@ -1588,11 +1585,11 @@
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingFour">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                    data-bs-target="#collapseE" aria-expanded="false" aria-controls="collapseE">
                                     E. CONSTANTES VITALES Y ANTROPOMETRÍA 
                                 </button>
                             </h2>
-                            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour"
+                            <div id="collapseE" class="accordion-collapse collapse" aria-labelledby="headingFour"
                                 data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
                                     <form id="formConstanteVitales">
@@ -1700,7 +1697,7 @@
                                                                 <div class="col-md-12">
 
                                                                     <input type="text"
-                                                                    class="form-control"
+                                                                    class="form-control seccion_e"
                                                                     name="temperatura"
                                                                     id="temperatura"
                                                                 >
@@ -1712,7 +1709,7 @@
                                                                 <div class="col-md-12">
 
                                                                     <input type="text"
-                                                                    class="form-control"
+                                                                    class="form-control seccion_e"
                                                                     name="presion_arterial"
                                                                     id="presion_arterial"
                                                                 >
@@ -1724,7 +1721,7 @@
                                                                 <div class="col-md-12">
 
                                                                     <input type="text"
-                                                                    class="form-control"
+                                                                    class="form-control seccion_e"
                                                                     name="frecuencia_cardiaca"
                                                                     id="frecuencia_cardiaca"
                                                                 >
@@ -1736,7 +1733,7 @@
                                                                 <div class="col-md-12">
 
                                                                     <input type="text"
-                                                                    class="form-control"
+                                                                    class="form-control seccion_e"
                                                                     name="frecuencia_respiratoria"
                                                                     id="frecuencia_respiratoria"
                                                                 >
@@ -1748,7 +1745,7 @@
                                                                 <div class="col-md-12">
 
                                                                     <input type="text"
-                                                                    class="form-control"
+                                                                    class="form-control seccion_e"
                                                                     name="saturacion"
                                                                     id="saturacion"
                                                                 >
@@ -1760,7 +1757,7 @@
                                                                 <div class="col-md-12">
 
                                                                     <input type="text"
-                                                                    class="form-control"
+                                                                    class="form-control seccion_e"
                                                                     name="peso"
                                                                     id="peso"
                                                                 >
@@ -1772,7 +1769,7 @@
                                                                 <div class="col-md-12">
 
                                                                     <input type="text"
-                                                                    class="form-control"
+                                                                    class="form-control seccion_e"
                                                                     name="talla"
                                                                     id="talla"
                                                                 >
@@ -1784,7 +1781,7 @@
                                                                 <div class="col-md-12">
 
                                                                     <input type="text"
-                                                                    class="form-control"
+                                                                    class="form-control seccion_e"
                                                                     name="imc"
                                                                     id="imc"
                                                                 >
@@ -1797,7 +1794,7 @@
 
                                                                     <input type="text"
                                                                     class="form-control"
-                                                                    name="perimetro_abdominal"
+                                                                    name="perimetro_abdominal seccion_e"
                                                                     id="perimetro_abdominal"
                                                                 >
                                                                 </div>
@@ -1809,12 +1806,12 @@
                                                 </table>
                                             </div>
                                         </div>
-                                    <center>
+                                        <!-- <center>
                                             <button type="submit" class="btn btn-sm btn-outline-success d-flex align-items-center"
                                                 style="margin-right:5px">
                                             <i class="fa fa-floppy-o"> </i> &nbsp;&nbsp;Guardar
                                             </button>
-                                        </center>
+                                        </center> -->
 
                                     </form>
                                 </div>
@@ -1824,11 +1821,11 @@
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingFive">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                                    data-bs-target="#collapseF" aria-expanded="false" aria-controls="collapseF">
                                     F. EXAMEN FÍSICO REGIONAL
                                 </button>
                             </h2>
-                            <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive"
+                            <div id="collapseF" class="accordion-collapse collapse" aria-labelledby="headingFive"
                                 data-bs-parent="#accordionExample">
                                 <form id="formExamenFisico">
                                     <div class="accordion-body">
@@ -2086,7 +2083,7 @@
                                                                     Observación:<span class="text-danger"> *</span>
                                                                 </label>
                                                                 <div class="col-md-10">
-                                                                    <textarea class="form-control" name="motivo_examen" id="motivo_examen"></textarea>
+                                                                    <textarea class="form-control seccion_f" name="motivo_examen" id="motivo_examen"></textarea>
                                                                 </div>
                                                             </div>
                                                         </td>
@@ -2097,12 +2094,12 @@
                                             </div>
                                         </div>
 
-                                        <center>
+                                        <!-- <center>
                                             <button type="submit" class="btn btn-sm btn-outline-success d-flex align-items-center"
                                                 style="margin-right:5px">
                                             <i class="fa fa-floppy-o"> </i> &nbsp;&nbsp;Guardar
                                             </button>
-                                        </center>
+                                        </center> -->
 
                                     </div>
                                   
@@ -2115,11 +2112,11 @@
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingSix">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                                    data-bs-target="#collapseG" aria-expanded="false" aria-controls="collapseG">
                                     G. FACTORES DE RIESGO DEL TRABAJO ACTUAL   
                                 </button>
                             </h2>
-                            <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix"
+                            <div id="collapseG" class="accordion-collapse collapse" aria-labelledby="headingSix"
                                 data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
                                     <div class="row mb-3 align-items-center">
@@ -3427,11 +3424,11 @@
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingSeven">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseSeven" aria-expanded="false" aria-controls="collapseSeven">
+                                    data-bs-target="#collapseH" aria-expanded="false" aria-controls="collapseH">
                                     H. ACTIVIDAD LABORAL/ INCIDENTES/ACCIDENTES / ENFERMEDADES OCUPACIONALES  
                                 </button>
                             </h2>
-                            <div id="collapseSeven" class="accordion-collapse collapse" aria-labelledby="headingSeven"
+                            <div id="collapseH" class="accordion-collapse collapse" aria-labelledby="headingSeven"
                                 data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
                                     <div class="row mb-3 align-items-center">
@@ -3499,11 +3496,11 @@
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingEigth">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseEigth" aria-expanded="false" aria-controls="collapseEigth">
+                                    data-bs-target="#collapseI" aria-expanded="false" aria-controls="collapseI">
                                     I. ACTIVIDADES EXTRA LABORALES 
                                 </button>
                             </h2>
-                            <div id="collapseEigth" class="accordion-collapse collapse" aria-labelledby="headingEigth"
+                            <div id="collapseI" class="accordion-collapse collapse" aria-labelledby="headingEigth"
                                 data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
                                     <div class="row mb-3 align-items-center">
@@ -3540,11 +3537,11 @@
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingNine">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseNine" aria-expanded="false" aria-controls="collapseNine">
+                                    data-bs-target="#collapseJ" aria-expanded="false" aria-controls="collapseJ">
                                     J. RESULTADOS DE EXÁMENES GENERALES Y ESPECÍFICOS DE ACUERDO AL RIESGO Y PUESTO DE TRABAJO (IMAGEN, LABORATORIO Y OTROS)
                                 </button>
                             </h2>
-                            <div id="collapseNine" class="accordion-collapse collapse" aria-labelledby="headingNine"
+                            <div id="collapseJ" class="accordion-collapse collapse" aria-labelledby="headingNine"
                                 data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
                                     <div class="row mb-3 align-items-center">
@@ -3567,7 +3564,7 @@
 
                                                 <tbody id="tbodyResultadoExamen">
                                                     <tr>
-                                                        <td colspan="2"><center>No hay Datos Disponibles</center></td>
+                                                        <td colspan="3"><center>No hay Datos Disponibles</center></td>
                                                         
                                                     </tr>
 
@@ -3578,19 +3575,19 @@
                                             <form id="formObservacionResultados" style="margin-top: 12px;">
                                                 <div class="row mb-3 align-items-center">
                                                     <label class="col-md-2 col-form-label " style="text-align: right;">
-                                                        Observacion<span class="text-danger"> *</span>
+                                                        Observacion
                                                     </label>
                                                     <div class="col-md-9">
-                                                        <textarea class="form-control " name="observacion_resultados"
+                                                        <textarea class="form-control seccion_j" name="observacion_resultados"
                                                             id="observacion_resultados"></textarea>
                                                     </div>
                                                 </div>
-                                                <center>
+                                                <!-- <center>
                                                     <button type="submit" class="btn btn-sm btn-outline-success d-flex align-items-center"
                                                         style="margin-right:5px">
                                                     <i class="fa fa-floppy-o"> </i> &nbsp;&nbsp;Guardar
                                                     </button>
-                                                </center>
+                                                </center> -->
 
                                             </form>
                                         </div>
@@ -3602,11 +3599,11 @@
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingTen">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseTen" aria-expanded="false" aria-controls="collapseTen">
+                                    data-bs-target="#collapseK" aria-expanded="false" aria-controls="collapseK">
                                     K. DIAGNÓSTICO &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  PRE:PRESUNTIVO DEF: DEFINITIVO
                                 </button>
                             </h2>
-                            <div id="collapseTen" class="accordion-collapse collapse" aria-labelledby="headingTen"
+                            <div id="collapseK" class="accordion-collapse collapse" aria-labelledby="headingTen"
                                 data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
                                     <div class="row mb-3 align-items-center">
@@ -3646,11 +3643,11 @@
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingEleven">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseEleven" aria-expanded="false" aria-controls="collapseEleven">
+                                    data-bs-target="#collapseL" aria-expanded="false" aria-controls="collapseL">
                                     L. APTITUD MÉDICA PARA EL TRABAJO
                                 </button>
                             </h2>
-                            <div id="collapseEleven" class="accordion-collapse collapse" aria-labelledby="headingEleven"
+                            <div id="collapseL" class="accordion-collapse collapse" aria-labelledby="headingEleven"
                                 data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
                                     <div class="row mb-3 align-items-center">
@@ -3693,17 +3690,17 @@
                                                     </tr>
                                                     <tr>
                                                         <td colspan="8">
-                                                            Observaciones<textarea name="observ_apt_med" id="observ_apt_med" class="form-control" rows="3"></textarea>
+                                                            Observaciones<textarea name="observ_apt_med" id="observ_apt_med" class="form-control seccion_l" rows="3"></textarea>
                                                         </td>
 
                                                     </tr>
                                                 </table>
-                                                <center>
+                                                <!-- <center>
                                                     <button type="button" onclick="guardarAptitudesMedi()" class="btn btn-sm btn-outline-success d-flex align-items-center"
                                                         style="margin-right:5px">
                                                     <i class="fa fa-floppy-o"> </i> &nbsp;&nbsp;Guardar
                                                     </button>
-                                                </center>
+                                                </center> -->
 
                                             </form>
 
@@ -3716,11 +3713,11 @@
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingTwelve">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseTwelve" aria-expanded="false" aria-controls="collapseTwelve">
+                                    data-bs-target="#collapseM" aria-expanded="false" aria-controls="collapseM">
                                     M. RECOMENDACIONES Y/O TRATAMIENTO
                                 </button>
                             </h2>
-                            <div id="collapseTwelve" class="accordion-collapse collapse" aria-labelledby="headingTwelve"
+                            <div id="collapseM" class="accordion-collapse collapse" aria-labelledby="headingTwelve"
                                 data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
                                     <div class="row mb-3 align-items-center">
@@ -3731,16 +3728,16 @@
 
                                                     <tr>
                                                         <td colspan="8">
-                                                            Descripción<textarea name="recomendacion_trata" id="recomendacion_trata" class="form-control" rows="5"></textarea>
+                                                            Descripción<textarea name="recomendacion_trata" id="recomendacion_trata" class="form-control seccion_m" rows="5"></textarea>
                                                         </td>
 
                                                     </tr>
                                                 </table>
-                                                <center>
+                                                <!-- <center>
                                                     <button type="button" onclick="guardarRecomendaciones()" class="btn btn-sm btn-success">  
                                                         Guardar
                                                     </button>
-                                                </center>
+                                                </center> -->
                                             </form>
                                         </div>
                                     </div>
@@ -3751,11 +3748,11 @@
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingThirteen">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseThirteen" aria-expanded="false" aria-controls="collapseThirteen">
+                                    data-bs-target="#collapseN" aria-expanded="false" aria-controls="collapseN">
                                     N.RETIRO (evaluación) 
                                 </button>
                             </h2>
-                            <div id="collapseThirteen" class="accordion-collapse collapse" aria-labelledby="headingThirteen"
+                            <div id="collapseN" class="accordion-collapse collapse" aria-labelledby="headingThirteen"
                                 data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
                                     <div class="row mb-3 align-items-center">
@@ -3828,16 +3825,16 @@
                                                     </tr>
                                                     <tr>
                                                         <td colspan="5">
-                                                            Observación<textarea name="observ_retiro" id="observ_retiro" class="form-control" rows="5"></textarea>
+                                                            Observación<textarea name="observ_retiro" id="observ_retiro" class="form-control seccion_n" rows="5"></textarea>
                                                         </td>
 
                                                     </tr>
                                                 </table>
-                                                <center>
+                                                <!-- <center>
                                                     <button type="button" onclick="guardarRetiro()" class="btn btn-sm btn-success">  
                                                         Guardar
                                                     </button>
-                                                </center>
+                                                </center> -->
                                             </form>
                                         </div>
                                     </div>
@@ -3863,9 +3860,81 @@
                 </center>
             </div>
 
-            <hr>
+           
+        </div>
+         <hr>
+    </div>
+
+
+    <div id="historial_paciente" style="display:none">
+        <div
+            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h4 class="h2 persona_evaluada1">Historial Evaluacion Ocupacional</h4>
+            <div class="btn-toolbar mb-2 mb-md-0">
+                <button type="button" class="btn btn-sm btn-outline-danger d-flex align-items-center"
+                    onclick="regresarHistorial()" style="margin-right:5px">
+                    <i class="fa fa-reply-all"></i>
+                </button>
+               
+
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div class="col-md-12" style="margin-bottom:7px">
+                <div class="container mt-2">
+                    <div class="col-md-12 row" style="margin-bottom: 12px;">
+                        <div class="col-md-6">
+                            <b>Cedula:</b> <span class="detalle_hist" id="cedula_historial"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <b>Paciente:</b> <span class="detalle_hist" id="paciente_historial"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <b>Fecha Nacimiento:</b> <span class="detalle_hist" id="fnacimiento_historial"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <b>Edad:</b> <span class="detalle_hist" id="edad_historial"></span>
+                        </div>
+
+                         <div class="col-md-6">
+                            <b>Grupo Sanguineo:</b> <span class="detalle_hist" id="gsanguineo_historial"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <b>Lateralidad:</b> <span class="detalle_hist" id="lateralidad_historial"></span>
+                        </div>
+
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover" id="tablaHistorialPaciente" style="width: 100%">
+                            <thead>
+                                <tr>
+                                    <th scope="col"></th>
+                                    <th scope="col">Motivo Consulta</th>
+                                    <th scope="col">Diagnostico</th>
+                                    <th>Fecha </th>
+                                    <th scope="col">Profesional</th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyHistorialPaciente">
+                                <tr>
+                                    <td colspan="5" style="text-align:center">No hay datos disponibles</td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
 
     <div class="modal fade" id="modalActividadExtra" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -4135,6 +4204,11 @@
 
 
         </script>
+        <script src="{{asset('bower_components/sweetalert/sweetalert.js')}}"></script>
+
+        <script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
+        <script src="{{ asset('js/dataTables.bootstrap5.min.js') }}"></script>
+        <script src="{{ asset('js/dataTables.rowReorder.min.js') }}"></script>
         <script src="{{asset('bower_components/sweetalert/sweetalert.js')}}"></script>
 
         <script src="{{ asset('js/consultorio/evaluacion.js?v=' . rand())}}"></script>
