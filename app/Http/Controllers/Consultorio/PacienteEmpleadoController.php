@@ -29,6 +29,7 @@ use DB;
 use App\models\Cita;
 use PHPUnit\Framework\Constraint\IsFalse;
 use PHPUnit\Logging\TestDox\TestFailedSubscriber;
+use function PHPUnit\Framework\returnArgument;
 
 class PacienteEmpleadoController extends Controller
 {
@@ -1557,5 +1558,15 @@ class PacienteEmpleadoController extends Controller
         } catch (\Exception $e) {
             return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
         }
+    }
+
+    public function pdfEvolucion($id){
+        $nombrePDF="pdf_evolucion.pdf";
+
+        $pdf=\PDF::LoadView('consultorio.pdf_evolucion',[]);
+        $pdf->setPaper("A4", "portrait");
+        return $pdf->stream($nombrePDF);
+        // $estadoarch = $pdf->stream();
+
     }
 }

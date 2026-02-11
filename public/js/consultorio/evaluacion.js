@@ -69,8 +69,8 @@ async function guardarHistoriaCompleta() {
         await guardarRecomendaciones();          // M
         await guardarRetiro();                   // N
 
-        $('#busqueda_paciente').hide(200)
-        $('#atencion_paciente').show(200)
+        $('#busqueda_paciente').show(200)
+        $('#atencion_paciente').hide(200)
 
         alertNotificar("Historia guardada correctamente", "success");
 

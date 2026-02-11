@@ -493,6 +493,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('guardar-retiro', [PacienteEmpleadoController::class, 'guardaRetiro']);
 
     Route::get('historial-paciente-evolucion/{cedula}', [PacienteEmpleadoController::class, 'histoEvoEmpleadoPaciente']);
+     Route::get('pdf-evolucion/{idempleado}', [PacienteEmpleadoController::class, 'pdfEvolucion']);
 
 
     //*******TASA DE ASEO Y RECOLECCION DE DESECHOS*********************/
