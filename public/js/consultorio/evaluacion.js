@@ -32,11 +32,17 @@ function validaSeccionI(){
     }
     return true
 }
-
+globalThis.CantDiag=0
 function validaSeccionK(){
+
     let ttamanio_diagnostico=$('#tbodyDiagnostico tr').length;
     if(ttamanio_diagnostico==0){
-        alertNotificar("Debe ingresar al menos un diagnostico")
+        alertNotificar("Debe ingresar al menos un diagnostico","error")
+        return false
+    }
+
+    if(CantDiag==0){
+        alertNotificar("Debe ingresar al menos un diagnostico","error")
         return false
     }
     return true
@@ -2678,6 +2684,7 @@ function guardarObservacionResultados() {
 
 
 function abrirModalDiagnostico(){
+    limpiarModalDiagnostico()
     $('#modalDiagnostico').modal('show')
 }
 
@@ -2718,6 +2725,7 @@ $('#modalDiagnostico').on('shown.bs.modal', function () {
 
 function limpiarModalDiagnostico(){
     $('.modal_diag').val('')
+    $('#cmb_diagnostico').val('')
 }
 function guardarDiagnostico(){
     
@@ -2776,6 +2784,7 @@ function guardarDiagnostico(){
     });
 }
 
+
 function llenarTablaDiagnostico(id_empleado){
     $("#tbodyDiagnostico").html('');
     $('#tbodyDiagnostico').empty(); 
@@ -2799,7 +2808,7 @@ function llenarTablaDiagnostico(id_empleado){
             <td colspan="4" style="text-align:center">No hay datos disponibles</td>`);
             return; 
         }
-  
+        CantDiag=data.resultado.length
         $.each(data.resultado,function(i, item){
             
             let def=""
