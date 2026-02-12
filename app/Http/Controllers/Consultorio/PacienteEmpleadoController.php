@@ -1122,26 +1122,32 @@ class PacienteEmpleadoController extends Controller
         try{
             $actualizaFactoreRiego=ActividadesExpo::where('fecha_atencion',date('Y-m-d'))
             ->where('idpaciente',$idpaciente)
+            ->where('estado','!=','Atendido')
             ->delete();
 
             $actualizaMedida=MedidasPreventivas::where('fecha_atencion',date('Y-m-d'))
             ->where('id_empleado',$idpaciente)
+            ->where('estado','!=','Atendido')
             ->delete();               
 
             $actualizaAntecedenteEmpleo=AntecedentesEmpleo::where('fecha_atencion',date('Y-m-d'))
             ->where('id_empleado',$idpaciente)
+            ->where('estado','!=','Atendido')
             ->delete();  
                 
             $actualizaActividadExtra=ActividadesExtras::where('fecha_atencion',date('Y-m-d'))
             ->where('id_empleado',$idpaciente)
+            ->where('estado','!=','Atendido')
             ->delete();                
 
             $actualizaResultadoExam=ResultadosExamen::where('fecha_atencion',date('Y-m-d'))
             ->where('id_empleado',$idpaciente)
+            ->where('estado','!=','Atendido')
             ->delete();  
 
             $actualizaDiagnostico=DiagnosticoEmpleado::where('fecha_atencion',date('Y-m-d'))
             ->where('id_empleado',$idpaciente)
+            ->where('estado','!=','Atendido')
             ->delete(); 
             
             return ["mensaje"=>"ok", "error"=>false];
@@ -1153,7 +1159,7 @@ class PacienteEmpleadoController extends Controller
 
      public function histoEvoEmpleadoPaciente($id){
         try{
-            $limpiaDataBorrador=$this->limpiarDataBorrador($id);
+            //$limpiaDataBorrador=$this->limpiarDataBorrador($id);
             $info = EmpleadoPaciente::where('id', $id)
             ->select(
                 'cedula', 
@@ -1179,13 +1185,16 @@ class PacienteEmpleadoController extends Controller
             ->leftJoin('sgm_consultorio.seccion_motivo_consulta as mot', 'mot.id_cabecera_atencion', '=', 'ca.id')
             ->select('ca.id as idcab','mot.motivo','ca.id_usuario_registra','ca.fecha_registro')
             ->where('ca.estado','Atendido')
+            ->where('ca.id_empleado',$id)
             ->where('mot.estado','Atendido')
             ->get();
 
             foreach($atenciones as $key=> $data){
-                $diag=DB::connection('pgsql')->table('sgm_consultorio.diagnostico_empleado')
-                ->where('estado','Atendido')
+                $diag=DB::connection('pgsql')->table('sgm_consultorio.diagnostico_empleado as de')
+                ->leftJoin('sgm_consultorio.cie10 as c', 'de.id_cie10', '=', 'c.id')
+                ->where('de.estado','Atendido')
                 ->where('id_cabecera_atencion',$data->idcab)
+                ->select(DB::raw("CONCAT(c.codigo, ' - ', c.descripcion) AS nombre"))
                 ->get();
 
                 $usuarioRegistra=DB::connection('mysql')->table('users as u')
@@ -1509,19 +1518,26 @@ class PacienteEmpleadoController extends Controller
                 $actualizaExamen->estado='Atendido';
                 $actualizaExamen->save();
 
+                $idpaciente=$request->id_empleado;
+
                 $actualizaFactoreRiego=ActividadesExpo::where('fecha_atencion',date('Y-m-d'))
+                ->where('idpaciente',$idpaciente)
                 ->update(["estado"=>"Atendido", "id_cabecera_atencion"=>$request->IdCabeceraAtencion]);
 
                 $actualizaMedida=MedidasPreventivas::where('fecha_atencion',date('Y-m-d'))
+                ->where('id_empleado',$idpaciente)
                 ->update(["estado"=>"Atendido", "id_cabecera_atencion"=>$request->IdCabeceraAtencion]);               
 
                 $actualizaAntecedenteEmpleo=AntecedentesEmpleo::where('fecha_atencion',date('Y-m-d'))
+                ->where('id_empleado',$idpaciente)
                 ->update(["estado"=>"Atendido", "id_cabecera_atencion"=>$request->IdCabeceraAtencion]);
                
                 $actualizaActividadExtra=ActividadesExtras::where('fecha_atencion',date('Y-m-d'))
+                ->where('id_empleado',$idpaciente)
                 ->update(["estado"=>"Atendido", "id_cabecera_atencion"=>$request->IdCabeceraAtencion]);               
 
                 $actualizaResultadoExam=ResultadosExamen::where('fecha_atencion',date('Y-m-d'))
+                ->where('id_empleado',$idpaciente)
                 ->update(["estado"=>"Atendido","id_cabecera_atencion"=>$request->IdCabeceraAtencion]);
                
                 $actualizaObservRes=ObservResultadosExamen::where('id_cabecera_atencion',$request->IdCabeceraAtencion)
@@ -1530,6 +1546,7 @@ class PacienteEmpleadoController extends Controller
                 $actualizaObservRes->save();
 
                 $actualizaDiagnostico=DiagnosticoEmpleado::where('fecha_atencion',date('Y-m-d'))
+                ->where('id_empleado',$idpaciente)
                 ->update(["estado"=>"Atendido","id_cabecera_atencion"=>$request->IdCabeceraAtencion]);
 
                 $actualizaAptitudMed=AptitudMedica::where('id_cabecera_atencion',$request->IdCabeceraAtencion)

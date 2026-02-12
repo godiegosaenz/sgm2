@@ -658,15 +658,27 @@ function verHistorial(id){
         $('#lateralidad_historial').html(data.resultado.lateralidad)
 
         $.each(data.motivo,function(i, item){
-
+        
             // Construir los diagnósticos
-            let diagnosticos = '';
+            let diagnosticos = `
+            <ul style="
+                margin:0;
+                padding-left:12px;
+                list-style-position: inside;
+            ">
+            `;
 
-            if(item.diagnosticos && item.diagnosticos.length > 0){
-                diagnosticos = item.diagnosticos.map(d => d.nombre).join('<br>');
+            $.each(item.diagnostico, function(i2, item2){
+                diagnosticos += `<li style="margin:0;padding:0;">${item2.nombre ?? ''}</li>`;
+            });
+
+            diagnosticos += '</ul>';
+
+            /*if(item.diagnosticos && item.diagnosticos.length > 0){
+                
             }else{
                 diagnosticos = 'Sin diagnóstico';
-            }
+            }*/
 
             $('#tbodyHistorialPaciente').append(`<tr>
                 <td style="width:9%; text-align:center; vertical-align:middle">
@@ -675,16 +687,16 @@ function verHistorial(id){
                     </button> 
                                      
                 </td>
-                <td style="width:20%; text-align:center; vertical-align:middle">
+                <td style="width:20%; text-align:left; vertical-align:middle">
                     ${item.motivo}                    
                 </td>
-                <td style="width:40%; text-align:center; vertical-align:middle">
+                <td style="width:40%; text-align:left; vertical-align:middle">
                     ${diagnosticos}               
                 </td>
                 <td style="width:10%; text-align:center; vertical-align:middle">
                     ${item.fecha_registro}            
                 </td>
-                <td style="width:20%; text-align:center; vertical-align:middle">
+                <td style="width:20%; text-align:left; vertical-align:middle">
                     ${item.profesional}                 
                 </td>
                 

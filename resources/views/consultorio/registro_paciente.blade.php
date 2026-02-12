@@ -3886,27 +3886,27 @@
                 <div class="container mt-2">
                     <div class="col-md-12 row" style="margin-bottom: 12px;">
                         <div class="col-md-6">
-                            <b>Cedula:</b> <span class="detalle_hist" id="cedula_historial"></span>
+                            <i class="fa fa-credit-card" style="color:#5d5def"></i> <b>Cedula:</b> <span class="detalle_hist" id="cedula_historial"></span>
                         </div>
 
                         <div class="col-md-6">
-                            <b>Paciente:</b> <span class="detalle_hist" id="paciente_historial"></span>
+                            <i class="fa fa-user" style="color:#5d5def"></i> <b>Paciente:</b> <span class="detalle_hist" id="paciente_historial"></span>
                         </div>
 
                         <div class="col-md-6">
-                            <b>Fecha Nacimiento:</b> <span class="detalle_hist" id="fnacimiento_historial"></span>
+                            <i class="fa fa-calendar" style="color:#5d5def"></i> <b>Fecha Nacimiento:</b> <span class="detalle_hist" id="fnacimiento_historial"></span>
                         </div>
 
                         <div class="col-md-6">
-                            <b>Edad:</b> <span class="detalle_hist" id="edad_historial"></span>
+                            <i class="fa fa-calendar-check-o" style="color:#5d5def"></i> <b>Edad:</b> <span class="detalle_hist" id="edad_historial"></span>
                         </div>
 
                          <div class="col-md-6">
-                            <b>Grupo Sanguineo:</b> <span class="detalle_hist" id="gsanguineo_historial"></span>
+                            <i class="fa fa-hospital-o" style="color:#5d5def"></i> <b>Grupo Sanguineo:</b> <span class="detalle_hist" id="gsanguineo_historial"></span>
                         </div>
 
                         <div class="col-md-6">
-                            <b>Lateralidad:</b> <span class="detalle_hist" id="lateralidad_historial"></span>
+                            <i class="fa fa-thermometer-full" style="color:#5d5def"></i> <b>Lateralidad:</b> <span class="detalle_hist" id="lateralidad_historial"></span>
                         </div>
 
                     </div>
