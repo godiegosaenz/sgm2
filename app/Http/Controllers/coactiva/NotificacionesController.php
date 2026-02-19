@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\coactiva;
+namespace App\Http\Controllers\Coactiva;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -99,6 +99,10 @@ class NotificacionesController extends Controller
             DB::rollBack();
             return ["mensaje"=>'Ocurrio un error, intentelo mas tarde '.$e, "error"=>true];
         }
+    }
+
+    public function vistaNotificar(){
+        return view('coactiva.notificar');
     }
 
 }

@@ -48,6 +48,8 @@ use App\Models\TransitoVehiculo;
 use App\Http\Controllers\RecaudacionesController;
 use App\Http\Controllers\Consultorio\PacienteEmpleadoController;
 use App\Http\Controllers\Recaudacion\TasaAseoController;
+use App\Http\Controllers\Coactiva\CoactivaController;
+use App\Http\Controllers\Coactiva\NotificacionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -340,8 +342,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('descargar-txt/{txt}', [PredioController::class, 'descargarTxt'])->name('descargarTxt.emisiones');
 
     //notifciar coactiva emisiones
-    Route::get('notificar-coactiva', [NotificacionesController::class, 'index'])->name('index.notificacion');
-    Route::post('guardar-notificacion', [NotificacionesController::class, 'notificar'])->name('notificar.coativa');
+    // Route::get('notificar-coactiva', [NotificacionesController::class, 'index'])->name('index.notificacion');
+    // Route::post('guardar-notificacion', [NotificacionesController::class, 'notificar'])->name('notificar.coativa');
 
 
 
@@ -501,6 +503,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('buscar-predios-urbanos-aseo/{cedula}', [TasaAseoController::class, 'buscaPrediosUrbanos']);
     Route::post('obtener-deuda-aseo-urb', [TasaAseoController::class, 'buscaDeudaAseoUrb']);
     Route::post('obtener-deuda-aseo-urb-parcial', [TasaAseoController::class, 'buscaDeudaAseoUrbParcial']);
+
+
+    //*******COACTIVA*********************/
+    Route::get('coactiva', [NotificacionesController::class, 'vistaNotificar'])->name('coactiva.notificar');
 
 
    

@@ -638,54 +638,75 @@ class LiquidacionesController extends Controller
             DB::raw("CONCAT(sgm_app.cat_predio.calle, ' y ', sgm_app.cat_predio.calle_s) AS direcc_cont"),
             'sgm_financiero.ren_liquidacion.saldo as subtotal_emi',
         
-                    DB::raw('
-                    (
-                        SELECT
-                            ROUND((
-                                COALESCE(ren_liquidacion.saldo, 0)
-                                +
-                                COALESCE((
-                                    CASE
-                                        WHEN (ren_liquidacion.anio = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM NOW()) < 7) THEN
-                                            ROUND(d.valor * (
-                                                SELECT porcentaje
-                                                FROM sgm_app.ctlg_descuento_emision
-                                                WHERE num_mes = EXTRACT(MONTH FROM NOW())
-                                                AND num_quincena = (CASE WHEN EXTRACT(DAY FROM NOW()) > 15 THEN 2 ELSE 1 END)
-                                                LIMIT 1
-                                            ) / 100, 2) * (-1)
-                                        ELSE 0
-                                    END
-                                ), 0)
-                                +
-                                COALESCE((
-                                    CASE
-                                    WHEN (ren_liquidacion.anio < EXTRACT(YEAR FROM NOW())) THEN                                        
-                                        ROUND((ren_liquidacion.saldo * (
-                                            SELECT ROUND((porcentaje / 100), 2) 
-                                            FROM sgm_financiero.ren_intereses i
-                                            WHERE i.anio = ren_liquidacion.anio
-                                            LIMIT 1
-                                        )), 2)
-                                        ELSE 0
-                                    END
-                                ), 0)
-                                +
-                                COALESCE((
-                                    CASE
-                                        WHEN ren_liquidacion.anio = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM NOW()) > 7 THEN
-                                            ROUND((d.valor * 0.10), 2)
-                                        WHEN ren_liquidacion.anio < EXTRACT(YEAR FROM NOW()) THEN
-                                            ROUND((d.valor * 0.10), 2)
-                                        ELSE 0
-                                    END
-                                ), 0)
-                            ), 2)
-                        FROM sgm_financiero.ren_det_liquidacion d
-                        WHERE d.liquidacion = ren_liquidacion.id 
-                        AND d.rubro = 2
-                        LIMIT 1
-                    ) AS total_pagar'), DB::raw("
+                  DB::raw('
+(
+    SELECT
+        ROUND((
+            COALESCE(ren_liquidacion.saldo, 0)
+
+            +
+            COALESCE((
+                CASE
+                    WHEN (ren_liquidacion.anio = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM NOW()) < 7) THEN
+                        ROUND(
+                            COALESCE((
+                                SELECT SUM(d.valor)
+                                FROM sgm_financiero.ren_det_liquidacion d
+                                WHERE d.liquidacion = ren_liquidacion.id
+                                  AND d.rubro = 2
+                            ),0)
+                            * (
+                                SELECT porcentaje
+                                FROM sgm_app.ctlg_descuento_emision
+                                WHERE num_mes = EXTRACT(MONTH FROM NOW())
+                                  AND num_quincena = (CASE WHEN EXTRACT(DAY FROM NOW()) > 15 THEN 2 ELSE 1 END)
+                                LIMIT 1
+                            ) / 100
+                        , 2) * (-1)
+                    ELSE 0
+                END
+            ), 0)
+
+            +
+            COALESCE((
+                CASE
+                    WHEN (ren_liquidacion.anio < EXTRACT(YEAR FROM NOW())) THEN
+                        ROUND((ren_liquidacion.saldo * (
+                            SELECT ROUND((porcentaje / 100), 2)
+                            FROM sgm_financiero.ren_intereses i
+                            WHERE i.anio = ren_liquidacion.anio
+                            LIMIT 1
+                        )), 2)
+                    ELSE 0
+                END
+            ), 0)
+
+            +
+            COALESCE((
+                CASE
+                    WHEN ren_liquidacion.anio = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM NOW()) > 7 THEN
+                        ROUND(COALESCE((
+                            SELECT SUM(d.valor)
+                            FROM sgm_financiero.ren_det_liquidacion d
+                            WHERE d.liquidacion = ren_liquidacion.id
+                              AND d.rubro = 2
+                        ),0) * 0.10, 2)
+                    WHEN ren_liquidacion.anio < EXTRACT(YEAR FROM NOW()) THEN
+                        ROUND(COALESCE((
+                            SELECT SUM(d.valor)
+                            FROM sgm_financiero.ren_det_liquidacion d
+                            WHERE d.liquidacion = ren_liquidacion.id
+                              AND d.rubro = 2
+                        ),0) * 0.10, 2)
+                    ELSE 0
+                END
+            ), 0)
+
+        ), 2)
+) AS total_pagar
+')
+,
+                     DB::raw("
                         (
                             SELECT
                                 CASE
@@ -721,7 +742,8 @@ class LiquidacionesController extends Controller
                                         0.00
                                     END
                             FROM sgm_financiero.ren_det_liquidacion d
-                            WHERE d.liquidacion = ren_liquidacion.id AND d.rubro = 2
+                            WHERE d.liquidacion = ren_liquidacion.id
+                             
                             LIMIT 1
                         ) AS intereses
                     "),
@@ -894,7 +916,8 @@ class LiquidacionesController extends Controller
                                         0.00
                                     END
                             FROM sgm_financiero.ren_det_liquidacion d
-                            WHERE d.liquidacion = ren_liquidacion.id AND d.rubro = 2
+                            WHERE d.liquidacion = ren_liquidacion.id 
+                          
                             LIMIT 1
                         ) AS intereses
                     "),
