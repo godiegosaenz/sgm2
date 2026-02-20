@@ -389,7 +389,7 @@ class LiquidacionesController extends Controller
         }
     }
 
-    public function pagoVoluntario($cedula, $lugar){
+    public function pagoVoluntario($cedula, $lugar, $es_not=0){
         try{
             $tipo_agrupado="";
             $nombre_persona="";
@@ -442,24 +442,30 @@ class LiquidacionesController extends Controller
                 } 
             }
             // dd($listado_final);
+            $disco="public";
+            if($es_not!=0){
+                $disco="disksCoactiva";
+            }
+
             $nombrePDF="PagoVoluntario".date('YmdHis').".pdf";                               
             $pdf = \PDF::loadView('reportes.pagoVoluntarioPredio', ['DatosLiquidacion'=>$listado_final,"ubicacion"=>$lugar,"nombre_persona"=>$nombre_persona, "direcc_cont"=>$direcc_cont]);
 
             $estadoarch = $pdf->stream();
 
             //lo guardamos en el disco temporal
-            \Storage::disk('public')->put(str_replace("", "",$nombrePDF), $estadoarch);
-            $exists_destino = \Storage::disk('public')->exists($nombrePDF);
+            \Storage::disk($disco)->put(str_replace("", "",$nombrePDF), $estadoarch);
+            $exists_destino = \Storage::disk($disco)->exists($nombrePDF);
             if($exists_destino){
-                return response()->json([
+                return [
                     'error'=>false,
-                    'pdf'=>$nombrePDF
-                ]);
+                    'pdf'=>$nombrePDF,
+                    'listado_final'=>$consulta["resultado"]
+                ];
             }else{
-                return response()->json([
+                return [
                     'error'=>true,
                     'mensaje'=>'No se pudo crear el documento'
-                ]);
+                ];
             }
 
         } catch (\Exception $e) {
@@ -634,6 +640,7 @@ class LiquidacionesController extends Controller
             'sgm_app.cat_ente.apellidos',
             DB::raw("CONCAT(sgm_app.cat_ente.apellidos, ' ', sgm_app.cat_ente.nombres) AS nombre_contr1"),
             'sgm_app.cat_ente.ci_ruc',
+            'sgm_app.cat_ente.id as idpersona',
             'sgm_app.cat_predio.num_predio',
             DB::raw("CONCAT(sgm_app.cat_predio.calle, ' y ', sgm_app.cat_predio.calle_s) AS direcc_cont"),
             'sgm_financiero.ren_liquidacion.saldo as subtotal_emi',

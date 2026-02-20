@@ -68,6 +68,11 @@ return [
           'driver' => 'local',
           'root' => storage_path('app/documentosCoactiva'),
         ],
+
+        'disksCoactiva' => [
+          'driver' => 'local',
+          'root' => storage_path('app/coactiva'),
+        ],
     ],
 
     /*

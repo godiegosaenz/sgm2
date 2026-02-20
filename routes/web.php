@@ -506,7 +506,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
     //*******COACTIVA*********************/
-    Route::get('coactiva', [NotificacionesController::class, 'vistaNotificar'])->name('coactiva.notificar');
+    Route::get('notificar', [NotificacionesController::class, 'vistaNotificar'])->name('coactiva.notificar');
+    Route::get('notificacion-pago-voluntario-rural-urb/{cedula}/{lugar}', [NotificacionesController::class, 'notificacionPagoVoluntario']);
+    Route::get('coactiva/documento/{ruta}', [NotificacionesController::class, 'verDocumento']);
+    Route::get('coactiva/documento-descargar/{ruta}', [NotificacionesController::class, 'descargarArchivo']);
+
+    Route::get('listado-notificaciones', [NotificacionesController::class, 'vistaListaNotificacion'])->name('coactiva.lista_notificar');
 
 
    

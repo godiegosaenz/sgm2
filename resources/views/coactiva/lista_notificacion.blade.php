@@ -64,7 +64,7 @@
 @endpush
 @section('content')
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h4 class="h2">Registrar Notificaciones Pago Voluntario</h4>
+    <h4 class="h2">Notificaciones Pago Voluntario</h4>
     <div class="btn-toolbar mb-2 mb-md-0">
     
    
@@ -81,108 +81,7 @@
             @endif
         </div>
     </div>
-    <form id="formConsulta" action="{{'tituloscoactivarural'}}" method="post">
-        @csrf
-        <div class="row justify-content-md-center">
-
-            <div class="col-3">
-                <div class="mb-3">
-                    <label for="num_predio">* Ubicacion: </label>
-                    <select class="form-select" aria-label="Default select example" id="lugar" name="lugar"  onchange="cambiaLugar()">
-                        <option value="1" {{ old('lugar') == '1' ? 'selected' : '' }}>Urbana</option>
-                        <option value="2" {{ old('lugar') == '2' ? 'selected' : '' }}>Rural</option>
-                      
-                    </select>
-
-                </div>
-            </div>
-            <div class="col-3 class_rural" style="display:none">
-                <div class="mb-3">
-                    <label for="num_predio">* Tipo : </label>
-                    <select class="form-select" aria-label="Default select example" id="tipo" name="tipo" onchange="cambiaTipo()">
-                        <option value="1" selected>Cédula</option>
-                        <option value="2" >Clave Catastral</option>
-                        <option value="3">Nombres</option>
-                    </select>
-
-                </div>
-            </div>
-            <div class="col-3 class_rural" id="div_cedula" style="display:none">
-                <div class="mb-3">
-                    <label for="num_predio">* Cedula : </label>
-                   
-                    <input type="number" class="form-control buscarCont" id="cedula" name="cedula" >
-                   
-                </div>
-            </div>
-
-            <div class="col-3 " id="div_clave" style="display:none">
-                <div class="mb-3">
-                    <label for="num_predio">* Clave Catastral : </label>
-                   
-                    <input type="number" class="form-control buscarCont" id="clave" name="clave" >
-                   
-                </div>
-            </div>
-
-            <div class="col-5 " id="div_nombres" style="display:none">
-                <div class="mb-3">
-                    <label for="num_predio">* Nombres : </label>
-                   
-                   <!-- <select id="cmb_nombres" name="cmb_nombres" class="form-control modal_new_cont"  style="width: 100%;">
-                        <option value=""></option>
-                    </select> -->
-                    <input type="text" class="form-control buscarCont" id="nombre" name="nombre" >
-                   
-                </div>
-            </div>
-
-
-            <div class="col-3 class_urb">
-                <div class="mb-3">
-                    <label for="num_predio">* Tipo : </label>
-                    <select class="form-select" aria-label="Default select example" id="tipo_urb" name="tipo_urb" onchange="cambiaTipoU()">
-                        <option value="1" selected>Matricula</option>
-                        <option value="2" >Clave Catastral</option>
-                        <option value="3">Nombres</option>
-                    </select>
-
-                </div>
-            </div>
-            <div class="col-3 class_urb" id="div_matricula_urb">
-                <div class="mb-3">
-                    <label for="num_predio">* Matricula : </label>
-                   
-                    <input type="number" class="form-control buscarCont" id="matricula_urb" name="matricula_urb" >
-                   
-                </div>
-            </div>
-
-            <div class="col-3 " id="div_clave_urb" style="display:none">
-                <div class="mb-3">
-                    <label for="num_predio">* Clave Catastral : </label>
-                   
-                    <input type="number" class="form-control buscarCont" id="clave_urb" name="clave_urb" >
-                   
-                </div>
-            </div>
-
-            <div class="col-5 " id="div_nombres_urb" style="display:none">
-                <div class="mb-3">
-                    <label for="num_predio">* Nombres : </label>
-                   
-                   <!-- <select id="cmb_nombres" name="cmb_nombres" class="form-control modal_new_cont"  style="width: 100%;">
-                        <option value=""></option>
-                    </select> -->
-                    <input type="text" class="form-control buscarCont" id="nombre_urb" name="nombre_urb" >
-                   
-                </div>
-            </div>
-
-           
-        </div>
-
-    </form>
+   
 
     <div>
       
@@ -198,14 +97,15 @@
                             <th scope="col"></th>
                             <th scope="col">Cedula/RUC</th>
                             <th scope="col">Nombres</th>
-                            <th>Telefono</th>
-                            <th scope="col">Correo</th>
-                            <th scope="col">Direccion</th>
+                            <th>Fecha Notificacion</th>
+                            <th scope="col">Deuda Total</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col">Pago Total</th>
                             </tr>
                         </thead>
                         <tbody id="tbodyRural">
                             <tr>
-                                <td colspan="6" style="text-align:center">No hay datos disponibles</td>
+                                <td colspan="7" style="text-align:center">No hay datos disponibles</td>
                             </tr>
                            
                         </tbody>
@@ -598,6 +498,7 @@
 </script>
 <script src="{{asset('bower_components/sweetalert/sweetalert.js')}}"></script>
 
-<script src="{{ asset('js/coactiva/notificar.js?v='.rand())}}"></script>
+<script src="{{ asset('js/coactiva/listado_notificacion.js?v='.rand())}}"></script>
 
 @endpush
+    
