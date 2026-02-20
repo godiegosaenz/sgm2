@@ -14,4 +14,14 @@ class InfoNotifica extends Model
     protected $primaryKey  = 'id';
     public $timestamps = false;
 
+    public function data(){
+        return $this->hasMany('App\Models\Coactiva\DataNotifica', 'id_info_notifica', 'id')->with('liquidacion');
+    }
+
+    public function ente(){
+        return $this->belongsTo('App\Models\PsqlEnte', 'id_persona', 'id');
+    }
+
+   
+   
 }

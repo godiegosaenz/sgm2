@@ -1,5 +1,5 @@
 @extends('layouts.appv2')
-@section('title', 'Liquidaciones')
+@section('title', 'Listado Notificaciones')
 @push('styles')
 <link rel="stylesheet" href="{{asset('bower_components/sweetalert/sweetalert.css')}}">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
@@ -58,6 +58,65 @@
     padding: 0.5rem !important;
 }
 
+.badge-notificado{
+   
+    background: linear-gradient(135deg,#0d6efd,#36a2ff);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .3px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.15);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.badge-pagado{
+    background: linear-gradient(135deg,#28a745,#20c997);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .3px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.15);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.badge-expirado{
+    background: linear-gradient(135deg,#dc3545,#ff6b6b); /* rojo suave */
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .3px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.15);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.badge-sin-expirar{
+    background: linear-gradient(145deg,#1db954,#6fffa2); /* verde brillante */
+    color: #0b1f14; /* texto oscuro para contraste */
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+    box-shadow: 
+        0 0 0 3px rgba(29,185,84,0.25),
+        0 4px 10px rgba(0,0,0,.35);
+}
 </style>
 
 
@@ -86,12 +145,23 @@
     <div>
       
         <div class="row mt-3">
-            
+            <div class="col-md-12 row">
+                <div class="col-md-3"></div>
+                <div class="col-6">
+                    <div class="mb-3">
+                        <label for="num_predio">* Periodo: </label>
+                        <input type="month" class="form-control" name="periodo" id="periodo" onchange="llenar_tabla_notificacion()">
+
+                    </div>
+                </div>
+
+                <div class="col-md-3"></div>
+            </div>
            
             <div class="col-md-12">
                 @csrf
                 <div class="table-responsive">
-                    <table class="table table-bordered table-hover" id="tableRural" style="width: 100%">
+                    <table class="table table-bordered table-hover" id="tableNotificacion" style="width: 100%">
                         <thead>
                             <tr>
                             <th scope="col"></th>
@@ -100,12 +170,13 @@
                             <th>Fecha Notificacion</th>
                             <th scope="col">Deuda Total</th>
                             <th scope="col">Estado</th>
+                            <th scope="col">Dias desde Notificacion</th>
                             <th scope="col">Pago Total</th>
                             </tr>
                         </thead>
-                        <tbody id="tbodyRural">
+                        <tbody id="tbodyNotificacion">
                             <tr>
-                                <td colspan="7" style="text-align:center">No hay datos disponibles</td>
+                                <td colspan="8" style="text-align:center">No hay datos disponibles</td>
                             </tr>
                            
                         </tbody>
@@ -115,7 +186,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modalContri" tabindex="-1"
+    <div class="modal fade" id="modalDetalleNot" tabindex="-1"
      aria-labelledby="ContribuyenteModalLabel"
      aria-hidden="true"
      data-bs-backdrop="static"
@@ -127,34 +198,16 @@
                 <!-- HEADER -->
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalContribuyenteLabel">
-                        Notificaciones
+                        Detalle
                     </h5>
-                    <button type="button" class="btn-close" onclick="cerrarModalPago()"></button>
+                    <button type="button" class="btn-close" onclick="cerrarModalNot()"></button>
                 </div>
 
                 <!-- BODY -->
                 <div class="modal-body">
 
-                    <!-- TABS -->
-                    <ul class="nav nav-tabs mb-3" role="tablist">
-                        <li class="nav-item">
-                            <button class="nav-link active"
-                                    data-bs-toggle="tab"
-                                    data-bs-target="#tab-actual"
-                                    type="button" onclick="ejecuta()">
-                                <i class="bi bi-list-check text-success"></i> Listado
-                            </button>
-                        </li>
-                       
-                    </ul>
-
-                    <!-- TAB CONTENT -->
-                    <div class="tab-content">
-
-                        <!-- TAB 1: CONTENIDO ACTUAL (SIN CAMBIOS) -->
-                        <div class="tab-pane fade show active" id="tab-actual">
-
-                            <form class=""
+                    <div class="col-md-12">
+                        <form class=""
                                 action="tituloscoactivarural/imprimir"
                                 id="formExonerar"
                                 name="formExonerar"
@@ -164,168 +217,131 @@
 
                                 <div class="col-md-12">
                                     <div class="row">
+                                        <center><h5>Datos del Notificador</h5></center>
                                         <div class="col-md-6">
+                                            <b>Usuario:</b>
+                                            <span id="nombre_notificador" class="label_not"></span><br>
+                                            <input type="hidden" name="id_notifica" id="id_notifica">
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <b>Fecha Notificacion:</b>
+                                            <span id="fecha_notificacion" class="label_not"></span><br>
+                                        </div>
+
+                                        <hr>
+
+                                        <center><h5>Datos del Contribuyente</h5></center>
+                                        <div class="col-md-6">                                           
                                             <b>Contribuyente:</b>
-                                            <span id="nombre_contr"></span><br>
+                                            <span id="num_ident_contr" class="label_not"></span><br>
+                                        </div>
+                                        <div class="col-md-6">
+                                             <b>C.I./RUC:</b>
+                                            <span id="nombre_contr" class="label_not"></span><br>
+                                        </div>
+
+                                        
+
+                                        <div class="col-md-6">                                           
+                                            <b>Valor Notificacion:</b>
+                                            <span id="valor_notificado" class="label_not"></span><br>
                                         </div>
 
                                         <div class="col-md-6">
-                                            <b>C.I./RUC:</b>
-                                            <span id="num_ident_contr"></span><br>
+                                             <b>Dias desde Notificacion:</b>
+                                            <span id="dias_notificado" class="label_not"></span><br>
+                                        </div>
+
+                                        <hr>
+
+
+                                    </div>
+
+                                    <div id="seccion_detalle">
+                                        <div class="col-md-12 mt-3">
+                                            <table class="table table-bordered table-hover"
+                                                id="tableDetNot"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr>                                                   
+                                                        <th>Matricula/Clave</th>
+                                                        <th>Año</th>
+                                                        <th>Subtotal</th>
+                                                        <th>Interes</th>
+                                                        <th>Descuento</th>
+                                                        <th>Recargo</th>
+                                                        <th>Total</th>
+                                                        
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tbodyNotificacionDetalle"></tbody>
+                                            </table>
+                                        </div>
+
+                                        <div class="row mt-3">
+                                        
+                                            <div class="col-md-12 text-center mt-2">
+                                                
+                                                <button type="button"
+                                                        class="btn btn-sm btn-success"
+                                                        onclick="detalleProcesoIniciaCoa()">
+                                                    Iniciar Proceso Coactiva
+                                                </button>
+                                                <button type="button"
+                                                        class="btn btn-sm btn-danger"
+                                                        onclick="cerrarModalNot()">
+                                                    Cerrar
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <div class="col-md-12 mt-3">
-                                        <table class="table table-bordered table-hover"
-                                            id="tableDetalleRural"
-                                            style="width:100%">
-                                            <thead>
-                                                <tr>
-                                                    <th><center>
-                                                        <input type="checkbox" id="selectAll">
-                                                    </center></th>
-                                                    <th>Matricula</th>
-                                                    <th>Num Titulo</th>
-                                                    <th>Codigo</th>
-                                                    <th>Direccion</th>
-                                                    <th>Subtotal</th>
-                                                    <th>Descuento</th>
-                                                    <th>Recarga</th>
-                                                    <th>Interes</th>
-                                                    <th>Total</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="tbodyRuralDetalle"></tbody>
-                                        </table>
-                                    </div>
-
-                                    <div class="row mt-3">
-                                        <div class="col-md-12 text-center">
-                                            <b>Total Deuda:</b>
-                                            <span id="total_deuda"></span>
+                                    <div id="seccion_inicia_proceso" style="display:none">
+                                        <div class="col-md-12 mt-3">
+                                            <h5><center>VALOR DEUDA ACTUALIZADO <span id="total_deuda_proceso"></span></center></h5>
+                                            <table class="table table-bordered table-hover"
+                                                id="tableProcesoNot"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr>                                                   
+                                                        <th>Matricula/Clave</th>
+                                                        <th>Año</th>
+                                                        <th>Subtotal</th>
+                                                        <th>Interes</th>
+                                                        <th>Descuento</th>
+                                                        <th>Recargo</th>
+                                                        <th>Total</th>
+                                                        
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tbodyProcesoNotDetalle"></tbody>
+                                            </table>
                                         </div>
 
-                                        <div class="col-md-12 text-center mt-2">
-                                            
-                                            <button type="button"
-                                                    class="btn btn-sm btn-success"
-                                                    onclick="generarNotificacion()">
-                                                Generar Notificacion
-                                            </button>
-
-                                            <button type="button"
-                                                    class="btn btn-sm btn-danger"
-                                                    onclick="cerrarModalPago()">
-                                                Cerrar
-                                            </button>
+                                        <div class="row mt-3">
+                                        
+                                            <div class="col-md-12 text-center mt-2">
+                                                
+                                                <button type="button"
+                                                        class="btn btn-sm btn-primary"
+                                                        onclick="cerrarModalNot()">
+                                                    Registrar Proceso Coactiva
+                                                </button>
+                                                <button type="button"
+                                                        class="btn btn-sm btn-danger"
+                                                        onclick="cerrarModalNot()">
+                                                    Cerrar
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
 
                                 </div>
                             </form>
-
-                        </div>
-
-                        <!-- TAB 2: VACÍO -->
-                        <div class="tab-pane fade" id="tab-vacio">
-                            <div class="text-center text-muted p-4" style="paddin: 0.5em !important;">
-                                
-                                <div class="p-4" style="border-radius:8px;">
-
-                                    <form id="formNotifica" method="POST" action="" enctype="multipart/form-data">
-
-                                        <!-- CÉDULA -->
-                                        <div class="row mb-3 align-items-center">
-                                            <label class="col-md-2 col-form-label " style="text-align: right;">
-                                                Cédula<span class="text-danger"> *</span> 
-                                            </label>
-                                            <div class="col-md-10">
-                                                <input type="text"
-                                                    class="form-control "
-                                                    placeholder="Ejemplo 1314801349" name="ci_ruc_notifica"
-                                                    id="ci_ruc_notifica" readonly>
-                                            </div>
-                                           
-                                        </div>
-
-                                        <!-- NOMBRES -->
-                                        <div class="row mb-3 align-items-center">
-                                            <label class="col-md-2 col-form-label " style="text-align: right;">
-                                                Nombres<span class="text-danger"> *</span> 
-                                            </label>
-                                            <div class="col-md-10">
-                                                <input type="text"
-                                                    class="form-control "
-                                                    placeholder="Ejemplo Juan" name="nombres_notifica"
-                                                    id="nombres_notifica" readonly>
-                                            </div>
-                                        </div>
-
-                                        <!-- ARCHIVO -->
-                                        <div class="row mb-3 align-items-center">
-                                            <label class="col-md-2 col-form-label "  style="text-align: right;">
-                                                Archivo<span class="text-danger"> *</span> 
-                                            </label>
-                                            <div class="col-md-10">
-                                                <input type="file" multiple
-                                                    class="form-control "
-                                                    name="archivo_notifica[]"
-                                                    id="archivo_notifica">
-                                            </div>
-                                        </div>
-
-                                         <!-- CORREO -->
-                                        <div class="row mb-3 align-items-center">
-                                            <label class="col-md-2 col-form-label " style="text-align: right;">
-                                                Correo<span class="text-danger"> </span> 
-                                            </label>
-                                            <div class="col-md-10">
-                                                <input type="text"
-                                                    class="form-control "
-                                                    name="correos_notifica"
-                                                    id="correos_notifica">
-
-                                                <input type="hidden" name="lugar_not" id="lugar_not">
-                                            </div>
-                                        </div>
-
-                                        <div class="row mb-3 align-items-center">
-                                            
-                                            <div class="col-md-12">
-                                                <center>    
-                                                    <button type="submit" class="btn bt-sm btn-primary" id="btn_enviar">Enviar</button>
-                                                    <button type="button" onclick="cancelarNotifica()" class="btn bt-sm btn-danger"  id="btn_cancelar">Cancelar</button>
-                                                </center>
-                                            </div>
-                                        </div>
-
-                                    </form>
-
-                                    <div class="col-md-12 mt-3">
-                                        <table class="table table-bordered table-hover"
-                                            id="tableNotifica"
-                                            style="width:100%">
-                                            <thead>
-                                                <tr>
-                                                    <th>#</th>
-                                                    <th>Predio</th>
-                                                    <th>Responsable</th>
-                                                    <th>Fecha</th>
-                                                    <th>Correo(s)</th>
-                                                    <th>Archivo</th>
-                                                   
-                                                </tr>
-                                            </thead>
-                                            <tbody id="tbodyNotifica"></tbody>
-                                        </table>
-                                    </div>
-
-                                </div>
-
-                            </div>
-                        </div>
-
                     </div>
+
+                   
                 </div>
 
             </div>
@@ -364,6 +380,8 @@
 @push('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 <script>
+
+    
 
     const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
     if(isDarkMode){
@@ -499,6 +517,8 @@
 <script src="{{asset('bower_components/sweetalert/sweetalert.js')}}"></script>
 
 <script src="{{ asset('js/coactiva/listado_notificacion.js?v='.rand())}}"></script>
-
+<script>
+    // llenar_tabla_notificacion()
+</script>
 @endpush
     

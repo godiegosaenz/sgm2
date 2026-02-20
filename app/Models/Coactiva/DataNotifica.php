@@ -14,4 +14,8 @@ class DataNotifica extends Model
     protected $primaryKey  = 'id';
     public $timestamps = false;
 
+    public function liquidacion(){
+        return $this->belongsTo('App\Models\PsqlLiquidacion', 'id_liquidacion', 'id');
+    }
+
 }

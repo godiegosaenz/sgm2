@@ -512,6 +512,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('coactiva/documento-descargar/{ruta}', [NotificacionesController::class, 'descargarArchivo']);
 
     Route::get('listado-notificaciones', [NotificacionesController::class, 'vistaListaNotificacion'])->name('coactiva.lista_notificar');
+    Route::get('pago-notificaciones/{periodo}', [NotificacionesController::class, 'tablaNotificacion']);
+    Route::get('pago-notificaciones-detalle/{id}', [NotificacionesController::class, 'detalleNotificacion']);
+     Route::get('pago-notificaciones-detalle-proceso-coac/{id}', [NotificacionesController::class, 'detalleNotificacionProceso']);
 
 
    

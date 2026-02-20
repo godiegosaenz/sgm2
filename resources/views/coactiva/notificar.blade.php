@@ -1,5 +1,5 @@
 @extends('layouts.appv2')
-@section('title', 'Liquidaciones')
+@section('title', 'Notificaciones')
 @push('styles')
 <link rel="stylesheet" href="{{asset('bower_components/sweetalert/sweetalert.css')}}">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
