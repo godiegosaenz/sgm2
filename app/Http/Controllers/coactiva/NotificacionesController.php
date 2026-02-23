@@ -594,9 +594,20 @@ class NotificacionesController extends Controller
         $anio_max = max($anios);
 
         $rango='DESDE EL '.($anio_min . ' HASTA EL EJERCICIO FISCAL ' . $anio_max);
-        // dd($listado_final);
+       
+        $funcionarios=DB::connection('pgsql')
+        ->table('sgm_coactiva.parametro_coactiva')
+        ->selectRaw("
+            MAX(CASE WHEN codigo = 'TESO' THEN valor END) AS tesorera,
+            MAX(CASE WHEN codigo = 'JUEZ_COACT' THEN valor END) AS juez_coactiva,
+            MAX(CASE WHEN codigo = 'SECRETARIO' THEN valor END) AS secretario
+        ")
+        ->whereIn('codigo', ['TESO','JUEZ_COACT','SECRETARIO'])
+        ->where('estado','A')
+        ->first();
+
         $nombrePDF="ProcesoCoactiva".date('YmdHis').".pdf";                               
-        $pdf = \PDF::loadView('reportes.procesoCoactiva', ['DatosLiquidacion'=>$listado_final,"ubicacion"=>$lugar,"nombre_persona"=>$nombre_persona, "direcc_cont"=>$direcc_cont, "ci_ruc"=>$ci_ruc, "rango"=>$rango]);
+        $pdf = \PDF::loadView('reportes.procesoCoactiva', ['DatosLiquidacion'=>$listado_final,"ubicacion"=>$lugar,"nombre_persona"=>$nombre_persona, "direcc_cont"=>$direcc_cont, "ci_ruc"=>$ci_ruc, "rango"=>$rango, "funcionarios"=>$funcionarios]);
 
         return $pdf->stream($nombrePDF);
     }

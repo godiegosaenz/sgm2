@@ -164,6 +164,48 @@
         </table>
     </footer>
 
+        @php
+            $total_final=0;
+            $coordenas_txt="";
+
+            function numeroEnLetras($numero)
+            {
+            $entero = floor($numero);
+                $decimal = round(($numero - $entero) * 100);
+
+                $formatter = new \Luecano\NumeroALetras\NumeroALetras();
+                $letras = mb_strtoupper($formatter->toWords($entero), 'UTF-8');
+
+                return $letras . " CON " . str_pad($decimal, 2, '0', STR_PAD_LEFT)
+                    . "/100 DÓLARES DE LOS ESTADOS UNIDOS DE AMÉRICA ($"
+                . number_format($numero, 2, ',', '.') . ")";
+            }
+        @endphp
+        @foreach ($DatosLiquidacion as $key=>$data)
+            @php
+                $total=0;
+                $anio_uno=0;
+                 foreach($data as $key2=> $info){
+                    if($key2==0){
+                        $anio_uno=$info->anio;
+                    }
+                    $valor = $info->total_pagar ?? 0;                    
+                    $valor = str_replace(',', '', $valor);
+                    // Convertir a número y sumar
+                    $total += (float) $valor;
+                    if($ubicacion==1){
+                        $coordenas_txt = ' (coordenadas <strong>X</strong> ' . $info->coordx . ' <strong>Y</strong> ' . $info->coordy.'),';
+                    }
+
+                }
+                $total_final = ($total_final ?? 0) + $total;
+                
+            @endphp
+       
+      
+            
+    @endforeach
+
     <div class="titulo" style="font-size:17px !important">
         <br>
         <p style="margin: 0; line-height: 0.8;">ORGANO EJECUTOR DE COACTIVA DEL GAD MUNICIPAL DEL CANTÓN<br>
@@ -189,13 +231,13 @@
         TITULO DE CREDITO: {{$rango}}</p>
 
     <p style="margin: 0; line-height: 1.2; margin-top:50px; text-align: center; font-weigth: 500 !important; font-size: 16px;">
-        JUEZ DE COACTIVA: ING. JACINTA MARIA MENDOZA CUSME</p>
+        JUEZ DE COACTIVA: {{$funcionarios->juez_coactiva}}</p>
 
     <p style="margin: 0; line-height: 0; margin-top:20px; text-align: center; font-weigth: 500 !important; font-size: 16px;">
         TESORERA MUNICIPAL</p>
 
     <p style="margin: 0; line-height: 1.2; margin-top:50px; text-align: center; font-weigth: 500 !important; font-size: 16px;">
-        SECRETARIO: AB. JESSICA KARINA ZAMBRANO PINCAY</p>
+        SECRETARIO: {{$funcionarios->secretario}}</p>
 
     <p style="margin: 0; line-height: 0; margin-top:20px; text-align: center; font-weigth: 500 !important; font-size: 16px;">
         ANALISTA JURIDICO COACTIVO GAD SAN VICENTE</p>
@@ -209,14 +251,14 @@
     </div>
 
     <p style="font-size: 14px; text-align: justify; line-height: 1.5; margin-top: 28px;">
-       VISTOS.-San Vicente, {{ fechaFormatoTexto() }}, las 09:22am, En mi calidad de Tesorera Municipal del Gobierno Autónomo Descentralizado Municipal del Cantón San Vicente y por ende Juez de Coactiva, continuando con el presente proceso administrativo se ordena que el actuario del despacho siente razón en Autos indicando si el contribuyente <strong>{{ strtoupper($nombre_persona) }} </strong> con C.I.  <strong>{{ $ci_ruc }}</strong>, ha cancelado o hecho alguna fórmula de pago  de los valores pendientes de pago que posee en el GAD Municipal de San Vicente, y cuyo plazo se encuentra fenecido, una vez realizado dicha razón vuelvan los autos para proveer lo que en derecho corresponda -NOTIFIQUESE Y CÚMPLASE.</p>
+       VISTOS.-San Vicente, {{ fechaFormatoTexto() }}, las {{ date('h:i a') }}, En mi calidad de Tesorera Municipal del Gobierno Autónomo Descentralizado Municipal del Cantón San Vicente y por ende Juez de Coactiva, continuando con el presente proceso administrativo se ordena que el actuario del despacho siente razón en Autos indicando si el contribuyente <strong>{{ strtoupper($nombre_persona) }} </strong> con C.I.  <strong>{{ $ci_ruc }}</strong>, ha cancelado o hecho alguna fórmula de pago  de los valores pendientes de pago que posee en el GAD Municipal de San Vicente, y cuyo plazo se encuentra fenecido, una vez realizado dicha razón vuelvan los autos para proveer lo que en derecho corresponda -NOTIFIQUESE Y CÚMPLASE.</p>
        
     <p style="margin: 0; line-height: 1.2; margin-top:50px; text-align: left; font-weigth: 500 !important; font-size: 14px;">
         Lo que comunico a usted para los fines de ley.</p>
 
 
     <p style="margin: 0; line-height: 1.2; margin-top:250px; text-align: left; font-weigth: 500 !important; font-size: 14px;">
-       ING. JACINTA MARIA MENDOZA CUSME</p>
+       {{$funcionarios->tesorera}}</p>
 
     <p style="margin: 0; line-height: 0; margin-top:15px; text-align: left; font-weigth: 500 !important; font-size: 14px;">
         TESORERA MUNICIPAL</p>
@@ -235,70 +277,30 @@
        RAZÓN. - Siento como tal y para los fines de ley pertinentes, que de acuerdo al oficio/pago voluntario de fecha {{ fechaFormatoTexto() }}, suscrito por su autoridad que el contribuyente <strong>{{ strtoupper($nombre_persona) }} </strong> con C.I.  <strong>{{ $ci_ruc }}</strong>, se le concedió un plazo de 10 días conforme a lo señalado en el Art. 271 del COA, para acercarse a realizarse el pago voluntario de las obligaciones pendientes por concepto de Predios Urbanos  con este GAD Municipal de San Vicente el mismo que  NO registra pago alguno de las obligaciones ni método de pago alguno,  es todo lo que puedo certificar en honor a la verdad.</p>
        
     <p style="margin: 0; line-height: 1.2; margin-top:50px; text-align: left; font-weigth: 500 !important; font-size: 14px;">
-        San Vicente a los 6 días del mes de febrero del 2026 a las 09:h46.</p>
+        San Vicente a los 6 días del mes de febrero del 2026 a las {{ date('h:i a') }}.</p>
 
 
     <p style="margin: 0; line-height: 1.2; margin-top:250px; text-align: left; font-weigth: 500 !important; font-size: 14px;">
-       AB. JESSICA KARINA ZAMBRANO PINCAY</p>
+       {{$funcionarios->secretario}}</p>
 
     <p style="margin: 0; line-height: 0; margin-top:15px; text-align: left; font-weigth: 500 !important; font-size: 14px;">
         ANALISTA JURIDICO COACTIVO GAD SAN VICENTE</p>
 
 
+    
+
     <div style="page-break-after: always;"></div>
 
-    
+
     <div class="titulo" style="font-size:13px !important">
         <br>
         <p style="margin: 0; line-height: 0.8;">ORGANO EJECUTOR DE COACTIVA DEL GAD MUNICIPAL DEL CANTÓN<br>
-        SAN VICENTE</p>
-        <p style="margin: 0; line-height: 1.2;">REQUERIMIENTO DE PAGO VOLUNTARIO</p>
+        SAN VICENTE <br>PROCESO No. </p>
+        <p style="margin: 0; line-height: 1.2;">ORDEN DE PAGO INMEDIATO</p>
     </div>
 
-    <div class="fecha">
-        San Vicente, {{ fechaFormatoTexto() }}
-    </div>
-    @php
-        $monto=4;
-        function numeroEnLetras($numero)
-        {
-           $entero = floor($numero);
-            $decimal = round(($numero - $entero) * 100);
-
-            $formatter = new \Luecano\NumeroALetras\NumeroALetras();
-            $letras = mb_strtoupper($formatter->toWords($entero), 'UTF-8');
-
-            return $letras . " CON " . str_pad($decimal, 2, '0', STR_PAD_LEFT)
-                . "/100 DÓLARES DE LOS ESTADOS UNIDOS DE AMÉRICA ($"
-            . number_format($numero, 2, ',', '.') . ")";
-        }
-
-        function fechaFormatoTexto($fecha =null)
-        {
-            $meses = [
-                1 => 'enero', 2 => 'febrero', 3 => 'marzo',
-                4 => 'abril', 5 => 'mayo', 6 => 'junio',
-                7 => 'julio', 8 => 'agosto', 9 => 'septiembre',
-                10 => 'octubre', 11 => 'noviembre', 12 => 'diciembre'
-            ];
-            // $fecha=date('d/m/Y');
-            $fecha = $fecha ? \Carbon\Carbon::parse($fecha) : now();
-
-            return $fecha->day . ' de ' . $meses[$fecha->month] . ' del ' . $fecha->year;
-        }
-
-
-    @endphp
-    <p><strong>Señor(a):</strong></p>
-    <p>{{ $nombre_persona }}</p>
-    <p>Ciudad.</p>
-
-    <div class="contenido">
-        <p>
-            Para los fines pertinentes, me permito comunicarle a usted, la siguiente notificación respecto
-            a los valores por concepto de pago de <strong>PREDIO MUNICIPAL</strong> que adeuda al
-            <strong>GAD MUNICIPAL DEL CANTÓN SAN VICENTE</strong>, ubicado en  {{ $direcc_cont }}.
-        </p>
+     <p style="font-size: 14px; text-align: justify; line-height: 1; margin-top: 28px;">
+       VISTOS: En lo principal, de los Títulos de Crédito respectivos emitidas por el órgano responsable de su emisión, desprendiéndose que el contribuyente <strong>{{ strtoupper($nombre_persona) }} </strong> con C.I.  <strong>{{ $ci_ruc }}</strong> adeuda al Gobierno Autónomo Descentralizado Municipal del cantón San Vicente la suma de la CANTIDAD DE <strong>{{ numeroEnLetras($total_final) }}</strong> por el concepto de PREDIOS URBANOS, la cual corresponde <br>
         @php
             $total_final=0;
             $coordenas_txt="";
@@ -325,69 +327,41 @@
                 
             @endphp
        
-            <p>
-                La obligación corresponde al predio con matrícula inmobiliaria
-                <strong>{{ $key  }}</strong>,{!! $coordenas_txt !!} cuya deuda asciende a la cantidad de
-                <strong>{{ numeroEnLetras($total) }}</strong>, correspondiente a los ejercicios fiscales <b>{{ $anio_uno }} - {{ $info->anio }}</b>.
-            </p>
+          
+               
+                A la matricula inmobiliaria <strong>{{ $key  }}</strong>, cuya deuda asciende a la cantidad de
+                <strong>{{ numeroEnLetras($total) }}</strong>, correspondiente a los ejercicios fiscales <b>{{ $anio_uno }} - {{ $info->anio }}</b><br>
+            
          @endforeach
-        <p>
-            Por cuanto su obligación asciende a la CANTIDAD DE <strong>{{ numeroEnLetras($total_final) }}</strong> con lo cual se verifica que la mencionada obligación es determinada y actualmente exigible.
-        </p>
-        <p>
-            Acorde con lo previsto en el art. 271 del Código Orgánico Administrativo se realiza el requerimiento de <strong>PAGO VOLUNTARIO</strong> para lo cual se concede el plazo de diez (10) días hábiles, que se contaran a partir del día siguiente de la notificación en conocimiento, con la finalidad de que se acerque a las ventanillas de tesorería de esta institución para que proceda resolver con los valores adeudados más los intereses de ley correspondientes, es preciso recalcar que  existe la opción de realizar <strong>convenio de pago</strong> con una cuota inicial.
-        </p>
-        <p>
-            <strong>En el evento de no proceder a la cancelación de lo adeudado se iniciará coactiva y en efecto se dictaran las medidas precautelares correspondientes, entre estas:</strong> Bloquear y retener fondos de cuentas corrientes y/o ahorros, prohibir la enagenación de los vehículos, bienes inmuebles que se hallaren inscritos a nombre que tuviere la/el coactivado que adeude al, <strong> GAD MUNICIPAL DEL CANTÓN SAN VICENTE.</strong> 
-        </p> 
-        <div style="margin-bottom:48px">
-            <p>Atentamente,</p>
-            <table style="
-                border-collapse: collapse;
-                width: 55%;
-                margin-left: auto;
-            ">
-                <tr>
-                    <td width=45% style="border:1px solid black; padding:2px; line-height:1;font: size 8px;">
-                        <b>Firma</b>
-                    </td>
-                    <td style="border:1px solid black; padding:2px; line-height:1;">
-                        &nbsp;
-                    </td>
-                </tr>
-                <tr>
-                    <td style="border:1px solid black; padding:2px; line-height:1;font: size 8px;">
-                        <b>Nombres y Apellidos</b>
-                    </td>
-                    <td style="border:1px solid black; padding:2px; line-height:1;">
-                        &nbsp;
-                    </td>
-                </tr>
-                <tr>
-                    <td style="border:1px solid black; padding:2px; line-height:1;font: size 8px;">
-                        <b>Cédula</b>
-                    </td>
-                    <td style="border:1px solid black; padding:2px; line-height:1;">
-                        &nbsp;
-                    </td>
-                </tr>
-                <tr>
-                    <td style="border:1px solid black; padding:2px; line-height:1;font: size 8px;">
-                        <b>Teléfono</b>
-                    </td>
-                    <td style="border:1px solid black; padding:2px; line-height:1;">
-                        &nbsp;
-                    </td>
-                </tr>
-            </table>
-            <p style="margin: 0; line-height: 1.2;">
-                <strong>Ab. Jessica Karina Zambrano Pincay</strong>
-            </p>
-            <p style="margin: 0; line-height: 1.2;">
-                <strong>ANALISTA JURÍDICO Y COACTIVAS DEL GAD MUNICIPAL DEL CANTÓN SAN VICENTE</strong>
-            </p>
-        </div>
+       
+      Sin que a la presente fecha haya pagado la obligación tributaria liquida, determinada y de plazo vencido que actualmente exigible, por lo que de conformidad como lo establece el Art. 157 y siguientes del Código Tributario,  en perfecta relación con lo prescrito en el Art. 279 del COA, dicto el presente Auto De Pago, disponiendo que el deudor pague al ORGANO EJECUTOR DE COACTIVA DEL GAD MUNICIPAL DEL CANTÓN SAN VICENTE, en el término de 03 Días, la CANTIDAD DE <strong>{{ numeroEnLetras($total_final) }}</strong>, valor al que sumaran los intereses, recargos, costas procesales y otros valores adicionales que genere la obligación, hasta que no se dé la cancelación de la deuda; o dimita bienes equivalentes, previniéndole que de no hacerlo se procederá al embargue de bienes suficientes para cubrir las obligaciones vencidas. En uso de la facultad concedida en el Art. 164 del Código Tributario,  279, 280 y 281 del Código Orgánico Administrativo (COA), se tomara las medidas precautelarías que correspondan que a continuación se detallan hasta que cancele las obligaciones vencidas, se ordena: 1): Pagar o dimitir bienes en el término de tres días a partir de la citación, apercibiéndole que de no hacerlo, se embargarán los bienes equivalentes al capital, intereses, multas y costas.- 2): Bloquear y retener fondos de cuentas corrientes y/o ahorros, pólizas de acumulación o cualquier tipo de inversión  que tuviere la/el coactivada/o hasta por un valor de la CANTIDAD DE MIL QUINIENTOS CINCUENTA Y NUEVE CON 94/100  DOLARES AMERICANOS (USD $1559,94), para lo cual se oficiará a la Superintendencia de Bancos y a la Superintendencia de Economía Popular y Solidaria para lo cual se oficiará a la Superintendencia de Bancos y a la Superintendencia de Economía Popular y Solidaria.- 3): Prohibir la enajenación de los vehículos de propiedad de la/el coactivada/o, para lo cual se oficiará a la Agencia Nacional de Transito.- 4): Prohibir la enajenación de los bienes inmuebles que se hallaren inscritos a nombre de la/el coactivada/o en el Registro de la Propiedad del Cantón San Vicente.- 5) Poner en conocimiento al Ministerio de Trabajo que el/la coactivado/a es deudor del GAD Municipal de San Vicente, a fin que registre el impedimento de ejercer cargo público.-Actúe en calidad de Secretario de este Órgano Ejecutor Abogada Jessica Karina Zambrano Pincay; JUZGADO DE COACTIVA DEL GOBIERNO AUTONOMO DESCENTRALIZADO MUNICIPAL DE SAN VICENTE. El GOBIERNO AUTONOMO DESCENTRALIZADO MUNICIPAL SAN VICENTE se reserva el derecho expreso de continuar acciónales legales en contra de los obligados solidarios y subsidiarios conforme a las leyes, estatutos y reglamentos vigentes. Notifíquese al coactivado, con el contenido del acto administrativo conforme lo previsto en el Art. 280 del Código Orgánico Administrativo. Se previene al coactivado(a), de la obligación de señalar correo electrónico y/o casillero judicial para posteriores notificaciones. - CÚMPLASE, OFICIESE Y NOTIFÍQUESE.</p>
+
+
+    <div style="page-break-after: always;"></div>
+    <div class="fecha">
+        San Vicente, {{ fechaFormatoTexto() }}
     </div>
+    @php
+        $monto=4;
+        
+
+        function fechaFormatoTexto($fecha =null)
+        {
+            $meses = [
+                1 => 'enero', 2 => 'febrero', 3 => 'marzo',
+                4 => 'abril', 5 => 'mayo', 6 => 'junio',
+                7 => 'julio', 8 => 'agosto', 9 => 'septiembre',
+                10 => 'octubre', 11 => 'noviembre', 12 => 'diciembre'
+            ];
+            // $fecha=date('d/m/Y');
+            $fecha = $fecha ? \Carbon\Carbon::parse($fecha) : now();
+
+            return $fecha->day . ' de ' . $meses[$fecha->month] . ' del ' . $fecha->year;
+        }
+
+
+    @endphp
+   
     
     <!-- <table class="cabecera" style="font-family: Arial;font-size:12px !important">
         <tr>
