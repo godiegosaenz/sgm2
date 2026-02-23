@@ -120,6 +120,9 @@
 </style>
 
 
+<link href="{{ asset('css/dataTables.bootstrap5.min.css') }}" rel="stylesheet">
+<link href="{{ asset('css/rowReorder.bootstrap5.min.css') }}" rel="stylesheet">
+
 @endpush
 @section('content')
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -241,16 +244,32 @@
                                             <span id="nombre_contr" class="label_not"></span><br>
                                         </div>
 
+                                        <hr>
+
+                                        <center><h5>Otros Datos</h5></center>
+                                        <div class="col-md-6">                                           
+                                            <b>Documento Generado:</b>
+                                            <span id="doc_generado" class="label_not"></span><br>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <b>Documento Subido:</b>
+                                            <span id="doc_subido" class="label_not"></span><br>
+                                        </div>
+
                                         
+                                        <div class="col-md-6">
+                                            <b>Dias desde Notificacion:</b>
+                                            <span id="dias_notificado" class="label_not dias_notificado"></span><br>
+                                        </div>
 
                                         <div class="col-md-6">                                           
-                                            <b>Valor Notificacion:</b>
-                                            <span id="valor_notificado" class="label_not"></span><br>
+                                            <b>Predio:</b>
+                                            <span id="predio_localizacion" class="label_not"></span><br>
                                         </div>
 
                                         <div class="col-md-6">
-                                             <b>Dias desde Notificacion:</b>
-                                            <span id="dias_notificado" class="label_not"></span><br>
+                                            <b>Matricula/Clave Catastral:</b>
+                                            <span id="matr_clave" class="label_not"></span><br>
                                         </div>
 
                                         <hr>
@@ -260,6 +279,7 @@
 
                                     <div id="seccion_detalle">
                                         <div class="col-md-12 mt-3">
+                                            <h5><center>VALOR NOTIFICACION $<span class="valor_notificado"></span></center></h5>
                                             <table class="table table-bordered table-hover"
                                                 id="tableDetNot"
                                                 style="width:100%">
@@ -299,6 +319,7 @@
 
                                     <div id="seccion_inicia_proceso" style="display:none">
                                         <div class="col-md-12 mt-3">
+                                            <h5><center>VALOR NOTIFICACION $<span class="valor_notificado"></span></center></h5>
                                             <h5><center>VALOR DEUDA ACTUALIZADO <span id="total_deuda_proceso"></span></center></h5>
                                             <table class="table table-bordered table-hover"
                                                 id="tableProcesoNot"
@@ -354,7 +375,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    
+                    <h2>Documento Generado</h2>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 @csrf
@@ -376,11 +397,81 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="documentopdf_subido" tabindex="-1" aria-labelledby="ContribuyenteModalLabel" aria-hidden="true"
+     data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Documento Subido</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                @csrf
+                <div class="modal-body">
+                <div class="row">
+                        <div class="col-sm-12 col-xs-11 "style="height: auto ">
+                                <iframe width="100%" height="500" frameborder="0"id="iframePdfSubido"></iframe>
+                                    <p style="color: #747373;font-size:15px"></p>
+                            </div>
+                        </div>
+                </div>
+                <div class="modal-footer"> 
+                    <center>
+                            <button class="btn btn-success" onclick="abrirModalSubir()">Subir</button>                           
+                            <a href=""id="vinculoSubido"><button  type="button" id="descargarSubido"class="btn btn-primary"><i class="fa fa-mail"></i> Descargar</button> </a>
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" >Salir</button>                                 
+                    </center>               
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="subir_documento" tabindex="-1" aria-labelledby="ContribuyenteModalLabel" aria-hidden="true"
+     data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Subir Documento</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form class="" action="" id="formArchivoFirmado" name="formArchivoFirmado" method="post" enctype="multipart/form-data">
+                    @csrf
+               
+                <div class="modal-body">
+                    <div class="row">
+
+                        <div class="mb-3">
+                                <label for="cmb_ruc_rep" class="form-label">DOCUMENTOS</label>
+                                <input type="file" class="form-control txt_coact" name="archivo" id="archivo" >
+                                <input type="hidden" id="idnoti" name="idnoti">
+                        </div>
+
+                    </div>
+                    <div class="modal-footer"> 
+                        <center>
+                                <button class="btn btn-success" type="submit">Guardar</button>                           
+                            
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" >Salir</button>                                 
+                        </center>               
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    
 @endsection
 @push('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-<script>
+ <!-- DataTables -->
 
+ <script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
+ <script src="{{ asset('js/dataTables.bootstrap5.min.js') }}"></script>
+ <script src="{{ asset('js/dataTables.rowReorder.min.js') }}"></script>
+<script>
+    
     
 
     const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;

@@ -162,7 +162,7 @@ class NotificacionesController extends Controller
                 $guardaDataNotificacion->descuento_notificado=number_format(($descuento_emi),2,'.', '');
                 $guardaDataNotificacion->recargo_notificado=number_format(($recargo_emi),2,'.', '');
                 $guardaDataNotificacion->total_notificado=number_format(($total_emi),2,'.', '');
-
+                $guardaDataNotificacion->predio='Urbano';
                 $guardaDataNotificacion->documento=$generarPdf['pdf'];
                 $guardaDataNotificacion->save();
 
@@ -215,7 +215,7 @@ class NotificacionesController extends Controller
                 $guardaDataNotificacion->descuento_notificado=number_format(($descuento_emi),2,'.', '');
                 $guardaDataNotificacion->recargo_notificado=number_format(($recargo_emi),2,'.', '');
                 $guardaDataNotificacion->total_notificado=number_format(($total_emi),2,'.', '');
-
+                $guardaDataNotificacion->predio='Rural';
                 $guardaDataNotificacion->documento=$generarPdf['pdf'];
                 $guardaDataNotificacion->save();
 
@@ -296,7 +296,7 @@ class NotificacionesController extends Controller
             ->selectRaw("CURRENT_DATE - DATE(fecha_registra) AS dias_transcurridos")
             ->get();
 
-            dd($datos);
+         
 
             foreach($datos as $key=> $data){
                
@@ -539,6 +539,66 @@ class NotificacionesController extends Controller
             return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
 
         }
+    }
+
+    public function subirArchivoFirmado(Request $request){
+        
+        try{
+            $noti=InfoNotifica::find($request->idnoti);
+            $nombre_geneado=$noti->documento;
+            $solo_nombre=explode(".",$nombre_geneado);
+            $nombre_firmado=$solo_nombre[0]."_firmado";
+            $documento=$request->archivo;
+            $extension = pathinfo($documento->getClientOriginalName(), PATHINFO_EXTENSION);
+            if(!is_null($documento)){
+                \Storage::disk('disksCoactiva')->put($nombre_firmado . "." . $extension, \File::get($documento));
+                $noti->documento_subido=$nombre_firmado.".".$extension;
+                $noti->save();
+
+                return ["mensaje"=>"Documento subido exitosamente ", "error"=>false, "archivo"=>$noti->documento_subido];
+            }
+         } catch (\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+
+        }
+    
+    }
+
+    public function pdfProcesoCoactiva($id,$lugar){
+
+        $consulta=$this->consultarTitulosUrb($id);
+        if($consulta['error']==true){
+            return ["mensaje"=>$consulta['mensaje'], "error"=>true];
+        }
+
+        $listado_final=[];
+        
+        foreach ($consulta["resultado"] as $key => $item){   
+            $anios[] = $item->anio;              
+            if(!isset($listado_final[$item->num_predio])) {
+                $listado_final[$item->num_predio]=array($item);
+        
+            }else{
+                array_push($listado_final[$item->num_predio], $item);
+            }
+
+            $nombre_persona=$item->nombre_per;
+            $direcc_cont=$item->direcc_cont;
+            $ci_ruc=$item->ci_ruc;
+            if(is_null($item->nombre_per)){
+                $nombre_persona=$item->nombre_contr1;
+            }
+        } 
+
+        $anio_min = min($anios);
+        $anio_max = max($anios);
+
+        $rango='DESDE EL '.($anio_min . ' HASTA EL EJERCICIO FISCAL ' . $anio_max);
+        // dd($listado_final);
+        $nombrePDF="ProcesoCoactiva".date('YmdHis').".pdf";                               
+        $pdf = \PDF::loadView('reportes.procesoCoactiva', ['DatosLiquidacion'=>$listado_final,"ubicacion"=>$lugar,"nombre_persona"=>$nombre_persona, "direcc_cont"=>$direcc_cont, "ci_ruc"=>$ci_ruc, "rango"=>$rango]);
+
+        return $pdf->stream($nombrePDF);
     }
 
 }

@@ -550,7 +550,7 @@
                 'active' => false // Puedes agregar más lógica si necesitas submenús
             ],
 
-              [
+            [
                 'name' => 'CONSULTORIO',
                 'icon' => 'hospital-icon',
                 'permission' => 'menu consultorio',
@@ -565,6 +565,37 @@
 
                 ],
                 'active' => request()->routeIs('consultorio.registro_paciente') 
+            ],
+
+            [
+                'name' => 'COACTIVA',
+                'icon' => 'gear-wide-connected',
+                'permission' => 'menu coactiva',
+                'subMenu' => [
+                    [
+                        'name' => 'Notificacion',
+                        'route' => 'coactiva.notificar',
+                        'permission' => 'Evaluaciones Ocupacionales',
+                        'active' => request()->routeIs('coactiva.notificar')
+                    ],
+
+                    [
+                        'name' => 'Listado Notificaciones',
+                        'route' => 'coactiva.lista_notificar',
+                        'permission' => 'Evaluaciones Ocupacionales',
+                        'active' => request()->routeIs('coactiva.lista_notificar')
+                    ],
+
+                    [
+                        'name' => 'Procesos Coactiva',
+                        'route' => 'coactiva.lista_notificar',
+                        'permission' => 'Evaluaciones Ocupacionales',
+                        'active' => request()->routeIs('coactiva.lista_notificar')
+                    ],
+
+
+                ],
+                'active' => request()->routeIs('coactiva.notificar') ||  request()->routeIs('coactiva.lista_notificar')
             ],
 
             [

@@ -514,9 +514,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('listado-notificaciones', [NotificacionesController::class, 'vistaListaNotificacion'])->name('coactiva.lista_notificar');
     Route::get('pago-notificaciones/{periodo}', [NotificacionesController::class, 'tablaNotificacion']);
     Route::get('pago-notificaciones-detalle/{id}', [NotificacionesController::class, 'detalleNotificacion']);
-     Route::get('pago-notificaciones-detalle-proceso-coac/{id}', [NotificacionesController::class, 'detalleNotificacionProceso']);
+    Route::get('pago-notificaciones-detalle-proceso-coac/{id}', [NotificacionesController::class, 'detalleNotificacionProceso']);
+    Route::post('guardar-documento-firmado-noti', [NotificacionesController::class, 'subirArchivoFirmado']);
 
-
+    Route::get('pdf-proceso-coactiva/{id}/{lugar}', [NotificacionesController::class, 'pdfProcesoCoactiva']);
    
     
 });

@@ -3,8 +3,11 @@ function llenar_tabla_notificacion(){
     var periodo=$('#periodo').val()
     if(periodo==""){return}
 
+    // $("#tableNotificacion tbody").html('');
+    // $('#tableNotificacion tbody').empty(); 
     $("#tableNotificacion tbody").html('');
-    $('#tableNotificacion tbody').empty(); 
+    $('#tableNotificacion').DataTable().destroy();
+	$('#tableNotificacion tbody').empty(); 
     var num_col = $("#tableNotificacion thead tr th").length; //obtenemos el numero de columnas de la tabla
     vistacargando("m", "Espere por favor")
     $.get('pago-notificaciones/'+periodo, function(data){
@@ -44,9 +47,14 @@ function llenar_tabla_notificacion(){
                     icono2=`<span class="badge-sin-expirar">${item.dias_transcurridos} </span>`;
                 }
 
-                let nombre=item.CarVe_Nombres
-                if(i.Ciu_Nombres!=""){
-                    nombre=item.Ciu_Nombres+" "+item.Ciu_Apellidos
+                let nombre=""
+                let num_ident=""
+                if(item.id_persona!=null){
+                    nombre=item.ente.apellidos+" "+item.ente.nombres
+                    num_ident=item.ente.ci_ruc
+                }else{
+                    nombre=item.contribuyente
+                    num_ident=item.num_ident
                 }
 				$('#tableNotificacion').append(`<tr>
                                                 <td style="width:5%; text-align:center; vertical-align:middle">
@@ -56,10 +64,10 @@ function llenar_tabla_notificacion(){
                                                 </td>
 
                                                 <td style="width:5%; text-align:center; vertical-align:middle">
-                                                    ${item.ente.ci_ruc}                                                     
+                                                    ${num_ident}                                                     
                                                 </td>
                                                 <td style="width:40%; text-align:center; vertical-align:middle">
-                                                    ${item.ente.apellidos} ${item.ente.nombres}                                                         
+                                                    ${nombre}                                                         
                                                 </td>
                                                 <td style="width:10%; text-align:center; vertical-align:middle">
                                                     ${item.fecha_registra}                                                     
@@ -84,7 +92,7 @@ function llenar_tabla_notificacion(){
 										</tr>`);
 			})
           
-
+            cargar_estilos_datatable('tableNotificacion')
             
 		}
     
@@ -94,6 +102,27 @@ function llenar_tabla_notificacion(){
         $("#tableNotificacion tbody").html('');
 		$("#tableNotificacion tbody").html(`<tr><td colspan="${num_col}" style="text-align:center">Se produjo un error, por favor intentelo más tarde</td></tr>`);
     });
+}
+
+function cargar_estilos_datatable(idtabla){
+	$("#"+idtabla).DataTable({
+		'paging'      : true,
+		'searching'   : true,
+		'ordering'    : true,
+		'info'        : true,
+		'autoWidth'   : true,
+		"destroy":true,
+        order: [[ 3, "desc" ]],
+		pageLength: 10,
+		sInfoFiltered:false,
+		language: {
+			// url: 'json/datatables/spanish.json',
+		},
+	}); 
+	$('.collapse-link').click();
+	$('.datatable_wrapper').children('.row').css('overflow','inherit !important');
+
+	$('.table-responsive').css({'padding-top':'12px','padding-bottom':'12px', 'border':'0', 'overflow-x':'inherit'});	
 }
 
 function detalleProcesoIniciaCoa(){
@@ -159,7 +188,7 @@ function detalleProcesoIniciaCoa(){
 										</tr>`);
 			})
           
-            $('#total_deuda_proceso').html('$ '+data.total)
+            $('#total_deuda_proceso').html('$'+data.total)
 		}
     
     }).fail(function(){
@@ -202,10 +231,11 @@ function detalleNot(id){
 
 			$('#modalDetalleNot').modal('show')
 			$("#tableDetNot tbody").html('');
-         
+            
+            let clave_matr = [];
 			$.each(data.resultado.data,function(i, item){
-
-              
+                
+                clave_matr.push(item.liquidacion.predio);
 				$('#tableDetNot').append(`<tr>
                                                 
                                                 <td style="width:20%; text-align:center; vertical-align:middle">
@@ -241,8 +271,19 @@ function detalleNot(id){
 
             $('#num_ident_contr').html(data.resultado.ente.apellidos +" "+data.resultado.ente.nombres)
             $('#nombre_contr').html(data.resultado.ente.ci_ruc)
-            $('#valor_notificado').html(data.resultado.total_notificado)
+            $('.valor_notificado').html(data.resultado.total_notificado)
             $('#dias_notificado').html(data.resultado.dias_transcurridos)
+
+            $('#doc_generado').html(`<i class="fa fa-file-pdf" style="color:skyblue" onclick="verpdf('${data.resultado.documento}')"><i>`)
+            $('#doc_subido').html(`<i class="fa fa-file-pdf" style="color:skyblue" onclick="verpdf_subido('${data.resultado.documento_subido}')"><i>`)
+
+            $('#predio_localizacion').html(data.resultado.predio) 
+            let prediosUnicos = [...new Set(clave_matr)];
+            let clave_matricula = prediosUnicos.join(', ');
+
+            $('#matr_clave').html(`
+                <label>${clave_matricula}</label>
+            `);
             
 		}
     
@@ -259,3 +300,72 @@ function cerrarModalNot(){
     $('#modalDetalleNot').modal('hide')
     
 }
+
+function verpdf(ruta){
+
+    var iframe=$('#iframePdf');
+    iframe.attr("src", "coactiva/documento/"+ruta);   
+    $("#vinculo").attr("href", 'coactiva/documento-descargar/'+ruta);
+    $("#documentopdf").modal("show");
+}
+
+function verpdf_subido(ruta){
+
+    var iframe=$('#iframePdfSubido');
+    iframe.attr("src", "coactiva/documento/"+ruta);   
+    $("#vinculoSubido").attr("href", 'coactiva/documento-descargar/'+ruta);
+    $("#documentopdf_subido").modal("show");
+}
+
+function abrirModalSubir(){
+    $('#archivo').val('')
+    $("#documentopdf_subido").modal("hide");
+    $("#subir_documento").modal("show");
+    
+    $('#idnoti').val($('#id_notifica').val())
+}
+
+$("#formArchivoFirmado").submit(function(e){
+    e.preventDefault();
+   
+    vistacargando("m","Espere por favor")
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    let tipo="POST"
+    let url_form="guardar-documento-firmado-noti"
+    var FrmData = new FormData(this);
+   
+    $.ajax({
+            
+        type: tipo,
+        url: url_form,
+        method: tipo,             
+		data: FrmData,      
+		
+        contentType:false,
+        cache:false,
+        processData:false, 
+
+        success: function(data){
+            vistacargando("");                
+            if(data.error==true){
+                alertNotificar(data.mensaje,'error');
+                return;                      
+            }
+           
+            alertNotificar(data.mensaje,"success");
+            $('#doc_subido').html(`<i class="fa fa-file-pdf" style="color:skyblue" onclick="verpdf_subido('${data.archivo}')"><i>`)
+            $('#subir_documento').modal('hide')
+                            
+        }, error:function (data) {
+            console.log(data)
+
+            vistacargando("");
+            alertNotificar('Ocurrió un error','error');
+        }
+    });
+})
