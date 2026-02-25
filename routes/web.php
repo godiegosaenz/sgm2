@@ -518,6 +518,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('guardar-documento-firmado-noti', [NotificacionesController::class, 'subirArchivoFirmado']);
 
     Route::get('pdf-proceso-coactiva/{id}/{lugar}', [NotificacionesController::class, 'pdfProcesoCoactiva']);
+    Route::get('inicia-proceso-coactiva/{id}', [NotificacionesController::class, 'iniciaProcesoCoactiva']);
+    Route::post('guardar-documento-firmado-coact', [NotificacionesController::class, 'subirArchivoFirmadoCoact']);
    
     
 });

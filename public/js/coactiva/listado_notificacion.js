@@ -38,6 +38,10 @@ function llenar_tabla_notificacion(){
                
                 if(item.estado=='Pagado'){
                     icono=`<span class="badge-pagado"> 💵 Pagado </span>`;
+                }else if(item.estado=='Coactivado'){
+                    icono=`<span class="badge-coactivado">
+                            <i class="fas fa-exclamation-circle" style="margin-right: 5px;"></i> Coactivado
+                            </span>`;
                 }
                 
                 let icono2=""
@@ -199,7 +203,9 @@ function detalleProcesoIniciaCoa(){
     });
 }
 
+globalThis.EstadoCoactivadoGlobal=0
 function detalleNot(id){
+   
     $('#id_notifica').val('')
     $('.label_not').html('')
     $("#tableDetNot tbody").html('');
@@ -228,7 +234,8 @@ function detalleNot(id){
 
             $('#seccion_detalle').show()
             $('#seccion_inicia_proceso').hide()
-
+            $('.seccion_detalle_coa').hide()
+            $('.botone_inicia_proceso').show()
 			$('#modalDetalleNot').modal('show')
 			$("#tableDetNot tbody").html('');
             
@@ -275,7 +282,7 @@ function detalleNot(id){
             $('#dias_notificado').html(data.resultado.dias_transcurridos)
 
             $('#doc_generado').html(`<i class="fa fa-file-pdf" style="color:skyblue" onclick="verpdf('${data.resultado.documento}')"><i>`)
-            $('#doc_subido').html(`<i class="fa fa-file-pdf" style="color:skyblue" onclick="verpdf_subido('${data.resultado.documento_subido}')"><i>`)
+            $('#doc_subido').html(`<i class="fa fa-file-pdf" style="color:skyblue" onclick="verpdf_subido('${data.resultado.documento_subido}','0')"><i>`)
 
             $('#predio_localizacion').html(data.resultado.predio) 
             let prediosUnicos = [...new Set(clave_matr)];
@@ -284,6 +291,60 @@ function detalleNot(id){
             $('#matr_clave').html(`
                 <label>${clave_matricula}</label>
             `);
+            $('#idcoa').val('')
+            if(data.resultado.estado=='Coactivado'){
+               
+                $("#tableDetCoa tbody").html('');
+                $('#tableDetCoa tbody').empty(); 
+
+                $.each(data.datosCoa.data,function(i, item){
+                
+				$('#tableDetCoa').append(`<tr>
+                                                
+                                                <td style="width:15%; text-align:center; vertical-align:middle">
+                                                    ${item.liquidacion.predio}
+                                                     
+                                                </td>
+                                                <td style="width:10%; text-align:center; vertical-align:middle">
+                                                   ${item.liquidacion.anio}                                                    
+                                                </td>
+                                                <td style="width:15%; text-align:center; vertical-align:middle">
+                                                   ${item.subtotal}                                                    
+                                                </td>
+                                                <td style="width:15%; text-align:center; vertical-align:middle">
+                                                   ${item.interes}                                                    
+                                                </td>
+                                                <td style="width:15%; text-align:center; vertical-align:middle">
+                                                    ${item.descuento}                                            
+                                                </td>
+                                                <td style="width:10%; text-align:center; vertical-align:middle">
+                                                   ${item.recargo}                                             
+                                                </td>
+
+                                                 <td style="width:10%; text-align:center; vertical-align:middle">
+                                                   ${item.coactiva === null ? '0.00' : item.coactiva}                                             
+                                                </td>
+
+                                                <td style="width:10%; text-align:center; vertical-align:middle">
+                                                    ${item.total}                                                   
+                                                </td>
+                                               
+											
+										</tr>`);
+			    })
+          
+
+                $('.seccion_detalle_coa').show()
+                $('.botone_inicia_proceso').hide()
+
+                $('#nombre_coactivador').html(data.datosCoa.profesional)
+                $('#fecha_coactivador').html(data.datosCoa.fecha_registra)
+
+                $('#doc_generado_coa').html(`<i class="fa fa-file-pdf" style="color:skyblue" onclick="verpdf('${data.datosCoa.documento}')"><i>`)
+                $('#doc_subido_coa').html(`<i class="fa fa-file-pdf" style="color:skyblue" onclick="verpdf_subido('${data.datosCoa.documento_subido}','1')"><i>`)
+
+                $('#idcoa').val(data.datosCoa.id)
+            }
             
 		}
     
@@ -309,13 +370,14 @@ function verpdf(ruta){
     $("#documentopdf").modal("show");
 }
 
-function verpdf_subido(ruta){
-
+function verpdf_subido(ruta,valor){
+    $('#es_coact').val(valor)
     var iframe=$('#iframePdfSubido');
     iframe.attr("src", "coactiva/documento/"+ruta);   
     $("#vinculoSubido").attr("href", 'coactiva/documento-descargar/'+ruta);
     $("#documentopdf_subido").modal("show");
 }
+
 
 function abrirModalSubir(){
     $('#archivo').val('')
@@ -326,6 +388,13 @@ function abrirModalSubir(){
 }
 
 $("#formArchivoFirmado").submit(function(e){
+    
+    let documento=$('#archivo').val()
+    if(documento=="" || documento==null){
+        alertNotificar("Debe subir el documento","error")
+        return
+    }
+
     e.preventDefault();
    
     vistacargando("m","Espere por favor")
@@ -334,9 +403,13 @@ $("#formArchivoFirmado").submit(function(e){
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
     });
-
+    let valor=$('#es_coact').val()
+   
     let tipo="POST"
     let url_form="guardar-documento-firmado-noti"
+    if($('#es_coact').val()==1){
+        url_form='guardar-documento-firmado-coact'
+    }
     var FrmData = new FormData(this);
    
     $.ajax({
@@ -358,7 +431,11 @@ $("#formArchivoFirmado").submit(function(e){
             }
            
             alertNotificar(data.mensaje,"success");
-            $('#doc_subido').html(`<i class="fa fa-file-pdf" style="color:skyblue" onclick="verpdf_subido('${data.archivo}')"><i>`)
+            if(valor==0){
+                $('#doc_subido').html(`<i class="fa fa-file-pdf" style="color:skyblue" onclick="verpdf_subido('${data.archivo}','${valor}')"><i>`)
+            }else{
+                $('#doc_subido_coa').html(`<i class="fa fa-file-pdf" style="color:skyblue" onclick="verpdf_subido('${data.archivo}','${valor}')"><i>`)
+            }
             $('#subir_documento').modal('hide')
                             
         }, error:function (data) {
@@ -369,3 +446,59 @@ $("#formArchivoFirmado").submit(function(e){
         }
     });
 })
+
+function iniciarProcesoCoact(){
+    let id_not=$('#id_notifica').val()
+    swal({
+        title: '¿Desea iniciar el proceso de coativa?',
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonClass: "btn-danger",
+        confirmButtonText: "Si, continuar",
+        cancelButtonText: "No, cancelar",
+        closeOnConfirm: false,
+        closeOnCancel: false
+    },
+    function(isConfirm) {
+        if (isConfirm) { 
+            vistacargando("m", "Espere por favor")
+            $.get('inicia-proceso-coactiva/'+id_not, function(data){
+                console.log(data)
+            
+                vistacargando("")
+                if(data.error==true){
+                    alertNotificar(data.mensaje,"error");
+                    // cancelar()
+                    return;   
+                }
+                alertNotificar(data.mensaje,"success");
+                $('#modalDetalleNot').modal('hide')
+
+                setTimeout(function() {
+                    verpdf(data.pdf)
+                }, 1000);
+                llenar_tabla_notificacion()
+            
+            }).fail(function(){
+                vistacargando("")
+                alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+            
+            });
+        }
+        sweetAlert.close();   // ocultamos la ventana de pregunta
+    });   
+}
+
+function verpdfCoa(ruta){
+    console.log('coactiva/documento-descargar/'+ruta)
+    var iframe=$('#iframePdfCoa');
+    iframe.attr("src", "coactiva/documento/"+ruta);   
+    $("#vinculoCoa").attr("href", 'coactiva/documento-descargar/'+ruta);
+    $("#documentopdf").modal("show");
+}
+
+$('#documentopdfcoa').on('hidden.bs.modal', function () {
+    llenar_tabla_notificacion()
+   
+   
+});
