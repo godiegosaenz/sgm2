@@ -138,7 +138,7 @@
 @endpush
 @section('content')
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h4 class="h2">Notificaciones Pago Voluntario</h4>
+    <h4 class="h2">Procesos Coactivados</h4>
     <div class="btn-toolbar mb-2 mb-md-0">
     
    
@@ -176,17 +176,18 @@
             <div class="col-md-12">
                 @csrf
                 <div class="table-responsive">
-                    <table class="table table-bordered table-hover" id="tableNotificacion" style="width: 100%">
+                    <table class="table table-bordered table-hover" id="tableCoactiva" style="width: 100%">
                         <thead>
                             <tr>
                             <th scope="col"></th>
-                            <th scope="col">Cedula/RUC</th>
-                            <th scope="col">Nombres</th>
-                            <th>Fecha Notificacion</th>
-                            <th scope="col">Deuda Total</th>
-                            <th scope="col">Estado</th>
-                            <th scope="col">Dias desde Notificacion</th>
-                            <th scope="col">Pago Total</th>
+                            <th scope="col">Contribuyente</th>                            
+                            <th>Fecha Coactiva</th>
+                            <th scope="col">Debe Pago Voluntario</th>
+                            <th scope="col">Debe Pago Inmediato</th>
+                            <th scope="col">Valor Cancelado</th>
+                            <th scope="col">Estado Pago</th>
+                            <th scope="col">Estado Proceso</th>
+                        
                             </tr>
                         </thead>
                         <tbody id="tbodyNotificacion">
@@ -713,7 +714,7 @@
 </script>
 <script src="{{asset('bower_components/sweetalert/sweetalert.js')}}"></script>
 
-<script src="{{ asset('js/coactiva/listado_notificacion.js?v='.rand())}}"></script>
+<script src="{{ asset('js/coactiva/listado_coactiva.js?v='.rand())}}"></script>
 <script>
     // llenar_tabla_notificacion()
 </script>

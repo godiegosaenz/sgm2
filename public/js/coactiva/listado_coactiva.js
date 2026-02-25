@@ -1,93 +1,87 @@
-
 function llenar_tabla_notificacion(){
     var periodo=$('#periodo').val()
     if(periodo==""){return}
 
-    // $("#tableNotificacion tbody").html('');
-    // $('#tableNotificacion tbody').empty(); 
-    $("#tableNotificacion tbody").html('');
-    $('#tableNotificacion').DataTable().destroy();
-	$('#tableNotificacion tbody').empty(); 
-    var num_col = $("#tableNotificacion thead tr th").length; //obtenemos el numero de columnas de la tabla
+    $("#tableCoactiva tbody").html('');
+    $('#tableCoactiva').DataTable().destroy();
+	$('#tableCoactiva tbody').empty(); 
+    var num_col = $("#tableCoactiva thead tr th").length; //obtenemos el numero de columnas de la tabla
     vistacargando("m", "Espere por favor")
-    $.get('pago-notificaciones/'+periodo, function(data){
+    $.get('pago-coactivas/'+periodo, function(data){
         console.log(data)
        
         vistacargando("")
         if(data.error==true){
-			$("#tableNotificacion tbody").html('');
-			$("#tableNotificacion tbody").html(`<tr><td colspan="${num_col}" style="text-align:center>No existen registros</td></tr>`);
+			$("#tableCoactiva tbody").html('');
+			$("#tableCoactiva tbody").html(`<tr><td colspan="${num_col}" style="text-align:center>No existen registros</td></tr>`);
 			alertNotificar(data.mensaje,"error");
             // cancelar()
 			return;   
 		}
 		if(data.error==false){
 			if(data.resultado.length==0){
-				$("#tableNotificacion tbody").html('');
-				$("#tableNotificacion tbody").html(`<tr><td colspan="${num_col}" style="text-align:center">No existen registros</td></tr>`);
+				$("#tableCoactiva tbody").html('');
+				$("#tableCoactiva tbody").html(`<tr><td colspan="${num_col}" style="text-align:center">No existen registros</td></tr>`);
 				alertNotificar("No se encontró información","error");
                 // cancelar()
 				return;
 			}
 			
-			$("#tableNotificacion tbody").html('');
+			$("#tableCoactiva tbody").html('');
          
 			$.each(data.resultado,function(i, item){
              
                 let icono=`<span class="badge-notificado"> 🔔 Notificado</span>`;
                
-                if(item.estado=='Pagado'){
-                    icono=`<span class="badge-pagado"> 💵 Pagado </span>`;
+                if(item.estado_proceso==1){
+                    icono=`<span class="badge-pagado"> 💵 ORDEN DE PAGO INMEDIATO </span>`;
                 }else if(item.estado=='Coactivado'){
                     icono=`<span class="badge-coactivado">
                             <i class="fas fa-exclamation-circle" style="margin-right: 5px;"></i> Coactivado
                             </span>`;
                 }
                 
-                let icono2=""
-                if(item.dias_transcurridos>=10){
-                    icono2=`<span class="badge-expirado">${item.dias_transcurridos} </span>`;
-                }else{
-                    icono2=`<span class="badge-sin-expirar">${item.dias_transcurridos} </span>`;
-                }
+                
 
                 let nombre=""
                 let num_ident=""
-                if(item.id_persona!=null){
-                    nombre=item.ente.apellidos+" "+item.ente.nombres
-                    num_ident=item.ente.ci_ruc
+                if(item.notificacion.id_persona!=null){
+                    nombre=item.notificacion.ente.apellidos+" "+item.notificacion.ente.nombres
+                    num_ident=item.notificacion.ente.ci_ruc
                 }else{
                     nombre=item.contribuyente
                     num_ident=item.num_ident
                 }
-				$('#tableNotificacion').append(`<tr>
-                                                <td style="width:5%; text-align:center; vertical-align:middle">
-                                                   <button type="button" class="btn btn-success btn-sm" onclick="detalleNot('${item.id}')">
+				$('#tableCoactiva').append(`<tr>
+                                                <td style="width:3%; text-align:center; vertical-align:middle">
+                                                   <button type="button" class="btn btn-success btn-sm" onclick="detalleNot('${item.notificacion.id}')">
                                                         <i class="fa fa-eye"></i>
                                                     </button>                                               
                                                 </td>
 
-                                                <td style="width:5%; text-align:center; vertical-align:middle">
-                                                    ${num_ident}                                                     
+                                                <td style="width:35%; text-align:letf; vertical-align:middle">
+                                                    <span><b>C.I.: </b>${num_ident}</span><br>   
+                                                    <span><b>Nombres: </b>${nombre}</span>   
+
                                                 </td>
-                                                <td style="width:40%; text-align:center; vertical-align:middle">
-                                                    ${nombre}                                                         
+                                                <td style="width:8%; text-align:center; vertical-align:middle">
+                                                    ${item.fecha_registra}                                                            
                                                 </td>
-                                                <td style="width:10%; text-align:center; vertical-align:middle">
-                                                    ${item.fecha_registra}                                                     
+                                                <td style="width:9%; text-align:center; vertical-align:middle">
+                                                    ${item.notificacion.total_notificado}                                                     
                                                 </td>
-                                                <td style="width:10%; text-align:center; vertical-align:middle">
-                                                    ${item.total_notificado}                                                     
+                                                <td style="width:9%; text-align:center; vertical-align:middle">
+                                                    ${item.valor_pago_inmediato}                                                     
                                                 </td>
-                                                <td style="width:10%; text-align:center; vertical-align:middle">
-                                                    ${icono}                                                     
+                                                <td style="width:7%; text-align:center; vertical-align:middle">
+                                                    ${item.valor_cancelado === null ? '0.00' : item.valor_cancelado}                                                  
                                                 </td>
 
-                                                <td style="width:10%; text-align:center; vertical-align:middle">
-                                                    ${icono2}                                                     
+                                                <td style="width:6%; text-align:center; vertical-align:middle">
+                                                    ${item.estado_pago}                                                  
                                                 </td>
-                                                <td style="width:10%; text-align:center; vertical-align:middle">
-                                                                                                   
+                                                <td style="width:23%; text-align:center; vertical-align:middle">
+                                                    ${icono}                                              
                                                 </td>
 
                                                
@@ -96,15 +90,15 @@ function llenar_tabla_notificacion(){
 										</tr>`);
 			})
           
-            cargar_estilos_datatable('tableNotificacion')
+            cargar_estilos_datatable('tableCoactiva')
             
 		}
     
     }).fail(function(){
         vistacargando("")
         alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
-        $("#tableNotificacion tbody").html('');
-		$("#tableNotificacion tbody").html(`<tr><td colspan="${num_col}" style="text-align:center">Se produjo un error, por favor intentelo más tarde</td></tr>`);
+        $("#tableCoactiva tbody").html('');
+		$("#tableCoactiva tbody").html(`<tr><td colspan="${num_col}" style="text-align:center">Se produjo un error, por favor intentelo más tarde</td></tr>`);
     });
 }
 

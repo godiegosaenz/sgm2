@@ -50,6 +50,7 @@ use App\Http\Controllers\Consultorio\PacienteEmpleadoController;
 use App\Http\Controllers\Recaudacion\TasaAseoController;
 use App\Http\Controllers\Coactiva\CoactivaController;
 use App\Http\Controllers\Coactiva\NotificacionController;
+// use App\Http\Controllers\Coactiva\CoactivaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -520,6 +521,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('pdf-proceso-coactiva/{id}/{lugar}', [NotificacionesController::class, 'pdfProcesoCoactiva']);
     Route::get('inicia-proceso-coactiva/{id}', [NotificacionesController::class, 'iniciaProcesoCoactiva']);
     Route::post('guardar-documento-firmado-coact', [NotificacionesController::class, 'subirArchivoFirmadoCoact']);
+
+    Route::get('procesos-coactiva', [CoactivaController::class, 'index'])->name('coactiva.lista_coactiva');
+    Route::get('pago-coactivas/{periodo}', [CoactivaController::class, 'tablaCoactiva']);
    
     
 });

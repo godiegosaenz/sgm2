@@ -19,7 +19,7 @@ class InfoCoa extends Model
     }
 
     public function notificacion(){
-        return $this->belongsTo('App\Models\Coactiva\InfoNotifica', 'id_info_notifica', 'id');
+        return $this->belongsTo('App\Models\Coactiva\InfoNotifica', 'id_info_notifica', 'id')->with('ente');
     }
 
    
