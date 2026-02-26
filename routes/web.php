@@ -524,6 +524,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('procesos-coactiva', [CoactivaController::class, 'index'])->name('coactiva.lista_coactiva');
     Route::get('pago-coactivas/{periodo}', [CoactivaController::class, 'tablaCoactiva']);
+    Route::post('guardar-cuota-conv', [CoactivaController::class, 'guardarConvenio']);
+    Route::get('llenar-tabla-convenio/{id}', [CoactivaController::class, 'tablaConvenio']);
+    Route::get('inactivar-convenio/{id}', [CoactivaController::class, 'inactivarConvenio']);
+
+    Route::post('guardar-medidas-conv', [CoactivaController::class, 'guardarMedidas']);
+    Route::get('llenar-tabla-medidas/{id}', [CoactivaController::class, 'tablaMedidas']);
+    Route::get('inactivar-medidas/{id}', [CoactivaController::class, 'inactivarMedidas']);
+
+    Route::post('guardar-pago-conv', [CoactivaController::class, 'guardarPago']);
+    Route::get('llenar-tabla-pago/{id}', [CoactivaController::class, 'tablaPagos']);
+    Route::get('inactivar-pago/{id}', [CoactivaController::class, 'inactivarPagos']);
    
     
 });

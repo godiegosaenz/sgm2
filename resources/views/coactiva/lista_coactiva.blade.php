@@ -85,15 +85,57 @@
     gap: 5px;
 }
 
-.badge-pagado{
-    background: linear-gradient(135deg,#28a745,#20c997);
+.badge-orden {
+    background: linear-gradient(135deg, #ffa500, #ff7f00); /* Naranja bajo */
     color: white;
     padding: 5px 12px;
     border-radius: 20px;
     font-size: 12px;
     font-weight: 600;
     letter-spacing: .3px;
-    box-shadow: 0 2px 6px rgba(0,0,0,.15);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .15);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.badge-cancelado {
+    background: linear-gradient(135deg, #007bff, #0056b3); /* Azul bajo */
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .3px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .15);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.badge-acuerdo {
+    background: linear-gradient(135deg, #28a745, #218838); /* Verde */
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .3px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .15);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.badge-medidas {
+    background: linear-gradient(135deg, #ec8c6f, #ec8c6f); /* Color dorado */
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .3px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .15);
     display: inline-flex;
     align-items: center;
     gap: 5px;
@@ -213,7 +255,7 @@
 
                 <!-- HEADER -->
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalContribuyenteLabel">
+                    <h5 class="modal-title titulo_modal" id="modalContribuyenteLabel">
                         Detalle
                     </h5>
                     <button type="button" class="btn-close" onclick="cerrarModalNot()"></button>
@@ -222,219 +264,539 @@
                 <!-- BODY -->
                 <div class="modal-body">
 
-                    <div class="col-md-12">
-                        <form class=""
-                                action="tituloscoactivarural/imprimir"
-                                id="formExonerar"
-                                name="formExonerar"
-                                method="post"
-                                enctype="multipart/form-data">
-                                @csrf
+                    <ul class="nav nav-tabs mb-3" role="tablist">
+                        <li class="nav-item">
+                            <button class="nav-link active"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#tab-notifica"
+                                    type="button">
+                                <i class="bi bi-list-check text-success"></i> Notificacion
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#tab-coact"
+                                    type="button">
+                                <i class="bi bi-bell-fill text-danger"></i> Coactiva
+                            </button>
+                        </li>
 
-                                <div class="col-md-12">
-                                    <div class="row">
-                                        <center><h5>Datos del Notificador</h5></center>
-                                        <div class="col-md-6">
-                                            <b>Usuario:</b>
-                                            <span id="nombre_notificador" class="label_not"></span><br>
-                                            <input type="hidden" name="id_notifica" id="id_notifica">
-                                        </div>
+                        <li class="nav-item">
+                            <button class="nav-link"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#tab-convenio"
+                                    type="button">
+                                <i class="fa fa-handshake-o text-success"></i> Convenio
+                            </button>
+                        </li>
 
-                                        <div class="col-md-6">
-                                            <b>Fecha Notificacion:</b>
-                                            <span id="fecha_notificacion" class="label_not"></span><br>
-                                        </div>
+                        <li class="nav-item">
+                            <button class="nav-link"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#tab-medidas"
+                                    type="button">
+                                <i class="fa fa-eyedropper text-warning"></i> Medidas
+                            </button>
+                        </li>
 
-                                        <hr>
+                        <li class="nav-item">
+                            <button class="nav-link"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#tab-cancelado"
+                                    type="button">
+                                <i class="fa fa-money text-primary"></i> Cancelado / Archivado
+                            </button>
+                        </li>
 
-                                        <center><h5>Datos del Contribuyente</h5></center>
-                                        <div class="col-md-6">                                           
-                                            <b>Contribuyente:</b>
-                                            <span id="num_ident_contr" class="label_not"></span><br>
-                                        </div>
-                                        <div class="col-md-6">
-                                             <b>C.I./RUC:</b>
-                                            <span id="nombre_contr" class="label_not"></span><br>
-                                        </div>
+                    </ul>
 
-                                        <hr>
+                    <div class="tab-content">
 
-                                        <center><h5>Otros Datos</h5></center>
-                                        <div class="col-md-6">                                           
-                                            <b>Documento Generado:</b>
-                                            <span id="doc_generado" class="label_not"></span><br>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <b>Documento Subido:</b>
-                                            <span id="doc_subido" class="label_not"></span><br>
-                                        </div>
+                        <!-- TAB 1: CONTENIDO ACTUAL (SIN CAMBIOS) -->
+                        <div class="tab-pane fade show active" id="tab-notifica">
 
-                                        
-                                        <div class="col-md-6">
-                                            <b>Dias desde Notificacion:</b>
-                                            <span id="dias_notificado" class="label_not dias_notificado"></span><br>
-                                        </div>
+                            <div class="col-md-12">
+                                <form class=""
+                                        action="tituloscoactivarural/imprimir"
+                                        id="formExonerar"
+                                        name="formExonerar"
+                                        method="post"
+                                        enctype="multipart/form-data">
+                                        @csrf
 
-                                        <div class="col-md-6">                                           
-                                            <b>Predio:</b>
-                                            <span id="predio_localizacion" class="label_not"></span><br>
-                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="row">
+                                                <center><h5>Datos del Notificador</h5></center>
+                                                <div class="col-md-6">
+                                                    <b>Usuario:</b>
+                                                    <span id="nombre_notificador" class="label_not"></span><br>
+                                                    <input type="hidden" name="id_notifica" id="id_notifica">
+                                                </div>
 
-                                        <div class="col-md-6">
-                                            <b>Matricula/Clave Catastral:</b>
-                                            <span id="matr_clave" class="label_not"></span><br>
-                                        </div>
+                                                <div class="col-md-6">
+                                                    <b>Fecha Notificacion:</b>
+                                                    <span id="fecha_notificacion" class="label_not"></span><br>
+                                                </div>
 
-                                        <hr>
+                                                <hr>
 
+                                                <center><h5>Datos del Contribuyente</h5></center>
+                                                <div class="col-md-6">                                           
+                                                    <b>Contribuyente:</b>
+                                                    <span id="num_ident_contr" class="label_not"></span><br>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <b>C.I./RUC:</b>
+                                                    <span id="nombre_contr" class="label_not"></span><br>
+                                                </div>
 
-                                    </div>
+                                                <hr>
 
-                                    <div id="seccion_detalle">
-                                        <div class="col-md-12 mt-3">
-                                            <h5><center>VALOR NOTIFICACION $<span class="valor_notificado"></span></center></h5>
-                                            <table class="table table-bordered table-hover"
-                                                id="tableDetNot"
-                                                style="width:100%">
-                                                <thead>
-                                                    <tr>                                                   
-                                                        <th>Matricula/Clave</th>
-                                                        <th>Año</th>
-                                                        <th>Subtotal</th>
-                                                        <th>Interes</th>
-                                                        <th>Descuento</th>
-                                                        <th>Recargo</th>
-                                                        <th>Total</th>
-                                                        
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="tbodyNotificacionDetalle"></tbody>
-                                            </table>
-                                        </div>
+                                                <center><h5>Otros Datos</h5></center>
+                                                <div class="col-md-6">                                           
+                                                    <b>Documento Generado:</b>
+                                                    <span id="doc_generado" class="label_not"></span><br>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <b>Documento Subido:</b>
+                                                    <span id="doc_subido" class="label_not"></span><br>
+                                                </div>
 
-                                        <div class="row mt-3 botone_inicia_proceso">
-                                        
-                                            <div class="col-md-12 text-center mt-2">
                                                 
-                                                <button type="button"
-                                                        class="btn btn-sm btn-success"
-                                                        onclick="detalleProcesoIniciaCoa()">
-                                                    Iniciar Proceso Coactiva
-                                                </button>
-                                                <button type="button"
-                                                        class="btn btn-sm btn-danger"
-                                                        onclick="cerrarModalNot()">
-                                                    Cerrar
-                                                </button>
+                                                <div class="col-md-6">
+                                                    <b>Dias desde Notificacion:</b>
+                                                    <span id="dias_notificado" class="label_not dias_notificado"></span><br>
+                                                </div>
+
+                                                <div class="col-md-6">                                           
+                                                    <b>Predio:</b>
+                                                    <span id="predio_localizacion" class="label_not"></span><br>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <b>Matricula/Clave Catastral:</b>
+                                                    <span id="matr_clave" class="label_not"></span><br>
+                                                </div>
+
+                                                <hr>
+
+
                                             </div>
-                                        </div>
-                                    </div>
 
-                                    <div id="seccion_inicia_proceso" style="display:none">
-                                        <div class="col-md-12 mt-3">
-                                            <h5><center>VALOR PAGO VOLUNTARIO $<span class="valor_notificado"></span></center></h5>
-                                            <h5><center>VALOR PAGO INMEDIATO $<span class="valor_coa"></span></center></h5>
-                                            <table class="table table-bordered table-hover"
-                                                id="tableProcesoNot"
-                                                style="width:100%">
-                                                <thead>
-                                                    <tr>                                                   
-                                                        <th>Matricula/Clave</th>
-                                                        <th>Año</th>
-                                                        <th>Subtotal</th>
-                                                        <th>Interes</th>
-                                                        <th>Descuento</th>
-                                                        <th>Recargo</th>
-                                                        <th>Total</th>
-                                                        
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="tbodyProcesoNotDetalle"></tbody>
-                                            </table>
-                                        </div>
+                                            <div id="seccion_detalle">
+                                                <div class="col-md-12 mt-3">
+                                                    <h5><center>VALOR NOTIFICACION $<span class="valor_notificado"></span></center></h5>
+                                                    <table class="table table-bordered table-hover"
+                                                        id="tableDetNot"
+                                                        style="width:100%">
+                                                        <thead>
+                                                            <tr>                                                   
+                                                                <th>Matricula/Clave</th>
+                                                                <th>Año</th>
+                                                                <th>Subtotal</th>
+                                                                <th>Interes</th>
+                                                                <th>Descuento</th>
+                                                                <th>Recargo</th>
+                                                                <th>Total</th>
+                                                                
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="tbodyNotificacionDetalle"></tbody>
+                                                    </table>
+                                                </div>
 
-                                        <div class="row mt-3">
-                                        
-                                            <div class="col-md-12 text-center mt-2">
+                                                <div class="row mt-3 botone_inicia_proceso">
                                                 
-                                                <button type="button"
-                                                        class="btn btn-sm btn-primary"
-                                                        onclick="iniciarProcesoCoact()">
-                                                    Registrar Proceso Coactiva
-                                                </button>
-                                                <button type="button"
-                                                        class="btn btn-sm btn-danger"
-                                                        onclick="cerrarModalNot()">
-                                                    Cerrar
-                                                </button>
+                                                    <div class="col-md-12 text-center mt-2">
+                                                        
+                                                        <button type="button"
+                                                                class="btn btn-sm btn-success"
+                                                                onclick="detalleProcesoIniciaCoa()">
+                                                            Iniciar Proceso Coactiva
+                                                        </button>
+                                                        <button type="button"
+                                                                class="btn btn-sm btn-danger"
+                                                                onclick="cerrarModalNot()">
+                                                            Cerrar
+                                                        </button>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="seccion_detalle_coa row" style="display:none">
-                                        <hr>
-                                        <center><h5>Datos Coactiva</h5></center>
-                                        <div class="col-md-6">
-                                            <b>Usuario:</b>
-                                            <span id="nombre_coactivador" class="label_not"></span><br>
-                                            <input type="hidden" name="id_notifica" id="id_notifica">
-                                        </div>
 
-                                        <div class="col-md-6">
-                                            <b>Fecha Coactiva:</b>
-                                            <span id="fecha_coactivador" class="label_not"></span><br>
-                                        </div>
+                                            <div id="seccion_inicia_proceso" style="display:none">
+                                                <div class="col-md-12 mt-3">
+                                                    <h5><center>VALOR PAGO VOLUNTARIO $<span class="valor_notificado"></span></center></h5>
+                                                    <h5><center>VALOR PAGO INMEDIATO $<span class="valor_coa"></span></center></h5>
+                                                    <table class="table table-bordered table-hover"
+                                                        id="tableProcesoNot"
+                                                        style="width:100%">
+                                                        <thead>
+                                                            <tr>                                                   
+                                                                <th>Matricula/Clave</th>
+                                                                <th>Año</th>
+                                                                <th>Subtotal</th>
+                                                                <th>Interes</th>
+                                                                <th>Descuento</th>
+                                                                <th>Recargo</th>
+                                                                <th>Total</th>
+                                                                
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="tbodyProcesoNotDetalle"></tbody>
+                                                    </table>
+                                                </div>
 
-                                         
-                                        <div class="col-md-6">                                           
-                                            <b>Documento Generado:</b>
-                                            <span id="doc_generado_coa" class="label_not"></span><br>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <b>Documento Subido:</b>
-                                            <span id="doc_subido_coa" class="label_not"></span><br>
-                                        </div>
+                                                <div class="row mt-3">
+                                                
+                                                    <div class="col-md-12 text-center mt-2">
+                                                        
+                                                        <button type="button"
+                                                                class="btn btn-sm btn-primary"
+                                                                onclick="iniciarProcesoCoact()">
+                                                            Registrar Proceso Coactiva
+                                                        </button>
+                                                        <button type="button"
+                                                                class="btn btn-sm btn-danger"
+                                                                onclick="cerrarModalNot()">
+                                                            Cerrar
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                           
 
+                                        </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade show " id="tab-coact">
+                            <div class="col-md-12">
+
+                                <div class="seccion_detalle_coa row" style="display:none">
                                     <hr>
-                                    </div>
-                                    <div class="seccion_detalle_coa" style="display:none">
-                                        <div class="col-md-12 mt-3">
-                                            <h5><center>VALOR PAGO INMEDIATO $<span class="valor_coa"></span></center></h5>
-                                            <table class="table table-bordered table-hover"
-                                                id="tableDetCoa"
-                                                style="width:100%">
-                                                <thead>
-                                                    <tr>                                                   
-                                                        <th>Matricula/Clave</th>
-                                                        <th>Año</th>
-                                                        <th>Subtotal</th>
-                                                        <th>Interes</th>
-                                                        <th>Descuento</th>
-                                                        <th>Recargo</th>
-                                                        <th>Coactiva</th>
-                                                        <th>Total</th>
-                                                        
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="tbodyCoactivaDetalle"></tbody>
-                                            </table>
-                                        </div>
-
-                                        <div class="row mt-3">
-                                        
-                                            <div class="col-md-12 text-center mt-2">
-                                                
-                                               
-                                                <button type="button"
-                                                        class="btn btn-sm btn-danger"
-                                                        onclick="cerrarModalNot()">
-                                                    Cerrar
-                                                </button>
-                                            </div>
-                                        </div>
+                                    <center><h5>Datos Coactiva</h5></center>
+                                    <div class="col-md-6">
+                                        <b>Usuario:</b>
+                                        <span id="nombre_coactivador" class="label_not"></span><br>
+                                        <input type="hidden" name="id_notifica" id="id_notifica">
                                     </div>
 
+                                    <div class="col-md-6">
+                                        <b>Fecha Coactiva:</b>
+                                        <span id="fecha_coactivador" class="label_not"></span><br>
+                                    </div>
+
+                                    
+                                    <div class="col-md-6">                                           
+                                        <b>Documento Generado:</b>
+                                        <span id="doc_generado_coa" class="label_not"></span><br>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <b>Documento Subido:</b>
+                                        <span id="doc_subido_coa" class="label_not"></span><br>
+                                    </div>
+
+                                <hr>
                                 </div>
-                            </form>
+                                <div class="seccion_detalle_coa" style="display:none">
+                                    <div class="col-md-12 mt-3">
+                                        <h5><center>VALOR PAGO INMEDIATO $<span class="valor_coa"></span></center></h5>
+                                        <table class="table table-bordered table-hover"
+                                            id="tableDetCoa"
+                                            style="width:100%">
+                                            <thead>
+                                                <tr>                                                   
+                                                    <th>Matricula/Clave</th>
+                                                    <th>Año</th>
+                                                    <th>Subtotal</th>
+                                                    <th>Interes</th>
+                                                    <th>Descuento</th>
+                                                    <th>Recargo</th>
+                                                    <th>Coactiva</th>
+                                                    <th>Total</th>
+                                                    
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tbodyCoactivaDetalle"></tbody>
+                                        </table>
+                                    </div>
+
+                                    <!-- <div class="row mt-3">
+                                    
+                                        <div class="col-md-12 text-center mt-2">
+                                            <button type="button"
+                                                    class="btn btn-sm btn-primary"
+                                                    onclick="cerrarModalNot()">
+                                                Pagó
+                                            </button>
+
+                                            <button type="button"
+                                                    class="btn btn-sm btn-warning"
+                                                    onclick="cerrarModalNot()">
+                                                Medidas Cautelares
+                                            </button>
+                                        
+                                            <button type="button"
+                                                    class="btn btn-sm btn-danger"
+                                                    onclick="cerrarModalNot()">
+                                                Cerrar
+                                            </button>
+                                        </div>
+                                    </div> -->
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade show" id="tab-convenio">
+
+                            <div class="col-md-12">
+                                <form class=""
+                                        action=""
+                                        id="FormConvenio"
+                                        name="FormConvenio"
+                                        method="post"
+                                        enctype="multipart/form-data">
+                                        @csrf
+
+                                        <div class="row mb-3 align-items-center">
+                                            <label class="col-md-3 col-form-label " style="text-align: right;">
+                                                Valor Adeudado<span class="text-danger"> *</span> 
+                                            </label>
+                                            <div class="col-md-7">
+                                                <input type="number" class="form-control txt_conv" step="0.01" min="0" name="valor_adeudado" id="valor_adeudado">
+                                                <input type="hidden" name="lugar_not" id="lugar_not" value="Urbano">
+                                                 <input type="hidden" id="idcoa_conv" name="idcoa_conv">
+                                            </div>
+                                           
+                                        </div>
+
+                                        <div class="row mb-3 align-items-center">
+                                            <label class="col-md-3 col-form-label " style="text-align: right;">
+                                                Cuota Inicial<span class="text-danger"> *</span> 
+                                            </label>
+                                            <div class="col-md-7">
+                                                <input type="number" class="form-control txt_conv"name="cuota_inicial" id="cuota_inicial" step="0.01" min="0">
+                                                
+                                            </div>
+                                           
+                                        </div>
+
+                                        <div class="row mb-3 align-items-center">
+                                            <label class="col-md-3 col-form-label " style="text-align: right;">
+                                                Numero de cuotas<span class="text-danger"> *</span> 
+                                            </label>
+                                            <div class="col-md-7">
+                                                <input type="number" class="form-control txt_conv"name="num_cuotas" id="num_cuotas">
+                                                
+                                            </div>
+                                           
+                                        </div>
+
+                                        <div class="row mb-3 align-items-center">
+                                            <label class="col-md-3 col-form-label " style="text-align: right;">
+                                                Fecha Inicio<span class="text-danger"> *</span> 
+                                            </label>
+                                            <div class="col-md-7">
+                                                <input type="date" class="form-control txt_conv"name="f_ini" id="f_ini">
+                                                
+                                            </div>
+                                           
+                                        </div>
+
+                                        <div class="row mb-3 align-items-center">
+                                            <label class="col-md-3 col-form-label " style="text-align: right;">
+                                                Fecha Fin<span class="text-danger"> *</span> 
+                                            </label>
+                                            <div class="col-md-7">
+                                                <input type="date" class="form-control txt_conv"name="f_fin" id="f_fin">
+                                                
+                                            </div>
+                                           
+                                        </div>
+
+                                         <div class="row mb-3 align-items-center">
+                                            <label class="col-md-3 col-form-label " style="text-align: right;">
+                                               
+                                            </label>
+                                            <div class="col-md-7">
+                                                <button type="submit" class="btn btn-success btn-sm">Guardar</button>
+                                                
+                                            </div>
+                                           
+                                        </div>
+
+                                </form>
+
+                                 <div class="col-md-12 mt-3">
+
+                                        <table class="table table-bordered table-hover"
+                                            id="tableConvenio"
+                                            style="width:100%">
+                                            <thead>
+                                                <tr>     
+                                                    <th></th>     
+                                                    <th>Fecha Registro</th>                                         
+                                                    <th>Valor Adeudado</th>
+                                                    <th>Cuota Inicial</th>
+                                                    <th># Cuotas</th>
+                                                    <th>Fecha Inicio</th>
+                                                    <th>Fecha Fin</th>
+                                                    <th>Estado</th>
+                                                    
+                                                    
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tbodyConvenioDetalle"></tbody>
+                                        </table>
+                                    </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade show" id="tab-medidas">
+
+                            <div class="col-md-12">
+                                <form class=""
+                                        action=""
+                                        id="FormMedidas"
+                                        name="FormMedidas"
+                                        method="post"
+                                        enctype="multipart/form-data">
+                                        @csrf
+
+                                        <div class="row mb-3 align-items-center">
+                                            <label class="col-md-3 col-form-label " style="text-align: right;">
+                                                Total Deuda<span class="text-danger"> *</span> 
+                                            </label>
+                                            <div class="col-md-7">
+                                                <input type="number" class="form-control txt_conv" step="0.01" min="0" name="total_valor_deuda" id="total_valor_deuda">
+                                               
+                                                <input type="hidden" id="idcoa_medida" name="idcoa_medida">
+                                            </div>
+                                           
+                                        </div>
+
+                                        <div class="row mb-3 align-items-center">
+                                            <label class="col-md-3 col-form-label " style="text-align: right;">
+                                                Medidas Impuestas<span class="text-danger"> *</span> 
+                                            </label>
+                                            <div class="col-md-7">
+                                                <textarea class="form-control txt_conv" name="medidas_txt" id="medidas_txt" ></textarea>
+                                                
+                                            </div>
+                                           
+                                        </div>
+
+
+                                        <div class="row mb-3 align-items-center">
+                                            <label class="col-md-3 col-form-label " style="text-align: right;">
+                                               
+                                            </label>
+                                            <div class="col-md-7">
+                                                <button type="submit" class="btn btn-success btn-sm">Guardar</button>
+                                                
+                                            </div>
+                                           
+                                        </div>
+
+                                </form>
+
+                                 <div class="col-md-12 mt-3">
+
+                                        <table class="table table-bordered table-hover"
+                                            id="tableMedidas"
+                                            style="width:100%">
+                                            <thead>
+                                                <tr>     
+                                                    <th></th>     
+                                                    <th>Fecha Registro</th>                                         
+                                                    <th>Total Deuda</th>
+                                                    <th>Medidas Impuestas</th>
+                                                  
+                                                    <th>Estado</th>
+                                                    
+                                                    
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tbodyMedidasDetalle"></tbody>
+                                        </table>
+                                    </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade show" id="tab-cancelado">
+
+                            <div class="col-md-12">
+                                <form class=""
+                                        action=""
+                                        id="FormCancelado"
+                                        name="FormCancelado"
+                                        method="post"
+                                        enctype="multipart/form-data">
+                                        @csrf
+
+                                        <div class="row mb-3 align-items-center">
+                                            <label class="col-md-3 col-form-label " style="text-align: right;">
+                                                Valor Pago Immediato<span class="text-danger"> *</span> 
+                                            </label>
+                                            <div class="col-md-7">
+                                                <input type="number" class="form-control " step="0.01" min="0" name="valor_pago_inm" id="valor_pago_inm" readonly>
+                                               
+                                                <input type="hidden" id="idcoa_pago" name="idcoa_pago">
+                                            </div>
+                                           
+                                        </div>
+
+                                        <div class="row mb-3 align-items-center">
+                                            <label class="col-md-3 col-form-label " style="text-align: right;">
+                                                Valor Cancelado<span class="text-danger"> *</span> 
+                                            </label>
+                                            <div class="col-md-7">
+                                                <input type="number" class="form-control txt_conv" step="0.01" min="0" name="valor_cancelado" id="valor_cancelado">
+                                               
+                                            </div>
+                                           
+                                        </div>
+
+                                       
+                                        <div class="row mb-3 align-items-center">
+                                            <label class="col-md-3 col-form-label " style="text-align: right;">
+                                               
+                                            </label>
+                                            <div class="col-md-7">
+                                                <button type="submit" class="btn btn-success btn-sm">Guardar</button>
+                                                
+                                            </div>
+                                           
+                                        </div>
+
+                                </form>
+
+                                 <div class="col-md-12 mt-3">
+
+                                        <table class="table table-bordered table-hover"
+                                            id="tableCancelado"
+                                            style="width:100%">
+                                            <thead>
+                                                <tr>     
+                                                    <th></th>     
+                                                    <th>Fecha Registro</th>                                         
+                                                    <th>Valor Cancelado</th>
+                                                   
+                                                    
+                                                    <th>Estado</th>
+                                                    
+                                                    
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tbodyCanceladoDetalle"></tbody>
+                                        </table>
+                                    </div>
+                            </div>
+                        </div>
+
                     </div>
 
                    

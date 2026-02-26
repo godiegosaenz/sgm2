@@ -575,27 +575,27 @@
                     [
                         'name' => 'Notificacion',
                         'route' => 'coactiva.notificar',
-                        'permission' => 'Evaluaciones Ocupacionales',
+                        'permission' => 'Notificacion',
                         'active' => request()->routeIs('coactiva.notificar')
                     ],
 
                     [
                         'name' => 'Listado Notificaciones',
                         'route' => 'coactiva.lista_notificar',
-                        'permission' => 'Evaluaciones Ocupacionales',
+                        'permission' => 'Listado Notificaciones',
                         'active' => request()->routeIs('coactiva.lista_notificar')
                     ],
 
                     [
                         'name' => 'Procesos Coactiva',
-                        'route' => 'coactiva.lista_notificar',
-                        'permission' => 'Evaluaciones Ocupacionales',
-                        'active' => request()->routeIs('coactiva.lista_notificar')
+                        'route' => 'coactiva.lista_coactiva',
+                        'permission' => 'Procesos Coactiva',
+                        'active' => request()->routeIs('coactiva.lista_coactiva')
                     ],
 
 
                 ],
-                'active' => request()->routeIs('coactiva.notificar') ||  request()->routeIs('coactiva.lista_notificar')
+                'active' => request()->routeIs('coactiva.notificar') ||  request()->routeIs('coactiva.lista_notificar') ||  request()->routeIs('coactiva.lista_coactiva')
             ],
 
             [
