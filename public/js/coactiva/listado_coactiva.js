@@ -51,8 +51,8 @@ function llenar_tabla_notificacion(){
                     nombre=item.notificacion.ente.apellidos+" "+item.notificacion.ente.nombres
                     num_ident=item.notificacion.ente.ci_ruc
                 }else{
-                    nombre=item.contribuyente
-                    num_ident=item.num_ident
+                    nombre=item.notificacion.contribuyente
+                    num_ident=item.notificacion.num_ident
                 }
 				$('#tableCoactiva').append(`<tr>
                                                 <td style="width:3%; text-align:center; vertical-align:middle">
@@ -133,7 +133,7 @@ function cargar_estilos_datatable(idtabla){
 		'info'        : true,
 		'autoWidth'   : true,
 		"destroy":true,
-        order: [[ 3, "desc" ]],
+        order: [[ 2, "desc" ]],
 		pageLength: 10,
 		sInfoFiltered:false,
 		language: {
@@ -258,16 +258,33 @@ function detalleNot(id){
             
             let clave_matr = [];
 			$.each(data.resultado.data,function(i, item){
+
+                let clave_matricula=""
+                let anio=""
                 
-                clave_matr.push(item.liquidacion.predio);
+                if(data.resultado.predio=='Urbano'){
+                    clave_matr.push(item.clave_cat);
+                    clave_matricula=item.liquidacion.predio
+                    anio=item.liquidacion.anio
+                    cont=data.resultado.ente.apellidos +" "+data.resultado.ente.nombres
+                   
+                }else{
+                    clave_matr.push(item.clave_cat);
+                    clave_matricula=item.clave_cat
+                    anio=item.anio
+                    cont=item.contrib
+                  
+                }
+                
+                // clave_matr.push(item.liquidacion.predio);
 				$('#tableDetNot').append(`<tr>
                                                 
                                                 <td style="width:20%; text-align:center; vertical-align:middle">
-                                                    ${item.liquidacion.predio}
+                                                    ${clave_matricula}
                                                      
                                                 </td>
                                                 <td style="width:10%; text-align:center; vertical-align:middle">
-                                                   ${item.liquidacion.anio}                                                    
+                                                   ${anio}                                                    
                                                 </td>
                                                 <td style="width:15%; text-align:center; vertical-align:middle">
                                                    ${item.subtotal}                                                    
@@ -276,10 +293,10 @@ function detalleNot(id){
                                                    ${item.interes}                                                    
                                                 </td>
                                                 <td style="width:15%; text-align:center; vertical-align:middle">
-                                                    ${item.descuento}                                            
+                                                    ${item.descuento === null ? '0.00' : item.descuento}                                             
                                                 </td>
                                                 <td style="width:15%; text-align:center; vertical-align:middle">
-                                                   ${item.recargo}                                             
+                                                   ${item.recargo === null ? '0.00' : item.recargo}                                              
                                                 </td>
 
                                                 <td style="width:10%; text-align:center; vertical-align:middle">
@@ -293,12 +310,20 @@ function detalleNot(id){
             $('#nombre_notificador').html(data.resultado.profesional)
             $('#fecha_notificacion').html(data.resultado.fecha_registra)
 
-            $('#num_ident_contr').html(data.resultado.ente.apellidos +" "+data.resultado.ente.nombres)
-            $('#nombre_contr').html(data.resultado.ente.ci_ruc)
+             let ced_ruc=""
+
+            if(data.resultado.predio=='Urbano'){
+                ced_ruc=data.resultado.ente.ci_ruc
+            }else{
+                ced_ruc=data.resultado.num_ident
+            }
+
+            $('#num_ident_contr').html(cont)
+            $('#nombre_contr').html(ced_ruc)
             $('.valor_notificado').html(data.resultado.total_notificado)
             $('#dias_notificado').html(data.resultado.dias_transcurridos)
 
-            $('.titulo_modal').html(data.resultado.ente.ci_ruc+" - "+data.resultado.ente.apellidos +" "+data.resultado.ente.nombres)
+            $('.titulo_modal').html(ced_ruc+" - "+cont)
 
             $('#doc_generado').html(`<i class="fa fa-file-pdf" style="color:skyblue" onclick="verpdf('${data.resultado.documento}')"><i>`)
             $('#doc_subido').html(`<i class="fa fa-file-pdf" style="color:skyblue" onclick="verpdf_subido('${data.resultado.documento_subido}','0')"><i>`)
@@ -321,15 +346,23 @@ function detalleNot(id){
                 $('#tableDetCoa tbody').empty(); 
 
                 $.each(data.datosCoa.data,function(i, item){
-                
-				$('#tableDetCoa').append(`<tr>
+                    let predio=""
+                    let anio=""
+                    if($('#predio_localizacion').html()=="Rural"){
+                        predio=item.clave_cat
+                        anio=item.anio
+                    }else{
+                        predio=item.liquidacion.predio
+                        anio=item.liquidacion.anio
+                    }
+				    $('#tableDetCoa').append(`<tr>
                                                 
                                                 <td style="width:15%; text-align:center; vertical-align:middle">
-                                                    ${item.liquidacion.predio}
+                                                    ${predio}
                                                      
                                                 </td>
                                                 <td style="width:10%; text-align:center; vertical-align:middle">
-                                                   ${item.liquidacion.anio}                                                    
+                                                   ${anio}                                                    
                                                 </td>
                                                 <td style="width:15%; text-align:center; vertical-align:middle">
                                                    ${item.subtotal}                                                    
@@ -338,10 +371,10 @@ function detalleNot(id){
                                                    ${item.interes}                                                    
                                                 </td>
                                                 <td style="width:15%; text-align:center; vertical-align:middle">
-                                                    ${item.descuento}                                            
+                                                    ${item.descuento === null ? '0.00' : item.descuento}                                          
                                                 </td>
                                                 <td style="width:10%; text-align:center; vertical-align:middle">
-                                                   ${item.recargo}                                             
+                                                   ${item.recargo === null ? '0.00' : item.recargo}                                              
                                                 </td>
 
                                                  <td style="width:10%; text-align:center; vertical-align:middle">
@@ -354,7 +387,7 @@ function detalleNot(id){
                                                
 											
 										</tr>`);
-			    })
+			        })
           
 
                 $('.seccion_detalle_coa').show()
@@ -378,6 +411,8 @@ function detalleNot(id){
                 $('.valor_coa').html(data.datosCoa.valor_pago_inmediato)
 
                 $('#valor_pago_inm').val(data.datosCoa.valor_pago_inmediato)
+                $('#medidas_txt').val('MEDIDAS SUPERINTENDENCIA, REGISTRO DE LA PROPIEDAD Y TRANSITO')
+                $('#total_valor_deuda').val(data.datosCoa.valor_pago_inmediato)
                 // alert(data.datosCoa.valor_pago_inmediato)
             }
             

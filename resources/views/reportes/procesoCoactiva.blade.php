@@ -214,6 +214,13 @@
     </footer>
 
         @php
+
+            $predio_txt="";
+            if($lugar_predio=="Urbano"){
+                $predio_txt="Predios Urbanos";
+            }else{
+                $predio_txt="Predios Rurales";
+            }
             $total_final=0;
             $coordenas_txt="";
 
@@ -320,7 +327,7 @@
     </div>
 
     <p style="font-size: 14px; text-align: justify; line-height: 1.5; margin-top: 28px;">
-       RAZÓN. - Siento como tal y para los fines de ley pertinentes, que de acuerdo al oficio/pago voluntario de fecha {{ fechaFormatoTexto() }}, suscrito por su autoridad que el contribuyente <strong>{{ strtoupper($nombre_persona) }} </strong> con C.I.  <strong>{{ $ci_ruc }}</strong>, se le concedió un plazo de 10 días conforme a lo señalado en el Art. 271 del COA, para acercarse a realizarse el pago voluntario de las obligaciones pendientes por concepto de Predios Urbanos  con este GAD Municipal de San Vicente el mismo que  NO registra pago alguno de las obligaciones ni método de pago alguno,  es todo lo que puedo certificar en honor a la verdad.</p>
+       RAZÓN. - Siento como tal y para los fines de ley pertinentes, que de acuerdo al oficio/pago voluntario de fecha {{ fechaFormatoTexto() }}, suscrito por su autoridad que el contribuyente <strong>{{ strtoupper($nombre_persona) }} </strong> con C.I.  <strong>{{ $ci_ruc }}</strong>, se le concedió un plazo de 10 días conforme a lo señalado en el Art. 271 del COA, para acercarse a realizarse el pago voluntario de las obligaciones pendientes por concepto de {{ $predio_txt }}  con este GAD Municipal de San Vicente el mismo que  NO registra pago alguno de las obligaciones ni método de pago alguno,  es todo lo que puedo certificar en honor a la verdad.</p>
        
     <p style="margin: 0; line-height: 1.2; margin-top:50px; text-align: left; font-weigth: 500 !important; font-size: 14px;">
         San Vicente a los {{ fechaFormatoTexto2() }} a las {{ date('h:i a') }}.</p>
@@ -346,7 +353,7 @@
     </div>
 
     <p style="font-size: 14px; text-align: justify; line-height: 1; margin-top: 28px;">
-       <b>VISTOS:</b> En lo principal, de los Títulos de Crédito respectivos emitidas por el órgano responsable de su emisión, desprendiéndose que el contribuyente  <strong>{{ strtoupper($nombre_persona) }} </strong> con C.I.  <strong>{{ $ci_ruc }}</strong> adeuda al Gobierno Autónomo Descentralizado Municipal del cantón San Vicente la suma de la CANTIDAD DE <strong>{{ numeroEnLetras($total_final) }}</strong> por el concepto de <b>PREDIOS URBANOS</b>, la cual corresponde a la  
+       <b>VISTOS:</b> En lo principal, de los Títulos de Crédito respectivos emitidas por el órgano responsable de su emisión, desprendiéndose que el contribuyente  <strong>{{ strtoupper($nombre_persona) }} </strong> con C.I.  <strong>{{ $ci_ruc }}</strong> adeuda al Gobierno Autónomo Descentralizado Municipal del cantón San Vicente la suma de la CANTIDAD DE <strong>{{ numeroEnLetras($total_final) }}</strong> por el concepto de <b>{{ $predio_txt }}</b>, la cual corresponde a la  
         @php
             $total_final=0;
             $coordenas_txt="";
@@ -470,7 +477,7 @@
     @php
         $sumatotal = 0;
     @endphp
-    
+    @if($lugar_predio=="Urbano")
         @foreach ($DatosLiquidaciones as $d)
             <div class="no-header-footer1">
             <table class="tabla-principal">
@@ -636,7 +643,240 @@
                 </tr>
             </tbody>
         </table>
+    @else
+
+        @foreach ($DatosLiquidaciones as $d)
+
+            @php
+                $anio=explode("-",$d[0]->CarVe_NumTitulo);
+            @endphp
     
+        
+            <table width="100%" border="0" >
+                <tr>
+                    <td colspan="3" style="text-align: center;">
+                        <b>TITULO DE CREDITO - PREDIO RURAL #{{$d[0]->CarVe_NumTitulo}} </b><br>
+                        San Vicente, 01 Enero {{$anio[0]+1}}
+                        
+                    </td>
+                </tr>
+                <tr style="line-height: 15px;">
+                    <td colspan="3" style="border: 1px solid #000; border-left:0px; border-bottom:0px; border-right:0px;width:45%">
+                    </td>
+                </tr>
+                <tr style="font-size: 11px;line-height: 9px;">
+                    <td><b>Contribuyente:</b> {{$d[0]->Ciu_Apellidos}} {{$d[0]->Ciu_Nombres}}</td>
+                
+                    <td style="width: 1%; text-align:left"></td>
+
+                    <td><b>Clave Catastral:</b> {{$d[0]->Pre_CodigoCatastral}}</td>
+                    
+                
+                </tr>
+                <tr style="font-size: 11px;line-height: 9px;">
+                    <td><b>Ruc/CC:</b> {{$d[0]->CarVe_CI}}</td>
+                
+                    <td></td>
+                    <td><b>Sitio Barrio:</b> {{$d[0]->nombre_sitio}}</td>
+                    
+                </tr>
+                <tr style="font-size: 11px;line-height: 9px;">
+                    <td><b>Direccion Domicilio:</b> {{$d[0]->Pro_DireccionDomicilio}}</td>
+                
+                    <td></td>
+                    <td><b>Nombre del predio:</b> {{$d[0]->Pre_NombrePredio}}</td>
+                    
+                </tr>
+            </table> 
+            
+            <table style="border-collapse: collapse; width: 100%;">
+                <tr style="font-size: 11px;line-height: 8px;">
+                    <td style="border: 1px solid #000; border-left:0px; border-bottom:0px;width:45%">
+                        <table style="width:100%">
+                            <tr>
+                                <td colspan="3" style="text-align: center;"><b>AVALUO</b></td>
+                                
+                            </tr>
+
+                            <tr>
+                                <td><b>Terreno</b></td>
+                                <td>$</td>
+                                
+                                <td style="text-align:right">{{number_format($d[0]->CarVe_ValTotalTerrPredio,2)}}</td>
+                            </tr>
+
+                            <tr>
+                                <td><b>Construccion</b></td>
+                                <td>$</td>
+                                <td style="text-align:right">{{number_format($d[0]->CarVe_ValTotalEdifPredio,2)}}</td>
+                            </tr>
+
+                            <tr>
+                                <td><b>Otras Inversiones</b></td>
+                                <td>$</td>
+                                <td style="text-align:right">{{number_format($d[0]->CarVe_ValOtrasInver,2)}}</td>
+                            </tr>
+                            
+                            <tr style="line-height: 15px;">
+                                <td colspan="3" style="border: 1px solid #000; border-left:0px; border-bottom:0px;border-right:0px"></td>
+                            
+                            </tr>
+
+                            <tr>
+                                <td><b>Valor de la Propiedad</b></td>
+                                <td>$</td>
+                                <td style="text-align:right">{{number_format($d[0]->CarVe_ValComerPredio,2)}}</td>
+                            </tr>
+
+
+                            <tr>
+                                <td><b>Rebaja Hipotecaria</b></td>
+                                <td>$</td>
+                                <td style="text-align:right">{{number_format($d[0]->CarVe_RebajaHipotec,2)}}</td>
+                            </tr>
+
+                            <tr>
+                                <td><b>Base Imponible</b></td>
+                                <td>$</td>
+                                <td style="text-align:right">{{number_format($d[0]->CarVe_BaseImponible,2)}}</td>
+                            </tr>
+                        </table>
+                    
+                    </td>
+                    
+                    <td style="border: 1px solid #000; border-left:0px; border-bottom:0px;border-right:0px">
+                        <table style="width:100%">
+                            <tr>
+                                <td><b>RUBROS/CONCEPTO</b></td>
+                                <td></td>
+                                <td><b>VALORES</b></td>
+                            </tr>
+
+                            <tr>
+                                <td><b>Impuesto Predial Rural:</b> </td>
+                                <td>$</td>
+                                <td style="text-align:right">{{number_format($d[0]->CarVe_IPU,2)}}</td>
+                            </tr>
+
+                            <tr>
+                                <td><b>Servicios Administrativo:</b> </td>
+                                <td>$</td>
+                                <td style="text-align:right">{{number_format($d[0]->CarVe_TasaAdministrativa,2)}}</td>
+                            </tr>
+
+
+                            <tr>
+                                <td><b>Bomberos:</b> </td>
+                                <td>$</td>
+                                <td style="text-align:right">{{number_format($d[0]->CarVe_Bomberos,2)}}</td>
+                            </tr>
+                            
+                            <tr style="margin-top:20px">
+                                <td><b>Valor Emitido:</b> </td>
+                                <td>$</td>
+                                <td style="text-align:right">{{number_format($d[0]->CarVe_ValorEmitido,2)}}</td>
+                            </tr>
+
+                            <tr style="line-height: 15px;">
+                                <td colspan="3" style="border: 1px solid #000; border-left:0px; border-bottom:0px;border-right:0px"></td>
+                            
+                            </tr>
+    
+
+                        
+
+                            <tr>
+                                <td><b>Fecha desde la cual se desvenga intereses:</b> </td>
+                                <td>$</td>
+                                <td style="text-align:right">Enero {{$anio[0]+1}}</td>
+                            </tr>
+
+                            <tr>
+                                <td><b>Intereses hasta la fecha de emision:</b> </td>
+                                <td>$</td>
+                                <td style="text-align:right">{{number_format($d[0]->intereses,2)}}</td>
+                            </tr>
+
+                            <tr>
+                                <td><b>Recargos:</b> </td>
+                                <td>$</td>
+                                <td style="text-align:right">{{number_format($d[0]->recargo,2)}}</td>
+                            </tr>
+
+                            <tr>
+                                <td><b>Total Deuda:</b> </td>
+                                <td>$</td>
+                                <td style="text-align:right">{{$d[0]->total_pagar}}</td>
+                            </tr>
+
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="border: 1px solid #000; border-left:0px; border-bottom:0px; border-right:0px;width:45%">
+
+                    </td>
+                </tr>
+            
+            </table>
+
+        
+            <center><b>Fecha Impresion:</b> {{ $fecha_formateada }}<br>
+            <b>Ley COA Aticulo 268</b></center>
+            <br>
+            <br>
+        
+            <hr style="border:Dotted;"/>
+            <br>
+            <br>
+
+            @php
+                // $sumatotal = $sumatotal + $d[0]->total_pagar;
+                $sumatotal += (float) str_replace(',', '', $d[0]->total_pagar);
+
+            @endphp
+       
+        @endforeach 
+    
+        <h2 style="text-align: center">TOTAL DE TÍTULO DE CRÉDITO: <span class="badge text-bg-secondary">{{$sumatotal}};</span></h2>
+        <p>CONCEPTO POR EL CUAL SE EMITE: PAGO DE IMPUESTO PREDIAL VENCIDO.
+            EL VALOR TOTAL DEL TÍTULO DE CRÉDITO CAUSARÁ EL INTERES RESPECTIVO A PARTIR DE LA FECHA DE
+            NOTIFICACIÓN SEGÚN LO EXPUESTO Y CONFORME LO ESTABLECE EL ART. 265 DEL COA LIQUIDACIÓN DE
+            INTERESES Y MULTAS</p>
+        <br>
+        <br>
+        <br>
+        <br>
+        <table width="100%">
+            <tbody>
+                <tr>
+                    <td style="text-align: center">
+                        __________________________________________
+                    </td>
+                    <td style="text-align: center">
+                        __________________________________________
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center">
+                        Ing. Jacinta María Mendoza Cusme
+                    </td>
+                    <td style="text-align: center">
+                        Ing. Danes Steven Cedeño Choez
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center">
+                        Tesorera Municipal Juez de Coactiva
+                    </td>
+                    <td style="text-align: center">
+                    Director Financiero
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    @endif
 
 </body>
 </html>

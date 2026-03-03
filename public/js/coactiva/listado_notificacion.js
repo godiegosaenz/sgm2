@@ -67,12 +67,14 @@ function llenar_tabla_notificacion(){
                                                     </button>                                               
                                                 </td>
 
-                                                <td style="width:5%; text-align:center; vertical-align:middle">
-                                                    ${num_ident}                                                     
+                                                <td style="width:35%; text-align:left; vertical-align:middle">
+                                                    ${num_ident} <br>
+                                                    ${nombre}                                                     
                                                 </td>
-                                                <td style="width:40%; text-align:center; vertical-align:middle">
-                                                    ${nombre}                                                         
+                                                <td style="width:10%; text-align:center; vertical-align:middle">
+                                                    ${item.predio}                                                        
                                                 </td>
+                                               
                                                 <td style="width:10%; text-align:center; vertical-align:middle">
                                                     ${item.fecha_registra}                                                     
                                                 </td>
@@ -82,12 +84,14 @@ function llenar_tabla_notificacion(){
                                                 <td style="width:10%; text-align:center; vertical-align:middle">
                                                     ${icono}                                                     
                                                 </td>
+                                                
 
                                                 <td style="width:10%; text-align:center; vertical-align:middle">
                                                     ${icono2}                                                     
                                                 </td>
                                                 <td style="width:10%; text-align:center; vertical-align:middle">
-                                                                                                   
+                                                    
+                                                    ${item.valor_cancelado === null ? '0.00' : item.valor_cancelado}                                                     
                                                 </td>
 
                                                
@@ -106,6 +110,27 @@ function llenar_tabla_notificacion(){
         $("#tableNotificacion tbody").html('');
 		$("#tableNotificacion tbody").html(`<tr><td colspan="${num_col}" style="text-align:center">Se produjo un error, por favor intentelo más tarde</td></tr>`);
     });
+}
+
+function cargar_estilos_datatable_con(idtabla){
+	$("#"+idtabla).DataTable({
+		'paging'      : true,
+		'searching'   : true,
+		'ordering'    : true,
+		'info'        : true,
+		'autoWidth'   : true,
+		"destroy":true,
+        order: [[ 1, "desc" ]],
+		pageLength: 10,
+		sInfoFiltered:false,
+		language: {
+			// url: 'json/datatables/spanish.json',
+		},
+	}); 
+	$('.collapse-link').click();
+	$('.datatable_wrapper').children('.row').css('overflow','inherit !important');
+
+	$('.table-responsive').css({'padding-top':'12px','padding-bottom':'12px', 'border':'0', 'overflow-x':'inherit'});	
 }
 
 function cargar_estilos_datatable(idtabla){
@@ -133,9 +158,10 @@ function detalleProcesoIniciaCoa(){
     $("#tableProcesoNot tbody").html('');
     $('#tableProcesoNot tbody').empty(); 
     var num_col = $("#tableProcesoNot thead tr th").length; //obtenemos el numero de columnas de la tabla
+    var lugar=$('#predio_localizacion').html()
     var id=$('#id_notifica').val()
     vistacargando("m","Espere por favor")
-    $.get('pago-notificaciones-detalle-proceso-coac/'+id, function(data){
+    $.get('pago-notificaciones-detalle-proceso-coac/'+id+'/'+lugar, function(data){
         console.log(data)
        
         vistacargando("")
@@ -160,12 +186,17 @@ function detalleProcesoIniciaCoa(){
 			$("#tableProcesoNot tbody").html('');
          
 			$.each(data.resultado,function(i, item){
-
-              
+                let clave_matr=""
+                if(lugar=="Rural"){
+                    clave_matr=item.clave
+                }else{
+                    clave_matr=item.predio
+                }
+               
 				$('#tableProcesoNot').append(`<tr>
                                                 
                                                 <td style="width:20%; text-align:center; vertical-align:middle">
-                                                    ${item.predio}
+                                                    ${clave_matr}
                                                      
                                                 </td>
                                                 <td style="width:10%; text-align:center; vertical-align:middle">
@@ -175,17 +206,18 @@ function detalleProcesoIniciaCoa(){
                                                    ${item.subtotal_emi}                                                    
                                                 </td>
                                                 <td style="width:15%; text-align:center; vertical-align:middle">
-                                                   ${item.intereses}                                                    
+                                                   ${item.intereses === null ? '0.00' : item.intereses}                                                      
                                                 </td>
                                                 <td style="width:15%; text-align:center; vertical-align:middle">
-                                                    ${item.descuento}                                            
+                                                    ${item.descuento === null ? '0.00' : item.descuento}                                          
                                                 </td>
                                                 <td style="width:15%; text-align:center; vertical-align:middle">
-                                                   ${item.recargo}                                             
+                                                   ${item.recargo === null ? '0.00' : item.recargo}                                              
                                                 </td>
 
                                                 <td style="width:10%; text-align:center; vertical-align:middle">
-                                                    ${item.total_pagar}                                                   
+                                                    
+                                                    ${item.total_pagar === null ? '0.00' : item.total_pagar}                                                     
                                                 </td>
                                                
 											
@@ -193,6 +225,7 @@ function detalleProcesoIniciaCoa(){
 			})
           
             $('#total_deuda_proceso').html('$'+data.total)
+            $('.valor_coa').html(data.total)
 		}
     
     }).fail(function(){
@@ -240,44 +273,74 @@ function detalleNot(id){
 			$("#tableDetNot tbody").html('');
             
             let clave_matr = [];
+            let cont=""
+            
 			$.each(data.resultado.data,function(i, item){
+                let clave_matricula=""
+                let anio=""
                 
-                clave_matr.push(item.liquidacion.predio);
+                if(data.resultado.predio=='Urbano'){
+                    clave_matr.push(item.clave_cat);
+                    clave_matricula=item.liquidacion.predio
+                    anio=item.liquidacion.anio
+                    cont=data.resultado.ente.apellidos +" "+data.resultado.ente.nombres
+                   
+                }else{
+                    clave_matr.push(item.clave_cat);
+                    clave_matricula=item.clave_cat
+                    anio=item.anio
+                    cont=item.contrib
+                  
+                }
+                    
 				$('#tableDetNot').append(`<tr>
                                                 
                                                 <td style="width:20%; text-align:center; vertical-align:middle">
-                                                    ${item.liquidacion.predio}
+                                                    ${clave_matricula}
                                                      
                                                 </td>
                                                 <td style="width:10%; text-align:center; vertical-align:middle">
-                                                   ${item.liquidacion.anio}                                                    
+                                                   ${anio}                                                    
                                                 </td>
                                                 <td style="width:15%; text-align:center; vertical-align:middle">
                                                    ${item.subtotal}                                                    
                                                 </td>
                                                 <td style="width:15%; text-align:center; vertical-align:middle">
-                                                   ${item.interes}                                                    
+                                                        
+                                                    ${item.interes === null ? '0.00' : item.interes}                                               
                                                 </td>
                                                 <td style="width:15%; text-align:center; vertical-align:middle">
-                                                    ${item.descuento}                                            
+                                                   
+                                                    ${item.descuento === null ? '0.00' : item.descuento}                                          
                                                 </td>
                                                 <td style="width:15%; text-align:center; vertical-align:middle">
-                                                   ${item.recargo}                                             
+                                                  
+                                                   ${item.recargo === null ? '0.00' : item.recargo}  
+                                                                                              
                                                 </td>
 
                                                 <td style="width:10%; text-align:center; vertical-align:middle">
-                                                    ${item.total}                                                   
+                                                   
+                                                    ${item.total === null ? '0.00' : item.total}                                                 
                                                 </td>
                                                
 											
 										</tr>`);
 			})
+
+            let ced_ruc=""
+
+            if(data.resultado.predio=='Urbano'){
+                ced_ruc=data.resultado.ente.ci_ruc
+            }else{
+                ced_ruc=data.resultado.num_ident
+            }
           
             $('#nombre_notificador').html(data.resultado.profesional)
             $('#fecha_notificacion').html(data.resultado.fecha_registra)
 
-            $('#num_ident_contr').html(data.resultado.ente.apellidos +" "+data.resultado.ente.nombres)
-            $('#nombre_contr').html(data.resultado.ente.ci_ruc)
+            $('#num_ident_contr').html(ced_ruc)
+            $('#nombre_contr').html(cont)
             $('.valor_notificado').html(data.resultado.total_notificado)
             $('#dias_notificado').html(data.resultado.dias_transcurridos)
 
@@ -298,15 +361,23 @@ function detalleNot(id){
                 $('#tableDetCoa tbody').empty(); 
 
                 $.each(data.datosCoa.data,function(i, item){
-                
-				$('#tableDetCoa').append(`<tr>
+                    let predio=""
+                    let anio=""
+                    if($('#predio_localizacion').html()=="Rural"){
+                        predio=item.clave_cat
+                        anio=item.anio
+                    }else{
+                        predio=item.liquidacion.predio
+                        anio=item.liquidacion.anio
+                    }
+				    $('#tableDetCoa').append(`<tr>
                                                 
                                                 <td style="width:15%; text-align:center; vertical-align:middle">
-                                                    ${item.liquidacion.predio}
+                                                    ${predio}
                                                      
                                                 </td>
                                                 <td style="width:10%; text-align:center; vertical-align:middle">
-                                                   ${item.liquidacion.anio}                                                    
+                                                   ${anio}                                                    
                                                 </td>
                                                 <td style="width:15%; text-align:center; vertical-align:middle">
                                                    ${item.subtotal}                                                    
@@ -315,10 +386,10 @@ function detalleNot(id){
                                                    ${item.interes}                                                    
                                                 </td>
                                                 <td style="width:15%; text-align:center; vertical-align:middle">
-                                                    ${item.descuento}                                            
+                                                    ${item.descuento === null ? '0.00' : item.descuento}                                            
                                                 </td>
                                                 <td style="width:10%; text-align:center; vertical-align:middle">
-                                                   ${item.recargo}                                             
+                                                    ${item.recargo === null ? '0.00' : item.recargo}                                             
                                                 </td>
 
                                                  <td style="width:10%; text-align:center; vertical-align:middle">
@@ -346,8 +417,18 @@ function detalleNot(id){
                 $('#idcoa').val(data.datosCoa.id)
 
                 $('.valor_coa').html(data.datosCoa.valor_pago_inmediato)
+
+               
+                
+                
                 // alert(data.datosCoa.valor_pago_inmediato)
             }
+
+            llenar_tabla_cuota(id)
+            llenar_tabla_pagos(id)
+            $('#idnot_conv').val(id)
+            $('#idnot_pago').val(id)
+            $('#valor_pago_inm').val(data.resultado.total_notificado)
             
 		}
     
@@ -505,3 +586,377 @@ $('#documentopdfcoa').on('hidden.bs.modal', function () {
    
    
 });
+
+function llenar_tabla_cuota(id){
+   
+    $("#tableConvenio tbody").html('');
+    $('#tableConvenio').DataTable().destroy();
+	$('#tableConvenio tbody').empty(); 
+    var num_col = $("#tableConvenio thead tr th").length; //obtenemos el numero de columnas de la tabla
+    vistacargando("m", "Espere por favor")
+    $.get('llenar-tabla-convenio-not/'+id, function(data){
+        console.log(data)
+       
+        vistacargando("")
+        if(data.error==true){
+			$("#tableConvenio tbody").html('');
+			$("#tableConvenio tbody").html(`<tr><td colspan="${num_col}" style="text-align:center>No existen registros</td></tr>`);
+			alertNotificar(data.mensaje,"error");
+            // cancelar()
+			return;   
+		}
+		if(data.error==false){
+			if(data.resultado.length==0){
+				$("#tableConvenio tbody").html('');
+				$("#tableConvenio tbody").html(`<tr><td colspan="${num_col}" style="text-align:center">No existen registros</td></tr>`);
+				// alertNotificar("No se encontró información","error");
+                // cancelar()
+				return;
+			}
+			
+			$("#tableConvenio tbody").html('');
+         
+			$.each(data.resultado,function(i, item){
+
+                let disabled=""
+                if(item.estado=='Inactivo'){
+                    disabled='disabled'
+                }
+             
+				$('#tableConvenio').append(`<tr>
+                                                <td style="width:5%; text-align:center; vertical-align:middle">
+                                                   <button type="button" ${disabled} class="btn btn-danger btn-sm" onclick="inactivarConvenio('${item.id}')">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>                                               
+                                                </td>
+
+                                                <td style="width:15%; text-align:center; vertical-align:middle">
+                                                    ${item.fecha_registra}
+                                                </td>
+
+                                                <td style="width:15%; text-align:center; vertical-align:middle">
+                                                    ${item.valor_adeudado}
+                                                </td>
+                                                <td style="width:15%; text-align:center; vertical-align:middle">
+                                                    ${item.cuota_inicial}                                                            
+                                                </td>
+                                                <td style="width:15%; text-align:center; vertical-align:middle">
+                                                    ${item.numero_cuotas}                                                  
+                                                </td>
+                                                <td style="width:15%; text-align:center; vertical-align:middle">
+                                                    ${item.f_inicio}                                                     
+                                                </td>
+                                                <td style="width:15%; text-align:center; vertical-align:middle">
+                                                    ${item.f_fin}                                                  
+                                                </td>
+
+                                                <td style="width:15%; text-align:center; vertical-align:middle">
+                                                    ${item.estado}                                                  
+                                                </td>
+                                                
+											
+										</tr>`);
+			})
+          
+            cargar_estilos_datatable_con('tableConvenio')
+            
+		}
+    
+    }).fail(function(){
+        vistacargando("")
+        alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+        $("#tableConvenio tbody").html('');
+		$("#tableConvenio tbody").html(`<tr><td colspan="${num_col}" style="text-align:center">Se produjo un error, por favor intentelo más tarde</td></tr>`);
+    });
+}
+
+$("#FormConvenio").submit(function(e){
+    e.preventDefault();
+    let valor_adeudado=$('#valor_adeudado').val()
+    let cuota_inicial=$('#cuota_inicial').val()
+    let num_cuotas=$('#num_cuotas').val()
+    let f_ini=$('#f_ini').val()
+    let f_fin=$('#f_fin').val()
+    let valor_coa=$('.valor_coa').html()
+    if(valor_adeudado=="" || valor_adeudado==null){
+        alertNotificar("Debe ingresar el valor adeudado","error")
+        $('#valor_adeudado').focus()
+        return
+    }
+   
+    if(parseFloat(valor_adeudado)<parseFloat(valor_coa)){
+        alertNotificar("El valor adeudado no debe ser menor a "+valor_coa,"error")
+        $('#valor_adeudado').focus()
+        return
+    }
+
+    if(cuota_inicial=="" || cuota_inicial==null){
+        alertNotificar("Debe ingresar la cuota inicial","error")
+        $('#cuota_inicial').focus()
+        return
+    }
+
+    if(num_cuotas=="" || num_cuotas==null){
+        alertNotificar("Debe ingresar el numero de cuotas","error")
+        $('#num_cuotas').focus()
+        return
+    }
+
+    if(f_ini=="" || f_ini==null){
+        alertNotificar("Debe ingresar la fecha de inicio","error")
+        $('#f_ini').focus()
+        return
+    }
+    if(f_fin=="" || f_fin==null){
+        alertNotificar("Debe ingresar la fecha de fin","error")
+        $('#f_fin').focus()
+        return
+    }
+
+    let startDate = new Date(f_ini.split('/').reverse().join('/')); // Cambiamos el formato dd/mm/yyyy a yyyy/mm/dd
+    let endDate = new Date(f_fin.split('/').reverse().join('/'));
+
+    // Validar si la fecha fin es posterior a la fecha inicio
+    if (endDate <= startDate) {
+        alertNotificar("La fecha final debe ser posterior a la fecha de inicio.","error");
+        return; // Detenemos la ejecución si la validación falla
+    }
+
+    
+    
+    vistacargando("m","Espere por favor")
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    let idnot_conv=$('#idnot_conv').val()
+   
+    let tipo="POST"
+    let url_form="guardar-cuota-conv-not"
+    var FrmData = new FormData(this);
+   
+    $.ajax({
+            
+        type: tipo,
+        url: url_form,
+        method: tipo,             
+		data: FrmData,      
+		
+        contentType:false,
+        cache:false,
+        processData:false, 
+
+        success: function(data){
+            vistacargando("");                
+            if(data.error==true){
+                alertNotificar(data.mensaje,'error');
+                return;                      
+            }
+           
+            alertNotificar(data.mensaje,"success");
+            llenar_tabla_cuota(idnot_conv)
+            // llenar_tabla_medidas(idcoa_conv)
+            // llenar_tabla_pagos(idcoa_conv)
+            llenar_tabla_notificacion()
+            $('.txt_conv').val('')
+                            
+        }, error:function (data) {
+            console.log(data)
+
+            vistacargando("");
+            alertNotificar('Ocurrió un error','error');
+        }
+    });
+})
+
+function inactivarConvenio(id){
+    if(confirm('¿Estas seguro que quieres inactivar el convenio?')){
+        vistacargando("m","Espere por favor")
+        $.get('inactivar-convenio/'+id, function(data){
+            console.log(data)
+        
+            vistacargando("")
+            if(data.error==true){			
+                alertNotificar(data.mensaje,"error");
+                return;   
+            }
+
+            alertNotificar(data.mensaje,"success");
+            let idnot_conv=$('#idnot_conv').val()
+            llenar_tabla_cuota(idnot_conv)
+            // llenar_tabla_medidas(idcoa_conv)
+            // llenar_tabla_pagos(idcoa_conv)
+            llenar_tabla_notificacion()
+
+        }).fail(function(){
+            vistacargando("")
+        
+        });
+    }
+
+}
+
+function llenar_tabla_pagos(id){
+   
+    $("#tableCancelado tbody").html('');
+    $('#tableCancelado').DataTable().destroy();
+	$('#tableCancelado tbody').empty(); 
+    var num_col = $("#tableCancelado thead tr th").length; //obtenemos el numero de columnas de la tabla
+    vistacargando("m", "Espere por favor")
+    $.get('llenar-tabla-pago-not/'+id, function(data){
+        console.log(data)
+       
+        vistacargando("")
+        if(data.error==true){
+			$("#tableCancelado tbody").html('');
+			$("#tableCancelado tbody").html(`<tr><td colspan="${num_col}" style="text-align:center>No existen registros</td></tr>`);
+			alertNotificar(data.mensaje,"error");
+            // cancelar()
+			return;   
+		}
+		if(data.error==false){
+			if(data.resultado.length==0){
+				$("#tableCancelado tbody").html('');
+				$("#tableCancelado tbody").html(`<tr><td colspan="${num_col}" style="text-align:center">No existen registros</td></tr>`);
+				// alertNotificar("No se encontró información","error");
+                // cancelar()
+				return;
+			}
+			
+			$("#tableCancelado tbody").html('');
+         
+			$.each(data.resultado,function(i, item){
+
+                let disabled=""
+                if(item.estado=='Inactivo'){
+                    disabled='disabled'
+                }
+             
+				$('#tableCancelado').append(`<tr>
+                                                <td style="width:10%; text-align:center; vertical-align:middle">
+                                                   <button type="button" ${disabled} class="btn btn-danger btn-sm" onclick="inactivarPago('${item.id}')">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>                                               
+                                                </td>
+
+                                                <td style="width:40%; text-align:center; vertical-align:middle">
+                                                    ${item.fecha_registra}
+                                                </td>
+
+                                                <td style="width:35%; text-align:center; vertical-align:middle">
+                                                    ${item.valor_cancelado}
+                                                </td>
+                                               
+                                                <td style="width:15%; text-align:center; vertical-align:middle">
+                                                    ${item.estado}                                                  
+                                                </td>
+                                                
+											
+										</tr>`);
+			})
+          
+            cargar_estilos_datatable_con('tableCancelado')
+            
+		}
+    
+    }).fail(function(){
+        vistacargando("")
+        alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+        $("#tableCancelado tbody").html('');
+		$("#tableCancelado tbody").html(`<tr><td colspan="${num_col}" style="text-align:center">Se produjo un error, por favor intentelo más tarde</td></tr>`);
+    });
+}
+
+
+$("#FormCancelado").submit(function(e){
+    e.preventDefault();
+    let valor_cancelado=$('#valor_cancelado').val()
+    let valor_coa=$('.valor_coa').html()
+    if(valor_cancelado=="" || valor_cancelado==null){
+        alertNotificar("Debe ingresar el valor cancelado","error")
+        $('#valor_cancelado').focus()
+        return
+    }
+   
+    if(parseFloat(valor_cancelado)<parseFloat(valor_coa)){
+        alertNotificar("El valor cancelado no debe ser menor a "+valor_coa,"error")
+        $('#valor_cancelado').focus()
+        return
+    }
+
+    vistacargando("m","Espere por favor")
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    let idnot_conv=$('#idnot_conv').val()
+   
+    let tipo="POST"
+    let url_form="guardar-pago-conv-not"
+    var FrmData = new FormData(this);
+   
+    $.ajax({
+            
+        type: tipo,
+        url: url_form,
+        method: tipo,             
+		data: FrmData,      
+		
+        contentType:false,
+        cache:false,
+        processData:false, 
+
+        success: function(data){
+            vistacargando("");                
+            if(data.error==true){
+                alertNotificar(data.mensaje,'error');
+                return;                      
+            }
+           
+            alertNotificar(data.mensaje,"success");
+            llenar_tabla_pagos(idnot_conv)
+            
+            llenar_tabla_cuota(idnot_conv)          
+
+            $('.txt_conv').val('')
+            llenar_tabla_notificacion()
+
+
+                            
+        }, error:function (data) {
+            console.log(data)
+
+            vistacargando("");
+            alertNotificar('Ocurrió un error','error');
+        }
+    });
+})
+
+function inactivarPago(id){
+    if(confirm('¿Estas seguro que quieres inactivar la medida?')){
+        vistacargando("m","Espere por favor")
+        $.get('inactivar-pago/'+id, function(data){
+            console.log(data)
+        
+            vistacargando("")
+            if(data.error==true){			
+                alertNotificar(data.mensaje,"error");
+                return;   
+            }
+
+            alertNotificar(data.mensaje,"success");
+            let idnot_conv=$('#idnot_conv').val()
+        
+            llenar_tabla_pagos(idnot_conv)
+            llenar_tabla_cuota(idnot_conv)         
+            llenar_tabla_notificacion()
+
+        }).fail(function(){
+            vistacargando("")
+        
+        });
+    }
+
+}

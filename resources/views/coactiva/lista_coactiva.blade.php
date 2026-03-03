@@ -1,5 +1,5 @@
 @extends('layouts.appv2')
-@section('title', 'Listado Notificaciones')
+@section('title', 'Procesos Coactivados')
 @push('styles')
 <link rel="stylesheet" href="{{asset('bower_components/sweetalert/sweetalert.css')}}">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
@@ -683,7 +683,7 @@
                                                 Medidas Impuestas<span class="text-danger"> *</span> 
                                             </label>
                                             <div class="col-md-7">
-                                                <textarea class="form-control txt_conv" name="medidas_txt" id="medidas_txt" ></textarea>
+                                                <textarea class="form-control txt_conv" readonly name="medidas_txt" id="medidas_txt" ></textarea>
                                                 
                                             </div>
                                            

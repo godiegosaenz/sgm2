@@ -157,25 +157,8 @@ class TituloRuralController extends Controller
 
     public function reportetest(Request $r){
         try{
-
-            // $data = $this->clientMunicipio->request('POST', "tituloscoactivarural/imprimir",[
-            //     'headers' => [
-            //         'Content-Type' => 'application/json'
-            //     ],
-            //     'body' => json_encode($r->all())
-            // ]);
-
-            // $data=json_decode((string) $data->getBody());
-
-            // if($data->error==true){
-            //     return [
-            //         'error'=>true,
-            //         'mensaje'=>'Ocurrió un error al consultar la informacion'
-            //     ];
-            // }
-            // dd($r);
             $dataArray = array();
-            // $liquidacionActual="";
+            
             $existe=0;
             foreach($r->checkLiquidacion as $clave => $valor_num){
                

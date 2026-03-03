@@ -10,6 +10,7 @@ use App\Models\Coactiva\DataNotifica;
 use App\Models\Coactiva\InfoCoa;
 use App\Models\Coactiva\InfoNotifica;
 use App\Models\Coactiva\Medidas;
+use App\Models\Coactiva\Secuencial;
 use Illuminate\Http\Request;
 use App\Models\PsqlYearDeclaracion;
 use App\Models\PsqlLiquidacion;
@@ -149,14 +150,152 @@ class CoactivaController extends Controller
             $guarda->usuario_registra=auth()->user()->persona->apellidos." ".auth()->user()->persona->nombres;
             $guarda->fecha_registra=date('Y-m-d H:i:s');
             $guarda->estado='Activo';
+           
+
+            $ultimo_sec=Medidas::whereYear('fecha_registra', date('Y'))
+            ->whereNotNull('num_oficio1')
+            ->first();
+            $num_oficio1="";
+            $num_oficio2="";
+            $num_oficio3="";
+            if(is_null($ultimo_sec)){
+                $secuencial=Secuencial::where('descripcion', 'Oficio')
+                ->where('anio',date('Y'))
+                ->where('estado','A')
+                ->select('secuencia')
+                ->first();
+                if(is_null($secuencial)){
+                    $num_oficio1=1;
+                    $guardaSecuencia=new Secuencial();
+                    $guardaSecuencia->secuencia=$num_oficio1;
+                    $guardaSecuencia->descripcion='Oficio';
+                    $guardaSecuencia->estado='A';
+                    $guardaSecuencia->anio=date('Y');
+                    $guardaSecuencia->save();
+                }else{
+                    $num_oficio1=$secuencial->secuencia;
+                }
+
+                
+            }else{
+                $num_oficio1=$ultimo_sec->num_oficio1;
+                $num_oficio1=$num_oficio1+1;
+            }
+
+            $guarda->num_oficio1=$num_oficio1;
+            $guarda->num_oficio2=$guarda->num_oficio1 + 1;
+            $guarda->num_oficio3=$guarda->num_oficio2 + 1;
+
             $guarda->save();
+
+            $noti=InfoNotifica::where('id',$request->idcoa_medida)
+            ->first();
+
+            if($noti->predio=="Urbano"){
+                $consulta=$this->consultarTitulosUrb($request->idcoa_medida);
+                if($consulta['error']==true){
+                    return ["mensaje"=>$consulta['mensaje'], "error"=>true];
+                }
+            
+                $listado_final=[];
+
+                foreach ($consulta["resultado"] as $key => $item){ 
+
+                    $anios[] = $item->anio;              
+                    if(!isset($listado_final[$item->num_predio])) {
+                        $listado_final[$item->num_predio]=array($item);
+                
+                    }else{
+                        array_push($listado_final[$item->num_predio], $item);
+                    }
+
+                    $nombre_persona=$item->nombre_per;
+                    $direcc_cont=$item->direcc_cont;
+                    $ci_ruc=$item->ci_ruc;
+                    if(is_null($item->nombre_per)){
+                        $nombre_persona=$item->nombre_contr1;
+                    }
+                } 
+            
+            }else{
+                $consulta=$this->consultarTitulos($request->idcoa_medida);
+                if($consulta['error']==true){
+                    return ["mensaje"=>$consulta['mensaje'], "error"=>true];
+                }
+                
+                $listado_final=[];
+
+                foreach ($consulta["resultado"] as $key => $item){ 
+                   
+                    $anios[] = $item->anio;              
+                    if(!isset($listado_final[$item->clave])) {
+                        $listado_final[$item->clave]=array($item);
+                
+                    }else{
+                        array_push($listado_final[$item->clave], $item);
+                    }
+
+                    $nombre_persona=$item->nombre_per;
+                    $direcc_cont=$item->direcc_cont;
+                    $ci_ruc=$item->num_ident;
+                    if(is_null($item->nombre_per)){
+                        $nombre_persona=$item->nombre_contr1;
+                    }
+                } 
+            }
+
+            $anio_min = min($anios);
+            $anio_max = max($anios);
+
+            $rango='DESDE EL '.($anio_min . ' HASTA EL EJERCICIO FISCAL ' . $anio_max);
+        
+            $funcionarios=DB::connection('pgsql')
+            ->table('sgm_coactiva.parametro_coactiva')
+            ->selectRaw("
+                MAX(CASE WHEN codigo = 'TESO' THEN valor END) AS tesorera,
+                MAX(CASE WHEN codigo = 'JUEZ_COACT' THEN valor END) AS juez_coactiva,
+                MAX(CASE WHEN codigo = 'SECRETARIO' THEN valor END) AS secretario
+            ")
+            ->whereIn('codigo', ['TESO','JUEZ_COACT','SECRETARIO'])
+            ->where('estado','A')
+            ->first();
+
+            $secr=DB::connection('pgsql')
+            ->table('sgm_coactiva.parametro_coactiva')
+            ->select('valor2')
+            ->where('codigo','SECRETARIO')
+            ->where('estado','A')
+            ->first();
+
+            // $secuencial=DB::connection('pgsql')
+            // ->table('sgm_coactiva.parametro_secuencial')
+            // ->selectRaw("
+            //     MAX(CASE WHEN descripcion = 'Oficio' THEN secuencia END) AS oficio,
+            //     MAX(CASE WHEN descripcion = 'Proceso' THEN secuencia END) AS proc
+            // ")
+            // ->whereIn('descripcion', ['Oficio','Proceso'])
+            // ->where('anio',date('Y'))
+            // ->where('estado','A')
+            // ->first();
+
+            $secuencial=DB::connection('pgsql')
+            ->table('sgm_coactiva.info_coact')
+            ->where('id_info_notifica',$guarda->id_info_coact)
+            ->select('num_proceso')
+            ->first();
+
+            $nombrePDF="MedidasCoactiva".date('YmdHis').".pdf";                               
+            $pdf = \PDF::loadView('reportes.medidasCoact', ['DatosLiquidacion'=>$listado_final,"nombre_persona"=>$nombre_persona, "direcc_cont"=>$direcc_cont, "ci_ruc"=>$ci_ruc, "rango"=>$rango, "funcionarios"=>$funcionarios, "lugar_predio"=>$noti->predio,"secr"=>$secr->valor2, "medidas"=>$guarda, "secuencial"=>$secuencial]);
+
 
             return ["mensaje"=>"Informacion registrada exitosamente", "error"=>false];
             
         } catch (\Exception $e) {
-            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e->getMessage(), "error"=>true];
         }
     }
+
+    
 
     public function tablaMedidas($id){
         try{
@@ -202,7 +341,7 @@ class CoactivaController extends Controller
                 return ["mensaje"=>"Ya existe un pago activo", "error"=>true];
             }
 
-            $actualizaEstado=$this->actualizarEstadoCoa($request->idcoa_pago,'Pago','A');
+            $actualizaEstado=$this->actualizarEstadoCoa($request->idcoa_pago,'Pago','A', $request->valor_cancelado);
             if($actualizaEstado['error']==true){
                 return ["mensaje"=>$actualizaEstado['mensaje'], "error"=>true];
             }
@@ -215,6 +354,7 @@ class CoactivaController extends Controller
             $guarda->estado='Activo';
             $guarda->save();
 
+            
             return ["mensaje"=>"Informacion registrada exitosamente", "error"=>false];
             
         } catch (\Exception $e) {
@@ -257,14 +397,21 @@ class CoactivaController extends Controller
         }
     }
 
-    public function actualizarEstadoCoa($id,$tipo,$estado){
+    public function actualizarEstadoCoa($id,$tipo,$estado, $valor=0){
          try{
             if($estado=="A"){
                 if($tipo=="Conv"){
                     $actualizaCoac=InfoCoa::where('id',$id)->first();
                     if(!is_null($actualizaCoac)){
                         $actualizaCoac->estado_proceso=4;
+                        $actualizaCoac->estado_pago='Debe';
+                        $actualizaCoac->valor_cancelado=(float) $valor;
                         $actualizaCoac->save();
+
+                        $actualizaPagoNot=InfoNotifica::where('id',$actualizaCoac->id_info_notifica)
+                        ->first();
+                        $actualizaPagoNot->valor_cancelado=(float) $actualizaCoac->valor_cancelado; 
+                        $actualizaPagoNot->save();
                     }
                     
                     $inactivaMedidas=Medidas::where('id_info_coact',$id)
@@ -290,7 +437,14 @@ class CoactivaController extends Controller
                     if(!is_null($actualizaCoac)){
                        
                         $actualizaCoac->estado_proceso=2;
+                        $actualizaCoac->estado_pago='Debe';
+                        $actualizaCoac->valor_cancelado=(float) $valor;
                         $actualizaCoac->save();
+
+                        $actualizaPagoNot=InfoNotifica::where('id',$actualizaCoac->id_info_notifica)
+                        ->first();
+                        $actualizaPagoNot->valor_cancelado=(float) $actualizaCoac->valor_cancelado; 
+                        $actualizaPagoNot->save();
                     }
                     
                     $inactivaConv=Convenio::where('id_info_coact',$id)
@@ -314,7 +468,14 @@ class CoactivaController extends Controller
                     ->first();
                     if(!is_null($actualizaCoac)){
                         $actualizaCoac->estado_proceso=3;
+                        $actualizaCoac->estado_pago='Pagado';
+                        $actualizaCoac->valor_cancelado=(float) $valor;
                         $actualizaCoac->save();
+
+                        $actualizaPagoNot=InfoNotifica::where('id',$actualizaCoac->id_info_notifica)
+                        ->first();
+                        $actualizaPagoNot->valor_cancelado=(float) $actualizaCoac->valor_cancelado; 
+                        $actualizaPagoNot->save();
                     }
                     
                     $inactivaMedidas=Medidas::where('id_info_coact',$id)
@@ -338,7 +499,14 @@ class CoactivaController extends Controller
                 $actualizaCoac=InfoCoa::where('id',$id)->first();
                 if(!is_null($actualizaCoac)){
                     $actualizaCoac->estado_proceso=1;
+                    $actualizaCoac->estado_pago='Debe';
+                    $actualizaCoac->valor_cancelado=(float) $valor;
                     $actualizaCoac->save();
+
+                    $actualizaPagoNot=InfoNotifica::where('id',$actualizaCoac->id_info_notifica)
+                    ->first();
+                    $actualizaPagoNot->valor_cancelado=(float) $actualizaCoac->valor_cancelado; 
+                    $actualizaPagoNot->save();
                     
                 }
 

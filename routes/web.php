@@ -515,12 +515,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('listado-notificaciones', [NotificacionesController::class, 'vistaListaNotificacion'])->name('coactiva.lista_notificar');
     Route::get('pago-notificaciones/{periodo}', [NotificacionesController::class, 'tablaNotificacion']);
     Route::get('pago-notificaciones-detalle/{id}', [NotificacionesController::class, 'detalleNotificacion']);
-    Route::get('pago-notificaciones-detalle-proceso-coac/{id}', [NotificacionesController::class, 'detalleNotificacionProceso']);
+    Route::get('pago-notificaciones-detalle-proceso-coac/{id}/{lugar}', [NotificacionesController::class, 'detalleNotificacionProceso']);
     Route::post('guardar-documento-firmado-noti', [NotificacionesController::class, 'subirArchivoFirmado']);
 
     Route::get('pdf-proceso-coactiva/{id}/{lugar}', [NotificacionesController::class, 'pdfProcesoCoactiva']);
     Route::get('inicia-proceso-coactiva/{id}', [NotificacionesController::class, 'iniciaProcesoCoactiva']);
     Route::post('guardar-documento-firmado-coact', [NotificacionesController::class, 'subirArchivoFirmadoCoact']);
+    Route::get('llenar-tabla-convenio-not/{id}', [NotificacionesController::class, 'tablaConvenioNot']);
+    Route::post('guardar-cuota-conv-not', [NotificacionesController::class, 'guardarConvenioNot']);
+    Route::post('guardar-pago-conv-not', [NotificacionesController::class, 'guardarPagoNot']);
+    Route::get('llenar-tabla-pago-not/{id}', [NotificacionesController::class, 'tablaPagosNot']);
+    Route::get('pdf-medida-coactiva/{id}', [NotificacionesController::class, 'pdfMedidas']);
 
     Route::get('procesos-coactiva', [CoactivaController::class, 'index'])->name('coactiva.lista_coactiva');
     Route::get('pago-coactivas/{periodo}', [CoactivaController::class, 'tablaCoactiva']);
@@ -535,6 +540,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('guardar-pago-conv', [CoactivaController::class, 'guardarPago']);
     Route::get('llenar-tabla-pago/{id}', [CoactivaController::class, 'tablaPagos']);
     Route::get('inactivar-pago/{id}', [CoactivaController::class, 'inactivarPagos']);
+
+
    
     
 });
