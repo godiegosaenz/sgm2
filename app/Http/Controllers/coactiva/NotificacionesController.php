@@ -155,11 +155,11 @@ class NotificacionesController extends Controller
                     $guardaData= new DataNotifica();
                     $guardaData->id_info_notifica=$guardaDataNotificacion->id;
                     $guardaData->id_liquidacion=$data->id;
-                    $guardaData->subtotal=$data->subtotal_emi;
-                    $guardaData->interes=$data->intereses;
-                    $guardaData->recargo=$data->recargo;
-                    $guardaData->descuento=$data->descuento;
-                    $guardaData->total=$data->total_pagar;
+                    $guardaData->subtotal=$subtotal;
+                    $guardaData->interes=$interes;
+                    $guardaData->recargo=$recargo ;
+                    $guardaData->descuento=$descuento;
+                    $guardaData->total=$total;
                     $guardaData->estado='Notificado';
                     $guardaData->save();
 
@@ -206,20 +206,22 @@ class NotificacionesController extends Controller
                 $total_emi=0;
                 foreach($generarPdf['listado_final'] as $data){
 
-                    $subtotal  = str_replace(',', '', $data->subtotal_emi);
-                    $interes   = str_replace(',', '', $data->intereses);
-                    $recargo   = str_replace(',', '', $data->recargo);
-                    $descuento   = str_replace(',', '', $data->descuento);
-                    $total     = str_replace(',', '', $data->total_pagar);
-
+                    $subtotal  = $data->subtotal_emi ? str_replace(',', '', $data->subtotal_emi) : null;
+                    $interes   = $data->intereses ? str_replace(',', '', $data->intereses) : null;
+                    $recargo   = $data->recargo ? str_replace(',', '', $data->recargo) : null;
+                    $descuento = $data->descuento ? str_replace(',', '', $data->descuento) : null;
+                    $total     = $data->total_pagar ? str_replace(',', '', $data->total_pagar) : null;
+                    
                     $guardaData= new DataNotifica();
                     $guardaData->id_info_notifica=$guardaDataNotificacion->id;
                     $guardaData->num_titulo=$data->num_titulo;
-                    $guardaData->subtotal=$data->subtotal_emi;
-                    $guardaData->interes=$data->intereses;
-                    $guardaData->recargo=$data->recargo;
-                    $guardaData->descuento=$data->descuento;
-                    $guardaData->total=$data->total_pagar;
+                    
+                    $guardaData->subtotal=$subtotal;
+                    $guardaData->interes=$interes;
+                    $guardaData->recargo=$recargo ;
+                    $guardaData->descuento=$descuento;
+                    $guardaData->total=$total;
+
                     $guardaData->estado='Notificado';
                     $guardaData->save();
 
@@ -490,8 +492,7 @@ class NotificacionesController extends Controller
             $liquidaciones=DataNotifica::where('id_info_notifica',$id)
            ->pluck('id_liquidacion')
             ->toArray();
-            // dd($liquidaciones);
-            
+           
             $liquidacionUrbana = DB::connection('pgsql')->table('sgm_financiero.ren_liquidacion')
             ->join('sgm_app.cat_predio', 'sgm_financiero.ren_liquidacion.predio', '=', 'sgm_app.cat_predio.id')
             ->join('sgm_app.cat_predio_propietario', 'sgm_app.cat_predio_propietario.predio', '=', 'sgm_app.cat_predio.id')
@@ -761,7 +762,6 @@ class NotificacionesController extends Controller
             ->whereIn('tp.TitPr_Estado',['E','N'])
             ->orderby('tp.Pre_CodigoCatastral','asc')            
             ->get();
-            //dd($liquidacionActual);
            
             foreach($liquidacionActual as $key=> $data){
                 $subtotal=0;
@@ -927,14 +927,21 @@ class NotificacionesController extends Controller
                 $total_emi=0;
                 
                 foreach ($consulta["resultado"] as $key => $item){ 
+                    
+                    $subtotal  = $item->subtotal_emi ? str_replace(',', '', $item->subtotal_emi) : null;
+                    $interes   = $item->intereses ? str_replace(',', '', $item->intereses) : null;
+                    $recargo   = $item->recargo ? str_replace(',', '', $item->recargo) : null;
+                    $descuento = $item->descuento ? str_replace(',', '', $item->descuento) : null;
+                    $total     = $item->total_pagar ? str_replace(',', '', $item->total_pagar) : null;
+
                     $guardaData= new DataCoa();
                     $guardaData->id_info_coact=$guardaCoa->id;
                     $guardaData->id_liquidacion=$item->id;
-                    $guardaData->subtotal=$item->subtotal_emi;
-                    $guardaData->interes=$item->intereses;
-                    $guardaData->recargo=$item->recargo;
-                    $guardaData->descuento=$item->descuento;
-                    $guardaData->total=$item->total_pagar;
+                    $guardaData->subtotal=$subtotal;
+                    $guardaData->interes=$interes;
+                    $guardaData->recargo=$recargo;
+                    $guardaData->descuento=$descuento;
+                    $guardaData->total=$total;
                     $guardaData->estado='A';
                     $guardaData->save();
 
@@ -980,15 +987,21 @@ class NotificacionesController extends Controller
                 $total_emi=0;
                 
                 foreach ($consulta["resultado"] as $key => $item){ 
+
+                    $subtotal  = $item->subtotal_emi ? str_replace(',', '', $item->subtotal_emi) : null;
+                    $interes   = $item->intereses ? str_replace(',', '', $item->intereses) : null;
+                    $recargo   = $item->recargo ? str_replace(',', '', $item->recargo) : null;
+                    $descuento = $item->descuento ? str_replace(',', '', $item->descuento) : null;
+                    $total     = $item->total_pagar ? str_replace(',', '', $item->total_pagar) : null;
                    
                     $guardaData= new DataCoa();
                     $guardaData->id_info_coact=$guardaCoa->id;
                     $guardaData->num_titulo=$item->num_titulo;
-                    $guardaData->subtotal=$item->subtotal_emi;
-                    $guardaData->interes=$item->intereses;
-                    $guardaData->recargo=$item->recargo;
-                    $guardaData->descuento=$item->descuento;
-                    $guardaData->total=$item->total_pagar;
+                    $guardaData->subtotal=$subtotal;
+                    $guardaData->interes=$interes;
+                    $guardaData->recargo=$recargo;
+                    $guardaData->descuento=$descuento;
+                    $guardaData->total=$total;
                     $guardaData->estado='A';
                     $guardaData->save();
 
@@ -1034,7 +1047,7 @@ class NotificacionesController extends Controller
             ->whereIn('codigo', ['TESO','JUEZ_COACT','SECRETARIO'])
             ->where('estado','A')
             ->first();
-            // dd($consulta);
+           
             if($noti->predio=="Urbano"){
                 $generarTitulo=$this->tituloCreditoUrb($consulta["liquidaciones"]);
                 if($generarTitulo['error']==true){
@@ -1495,9 +1508,7 @@ class NotificacionesController extends Controller
                 ->where('liq.id', $valor)
                 ->where('pp.estado','A')
                 ->get();
-                //dd($liquidacion);
-            
-
+               
                 $fecha_hoy=date('Y-m-d');
                 setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES@euro', 'es_ES', 'esp');
                 $fecha_timestamp = strtotime($fecha_hoy);    
@@ -1604,7 +1615,7 @@ class NotificacionesController extends Controller
                         ->where('hijo.Ubi_Codigo', $data->Ubi_Codigo)
                         ->value('padre.Ubi_Descripcion');
                         $liquidacionActual[$key]->nombre_sitio=$sitioBarrio;
-                        //  dd($liquidacionActual);
+                        
                     }
                     array_push($dataArray, $liquidacionActual);
                    
@@ -1687,7 +1698,7 @@ class NotificacionesController extends Controller
                 }
 
             }
-            //dd($liquidacionRural);
+            
             $fecha_hoy=date('Y-m-d');
             setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES@euro', 'es_ES', 'esp');
             $fecha_timestamp = strtotime($fecha_hoy);
