@@ -348,7 +348,7 @@
     </div>
 
     <p style="font-size: 14px; text-align: justify; line-height: 1; margin-top: 28px;">
-        <span>Oficio N° GADMCSV-COAC-JKZP-{{str_pad($num_oficio1, 3, "0", STR_PAD_LEFT) }}-2026</span><br>
+        <span>Oficio N° GADMCSV-COAC-JKZP-{{str_pad($num_oficio1, 3, "0", STR_PAD_LEFT) }}-{{ date('Y') }}</span><br>
         <span>San Vicente {{ fechaFormatoTexto() }}.</span><br><br>
         <b>Señores:</b><br><br><br>
 
@@ -392,7 +392,7 @@
     </div>
 
     <p style="font-size: 14px; text-align: justify; line-height: 1; margin-top: 28px;">
-        <span>Oficio N° GADMCSV-COAC-JKZP-{{str_pad($num_oficio2, 3, "0", STR_PAD_LEFT) }}-2026</span><br>
+        <span>Oficio N° GADMCSV-COAC-JKZP-{{str_pad($num_oficio2, 3, "0", STR_PAD_LEFT) }}-{{ date('Y') }}</span><br>
         <span>San Vicente {{ fechaFormatoTexto() }}.</span><br><br>
         <b>Señores:</b><br><br><br>
 
@@ -437,7 +437,7 @@
     </div>
 
     <p style="font-size: 14px; text-align: justify; line-height: 1; margin-top: 28px;">
-        <span>Oficio N° GADMCSV-COAC-JKZP-{{str_pad($num_oficio3, 3, "0", STR_PAD_LEFT) }}-2026</span><br>
+        <span>Oficio N° GADMCSV-COAC-JKZP-{{str_pad($num_oficio3, 3, "0", STR_PAD_LEFT) }}-{{ date('Y') }}</span><br>
         <span>San Vicente {{ fechaFormatoTexto() }}.</span><br><br>
         <b>Señor:</b><br><br><br>
 
