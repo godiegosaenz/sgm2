@@ -221,6 +221,7 @@ function detalleProcesoIniciaCoa(){
 }
 
 globalThis.EstadoCoactivadoGlobal=0
+globalThis.IdNotificaSele=""
 function detalleNot(id){
    
     $('#id_notifica').val('')
@@ -229,6 +230,7 @@ function detalleNot(id){
     $('#tableDetNot tbody').empty(); 
     var num_col = $("#tableDetNot thead tr th").length; //obtenemos el numero de columnas de la tabla
     vistacargando("m", "Espere por favor")
+    IdNotificaSele=id
     $.get('pago-notificaciones-detalle/'+id, function(data){
         console.log(data)
         $('#id_notifica').val(id)
@@ -788,6 +790,8 @@ $("#FormMedidas").submit(function(e){
     let total_valor_deuda=$('#total_valor_deuda').val()
     let medidas_txt=$('#medidas_txt').val()
     let valor_coa=$('.valor_coa').html()
+    let predio=$('#predio_localizacion').html()
+    
     if(total_valor_deuda=="" || total_valor_deuda==null){
         alertNotificar("Debe ingresar el total de la deuda","error")
         $('#total_valor_deuda').focus()
@@ -817,6 +821,8 @@ $("#FormMedidas").submit(function(e){
     let tipo="POST"
     let url_form="guardar-medidas-conv"
     var FrmData = new FormData(this);
+    FrmData.append('predio', predio);
+    FrmData.append('IdNotificaSele', IdNotificaSele);
    
     $.ajax({
             
@@ -843,7 +849,7 @@ $("#FormMedidas").submit(function(e){
             llenar_tabla_pagos(idcoa_conv)
 
             llenar_tabla_notificacion()
-            $('.txt_conv').val('')
+            // $('.txt_conv').val('')
                             
         }, error:function (data) {
             console.log(data)
@@ -892,9 +898,12 @@ function llenar_tabla_medidas(id){
                 }
              
 				$('#tableMedidas').append(`<tr>
-                                                <td style="width:5%; text-align:center; vertical-align:middle">
+                                                <td style="width:10%; text-align:center; vertical-align:middle">
                                                    <button type="button" ${disabled} class="btn btn-danger btn-sm" onclick="inactivarMedidas('${item.id}')">
                                                         <i class="fa fa-trash"></i>
+                                                    </button>   
+                                                    <button type="button" ${disabled} class="btn btn-primary btn-sm" onclick="verpdf('${item.documento}')">
+                                                        <i class="fa fa-file"></i>
                                                     </button>                                               
                                                 </td>
 
@@ -910,7 +919,7 @@ function llenar_tabla_medidas(id){
                                                 </td>
                                                 
 
-                                                <td style="width:15%; text-align:center; vertical-align:middle">
+                                                <td style="width:10%; text-align:center; vertical-align:middle">
                                                     ${item.estado}                                                  
                                                 </td>
                                                 

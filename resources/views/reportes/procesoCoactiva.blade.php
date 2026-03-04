@@ -266,7 +266,7 @@
        
     </div>
 
-    <p style="margin: 0; line-height: 1.2; margin-top:50px; text-align: center; font-weigth: 500 !important; font-size: 16px;">PROCESO COACTIVO No. </p>
+    <p style="margin: 0; line-height: 1.2; margin-top:50px; text-align: center; font-weigth: 500 !important; font-size: 16px;">PROCESO COACTIVO No. {{ str_pad($num_proceso, 3, "0", STR_PAD_LEFT) }}-{{ date('Y') }}</p>
 
     <p style="margin: 0; line-height: 1.2; margin-top:50px; text-align: center; font-weigth: 500 !important; font-size: 16px;">AÑO: {{ date('Y') }}</p>
 
@@ -348,7 +348,7 @@
     <div class="titulo" style="font-size:13px !important">
         <br>
         <p style="margin: 0; line-height: 0.8;">ORGANO EJECUTOR DE COACTIVA DEL GAD MUNICIPAL DEL CANTÓN<br>
-        SAN VICENTE <br>PROCESO No. </p>
+        SAN VICENTE <br>PROCESO No. {{ str_pad($num_proceso, 3, "0", STR_PAD_LEFT) }}-{{ date('Y') }}</p>
         <p style="margin: 0; line-height: 1.2;">ORDEN DE PAGO INMEDIATO</p>
     </div>
 

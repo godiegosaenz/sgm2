@@ -118,7 +118,7 @@ class NotificacionesController extends Controller
 
     public function notificacionPagoVoluntario($cedula, $lugar){
        
-        DB::beginTransaction();
+        DB::connection('pgsql')->beginTransaction();
         try{
             if($lugar==1){
                 
@@ -145,6 +145,13 @@ class NotificacionesController extends Controller
                 $recargo_emi=0;
                 $total_emi=0;
                 foreach($generarPdf['listado_final'] as $data){
+
+                    $subtotal  = str_replace(',', '', $data->subtotal_emi);
+                    $interes   = str_replace(',', '', $data->intereses);
+                    $recargo   = str_replace(',', '', $data->recargo);
+                    $descuento   = str_replace(',', '', $data->descuento);
+                    $total     = str_replace(',', '', $data->total_pagar);
+
                     $guardaData= new DataNotifica();
                     $guardaData->id_info_notifica=$guardaDataNotificacion->id;
                     $guardaData->id_liquidacion=$data->id;
@@ -171,15 +178,15 @@ class NotificacionesController extends Controller
                 $guardaDataNotificacion->estado="Notificado";
                 $guardaDataNotificacion->id_usuario_registra=auth()->user()->id;
                 $guardaDataNotificacion->fecha_registra=date('Y-m-d H:i:s');
-                $guardaDataNotificacion->subtotal_notificado=number_format(($subtotal_emi),2,'.', '');
-                $guardaDataNotificacion->interes_notificado=number_format(($intereses_emi),2,'.', '');
-                $guardaDataNotificacion->descuento_notificado=number_format(($descuento_emi),2,'.', '');
-                $guardaDataNotificacion->recargo_notificado=number_format(($recargo_emi),2,'.', '');
-                $guardaDataNotificacion->total_notificado=number_format(($total_emi),2,'.', '');
+                $guardaDataNotificacion->subtotal_notificado=(float)$subtotal_emi;
+                $guardaDataNotificacion->interes_notificado=(float)$intereses_emi;
+                $guardaDataNotificacion->descuento_notificado=(float)$descuento_emi;
+                $guardaDataNotificacion->recargo_notificado=(float)$recargo_emi;
+                $guardaDataNotificacion->total_notificado=(float)$total_emi;
                 $guardaDataNotificacion->predio='Urbano';
                 $guardaDataNotificacion->documento=$generarPdf['pdf'];
                 $guardaDataNotificacion->save();
-
+                DB::connection('pgsql')->commit();
                 return ["mensaje"=>'Notificacion registrada exitosamente', "error"=>false, "pdf"=>$generarPdf['pdf']];
             }else{
                 $generarPdf=$this->Liquidaciones->pagoVoluntario($cedula, $lugar, 1);
@@ -198,6 +205,13 @@ class NotificacionesController extends Controller
                 $recargo_emi=0;
                 $total_emi=0;
                 foreach($generarPdf['listado_final'] as $data){
+
+                    $subtotal  = str_replace(',', '', $data->subtotal_emi);
+                    $interes   = str_replace(',', '', $data->intereses);
+                    $recargo   = str_replace(',', '', $data->recargo);
+                    $descuento   = str_replace(',', '', $data->descuento);
+                    $total     = str_replace(',', '', $data->total_pagar);
+
                     $guardaData= new DataNotifica();
                     $guardaData->id_info_notifica=$guardaDataNotificacion->id;
                     $guardaData->num_titulo=$data->num_titulo;
@@ -224,21 +238,21 @@ class NotificacionesController extends Controller
                 $guardaDataNotificacion->estado="Notificado";
                 $guardaDataNotificacion->id_usuario_registra=auth()->user()->id;
                 $guardaDataNotificacion->fecha_registra=date('Y-m-d H:i:s');
-                $guardaDataNotificacion->subtotal_notificado=number_format(($subtotal_emi),2,'.', '');
-                $guardaDataNotificacion->interes_notificado=number_format(($intereses_emi),2,'.', '');
-                $guardaDataNotificacion->descuento_notificado=number_format(($descuento_emi),2,'.', '');
-                $guardaDataNotificacion->recargo_notificado=number_format(($recargo_emi),2,'.', '');
-                $guardaDataNotificacion->total_notificado=number_format(($total_emi),2,'.', '');
+                $guardaDataNotificacion->subtotal_notificado=(float)$subtotal_emi;
+                $guardaDataNotificacion->interes_notificado=(float)$intereses_emi;
+                $guardaDataNotificacion->descuento_notificado=(float)$descuento_emi;
+                $guardaDataNotificacion->recargo_notificado=(float)$recargo_emi;
+                $guardaDataNotificacion->total_notificado=(float)$total_emi;
                 $guardaDataNotificacion->predio='Rural';
                 $guardaDataNotificacion->documento=$generarPdf['pdf'];
                 $guardaDataNotificacion->save();
-
+                DB::connection('pgsql')->commit();
                 return ["mensaje"=>'Notificacion registrada exitosamente', "error"=>false, "pdf"=>$generarPdf['pdf']];
             }
 
         }catch (\Exception $e) {
-            DB::rollBack();
-            return ["mensaje"=>'Ocurrio un error, intentelo mas tarde '.$e, "error"=>true];
+            DB::connection('pgsql')->rollBack();
+            return ["mensaje"=>'Ocurrio un error, intentelo mas tarde '.$e->getMessage()." Linea=>".$e->getLine(), "error"=>true];
         }
     }
 
@@ -476,6 +490,7 @@ class NotificacionesController extends Controller
             $liquidaciones=DataNotifica::where('id_info_notifica',$id)
            ->pluck('id_liquidacion')
             ->toArray();
+            // dd($liquidaciones);
             
             $liquidacionUrbana = DB::connection('pgsql')->table('sgm_financiero.ren_liquidacion')
             ->join('sgm_app.cat_predio', 'sgm_financiero.ren_liquidacion.predio', '=', 'sgm_app.cat_predio.id')
@@ -645,6 +660,7 @@ class NotificacionesController extends Controller
             return ["resultado"=>$liquidacionUrbana, 
                     "total_valor"=>number_format($total_valor,2),
                     "liquidaciones"=>$liquidaciones,
+                    "id"=>$id,
                     "error"=>false,
             ];
 
@@ -868,6 +884,7 @@ class NotificacionesController extends Controller
     }
 
     public function iniciaProcesoCoactiva($id){
+        DB::connection('pgsql')->beginTransaction();
         try{
             $noti=InfoNotifica::where('estado','Notificado')
             ->where('id',$id)
@@ -896,11 +913,12 @@ class NotificacionesController extends Controller
             if($noti->predio=="Urbano"){
                 $consulta=$this->consultarTitulosUrb($id);
                 if($consulta['error']==true){
+                    DB::connection('pgsql')->rollBack();
                     return ["mensaje"=>$consulta['mensaje'], "error"=>true];
+                    
                 }
             
                 $listado_final=[];
-
 
                 $subtotal_emi=0;
                 $intereses_emi=0;
@@ -949,13 +967,12 @@ class NotificacionesController extends Controller
             }else{
                 $consulta=$this->consultarTitulos($id);
                 if($consulta['error']==true){
+                    DB::connection('pgsql')->rollBack();
                     return ["mensaje"=>$consulta['mensaje'], "error"=>true];
+                    
                 }
                 
                 $listado_final=[];
-
-               
-
                 $subtotal_emi=0;
                 $intereses_emi=0;
                 $descuento_emi=0;
@@ -1017,81 +1034,86 @@ class NotificacionesController extends Controller
             ->whereIn('codigo', ['TESO','JUEZ_COACT','SECRETARIO'])
             ->where('estado','A')
             ->first();
-
+            // dd($consulta);
             if($noti->predio=="Urbano"){
                 $generarTitulo=$this->tituloCreditoUrb($consulta["liquidaciones"]);
                 if($generarTitulo['error']==true){
+                    DB::connection('pgsql')->rollBack();
                     return ["mensaje"=>$generarTitulo['mensaje'], "error"=>true];
                 }
             }else{
                 $generarTitulo=$this->tituloCreditoRural($consulta["liquidaciones"]);
                 if($generarTitulo['error']==true){
+                    DB::connection('pgsql')->rollBack();
                     return ["mensaje"=>$generarTitulo['mensaje'], "error"=>true];
                 }
             }
-            // dd($generarTitulo);
+
+            $ultimo_sec = InfoCoa::whereYear('fecha_registra', date('Y'))
+                ->whereNotNull('num_proceso')
+                ->orderByDesc('num_proceso')
+                ->first();
+             
+            if (is_null($ultimo_sec)) {
+
+                $secuencial = Secuencial::where('descripcion', 'Proceso')
+                    ->where('anio', date('Y'))
+                    ->where('estado', 'A')
+                    ->lockForUpdate()
+                    ->first();
+
+                if (is_null($secuencial)) {
+
+                    $num_proceso = 1;
+
+                    Secuencial::create([
+                        'secuencia' => 1,
+                        'descripcion' => 'Proceso',
+                        'estado' => 'A',
+                        'anio' => date('Y')
+                    ]);
+
+                } else {
+
+                    $secuencial->increment('secuencia');
+                    $num_proceso = $secuencial->secuencia;
+                }
+
+            } else {
+
+                $num_proceso = $ultimo_sec->num_proceso + 1;
+            }
+
+            $nombrePDF="ProcesoCoactiva".date('YmdHis').".pdf";  
+            $guardaCoa->estado_proceso=1;
+            $guardaCoa->id_usuario_registra=auth()->user()->id;
+            $guardaCoa->fecha_registra=date('Y-m-d H:i:s');
+            $guardaCoa->subtotal_pago_inmediato=number_format(($subtotal_emi),2,'.', '');
+            $guardaCoa->interes_pago_inmediato=number_format(($intereses_emi),2,'.', '');
+            $guardaCoa->descuento_pago_inmediato=number_format(($descuento_emi),2,'.', '');
+            $guardaCoa->recargo_pago_inmediato=number_format(($recargo_emi),2,'.', '');
+            $guardaCoa->valor_pago_inmediato=number_format(($total_emi),2,'.', '');
+            $guardaCoa->documento=$nombrePDF;
+            $guardaCoa->estado_pago='Debe';
+            $guardaCoa->num_proceso=$num_proceso;
+            $guardaCoa->save();
             
-            $nombrePDF="ProcesoCoactiva".date('YmdHis').".pdf";                               
-            $pdf = \PDF::loadView('reportes.procesoCoactiva', ['DatosLiquidacion'=>$listado_final,"nombre_persona"=>$nombre_persona, "direcc_cont"=>$direcc_cont, "ci_ruc"=>$ci_ruc, "rango"=>$rango, "funcionarios"=>$funcionarios, 'DatosLiquidaciones'=>$generarTitulo['data']['DatosLiquidaciones'], 'fecha_formateada'=>$generarTitulo['data']['fecha_formateada'], "lugar_predio"=>$noti->predio]);
+                                         
+            $pdf = \PDF::loadView('reportes.procesoCoactiva', ['DatosLiquidacion'=>$listado_final,"nombre_persona"=>$nombre_persona, "direcc_cont"=>$direcc_cont, "ci_ruc"=>$ci_ruc, "rango"=>$rango, "funcionarios"=>$funcionarios, 'DatosLiquidaciones'=>$generarTitulo['data']['DatosLiquidaciones'], 'fecha_formateada'=>$generarTitulo['data']['fecha_formateada'], "lugar_predio"=>$noti->predio, "num_proceso"=>$num_proceso]);
 
-            // return $pdf->stream('a.pdf');
-
+           
             $estadoarch = $pdf->stream();
             $disco="disksCoactiva";
             \Storage::disk($disco)->put(str_replace("", "",$nombrePDF), $estadoarch);
             $exists_destino = \Storage::disk($disco)->exists($nombrePDF);
             if($exists_destino){
 
-                $ultimo_sec=DataCoa::whereYear('fecha_registra', date('Y'))
-                ->whereNotNull('num_proceso')
-                ->first();
-                $num_proceso="";
-                if(is_null($ultimo_sec)){
-                    $secuencial=Secuencial::where('descripcion', 'Proceso')
-                    ->where('anio',date('Y'))
-                    ->where('estado','A')
-                    ->select('secuencia')
-                    ->first();
-                    if(is_null($secuencial)){
-                        $num_proceso=1;
-
-                        $guardaSecuencia=new Secuencial();
-                        $guardaSecuencia->secuencia=$num_proceso;
-                        $guardaSecuencia->descripcion='Proceso';
-                        $guardaSecuencia->estado='A';
-                        $guardaSecuencia->anio=date('Y');
-                        $guardaSecuencia->save();
-
-                    }else{
-                        $num_proceso=$secuencial->secuencia;
-                    }
-
-                    
-                }else{
-                    $num_proceso=$ultimo_sec->num_proceso;
-                    $num_proceso=$num_proceso+1;
-                }
-
-                $guardaCoa->num_proceso=$num_proceso;
-                $guardaCoa->estado_proceso=1;
-                $guardaCoa->id_usuario_registra=auth()->user()->id;
-                $guardaCoa->fecha_registra=date('Y-m-d H:i:s');
-                $guardaCoa->subtotal_pago_inmediato=number_format(($subtotal_emi),2,'.', '');
-                $guardaCoa->interes_pago_inmediato=number_format(($intereses_emi),2,'.', '');
-                $guardaCoa->descuento_pago_inmediato=number_format(($descuento_emi),2,'.', '');
-                $guardaCoa->recargo_pago_inmediato=number_format(($recargo_emi),2,'.', '');
-                $guardaCoa->valor_pago_inmediato=number_format(($total_emi),2,'.', '');
-                $guardaCoa->documento=$nombrePDF;
-                $guardaCoa->estado_pago='Debe';
-                $guardaCoa->save();
-
-               
-
                 $noti->estado='Coactivado';
                 $noti->save();
-
-                return ["mensaje"=>'Notificacion registrada exitosamente', "error"=>false, "pdf"=>$nombrePDF];
+                DB::connection('pgsql')->commit();
+                return ["mensaje"=>'Proceso iniciado exitosamente', "error"=>false, "pdf"=>$nombrePDF];
             }else{
+                DB::connection('pgsql')->rollBack();
                 return [
                     'error'=>true,
                     'mensaje'=>'No se pudo crear el documento'
@@ -1104,7 +1126,7 @@ class NotificacionesController extends Controller
            
 
         }catch (\Exception $e) {
-            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e->getMessage(). 'Linea=> '.$e->getLine(), "error"=>true];
 
         }
     }

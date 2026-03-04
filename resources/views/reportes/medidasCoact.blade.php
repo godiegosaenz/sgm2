@@ -284,7 +284,7 @@
     <div class="titulo" style="font-size:13px !important">
         <br>
         <p style="margin: 0; line-height: 0.8;">ORGANO EJECUTOR DE COACTIVA DEL GAD MUNICIPAL DEL CANTÓN<br>
-        SAN VICENTE <br><br>PROCESO No. {{ str_pad($secuencial->num_proceso, 6, "0", STR_PAD_LEFT) }}</p>
+        SAN VICENTE <br><br>PROCESO No. {{ str_pad($secuencial->num_proceso, 3, "0", STR_PAD_LEFT) }}-{{ date('Y') }}</p>
         <p style="margin: 0; line-height: 1.2;">MEDIDA CAUTELAR</p>
     </div>
 
@@ -327,7 +327,7 @@
        
      
 
-    <div style="margin-bottom:28px; margin-top: 120px;">
+    <div style="margin-bottom:8px; margin-top: 80px;">
         <center>
             <p style="margin: 0; line-height: 0.9;">
                 <strong>{{$funcionarios->tesorera}}</strong>
@@ -356,7 +356,7 @@
 
         <span>Presente. -</span><br><br>
 
-        <span>Dentro del Proceso Coactivo No {{ str_pad($secuencial->num_proceso, 6, "0", STR_PAD_LEFT) }} que el Gobierno Autónomo Descentralizado Municipal del Cantón San Vicente sigue en contra del Coactivado <strong>{{ strtoupper($nombre_persona) }} </strong> con C.I/RUC.  <strong>{{ $ci_ruc }}</strong>; mediante providencia se ha dispuesto lo siguiente:
+        <span>Dentro del Proceso Coactivo No {{ str_pad($secuencial->num_proceso, 3, "0", STR_PAD_LEFT) }}-{{ date('Y') }} que el Gobierno Autónomo Descentralizado Municipal del Cantón San Vicente sigue en contra del Coactivado <strong>{{ strtoupper($nombre_persona) }} </strong> con C.I/RUC.  <strong>{{ $ci_ruc }}</strong>; mediante providencia se ha dispuesto lo siguiente:
         </span><br><br><br>
 
         <span>
@@ -385,7 +385,7 @@
         <br>
         <p style="margin: 0; line-height: 0.8;">ORGANO EJECUTOR DE COACTIVA DEL GAD MUNICIPAL DEL CANTÓN
        
-        <br>  SAN VICENTE<br><br>PROCESO No. {{ str_pad($secuencial->num_proceso, 6, "0", STR_PAD_LEFT) }}</p>
+        <br>  SAN VICENTE<br><br>PROCESO No. {{ str_pad($secuencial->num_proceso, 3, "0", STR_PAD_LEFT) }}-{{ date('Y') }}</p>
         <p style="margin: 0; line-height: 1.2;">MEDIDA CAUTELAR</p>
         
         
@@ -402,11 +402,11 @@
 
         <b>De mi consideración. -</b><br><br>
 
-        <b>Dentro del PROCESO No. {{ str_pad($secuencial->num_proceso, 6, "0", STR_PAD_LEFT) }}, que se sigue en contra del contribuyente <strong>{{ strtoupper($nombre_persona) }} </strong> con C.I/RUC.  <strong>{{ $ci_ruc }}</strong>; se ha dispuesto lo siguiente</b><br><br>
+        <b>Dentro del PROCESO No. {{ str_pad($secuencial->num_proceso, 3, "0", STR_PAD_LEFT) }}-{{ date('Y') }}, que se sigue en contra del contribuyente <strong>{{ strtoupper($nombre_persona) }} </strong> con C.I/RUC.  <strong>{{ $ci_ruc }}</strong>; se ha dispuesto lo siguiente</b><br><br>
 
 
        <span style="margin-left:20px; display:block;">
-            3): Prohibir la enajenación de los bienes inmuebles que se hallaren inscritos a nombre de la/el coactivada/o en el Registro de la Propiedad del Cantón San Vicente.
+            Al amparo de lo dispuesto en los artículos 281 del Código Orgánico Administrativo (COA), en concordancia con las facultades de ejecución de las que me hallo investido, dispongo a usted que, en atención a los principios Celeridad, Economía Procesal, Eficacia, de lealtad institucional, proceda de manera simultánea a realizar la búsqueda y localización de todos los bienes inmuebles que se encuentren registrados a nombre de la/el coactivada. En caso de identificarse propiedades a nombre del referido deudor, SE DISPONE LA INSCRIPCIÓN INMEDIATA DE LA MEDIDA CAUTELAR DE PROHIBICIÓN DE ENAJENAR que se hallaren inscritos a nombre de la/el coactivada/o en el Registro de la Propiedad del Cantón San Vicente, sobre dichos inmuebles, debiendo remitir a este despacho las certificaciones que acrediten el cumplimiento de lo ordenado.
         </span><br><br>
 
         <span>
@@ -416,7 +416,7 @@
        
     </p>
        
-    <div style="margin-bottom:28px; margin-top: 120px;">
+    <div style="margin-bottom:8px; margin-top: 80px;">
         <center>
             <p style="margin: 0; line-height: 0.9;">
                 <strong>{{$funcionarios->secretario}}</strong>
@@ -447,7 +447,7 @@
 
         <b>De mi consideración. -</b><br><br>
 
-        <b>Dentro del PROCESO No. {{ str_pad($secuencial->num_proceso, 6, "0", STR_PAD_LEFT) }}, que se sigue en contra del contribuyente <strong>{{ strtoupper($nombre_persona) }} </strong> con C.I/RUC.  <strong>{{ $ci_ruc }}</strong>; se ha dispuesto lo siguiente</b><br><br>
+        <b>Dentro del PROCESO No. {{ str_pad($secuencial->num_proceso, 3, "0", STR_PAD_LEFT) }}-{{ date('Y') }}, que se sigue en contra del contribuyente <strong>{{ strtoupper($nombre_persona) }} </strong> con C.I/RUC.  <strong>{{ $ci_ruc }}</strong>; se ha dispuesto lo siguiente</b><br><br>
 
 
        <span style="margin-left:20px; display:block;">
