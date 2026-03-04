@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Coactiva;
+namespace App\Http\Controllers\coactiva;
 
 use App\Http\Controllers\Controller;
 use App\Models\Coactiva\Convenio;
