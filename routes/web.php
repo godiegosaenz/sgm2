@@ -48,7 +48,7 @@ use App\Models\TransitoVehiculo;
 use App\Http\Controllers\RecaudacionesController;
 use App\Http\Controllers\Consultorio\PacienteEmpleadoController;
 use App\Http\Controllers\Recaudacion\TasaAseoController;
-use App\Http\Controllers\Coactiva\CoactivaController;
+use App\Http\Controllers\coactiva\CoactivaController;
 use App\Http\Controllers\Coactiva\NotificacionController;
 // use App\Http\Controllers\Coactiva\CoactivaController;
 
