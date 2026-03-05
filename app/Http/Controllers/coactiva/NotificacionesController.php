@@ -146,11 +146,11 @@ class NotificacionesController extends Controller
                 $total_emi=0;
                 foreach($generarPdf['listado_final'] as $data){
 
-                    $subtotal  = str_replace(',', '', $data->subtotal_emi);
-                    $interes   = str_replace(',', '', $data->intereses);
-                    $recargo   = str_replace(',', '', $data->recargo);
-                    $descuento   = str_replace(',', '', $data->descuento);
-                    $total     = str_replace(',', '', $data->total_pagar);
+                    $subtotal  = $data->subtotal_emi ? str_replace(',', '', $data->subtotal_emi) : 0;
+                    $interes   = $data->intereses ? str_replace(',', '', $data->intereses) : 0;
+                    $recargo   = $data->recargo ? str_replace(',', '', $data->recargo) : 0;
+                    $descuento = $data->descuento ? str_replace(',', '', $data->descuento) : 0;
+                    $total     = $data->total_pagar ? str_replace(',', '', $data->total_pagar) : 0;
 
                     $guardaData= new DataNotifica();
                     $guardaData->id_info_notifica=$guardaDataNotificacion->id;
@@ -206,11 +206,11 @@ class NotificacionesController extends Controller
                 $total_emi=0;
                 foreach($generarPdf['listado_final'] as $data){
 
-                    $subtotal  = $data->subtotal_emi ? str_replace(',', '', $data->subtotal_emi) : null;
-                    $interes   = $data->intereses ? str_replace(',', '', $data->intereses) : null;
-                    $recargo   = $data->recargo ? str_replace(',', '', $data->recargo) : null;
-                    $descuento = $data->descuento ? str_replace(',', '', $data->descuento) : null;
-                    $total     = $data->total_pagar ? str_replace(',', '', $data->total_pagar) : null;
+                    $subtotal  = $data->subtotal_emi ? str_replace(',', '', $data->subtotal_emi) : 0;
+                    $interes   = $data->intereses ? str_replace(',', '', $data->intereses) : 0;
+                    $recargo   = $data->recargo ? str_replace(',', '', $data->recargo) : 0;
+                    $descuento = $data->descuento ? str_replace(',', '', $data->descuento) : 0;
+                    $total     = $data->total_pagar ? str_replace(',', '', $data->total_pagar) : 0;
                     
                     $guardaData= new DataNotifica();
                     $guardaData->id_info_notifica=$guardaDataNotificacion->id;
@@ -928,11 +928,11 @@ class NotificacionesController extends Controller
                 
                 foreach ($consulta["resultado"] as $key => $item){ 
                     
-                    $subtotal  = $item->subtotal_emi ? str_replace(',', '', $item->subtotal_emi) : null;
-                    $interes   = $item->intereses ? str_replace(',', '', $item->intereses) : null;
-                    $recargo   = $item->recargo ? str_replace(',', '', $item->recargo) : null;
-                    $descuento = $item->descuento ? str_replace(',', '', $item->descuento) : null;
-                    $total     = $item->total_pagar ? str_replace(',', '', $item->total_pagar) : null;
+                    $subtotal  = $item->subtotal_emi ? str_replace(',', '', $item->subtotal_emi) : 0;
+                    $interes   = $item->intereses ? str_replace(',', '', $item->intereses) : 0;
+                    $recargo   = $item->recargo ? str_replace(',', '', $item->recargo) : 0;
+                    $descuento = $item->descuento ? str_replace(',', '', $item->descuento) : 0;
+                    $total     = $item->total_pagar ? str_replace(',', '', $item->total_pagar) : 0;
 
                     $guardaData= new DataCoa();
                     $guardaData->id_info_coact=$guardaCoa->id;
@@ -988,11 +988,11 @@ class NotificacionesController extends Controller
                 
                 foreach ($consulta["resultado"] as $key => $item){ 
 
-                    $subtotal  = $item->subtotal_emi ? str_replace(',', '', $item->subtotal_emi) : null;
-                    $interes   = $item->intereses ? str_replace(',', '', $item->intereses) : null;
-                    $recargo   = $item->recargo ? str_replace(',', '', $item->recargo) : null;
-                    $descuento = $item->descuento ? str_replace(',', '', $item->descuento) : null;
-                    $total     = $item->total_pagar ? str_replace(',', '', $item->total_pagar) : null;
+                    $subtotal  = $item->subtotal_emi ? str_replace(',', '', $item->subtotal_emi) : 0;
+                    $interes   = $item->intereses ? str_replace(',', '', $item->intereses) : 0;
+                    $recargo   = $item->recargo ? str_replace(',', '', $item->recargo) : 0;
+                    $descuento = $item->descuento ? str_replace(',', '', $item->descuento) : 0;
+                    $total     = $item->total_pagar ? str_replace(',', '', $item->total_pagar) : 0;
                    
                     $guardaData= new DataCoa();
                     $guardaData->id_info_coact=$guardaCoa->id;
