@@ -32,6 +32,10 @@ class CoactivaController extends Controller
     }
     public function index()
     {
+        if(!Auth()->user()->hasPermissionTo('Procesos Coactiva'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
         return view('coactiva.lista_coactiva');
     }
 

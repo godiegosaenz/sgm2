@@ -49,7 +49,7 @@ use App\Http\Controllers\RecaudacionesController;
 use App\Http\Controllers\Consultorio\PacienteEmpleadoController;
 use App\Http\Controllers\Recaudacion\TasaAseoController;
 use App\Http\Controllers\coactiva\CoactivaController;
-use App\Http\Controllers\Coactiva\NotificacionController;
+use App\Http\Controllers\EmisionTitulo\EmisionTituloRuralController;
 // use App\Http\Controllers\Coactiva\CoactivaController;
 
 /*
@@ -542,7 +542,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('inactivar-pago/{id}', [CoactivaController::class, 'inactivarPagos']);
 
 
-   
+   //********** EMISION DE TITULO DADO DE BAJA RURAL ***********************/
+   Route::get('emision-rural', [EmisionTituloRuralController::class, 'index'])->name('emision_rural.index');
+   Route::get('buscar-liquidacion-rurales-baja/{cedula}', [EmisionTituloRuralController::class, 'consultarTitulosBaja']);
+   Route::post('simulacion-emision-rural', [EmisionTituloRuralController::class, 'simulacionEmisionRural']);
+   Route::post('generacion-emision-rural', [EmisionTituloRuralController::class, 'generacionEmisionRural']);
     
 });
 

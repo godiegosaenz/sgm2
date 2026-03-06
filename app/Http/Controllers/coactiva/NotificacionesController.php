@@ -30,6 +30,10 @@ class NotificacionesController extends Controller
 
     public function index()
     {
+        // if(!Auth()->user()->hasPermissionTo('Notificacion'))
+        // {
+        //     abort(403, 'No tienes acceso a esta seccion.');
+        // }
         return view('coactiva.notificacion');
     }
 
@@ -113,6 +117,10 @@ class NotificacionesController extends Controller
     }
 
     public function vistaNotificar(){
+        if(!Auth()->user()->hasPermissionTo('Listado Notificaciones'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
         return view('coactiva.notificar');
     }
 
@@ -309,6 +317,10 @@ class NotificacionesController extends Controller
     }
 
     public function vistaListaNotificacion(){
+        if(!Auth()->user()->hasPermissionTo('Listado Notificaciones'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
         return view('coactiva.lista_notificacion');
     }
 

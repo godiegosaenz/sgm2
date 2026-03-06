@@ -130,7 +130,7 @@ class CobroTituloRuralController extends Controller
                 $liquidacionRural[$key]->subtotal_emi=$subtotal;
                 
                 $liquidacionRural[$key]->intereses=$valor;
-
+                $valor = floatval(str_replace(',', '', $valor));
                 $total_pago=($valor + $data->valor_emitido + $data->recargo) - $data->descuento;
 
                 $liquidacionRural[$key]->total_pagar=number_format($total_pago,2);
@@ -477,13 +477,15 @@ class CobroTituloRuralController extends Controller
             return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
         }
     }
-    public function pdfTituloPrevio($titulos, $copia){
+    public function pdfTituloPrevio($titulos, $copia, $simulacion=null){
         try{
+          
             // $titulos=['2018-000001-PR','2019-000001-PR','2025-000001-PR','2024-003798-PR'];
             $anio_actual=[''];
             $vencido=[''];
             foreach($titulos as $item){
                 $solo_anio=explode("-",$item);
+              
                 if($solo_anio[0]==date('Y')){
                     $anio_actual=[];
                     array_push($anio_actual,$item);
@@ -492,7 +494,7 @@ class CobroTituloRuralController extends Controller
                 }
 
             }
-           
+          
             $liquidacionRural=[];           
             $liquidacionRural=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
             ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
@@ -526,7 +528,7 @@ class CobroTituloRuralController extends Controller
             ->orderby('CarVe_NumTitulo','asc')
             ->distinct()
             ->get();
-            
+           
             $mes_Actual=date('m');
             $aplica_remision=0;
             if($mes_Actual<7){
@@ -540,13 +542,38 @@ class CobroTituloRuralController extends Controller
                 $subtotal=number_format($data->valor_emitido,2);
                 $anio=explode("-",$data->num_titulo);
                 $liquidacionRural[$key]->anio=$anio[0];
+
+                if($simulacion=="S"){
+                    $salarioBase=DB::connection('sqlsrv')->table('RBU')
+                    ->where('Rbu_Año',$anio)
+                    ->select('Rbu_Valor')
+                    ->first();
+
+                    $base_im=floatval(str_replace(',', '', $data->base_imp));
+                    $salarioBase=$salarioBase->Rbu_Valor;
+
+                    $max=$salarioBase *15;
+                    
+                    if($base_im<=$max){
+                        $ipuNew=0;                       
+                        
+                    }else{
+                       $ipuNew=$base_im *  0.001;
+                    }
+                    $bom=floatval(str_replace(',', '', $data->valor_comer_predio));
+                    $bom_new=$bom * 0.00015;
+                    $liquidacionRural[$key]->ipu=$ipuNew;
+
+                    $liquidacionRural[$key]->bomberos=$bom_new;
+                }
+
                 if($aplica_remision==0){
                     
                     $consultaInteresMora=DB::connection('sqlsrv')->table('INTERES_MORA as im')
                     ->where('IntMo_Año',$anio)
                     ->select('IntMo_Valor')
                     ->first();
-
+                   
                     $valor=(($consultaInteresMora->IntMo_Valor/100) * ($data->valor_emitido - $data->tasa));                
                     $valor=number_format($valor,2);
                     $liquidacionRural[$key]->porcentaje_intereses=$consultaInteresMora->IntMo_Valor;
@@ -555,11 +582,17 @@ class CobroTituloRuralController extends Controller
                     $valor=number_format($cero,2);
                     $liquidacionRural[$key]->porcentaje_intereses=number_format($cero,2);
                 }
+                $valor = floatval(str_replace(',', '', $valor));
                 $liquidacionRural[$key]->subtotal_emi=$subtotal;
                 $liquidacionRural[$key]->intereses=$valor;
 
-                $total_pago=($valor + $data->valor_emitido + $data->recargo) - $data->descuento;
-               
+                $total_pago = (
+                    (is_numeric($valor) ? $valor : 0) + 
+                    (is_numeric($data->valor_emitido) ? $data->valor_emitido : 0) + 
+                    (is_numeric($data->recargo) ? $data->recargo : 0) - 
+                    (is_numeric($data->descuento) ? $data->descuento : 0)
+                );
+             
                 $liquidacionRural[$key]->total_pagar=$total_pago;
                 $total_valor=$total_valor+$total_pago;
 
@@ -572,7 +605,8 @@ class CobroTituloRuralController extends Controller
                 $liquidacionRural[$key]->nombre_sitio=$sitioBarrio;
                
             }
-          
+            // dd($liquidacionRural);
+                      
             $actual=DB::connection('sqlsrv')->table('TITULOS_PREDIO as tp')
             ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'tp.Pre_CodigoCatastral')
             ->select('tp.Pre_CodigoCatastral as clave',
@@ -616,23 +650,40 @@ class CobroTituloRuralController extends Controller
                 ->where('IntMo_Año',$anio)
                 ->select('IntMo_Valor')
                 ->first();
-                
+                              
                 if(!is_null($consultaInteresMora)){
+                    
                     $valor=(($consultaInteresMora->IntMo_Valor/100) * ($data->valor_emitido - $data->tasa));
                     
+                    $valor = floatval(str_replace(',', '', $valor));
+
                     $valor=number_format($valor,2);
 
                     $actual[$key]->porcentaje_intereses=$consultaInteresMora->IntMo_Valor;
                     $actual[$key]->intereses=$valor;
 
-                    $total_pago=($valor +$data->valor_emitido + $data->recargo) - $data->descuento;
+                    // $total_pago=($valor +$data->valor_emitido + $data->recargo) - $data->descuento;
+                    $total_pago = (
+                        (is_numeric($valor) ? $valor : 0) + 
+                        (is_numeric($data->valor_emitido) ? $data->valor_emitido : 0) + 
+                        (is_numeric($data->recargo) ? $data->recargo : 0) - 
+                        (is_numeric($data->descuento) ? $data->descuento : 0)
+                    );
+                   
+
                     $actual[$key]->total_pagar=number_format($total_pago,2);
                 }else{
                     $cero=0;
                     $actual[$key]->porcentaje_intereses=number_format($cero,2);
                     $actual[$key]->intereses=number_format($cero,2);
 
-                    $total_pago=($valor +$data->valor_emitido+ $data->recargo) - $data->descuento;
+                    // $total_pago=($valor +$data->valor_emitido+ $data->recargo) - $data->descuento;
+                    $total_pago = (
+                        (is_numeric($valor) ? $valor : 0) + 
+                        (is_numeric($data->valor_emitido) ? $data->valor_emitido : 0) + 
+                        (is_numeric($data->recargo) ? $data->recargo : 0) - 
+                        (is_numeric($data->descuento) ? $data->descuento : 0)
+                    );
                     $actual[$key]->total_pagar=number_format($total_pago,2);
                 }
                 $actual[$key]->subtotal_emi=$subtotal;
@@ -650,8 +701,8 @@ class CobroTituloRuralController extends Controller
                 
             }
 
-            $resultado = $liquidacionRural->merge($actual);            
-           
+            $resultado = $liquidacionRural->merge($actual); 
+          
             $nombrePDF="PrevioTituloRural".date('YmdHis').".pdf";
             
             $pdf = PDF::loadView('reportes.PrevioTituloRural',["liquidacionRural"=>$resultado, "copia"=>$copia]);
@@ -674,8 +725,8 @@ class CobroTituloRuralController extends Controller
             }
 
         }catch (\Exception $e) {
-            
-            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e->getMessage(), "error"=>true];
+            dd($e);
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e->getMessage(). 'Linea=> ',$e->getLine(), "error"=>true];
         }
     }
 

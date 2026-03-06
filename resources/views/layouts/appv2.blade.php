@@ -490,8 +490,15 @@
                         'permission' => 'Reporteria Transito',
                         'active' => request()->routeIs('vistaReporteTransito.transito')
                     ],
+
+                    [
+                        'name' => 'Emision Predial',
+                        'route' => 'emision_rural.index',
+                        'permission' => 'Emision Predial',
+                        'active' => request()->routeIs('emision_rural.index')
+                    ],
                 ],
-                'active' => request()->routeIs('index.catastro') || request()->routeIs('create.catastro') || request()->routeIs('create.patente') || request()->routeIs('create.patente') || request()->routeIs('index.patente') || request()->routeIs('vistaReporteTransito.transito') || request()->routeIs('index.transito') || request()->routeIs('create.transito') | request()->routeIs('vistaReportePatente.patente') 
+                'active' => request()->routeIs('index.catastro') || request()->routeIs('create.catastro') || request()->routeIs('create.patente') || request()->routeIs('create.patente') || request()->routeIs('index.patente') || request()->routeIs('vistaReporteTransito.transito') || request()->routeIs('index.transito') || request()->routeIs('create.transito') || request()->routeIs('vistaReportePatente.patente') || request()->routeIs('emision_rural.index') 
             ],
             [
                 'name' => 'CONFIGURACION',
