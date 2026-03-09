@@ -547,9 +547,7 @@ function buscarTitulos(cedula, nombres, correos){
                 codigo=item.id
             }
             $('#tbodyRuralDetalle').append(`<tr>
-                   <td style="width:5%; text-align:center; vertical-align:middle">
-                        <input type="checkbox" name="checkLiquidacion[]" id="predio_valor" value="${codigo}" >                
-                    </td>
+                   
                     <td style="width:10%; text-align:center; vertical-align:middle">
                         ${num_matricula}                      
                     </td>

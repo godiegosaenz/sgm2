@@ -600,9 +600,16 @@
                         'active' => request()->routeIs('coactiva.lista_coactiva')
                     ],
 
+                    [
+                        'name' => 'Busqueda Procesos',
+                        'route' => 'coactiva.filtra_coactiva',
+                        'permission' => 'Busqueda Procesos',
+                        'active' => request()->routeIs('coactiva.filtra_coactiva')
+                    ],
+
 
                 ],
-                'active' => request()->routeIs('coactiva.notificar') ||  request()->routeIs('coactiva.lista_notificar') ||  request()->routeIs('coactiva.lista_coactiva')
+                'active' => request()->routeIs('coactiva.notificar') ||  request()->routeIs('coactiva.lista_notificar') ||  request()->routeIs('coactiva.lista_coactiva') ||  request()->routeIs('coactiva.filtra_coactiva')
             ],
 
             [

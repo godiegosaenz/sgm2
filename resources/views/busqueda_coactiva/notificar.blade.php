@@ -281,7 +281,9 @@
                                             style="width:100%">
                                             <thead>
                                                 <tr>
-                                                   
+                                                    <th><center>
+                                                        <input type="checkbox" id="selectAll">
+                                                    </center></th>
                                                     <th>Matricula</th>
                                                     <th>Num Titulo</th>
                                                     <th>Codigo</th>

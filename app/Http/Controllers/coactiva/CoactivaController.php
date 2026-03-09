@@ -729,4 +729,51 @@ public function guardarMedidas(Request $request)
         }
     }
 
+    public function vistaFiltra()
+    {
+        if(!Auth()->user()->hasPermissionTo('Busqueda Procesos'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
+        return view('busqueda_coactiva.filtra_coactiva');
+    }
+
+    public function tablaCoactivaFiltra(Request $request){
+        try{
+            $data=$request->data;
+            $datos=InfoCoa::with('data','notificacion')
+            ->whereHas('notificacion', function($query) use($data) { // Filtramos por la relación 'notificacion'
+                $query->whereHas('ente', function($query) use($data) { // Filtro en la relación 'ente' dentro de 'notificacion'
+                    $query->where('ci_ruc', '=',$data )
+                    ->orwhere(DB::raw("CONCAT(nombres, ' ', apellidos)"), 'ilike', '%'.$data.'%')
+                    ->orwhere(DB::raw("CONCAT(apellidos, ' ', nombres )"), 'ilike', '%'.$data.'%');
+                })
+                ->orwhere('num_ident','=',$data)
+                ->orwhere('contribuyente', 'ilike', '%'.$data.'%');
+            })
+            ->select('*')
+            ->selectRaw("CURRENT_DATE - DATE(fecha_registra) AS dias_transcurridos")
+            ->limit(10)
+            ->get();
+         
+
+            foreach($datos as $key=> $data){
+               
+                $usuarioRegistra=DB::connection('mysql')->table('users as u')
+                ->leftJoin('personas as p', 'p.id', '=', 'u.idpersona')
+                ->where('u.id',$data->id_usuario_registra)
+                ->select('p.nombres','p.apellidos','p.cedula')
+                ->first();
+                $datos[$key]->profesional=$usuarioRegistra->nombres." ".$usuarioRegistra->apellidos;
+
+            }
+         
+            return ["resultado"=>$datos, "error"=>false];
+
+        } catch (\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+        }
+    }
+
+
 }

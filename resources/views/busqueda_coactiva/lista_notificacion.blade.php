@@ -202,44 +202,6 @@
         </div>
     </div>
 
-    
-    <div class="modal fade" id="modalAnula" tabindex="-1" aria-labelledby="ContribuyenteModalLabel" aria-hidden="true"
-     data-bs-backdrop="static" data-bs-keyboard="false">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <h2>Anular Notificacion</h2>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-
-                <form class="" action="" id="formAnulaNot" name="formAnulaNot" method="post" enctype="multipart/form-data">
-                    @csrf
-               
-                    <div class="modal-body">
-                        <div class="row">
-
-                            <div class="mb-3">
-                                <label for="cmb_ruc_rep" class="form-label">Motivo</label>
-                                <textarea class="form-control txt_coact" name="motivo_anula" id="motivo_anula" ></textarea>
-                                <input type="hidden" id="idnot_elimina" name="idnot_elimina">
-                            </div>
-
-                        </div>
-                    </div>
-                    <div class="modal-footer"> 
-                        <center>
-                                <button class="btn btn-success" type="button" onclick="anularNot()">Guardar</button>                           
-                            
-                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" >Salir</button>                                 
-                        </center>               
-                    </div>
-                </form>
-
-            </div>
-        </div>
-    </div>
-
     <div class="modal fade" id="modalDetalleNot" tabindex="-1"
      aria-labelledby="ContribuyenteModalLabel"
      aria-hidden="true"
@@ -817,9 +779,9 @@
         </div>
     </div>
 
-   
-
     @include('coactiva.modal_subido_coa')
+
+   
 
 
     

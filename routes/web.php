@@ -524,6 +524,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('llenar-tabla-convenio-not/{id}', [NotificacionesController::class, 'tablaConvenioNot']);
     Route::post('guardar-cuota-conv-not', [NotificacionesController::class, 'guardarConvenioNot']);
     Route::post('guardar-pago-conv-not', [NotificacionesController::class, 'guardarPagoNot']);
+    Route::post('anula-notificacion', [NotificacionesController::class, 'anularNotificacion']);
     Route::get('llenar-tabla-pago-not/{id}', [NotificacionesController::class, 'tablaPagosNot']);
     Route::get('pdf-medida-coactiva/{id}', [NotificacionesController::class, 'pdfMedidas']);
 
@@ -540,6 +541,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('guardar-pago-conv', [CoactivaController::class, 'guardarPago']);
     Route::get('llenar-tabla-pago/{id}', [CoactivaController::class, 'tablaPagos']);
     Route::get('inactivar-pago/{id}', [CoactivaController::class, 'inactivarPagos']);
+
+    Route::get('contribuyentes-procesos-coactiva', [CoactivaController::class, 'vistaFiltra'])->name('coactiva.filtra_coactiva');
+    Route::post('pago-coactivas-filtra', [CoactivaController::class, 'tablaCoactivaFiltra']);
 
 
    //********** EMISION DE TITULO DADO DE BAJA RURAL ***********************/

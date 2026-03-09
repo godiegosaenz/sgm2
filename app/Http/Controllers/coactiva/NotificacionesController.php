@@ -1776,7 +1776,7 @@ class NotificacionesController extends Controller
         }
     }
 
-      public function guardarPagoNot(Request $request){
+    public function guardarPagoNot(Request $request){
         try{
             $verifica=Pago::where('id_info_notifica',$request->idnot_pago)
             ->where('estado','Activo')
@@ -1812,7 +1812,49 @@ class NotificacionesController extends Controller
         }
     }
 
-     public function tablaPagosNot($id){
+    public function anularNotificacion(Request $request){
+        try{
+            
+            $verifica=Convenio::where('id_info_notifica',$request->idnot_elimina)
+            ->where('estado','Activo')
+            ->first();
+            if(!is_null($verifica)){
+                return ["mensaje"=>"Ya existe un convenio activo, por lo que no se puede anular la notificacion", "error"=>true];
+            }
+            $verifica=Pago::where('id_info_notifica',$request->idnot_elimina)
+            ->where('estado','Activo')
+            ->first();
+            if(!is_null($verifica)){
+                return ["mensaje"=>"Ya existe un pago activo, por lo que no se puede anular la notificacion", "error"=>true];
+            }
+
+            $esta_coact=InfoCoa::where('id_info_notifica',$request->idnot_elimina)
+            ->first();
+            if(!is_null($esta_coact)){
+                return ["mensaje"=>"Ya existe un proceso de coactiva inicializado, por lo que no se puede anular la notificacion", "error"=>true];
+            }
+
+            $anula=InfoNotifica::where('id',$request->idnot_elimina)->first();
+            if($anula->estado=="Coactivado"){
+                return ["mensaje"=>"Ya existe un proceso de coactiva inicializado, por lo que no se puede anular la notificacion", "error"=>true];
+            }else if($anula->estado=="Anulado"){
+                return ["mensaje"=>"La notificacion ya se encuentra anulada ", "error"=>true];
+            }else{
+                $anula->estado="Anulado";
+                $anula->usuario_elimina=auth()->user()->persona->apellidos." ".auth()->user()->persona->nombres;
+                $anula->fecha_elimina=date('Y-m-d H:i:s');
+                $anula->save();
+
+                return ["mensaje"=>"Informacion anulada exitosamente", "error"=>false];
+            }
+            
+            
+        } catch (\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+        }
+    }
+
+    public function tablaPagosNot($id){
         try{
            
             $datos=Pago::where('id_info_notifica',$id)
