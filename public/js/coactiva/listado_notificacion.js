@@ -248,7 +248,7 @@ function detalleProcesoIniciaCoa(){
 
 globalThis.EstadoCoactivadoGlobal=0
 function detalleNot(id){
-   
+    $('.txt_conv').val('')
     $('#id_notifica').val('')
     $('.label_not').html('')
     $("#tableDetNot tbody").html('');
@@ -352,6 +352,7 @@ function detalleNot(id){
             $('#num_ident_contr').html(ced_ruc)
             $('#nombre_contr').html(cont)
             $('.valor_notificado').html(data.resultado.total_notificado)
+            $('#valor_adeudado').val(data.resultado.total_notificado)
             $('#dias_notificado').html(data.resultado.dias_transcurridos)
 
             $('#doc_generado').html(`<i class="fa fa-file-pdf" style="color:skyblue" onclick="verpdf('${data.resultado.documento}')"><i>`)
@@ -637,20 +638,23 @@ function llenar_tabla_cuota(id){
                                                 <td style="width:5%; text-align:center; vertical-align:middle">
                                                    <button type="button" ${disabled} class="btn btn-danger btn-sm" onclick="inactivarConvenio('${item.id}')">
                                                         <i class="fa fa-trash"></i>
-                                                    </button>                                               
+                                                    </button>       
+                                                    
+                                                     <button type="button" ${disabled} class="btn btn-success btn-sm"  onclick="detalleConvenio('${item.id}')">
+                                                        <i class="fa fa-eye"></i>
+                                                    </button> 
+
                                                 </td>
 
-                                                <td style="width:15%; text-align:center; vertical-align:middle">
+                                               <td style="width:15%; text-align:center; vertical-align:middle">
                                                     ${item.fecha_registra}
                                                 </td>
 
-                                                <td style="width:15%; text-align:center; vertical-align:middle">
-                                                    ${item.valor_adeudado}
-                                                </td>
-                                                <td style="width:15%; text-align:center; vertical-align:middle">
+                                               
+                                                <td style="width:10%; text-align:center; vertical-align:middle">
                                                     ${item.cuota_inicial}                                                            
                                                 </td>
-                                                <td style="width:15%; text-align:center; vertical-align:middle">
+                                                <td style="width:5%; text-align:center; vertical-align:middle">
                                                     ${item.numero_cuotas}                                                  
                                                 </td>
                                                 <td style="width:15%; text-align:center; vertical-align:middle">
@@ -662,6 +666,18 @@ function llenar_tabla_cuota(id){
 
                                                 <td style="width:15%; text-align:center; vertical-align:middle">
                                                     ${item.estado}                                                  
+                                                </td>
+
+                                                 <td style="width:15%; text-align:center; vertical-align:middle">
+                                                    ${item.estado_pago}                                                  
+                                                </td>
+
+                                                <td style="width:15%; text-align:center; vertical-align:middle">
+                                                    ${item.valor_adeudado}
+                                                </td>
+
+                                                 <td style="width:15%; text-align:center; vertical-align:middle">
+                                                    ${item.valor_cancelado}
                                                 </td>
                                                 
 											
@@ -678,6 +694,54 @@ function llenar_tabla_cuota(id){
         $("#tableConvenio tbody").html('');
 		$("#tableConvenio tbody").html(`<tr><td colspan="${num_col}" style="text-align:center">Se produjo un error, por favor intentelo más tarde</td></tr>`);
     });
+}
+
+function detalleConvenio(id){
+    $('#tableDetConvenio tbody').html('')
+    vistacargando("m","Espere por favor")
+    $.get('detalle-convenio/'+id, function(data){
+        console.log(data)
+    
+        vistacargando("")
+        if(data.error==true){			
+            alertNotificar(data.mensaje,"error");
+            return;   
+        }
+
+        $.each(data.resultado,function(i, item){
+
+            
+			$('#tableDetConvenio').append(`<tr>
+                                                
+                                                <td style="width:10%; text-align:center; vertical-align:middle">
+                                                    ${i+1}
+                                                </td>
+
+                                                <td style="width:25%; text-align:center; vertical-align:middle">
+                                                    ${item.fecha}
+                                                </td>
+
+                                               
+                                                <td style="width:20%; text-align:center; vertical-align:middle">
+                                                    
+                                                    ${item.saldo_abono === null ? '0.00' : item.saldo_abono}                                                          
+                                                </td>
+                                                <td style="width:20%; text-align:center; vertical-align:middle">
+                                                    ${item.valor_cuota}                                                  
+                                                </td>
+                                                <td style="width:25%; text-align:center; vertical-align:middle">
+                                                    ${item.estado}                                                     
+                                                </td>
+                                             
+										</tr>`);
+		})
+
+        $('#modalDetalleConvenio').modal('show')
+    }).fail(function(){
+        vistacargando("")
+    
+    });
+    
 }
 
 $("#FormConvenio").submit(function(e){
@@ -1044,3 +1108,61 @@ $("#formAnulaNot").submit(function(e){
     });
         
 })
+
+function calcularCuotaInicial(input){
+    let valor = $(input).val();
+    
+    let cuota_inicial=valor * 0.20
+    cuota_inicial=cuota_inicial.toFixed(2)
+    $('#cuota_inicial').val(cuota_inicial)
+
+    // $('.cal_mensual').val('')
+    calculaValorMensual()
+
+}
+
+function calculaValorMensual(){
+    // let cant_cuota= Number($(input).val());
+    let cant_cuota= Number($('#num_cuotas').val());
+    if(cant_cuota==""){return}
+    let valor_adeudado = parseFloat($('#valor_adeudado').val()) || 0;
+    valor_adeudado = Math.round(valor_adeudado * 100) / 100;
+    let cuota_inicial=parseFloat($('#cuota_inicial').val()) || 0;
+    cuota_inicial=Math.round(cuota_inicial * 100) / 100;
+
+    
+    let restante=Number(valor_adeudado) - Number(cuota_inicial)
+    console.log(restante)
+
+    let valor_mensual=restante / cant_cuota;
+    valor_mensual=valor_mensual.toFixed(2)
+
+    $('#valor_cuotas').val(valor_mensual)
+
+    let fechaInicio = $('#f_ini').val();
+
+    if(!fechaInicio || !cant_cuota) return;
+
+    let partes = fechaInicio.split('-');
+    console.log(partes)
+
+    let fecha = new Date(partes[0], partes[1]-1, partes[2]);
+    console.log(fecha.getMonth())
+    console.log(fecha.getMonth() + cant_cuota)
+    // año, mes-1, día
+
+    fecha.setMonth(fecha.getMonth() + cant_cuota);
+
+    let dia = String(fecha.getDate()).padStart(2,'0');
+    let mes = String(fecha.getMonth()+1).padStart(2,'0');
+    let anio = fecha.getFullYear();
+
+    console.log('anio' +anio)
+    console.log('mes' +mes)
+    console.log('dia' +dia)
+
+    let fechaFinal = `${anio}-${mes}-${dia}`;
+
+    $('#f_fin').val(fechaFinal);
+
+}

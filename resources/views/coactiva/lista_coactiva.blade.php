@@ -566,7 +566,7 @@
                                                 Valor Adeudado<span class="text-danger"> *</span> 
                                             </label>
                                             <div class="col-md-7">
-                                                <input type="number" class="form-control txt_conv" step="0.01" min="0" name="valor_adeudado" id="valor_adeudado">
+                                                <input type="number" class="form-control txt_conv" step="0.01" min="0" name="valor_adeudado" id="valor_adeudado" oninput="calcularCuotaInicial(this)"onblur="calcularCuotaInicial(this)">
                                                 <input type="hidden" name="lugar_not" id="lugar_not" value="Urbano">
                                                  <input type="hidden" id="idcoa_conv" name="idcoa_conv">
                                             </div>
@@ -589,7 +589,18 @@
                                                 Numero de cuotas<span class="text-danger"> *</span> 
                                             </label>
                                             <div class="col-md-7">
-                                                <input type="number" class="form-control txt_conv"name="num_cuotas" id="num_cuotas">
+                                                <input type="number" class="form-control txt_conv"name="num_cuotas" id="num_cuotas" oninput="calculaValorMensual()">
+                                                
+                                            </div>
+                                           
+                                        </div>
+
+                                        <div class="row mb-3 align-items-center">
+                                            <label class="col-md-3 col-form-label " style="text-align: right;">
+                                                Valor por Cuota<span class="text-danger"> *</span> 
+                                            </label>
+                                            <div class="col-md-7">
+                                                <input type="number" class="form-control txt_conv cal_mensual"name="valor_cuotas" id="valor_cuotas" readonly>
                                                 
                                             </div>
                                            
@@ -600,7 +611,7 @@
                                                 Fecha Inicio<span class="text-danger"> *</span> 
                                             </label>
                                             <div class="col-md-7">
-                                                <input type="date" class="form-control txt_conv"name="f_ini" id="f_ini">
+                                                <input type="date" class="form-control txt_conv_ cal_mensual"name="f_ini" id="f_ini" readonly>
                                                 
                                             </div>
                                            
@@ -611,7 +622,7 @@
                                                 Fecha Fin<span class="text-danger"> *</span> 
                                             </label>
                                             <div class="col-md-7">
-                                                <input type="date" class="form-control txt_conv"name="f_fin" id="f_fin">
+                                                <input type="date" class="form-control txt_conv cal_mensual"name="f_fin" id="f_fin" readonly>
                                                 
                                             </div>
                                            
@@ -638,13 +649,16 @@
                                             <thead>
                                                 <tr>     
                                                     <th></th>     
-                                                    <th>Fecha Registro</th>                                         
-                                                    <th>Valor Adeudado</th>
+                                                    <th>Fecha Registro</th>                                       
+                                          
                                                     <th>Cuota Inicial</th>
                                                     <th># Cuotas</th>
                                                     <th>Fecha Inicio</th>
                                                     <th>Fecha Fin</th>
                                                     <th>Estado</th>
+                                                    <th>Estado Pago</th>
+                                                    <th>Valor Adeudado</th>
+                                                    <th>Valor Cancelado</th>
                                                     
                                                     
                                                 </tr>
@@ -703,7 +717,7 @@
 
                                 </form>
 
-                                 <div class="col-md-12 mt-3">
+                                <div class="col-md-12 mt-3">
 
                                         <table class="table table-bordered table-hover"
                                             id="tableMedidas"
@@ -722,7 +736,7 @@
                                             </thead>
                                             <tbody id="tbodyMedidasDetalle"></tbody>
                                         </table>
-                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -805,6 +819,49 @@
             </div>
         </div>
     </div>
+
+     <div class="modal fade" id="modalDetalleConvenio" tabindex="-1" aria-labelledby="ContribuyenteModalLabel" aria-hidden="true"
+     data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Detalle Convenio</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                @csrf
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12 mt-3">
+
+                                <table class="table table-bordered table-hover"
+                                    id="tableDetConvenio"
+                                    style="width:100%">
+                                    <thead>
+                                        <tr> 
+                                            <th style="text-align:center"># Cuota</th>    
+                                            <th style="text-align:center">Fecha</th>     
+                                            <th style="text-align:center">Valor Abono</th>                                    
+                                            <th style="text-align:center">Valor Deuda</th>
+                                            <th style="text-align:center">Estado</th>                                            
+                                            
+                                            
+                                            
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbodyDetConvenio"></tbody>
+                                </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"> 
+                    <center>
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" >Salir</button>                                 
+                    </center>               
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 
     <div class="modal fade" id="documentopdf" tabindex="-1" aria-labelledby="ContribuyenteModalLabel" aria-hidden="true"
@@ -1079,6 +1136,11 @@
 <script src="{{ asset('js/coactiva/listado_coactiva.js?v='.rand())}}"></script>
 <script>
     // llenar_tabla_notificacion()
+    $(document).ready(function(){
+        let hoy = new Date().toISOString().split('T')[0];
+        // alert(hoy)
+        $('#f_ini').val(hoy);
+    })
 </script>
 @endpush
     

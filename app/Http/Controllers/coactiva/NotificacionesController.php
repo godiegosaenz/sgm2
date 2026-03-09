@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Coactiva;
 
 use App\Http\Controllers\Controller;
 use App\Models\Coactiva\Convenio;
+use App\Models\Coactiva\CuotaConvenio;
 use App\Models\Coactiva\DataCoa;
 use App\Models\Coactiva\DataNotifica;
 use App\Models\Coactiva\InfoCoa;
@@ -1767,7 +1768,20 @@ class NotificacionesController extends Controller
             $guarda->usuario_registra=auth()->user()->persona->apellidos." ".auth()->user()->persona->nombres;
             $guarda->fecha_registra=date('Y-m-d H:i:s');
             $guarda->estado='Activo';
+            $guarda->estado_pago='Debe';
+            $guarda->valor_cancelado=0;
             $guarda->save();
+
+            $fecha_ini = Carbon::parse($request->fecha_ini);
+            for($i=0; $i<$request->num_cuotas; $i++){
+                $fechaCuota = $fecha_ini->copy()->addMonthsNoOverflow($i);
+                $cuotas=new CuotaConvenio();
+                $cuotas->fecha=$fechaCuota;
+                $cuotas->valor_cuota=(float) $request->valor_cuotas;
+                $cuotas->estado='Pendiente';
+                $cuotas->id_convenio=$guarda->id;
+                $cuotas->save();
+            }
 
             return ["mensaje"=>"Informacion registrada exitosamente", "error"=>false];
             
@@ -1843,6 +1857,7 @@ class NotificacionesController extends Controller
                 $anula->estado="Anulado";
                 $anula->usuario_elimina=auth()->user()->persona->apellidos." ".auth()->user()->persona->nombres;
                 $anula->fecha_elimina=date('Y-m-d H:i:s');
+                $anula->motivo_anula=$request->motivo_anula;
                 $anula->save();
 
                 return ["mensaje"=>"Informacion anulada exitosamente", "error"=>false];
