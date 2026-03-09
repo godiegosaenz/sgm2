@@ -1774,7 +1774,16 @@ class NotificacionesController extends Controller
 
             $fecha_ini = Carbon::parse($request->fecha_ini);
             for($i=0; $i<$request->num_cuotas; $i++){
-                $fechaCuota = $fecha_ini->copy()->addMonthsNoOverflow($i);
+                if($i==0){
+                    $cuotas=new CuotaConvenio();
+                    $cuotas->fecha=$guarda->f_inicio;
+                    $cuotas->valor_cuota=(float) $guarda->cuota_inicial ;
+                    $cuotas->estado='Pendiente';
+                    $cuotas->id_convenio=$guarda->id;
+                    $cuotas->cuota_inicial=true;
+                    $cuotas->save();
+                }
+                $fechaCuota = $fecha_ini->copy()->addMonthsNoOverflow($i+1);
                 $cuotas=new CuotaConvenio();
                 $cuotas->fecha=$fechaCuota;
                 $cuotas->valor_cuota=(float) $request->valor_cuotas;

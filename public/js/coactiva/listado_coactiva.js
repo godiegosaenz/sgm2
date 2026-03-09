@@ -791,7 +791,8 @@ function detalleConvenio(id){
 			$('#tableDetConvenio').append(`<tr>
                                                 
                                                 <td style="width:10%; text-align:center; vertical-align:middle">
-                                                    ${i+1}
+                                                    
+                                                    ${item.cuota_inicial === true ? 'Inicial': i} 
                                                 </td>
 
                                                 <td style="width:25%; text-align:center; vertical-align:middle">
@@ -813,7 +814,7 @@ function detalleConvenio(id){
 										</tr>`);
 		})
 
-         $('#modalDetalleConvenio').modal('show')
+        $('#modalDetalleConvenio').modal('show')
     }).fail(function(){
         vistacargando("")
     

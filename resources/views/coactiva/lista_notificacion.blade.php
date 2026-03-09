@@ -527,7 +527,7 @@
                                                 Valor Adeudado<span class="text-danger"> *</span> 
                                             </label>
                                             <div class="col-md-7">
-                                                <input type="number" class="form-control txt_conv" step="0.01" min="0" name="valor_adeudado" id="valor_adeudado" oninput="calcularCuotaInicial(this)"onblur="calcularCuotaInicial(this)">
+                                                <input type="number" class="form-control txt_conv2" step="0.01" min="0" name="valor_adeudado" id="valor_adeudado" oninput="calcularCuotaInicial(this)"onblur="calcularCuotaInicial(this)">
                                                 <input type="hidden" name="lugar_not" id="lugar_not" value="Urbano">
                                                  <input type="hidden" id="idnot_conv" name="idnot_conv">
                                             </div>
