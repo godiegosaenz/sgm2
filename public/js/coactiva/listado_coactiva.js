@@ -331,6 +331,8 @@ function detalleNot(id){
             $('#doc_subido').html(`<i class="fa fa-file-pdf" style="color:skyblue" onclick="verpdf_subido('${data.resultado.documento_subido}','0')"><i>`)
 
             $('#predio_localizacion').html(data.resultado.predio) 
+            $('#lugar_not').val(data.resultado.predio) 
+            $('#idnotifica').val(id)
             let prediosUnicos = [...new Set(clave_matr)];
             let clave_matricula = prediosUnicos.join(', ');
 

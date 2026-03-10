@@ -243,6 +243,8 @@
         </div>
     </div>
 
+  
+
     <div class="modal fade" id="modalDetalleNot" tabindex="-1"
      aria-labelledby="ContribuyenteModalLabel"
      aria-hidden="true"
@@ -561,14 +563,16 @@
                                             <thead>
                                                 <tr>     
                                                     <th></th>     
-                                                    <th>Fecha Registro</th>                                         
-                                                    <th>Valor Adeudado</th>
+                                                    <th>Fecha Registro</th>                                       
+                                          
                                                     <th>Cuota Inicial</th>
                                                     <th># Cuotas</th>
                                                     <th>Fecha Inicio</th>
                                                     <th>Fecha Fin</th>
                                                     <th>Estado</th>
-                                                    
+                                                    <th>Estado Pago</th>
+                                                    <th>Valor Adeudado</th>
+                                                    <th>Valor Cancelado</th>
                                                     
                                                 </tr>
                                             </thead>
@@ -637,6 +641,48 @@
                    
                 </div>
 
+            </div>
+        </div>
+    </div>
+
+      <div class="modal fade" id="modalDetalleConvenio" tabindex="-1" aria-labelledby="ContribuyenteModalLabel" aria-hidden="true"
+     data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Detalle Convenio</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                @csrf
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12 mt-3">
+
+                                <table class="table table-bordered table-hover"
+                                    id="tableDetConvenio"
+                                    style="width:100%">
+                                    <thead>
+                                        <tr> 
+                                            <th style="text-align:center"># Cuota</th>    
+                                            <th style="text-align:center">Fecha</th>     
+                                            <th style="text-align:center">Valor Abono</th>                                    
+                                            <th style="text-align:center">Valor Deuda</th>
+                                            <th style="text-align:center">Estado</th>                                            
+                                            
+                                            
+                                            
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbodyDetConvenio"></tbody>
+                                </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"> 
+                    <center>
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" >Salir</button>                                 
+                    </center>               
+                </div>
             </div>
         </div>
     </div>

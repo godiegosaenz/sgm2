@@ -719,28 +719,33 @@ function llenar_tabla_cuota(id){
 			$.each(data.resultado,function(i, item){
 
                 let disabled="disabled"
-                // if(item.estado=='Inactivo'){
-                //     disabled='disabled'
-                // }
+                let disabled2=""
+                if(item.estado=='Inactivo'){
+                    disabled='disabled'
+                    disabled2='disabled'
+                }
              
 				$('#tableConvenio').append(`<tr>
                                                 <td style="width:5%; text-align:center; vertical-align:middle">
                                                    <button type="button" ${disabled} class="btn btn-danger btn-sm" onclick="inactivarConvenio('${item.id}')">
                                                         <i class="fa fa-trash"></i>
-                                                    </button>                                               
+                                                    </button>       
+                                                    
+                                                     <button type="button" ${disabled2} class="btn btn-success btn-sm"  onclick="detalleConvenio('${item.id}')">
+                                                        <i class="fa fa-eye"></i>
+                                                    </button> 
+
                                                 </td>
 
-                                                <td style="width:15%; text-align:center; vertical-align:middle">
+                                               <td style="width:15%; text-align:center; vertical-align:middle">
                                                     ${item.fecha_registra}
                                                 </td>
 
-                                                <td style="width:15%; text-align:center; vertical-align:middle">
-                                                    ${item.valor_adeudado}
-                                                </td>
-                                                <td style="width:15%; text-align:center; vertical-align:middle">
+                                               
+                                                <td style="width:10%; text-align:center; vertical-align:middle">
                                                     ${item.cuota_inicial}                                                            
                                                 </td>
-                                                <td style="width:15%; text-align:center; vertical-align:middle">
+                                                <td style="width:5%; text-align:center; vertical-align:middle">
                                                     ${item.numero_cuotas}                                                  
                                                 </td>
                                                 <td style="width:15%; text-align:center; vertical-align:middle">
@@ -752,6 +757,18 @@ function llenar_tabla_cuota(id){
 
                                                 <td style="width:15%; text-align:center; vertical-align:middle">
                                                     ${item.estado}                                                  
+                                                </td>
+
+                                                 <td style="width:15%; text-align:center; vertical-align:middle">
+                                                    ${item.estado_pago}                                                  
+                                                </td>
+
+                                                <td style="width:15%; text-align:center; vertical-align:middle">
+                                                    ${item.valor_adeudado}
+                                                </td>
+
+                                                 <td style="width:15%; text-align:center; vertical-align:middle">
+                                                    ${item.valor_cancelado}
                                                 </td>
                                                 
 											
@@ -768,6 +785,55 @@ function llenar_tabla_cuota(id){
         $("#tableConvenio tbody").html('');
 		$("#tableConvenio tbody").html(`<tr><td colspan="${num_col}" style="text-align:center">Se produjo un error, por favor intentelo más tarde</td></tr>`);
     });
+}
+
+function detalleConvenio(id){
+    $('#tableDetConvenio tbody').html('')
+    vistacargando("m","Espere por favor")
+    $.get('detalle-convenio/'+id, function(data){
+        console.log(data)
+    
+        vistacargando("")
+        if(data.error==true){			
+            alertNotificar(data.mensaje,"error");
+            return;   
+        }
+
+        $.each(data.resultado,function(i, item){
+
+            
+			$('#tableDetConvenio').append(`<tr>
+                                                
+                                                <td style="width:10%; text-align:center; vertical-align:middle">
+                                                    
+                                                    ${item.cuota_inicial === true ? 'Inicial': i} 
+                                                </td>
+
+                                                <td style="width:25%; text-align:center; vertical-align:middle">
+                                                    ${item.fecha}
+                                                </td>
+
+                                               
+                                                <td style="width:20%; text-align:center; vertical-align:middle">
+                                                    
+                                                    ${item.saldo_abono === null ? '0.00' : item.saldo_abono}                                                          
+                                                </td>
+                                                <td style="width:20%; text-align:center; vertical-align:middle">
+                                                    ${item.valor_cuota}                                                  
+                                                </td>
+                                                <td style="width:25%; text-align:center; vertical-align:middle">
+                                                    ${item.estado}                                                     
+                                                </td>
+                                             
+										</tr>`);
+		})
+
+        $('#modalDetalleConvenio').modal('show')
+    }).fail(function(){
+        vistacargando("")
+    
+    });
+   
 }
 
 function inactivarConvenio(id){

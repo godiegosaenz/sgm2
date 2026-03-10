@@ -87,6 +87,39 @@ class CoactivaController extends Controller
             if($actualizaEstado['error']==true){
                 return ["mensaje"=>$actualizaEstado['mensaje'], "error"=>true];
             }
+
+            if($request->lugar_not=='Urbano'){
+                $dataNoti=DataNotifica::where('id_info_notifica',$request->idnotifica)->pluck('id_liquidacion')
+                ->toArray();
+                $total=$this->coactiva->tituloCreditoUrb($dataNoti);
+                
+                $total_deuda=0;
+                foreach($total['data']['DatosLiquidaciones'] as $data){
+                    $total_deuda=$total_deuda + $data[0]->total_complemento;
+                }
+                
+            }else{
+                $dataNoti=DataNotifica::where('id_info_notifica',$request->idnotifica)->pluck('num_titulo')
+                ->toArray();
+                $total=$this->coactiva->tituloCreditoRural($dataNoti);
+              
+                $total_deuda=0;
+                foreach($total['data']['DatosLiquidaciones'] as $data){
+                    $total = $data[0]->total_pagar ? str_replace(',', '', $data[0]->total_pagar) : 0;
+                    $total_deuda=$total_deuda + $total;
+                }
+            }          
+           
+            $total_deuda = (float) $total_deuda;
+            $valorAdeudado = (float) $request->valor_adeudado;
+          
+            if(round($total_deuda,2) != round($valorAdeudado,2)){
+                return [
+                    "mensaje" => "El valor adeudado actual ha subido a $" . number_format($total_deuda,2),
+                    "error" => true
+                ];
+            }
+             
             
             $guarda=new Convenio();
             $guarda->id_info_coact=$request->idcoa_conv;

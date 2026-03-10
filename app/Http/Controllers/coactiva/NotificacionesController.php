@@ -1743,8 +1743,11 @@ class NotificacionesController extends Controller
         }
     }
 
-     public function guardarConvenioNot(Request $request){
+   
+
+    public function guardarConvenioNot(Request $request){
         try{
+            
             $verifica=Convenio::where('id_info_notifica',$request->idnot_conv)
             ->where('estado','Activo')
             ->first();
@@ -1757,7 +1760,37 @@ class NotificacionesController extends Controller
             if(!is_null($esta_coact)){
                 return ["mensaje"=>"Ya existe un proceso de coactiva inicializado", "error"=>true];
             }
+            
+            if($request->lugar_not=='Urbano'){
+                $dataNoti=DataNotifica::where('id_info_notifica',$request->idnot_conv)->pluck('id_liquidacion')
+                ->toArray();
+                $total=$this->tituloCreditoUrb($dataNoti);
+                $total_deuda=0;
+                foreach($total['data']['DatosLiquidaciones'] as $data){
+                    $total_deuda=$total_deuda + $data[0]->total_complemento;
+                }
+                
+            }else{
+                $dataNoti=DataNotifica::where('id_info_notifica',$request->idnot_conv)->pluck('num_titulo')
+                ->toArray();
+                $total=$this->tituloCreditoRural($dataNoti);
 
+                $total_deuda=0;
+                foreach($total['data']['DatosLiquidaciones'] as $data){
+                    $total = $data[0]->total_pagar ? str_replace(',', '', $data[0]->total_pagar) : 0;
+                    $total_deuda=$total_deuda + $total;
+                }
+            }          
+           
+            $total_deuda = (float) $total_deuda;
+            $valorAdeudado = (float) $request->valor_adeudado;
+            if(round($total_deuda,2) != round($valorAdeudado,2)){
+                return [
+                    "mensaje" => "El valor adeudado actual ha subido a $" . number_format($total_deuda,2),
+                    "error" => true
+                ];
+            }
+            
             $guarda=new Convenio();
             $guarda->id_info_notifica=$request->idnot_conv;
             $guarda->valor_adeudado = (float) $request->valor_adeudado; // Convertir a float
