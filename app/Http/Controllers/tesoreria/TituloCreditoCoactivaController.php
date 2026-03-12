@@ -606,7 +606,7 @@ class TituloCreditoCoactivaController extends Controller
                 ->where('liq.id', $valor)
                 ->where('pp.estado','A')
                 ->get();
-                //dd($liquidacion);
+                // dd($liquidacion);
             
 
                 $fecha_hoy=date('Y-m-d');
