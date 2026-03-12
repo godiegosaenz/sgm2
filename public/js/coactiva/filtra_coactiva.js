@@ -829,6 +829,12 @@ function detalleConvenio(id){
 		})
 
         $('#modalDetalleConvenio').modal('show')
+        $('#convenio_generado').html(data.resultado[0].convenio.usuario_registra)
+        $('#fecha_conv_generado').html(data.resultado[0].convenio.fecha_registra)
+        $('#convenio_contr').html($('.titulo_modal').html())
+        $('#convenio_deuda').html(data.resultado[0].convenio.valor_adeudado)
+
+
     }).fail(function(){
         vistacargando("")
     

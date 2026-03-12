@@ -638,7 +638,14 @@ class LiquidacionesController extends Controller
             'sgm_app.cat_predio.coordy',
             'sgm_app.cat_ente.nombres',
             'sgm_app.cat_ente.apellidos',
-            DB::raw("CONCAT(sgm_app.cat_ente.apellidos, ' ', sgm_app.cat_ente.nombres) AS nombre_contr1"),
+            // DB::raw("CONCAT(sgm_app.cat_ente.apellidos, ' ', sgm_app.cat_ente.nombres) AS nombre_contr1"),
+            DB::raw("
+                CASE 
+                    WHEN sgm_app.cat_ente.tipo_documento = 606 
+                        THEN sgm_app.cat_ente.razon_social
+                    ELSE CONCAT(sgm_app.cat_ente.apellidos, ' ', sgm_app.cat_ente.nombres)
+                END AS nombre_contr1
+            "),
             'sgm_app.cat_ente.ci_ruc',
             'sgm_app.cat_ente.id as idpersona',
             'sgm_app.cat_predio.num_predio',

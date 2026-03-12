@@ -132,6 +132,7 @@ class NotificacionesController extends Controller
             if($lugar==1){
                 
                 $generarPdf=$this->Liquidaciones->pagoVoluntario($cedula, $lugar, 1);
+                
                 if($generarPdf['error']==true){
                     return ["mensaje"=>$generarPdf['mensaje'], "error"=>true];
                 }
@@ -144,8 +145,11 @@ class NotificacionesController extends Controller
                     return ["mensaje"=>'El contribuyente ya tiene registrado una notificacion', "error"=>true];
                 }
 
+                $id_persona=DB::connection('pgsql')->table('sgm_app.cat_ente')
+                ->where('ci_ruc',$cedula)->select('id')->first();
+
                 $guardaDataNotificacion=new InfoNotifica();
-                $guardaDataNotificacion->id_persona=$generarPdf['listado_final'][0]->idpersona;
+                $guardaDataNotificacion->id_persona=$id_persona->id;
                 $guardaDataNotificacion->save();
                 
                 $subtotal_emi=0;
@@ -154,7 +158,7 @@ class NotificacionesController extends Controller
                 $recargo_emi=0;
                 $total_emi=0;
                 foreach($generarPdf['listado_final'] as $data){
-
+                   
                     $subtotal  = $data->subtotal_emi ? str_replace(',', '', $data->subtotal_emi) : 0;
                     $interes   = $data->intereses ? str_replace(',', '', $data->intereses) : 0;
                     $recargo   = $data->recargo ? str_replace(',', '', $data->recargo) : 0;
@@ -352,7 +356,6 @@ class NotificacionesController extends Controller
 
             }
                             
-
             return ["resultado"=>$datos, "error"=>false];
 
         } catch (\Exception $e) {
@@ -919,11 +922,17 @@ class NotificacionesController extends Controller
             if(!is_null($pagoConvenio)){
                 return ["mensaje"=>"La notificacion voluntaria tiene un pago activo", "error"=>true];
             }
-
+           
             $guardaCoa=new InfoCoa();
             $guardaCoa->id_info_notifica=$id;
             $guardaCoa->save();
             if($noti->predio=="Urbano"){
+                $cedula=DB::connection('pgsql')->table('sgm_coactiva.info_notifica as n')
+                ->leftJoin('sgm_app.cat_ente as e', 'e.id', '=', 'n.id_persona')
+                ->select('ci_ruc')
+                ->where('n.id',$id)
+                ->first();
+
                 $consulta=$this->consultarTitulosUrb($id);
                 if($consulta['error']==true){
                     DB::connection('pgsql')->rollBack();
@@ -978,7 +987,7 @@ class NotificacionesController extends Controller
 
                     $nombre_persona=$item->nombre_per;
                     $direcc_cont=$item->direcc_cont;
-                    $ci_ruc=$item->ci_ruc;
+                    $ci_ruc=$cedula->ci_ruc;
                     if(is_null($item->nombre_per)){
                         $nombre_persona=$item->nombre_contr1;
                     }

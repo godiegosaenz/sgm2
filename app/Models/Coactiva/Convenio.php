@@ -14,5 +14,12 @@ class Convenio extends Model
     protected $primaryKey  = 'id';
     public $timestamps = false;
 
-    
+    public function notificacion(){
+        return $this->belongsTo('App\Models\Coactiva\InfoNotifica', 'id_info_notifica', 'id')->with('ente');
+    }
+
+    public function coactiva(){
+        return $this->belongsTo('App\Models\Coactiva\InfoCoa', 'id_info_coact', 'id')->with('notificacion');
+    }
+
 }

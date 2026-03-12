@@ -13,13 +13,7 @@ use App\Models\Coactiva\InfoNotifica;
 use App\Models\Coactiva\Medidas;
 use App\Models\Coactiva\Secuencial;
 use Illuminate\Http\Request;
-use App\Models\PsqlYearDeclaracion;
-use App\Models\PsqlLiquidacion;
-use App\Models\CoactTitulo;
-use App\Models\CoactListadoTitulo;
 use Carbon\Carbon;
-// use Storage;
-// use DB;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Gate;
@@ -202,7 +196,7 @@ class CoactivaController extends Controller
     public function detalleConvenio($id){
         try{
             
-            $detalle=CuotaConvenio::where('id_convenio',$id)
+            $detalle=CuotaConvenio::with('convenio')->where('id_convenio',$id)
             ->get();
             
             return ["resultado"=>$detalle, "error"=>false];

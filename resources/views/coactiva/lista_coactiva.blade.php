@@ -823,7 +823,7 @@
 
      <div class="modal fade" id="modalDetalleConvenio" tabindex="-1" aria-labelledby="ContribuyenteModalLabel" aria-hidden="true"
      data-bs-backdrop="static" data-bs-keyboard="false">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
                     <h2>Detalle Convenio</h2>
@@ -832,25 +832,36 @@
                 @csrf
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col-md-12 mt-3">
-
-                                <table class="table table-bordered table-hover"
-                                    id="tableDetConvenio"
-                                    style="width:100%">
-                                    <thead>
-                                        <tr> 
-                                            <th style="text-align:center"># Cuota</th>    
-                                            <th style="text-align:center">Fecha</th>     
-                                            <th style="text-align:center">Valor Abono</th>                                    
-                                            <th style="text-align:center">Valor Deuda</th>
-                                            <th style="text-align:center">Estado</th>                                            
-                                            
-                                            
-                                            
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tbodyDetConvenio"></tbody>
-                                </table>
+                        <div class="col-md-12 mt-3 row">
+                            <div class="col-md-6">
+                                <b>Generado por:</b> <span id="convenio_generado"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <b>Fecha:</b> <span id="fecha_conv_generado"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <b>Valor Deuda $:</b> <span id="convenio_deuda"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <b>Contribuyente:</b> <span id="convenio_contr"></span>
+                            </div>
+                            <table class="table table-bordered table-hover"
+                                id="tableDetConvenio"
+                                style="width:100%">
+                                <thead>
+                                    <tr> 
+                                        <th style="text-align:center"># Cuota</th>    
+                                        <th style="text-align:center">Fecha</th>     
+                                        <th style="text-align:center">Valor Abono</th>                                    
+                                        <th style="text-align:center">Valor Deuda</th>
+                                        <th style="text-align:center">Estado</th>                                            
+                                        
+                                        
+                                        
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodyDetConvenio"></tbody>
+                            </table>
                         </div>
                     </div>
                 </div>

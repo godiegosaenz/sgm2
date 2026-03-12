@@ -1,129 +1,115 @@
 function llenar_tabla_notificacion(){
-    var periodo=$('#periodo').val()
-    if(periodo==""){return}
+    var contrib=$('#contrib').val()
+    if(contrib==""){return}
 
     $("#tableCoactiva tbody").html('');
     $('#tableCoactiva').DataTable().destroy();
 	$('#tableCoactiva tbody').empty(); 
     var num_col = $("#tableCoactiva thead tr th").length; //obtenemos el numero de columnas de la tabla
     vistacargando("m", "Espere por favor")
-    $.get('pago-coactivas/'+periodo, function(data){
-        console.log(data)
-       
-        vistacargando("")
-        if(data.error==true){
-			$("#tableCoactiva tbody").html('');
-			$("#tableCoactiva tbody").html(`<tr><td colspan="${num_col}" style="text-align:center>No existen registros</td></tr>`);
-			alertNotificar(data.mensaje,"error");
-            // cancelar()
-			return;   
-		}
-		if(data.error==false){
-			if(data.resultado.length==0){
-				$("#tableCoactiva tbody").html('');
-				$("#tableCoactiva tbody").html(`<tr><td colspan="${num_col}" style="text-align:center">No existen registros</td></tr>`);
-				alertNotificar("No se encontró información","error");
+
+    $.ajax({
+        url: 'pago-convenios-filtra' ,
+        type: 'POST',
+        data: { data: contrib },
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function(data) {
+            vistacargando("")
+            if(data.error==true){
+                $("#tableCoactiva tbody").html('');
+                $("#tableCoactiva tbody").html(`<tr><td colspan="${num_col}" style="text-align:center>No existen registros</td></tr>`);
+                alertNotificar(data.mensaje,"error");
                 // cancelar()
-				return;
-			}
-			
-			$("#tableCoactiva tbody").html('');
-         
-			$.each(data.resultado,function(i, item){
-             
-                let icono=`<span class="badge-notificado"> 🔔 Notificado</span>`;
-               
-                if(item.estado_proceso==1){
-                    icono=`<span class="badge-orden"> 💵 ORDEN DE PAGO INMEDIATO </span>`;
-                }else if(item.estado_proceso==2){
-                   icono=`<span class="badge-medidas"> <i class="fa fa-balance-scale" style="font-size: 16px;"></i> EN EJECUCIÓN CON MEDIDAS </span>`;
-                }else if(item.estado_proceso==3){
-                    icono=`<span class="badge-cancelado"> <i class="fa fa-archive" style="font-size: 16px;"></i> CANCELADO \ ARCHIVADO </span>`;
-                }else if(item.estado_proceso==4){
-                    icono=`<span class="badge-acuerdo"> <i class="fa fa-handshake" style="font-size: 16px;"></i> ACUERDO DE PAGO </span>`;
+                return;   
+            }
+            if(data.error==false){
+                if(data.resultado.length==0){
+                    $("#tableCoactiva tbody").html('');
+                    $("#tableCoactiva tbody").html(`<tr><td colspan="${num_col}" style="text-align:center">No existen registros</td></tr>`);
+                    alertNotificar("No se encontró información","error");
+                    // cancelar()
+                    return;
                 }
-                               
+                
+                $("#tableCoactiva tbody").html('');
+            
+                $.each(data.resultado,function(i, item){
+                
+                    let icono=`<span class="badge-notificado"> 🔔 Notificado</span>`;
+                
+                    if(item.estado_pago=="Pagado"){
+                        icono=`<span class="badge-orden"> 💵 PAGADO </span>`;
+                    }else if(item.estado_proceso=="Debe"){
+                    icono=`<span class="badge-medidas"> <i class="fa fa-balance-scale" style="font-size: 16px;"></i> EN EJECUCIÓN CON MEDIDAS </span>`;
+                    }else if(item.estado_proceso=="En pago"){
+                        icono=`<span class="badge-cancelado"> <i class="fa fa-archive" style="font-size: 16px;"></i> CANCELADO \ ARCHIVADO </span>`;
+                    }
+                    
+                    
 
-                // let nombre=""
-                // let num_ident=""
-                // if(item.notificacion.id_persona!=null){
-                //     nombre=item.notificacion.ente.apellidos+" "+item.notificacion.ente.nombres
-                //     num_ident=item.notificacion.ente.ci_ruc
-                // }else{
-                //     nombre=item.notificacion.contribuyente
-                //     num_ident=item.notificacion.num_ident
-                // }
-
-                let nombre=""
-                let num_ident=""
-                if(item.notificacion.id_persona!=null){
-                    if(item.notificacion.ente.tipo_documento==606){
-                        nombre=item.notificacion.ente.razon_social
+                    let nombre=""
+                    let num_ident=""
+                    if(item.notificacion.id_persona!=null){
+                        nombre=item.notificacion.ente.apellidos+" "+item.notificacion.ente.nombres
                         num_ident=item.notificacion.ente.ci_ruc
                     }else{
-                        if(item.notificacion.ente.nombres==null){
-                            nombre=item.notificacion.ente.razon_social
-                            num_ident=item.notificacion.ente.ci_ruc
-                        }else{
-                            nombre=item.notificacion.ente.apellidos+" "+item.notificacion.ente.nombres
-                            num_ident=item.notificacion.ente.ci_ruc
-                        }
-                        
+                        nombre=item.notificacion.contribuyente
+                        num_ident=item.notificacion.num_ident
                     }
-                        
-                }else{
-                    nombre=item.notificacion.contribuyente
-                    num_ident=item.notificacion.num_ident
-                }
+                    $('#tableCoactiva').append(`<tr>
+                                                    <td style="width:3%; text-align:center; vertical-align:middle">
+                                                    <button type="button" class="btn btn-success btn-sm" onclick="detalleNot('${item.notificacion.id}')">
+                                                            <i class="fa fa-eye"></i>
+                                                        </button>                                               
+                                                    </td>
 
-				$('#tableCoactiva').append(`<tr>
-                                                <td style="width:3%; text-align:center; vertical-align:middle">
-                                                   <button type="button" class="btn btn-success btn-sm" onclick="detalleNot('${item.notificacion.id}')">
-                                                        <i class="fa fa-eye"></i>
-                                                    </button>                                               
-                                                </td>
+                                                    <td style="width:38%; text-align:letf; vertical-align:middle">
+                                                        <span><b>C.I.: </b>${num_ident}</span><br>   
+                                                        <span><b>Nombres: </b>${nombre}</span>   
 
-                                                <td style="width:38%; text-align:letf; vertical-align:middle">
-                                                    <span><b>C.I.: </b>${num_ident}</span><br>   
-                                                    <span><b>Nombres: </b>${nombre}</span>   
+                                                    </td>
+                                                    <td style="width:8%; text-align:center; vertical-align:middle">
+                                                        ${item.fecha_registra}                                                            
+                                                    </td>
+                                                    <td style="width:9%; text-align:center; vertical-align:middle">
+                                                        ${item.notificacion.total_notificado}                                                     
+                                                    </td>
+                                                    <td style="width:9%; text-align:center; vertical-align:middle">
+                                                        ${item.valor_pago_inmediato}                                                     
+                                                    </td>
+                                                    <td style="width:7%; text-align:center; vertical-align:middle">
+                                                        ${item.valor_cancelado === null ? '0.00' : item.valor_cancelado}                                                  
+                                                    </td>
 
-                                                </td>
-                                                <td style="width:8%; text-align:center; vertical-align:middle">
-                                                    ${item.fecha_registra}                                                            
-                                                </td>
-                                                <td style="width:9%; text-align:center; vertical-align:middle">
-                                                    ${item.notificacion.total_notificado}                                                     
-                                                </td>
-                                                <td style="width:9%; text-align:center; vertical-align:middle">
-                                                    ${item.valor_pago_inmediato}                                                     
-                                                </td>
-                                                <td style="width:7%; text-align:center; vertical-align:middle">
-                                                    ${item.valor_cancelado === null ? '0.00' : item.valor_cancelado}                                                  
-                                                </td>
+                                                    <td style="width:6%; text-align:center; vertical-align:middle">
+                                                        ${item.estado_pago}                                                  
+                                                    </td>
+                                                    <td style="width:20%; text-align:center; vertical-align:middle">
+                                                        ${icono}                                              
+                                                    </td>
 
-                                                <td style="width:6%; text-align:center; vertical-align:middle">
-                                                    ${item.estado_pago}                                                  
-                                                </td>
-                                                <td style="width:20%; text-align:center; vertical-align:middle">
-                                                    ${icono}                                              
-                                                </td>
-
-                                               
+                                                    
+                                                    <td style="width:20%; text-align:center; vertical-align:middle">
+                                                        ${icono}                                              
+                                                    </td>
                                                 
-											
-										</tr>`);
-			})
-          
-            cargar_estilos_datatable('tableCoactiva')
+                                                    
+                                                
+                                            </tr>`);
+                })
             
-		}
-    
-    }).fail(function(){
-        vistacargando("")
-        alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
-        $("#tableCoactiva tbody").html('');
-		$("#tableCoactiva tbody").html(`<tr><td colspan="${num_col}" style="text-align:center">Se produjo un error, por favor intentelo más tarde</td></tr>`);
+                cargar_estilos_datatable('tableCoactiva')
+                
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+             vistacargando("")
+            console.log("Error: " + textStatus);
+        }
     });
+  
 }
 
 function cargar_estilos_datatable_con(idtabla){
@@ -174,6 +160,7 @@ function detalleProcesoIniciaCoa(){
     var num_col = $("#tableProcesoNot thead tr th").length; //obtenemos el numero de columnas de la tabla
     var id=$('#id_notifica').val()
     vistacargando("m","Espere por favor")
+    
     $.get('pago-notificaciones-detalle-proceso-coac/'+id, function(data){
         console.log(data)
        
@@ -290,20 +277,7 @@ function detalleNot(id){
                     clave_matr.push(item.clave_cat);
                     clave_matricula=item.liquidacion.predio
                     anio=item.liquidacion.anio
-                    // cont=data.resultado.ente.apellidos +" "+data.resultado.ente.nombres
-
-                    
-                    if(data.resultado.ente.tipo_documento==606){
-                        cont=data.resultado.ente.razon_social                       
-                    }else{
-                        if(data.resultado.ente.nombres==null){
-                            cont=data.resultado.ente.razon_social                           
-                        }else{
-                            cont=data.resultado.ente.apellidos+" "+data.resultado.ente.nombres                           
-                        }
-                        
-                    }                            
-                   
+                    cont=data.resultado.ente.apellidos +" "+data.resultado.ente.nombres
                    
                 }else{
                     clave_matr.push(item.clave_cat);
@@ -366,8 +340,6 @@ function detalleNot(id){
             $('#doc_subido').html(`<i class="fa fa-file-pdf" style="color:skyblue" onclick="verpdf_subido('${data.resultado.documento_subido}','0')"><i>`)
 
             $('#predio_localizacion').html(data.resultado.predio) 
-            $('#lugar_not').val(data.resultado.predio) 
-            $('#idnotifica').val(id)
             let prediosUnicos = [...new Set(clave_matr)];
             let clave_matricula = prediosUnicos.join(', ');
 
@@ -448,8 +420,6 @@ function detalleNot(id){
                 llenar_tabla_pagos(data.datosCoa.id)
 
                 $('.valor_coa').html(data.datosCoa.valor_pago_inmediato)
-                $('#valor_adeudado').val(data.datosCoa.valor_pago_inmediato)
-
 
                 $('#valor_pago_inm').val(data.datosCoa.valor_pago_inmediato)
                 $('#medidas_txt').val('MEDIDAS SUPERINTENDENCIA, REGISTRO DE LA PROPIEDAD Y TRANSITO')
@@ -482,6 +452,11 @@ function verpdf(ruta){
 }
 
 function verpdf_subido(ruta,valor){
+   
+    if(ruta=='null'){
+        alertNotificar("No se ha subido ningun documento","warning")
+        return
+    }
     $('#es_coact').val(valor)
     var iframe=$('#iframePdfSubido');
     iframe.attr("src", "coactiva/documento/"+ruta);   
@@ -745,27 +720,31 @@ function llenar_tabla_cuota(id){
          
 			$.each(data.resultado,function(i, item){
 
-                let disabled=""
+                let disabled="disabled"
+                let disabled2=""
                 if(item.estado=='Inactivo'){
                     disabled='disabled'
+                    disabled2='disabled'
                 }
              
 				$('#tableConvenio').append(`<tr>
-                                                <td style="width:8%; text-align:center; vertical-align:middle">
-                                                    <button type="button" ${disabled} class="btn btn-danger btn-sm"  onclick="inactivarConvenio('${item.id}')">
+                                                <td style="width:5%; text-align:center; vertical-align:middle">
+                                                   <button type="button" ${disabled} class="btn btn-danger btn-sm" onclick="inactivarConvenio('${item.id}')">
                                                         <i class="fa fa-trash"></i>
-                                                    </button>
-                                                    <button type="button" ${disabled} class="btn btn-success btn-sm"  onclick="detalleConvenio('${item.id}')">
+                                                    </button>       
+                                                    
+                                                     <button type="button" ${disabled2} class="btn btn-success btn-sm"  onclick="detalleConvenio('${item.id}')">
                                                         <i class="fa fa-eye"></i>
-                                                    </button>                                               
+                                                    </button> 
+
                                                 </td>
 
-                                                <td style="width:15%; text-align:center; vertical-align:middle">
+                                               <td style="width:15%; text-align:center; vertical-align:middle">
                                                     ${item.fecha_registra}
                                                 </td>
 
                                                
-                                                <td style="width:15%; text-align:center; vertical-align:middle">
+                                                <td style="width:10%; text-align:center; vertical-align:middle">
                                                     ${item.cuota_inicial}                                                            
                                                 </td>
                                                 <td style="width:5%; text-align:center; vertical-align:middle">
@@ -857,6 +836,7 @@ function detalleConvenio(id){
         $('#convenio_contr').html($('.titulo_modal').html())
         $('#convenio_deuda').html(data.resultado[0].convenio.valor_adeudado)
 
+
     }).fail(function(){
         vistacargando("")
     
@@ -865,6 +845,8 @@ function detalleConvenio(id){
 }
 
 function inactivarConvenio(id){
+    alertNotificar("Usted no puede realizar dicha accion", "warning")
+    return
     if(confirm('¿Estas seguro que quieres inactivar el convenio?')){
         vistacargando("m","Espere por favor")
         $.get('inactivar-convenio/'+id, function(data){
@@ -998,10 +980,10 @@ function llenar_tabla_medidas(id){
          
 			$.each(data.resultado,function(i, item){
 
-                let disabled=""
-                if(item.estado=='Inactivo'){
-                    disabled='disabled'
-                }
+                let disabled="disabled"
+                // if(item.estado=='Inactivo'){
+                //     disabled='disabled'
+                // }
              
 				$('#tableMedidas').append(`<tr>
                                                 <td style="width:10%; text-align:center; vertical-align:middle">
@@ -1046,6 +1028,8 @@ function llenar_tabla_medidas(id){
 }
 
 function inactivarMedidas(id){
+    alertNotificar("Usted no puede realizar dicha accion", "warning")
+    return
     if(confirm('¿Estas seguro que quieres inactivar la medida?')){
         vistacargando("m","Espere por favor")
         $.get('inactivar-medidas/'+id, function(data){
@@ -1168,10 +1152,10 @@ function llenar_tabla_pagos(id){
          
 			$.each(data.resultado,function(i, item){
 
-                let disabled=""
-                if(item.estado=='Inactivo'){
-                    disabled='disabled'
-                }
+                let disabled="disabled"
+                // if(item.estado=='Inactivo'){
+                //     disabled='disabled'
+                // }
              
 				$('#tableCancelado').append(`<tr>
                                                 <td style="width:10%; text-align:center; vertical-align:middle">
@@ -1209,6 +1193,8 @@ function llenar_tabla_pagos(id){
 }
 
 function inactivarPago(id){
+    alertNotificar("Usted no puede realizar dicha accion", "warning")
+    return
     if(confirm('¿Estas seguro que quieres inactivar la medida?')){
         vistacargando("m","Espere por favor")
         $.get('inactivar-pago/'+id, function(data){
@@ -1233,64 +1219,5 @@ function inactivarPago(id){
         
         });
     }
-
-}
-
-
-function calcularCuotaInicial(input){
-    let valor = $(input).val();
-    
-    let cuota_inicial=valor * 0.20
-    cuota_inicial=cuota_inicial.toFixed(2)
-    $('#cuota_inicial').val(cuota_inicial)
-
-    // $('.cal_mensual').val('')
-    calculaValorMensual()
-
-}
-
-function calculaValorMensual(){
-    // let cant_cuota= Number($(input).val());
-    let cant_cuota= Number($('#num_cuotas').val());
-    if(cant_cuota==""){return}
-    let valor_adeudado = parseFloat($('#valor_adeudado').val()) || 0;
-    valor_adeudado = Math.round(valor_adeudado * 100) / 100;
-    let cuota_inicial=parseFloat($('#cuota_inicial').val()) || 0;
-    cuota_inicial=Math.round(cuota_inicial * 100) / 100;
-
-    
-    let restante=Number(valor_adeudado) - Number(cuota_inicial)
-    console.log(restante)
-
-    let valor_mensual=restante / cant_cuota;
-    valor_mensual=valor_mensual.toFixed(2)
-
-    $('#valor_cuotas').val(valor_mensual)
-
-    let fechaInicio = $('#f_ini').val();
-
-    if(!fechaInicio || !cant_cuota) return;
-
-    let partes = fechaInicio.split('-');
-    console.log(partes)
-
-    let fecha = new Date(partes[0], partes[1]-1, partes[2]);
-    console.log(fecha.getMonth())
-    console.log(fecha.getMonth() + cant_cuota)
-    // año, mes-1, día
-
-    fecha.setMonth(fecha.getMonth() + cant_cuota);
-
-    let dia = String(fecha.getDate()).padStart(2,'0');
-    let mes = String(fecha.getMonth()+1).padStart(2,'0');
-    let anio = fecha.getFullYear();
-
-    console.log('anio' +anio)
-    console.log('mes' +mes)
-    console.log('dia' +dia)
-
-    let fechaFinal = `${anio}-${mes}-${dia}`;
-
-    $('#f_fin').val(fechaFinal);
 
 }

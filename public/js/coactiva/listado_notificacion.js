@@ -54,8 +54,20 @@ function llenar_tabla_notificacion(){
                 let nombre=""
                 let num_ident=""
                 if(item.id_persona!=null){
-                    nombre=item.ente.apellidos+" "+item.ente.nombres
-                    num_ident=item.ente.ci_ruc
+                    if(item.ente.tipo_documento==606){
+                        nombre=item.ente.razon_social
+                        num_ident=item.ente.ci_ruc
+                    }else{
+                        if(item.ente.nombres==null){
+                            nombre=item.ente.razon_social
+                            num_ident=item.ente.ci_ruc
+                        }else{
+                            nombre=item.ente.apellidos+" "+item.ente.nombres
+                            num_ident=item.ente.ci_ruc
+                        }
+                        
+                    }
+                        
                 }else{
                     nombre=item.contribuyente
                     num_ident=item.num_ident
@@ -293,7 +305,24 @@ function detalleNot(id){
                     clave_matr.push(item.clave_cat);
                     clave_matricula=item.liquidacion.predio
                     anio=item.liquidacion.anio
-                    cont=data.resultado.ente.apellidos +" "+data.resultado.ente.nombres
+                    // cont=data.resultado.ente.apellidos +" "+data.resultado.ente.nombres
+
+                    let nombre=""
+                    let num_ident=""
+                    
+                    if(data.resultado.ente.tipo_documento==606){
+                        cont=data.resultado.ente.razon_social
+                        num_ident=data.resultado.ente.ci_ruc
+                    }else{
+                        if(data.resultado.ente.nombres==null){
+                            cont=data.resultado.ente.razon_social
+                            num_ident=data.resultado.ente.ci_ruc
+                        }else{
+                            cont=data.resultado.ente.apellidos+" "+data.resultado.ente.nombres
+                            num_ident=data.resultado.ente.ci_ruc
+                        }
+                        
+                    }     
                    
                 }else{
                     clave_matr.push(item.clave_cat);
@@ -354,6 +383,8 @@ function detalleNot(id){
             $('.valor_notificado').html(data.resultado.total_notificado)
             $('#valor_adeudado').val(data.resultado.total_notificado)
             $('#dias_notificado').html(data.resultado.dias_transcurridos)
+
+            $('.titulo_modal').html(ced_ruc+" - "+cont)
 
             $('#doc_generado').html(`<i class="fa fa-file-pdf" style="color:skyblue" onclick="verpdf('${data.resultado.documento}')"><i>`)
             $('#doc_subido').html(`<i class="fa fa-file-pdf" style="color:skyblue" onclick="verpdf_subido('${data.resultado.documento_subido}','0')"><i>`)
@@ -430,7 +461,7 @@ function detalleNot(id){
 
                 $('.valor_coa').html(data.datosCoa.valor_pago_inmediato)
 
-               
+                
                 
                 
                 // alert(data.datosCoa.valor_pago_inmediato)
@@ -738,6 +769,10 @@ function detalleConvenio(id){
 		})
 
         $('#modalDetalleConvenio').modal('show')
+        $('#convenio_generado').html(data.resultado[0].convenio.usuario_registra)
+        $('#fecha_conv_generado').html(data.resultado[0].convenio.fecha_registra)
+        $('#convenio_contr').html($('.titulo_modal').html())
+        $('#convenio_deuda').html(data.resultado[0].convenio.valor_adeudado)
     }).fail(function(){
         vistacargando("")
     

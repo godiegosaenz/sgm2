@@ -587,6 +587,7 @@ function buscarTitulos(cedula, nombres, correos){
         $('#total_deuda').html(data.total_valor);
         let tamanio=data.resultado.length
         $('#nombre_contr').html(nombres)
+        
         $('#num_ident_contr').html(cedula)
         $('#direccion_contr').html(data.resultado[tamanio-1].direcc_cont)
         $('#clave_contr').html(data.resultado[tamanio-1].clave)

@@ -503,7 +503,7 @@
                             <tbody>
                                 <tr>
                                     <td width="50%">{{$d[0]->nombres}}</td>
-                                    <td width="50%">{{$d[0]->cedula}}</td>
+                                    <td width="50%">{{$ci_ruc}}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -674,7 +674,7 @@
                 
                 </tr>
                 <tr style="font-size: 11px;line-height: 9px;">
-                    <td><b>Ruc/CC:</b> {{$d[0]->CarVe_CI}}</td>
+                    <td><b>Ruc/CC:</b> {{$d[0]->CarVe_CI}} </td>ci_ruc
                 
                     <td></td>
                     <td><b>Sitio Barrio:</b> {{$d[0]->nombre_sitio}}</td>

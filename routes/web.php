@@ -50,6 +50,7 @@ use App\Http\Controllers\Consultorio\PacienteEmpleadoController;
 use App\Http\Controllers\Recaudacion\TasaAseoController;
 use App\Http\Controllers\coactiva\CoactivaController;
 use App\Http\Controllers\EmisionTitulo\EmisionTituloRuralController;
+use App\Http\Controllers\Convenio\ConvenioPagoController;
 // use App\Http\Controllers\Coactiva\CoactivaController;
 
 /*
@@ -545,6 +546,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('contribuyentes-procesos-coactiva', [CoactivaController::class, 'vistaFiltra'])->name('coactiva.filtra_coactiva');
     Route::post('pago-coactivas-filtra', [CoactivaController::class, 'tablaCoactivaFiltra']);
+
+
+    //***************************PAGO CONVENIO********************************************//
+    Route::get('pago-convenio', [ConvenioPagoController::class, 'index'])->name('coactiva.filtra_coactiva');
+    Route::post('pago-convenios-filtra', [ConvenioPagoController::class, 'tablaConvenioFiltra']);
 
 
    //********** EMISION DE TITULO DADO DE BAJA RURAL ***********************/
