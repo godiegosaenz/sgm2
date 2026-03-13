@@ -57,6 +57,10 @@ class CoactivaController extends Controller
                 ->first();
                 $datos[$key]->profesional=$usuarioRegistra->nombres." ".$usuarioRegistra->apellidos;
 
+                $num_proceso=str_pad($data->num_proceso, 3, "0", STR_PAD_LEFT).'-'.date('Y');
+                $datos[$key]->num_proceso=$num_proceso;
+
+
             }
             // DD($datos);              
 

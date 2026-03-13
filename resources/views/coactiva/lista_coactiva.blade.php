@@ -222,7 +222,8 @@
                         <thead>
                             <tr>
                             <th scope="col"></th>
-                            <th scope="col">Contribuyente</th>                            
+                            <th scope="col">Contribuyente</th> 
+                            <th>Num Proceso</th>                           
                             <th>Fecha Coactiva</th>
                             <th scope="col">Debe Pago Voluntario</th>
                             <th scope="col">Debe Pago Inmediato</th>
@@ -234,7 +235,7 @@
                         </thead>
                         <tbody id="tbodyNotificacion">
                             <tr>
-                                <td colspan="8" style="text-align:center">No hay datos disponibles</td>
+                                <td colspan="9" style="text-align:center">No hay datos disponibles</td>
                             </tr>
                            
                         </tbody>

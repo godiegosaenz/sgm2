@@ -83,10 +83,13 @@ function llenar_tabla_notificacion(){
                                                     </button>                                               
                                                 </td>
 
-                                                <td style="width:38%; text-align:letf; vertical-align:middle">
+                                                <td style="width:33%; text-align:letf; vertical-align:middle">
                                                     <span><b>C.I.: </b>${num_ident}</span><br>   
                                                     <span><b>Nombres: </b>${nombre}</span>   
 
+                                                </td>
+                                                 <td style="width:5%; text-align:center; vertical-align:middle">
+                                                    ${item.num_proceso}                                                            
                                                 </td>
                                                 <td style="width:8%; text-align:center; vertical-align:middle">
                                                     ${item.fecha_registra}                                                            
