@@ -18,11 +18,12 @@ class ConvenioPagoController extends Controller
         try{
             $data=$request->data;
             $datos=Convenio::with('notificacion','coactiva')
-             ->whereHas('notificacion', function($query) use($data) { // Filtramos por la relación 'notificacion'
+            ->whereHas('notificacion', function($query) use($data) { // Filtramos por la relación 'notificacion'
                 $query->whereHas('ente', function($query) use($data) { // Filtro en la relación 'ente' dentro de 'notificacion'
                     $query->where('ci_ruc', '=',$data )
                     ->orwhere(DB::raw("CONCAT(nombres, ' ', apellidos)"), 'ilike', '%'.$data.'%')
-                    ->orwhere(DB::raw("CONCAT(apellidos, ' ', nombres )"), 'ilike', '%'.$data.'%');
+                    ->orwhere(DB::raw("CONCAT(apellidos, ' ', nombres )"), 'ilike', '%'.$data.'%')
+                    ->orwhere(DB::raw("razon_social"), 'ilike', '%'.$data.'%');
                 })
                 ->orwhere('num_ident','=',$data)
                 ->orwhere('contribuyente', 'ilike', '%'.$data.'%');

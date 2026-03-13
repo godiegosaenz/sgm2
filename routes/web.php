@@ -549,7 +549,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
     //***************************PAGO CONVENIO********************************************//
-    Route::get('pago-convenio', [ConvenioPagoController::class, 'index'])->name('coactiva.filtra_coactiva');
+    Route::get('pago-convenio', [ConvenioPagoController::class, 'index'])->name('coactiva.filtra_coactiva1');
     Route::post('pago-convenios-filtra', [ConvenioPagoController::class, 'tablaConvenioFiltra']);
 
 
