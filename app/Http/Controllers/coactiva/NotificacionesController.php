@@ -1165,6 +1165,96 @@ class NotificacionesController extends Controller
 
         }
     }
+     public function obtenerTitulosConvenio($id, $lugar, $noti_proc){
+        try{
+            // if($noti_proc=="Voluntario"){
+            //     if($lugar=="Urbano"){
+            //         $obtenerId=Convenio::where('id',$id)->select('id_info_notifica')
+            //         ->where('estado','Activo')
+            //         ->first();
+            //         if(is_null($obtenerId)){
+            //             return ["mensaje"=>"El convenio ya no se encuentra activo ","error"=>true];
+            //         }
+            //         $obtenerLiquidaciones=DataNotifica::where('id_info_notifica',$obtenerId->id_info_notifica)
+            //         ->pluck('id_liquidacion')
+            //         ->toArray();
+            //     }else{
+            //         $obtenerId=Convenio::where('id',$id)->select('id_info_notifica')
+            //         ->where('estado','Activo')
+            //         ->first();
+            //         if(is_null($obtenerId)){
+            //             return ["mensaje"=>"El convenio ya no se encuentra activo ","error"=>true];
+            //         }
+            //         $obtenerLiquidaciones=DataNotifica::where('id_info_notifica',$obtenerId->id_info_notifica)
+            //         ->pluck('num_titulo')
+            //         ->toArray();
+            //     }
+            // }else{
+            //     if($lugar=="Urbano"){
+            //         $obtenerId=Convenio::where('id',$id)->select('id_info_coact')
+            //         ->where('estado','Activo')
+            //         ->first();
+            //         if(is_null($obtenerId)){
+            //             return ["mensaje"=>"El convenio ya no se encuentra activo ","error"=>true];
+            //         }
+            //         $obtenerLiquidaciones=DataCoa::where('id_info_coact',$obtenerId->id_info_coact)
+            //         ->pluck('id_liquidacion')
+            //         ->toArray();
+            //     }else{
+            //         $obtenerId=Convenio::where('id',$id)->select('id_info_coact')
+            //         ->where('estado','Activo')
+            //         ->first();
+            //         if(is_null($obtenerId)){
+            //             return ["mensaje"=>"El convenio ya no se encuentra activo ","error"=>true];
+            //         }
+            //         $obtenerLiquidaciones=DataCoa::where('id_info_coact',$obtenerId->id_info_coact)
+            //         ->pluck('num_titulo')
+            //         ->toArray();
+            //     }
+            // }
+
+
+            // Definir variables dinámicas
+            $esVoluntario = $noti_proc == "Voluntario";
+            $esUrbano = $lugar == "Urbano";
+
+            $campoInfo = $esVoluntario ? 'id_info_notifica' : 'id_info_coact';
+            $modeloData = $esVoluntario ? DataNotifica::class : DataCoa::class;
+            $campoPluck = $esUrbano ? 'id_liquidacion' : 'num_titulo';
+
+            // Obtener convenio
+            $obtenerId = Convenio::where('id', $id)
+                ->where('estado', 'Activo')
+                ->select($campoInfo)
+                ->first();
+
+            if (is_null($obtenerId)) {
+                return ["mensaje" => "El convenio ya no se encuentra activo", "error" => true];
+            }
+
+            // Obtener liquidaciones
+            $obtenerLiquidaciones = $modeloData::where($campoInfo, $obtenerId->$campoInfo)
+                ->pluck($campoPluck)
+                ->toArray();
+
+            $metodo = $lugar == "Urbano" ? 'tituloCreditoUrbAux' : 'tituloCreditoRuralAux';
+
+            $consulta = $this->$metodo($obtenerLiquidaciones);
+
+            if ($consulta['error'] == true) {
+                return [
+                    "mensaje" => $consulta['mensaje'],
+                    "error" => true
+                ];
+            }
+
+            return['resultado'=>$consulta['data']['DatosLiquidaciones'],"error"=>false];
+
+
+        }catch(\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+        }
+    }
 
     public function pdfMedidas($id){
         try{
@@ -1333,7 +1423,7 @@ class NotificacionesController extends Controller
         }
     }
 
-    public function tituloCreditoUrb($idliquidaciones){
+    public function tituloCreditoUrbAux($idliquidaciones){
         try{
             $dataArray = array();
             foreach($idliquidaciones as $clave => $valor){
@@ -1358,6 +1448,7 @@ class NotificacionesController extends Controller
                     'liq.anio',
                     'en.direccion',
                     'en.ci_ruc as cedula',
+                    'liq.estado_liquidacion',
                     DB::raw("
                         CASE
                             WHEN liq.comprador IS NULL THEN liq.nombre_comprador
@@ -1529,6 +1620,238 @@ class NotificacionesController extends Controller
                 )
                 ->where('liq.id', $valor)
                 ->where('pp.estado','A')
+                ->whereIn('liq.estado_liquidacion',[1,2])
+                ->get();
+               
+                $fecha_hoy=date('Y-m-d');
+                setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES@euro', 'es_ES', 'esp');
+                $fecha_timestamp = strtotime($fecha_hoy);    
+                $fecha_formateada = strftime("%d de %B del %Y", $fecha_timestamp);
+        
+
+                $rubros = DB::connection('pgsql')->table('sgm_financiero.ren_det_liquidacion as rdl')
+                                                    ->join('sgm_financiero.ren_rubros_liquidacion as rrl', 'rdl.rubro', '=', 'rrl.id')
+                                                    ->select('rdl.id', 'rdl.liquidacion', 'rdl.rubro', 'rdl.valor', 'rdl.estado', 'rrl.descripcion')
+                                                    ->where('rdl.liquidacion', $valor)
+                                                    ->get();
+                                                
+                $liquidacion['rubros'] = $rubros;
+
+                array_push($dataArray, $liquidacion);
+            }
+
+            $data = [
+                'title' => 'Reporte de liquidacion',
+                'date' => date('m/d/Y'),
+                'DatosLiquidaciones' => $dataArray,
+                'fecha_formateada'=>$fecha_formateada
+            ];
+
+            return ["data"=>$data, "error"=>false];
+        }catch (\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+
+        }
+    }
+
+     public function tituloCreditoUrb($idliquidaciones){
+        try{
+            $dataArray = array();
+            foreach($idliquidaciones as $clave => $valor){
+                $liquidacion = DB::connection('pgsql')->table('sgm_financiero.ren_liquidacion as liq')
+
+                // ->leftJoin('sgm_app.cat_ente as en', 'en.id', '=', 'liq.comprador')
+                ->leftJoin('sgm_app.cat_predio as pre', 'pre.id', '=', 'liq.predio')
+                ->join('sgm_app.cat_predio_propietario as pp', 'pp.predio', '=', 'pre.id')           
+                ->leftJoin('sgm_app.cat_ente as en', 'pp.ente', '=', 'en.id')
+                ->leftJoin('sgm_app.cat_ciudadela as cdla', 'cdla.id', '=', 'pre.ciudadela')
+                ->select(
+                    'liq.num_liquidacion',
+                    'liq.anio',
+                    'liq.avaluo_municipal',
+                    'liq.avaluo_construccion',
+                    'liq.avaluo_solar',
+                    'liq.fecha_ingreso',
+                    'liq.total_pago',
+                    'pre.num_predio',
+                    'saldo',
+                    'liq.id',
+                    'liq.anio',
+                    'en.direccion',
+                    'en.ci_ruc as cedula',
+                    'liq.estado_liquidacion',
+                    DB::raw("
+                        CASE
+                            WHEN liq.comprador IS NULL THEN liq.nombre_comprador
+                            ELSE CASE en.es_persona
+                                WHEN TRUE THEN COALESCE(en.apellidos, '') || ' ' || COALESCE(en.nombres, '')
+                                ELSE COALESCE(en.razon_social, '')
+                            END
+                        END AS nombres
+                    "),
+                    // DB::raw("
+                    //     CASE
+                    //         WHEN liq.comprador IS NULL THEN 'S/N'
+                    //         ELSE (SELECT ci_ruc FROM sgm_app.cat_ente WHERE cat_ente.id = liq.comprador)
+                    //     END AS cedula
+                    // "),
+                    DB::raw("cdla.nombre || ' MZ: ' || pre.urb_mz || ' SL: ' || pre.urb_solarnew AS direccion1"),
+                    'pre.clave_cat as cod_predial',
+                    DB::raw("(SELECT razon_social FROM sgm_application.empresa) AS empresa"),
+                    DB::raw("
+                        (
+                            SELECT
+                                CASE
+                                    WHEN (liq.anio = EXTRACT(YEAR FROM NOW())) AND (EXTRACT(MONTH FROM NOW()) < 7) THEN
+                                        (ROUND(d.valor * (
+                                            SELECT porcentaje
+                                            FROM sgm_app.ctlg_descuento_emision
+                                            WHERE num_mes = EXTRACT(MONTH FROM NOW())
+                                            AND num_quincena = (CASE WHEN EXTRACT(DAY FROM NOW()) > 15 THEN 2 ELSE 1 END)) / 100, 2) * (-1))
+                                    WHEN (liq.anio < EXTRACT(YEAR FROM NOW())) THEN
+                                        (ROUND((d.valor * 0.1), 2) + ROUND((liq.saldo) *
+                                        (SELECT ROUND((porcentaje / 100), 2) FROM sgm_financiero.ren_intereses i WHERE i.anio = liq.anio), 2))
+                                    ELSE
+                                        ROUND((d.valor * 0.1), 2)
+                                END AS valor_complemento
+                            FROM sgm_financiero.ren_det_liquidacion d
+                            WHERE d.liquidacion = liq.id
+                            AND d.rubro = 2
+                        ) AS valor_complemento
+                    "),
+
+                    DB::raw("
+                            (
+                                SELECT
+                                    CASE
+                                        WHEN (liq.anio = EXTRACT(YEAR FROM NOW())) AND (EXTRACT(MONTH FROM NOW()) < 7) THEN
+                                            ROUND(d.valor * (
+                                                SELECT porcentaje
+                                                FROM sgm_app.ctlg_descuento_emision
+                                                WHERE num_mes = EXTRACT(MONTH FROM NOW())
+                                                AND num_quincena = (CASE WHEN EXTRACT(DAY FROM NOW()) > 15 THEN 2 ELSE 1 END)
+                                                LIMIT 1
+                                            ) / 100, 2) * (-1)
+                                        ELSE
+                                            0.00
+                                    END
+                                FROM sgm_financiero.ren_det_liquidacion d
+                                WHERE d.liquidacion = liq.id AND d.rubro = 2
+                                LIMIT 1
+                            ) AS desc
+                        "),
+                        
+                        DB::raw("
+                            (
+                                SELECT
+                                    CASE
+                                        WHEN (liq.anio < EXTRACT(YEAR FROM NOW())) THEN                                        
+                                            ROUND((liq.saldo * (
+                                                SELECT ROUND((porcentaje / 100), 2) 
+                                                FROM sgm_financiero.ren_intereses i
+                                                WHERE i.anio = liq.anio
+                                                LIMIT 1
+                                            )), 2)
+                                        ELSE
+                                            0.00
+                                        END
+                                FROM sgm_financiero.ren_det_liquidacion d
+                                WHERE d.liquidacion = liq.id 
+                               
+                                LIMIT 1
+                            ) AS interes
+                        "),
+
+                        DB::raw("
+                            (
+                                SELECT
+                                    CASE
+                                        WHEN liq.anio = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM NOW()) > 7 THEN
+                                            ROUND((d.valor * 0.10), 2)
+                                        WHEN liq.anio < EXTRACT(YEAR FROM NOW()) THEN
+                                            ROUND((d.valor * 0.10), 2)
+                                        ELSE
+                                            0.00
+                                    END
+                                FROM sgm_financiero.ren_det_liquidacion d
+                                WHERE d.liquidacion = liq.id AND d.rubro = 2
+                                LIMIT 1
+                            ) AS recargos
+                        "),
+
+                         DB::raw('
+                        (
+                            SELECT
+                                ROUND((
+                                    COALESCE(liq.saldo, 0)
+
+                                    +
+                                    COALESCE((
+                                        CASE
+                                            WHEN (liq.anio = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM NOW()) < 7) THEN
+                                                ROUND(
+                                                    COALESCE((
+                                                        SELECT SUM(d.valor)
+                                                        FROM sgm_financiero.ren_det_liquidacion d
+                                                        WHERE d.liquidacion = liq.id
+                                                        AND d.rubro = 2
+                                                    ),0)
+                                                    * (
+                                                        SELECT porcentaje
+                                                        FROM sgm_app.ctlg_descuento_emision
+                                                        WHERE num_mes = EXTRACT(MONTH FROM NOW())
+                                                        AND num_quincena = (CASE WHEN EXTRACT(DAY FROM NOW()) > 15 THEN 2 ELSE 1 END)
+                                                        LIMIT 1
+                                                    ) / 100
+                                                , 2) * (-1)
+                                            ELSE 0
+                                        END
+                                    ), 0)
+
+                                    +
+                                    COALESCE((
+                                        CASE
+                                            WHEN (liq.anio < EXTRACT(YEAR FROM NOW())) THEN
+                                                ROUND((liq.saldo * (
+                                                    SELECT ROUND((porcentaje / 100), 2)
+                                                    FROM sgm_financiero.ren_intereses i
+                                                    WHERE i.anio = liq.anio
+                                                    LIMIT 1
+                                                )), 2)
+                                            ELSE 0
+                                        END
+                                    ), 0)
+
+                                    +
+                                    COALESCE((
+                                        CASE
+                                            WHEN liq.anio = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM NOW()) > 7 THEN
+                                                ROUND(COALESCE((
+                                                    SELECT SUM(d.valor)
+                                                    FROM sgm_financiero.ren_det_liquidacion d
+                                                    WHERE d.liquidacion = liq.id
+                                                    AND d.rubro = 2
+                                                ),0) * 0.10, 2)
+                                            WHEN liq.anio < EXTRACT(YEAR FROM NOW()) THEN
+                                                ROUND(COALESCE((
+                                                    SELECT SUM(d.valor)
+                                                    FROM sgm_financiero.ren_det_liquidacion d
+                                                    WHERE d.liquidacion = liq.id
+                                                    AND d.rubro = 2
+                                                ),0) * 0.10, 2)
+                                            ELSE 0
+                                        END
+                                    ), 0)
+
+                                ), 2)
+                        ) AS total_complemento
+                    '),
+
+                    'liq.id_liquidacion'
+                )
+                ->where('liq.id', $valor)
+                ->where('pp.estado','A')
+                // ->whereIn('liq.estado_liquidacion',[1,2])
                 ->get();
                
                 $fecha_hoy=date('Y-m-d');
@@ -1599,6 +1922,183 @@ class NotificacionesController extends Controller
                     'P.Ubi_Codigo',)
                     ->where('tp.TitPr_NumTitulo', '=', $valor_num)            
                     ->whereIn('tp.TitPr_Estado',['E','N'])
+                    ->orderby('TitPr_NumTitulo','asc')
+                    ->get();
+
+                    foreach($liquidacionActual as $key=> $data){
+                        $subtotal=0;
+                        $subtotal=number_format($data->CarVe_ValorEmitido,2);
+                        $valor=0;
+                        $anio=explode("-",$data->CarVe_NumTitulo);
+                        $consultaInteresMora=\DB::connection('sqlsrv')->table('INTERES_MORA as im')
+                        ->where('IntMo_Año',$anio)
+                        ->select('IntMo_Valor')
+                        ->first();
+                        
+                        if(!is_null($consultaInteresMora)){
+                            $valor=(($consultaInteresMora->IntMo_Valor/100) * ($data->CarVe_ValorEmitido + $data->recargo - $data->CarVe_TasaAdministrativa));
+                            
+                            $valor=number_format($valor,2);
+
+                            $liquidacionActual[$key]->porcentaje_intereses=$consultaInteresMora->IntMo_Valor;
+                            $liquidacionActual[$key]->intereses=$valor;
+
+                            $total_pago=$valor +$data->CarVe_ValorEmitido;
+                            $liquidacionActual[$key]->total_pagar=number_format($total_pago,2);
+                        }else{
+                            $cero=0;
+                            $liquidacionActual[$key]->porcentaje_intereses=number_format($cero,2);
+                            $liquidacionActual[$key]->intereses=number_format($cero,2);
+
+                            $total_pago=$valor +$data->CarVe_ValorEmitido;
+                            $liquidacionActual[$key]->total_pagar=number_format($total_pago,2);
+                        }
+
+                        $sitioBarrio=\DB::connection('sqlsrv')
+                        ->table('UBICACION as hijo')
+                        ->join('UBICACION as padre', 'padre.Ubi_Codigo', '=', 'hijo.Ubi_CodigoPadre')
+                        ->where('hijo.Ubi_Codigo', $data->Ubi_Codigo)
+                        ->value('padre.Ubi_Descripcion');
+                        $liquidacionActual[$key]->nombre_sitio=$sitioBarrio;
+                        
+                    }
+                    array_push($dataArray, $liquidacionActual);
+                   
+                }else{
+                    $liquidacionRural=\DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
+                    ->leftJoin('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'cv.CarVe_CI')
+                    ->leftJoin('PROPIETARIO as pr', 'pr.Ciu_Cedula', '=', 'cv.CarVe_CI')
+                    ->leftJoin('PREDIO as P', 'P.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
+                    ->select('cv.Pre_CodigoCatastral',
+                    'cv.CarVe_FechaEmision',
+                    'cv.CarVe_NumTitulo',
+                    'cv.CarVe_CI',
+                    'cv.CarVe_Estado',
+                    'c.Ciu_Apellidos',
+                    'c.Ciu_Nombres',
+                    'P.Pre_NombrePredio',
+                    'cv.CarVe_ValTotalTerrPredio',
+                    'cv.CarVe_ValTotalEdifPredio',
+                    'cv.CarVe_ValOtrasInver',
+                    'cv.CarVe_ValComerPredio',
+                    'cv.CarVe_RebajaHipotec',
+                    'cv.CarVe_BaseImponible',
+                    'cv.CarVe_IPU',
+                    'cv.CarVe_TasaAdministrativa',
+                    'cv.CarVe_Bomberos'
+                    ,'cv.CarVe_ValorEmitido',
+                    'cv.CarVe_direccPropietario as Pro_DireccionDomicilio',
+                    'cv.Carve_Recargo as recargo',
+                    'P.Ubi_Codigo',)
+                    ->where('CarVe_NumTitulo', '=', $valor_num)
+                    ->get();
+                   
+                    //volver
+                    $mes_Actual=date('m');
+           
+                    $aplica_remision=0;
+                    if($mes_Actual<7){
+                        $aplica_remision=1;
+                    }
+                    $aplica_remision=0;
+                    foreach($liquidacionRural as $key=> $data){
+                        $anio=explode("-",$data->CarVe_NumTitulo);
+                        $valor=0;
+                        if($aplica_remision==0){
+                            $consultaInteresMora=\DB::connection('sqlsrv')->table('INTERES_MORA as im')
+                            ->where('IntMo_Año',$anio)
+                            ->select('IntMo_Valor')
+                            ->first();
+                            if(!is_null($consultaInteresMora)){
+                                
+                                $valor=(($consultaInteresMora->IntMo_Valor/100) * ($data->CarVe_ValorEmitido +$data->recargo - $data->CarVe_TasaAdministrativa));
+                            
+                                $valor=number_format($valor,2);
+
+                                $liquidacionRural[$key]->porcentaje_intereses=$consultaInteresMora->IntMo_Valor;
+                                
+                            }else{
+                                $cero=0;
+                                $liquidacionRural[$key]->porcentaje_intereses=number_format($cero,2);
+                            }
+                        }else  {
+                            $cero=0;
+                            $valor=number_format($cero,2);
+                            $liquidacionRural[$key]->porcentaje_intereses=number_format($cero,2);
+                            
+                        }  
+                        
+                        $liquidacionRural[$key]->intereses=$valor;
+                        $total_pago=$valor +$data->CarVe_ValorEmitido;
+                        $liquidacionRural[$key]->total_pagar=number_format($total_pago,2);
+
+                        $sitioBarrio=\DB::connection('sqlsrv')
+                        ->table('UBICACION as hijo')
+                        ->join('UBICACION as padre', 'padre.Ubi_Codigo', '=', 'hijo.Ubi_CodigoPadre')
+                        ->where('hijo.Ubi_Codigo', $data->Ubi_Codigo)
+                        ->value('padre.Ubi_Descripcion');
+                        $liquidacionRural[$key]->nombre_sitio=$sitioBarrio;
+                    }
+                    array_push($dataArray, $liquidacionRural);
+                }
+
+            }
+            
+            $fecha_hoy=date('Y-m-d');
+            setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES@euro', 'es_ES', 'esp');
+            $fecha_timestamp = strtotime($fecha_hoy);
+            $fecha_formateada = strftime("%d de %B del %Y", $fecha_timestamp);
+            $data = [
+                'title' => 'Reporte de liquidacion',
+                'date' => date('m/d/Y'),
+                // 'DatosLiquidacion' => $data->resultado,
+                'DatosLiquidaciones' => $dataArray,
+                'fecha_formateada'=>$fecha_formateada
+            ];
+            return ["data"=>$data, "error"=>false];
+        }catch (\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+
+        }
+    }
+
+     public function tituloCreditoRuralAux($idliquidaciones){
+        try{
+            $dataArray = array();
+            
+            $existe=0;
+            foreach($idliquidaciones as $clave => $valor_num){
+               
+                
+                $solo_anio=explode("-", $valor_num);
+                if (date('Y') == (int)$solo_anio[0]) {
+                    $existe=1;
+                    $liquidacionActual=\DB::connection('sqlsrv')->table('TITULOS_PREDIO as tp')
+                    ->leftJoin('CIUDADANO as c', 'c.Ciu_Cedula', '=', 'tp.Titpr_RUC_CI')
+                    ->Join('PREDIO as P', 'P.Pre_CodigoCatastral', '=', 'tp.Pre_CodigoCatastral')
+                    ->select('tp.Pre_CodigoCatastral',
+                    'tp.TitPr_FechaEmision as CarVe_FechaEmision',
+                    'tp.TitPr_NumTitulo as CarVe_NumTitulo',
+                    'tp.Titpr_RUC_CI as CarVe_CI',
+                    'tp.TitPr_Estado as CarVe_Estado',
+                    'c.Ciu_Apellidos',
+                    'c.Ciu_Nombres',
+                    'P.Pre_NombrePredio',
+                    'tp.TitPr_ValTotalTerrPredio as CarVe_ValTotalTerrPredio',
+                    'tp.TitPr_ValTotalEdifPredio as CarVe_ValTotalEdifPredio',
+                    'tp.TitPr_ValOtrasInver as CarVe_ValOtrasInver',
+                    'tp.TitPr_ValComerPredio as CarVe_ValComerPredio',
+                    'tp.TitPr_RebajaHipotec as CarVe_RebajaHipotec',
+                    'tp.TitPr_BaseImponible as CarVe_BaseImponible',
+                    'tp.TitPr_IPU as CarVe_IPU',
+                    'tp.TitPr_TasaAdministrativa as CarVe_TasaAdministrativa',
+                    'tp.TitPr_Bomberos as CarVe_Bomberos', 
+                    'tp.TitPr_ValorEmitido as CarVe_ValorEmitido',              
+                    'tp.TitPr_DireccionCont as Pro_DireccionDomicilio',
+                    'tp.TitPr_Recargo as recargo',
+                    'P.Ubi_Codigo',)
+                    ->where('tp.TitPr_NumTitulo', '=', $valor_num)            
+                    ->whereIn('tp.TitPr_Estado',['E','N','C'])
                     ->orderby('TitPr_NumTitulo','asc')
                     ->get();
 

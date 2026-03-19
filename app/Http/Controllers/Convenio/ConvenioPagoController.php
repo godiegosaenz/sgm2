@@ -17,19 +17,35 @@ class ConvenioPagoController extends Controller
     public function tablaConvenioFiltra(Request $request){
         try{
             $data=$request->data;
-            $datos=Convenio::with('notificacion','coactiva')
-            ->whereHas('notificacion', function($query) use($data) { // Filtramos por la relación 'notificacion'
-                $query->whereHas('ente', function($query) use($data) { // Filtro en la relación 'ente' dentro de 'notificacion'
-                    $query->where('ci_ruc', '=',$data )
-                    ->orwhere(DB::raw("CONCAT(nombres, ' ', apellidos)"), 'ilike', '%'.$data.'%')
-                    ->orwhere(DB::raw("CONCAT(apellidos, ' ', nombres )"), 'ilike', '%'.$data.'%')
-                    ->orwhere(DB::raw("razon_social"), 'ilike', '%'.$data.'%');
+            $datos = Convenio::with('notificacion', 'coactiva')
+            ->where('estado', 'Activo') // Aseguramos que este filtro se aplique primero
+            ->where(function ($query) use ($data) {
+                $query->whereHas('notificacion', function ($query) use ($data) {
+                    $query->whereHas('ente', function ($query) use ($data) {
+                        $query->where('ci_ruc', '=', $data)
+                            ->orWhere(DB::raw("CONCAT(nombres, ' ', apellidos)"), 'ilike', '%' . $data . '%')
+                            ->orWhere(DB::raw("CONCAT(apellidos, ' ', nombres )"), 'ilike', '%' . $data . '%')
+                            ->orWhere(DB::raw("razon_social"), 'ilike', '%' . $data . '%');
+                    })
+                    ->orWhere('num_ident', '=', $data)
+                    ->orWhere('contribuyente', 'ilike', '%' . $data . '%');
                 })
-                ->orwhere('num_ident','=',$data)
-                ->orwhere('contribuyente', 'ilike', '%'.$data.'%');
+                ->orWhereHas('coactiva', function ($query) use ($data) {
+                    $query->whereHas('notificacion', function ($query) use ($data) {
+                        $query->whereHas('ente', function ($query) use ($data) {
+                            $query->where('ci_ruc', '=', $data)
+                                ->orWhere(DB::raw("CONCAT(nombres, ' ', apellidos)"), 'ilike', '%' . $data . '%')
+                                ->orWhere(DB::raw("CONCAT(apellidos, ' ', nombres )"), 'ilike', '%' . $data . '%')
+                                ->orWhere(DB::raw("razon_social"), 'ilike', '%' . $data . '%');
+                        })
+                        ->orWhere('num_ident', '=', $data)
+                        ->orWhere('contribuyente', 'ilike', '%' . $data . '%');
+                    });
+                });
             })
+            ->limit(10)
             ->get();
-            
+                    
             return ["resultado"=>$datos, "error"=>false];
 
         } catch (\Exception $e) {

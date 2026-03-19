@@ -223,10 +223,11 @@
                             <th scope="col"></th>
                             <th scope="col">Contribuyente</th>                            
                             <th>Fecha Registro</th>
+                            <th scope="col">Num Proceso </th>
                             <th scope="col">Fecha Inicia</th>
                             <th scope="col">Fecha Fin</th>
                             <th scope="col">Valor Deuda</th>
-                            <th scope="col">Estado </th>
+                           
                             <th scope="col">Estado Pago</th>
                             <th scope="col">Valor Cancelado</th>
                         
@@ -648,7 +649,7 @@
 
       <div class="modal fade" id="modalDetalleConvenio" tabindex="-1" aria-labelledby="ContribuyenteModalLabel" aria-hidden="true"
      data-bs-backdrop="static" data-bs-keyboard="false">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4>Detalle Convenio</h4>
@@ -657,7 +658,7 @@
                 @csrf
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col-md-12 mt-3 row">
+                        <div class="col-md-12 mt-3 row detalle_principal">
                             <div class="col-md-6">
                                 <b>Generado por:</b> <span id="convenio_generado"></span>
                             </div>
@@ -665,10 +666,28 @@
                                 <b>Fecha:</b> <span id="fecha_conv_generado"></span>
                             </div>
                             <div class="col-md-6">
-                                <b>Valor Deuda $:</b> <span id="convenio_deuda"></span>
+                                <b>Valor Deuda Convenio $:</b> <span id="convenio_deuda"></span>
+                            </div>
+                            <!-- <div class="col-md-6">
+                                <b>Contribuyente:</b> <span id="convenio_contr"></span>
+                            </div> -->
+
+                            <div class="col-md-6">
+                                <b>Valor Intereses $:</b> <span id="valor_intereses"></span>
                             </div>
                             <div class="col-md-6">
-                                <b>Contribuyente:</b> <span id="convenio_contr"></span>
+                                <b>Valor Final $:</b> <span id="valor_final"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <b>Valor Cancelado $:</b> <span id="valor_cancelado"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <b>Valor Pendiente $:</b> <span id="valor_pendiente"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <b>Titulos:</b> <span id="boton_titulos"></span>
                             </div>
                             <table class="table table-bordered table-hover"
                                 id="tableDetConvenio"
@@ -688,11 +707,36 @@
                                 <tbody id="tbodyDetConvenio"></tbody>
                             </table>
                         </div>
+
+                        <div class="col-md-12 mt-3 row listado_titulo" style="display:none">
+
+                            <table class="table table-bordered table-hover"
+                                id="tableTitulo"
+                                style="width:100%">
+                                <thead>
+                                    <tr> 
+                                        <th style="text-align:center">Titulo</th>    
+                                        <th style="text-align:center">Subtotal</th>     
+                                        <th style="text-align:center">Intereses</th>                                    
+                                        <th style="text-align:center">Coactiva</th>
+                                        <th style="text-align:center">Recargo</th>                                            
+                                        <th style="text-align:center">Descuento</th>   
+                                        <th style="text-align:center">Total</th>   
+                                        <th style="text-align:center">Estado</th>   
+                                        
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodyTitulo"></tbody>
+                            </table>
+
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer"> 
                     <center>
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" >Salir</button>                                 
+                            <button type="button" class="btn btn-danger salir" data-bs-dismiss="modal" >Salir</button>
+                            
+                            <button type="button" class="btn btn-primary detalle_btn" onclick="volverDetalle()">Volver</button>
                     </center>               
                 </div>
             </div>
