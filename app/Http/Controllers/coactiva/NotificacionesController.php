@@ -476,7 +476,7 @@ class NotificacionesController extends Controller
             return ["resultado"=>$datos[0],"datosCoa"=>$datosCoa, "error"=>false];
 
         } catch (\Exception $e) {
-            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e->getLine(), "error"=>true];
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e->getMessage(), "error"=>true];
         }
     }
 
