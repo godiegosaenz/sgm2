@@ -652,7 +652,7 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4>Detalle Convenio</h4>
+                    <h4 id="contribuyente_convenio"></h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 @csrf
@@ -660,6 +660,7 @@
                     <div class="row">
                         <div class="col-md-12 mt-3 row detalle_principal">
                             <div class="col-md-6">
+                                <input type="hidden" name="id_convenio" id="id_convenio">
                                 <b>Generado por:</b> <span id="convenio_generado"></span>
                             </div>
                             <div class="col-md-6">
@@ -694,10 +695,15 @@
                                 style="width:100%">
                                 <thead>
                                     <tr> 
+                                        <th scope="col">
+                                            
+                                        </th>
                                         <th style="text-align:center"># Cuota</th>    
                                         <th style="text-align:center">Fecha</th>     
                                         <th style="text-align:center">Valor Abono</th>                                    
-                                        <th style="text-align:center">Valor Deuda</th>
+                                        <th style="text-align:center">Valor Convenio</th>
+                                        <th style="text-align:center">Valor Interes</th>
+                                        <th style="text-align:center">Valor A Pagar</th>
                                         <th style="text-align:center">Estado</th>                                            
                                         
                                         
@@ -709,7 +715,7 @@
                         </div>
 
                         <div class="col-md-12 mt-3 row listado_titulo" style="display:none">
-
+                            <center><h4 id="fecha_liquidacion"></h4></center>
                             <table class="table table-bordered table-hover"
                                 id="tableTitulo"
                                 style="width:100%">
@@ -732,8 +738,18 @@
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer"> 
+                <div class="col-md-12 salir">
                     <center>
+                       <b>Total Seleccionado $</b> <span id="total_seleccionado_cobra"></span><br>
+                       <b>Total Recibido $</b> <input type="number" name="valor_recibido" id="valor_recibido" style="width:100px">
+                    </center>
+                </div>
+                <hr>
+                <div class="col-md-12" style="justify-content: flex-end; margin-bottom: 20px;"> 
+                    <center>
+
+                            <button type="button" class="btn btn-success salir" onclick="cobrarCovenio()">Cobrar</button>
+
                             <button type="button" class="btn btn-danger salir" data-bs-dismiss="modal" >Salir</button>
                             
                             <button type="button" class="btn btn-primary detalle_btn" onclick="volverDetalle()">Volver</button>

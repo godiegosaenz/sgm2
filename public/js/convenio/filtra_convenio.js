@@ -96,7 +96,7 @@ function llenar_tabla_notificacion(){
 
                     $('#tableCoactiva').append(`<tr>
                                                     <td style="width:3%; text-align:center; vertical-align:middle">
-                                                    <button type="button" class="btn btn-success btn-sm" onclick="detalleConvenio('${item.id}','${es_Urbano_Rural}','${es_voluntario_coact}')">
+                                                    <button type="button" class="btn btn-success btn-sm" onclick="detalleConvenio('${item.id}','${es_Urbano_Rural}','${es_voluntario_coact}','${nombre}')">
                                                             <i class="fa fa-eye"></i>
                                                         </button>                                               
                                                     </td>
@@ -167,7 +167,7 @@ function cargar_estilos_datatable_con(idtabla){
 		'info'        : true,
 		'autoWidth'   : true,
 		"destroy":true,
-        order: [[ 1, "desc" ]],
+        order: [[ 0, "asc" ]],
 		pageLength: 10,
 		sInfoFiltered:false,
 		language: {
@@ -839,52 +839,98 @@ function llenar_tabla_cuota(id){
 globalThis.IdConvenio=0
 globalThis.Urbano_Rural=""
 globalThis.Noti_o_Proceso=""
-function detalleConvenio(id, predio, not_proceso){
+function detalleConvenio(id, predio, not_proceso, contribuyente){
     IdConvenio=id
     Urbano_Rural=predio
     Noti_o_Proceso=not_proceso
     $('#boton_titulos').html('')
     $('#tableDetConvenio tbody').html('')
+    $('input[type="checkbox"]').prop('checked', false);
+    $('#total_seleccionado_cobra').html('')
+    $('#valor_recibido').val('')
     vistacargando("m","Espere por favor")
     $.get('detalle-convenio/'+id, function(data){
         console.log(data)
     
-        vistacargando("")
-        if(data.error==true){			
+       
+        if(data.error==true){	
+            vistacargando("")		
             alertNotificar(data.mensaje,"error");
             return;   
         }
+        $('#contribuyente_convenio').html(contribuyente)
+        verTitulos('N')
+        setTimeout(() => {
+             $.each(data.resultado,function(i, item){
+                let interes='0.00'
+                let cuota=item.valor_cuota
+                let valor_final=cuota
+                let valor_abono=item.saldo_abono === null ? '0' : item.saldo_abono
+                if((i === data.resultado.length - 1)){
+                    interes=parseFloat($('#valor_intereses').html())
+                    interes=interes.toFixed(2)
 
-        $.each(data.resultado,function(i, item){
-            
-            
-			$('#tableDetConvenio').append(`<tr>
+                    cuota=(parseFloat(item.valor_cuota) + parseFloat($('#valor_intereses').html())) - parseFloat(valor_abono)
+                    cuota=cuota.toFixed(2)
+                    valor_final=cuota
+                    
+                    // cuota=cuota+" ("+item.valor_cuota+" + "+parseFloat($('#valor_intereses').html())+")"
+                    // cuota=item.valor_cuota+" + "+parseFloat($('#valor_intereses').html())
+                }else{
+                    cuota=parseFloat(item.valor_cuota) - parseFloat(valor_abono)
+                    cuota=cuota.toFixed(2)
+                    valor_final=cuota
+                }
+                let disabled=""
+                if(item.estado=="Pagada"){
+                    disabled="disabled"
+                }
+                
+                $('#tableDetConvenio').append(`<tr>
+
+                                                    <td  style="width:5%; text-align:center; vertical-align:middle">
+                                                        <input type="checkbox" ${disabled} name="predio_valor" id="predio_valor" value="${valor_final}" data-valor-cobrado="${item.valor_cuota}" data-orden="${i+1}" data-idcuota="${item.id}"  >                
+                                                    </td>
+                                                    
+                                                    <td style="width:10%; text-align:center; vertical-align:middle">
+                                                        
+                                                        ${item.cuota_inicial === true ? 'Inicial': i} 
+                                                    </td>
+
+                                                    <td style="width:10%; text-align:center; vertical-align:middle">
+                                                        ${item.fecha}
+                                                    </td>
+
                                                 
-                                                <td style="width:10%; text-align:center; vertical-align:middle">
-                                                    
-                                                    ${item.cuota_inicial === true ? 'Inicial': i} 
-                                                </td>
+                                                    <td style="width:15%; text-align:center; vertical-align:middle">
+                                                        
+                                                        ${item.saldo_abono === null ? '0.00' : item.saldo_abono}                                                          
+                                                    </td>
 
-                                                <td style="width:25%; text-align:center; vertical-align:middle">
-                                                    ${item.fecha}
-                                                </td>
+                                                     <td style="width:15%; text-align:center; vertical-align:middle">
+                                                        
+                                                        ${item.valor_cuota}                                                          
+                                                    </td>
 
-                                               
-                                                <td style="width:20%; text-align:center; vertical-align:middle">
-                                                    
-                                                    ${item.saldo_abono === null ? '0.00' : item.saldo_abono}                                                          
-                                                </td>
-                                                <td style="width:20%; text-align:center; vertical-align:middle">
-                                                    ${item.valor_cuota}                                                  
-                                                </td>
-                                                <td style="width:25%; text-align:center; vertical-align:middle">
-                                                    ${item.estado}                                                     
-                                                </td>
-                                             
-										</tr>`);
-		})
-
-        $('#modalDetalleConvenio').modal('show')
+                                                     <td style="width:15%; text-align:center; vertical-align:middle">
+                                                        
+                                                        ${interes}                                                          
+                                                    </td>
+                                                    <td style="width:15%; text-align:center; vertical-align:middle">
+                                                        ${cuota}                                                  
+                                                    </td>
+                                                    <td style="width:25%; text-align:center; vertical-align:middle">
+                                                        ${item.estado}                                                     
+                                                    </td>
+                                                
+                                            </tr>`);
+            })
+            vistacargando("")
+            $('#modalDetalleConvenio').modal('show')
+        }, 1500);
+           
+       
+        
         $('.detalle_principal').show()
         $('.listado_titulo').hide()
         volverDetalle()
@@ -893,7 +939,7 @@ function detalleConvenio(id, predio, not_proceso){
         $('#convenio_contr').html($('.titulo_modal').html())
         $('#convenio_deuda').html(data.resultado[0].convenio.valor_adeudado)
 
-        verTitulos('N')
+        $('#fecha_liquidacion').html('Titulos acociados al convenio <br> Liquidacion Generada al '+data.fechaFormateada)
 
         $('#boton_titulos').append(`<i class="fa fa-file-pdf" style="color:blue" onclick="verTitulos('S')"></i>`)
 
@@ -905,6 +951,176 @@ function detalleConvenio(id, predio, not_proceso){
     
     });
    
+}
+
+
+// Función para seleccionar/deseleccionar todas las filas
+$(document).on('change', '#selectAll', function() {
+    // Obtener el estado del checkbox (marcado o desmarcado)
+    var isChecked = $(this).prop('checked');
+    
+    // Cambiar el estado de todos los checkboxes en el cuerpo de la tabla
+    $('#tbodyDetConvenio input[type="checkbox"]').each(function() {
+        $(this).prop('checked', isChecked);
+    });
+    
+    // Recalcular el total cuando se seleccionan o deseleccionan las filas
+    actualizarTotalGeneral();
+});
+
+// Función para calcular el total cuando se marca o desmarca un checkbox individual
+$(document).on('change', '#tbodyDetConvenio input[type="checkbox"]', function() {
+    actualizarTotalGeneral();
+});
+
+function actualizarTotalGeneral() {
+    let totalGeneral = 0;
+    ordenTitulosSeleccionados=[]
+    valorCobrado=[]
+    valorInteres=[]
+    idCuota=[]
+   
+    // Iterar sobre cada checkbox marcado y sumar el valor correspondiente
+    $('#tbodyDetConvenio input[type="checkbox"]:checked').each(function() {
+        // totalGeneral += parseFloat($(this).val());
+        let valor = $(this).val().replace(/,/g, '');
+        totalGeneral += parseFloat(valor) || 0;
+        ordenTitulosSeleccionados.push($(this).data('orden'));
+        valorCobrado.push($(this).data('valor-cobrado'));
+        idCuota.push($(this).data('idcuota'));
+       
+    });
+    
+    // Actualizar el total general en un lugar específico (ej. un div o campo)
+    $('#total_seleccionado_cobra').text(totalGeneral.toFixed(2));  // Actualiza el total con 2 decimales
+
+    console.log('Num Titulos Seleccionados:', totalGeneral);
+}
+
+function validarSeleccionCorrelativa(ordenTitulosSeleccionados) {
+
+    if (ordenTitulosSeleccionados.length === 0) {
+        swal("Debe seleccionar al menos un título.", "", "warning");
+        return false;
+    }
+    console.log(ordenTitulosSeleccionados)
+    // Convertir a números y ordenar
+    const orden = ordenTitulosSeleccionados.map(Number).sort((a, b) => a - b);
+    console.log(orden)
+
+    // El máximo seleccionado debe incluir todos los anteriores
+    const max = orden[orden.length - 1];
+
+    let faltantes = [];
+
+    for (let i = 1; i <= max; i++) {
+        if (!orden.includes(i)) {
+            faltantes.push(i);
+        }
+    }
+
+    if (faltantes.length > 0) {
+
+        swal({
+            title: "Selección inválida",
+            // text: "Debe seleccionar también: " + faltantes.join(", "),
+             text: "Debe seleccionar las cuotas en orden ascedente ",
+            type: "warning"
+        });
+
+        return false;
+    }
+
+    return true;
+}
+
+function cobrarCovenio(){
+   
+    let selectedRows = $('#tbodyDetConvenio input[type="checkbox"]:checked');
+
+    // Validar que al menos un checkbox esté seleccionado
+    if (selectedRows.length === 0) {
+        alertNotificar('Por favor, seleccione al menos una cuota.','error');
+        return;  // Detener la ejecución si no hay ninguna selección
+    }
+
+
+    if (!validarSeleccionCorrelativa(ordenTitulosSeleccionados)) {
+        return; // ❌ Detener si está mal
+    }
+    let total_recibido=$('#valor_recibido').val()
+    total_recibido=total_recibido*1
+    total_recibido=total_recibido.toFixed(2)
+
+    let total_seleccionado_cobra=$('#total_seleccionado_cobra').html()
+    total_seleccionado_cobra=total_seleccionado_cobra*1
+    total_seleccionado_cobra=total_seleccionado_cobra.toFixed(2)
+
+    if(parseFloat(total_recibido) < parseFloat(total_seleccionado_cobra)){
+       swal({
+            title: "Valor inválido",
+            // text: "Debe seleccionar también: " + faltantes.join(", "),
+             text: "El valor recibido no debe menor a  "+total_seleccionado_cobra,
+            type: "warning"
+        });
+    }
+    
+    swal({
+        title: '¿Desea realizar el pago?',
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonClass: "btn-danger",
+        confirmButtonText: "Si, continuar",
+        cancelButtonText: "No, cancelar",
+        closeOnConfirm: false,
+        closeOnCancel: false
+    },
+    function(isConfirm) {
+        if (isConfirm) { 
+
+             // Validar
+       
+            vistacargando("m","Espere por favor");           
+
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            
+            $.ajax({
+                type:'POST',
+                url: "pago-convenio-cuota",
+                data: { _token: $('meta[name="csrf-token"]').attr('content'),
+                    ordenTitulosSeleccionados:ordenTitulosSeleccionados,
+                    IdConvenio:IdConvenio,
+                    valorCobrado:valorCobrado,
+                    idCuota:idCuota,
+                    total_recibido:total_recibido,
+                    total_seleccionado_cobra:total_seleccionado_cobra,
+                    
+                },
+                success: function(data){
+                    console.log(data)
+                    vistacargando("");                
+                    if(data.error==true){                       
+                        alertNotificar(data.mensaje,'error');
+                        return;                      
+                    }
+
+                    alertNotificar(data.mensaje,'success');
+                    $('#modalDetalleConvenio').modal('hide')
+                   
+                    
+                }, error:function (data) {
+                    vistacargando("");
+                    alertNotificar('Ocurrió un error','error');
+                }
+            });
+
+        }
+        sweetAlert.close();   // ocultamos la ventana de pregunta
+    });
 }
 
 function inactivarConvenio(id){
@@ -1285,6 +1501,7 @@ function inactivarPago(id){
 
 }
 
+
 function verTitulos(mostrar){
     
     if(mostrar=="N"){
@@ -1296,11 +1513,11 @@ function verTitulos(mostrar){
         $('#tableTitulo').DataTable().destroy();
         $('#tableTitulo tbody').empty(); 
     
-        vistacargando("m","Espere por favor")
+      
         $.get('ver-titulos-convenio/'+IdConvenio+'/'+Urbano_Rural+'/'+Noti_o_Proceso, function(data){
             console.log(data)
         
-            vistacargando("")
+          
             if(data.error==true){			
                 alertNotificar(data.mensaje,"error");
                 return;   
@@ -1345,6 +1562,7 @@ function verTitulos(mostrar){
                     }
                 }
                 total_final=parseFloat(total_final) + parseFloat(total_a_pagar);
+              
                 $('#tableTitulo').append(`<tr>
                                                 <td style="width:15%; text-align:center; vertical-align:middle">
                                                     ${num_titulo}                                              
@@ -1381,11 +1599,12 @@ function verTitulos(mostrar){
                                             
                                         </tr>`);
             })
-            
+            // alert(total_final)
             cargar_estilos_datatable_con('tableTitulo')
             $('#valor_final').html(total_final.toFixed(2))
 
-            let valor_int= parseFloat(total_final) - parseFloat($('#convenio_deuda').html()) 
+            let valor_int= parseFloat(total_final.toFixed(2)) - parseFloat($('#convenio_deuda').html()) 
+          
             $('#valor_intereses').html(valor_int.toFixed(2))
 
             $('#valor_cancelado').html(total_cancelado.toFixed(2))
@@ -1394,7 +1613,7 @@ function verTitulos(mostrar){
             $('#valor_pendiente').html(valor_pendiente.toFixed(2))
             
         }).fail(function(){
-            vistacargando("")
+            
             $("#tableTitulo tbody").html('');
             $("#tableTitulo tbody").html(`<tr><td colspan="${num_col}" style="text-align:center">Se produjo un error, por favor intentelo más tarde</td></tr>`);
         

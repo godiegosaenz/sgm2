@@ -203,7 +203,15 @@ class CoactivaController extends Controller
             $detalle=CuotaConvenio::with('convenio')->where('id_convenio',$id)
             ->get();
             
-            return ["resultado"=>$detalle, "error"=>false];
+
+            $fecha = new \DateTime();
+            $formato = new \IntlDateFormatter(
+                'es_ES',
+                \IntlDateFormatter::LONG,
+                \IntlDateFormatter::NONE
+            );
+
+            return ["resultado"=>$detalle, "fechaFormateada"=>$formato->format($fecha), "error"=>false];
 
         } catch (\Exception $e) {
             return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
