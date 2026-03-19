@@ -1,6 +1,7 @@
 function llenar_tabla_notificacion(){
     var contrib=$('#contrib').val()
     if(contrib==""){return}
+    
 
     $("#tableCoactiva tbody").html('');
     $('#tableCoactiva').DataTable().destroy();
@@ -32,35 +33,70 @@ function llenar_tabla_notificacion(){
                     // cancelar()
                     return;
                 }
+                // Obtener el año actual
+                var year = new Date().getFullYear();
                 
                 $("#tableCoactiva tbody").html('');
             
                 $.each(data.resultado,function(i, item){
                 
-                    let icono=`<span class="badge-notificado"> 🔔 Notificado</span>`;
+                    let icono='';
                 
                     if(item.estado_pago=="Pagado"){
                         icono=`<span class="badge-orden"> 💵 PAGADO </span>`;
-                    }else if(item.estado_proceso=="Debe"){
-                    icono=`<span class="badge-medidas"> <i class="fa fa-balance-scale" style="font-size: 16px;"></i> EN EJECUCIÓN CON MEDIDAS </span>`;
-                    }else if(item.estado_proceso=="En pago"){
-                        icono=`<span class="badge-cancelado"> <i class="fa fa-archive" style="font-size: 16px;"></i> CANCELADO \ ARCHIVADO </span>`;
+                    }else if(item.estado_pago=="Debe"){
+                    icono=`<span class="badge-medidas"> <i class="fa fa-credit-card" style="font-size: 16px;"></i> DEBE</span>`;
+                    }else if(item.estado_pago=="En pago"){
+                        icono=`<span class="badge-cancelado"> <i class="fa fa-archive" style="font-size: 16px;"></i> PAGANDO </span>`;
                     }
-                    
-                    
-
                     let nombre=""
                     let num_ident=""
-                    if(item.notificacion.id_persona!=null){
-                        nombre=item.notificacion.ente.apellidos+" "+item.notificacion.ente.nombres
-                        num_ident=item.notificacion.ente.ci_ruc
+                    let num_proceso=""
+                    let es_Urbano_Rural=""
+                    let es_voluntario_coact=""
+                    if(item.coactiva==null){
+                        
+                        if(item.notificacion.id_persona!=null){
+                            nombre=item.notificacion.ente.apellidos+" "+item.notificacion.ente.nombres
+                            num_ident=item.notificacion.ente.ci_ruc
+                        }else{
+                            nombre=item.notificacion.contribuyente
+                            num_ident=item.notificacion.num_ident
+                        }
+
+                        if(item.notificacion.predio=="Urbano"){
+                            es_Urbano_Rural="Urbano"
+                        }else{
+                            es_Urbano_Rural="Rural"
+                        }
+                        es_voluntario_coact="Voluntario"
+
                     }else{
-                        nombre=item.notificacion.contribuyente
-                        num_ident=item.notificacion.num_ident
+                        if(item.coactiva.notificacion.id_persona!=null){
+                            nombre=item.coactiva.notificacion.ente.apellidos+" "+item.coactiva.notificacion.ente.nombres
+                            num_ident=item.coactiva.notificacion.ente.ci_ruc
+                        }else{
+                            nombre=item.coactiva.notificacion.contribuyente
+                            num_ident=item.coactiva.notificacion.num_ident
+                        }
+
+                        if(item.coactiva.notificacion.predio=="Urbano"){
+                            es_Urbano_Rural="Urbano"
+                        }else{
+                            es_Urbano_Rural="Rural"
+                        }
+                        es_voluntario_coact="Proceso"
+
+                        // Agregar ceros a la izquierda y concatenar el año
+                        num_proceso = strPad(item.coactiva.num_proceso, 3, '0') + '-' + year
+                        
                     }
+
+                    
+
                     $('#tableCoactiva').append(`<tr>
                                                     <td style="width:3%; text-align:center; vertical-align:middle">
-                                                    <button type="button" class="btn btn-success btn-sm" onclick="detalleNot('${item.notificacion.id}')">
+                                                    <button type="button" class="btn btn-success btn-sm" onclick="detalleConvenio('${item.id}','${es_Urbano_Rural}','${es_voluntario_coact}')">
                                                             <i class="fa fa-eye"></i>
                                                         </button>                                               
                                                     </td>
@@ -73,26 +109,29 @@ function llenar_tabla_notificacion(){
                                                     <td style="width:8%; text-align:center; vertical-align:middle">
                                                         ${item.fecha_registra}                                                            
                                                     </td>
+                                                    
+                                                    <td style="width:6%; text-align:center; vertical-align:middle">
+                                                        ${num_proceso}                                                  
+                                                    </td>
+                                                    
                                                     <td style="width:9%; text-align:center; vertical-align:middle">
-                                                        ${item.notificacion.total_notificado}                                                     
+                                                        ${item.f_inicio}                                                     
                                                     </td>
                                                     <td style="width:9%; text-align:center; vertical-align:middle">
-                                                        ${item.valor_pago_inmediato}                                                     
+                                                        ${item.f_fin}                                                     
                                                     </td>
                                                     <td style="width:7%; text-align:center; vertical-align:middle">
-                                                        ${item.valor_cancelado === null ? '0.00' : item.valor_cancelado}                                                  
+                                                        ${item.valor_adeudado === null ? '0.00' : item.valor_adeudado}                                                  
                                                     </td>
 
-                                                    <td style="width:6%; text-align:center; vertical-align:middle">
-                                                        ${item.estado_pago}                                                  
-                                                    </td>
-                                                    <td style="width:20%; text-align:center; vertical-align:middle">
+                                                   
+                                                    <td style="width:10%; text-align:center; vertical-align:middle">
                                                         ${icono}                                              
                                                     </td>
 
                                                     
                                                     <td style="width:20%; text-align:center; vertical-align:middle">
-                                                        ${icono}                                              
+                                                                                                   
                                                     </td>
                                                 
                                                     
@@ -110,6 +149,14 @@ function llenar_tabla_notificacion(){
         }
     });
   
+}
+
+function strPad(num, length, padChar) {
+    var str = num.toString();
+    while (str.length < length) {
+        str = padChar + str;
+    }
+    return str;
 }
 
 function cargar_estilos_datatable_con(idtabla){
@@ -726,6 +773,7 @@ function llenar_tabla_cuota(id){
                     disabled='disabled'
                     disabled2='disabled'
                 }
+                
              
 				$('#tableConvenio').append(`<tr>
                                                 <td style="width:5%; text-align:center; vertical-align:middle">
@@ -788,8 +836,14 @@ function llenar_tabla_cuota(id){
 		$("#tableConvenio tbody").html(`<tr><td colspan="${num_col}" style="text-align:center">Se produjo un error, por favor intentelo más tarde</td></tr>`);
     });
 }
-
-function detalleConvenio(id){
+globalThis.IdConvenio=0
+globalThis.Urbano_Rural=""
+globalThis.Noti_o_Proceso=""
+function detalleConvenio(id, predio, not_proceso){
+    IdConvenio=id
+    Urbano_Rural=predio
+    Noti_o_Proceso=not_proceso
+    $('#boton_titulos').html('')
     $('#tableDetConvenio tbody').html('')
     vistacargando("m","Espere por favor")
     $.get('detalle-convenio/'+id, function(data){
@@ -802,7 +856,7 @@ function detalleConvenio(id){
         }
 
         $.each(data.resultado,function(i, item){
-
+            
             
 			$('#tableDetConvenio').append(`<tr>
                                                 
@@ -831,10 +885,19 @@ function detalleConvenio(id){
 		})
 
         $('#modalDetalleConvenio').modal('show')
+        $('.detalle_principal').show()
+        $('.listado_titulo').hide()
+        volverDetalle()
         $('#convenio_generado').html(data.resultado[0].convenio.usuario_registra)
         $('#fecha_conv_generado').html(data.resultado[0].convenio.fecha_registra)
         $('#convenio_contr').html($('.titulo_modal').html())
         $('#convenio_deuda').html(data.resultado[0].convenio.valor_adeudado)
+
+        verTitulos('N')
+
+        $('#boton_titulos').append(`<i class="fa fa-file-pdf" style="color:blue" onclick="verTitulos('S')"></i>`)
+
+        // <i class="fa fa-file-pdf" style="color:blue" onclick="verTitulos()"></i>
 
 
     }).fail(function(){
@@ -1220,4 +1283,134 @@ function inactivarPago(id){
         });
     }
 
+}
+
+function verTitulos(mostrar){
+    
+    if(mostrar=="N"){
+
+        $('#valor_final').html('')
+        $('#valor_intereses').html('')
+
+        $("#tableTitulo tbody").html('');
+        $('#tableTitulo').DataTable().destroy();
+        $('#tableTitulo tbody').empty(); 
+    
+        vistacargando("m","Espere por favor")
+        $.get('ver-titulos-convenio/'+IdConvenio+'/'+Urbano_Rural+'/'+Noti_o_Proceso, function(data){
+            console.log(data)
+        
+            vistacargando("")
+            if(data.error==true){			
+                alertNotificar(data.mensaje,"error");
+                return;   
+            }
+
+            // alertNotificar(data.mensaje,"success");
+            $("#tableTitulo tbody").html('');
+            let total_final=0
+            let total_cancelado=0
+            $.each(data.resultado,function(i, item){
+                let num_titulo=""
+                let subtotal=""
+                let int=""
+                let recargos=""
+                let descuento=""
+                let total_a_pagar=""
+                let estado=""
+                if(Urbano_Rural=="Urbano"){
+                    num_titulo=item[0].id_liquidacion
+                    subtotal=item[0].total_pago
+                    int=item[0].interes
+                    recargos=item[0].recargos
+                    descuento=item[0].desc
+                    total_a_pagar=item[0].total_complemento
+                    estado=item[0].estado_liquidacion
+                    if(estado==1){
+                        total_cancelado=parseFloat(total_cancelado) + parseFloat(total_a_pagar);
+                    }
+                }else{
+                    num_titulo=item[0].CarVe_NumTitulo
+                    subtotal=item[0].CarVe_ValorEmitido
+                    int=item[0].intereses
+                    recargos=item[0].recargo
+                    descuento="0.00"
+                    total_a_pagar=item[0].total_pagar
+                    estado=item[0].CarVe_Estado
+                    if(estado=="C"){
+                        estado=1
+                        total_cancelado=parseFloat(total_cancelado) + parseFloat(total_a_pagar);
+                    }else{
+                        estado=0
+                    }
+                }
+                total_final=parseFloat(total_final) + parseFloat(total_a_pagar);
+                $('#tableTitulo').append(`<tr>
+                                                <td style="width:15%; text-align:center; vertical-align:middle">
+                                                    ${num_titulo}                                              
+                                                </td>
+
+                                                <td style="width:10%; text-align:center; vertical-align:middle">
+                                                    ${subtotal}
+                                                </td>
+
+                                                <td style="width:10%; text-align:center; vertical-align:middle">
+                                                    ${int}
+                                                </td>
+                                                
+                                                <td style="width:10%; text-align:center; vertical-align:middle">
+                                                    0.00                                               
+                                                </td>
+
+                                                <td style="width:10%; text-align:center; vertical-align:middle">
+                                                    ${recargos == null ? '0.00' : recargos}
+                                                </td>
+
+                                                <td style="width:10%; text-align:center; vertical-align:middle">
+                                                    ${descuento}
+                                                </td>
+                                                
+                                                <td style="width:10%; text-align:center; vertical-align:middle">
+                                                    ${total_a_pagar}                                               
+                                                </td>
+
+                                                <td style="width:10%; text-align:center; vertical-align:middle">
+                                                    ${estado == 1 ? 'Pagado' : 'Por pagar'}                                            
+                                                </td>
+                                                
+                                            
+                                        </tr>`);
+            })
+            
+            cargar_estilos_datatable_con('tableTitulo')
+            $('#valor_final').html(total_final.toFixed(2))
+
+            let valor_int= parseFloat(total_final) - parseFloat($('#convenio_deuda').html()) 
+            $('#valor_intereses').html(valor_int.toFixed(2))
+
+            $('#valor_cancelado').html(total_cancelado.toFixed(2))
+
+            let valor_pendiente= parseFloat(total_final) - parseFloat(total_cancelado) 
+            $('#valor_pendiente').html(valor_pendiente.toFixed(2))
+            
+        }).fail(function(){
+            vistacargando("")
+            $("#tableTitulo tbody").html('');
+            $("#tableTitulo tbody").html(`<tr><td colspan="${num_col}" style="text-align:center">Se produjo un error, por favor intentelo más tarde</td></tr>`);
+        
+        });
+    }else{
+        $('.detalle_principal').hide()
+        $('.listado_titulo').show()
+        $('.salir').hide()
+        $('.detalle_btn').show()
+    }
+}
+
+function volverDetalle(){
+    $('.detalle_btn').hide()
+    $('.salir').show()
+
+    $('.detalle_principal').show()
+    $('.listado_titulo').hide()
 }
