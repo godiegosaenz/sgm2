@@ -99,6 +99,20 @@
     gap: 5px;
 }
 
+.badge-cancelado-cuota {
+    background: linear-gradient(135deg, #73cc82, #73cc82); /* Naranja bajo */
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .3px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .15);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
 .badge-cancelado {
     background: linear-gradient(135deg, #007bff, #0056b3); /* Azul bajo */
     color: white;
@@ -700,11 +714,13 @@
                                         </th>
                                         <th style="text-align:center"># Cuota</th>    
                                         <th style="text-align:center">Fecha</th>     
-                                        <th style="text-align:center">Valor Abono</th>                                    
+                                                                        
                                         <th style="text-align:center">Valor Convenio</th>
                                         <th style="text-align:center">Valor Interes</th>
+                                        <th style="text-align:center">Valor Abono</th>    
                                         <th style="text-align:center">Valor A Pagar</th>
-                                        <th style="text-align:center">Estado</th>                                            
+                                        <th style="text-align:center">Estado</th>  
+                                        <th style="text-align:center">Archivo</th>                                             
                                         
                                         
                                         

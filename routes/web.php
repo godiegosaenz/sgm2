@@ -553,6 +553,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('pago-convenio', [ConvenioPagoController::class, 'index'])->name('coactiva.filtra_coactiva1');
     Route::post('pago-convenios-filtra', [ConvenioPagoController::class, 'tablaConvenioFiltra']);
     Route::post('pago-convenio-cuota', [ConvenioPagoController::class, 'pagaCuota']);
+    Route::get('pdf-pago-convenio/{idcuota}', [ConvenioPagoController::class, 'pdfPagoCuota']);
 
 
    //********** EMISION DE TITULO DADO DE BAJA RURAL ***********************/

@@ -61,7 +61,7 @@ class ConvenioPagoController extends Controller
         try {
 
             $cuotas=CuotaConvenio::where('id_convenio',$request->IdConvenio)
-            ->where('estado','!=','Pagado')
+            ->where('estado','!=','Pagada')
             ->orderBy('id','asc')
             ->get();
             
@@ -75,17 +75,25 @@ class ConvenioPagoController extends Controller
                 $cuota_o_abono = $info->estado == "Abonada"
                 ? $info->saldo_abono
                 : $info->valor_cuota;
-
-                if ($valor_recibido >= $cuota_o_abono) {
+                
+                $valor_pagar=$info->valor_cuota;
+               
+                if (round((float)$valor_recibido, 2) >= round((float)$cuota_o_abono, 2)) {
+                    if($info->estado == "Abonada"){
+                        $valor_pagar=(float) $info->valor_cuota -  (float) $info->saldo_abono;
+                        $info->saldo_abono=null;
+                       
+                    }
                     $info->valor_cobrado=(float) $info->valor_cuota;
                     $info->estado='Pagada';
-                    if($info->estado == "Abonada"){
-                        $info->saldo_abono=null;
-                    }
+                    
+                    
                 }else{
                     if($valor_recibido>0){
                         $info->saldo_abono=(float) $valor_recibido;
                         $info->estado='Abonada';
+                    }else{
+                        break;
                     }
                 }
 
@@ -93,10 +101,18 @@ class ConvenioPagoController extends Controller
                 $info->fecha_cobro=date('Y-m-d H:i:s');
                 $info->save();
 
-                $valor_recibido=$valor_recibido - $info->valor_cuota;
+                $valor_recibido=(float) $valor_recibido - (float) $valor_pagar;
             }
             
-            
+            $actualizaConvenio=$this->actualizaConvenio($request->IdConvenio);
+            if($actualizaConvenio['error']==true){
+                DB::connection('pgsql')->rollBack();
+
+                return [
+                    "mensaje" => $actualizaConvenio['mensaje'],
+                    "error" => true
+                ];
+            }
             DB::connection('pgsql')->commit();
 
             return ["mensaje" => "Información registrada exitosamente", "error" => false];
@@ -109,6 +125,94 @@ class ConvenioPagoController extends Controller
                 "mensaje" => "Ocurrió un error: " . $e->getMessage(). $e->getLine(),
                 "error" => true
             ];
+        }
+    }
+
+    public function actualizaConvenio($id)
+    {
+        DB::connection('pgsql')->beginTransaction();
+
+        try {
+            $obtenerValorPagado=CuotaConvenio::whereIn('estado',['Pagada','Abonada'])
+            ->where('id_convenio','=', $id) 
+            ->sum('valor_cobrado');
+            $obtenerValorPagado = round($obtenerValorPagado, 2);
+            if($obtenerValorPagado>0){
+                $actualizaConvenio=Convenio::where('id',$id)
+                ->where('estado','Activo')
+                ->first();
+
+                if(!is_null($actualizaConvenio)){
+                    $totalConvenio = CuotaConvenio::where('id_convenio', $id)
+                        ->sum('valor_cuota');
+
+                    $totalConvenio = round($totalConvenio, 2);
+
+                    if ($obtenerValorPagado >= $totalConvenio) {
+                        $actualizaConvenio->estado_pago = 'Pago Total';   // ✅ ya no debe nada
+                    } else {
+                        $actualizaConvenio->estado_pago = 'Pago Parcial';   // ❌ aún debe
+                    }
+
+                    $actualizaConvenio->valor_cancelado=$obtenerValorPagado;
+                    $actualizaConvenio->save();
+
+                    DB::connection('pgsql')->commit();
+                
+                }
+
+            }
+
+            return [
+                "mensaje" => "OK",
+                "error" => false
+            ];
+
+        } catch (\Exception $e) {
+
+            DB::connection('pgsql')->rollBack();
+
+            return [
+                "mensaje" => "Ocurrió un error: " . $e->getMessage(). $e->getLine(),
+                "error" => true
+            ];
+        }
+    }
+
+    public function pdfPagoCuota($idcuota){
+       
+        try {
+            $dataConvenio=Convenio::with('notificacion','coactiva','cuotas')
+            ->whereHas('cuotas', function($query) use($idcuota) { 
+               $query->where('id',$idcuota);    
+            })
+            ->first();
+            dd($dataConvenio);
+
+            $fecha_hoy=date('Y-m-d');
+            setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES@euro', 'es_ES', 'esp');
+            $fecha_timestamp = strtotime($fecha_hoy);    
+            $fecha_formateada = strftime("%d de %B del %Y", $fecha_timestamp);
+
+            $nombrePDF="Convenio_Cuota_".$idcuota.".pdf";
+            $pdf = \PDF::loadView('reportes.bajaBien', ["data"=>$dataConvenio, 
+            "fecha_formateada"=>$fecha_formateada]);
+
+            $estadoarch = $pdf->stream();
+            $disco="public";
+            \Storage::disk($disco)->put(str_replace("", "",$nombrePDF), $estadoarch);
+            $exists_destino = \Storage::disk($disco)->exists($nombrePDF);
+            if($exists_destino){
+                return ["mensaje"=>'Documento generado exitosamente', "error"=>false, "pdf"=>$nombrePDF];
+            }else{
+                return [
+                    'error'=>true,
+                    'mensaje'=>'No se pudo crear el documento'
+                ];
+            }
+
+        }catch (\Exception $e) {
+            dd($e);
         }
     }
 

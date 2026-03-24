@@ -21,5 +21,8 @@ class Convenio extends Model
     public function coactiva(){
         return $this->belongsTo('App\Models\Coactiva\InfoCoa', 'id_info_coact', 'id')->with('notificacion');
     }
+    public function cuotas(){
+        return $this->hasMany('App\Models\Coactiva\CuotaConvenio', 'id_convenio', 'id');
+    }
 
 }

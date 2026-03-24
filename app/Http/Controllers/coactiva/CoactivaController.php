@@ -201,6 +201,7 @@ class CoactivaController extends Controller
         try{
             
             $detalle=CuotaConvenio::with('convenio')->where('id_convenio',$id)
+            ->orderBy('id','asc')
             ->get();
             
 

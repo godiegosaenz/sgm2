@@ -42,12 +42,12 @@ function llenar_tabla_notificacion(){
                 
                     let icono='';
                 
-                    if(item.estado_pago=="Pagado"){
-                        icono=`<span class="badge-orden"> 💵 PAGADO </span>`;
+                    if(item.estado_pago=="Pago Total"){
+                        icono=`<span class="badge-cancelado-cuota"> <i class="fa fa-check-circle" style="font-size: 16px;"></i> PAGO TOTAL </span>`;
                     }else if(item.estado_pago=="Debe"){
                     icono=`<span class="badge-medidas"> <i class="fa fa-credit-card" style="font-size: 16px;"></i> DEBE</span>`;
-                    }else if(item.estado_pago=="En pago"){
-                        icono=`<span class="badge-cancelado"> <i class="fa fa-archive" style="font-size: 16px;"></i> PAGANDO </span>`;
+                    }else if(item.estado_pago=="Pago Parcial"){
+                        icono=`<span class="badge-cancelado"> <i class="fa fa-archive" style="font-size: 16px;"></i> PAGO PARCIAL </span>`;
                     }
                     let nombre=""
                     let num_ident=""
@@ -762,9 +762,9 @@ function llenar_tabla_cuota(id){
                 // cancelar()
 				return;
 			}
-			
+			alert("aa")
 			$("#tableConvenio tbody").html('');
-         
+            let total_cancelado=0
 			$.each(data.resultado,function(i, item){
 
                 let disabled="disabled"
@@ -773,7 +773,7 @@ function llenar_tabla_cuota(id){
                     disabled='disabled'
                     disabled2='disabled'
                 }
-                
+               
              
 				$('#tableConvenio').append(`<tr>
                                                 <td style="width:5%; text-align:center; vertical-align:middle">
@@ -826,7 +826,7 @@ function llenar_tabla_cuota(id){
 			})
           
             cargar_estilos_datatable_con('tableConvenio')
-            
+           
 		}
     
     }).fail(function(){
@@ -860,6 +860,10 @@ function detalleConvenio(id, predio, not_proceso, contribuyente){
         }
         $('#contribuyente_convenio').html(contribuyente)
         verTitulos('N')
+        let cont=0
+        let total_cancelado=0
+        let valor_final_paga=0
+        let valor_pend=0
         setTimeout(() => {
              $.each(data.resultado,function(i, item){
                 let interes='0.00'
@@ -882,14 +886,35 @@ function detalleConvenio(id, predio, not_proceso, contribuyente){
                     valor_final=cuota
                 }
                 let disabled=""
+                
                 if(item.estado=="Pagada"){
                     disabled="disabled"
+                    total_cancelado=parseFloat(total_cancelado) + parseFloat(cuota);                
+                   
+                }else if(item.estado=="Abonada"){
+                    total_cancelado=parseFloat(total_cancelado) + parseFloat(cuota);   
+                }else{
+                    cont=cont+1
+                    valor_pend=parseFloat(valor_pend) + parseFloat(cuota);
+                }
+                valor_final_paga=parseFloat(valor_final_paga) + parseFloat(cuota);
+                console.log(valor_final_paga)
+
+                let icono='';
+                let disabled2='disabled'
+                if(item.estado=="Pagada"){
+                    icono=`<span class="badge-cancelado-cuota"> <i class="fa fa-check-circle" style="font-size: 16px;"></i> Pagada </span>`;
+                    disabled2=''
+                }else if(item.estado=="Pendiente"){
+                icono=`<span class="badge-medidas"> <i class="fa fa-credit-card" style="font-size: 16px;"></i> Pendiente</span>`;
+                }else if(item.estado=="Abonada"){
+                    icono=`<span class="badge-cancelado"> <i class="fa fa-archive" style="font-size: 16px;"></i> Abonada </span>`;
                 }
                 
                 $('#tableDetConvenio').append(`<tr>
 
                                                     <td  style="width:5%; text-align:center; vertical-align:middle">
-                                                        <input type="checkbox" ${disabled} name="predio_valor" id="predio_valor" value="${valor_final}" data-valor-cobrado="${item.valor_cuota}" data-orden="${i+1}" data-idcuota="${item.id}"  >                
+                                                        <input type="checkbox" ${disabled} name="predio_valor" id="predio_valor" value="${valor_final}" data-valor-cobrado="${item.valor_cuota}" data-orden="${cont}" data-idcuota="${item.id}"  >                
                                                     </td>
                                                     
                                                     <td style="width:10%; text-align:center; vertical-align:middle">
@@ -902,10 +927,7 @@ function detalleConvenio(id, predio, not_proceso, contribuyente){
                                                     </td>
 
                                                 
-                                                    <td style="width:15%; text-align:center; vertical-align:middle">
-                                                        
-                                                        ${item.saldo_abono === null ? '0.00' : item.saldo_abono}                                                          
-                                                    </td>
+                                                   
 
                                                      <td style="width:15%; text-align:center; vertical-align:middle">
                                                         
@@ -916,18 +938,32 @@ function detalleConvenio(id, predio, not_proceso, contribuyente){
                                                         
                                                         ${interes}                                                          
                                                     </td>
+
+                                                     <td style="width:15%; text-align:center; vertical-align:middle">
+                                                        
+                                                        ${item.saldo_abono === null ? '0.00' : item.saldo_abono}                                                          
+                                                    </td>
                                                     <td style="width:15%; text-align:center; vertical-align:middle">
                                                         ${cuota}                                                  
                                                     </td>
-                                                    <td style="width:25%; text-align:center; vertical-align:middle">
-                                                        ${item.estado}                                                     
+                                                    <td style="width:20%; text-align:center; vertical-align:middle">
+                                                        ${icono}                                                     
+                                                    </td>
+
+                                                     <td style="width:5%; text-align:center; vertical-align:middle">
+                                                        <i class="fa fa-file-pdf-o" style="color:green" ${disabled2}></i>                                                     
                                                     </td>
                                                 
                                             </tr>`);
             })
             vistacargando("")
+
+            console.log(valor_final_paga)
             $('#modalDetalleConvenio').modal('show')
-        }, 1500);
+            $('#valor_cancelado').html(total_cancelado.toFixed(2))
+            $('#valor_final').html(valor_final_paga.toFixed(2))
+            $('#valor_pendiente').html(valor_pend.toFixed(2))
+        }, 1000);
            
        
         
@@ -939,7 +975,7 @@ function detalleConvenio(id, predio, not_proceso, contribuyente){
         $('#convenio_contr').html($('.titulo_modal').html())
         $('#convenio_deuda').html(data.resultado[0].convenio.valor_adeudado)
 
-        $('#fecha_liquidacion').html('Titulos acociados al convenio <br> Liquidacion Generada al '+data.fechaFormateada)
+        $('#fecha_liquidacion').html('Titulos asociados al convenio <br> Liquidacion Generada al '+data.fechaFormateada)
 
         $('#boton_titulos').append(`<i class="fa fa-file-pdf" style="color:blue" onclick="verTitulos('S')"></i>`)
 
@@ -1018,7 +1054,8 @@ function validarSeleccionCorrelativa(ordenTitulosSeleccionados) {
             faltantes.push(i);
         }
     }
-
+    console.log(orden)
+    console.log(faltantes)
     if (faltantes.length > 0) {
 
         swal({
@@ -1056,13 +1093,17 @@ function cobrarCovenio(){
     total_seleccionado_cobra=total_seleccionado_cobra*1
     total_seleccionado_cobra=total_seleccionado_cobra.toFixed(2)
 
+    console.log(parseFloat(total_recibido))
+    console.log(parseFloat(total_seleccionado_cobra))
     if(parseFloat(total_recibido) < parseFloat(total_seleccionado_cobra)){
-       swal({
+      
+        swal({
             title: "Valor inválido",
             // text: "Debe seleccionar también: " + faltantes.join(", "),
-             text: "El valor recibido no debe menor a  "+total_seleccionado_cobra,
+            text: "El valor recibido no debe menor a  "+total_seleccionado_cobra,
             type: "warning"
         });
+        return
     }
     
     swal({
@@ -1110,6 +1151,7 @@ function cobrarCovenio(){
 
                     alertNotificar(data.mensaje,'success');
                     $('#modalDetalleConvenio').modal('hide')
+                    llenar_tabla_notificacion()
                    
                     
                 }, error:function (data) {
@@ -1543,6 +1585,7 @@ function verTitulos(mostrar){
                     descuento=item[0].desc
                     total_a_pagar=item[0].total_complemento
                     estado=item[0].estado_liquidacion
+                    console.log("estado "+estado)
                     if(estado==1){
                         total_cancelado=parseFloat(total_cancelado) + parseFloat(total_a_pagar);
                     }
@@ -1601,16 +1644,16 @@ function verTitulos(mostrar){
             })
             // alert(total_final)
             cargar_estilos_datatable_con('tableTitulo')
-            $('#valor_final').html(total_final.toFixed(2))
+            // $('#valor_final').html(total_final.toFixed(2))
 
             let valor_int= parseFloat(total_final.toFixed(2)) - parseFloat($('#convenio_deuda').html()) 
           
             $('#valor_intereses').html(valor_int.toFixed(2))
 
-            $('#valor_cancelado').html(total_cancelado.toFixed(2))
+            // $('#valor_cancelado').html(total_cancelado.toFixed(2))
 
             let valor_pendiente= parseFloat(total_final) - parseFloat(total_cancelado) 
-            $('#valor_pendiente').html(valor_pendiente.toFixed(2))
+            // $('#valor_pendiente').html(valor_pendiente.toFixed(2))
             
         }).fail(function(){
             
