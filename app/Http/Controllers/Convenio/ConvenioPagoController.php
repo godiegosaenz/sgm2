@@ -187,7 +187,7 @@ class ConvenioPagoController extends Controller
                $query->where('id',$idcuota);    
             })
             ->first();
-            dd($dataConvenio);
+            // dd($dataConvenio);
 
             $fecha_hoy=date('Y-m-d');
             setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES@euro', 'es_ES', 'esp');
@@ -195,8 +195,10 @@ class ConvenioPagoController extends Controller
             $fecha_formateada = strftime("%d de %B del %Y", $fecha_timestamp);
 
             $nombrePDF="Convenio_Cuota_".$idcuota.".pdf";
-            $pdf = \PDF::loadView('reportes.bajaBien', ["data"=>$dataConvenio, 
+            $pdf = \PDF::loadView('reportes.pago_cuota_convenio', ["data"=>$dataConvenio, 
             "fecha_formateada"=>$fecha_formateada]);
+
+            return $pdf->stream($nombrePDF);
 
             $estadoarch = $pdf->stream();
             $disco="public";

@@ -341,9 +341,7 @@ class NotificacionesController extends Controller
             ->whereBetween('fecha_registra', [$inicio.' 00:00:00', $fin.' 23:59:59'])
             ->select('*')
             ->selectRaw("CURRENT_DATE - DATE(fecha_registra) AS dias_transcurridos")
-            ->get();
-
-         
+            ->get();        
 
             foreach($datos as $key=> $data){
                
@@ -355,6 +353,8 @@ class NotificacionesController extends Controller
                 $datos[$key]->profesional=$usuarioRegistra->nombres." ".$usuarioRegistra->apellidos;
 
             }
+
+            // dd($datos);
                             
             return ["resultado"=>$datos, "error"=>false];
 
