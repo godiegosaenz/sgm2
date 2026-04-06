@@ -303,7 +303,7 @@ function detalleNot(id){
                 
                 if(data.resultado.predio=='Urbano'){
                     clave_matr.push(item.clave_cat);
-                    clave_matricula=item.liquidacion.predio
+                    clave_matricula=item.liquidacion.predio.num_predio
                     anio=item.liquidacion.anio
                     // cont=data.resultado.ente.apellidos +" "+data.resultado.ente.nombres
 

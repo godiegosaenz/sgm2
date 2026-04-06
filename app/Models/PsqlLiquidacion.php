@@ -14,4 +14,8 @@ class PsqlLiquidacion extends Model
     protected $primaryKey  = 'id';
     public $timestamps = false;
 
+    public function predio(){
+        return $this->belongsTo('App\Models\PsqlPredio', 'predio', 'id');
+    }
+
 }

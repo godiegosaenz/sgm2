@@ -185,6 +185,12 @@
         0 0 0 3px rgba(29,185,84,0.25),
         0 4px 10px rgba(0,0,0,.35);
 }
+
+.disabled-icon {
+    pointer-events: none; /* 🔥 desactiva el click */
+    opacity: 0.5;         /* opcional: se vea deshabilitado */
+    cursor: not-allowed;
+}
 </style>
 
 

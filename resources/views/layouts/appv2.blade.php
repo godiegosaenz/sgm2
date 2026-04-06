@@ -718,6 +718,7 @@
       @yield('content')
 
     </main>
+    @include('divcargando')
   </div>
 </div>
 <script src="{{ asset('js/bootstrap53.bundle.min.js') }}" defer></script>
@@ -767,5 +768,5 @@
   }
 </script>
 @stack('scripts')
-@include('divcargando')
+
 </html>

@@ -131,7 +131,7 @@ function llenar_tabla_notificacion(){
 
                                                     
                                                     <td style="width:20%; text-align:center; vertical-align:middle">
-                                                                                                   
+                                                        ${item.valor_cancelado === null ? '0.00' : item.valor_cancelado}                                          
                                                     </td>
                                                 
                                                     
@@ -892,16 +892,17 @@ function detalleConvenio(id, predio, not_proceso, contribuyente){
                     total_cancelado=parseFloat(total_cancelado) + parseFloat(cuota);                
                    
                 }else if(item.estado=="Abonada"){
-                    total_cancelado=parseFloat(total_cancelado) + parseFloat(cuota);   
+                    total_cancelado=parseFloat(total_cancelado) + parseFloat(valor_abono);   
+                    valor_pend=parseFloat(valor_pend) + parseFloat(cuota);
                 }else{
                     cont=cont+1
                     valor_pend=parseFloat(valor_pend) + parseFloat(cuota);
                 }
-                valor_final_paga=parseFloat(valor_final_paga) + parseFloat(cuota);
+                valor_final_paga=parseFloat(valor_final_paga) + parseFloat(cuota) + parseFloat(valor_abono);
                 console.log(valor_final_paga)
 
                 let icono='';
-                let disabled2='disabled'
+                let disabled2='disabled-icon'
                 if(item.estado=="Pagada"){
                     icono=`<span class="badge-cancelado-cuota"> <i class="fa fa-check-circle" style="font-size: 16px;"></i> Pagada </span>`;
                     disabled2=''
@@ -951,7 +952,7 @@ function detalleConvenio(id, predio, not_proceso, contribuyente){
                                                     </td>
 
                                                      <td style="width:5%; text-align:center; vertical-align:middle">
-                                                        <i class="fa fa-file-pdf-o" style="color:green" ${disabled2}></i>                                                     
+                                                        <i class="fa fa-file-pdf-o ${disabled2}" style="color:green" onclick="verPdfCuota(${item.id})"></i>                                                     
                                                     </td>
                                                 
                                             </tr>`);
@@ -963,7 +964,7 @@ function detalleConvenio(id, predio, not_proceso, contribuyente){
             $('#valor_cancelado').html(total_cancelado.toFixed(2))
             $('#valor_final').html(valor_final_paga.toFixed(2))
             $('#valor_pendiente').html(valor_pend.toFixed(2))
-        }, 1000);
+        }, 2000);
            
        
         
@@ -989,6 +990,21 @@ function detalleConvenio(id, predio, not_proceso, contribuyente){
    
 }
 
+function verPdfCuota(id){
+    vistacargando("m","Espere por favor")
+    $.get('pdf-pago-convenio/'+id+'/'+Urbano_Rural+'/'+Noti_o_Proceso, function(data){
+        vistacargando("")	   
+        if(data.error==true){	
+        vistacargando("")		
+        alertNotificar(data.mensaje,"error");
+        return;   
+    }
+        window.location.href='coactiva/documento-descargar/'+data.pdf
+    }).fail(function(){
+        vistacargando("")
+    
+    });
+}
 
 // Función para seleccionar/deseleccionar todas las filas
 $(document).on('change', '#selectAll', function() {
@@ -1139,7 +1155,9 @@ function cobrarCovenio(){
                     idCuota:idCuota,
                     total_recibido:total_recibido,
                     total_seleccionado_cobra:total_seleccionado_cobra,
-                    
+                    Urbano_Rural:Urbano_Rural,
+                    Noti_o_Proceso:Noti_o_Proceso, 
+                   
                 },
                 success: function(data){
                     console.log(data)
@@ -1152,7 +1170,7 @@ function cobrarCovenio(){
                     alertNotificar(data.mensaje,'success');
                     $('#modalDetalleConvenio').modal('hide')
                     llenar_tabla_notificacion()
-                   
+                    verpdf(data.pdf)
                     
                 }, error:function (data) {
                     vistacargando("");
@@ -1164,6 +1182,7 @@ function cobrarCovenio(){
         sweetAlert.close();   // ocultamos la ventana de pregunta
     });
 }
+
 
 function inactivarConvenio(id){
     alertNotificar("Usted no puede realizar dicha accion", "warning")

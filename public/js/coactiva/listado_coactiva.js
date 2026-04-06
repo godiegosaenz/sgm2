@@ -291,7 +291,7 @@ function detalleNot(id){
                 
                 if(data.resultado.predio=='Urbano'){
                     clave_matr.push(item.clave_cat);
-                    clave_matricula=item.liquidacion.predio
+                    clave_matricula=item.liquidacion.predio.num_predio
                     anio=item.liquidacion.anio
                     // cont=data.resultado.ente.apellidos +" "+data.resultado.ente.nombres
 
@@ -394,7 +394,7 @@ function detalleNot(id){
                         predio=item.clave_cat
                         anio=item.anio
                     }else{
-                        predio=item.liquidacion.predio
+                        predio=item.liquidacion.predio.num_predio
                         anio=item.liquidacion.anio
                     }
 				    $('#tableDetCoa').append(`<tr>
@@ -907,11 +907,11 @@ $("#FormMedidas").submit(function(e){
         return
     }
    
-    if(parseFloat(total_valor_deuda)<parseFloat(valor_coa)){
-        alertNotificar("El valor adeudado no debe ser menor a "+valor_coa,"error")
-        $('#total_valor_deuda').focus()
-        return
-    }
+    // if(parseFloat(total_valor_deuda)<parseFloat(valor_coa)){
+    //     alertNotificar("El valor adeudado no debe ser menor a "+valor_coa,"error")
+    //     $('#total_valor_deuda').focus()
+    //     return
+    // }
 
     if(medidas_txt=="" || medidas_txt==null){
         alertNotificar("Debe ingresar medidas impuestas","error")

@@ -283,6 +283,7 @@ class CoactivaController extends Controller
 
                 $num_oficio1 = $ultimo_sec->num_oficio3 + 1;
             }
+          
 
             $nombrePDF = "MedidasCoactiva" . date('YmdHis') . ".pdf";
 

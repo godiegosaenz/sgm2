@@ -83,6 +83,20 @@
             font-family: sans-serif;
         }
 
+        .watermark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%; /* Solo ocupa la mitad superior */
+            background-image: url('{{ asset('img/logo4.png') }}');
+            background-repeat: no-repeat;
+            background-size: contain;
+            background-position: center;
+            opacity: 0.05; /* Opacidad muy baja */
+            z-index: -1; /* La imagen queda detrás del contenido */
+        }
+
         
 
     </style>
@@ -91,7 +105,7 @@
     @php
         $sumatotal = 0;
     @endphp
-   
+        <div class="watermark"></div>
         <table class="cabecera">
             <tr>
                 <td class="logo">
@@ -107,7 +121,7 @@
         <table width="100%" border="0" >
             <tr>
                 <td colspan="3" style="text-align: center;">
-                    <b>PAGO DE CUOTA DE CONVENIO </b><br>
+                    <b>PAGO DE CUOTA DE CONVENIO #{{ $num_cuota }}</b><br>
                   
                     
                 </td>
@@ -118,75 +132,129 @@
             </tr>
             <tr style="font-size: 11px;">
                
-                <td><b>Ruc/CC:</b> .......</td>
+                <td style="width: 50%;"><b>Ruc/CC:</b>{{ $cedula }}</td>
             
                 <td style="width: 1%; text-align:left"></td>
 
-                <td><b>Contribuyente:</b> ........</td>
+                <td><b>Contribuyente:</b>{{ $contr }}</td>
                
             </tr>
 
             <tr style="font-size: 11px;">
                
-                <td><b>Matricula/Clave:</b> .......</td>
+               
+                <td><b>Fecha Convenio:</b> {{ $data->fecha_registra }}</td>
             
                 <td style="width: 1%; text-align:left"></td>
 
-                <td><b>Fecha Convenio:</b> ........</td>
+                <td><b>Fecha Impresion:</b> {{ date('Y-m-d H:i:s') }}</td>
+               
+            </tr>
+            <tr style="font-size: 11px;">
+               
+               <td colspan="3"><b>Matricula/Clave:</b> {{ implode(',', $clave) }}</td>
+
+                
                
             </tr>
             
            
         </table> 
+        @php
+            // $valor_pend=round((float)$data->valor_cancelado,2) - round((float)$total,2);
+            $valor_pend=round((float)$total,2) - round((float)$data->valor_cancelado,2);
+            if($valor_pend<0){
+                $valor_pend='0.00';
+            }
 
+        @endphp
        
         <table width="100%" style="border-collapse: collapse; margin-top:10px">
             <tr style="font-size: 11px;">
                 <!-- TABLA IZQUIERDA -->
-                <td style="width:27%; vertical-align: top;padding-right:1px;">
+                <td style="width:30%; vertical-align: top;padding-right:1px;">
                     <table width="100%" style="border-collapse: collapse; border-spacing: 0;">
+
+                        <tr>
+                            <td colspan="2" style="text-align:center"><b>Datos del Pago</b></td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid white;text-align:right"><b>Fecha Pago</b></td>
+                            <td style="border: 1px solid white; text-align:right" > {{ date('d/m/Y', strtotime($cuota->fecha_cobro)) }}</td>
+                         <td style="border: 1px solid white; text-align:right"></td>
+                           
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid white;text-align:right"><b>Valor Pagado</b></td>
+                            <td style="border: 1px solid white; text-align:right">{{ $cuota->valor_cobrado }}</td>
+                            <td style="border: 1px solid white; text-align:right"></td>
+                        </tr>
+
+                        <tr>
+                            <td style="border: 1px solid white;text-align:right"><span style="color:white">..</span></td>
+                            <td style="border: 1px solid white; text-align:right"><span style="color:white">..</span></td>
+                            <td style="border: 1px solid white; text-align:right"><span style="color:white">..</span></td>
+                           
+                        </tr>
+
+                        <tr>
+                            <td colspan="3" style="text-align:center"><b>Datos del Convenio</b></td>
+                        </tr>
                         <tr>
                             <td style="border: 1px solid white;width:60%;text-align:right"><b>Valor Deuda Convenio</b></td>
-                            <td style="border: 1px solid white; text-align:right">555</td>
+                            <td style="border: 1px solid white; text-align:right">{{ $data->valor_adeudado }}</td>
                             <td style="border: 1px solid white; text-align:right"></td>
                         </tr>
                         <tr>
                             <td style="border: 1px solid white;text-align:right"><b>Valor Intereses</b></td>
-                            <td style="border: 1px solid white; text-align:right">555</td>
+                            <td style="border: 1px solid white; text-align:right">{{  number_format($interes,2) }}</td>
                             <td style="border: 1px solid white; text-align:right"></td>
                         </tr>
                         <tr>
                             <td style="border: 1px solid white;text-align:right"><b>Valor Final</b></td>
-                            <td style="border: 1px solid white; text-align:right">555</td>
+                            <td style="border: 1px solid white; text-align:right">{{$total}}</td>
                             <td style="border: 1px solid white; text-align:right"></td>
                         </tr>
                         <tr>
                             <td style="border: 1px solid white;text-align:right"><b>Valor Cancelado</b></td>
-                            <td style="border: 1px solid white; text-align:right">555</td>
+                            <td style="border: 1px solid white; text-align:right">{{ $data->valor_cancelado }}</td>
                             <td style="border: 1px solid white; text-align:right"></td>
                         </tr>
                         <tr>
                             <td style="border: 1px solid white;text-align:right"><b>Valor Pendiente</b></td>
-                            <td style="border: 1px solid white; text-align:right">555</td>
+                            <td style="border: 1px solid white; text-align:right">{{ $valor_pend }}</td>
                             <td style="border: 1px solid white; text-align:right"></td>
                         </tr>
                     </table>
                 </td>
 
                 <!-- TABLA DERECHA -->
-                <td style="width:73%; vertical-align: top;padding-left:10px;">
+                <td style="width:70%; vertical-align: top;padding-left:10px;">
                     <table width="100%" style="border-collapse: collapse; border-spacing: 0;">
                         <tr style="font-size: 11px">
-                            <td style="border: 1px solid #000; text-align:center"><b>#Cuota</b></td>
-                            <td style="border: 1px solid #000; text-align:center"><b>Fecha Pago</b></td>
-                            <td style="border: 1px solid #000; text-align:center"><b>Valor Convenio</b></td>
-                            <td style="border: 1px solid #000; text-align:center"><b>Valor Interes</b></td>
-                            <td style="border: 1px solid #000; text-align:center"><b>Valor Abono</b></td>
-                            <td style="border: 1px solid #000; text-align:center"><b>Valor a Pagar</b></td>
-                            <td style="border: 1px solid #000; text-align:center"><b>Estado</b></td>
+                            <td style="border: 1px solid #000; text-align:center; background-color:#D6D3D2;" ><b>#Cuota</b></td>
+                            <td style="border: 1px solid #000; text-align:center; background-color:#D6D3D2;"><b>Fecha Pago</b></td>
+                            <td style="border: 1px solid #000; text-align:center; background-color:#D6D3D2;"><b>Valor Convenio</b></td>
+                            <td style="border: 1px solid #000; text-align:center; background-color:#D6D3D2;"><b>Valor Interes</b></td>
+                            <td style="border: 1px solid #000; text-align:center; background-color:#D6D3D2;"><b>Valor Abono</b></td>
+                            <td style="border: 1px solid #000; text-align:center; background-color:#D6D3D2;"><b>Valor a Pagar</b></td>
+                            <td style="border: 1px solid #000; text-align:center; background-color:#D6D3D2;"><b>Estado</b></td>
                         </tr>
+                        @php
+                            $tamanio=sizeof($data->cuotas);
+                            $interes_valor='0.00';  
+                        @endphp
                         @foreach ($data->cuotas as $i=> $info)
-                        
+                            @php
+                                $cuota=$info->valor_cuota;
+                                $valor_abono=$info->saldo_abono === null ? '0' : $info->saldo_abono;
+                                if($i==$tamanio-1){
+                                    $interes_valor=$interes;
+                                    $cuota=round((float)$info->valor_cuota,2) + round((float)$interes,2) - round((float)$valor_abono,2);
+                                }else{
+                                    $cuota=round((float)$info->valor_cuota,2) - round((float)$valor_abono,2);
+                                }
+                            @endphp
                       
                             <tr style="font-size: 11px">
                                 <td style="border: 1px solid #000;text-align:center">
@@ -195,10 +263,10 @@
                                
                                 <td style="border: 1px solid #000;text-align:center">{{ $info->fecha }}</td>
                                 <td style="border: 1px solid #000;text-align:right">{{ $info->valor_cuota }}</td>
-                                <td style="border: 1px solid #000;text-align:right">0.00</td>
+                                <td style="border: 1px solid #000;text-align:right">{{ $interes_valor}}</td>
                                 <td style="border: 1px solid #000;text-align:right">{{ $info->saldo_abono === null ? '0.00' : $info->saldo_abono}}</td>
-                                <td style="border: 1px solid #000;text-align:right">222</td>
-                                <td style="border: 1px solid #000;">{{ $info->estado }}</td>
+                                <td style="border: 1px solid #000;text-align:right">{{ number_format($cuota,2) }}</td>
+                                <td style="border: 1px solid #000;text-align:center">{{ $info->estado }}</td>
                             </tr>
                         @endforeach
                     </table>

@@ -2,15 +2,23 @@
 
 namespace App\Http\Controllers\Convenio;
 
+use App\Http\Controllers\Coactiva\NotificacionesController;
 use App\Http\Controllers\Controller;
 use App\Models\Coactiva\Convenio;
 use App\Models\Coactiva\CuotaConvenio;
+use App\Models\Coactiva\DataCoa;
+use App\Models\Coactiva\DataNotifica;
+use App\Models\PsqlPredio;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class ConvenioPagoController extends Controller
-{ 
+{   
+    private $coactiva= null;
+    public function __construct() {
+        $this->coactiva = new NotificacionesController;
+    }
     public function index(){
         return view('convenio.pago');
     } 
@@ -56,6 +64,7 @@ class ConvenioPagoController extends Controller
 
     public function pagaCuota(Request $request)
     {
+       
         DB::connection('pgsql')->beginTransaction();
 
         try {
@@ -91,6 +100,7 @@ class ConvenioPagoController extends Controller
                 }else{
                     if($valor_recibido>0){
                         $info->saldo_abono=(float) $valor_recibido;
+                        $info->valor_cobrado=(float) $info->saldo_abono;
                         $info->estado='Abonada';
                     }else{
                         break;
@@ -113,9 +123,20 @@ class ConvenioPagoController extends Controller
                     "error" => true
                 ];
             }
+
+            $crearPdf=$this->pdfPagoCuota($request->idCuota[0],$request->Urbano_Rural,$request->Noti_o_Proceso);
+            if($crearPdf['error']==true){
+                DB::connection('pgsql')->rollBack();
+
+                return [
+                    "mensaje" => $crearPdf['mensaje'],
+                    "error" => true
+                ];
+            }
             DB::connection('pgsql')->commit();
 
-            return ["mensaje" => "Información registrada exitosamente", "error" => false];
+            return ["mensaje" => "Información registrada exitosamente", "error" => false, "pdf"=>$crearPdf['pdf']];
+            // return ["mensaje" => "Información registrada exitosamente", "error" => false];
 
         } catch (\Exception $e) {
 
@@ -133,35 +154,33 @@ class ConvenioPagoController extends Controller
         DB::connection('pgsql')->beginTransaction();
 
         try {
-            $obtenerValorPagado=CuotaConvenio::whereIn('estado',['Pagada','Abonada'])
-            ->where('id_convenio','=', $id) 
-            ->sum('valor_cobrado');
-            $obtenerValorPagado = round($obtenerValorPagado, 2);
-            if($obtenerValorPagado>0){
-                $actualizaConvenio=Convenio::where('id',$id)
-                ->where('estado','Activo')
-                ->first();
+            $totalCuotaConvenio = CuotaConvenio::where('id_convenio', $id)
+            ->whereIn('estado',['Pagada','Abonada'])
+                ->sum('valor_cobrado');
 
-                if(!is_null($actualizaConvenio)){
-                    $totalConvenio = CuotaConvenio::where('id_convenio', $id)
-                        ->sum('valor_cuota');
+            $totalCuotaConvenio = round($totalCuotaConvenio, 2);
 
-                    $totalConvenio = round($totalConvenio, 2);
+            $convenio=Convenio::where('estado','Activo')
+            ->where('id','=', $id) 
+            ->first();
 
-                    if ($obtenerValorPagado >= $totalConvenio) {
-                        $actualizaConvenio->estado_pago = 'Pago Total';   // ✅ ya no debe nada
-                    } else {
-                        $actualizaConvenio->estado_pago = 'Pago Parcial';   // ❌ aún debe
-                    }
+            $convenio->valor_cancelado=$totalCuotaConvenio;
+            $convenio->save();
 
-                    $actualizaConvenio->valor_cancelado=$obtenerValorPagado;
-                    $actualizaConvenio->save();
+            $obtenerAdeuadado = round($convenio->valor_adeudado, 2);
 
-                    DB::connection('pgsql')->commit();
-                
-                }
-
+            if ($obtenerAdeuadado <= $totalCuotaConvenio) {
+                $convenio->estado_pago = 'Pago Total';   // ✅ ya no debe nada
+            } else {
+                $convenio->estado_pago = 'Pago Parcial';   // ❌ aún debe
             }
+            $convenio->save();
+
+
+            DB::connection('pgsql')->commit();
+            
+
+            
 
             return [
                 "mensaje" => "OK",
@@ -179,29 +198,155 @@ class ConvenioPagoController extends Controller
         }
     }
 
-    public function pdfPagoCuota($idcuota){
-       
+    public function pdfPagoCuota($idcuota,$lugar,$noti_proc){       
         try {
+            $nombrePDF="Convenio_Cuota_".$idcuota.".pdf";
+            
+            $disco="disksCoactiva";
+            $exists_destino = \Storage::disk($disco)->exists($nombrePDF);
+            if($exists_destino){
+                return ["pdf"=>$nombrePDF, "error"=>false];
+            }
+
             $dataConvenio=Convenio::with('notificacion','coactiva','cuotas')
             ->whereHas('cuotas', function($query) use($idcuota) { 
                $query->where('id',$idcuota);    
             })
             ->first();
-            // dd($dataConvenio);
+                      
+            $contr="";
+            $cedula="";
+            $idliqui=[''];
+            $clave=[''];
+            if($lugar=='Urbano'){
+                if(!is_null($dataConvenio->notificacion)){
+                    $contr=$dataConvenio->notificacion->ente->apellidos." ".$dataConvenio->notificacion->ente->nombres;
+                    $cedula=$dataConvenio->notificacion->ente->ci_ruc;
+                    
+                    $idliqui=DataNotifica::with('liquidacion')
+                    ->where('id_info_notifica',$dataConvenio->notificacion->id)                
+                    ->get()
+                    ->pluck('liquidacion.predio')
+                    ->toArray();
+                    
+                    $clave=PsqlPredio::whereIN('id',$idliqui)
+                    ->pluck('num_predio')
+                    ->toArray();
+                 
 
+                }else{
+                    $contr=$dataConvenio->coactiva->notificacion->ente->apellidos." ".$dataConvenio->coactiva->notificacion->ente->nombres;
+                    $cedula=$dataConvenio->coactiva->notificacion->ente->ci_ruc;
+                    $idliqui=DataCoa::with('liquidacion')
+                    ->where('id_info_coact',$dataConvenio->coactiva->id)
+                    ->get()
+                    ->pluck('liquidacion.predio')
+                    ->toArray();
+
+                    $clave=PsqlPredio::whereIN('id',$idliqui)
+                    ->pluck('num_predio')
+                    ->toArray();
+                }
+            }else{
+                if(!is_null($dataConvenio->notificacion)){
+                    $contr=$dataConvenio->notificacion->contribuyente;
+                    $cedula=$dataConvenio->notificacion->num_ident;
+                    $num_titulo=DataNotifica::where('id_info_notifica',$dataConvenio->notificacion->id)
+                    ->pluck('num_titulo')
+                    ->toArray();
+                }else{  
+                   $contr=$dataConvenio->coactiva->contribuyente;
+                    $cedula=$dataConvenio->coactiva->num_ident;
+                    $num_titulo=DataCoa::where('id_info_coact',$dataConvenio->coactiva->id)
+                    ->pluck('num_titulo')
+                    ->toArray();
+                }
+               
+                $clave = [];
+                $clave_act = [];
+
+                foreach ($num_titulo as $key => $data) {
+                    $anio = explode("-", $data)[0];
+
+                    if ($anio < date('Y')) {
+                        $result = DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
+                            ->where('CarVe_NumTitulo', $data)
+                            ->pluck('Pre_CodigoCatastral')
+                            ->toArray();
+
+                        $clave = array_merge($clave, $result);
+
+                    } else {
+                        $result = DB::connection('sqlsrv')->table('TITULOS_PREDIO as tp')
+                            ->where('TitPr_NumTitulo', $data)
+                            ->pluck('Pre_CodigoCatastral')
+                            ->toArray();
+
+                        $clave_act = array_merge($clave_act, $result);
+                    }
+                }
+
+                // 🔥 unir ambos arrays en uno solo
+                $claves_final = array_merge($clave, $clave_act);
+
+                // opcional: quitar duplicados
+                $claves_final = array_unique($claves_final);
+                $clave=$claves_final;
+               
+            }
+            
+            $cuota = $dataConvenio->cuotas->firstWhere('id', $idcuota);
+            // dd($cuota);
+            $num_cuota="";
+            foreach ($dataConvenio->cuotas as $i=> $cuota_data) {
+                if($cuota_data->id==$idcuota){
+                    $num_cuota=$cuota->cuota_inicial === true ? 'Inicial': $i; 
+                }
+            }
+            // dd($cuota);
+      
+            $idConvenio=$dataConvenio->id;
+           
+            $dataTitulo=$this->coactiva->obtenerTitulosConvenio($idConvenio, $lugar, $noti_proc);
+          
+            $total=0;
+            foreach($dataTitulo['resultado'] as $data){
+                if($lugar=='Urbano'){
+                    $total=$total + $data[0]->total_complemento;
+                }else{
+                    $total=$total + $data[0]->total_pagar;
+                }
+            }
+            $interes=0;
+            
+            if (round((float)$dataConvenio->valor_adeudado, 2) < round((float)$total, 2)) {
+                $interes=round((float)$total,2) - round((float)$dataConvenio->valor_adeudado,2);
+                
+            }
+            
+          
             $fecha_hoy=date('Y-m-d');
             setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES@euro', 'es_ES', 'esp');
             $fecha_timestamp = strtotime($fecha_hoy);    
             $fecha_formateada = strftime("%d de %B del %Y", $fecha_timestamp);
 
-            $nombrePDF="Convenio_Cuota_".$idcuota.".pdf";
-            $pdf = \PDF::loadView('reportes.pago_cuota_convenio', ["data"=>$dataConvenio, 
-            "fecha_formateada"=>$fecha_formateada]);
+            
+            $pdf = \PDF::loadView('reportes.pago_cuota_convenio', 
+                ["data"=>$dataConvenio,
+                "interes"=>round((float)$interes,2), 
+                "total"=>$total, 
+                "cuota"=>$cuota, 
+                "contr"=>$contr, 
+                "cedula"=>$cedula,
+                "clave"=>$clave, 
+                "num_cuota"=>$num_cuota, 
+                "fecha_formateada"=>$fecha_formateada
+            ]);
 
-            return $pdf->stream($nombrePDF);
+            // return $pdf->stream($nombrePDF);
 
             $estadoarch = $pdf->stream();
-            $disco="public";
+            $disco="disksCoactiva";
             \Storage::disk($disco)->put(str_replace("", "",$nombrePDF), $estadoarch);
             $exists_destino = \Storage::disk($disco)->exists($nombrePDF);
             if($exists_destino){
@@ -214,8 +359,13 @@ class ConvenioPagoController extends Controller
             }
 
         }catch (\Exception $e) {
-            dd($e);
+            return [
+                'error'=>true,
+                'mensaje'=>'Ocurrio un error '.$e->getLine().' Mensaje '.$e->getMessage(),
+            ];
         }
     }
+
+  
 
 }

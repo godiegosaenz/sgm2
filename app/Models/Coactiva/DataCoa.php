@@ -15,7 +15,7 @@ class DataCoa extends Model
     public $timestamps = false;
 
     public function liquidacion(){
-        return $this->belongsTo('App\Models\PsqlLiquidacion', 'id_liquidacion', 'id');
+        return $this->belongsTo('App\Models\PsqlLiquidacion', 'id_liquidacion', 'id')->with('predio');
     }
 
 }

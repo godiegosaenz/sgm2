@@ -1165,55 +1165,9 @@ class NotificacionesController extends Controller
 
         }
     }
-     public function obtenerTitulosConvenio($id, $lugar, $noti_proc){
+    public function obtenerTitulosConvenio($id, $lugar, $noti_proc){
         try{
-            // if($noti_proc=="Voluntario"){
-            //     if($lugar=="Urbano"){
-            //         $obtenerId=Convenio::where('id',$id)->select('id_info_notifica')
-            //         ->where('estado','Activo')
-            //         ->first();
-            //         if(is_null($obtenerId)){
-            //             return ["mensaje"=>"El convenio ya no se encuentra activo ","error"=>true];
-            //         }
-            //         $obtenerLiquidaciones=DataNotifica::where('id_info_notifica',$obtenerId->id_info_notifica)
-            //         ->pluck('id_liquidacion')
-            //         ->toArray();
-            //     }else{
-            //         $obtenerId=Convenio::where('id',$id)->select('id_info_notifica')
-            //         ->where('estado','Activo')
-            //         ->first();
-            //         if(is_null($obtenerId)){
-            //             return ["mensaje"=>"El convenio ya no se encuentra activo ","error"=>true];
-            //         }
-            //         $obtenerLiquidaciones=DataNotifica::where('id_info_notifica',$obtenerId->id_info_notifica)
-            //         ->pluck('num_titulo')
-            //         ->toArray();
-            //     }
-            // }else{
-            //     if($lugar=="Urbano"){
-            //         $obtenerId=Convenio::where('id',$id)->select('id_info_coact')
-            //         ->where('estado','Activo')
-            //         ->first();
-            //         if(is_null($obtenerId)){
-            //             return ["mensaje"=>"El convenio ya no se encuentra activo ","error"=>true];
-            //         }
-            //         $obtenerLiquidaciones=DataCoa::where('id_info_coact',$obtenerId->id_info_coact)
-            //         ->pluck('id_liquidacion')
-            //         ->toArray();
-            //     }else{
-            //         $obtenerId=Convenio::where('id',$id)->select('id_info_coact')
-            //         ->where('estado','Activo')
-            //         ->first();
-            //         if(is_null($obtenerId)){
-            //             return ["mensaje"=>"El convenio ya no se encuentra activo ","error"=>true];
-            //         }
-            //         $obtenerLiquidaciones=DataCoa::where('id_info_coact',$obtenerId->id_info_coact)
-            //         ->pluck('num_titulo')
-            //         ->toArray();
-            //     }
-            // }
-
-
+           
             // Definir variables dinámicas
             $esVoluntario = $noti_proc == "Voluntario";
             $esUrbano = $lugar == "Urbano";
@@ -1231,6 +1185,7 @@ class NotificacionesController extends Controller
             if (is_null($obtenerId)) {
                 return ["mensaje" => "El convenio ya no se encuentra activo", "error" => true];
             }
+            
 
             // Obtener liquidaciones
             $obtenerLiquidaciones = $modeloData::where($campoInfo, $obtenerId->$campoInfo)
