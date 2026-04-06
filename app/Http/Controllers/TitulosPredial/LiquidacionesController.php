@@ -330,7 +330,7 @@ class LiquidacionesController extends Controller
             set_time_limit(0);
             ini_set("memory_limit",-1);
             ini_set('max_execution_time', 0); 
-            
+
             $tipo_agrupado="";
             if($lugar==1){
                 $consulta=$this->consultarTitulosUrb($cedula, null);
@@ -395,6 +395,9 @@ class LiquidacionesController extends Controller
 
     public function pagoVoluntario($cedula, $lugar, $es_not=0){
         try{
+            set_time_limit(0);
+            ini_set("memory_limit",-1);
+            ini_set('max_execution_time', 0); 
             $tipo_agrupado="";
             $nombre_persona="";
             $direcc_cont="";
