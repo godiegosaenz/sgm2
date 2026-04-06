@@ -204,13 +204,12 @@ class CoactivaController extends Controller
             ->orderBy('id','asc')
             ->get();
             
-
-            $fecha = new \DateTime();
-            $formato = new \IntlDateFormatter(
-                'es_ES',
-                \IntlDateFormatter::LONG,
-                \IntlDateFormatter::NONE
-            );
+            // $fecha = new \DateTime();
+            // $formato = new \IntlDateFormatter(
+            //     'es_ES',
+            //     \IntlDateFormatter::LONG,
+            //     \IntlDateFormatter::NONE
+            // );
             // dd($formato);
 
             return ["resultado"=>$detalle, 
