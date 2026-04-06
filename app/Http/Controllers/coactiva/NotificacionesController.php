@@ -672,7 +672,7 @@ class NotificacionesController extends Controller
             foreach($liquidacionUrbana as $key=>$data){
                 $total_valor=$total_valor+$data->total_pagar;
             }
-
+ 
 
             return ["resultado"=>$liquidacionUrbana, 
                     "total_valor"=>number_format($total_valor,2),

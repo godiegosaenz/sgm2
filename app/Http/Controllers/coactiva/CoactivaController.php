@@ -211,8 +211,12 @@ class CoactivaController extends Controller
                 \IntlDateFormatter::LONG,
                 \IntlDateFormatter::NONE
             );
+            // dd($formato);
 
-            return ["resultado"=>$detalle, "fechaFormateada"=>$formato->format($fecha), "error"=>false];
+            return ["resultado"=>$detalle, 
+                // "fechaFormateada"=>$formato->format($fecha), 
+                "error"=>false
+                ];
 
         } catch (\Exception $e) {
             return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
