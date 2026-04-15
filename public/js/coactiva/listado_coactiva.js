@@ -289,7 +289,8 @@ function detalleNot(id){
                 let clave_matricula=""
                 let anio=""
                 
-                if(data.resultado.predio=='Urbano'){
+                //if(data.resultado.predio=='Urbano'){
+                if(item.id_liquidacion!=null){
                     clave_matr.push(item.clave_cat);
                     clave_matricula=item.liquidacion.predio.num_predio
                     anio=item.liquidacion.anio
@@ -350,13 +351,14 @@ function detalleNot(id){
             $('#nombre_notificador').html(data.resultado.profesional)
             $('#fecha_notificacion').html(data.resultado.fecha_registra)
 
-             let ced_ruc=""
+            let ced_ruc=""
+            ced_ruc=data.resultado.num_ident
 
-            if(data.resultado.predio=='Urbano'){
+            /*if(data.resultado.predio=='Urbano'){
                 ced_ruc=data.resultado.ente.ci_ruc
             }else{
                 ced_ruc=data.resultado.num_ident
-            }
+            }*/
 
             $('#num_ident_contr').html(cont)
             $('#nombre_contr').html(ced_ruc)
@@ -390,7 +392,8 @@ function detalleNot(id){
                 $.each(data.datosCoa.data,function(i, item){
                     let predio=""
                     let anio=""
-                    if($('#predio_localizacion').html()=="Rural"){
+                    //if($('#predio_localizacion').html()=="Rural"){
+                    if(item.id_liquidacion==null){
                         predio=item.clave_cat
                         anio=item.anio
                     }else{

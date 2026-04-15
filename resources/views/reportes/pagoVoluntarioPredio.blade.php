@@ -213,17 +213,18 @@
         <p>
             Para los fines pertinentes, me permito comunicarle a usted, la siguiente notificación respecto
             a los valores por concepto de pago de <strong>PREDIO MUNICIPAL</strong> que adeuda al
-            <strong>GAD MUNICIPAL DEL CANTÓN SAN VICENTE</strong>, ubicado en  {{ $direcc_cont }}.
+            <strong>GAD MUNICIPAL DEL CANTÓN SAN VICENTE</strong>.
         </p>
         @php
             $total_final=0;
-            $coordenas_txt="";
+            // $coordenas_txt="";
         @endphp
         @foreach ($DatosLiquidacion as $key=>$data)
             @php
                 $total=0;
                 $anio_uno=0;
                 foreach($data as $key2=> $info){
+                    $coordenas_txt="";
                     if($key2==0){
                         $anio_uno=$info->anio;
                     }
@@ -231,7 +232,8 @@
                     $valor = str_replace(',', '', $valor);
                     // Convertir a número y sumar
                     $total += (float) $valor;
-                    if($ubicacion==1){
+                    // if($ubicacion==1){
+                    if(isset($info->coordx)){
                         $coordenas_txt = ' (coordenadas <strong>X</strong> ' . $info->coordx . ' <strong>Y</strong> ' . $info->coordy.'),';
                     }
 
@@ -323,7 +325,8 @@
             <center>
                
               <h3 style="margin: 0; padding: 0;">
-                 Liquidación de predios {{ $ubicacion == 1 ? 'urbanos' : 'rurales' }}
+                
+                Liquidación de predios 
             </h3>
 
             <h3 style="margin: 4px 0 0 0; padding: 0;">
@@ -382,7 +385,10 @@
                             $anio=explode("-",$item->num_titulo);
 
                             $num_matricula="";
-                            if($ubicacion==1){
+                            /*if($ubicacion==1){
+                                $num_matricula = $item->num_predio;
+                            }*/
+                            if(isset($item->num_predio)){
                                 $num_matricula = $item->num_predio;
                             }
                             $nombre_persona=$item->nombre_per;

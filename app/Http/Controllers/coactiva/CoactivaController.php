@@ -85,35 +85,41 @@ class CoactivaController extends Controller
             if($actualizaEstado['error']==true){
                 return ["mensaje"=>$actualizaEstado['mensaje'], "error"=>true];
             }
-
-            if($request->lugar_not=='Urbano'){
-                $dataNoti=DataNotifica::where('id_info_notifica',$request->idnotifica)->pluck('id_liquidacion')
+  
+            //if($request->lugar_not=='Urbano'){
+                $dataNoti=DataNotifica::where('id_info_notifica',$request->idnotifica)
+                ->whereNotNull('id_liquidacion')
+                ->pluck('num_titulo')
                 ->toArray();
+
+        
                 $total=$this->coactiva->tituloCreditoUrb($dataNoti);
-                
+               
                 $total_deuda=0;
                 foreach($total['data']['DatosLiquidaciones'] as $data){
                     $total_deuda=$total_deuda + $data[0]->total_complemento;
                 }
                 
-            }else{
-                $dataNoti=DataNotifica::where('id_info_notifica',$request->idnotifica)->pluck('num_titulo')
+            //}else{
+                $dataNoti=DataNotifica::where('id_info_notifica',$request->idnotifica)
+                ->whereNull('id_liquidacion')
+                ->pluck('num_titulo')
                 ->toArray();
                 $total=$this->coactiva->tituloCreditoRural($dataNoti);
               
-                $total_deuda=0;
+                //$total_deuda=0;
                 foreach($total['data']['DatosLiquidaciones'] as $data){
                     $total = $data[0]->total_pagar ? str_replace(',', '', $data[0]->total_pagar) : 0;
                     $total_deuda=$total_deuda + $total;
                 }
-            }          
+           // }          
            
             $total_deuda = (float) $total_deuda;
             $valorAdeudado = (float) $request->valor_adeudado;
           
             if(round($total_deuda,2) != round($valorAdeudado,2)){
                 return [
-                    "mensaje" => "El valor adeudado actual ha subido a $" . number_format($total_deuda,2),
+                    "mensaje" => "El valor adeudado actual ha cambiado a $" . number_format($total_deuda,2),
                     "error" => true
                 ];
             }
@@ -158,7 +164,7 @@ class CoactivaController extends Controller
             return ["mensaje"=>"Informacion registrada exitosamente", "error"=>false];
             
         } catch (\Exception $e) {
-            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e->getMessage()." Linea ".$e->getLine(), "error"=>true];
         }
     }
 
@@ -222,7 +228,7 @@ class CoactivaController extends Controller
         }
     }
    
-    public function guardarMedidas(Request $request)
+    public function guardarMedidas_old(Request $request)
     {
         DB::connection('pgsql')->beginTransaction();
 
@@ -402,6 +408,208 @@ class CoactivaController extends Controller
 
             return [
                 "mensaje" => "Ocurrió un error: " . $e->getMessage(). $e->getLine(),
+                "error" => true
+            ];
+        }
+    }
+
+     public function guardarMedidas(Request $request)
+    {
+        DB::connection('pgsql')->beginTransaction();
+
+        try {
+
+            $verifica = Medidas::where('id_info_coact', $request->idcoa_medida)
+                ->where('estado', 'Activo')
+                ->first();
+
+            if (!is_null($verifica)) {
+                return ["mensaje" => "Ya existe una medida activa", "error" => true];
+            }
+
+            $actualizaEstado = $this->actualizarEstadoCoa($request->idcoa_medida, 'Medi', 'A');
+            if ($actualizaEstado['error'] == true) {
+                DB::connection('pgsql')->rollBack();
+                return ["mensaje" => $actualizaEstado['mensaje'], "error" => true];
+            }
+
+            $guarda = new Medidas();
+            $guarda->id_info_coact = $request->idcoa_medida;
+            $guarda->total_deuda = (float) $request->total_valor_deuda;
+            $guarda->medidas = $request->medidas_txt;
+            $guarda->usuario_registra = auth()->user()->persona->apellidos . " " . auth()->user()->persona->nombres;
+            $guarda->fecha_registra = now();
+            $guarda->estado = 'Activo';
+
+            /* ================== SECUENCIAL ================== */
+
+            $ultimo_sec = Medidas::whereYear('fecha_registra', date('Y'))
+                ->whereNotNull('num_oficio1')
+                ->orderByDesc('num_oficio1')
+                ->first();
+
+            if (is_null($ultimo_sec)) {
+
+                $secuencial = Secuencial::where('descripcion', 'Oficio')
+                    ->where('anio', date('Y'))
+                    ->where('estado', 'A')
+                    ->lockForUpdate()
+                    ->first();
+
+                if (is_null($secuencial)) {
+
+                    $num_oficio1 = 1;
+
+                    Secuencial::create([
+                        'secuencia' => 1,
+                        'descripcion' => 'Oficio',
+                        'estado' => 'A',
+                        'anio' => date('Y')
+                    ]);
+
+                } else {
+
+                    $secuencial->increment('secuencia');
+                    $num_oficio1 = $secuencial->secuencia;
+                }
+
+            } else {
+
+                $num_oficio1 = $ultimo_sec->num_oficio3 + 1;
+            }
+          
+
+            $nombrePDF = "MedidasCoactiva" . date('YmdHis') . ".pdf";
+
+            $guarda->num_oficio1 = $num_oficio1;
+            $guarda->num_oficio2 = $num_oficio1 + 1;
+            $guarda->num_oficio3 = $num_oficio1 + 2;
+            $guarda->documento = $nombrePDF;
+            $guarda->save();
+
+            /* ================== CONSULTAS ================== */
+
+            $consulta=$this->coactiva->consultarTitulosUrb($request->IdNotificaSele);
+            if($consulta['error']==true){
+                DB::connection('pgsql')->rollBack();
+                return ["mensaje"=>$consulta['mensaje'], "error"=>true];
+                
+            }
+            
+            $consulta1=$this->coactiva->consultarTitulos($request->IdNotificaSele);
+            if($consulta1['error']==true){
+                DB::connection('pgsql')->rollBack();
+                return ["mensaje"=>$consulta1['mensaje'], "error"=>true];
+                
+            }
+
+            $todo = $consulta["resultado"]->merge($consulta1["resultado"]);
+            $listado_final = [];
+            $anios = [];
+            
+            foreach ($todo as $key => $item){ 
+                $anios[] = $item->anio;
+                if(isset($item->num_predio)){            
+                    if(!isset($listado_final[$item->num_predio])) {
+                        $listado_final[$item->num_predio]=array($item);
+                
+                    }else{
+                        array_push($listado_final[$item->num_predio], $item);
+                    }
+                }else{
+                    if(!isset($listado_final[$item->clave])) {
+                        $listado_final[$item->clave]=array($item);
+            
+                    }else{
+                        array_push($listado_final[$item->clave], $item);
+                    }
+                }
+
+                $nombre_persona=$item->nombre_per;
+                $direcc_cont=$item->direcc_cont;
+                if(isset($item->num_ident)){
+                    $ci_ruc=$item->num_ident;
+                }
+                if(isset($item->ci_ruc)){
+                    $ci_ruc=$item->ci_ruc;
+                }
+            }
+                       
+
+            $anio_min = min($anios);
+            $anio_max = max($anios);
+            $rango = 'DESDE EL ' . $anio_min . ' HASTA EL EJERCICIO FISCAL ' . $anio_max;
+
+            /* ================== CONSULTAS db ================== */
+            $secr=DB::connection('pgsql')
+                ->table('sgm_coactiva.parametro_coactiva')
+                ->select('valor2')
+                ->where('codigo','SECRETARIO')
+                ->where('estado','A')
+                ->first();
+
+            $funcionarios=DB::connection('pgsql')
+                ->table('sgm_coactiva.parametro_coactiva')
+                ->selectRaw("
+                    MAX(CASE WHEN codigo = 'TESO' THEN valor END) AS tesorera,
+                    MAX(CASE WHEN codigo = 'JUEZ_COACT' THEN valor END) AS juez_coactiva,
+                    MAX(CASE WHEN codigo = 'SECRETARIO' THEN valor END) AS secretario
+                ")
+                ->whereIn('codigo', ['TESO','JUEZ_COACT','SECRETARIO'])
+                ->where('estado','A')
+                ->first();
+
+            $secuencial_data=DB::connection('pgsql')
+                ->table('sgm_coactiva.info_coact')
+                ->where('id',$request->idcoa_medida)
+                ->select('num_proceso')
+                ->first();
+        
+            /* ================== GENERAR PDF ================== */
+
+            $pdf = \PDF::loadView('reportes.medidasCoact', [
+                'DatosLiquidacion' => $listado_final,
+                "nombre_persona" => $nombre_persona,
+                "direcc_cont" => $direcc_cont,
+                "ci_ruc" => $ci_ruc,
+                "rango" => $rango,
+                "medidas" => $guarda,
+                "lugar_predio" => $request->predio,
+                "secuencial"=>$secuencial_data,
+                "secr"=>$secr->valor2,
+                "funcionarios"=>$funcionarios
+            ]);
+
+            $contenidoPDF = $pdf->output();
+
+            $disco = "disksCoactiva";
+            Storage::disk($disco)->put($nombrePDF, $contenidoPDF);
+
+            if (!Storage::disk($disco)->exists($nombrePDF)) {
+                DB::rollBack();
+                return [
+                    'error' => true,
+                    'mensaje' => 'No se pudo crear el documento'
+                ];
+            }
+
+            /* ================== COMMIT ================== */
+
+            DB::connection('pgsql')->commit();
+
+            return ["mensaje" => "Información registrada exitosamente", "error" => false];
+
+        } catch (\Exception $e) {
+
+            DB::connection('pgsql')->rollBack();
+
+            // Si el PDF ya se creó, lo eliminamos
+            if (isset($nombrePDF) && Storage::disk("disksCoactiva")->exists($nombrePDF)) {
+                Storage::disk("disksCoactiva")->delete($nombrePDF);
+            }
+
+            return [
+                "mensaje" => "Ocurrió un error: " . $e->getMessage().' Linea=> '. $e->getLine(),
                 "error" => true
             ];
         }

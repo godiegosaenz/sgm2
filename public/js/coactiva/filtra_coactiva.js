@@ -271,9 +271,10 @@ function detalleNot(id){
                 let clave_matricula=""
                 let anio=""
                 
-                if(data.resultado.predio=='Urbano'){
+                // if(data.resultado.predio=='Urbano'){
+                if(item.liquidacion!=null){
                     clave_matr.push(item.clave_cat);
-                    clave_matricula=item.liquidacion.predio
+                    clave_matricula=item.liquidacion.predio.num_predio
                     anio=item.liquidacion.anio
                     cont=data.resultado.ente.apellidos +" "+data.resultado.ente.nombres
                    
@@ -357,11 +358,13 @@ function detalleNot(id){
                 $.each(data.datosCoa.data,function(i, item){
                     let predio=""
                     let anio=""
-                    if($('#predio_localizacion').html()=="Rural"){
+                    // if($('#predio_localizacion').html()=="Rural"){
+                    if(item.id_liquidacion==null){
                         predio=item.clave_cat
                         anio=item.anio
                     }else{
-                        predio=item.liquidacion.predio
+                        // predio=item.liquidacion.predio
+                        predio=item.liquidacion.predio.num_predio
                         anio=item.liquidacion.anio
                     }
 				    $('#tableDetCoa').append(`<tr>

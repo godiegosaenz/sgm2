@@ -9,6 +9,7 @@
             font-family: DejaVu Sans, sans-serif;
             font-size: 12px;
             line-height: 1.2;
+            /* margin-bottom: 90px; */
         }
         .titulo {
             text-align: center;
@@ -69,6 +70,13 @@
             left: -70px;
             right: -50px;
             height: 150px;
+        }
+
+        .footer-firma {
+            position: fixed;
+            bottom: -60px; /* encima del footer institucional */
+            width: 100%;
+            text-align: center;
         }
 
         table.blueTable {
@@ -188,6 +196,8 @@
             display: none;
         }
 
+        
+
 
     </style>
 </head>
@@ -289,7 +299,7 @@
     </div>
 
     <p style="font-size: 14px; text-align: justify; line-height: 1; margin-top: 28px;">
-        <b>VISTOS: San Vicente, {{ fechaFormatoTexto() }},</b> en lo principal, de la liquidación obtenida del sistema gestión municipal, misma que se incorpora al proceso se deprende que el/la contribuyente <strong>{{ strtoupper($nombre_persona) }} </strong> con C.I/RUC.  <strong>{{ $ci_ruc }}</strong>; adeuda al Gobierno Autónomo Descentralizado Municipal del cantón San Vicente la suma de <strong>{{ numeroEnLetras($total_final) }}</strong>, por el concepto de {{ $predio_txt }}, la cual corresponde a la 
+        <b>VISTOS: San Vicente, {{ fechaFormatoTexto() }},</b> en lo principal, de la liquidación obtenida del sistema gestión municipal, misma que se incorpora al proceso se deprende que el/la contribuyente <strong>{{ strtoupper($nombre_persona) }} </strong> con C.I/RUC.  <strong>{{ $ci_ruc }}</strong>; adeuda al Gobierno Autónomo Descentralizado Municipal del cantón San Vicente la suma de <strong>{{ numeroEnLetras($total_final) }}</strong>, por el concepto de impuesto preediales, la cual corresponde a la 
       
         @php
             $total_final=0;
@@ -327,7 +337,7 @@
        
      
 
-    <div style="margin-bottom:8px; margin-top: 80px;">
+    <div style="margin-bottom:8px; margin-top: 80px;" class="footer-firma">
         <center>
             <p style="margin: 0; line-height: 0.9;">
                 <strong>{{$funcionarios->tesorera}}</strong>
@@ -368,7 +378,7 @@
 
     </p>
        
-    <div style="margin-bottom:28px; margin-top: 120px;">
+    <div style="margin-bottom:28px; margin-top: 120px;" class="footer-firma">
         <center>
             <p style="margin: 0; line-height: 0.9;">
                 <strong>{{$funcionarios->secretario}}</strong>
@@ -416,7 +426,7 @@
        
     </p>
        
-    <div style="margin-bottom:8px; margin-top: 80px;">
+    <div style="margin-bottom:8px; margin-top: 80px;" class="footer-firma">
         <center>
             <p style="margin: 0; line-height: 0.9;">
                 <strong>{{$funcionarios->secretario}}</strong>
@@ -469,7 +479,7 @@
        
     </p>
        
-    <div style="margin-bottom:28px; margin-top: 120px;">
+    <div style="margin-bottom:28px; margin-top: 120px;" class="footer-firma">
         <center>
             <p style="margin: 0; line-height: 0.9;">
                 <strong>{{$funcionarios->secretario}}</strong>

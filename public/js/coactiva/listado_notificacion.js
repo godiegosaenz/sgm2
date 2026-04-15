@@ -183,7 +183,7 @@ function detalleProcesoIniciaCoa(){
     var lugar=$('#predio_localizacion').html()
     var id=$('#id_notifica').val()
     vistacargando("m","Espere por favor")
-    $.get('pago-notificaciones-detalle-proceso-coac/'+id+'/'+lugar, function(data){
+    $.get('pago-notificaciones-detalle-proceso-coac/'+id, function(data){
         console.log(data)
        
         vistacargando("")
@@ -301,8 +301,10 @@ function detalleNot(id){
                 let clave_matricula=""
                 let anio=""
                 
-                if(data.resultado.predio=='Urbano'){
-                    clave_matr.push(item.clave_cat);
+                // if(data.resultado.predio=='Urbano'){
+                if(item.liquidacion!=null){
+                    clave_matr.push(item.liquidacion.predio.num_predio);
+                    // console.log(item.liquidacion.predio.num_predio)
                     clave_matricula=item.liquidacion.predio.num_predio
                     anio=item.liquidacion.anio
                     // cont=data.resultado.ente.apellidos +" "+data.resultado.ente.nombres
@@ -404,13 +406,16 @@ function detalleNot(id){
                 $('#tableDetCoa tbody').empty(); 
 
                 $.each(data.datosCoa.data,function(i, item){
+                    console.log(item)
                     let predio=""
                     let anio=""
-                    if($('#predio_localizacion').html()=="Rural"){
+                    // if($('#predio_localizacion').html()=="Rural"){
+                    if(item.id_liquidacion==null){
                         predio=item.clave_cat
                         anio=item.anio
                     }else{
-                        predio=item.liquidacion.predio
+                        // predio=item.liquidacion.predio
+                        predio=item.liquidacion.predio.num_predio
                         anio=item.liquidacion.anio
                     }
 				    $('#tableDetCoa').append(`<tr>

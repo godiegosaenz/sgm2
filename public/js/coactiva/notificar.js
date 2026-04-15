@@ -508,10 +508,12 @@ function buscarTitulos(cedula, nombres, correos){
     AplicaRemiGlobal=0
     $('#selectAll').prop('checked',false)
 
-    let ruta_busqueda='buscar-liquidacion-rurales/'+cedula+'/'
+    // let ruta_busqueda='buscar-liquidacion-rurales/'+cedula+'/'
+    let ruta_busqueda='buscar-deudas-predios/'+cedula
+    llenarTabla(ruta_busqueda)
     let ubicacion=$('#lugar').val()
     if(ubicacion==1){
-        ruta_busqueda='buscar-liquidacion-urbanos/'+cedula+'/'
+        // ruta_busqueda='buscar-liquidacion-urbanos/'+cedula+'/'
     }
    
     $("#tbodyRuralDetalle").html('');
@@ -535,17 +537,24 @@ function buscarTitulos(cedula, nombres, correos){
             alertNotificar('No existen deuda para esta persona/empresa',"error");
             return
         }
-       
+        
+        let total_valor=0
         $.each(data.resultado,function(i, item){
             let recar = item.recargo !=null ? item.recargo : '0.00';
             let descu = item.descuento !=null ? item.descuento : '0.00';
             let intereses = item.intereses !=null ? item.intereses : '0.00';
             let num_matricula=""
             let codigo=item.num_titulo
-            if(ubicacion==1){
+            // if(ubicacion==1){
+            if(item.num_predio!==undefined){
                 num_matricula = item.num_predio;
                 codigo=item.id
             }
+
+            // total_valor =total_valor +item.total_pagar
+            total_valor = parseFloat(
+                (total_valor + parseFloat(item.total_pagar)).toFixed(2)
+            );
             $('#tbodyRuralDetalle').append(`<tr>
                    
                     <td style="width:10%; text-align:center; vertical-align:middle">
@@ -578,6 +587,8 @@ function buscarTitulos(cedula, nombres, correos){
                 
             </tr>`);
         })
+
+        // alert(total_valor)
         const firstTab = document.querySelector('#tab-actual-btn');
         //const tab = new bootstrap.Tab(firstTab);
         //tab.show();

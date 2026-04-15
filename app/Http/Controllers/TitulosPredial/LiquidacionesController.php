@@ -401,7 +401,7 @@ class LiquidacionesController extends Controller
             $tipo_agrupado="";
             $nombre_persona="";
             $direcc_cont="";
-            if($lugar==1){
+            // if($lugar==1){
                 $consulta=$this->consultarTitulosUrb($cedula, null);
                 if($consulta["error"]==true){
                     return ["mensaje"=>$consulta["mensaje"], "error"=>true];
@@ -424,16 +424,16 @@ class LiquidacionesController extends Controller
                     }
                 } 
               
-            }else{
-                $consulta=$this->consultarTitulos($cedula, null);
-                if($consulta["error"]==true){
-                    return ["mensaje"=>$consulta["mensaje"], "error"=>true];
+            // }else{
+                $consulta1=$this->consultarTitulos($cedula, null);
+                if($consulta1["error"]==true){
+                    return ["mensaje"=>$consulta1["mensaje"], "error"=>true];
                 }
 
                 #agrupamos
-                $listado_final=[];
+                // $listado_final=[];
                                
-                foreach ($consulta["resultado"] as $key => $item){                
+                foreach ($consulta1["resultado"] as $key => $item){                
                     if(!isset($listado_final[$item->clave])) {
                         $listado_final[$item->clave]=array($item);
                 
@@ -447,15 +447,20 @@ class LiquidacionesController extends Controller
                         $nombre_persona=$item->nombre_contr1;
                     }
                 } 
-            }
-            // dd($listado_final);
+            // }
+            // dd($listado_final); 
+            // $todo = array_merge($consulta["resultado"], $consulta1["resultado"]);
+            $todo = $consulta["resultado"]->merge($consulta1["resultado"]);
+            
             $disco="public";
             if($es_not!=0){
                 $disco="disksCoactiva";
             }
 
             $nombrePDF="PagoVoluntario".date('YmdHis').".pdf";                               
-            $pdf = \PDF::loadView('reportes.pagoVoluntarioPredio', ['DatosLiquidacion'=>$listado_final,"ubicacion"=>$lugar,"nombre_persona"=>$nombre_persona, "direcc_cont"=>$direcc_cont]);
+            // $pdf = \PDF::loadView('reportes.pagoVoluntarioPredio', ['DatosLiquidacion'=>$listado_final,"ubicacion"=>$lugar,"nombre_persona"=>$nombre_persona, "direcc_cont"=>$direcc_cont]);
+
+            $pdf = \PDF::loadView('reportes.pagoVoluntarioPredio', ['DatosLiquidacion'=>$listado_final,"nombre_persona"=>$nombre_persona, "direcc_cont"=>$direcc_cont]);
 
             $estadoarch = $pdf->stream();
 
@@ -466,7 +471,8 @@ class LiquidacionesController extends Controller
                 return [
                     'error'=>false,
                     'pdf'=>$nombrePDF,
-                    'listado_final'=>$consulta["resultado"]
+                    // 'listado_final'=>$consulta["resultado"]
+                    'listado_final'=>$todo
                 ];
             }else{
                 return [
@@ -570,17 +576,35 @@ class LiquidacionesController extends Controller
                 $dataContribuyente=DB::connection('pgsql')->table('sgm_app.cat_predio as p')
                 ->leftJoin('sgm_app.cat_predio_propietario as pp','pp.predio','p.id')
                 ->leftJoin('sgm_app.cat_ente as e','e.id','pp.ente')
-                ->select('e.id','ci_ruc as Titpr_RUC_CI',DB::raw("CONCAT(e.apellidos, ' ', e.nombres) AS nombres"),DB::raw("CONCAT(e.ciudad, '-', e.direccion) AS direccion"))
+                ->select('e.id','ci_ruc as Titpr_RUC_CI',
+                // DB::raw("CONCAT(e.apellidos, ' ', e.nombres) AS nombres")
+                DB::raw("
+                    CASE 
+                        WHEN e.nombres IS NULL OR e.nombres = '' 
+                        THEN e.razon_social
+                        ELSE CONCAT(e.apellidos, ' ', e.nombres)
+                    END AS nombres
+                ")
+                ,DB::raw("CONCAT(e.ciudad, '-', e.direccion) AS direccion"))
                 ->where('p.num_predio',$matricula)
                 ->where('pp.estado','A')
                 ->get();
-
+ 
             }else if($tipo==2){
                 $clave=$request->valor;
                 $dataContribuyente=DB::connection('pgsql')->table('sgm_app.cat_predio as p')
                 ->leftJoin('sgm_app.cat_predio_propietario as pp','pp.predio','p.id')
                 ->leftJoin('sgm_app.cat_ente as e','e.id','pp.ente')
-                ->select('e.id','ci_ruc as Titpr_RUC_CI',DB::raw("CONCAT(e.apellidos, ' ', e.nombres) AS nombres"),DB::raw("CONCAT(e.ciudad, '-', e.direccion) AS direccion"))
+                ->select('e.id','ci_ruc as Titpr_RUC_CI',
+                // DB::raw("CONCAT(e.apellidos, ' ', e.nombres) AS nombres"),
+                DB::raw("
+                    CASE 
+                        WHEN e.nombres IS NULL OR e.nombres = '' 
+                        THEN e.razon_social
+                        ELSE CONCAT(e.apellidos, ' ', e.nombres)
+                    END AS nombres
+                "),
+                DB::raw("CONCAT(e.ciudad, '-', e.direccion) AS direccion"))
                 ->where('p.clave_cat',$clave)
                 ->where('pp.estado','A')
                 ->get();
@@ -588,10 +612,19 @@ class LiquidacionesController extends Controller
                 $valor=$request->valor;
                
                 $dataContribuyente=DB::connection('pgsql')->table('sgm_app.cat_ente as e')
-                ->select('id','ci_ruc as Titpr_RUC_CI',DB::raw("CONCAT(e.apellidos, ' ', e.nombres) AS nombres"),DB::raw("CONCAT(e.ciudad, '-', e.direccion) AS direccion"))
+                ->select('id','ci_ruc as Titpr_RUC_CI',
+                // DB::raw("CONCAT(e.apellidos, ' ', e.nombres) AS nombres")
+                DB::raw("
+                    CASE 
+                        WHEN e.nombres IS NULL OR e.nombres = '' 
+                        THEN e.razon_social
+                        ELSE CONCAT(e.apellidos, ' ', e.nombres)
+                    END AS nombres
+                ")
+                ,DB::raw("CONCAT(e.ciudad, '-', e.direccion) AS direccion"))
                 ->WhereRaw("LOWER(nombres) LIKE LOWER(?)", ["%$valor%"])
                 ->orWhereRaw("LOWER(apellidos) LIKE LOWER(?)", ["%$valor%"])
-                ->limit(10)
+                ->limit(20)
                 ->get();
             }
             if(sizeof($dataContribuyente)>0){

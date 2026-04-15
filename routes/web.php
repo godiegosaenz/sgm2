@@ -434,7 +434,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('croquis-predio/{cedula}/{lugar}', [LiquidacionesController::class, 'croquisPredio']);
     Route::post('notifica-contribuyente', [LiquidacionesController::class, 'notificaContribuyente']);
     Route::get('/notificacion/{id}/{archivoIndex}', [LiquidacionesController::class, 'descargarArchivo']);
-    
+     
 
     //predios-urbano
     Route::get('predio-urbano-liquidar', [UrbanoLiquidacionController::class, 'index']);
@@ -509,6 +509,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     //*******COACTIVA*********************/
     Route::get('notificar', [NotificacionesController::class, 'vistaNotificar'])->name('coactiva.notificar');
+    Route::get('buscar-deudas-predios/{cedula}', [NotificacionesController::class, 'deudasContribuyente']);
     Route::get('notificacion-pago-voluntario-rural-urb/{cedula}/{lugar}', [NotificacionesController::class, 'notificacionPagoVoluntario']);
     Route::get('coactiva/documento/{ruta}', [NotificacionesController::class, 'verDocumento']);
     Route::get('coactiva/documento-descargar/{ruta}', [NotificacionesController::class, 'descargarArchivo']);
@@ -516,7 +517,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('listado-notificaciones', [NotificacionesController::class, 'vistaListaNotificacion'])->name('coactiva.lista_notificar');
     Route::get('pago-notificaciones/{periodo}', [NotificacionesController::class, 'tablaNotificacion']);
     Route::get('pago-notificaciones-detalle/{id}', [NotificacionesController::class, 'detalleNotificacion']);
-    Route::get('pago-notificaciones-detalle-proceso-coac/{id}/{lugar}', [NotificacionesController::class, 'detalleNotificacionProceso']);
+    Route::get('pago-notificaciones-detalle-proceso-coac/{id}', [NotificacionesController::class, 'detalleNotificacionProceso']);
     Route::post('guardar-documento-firmado-noti', [NotificacionesController::class, 'subirArchivoFirmado']);
 
     Route::get('pdf-proceso-coactiva/{id}/{lugar}', [NotificacionesController::class, 'pdfProcesoCoactiva']);

@@ -327,7 +327,7 @@
     </div>
 
     <p style="font-size: 14px; text-align: justify; line-height: 1.5; margin-top: 28px;">
-       RAZÓN. - Siento como tal y para los fines de ley pertinentes, que de acuerdo al oficio/pago voluntario de fecha {{ fechaFormatoTexto() }}, suscrito por su autoridad que el contribuyente <strong>{{ strtoupper($nombre_persona) }} </strong> con C.I.  <strong>{{ $ci_ruc }}</strong>, se le concedió un plazo de 10 días conforme a lo señalado en el Art. 271 del COA, para acercarse a realizarse el pago voluntario de las obligaciones pendientes por concepto de impuesto predial  con este GAD Municipal de San Vicente el mismo que  NO registra pago alguno de las obligaciones ni método de pago alguno,  es todo lo que puedo certificar en honor a la verdad.</p>
+       RAZÓN. - Siento como tal y para los fines de ley pertinentes, que de acuerdo al oficio/pago voluntario de fecha {{ fechaFormatoTexto() }}, suscrito por su autoridad que el contribuyente <strong>{{ strtoupper($nombre_persona) }} </strong> con C.I.  <strong>{{ $ci_ruc }}</strong>, se le concedió un plazo de 10 días conforme a lo señalado en el Art. 271 del COA, para acercarse a realizarse el pago voluntario de las obligaciones pendientes por concepto de {{ $predio_txt }}  con este GAD Municipal de San Vicente el mismo que  NO registra pago alguno de las obligaciones ni método de pago alguno,  es todo lo que puedo certificar en honor a la verdad.</p>
        
     <p style="margin: 0; line-height: 1.2; margin-top:50px; text-align: left; font-weigth: 500 !important; font-size: 14px;">
         San Vicente a los {{ fechaFormatoTexto2() }} a las {{ date('h:i a') }}.</p>
@@ -353,7 +353,7 @@
     </div>
 
     <p style="font-size: 14px; text-align: justify; line-height: 1; margin-top: 28px;">
-       <b>VISTOS:</b> En lo principal, de los Títulos de Crédito respectivos emitidas por el órgano responsable de su emisión, desprendiéndose que el contribuyente  <strong>{{ strtoupper($nombre_persona) }} </strong> con C.I.  <strong>{{ $ci_ruc }}</strong> adeuda al Gobierno Autónomo Descentralizado Municipal del cantón San Vicente la suma de la CANTIDAD DE <strong>{{ numeroEnLetras($total_final) }}</strong> por el concepto de <b> impuesto predial</b>, la cual corresponde a la  
+       <b>VISTOS:</b> En lo principal, de los Títulos de Crédito respectivos emitidas por el órgano responsable de su emisión, desprendiéndose que el contribuyente  <strong>{{ strtoupper($nombre_persona) }} </strong> con C.I.  <strong>{{ $ci_ruc }}</strong> adeuda al Gobierno Autónomo Descentralizado Municipal del cantón San Vicente la suma de la CANTIDAD DE <strong>{{ numeroEnLetras($total_final) }}</strong> por el concepto de <b>{{ $predio_txt }}</b>, la cual corresponde a la  
         @php
             $total_final=0;
             $coordenas_txt="";
@@ -477,8 +477,8 @@
     @php
         $sumatotal = 0;
     @endphp
-    @if(sizeof($liquidacionUrb)>0)
-        @foreach ($liquidacionUrb as $d)
+    @if($lugar_predio=="Urbano")
+        @foreach ($DatosLiquidaciones as $d)
             <div class="no-header-footer1">
             <table class="tabla-principal">
                 <tr style="line-height:1">
@@ -508,7 +508,7 @@
                             </tbody>
                         </table>
                         <table class="tabla-izquierda">
-                            <thead > 
+                            <thead >
                                 <tr>
                                     <th colspan="2">TITULO DE CREDITO - PREDIO URBANO # {{$d[0]->id_liquidacion}}</th>
                                 </tr>
@@ -607,50 +607,45 @@
             @endphp
             </div>
         @endforeach
-        @if(sizeof($liquidacionRural)==0)
-            <h2 style="text-align: center">TOTAL DE TÍTULO DE CRÉDITO: <span class="badge text-bg-secondary">{{$sumatotal}};</span></h2>
-            <p>CONCEPTO POR EL CUAL SE EMITE: PAGO DE IMPUESTO PREDIAL VENCIDO.
-                EL VALOR TOTAL DEL TÍTULO DE CRÉDITO CAUSARÁ EL INTERES RESPECTIVO A PARTIR DE LA FECHA DE
-                NOTIFICACIÓN SEGÚN LO EXPUESTO Y CONFORME LO ESTABLECE EL ART. 265 DEL COA LIQUIDACIÓN DE
-                INTERESES Y MULTAS</p>
-            <br>
-            <br>
-            
-            <table width="100%">
-                <tbody>
-                    <tr>
-                        <td style="text-align: center">
-                            __________________________________________
-                        </td>
-                        <td style="text-align: center">
-                            __________________________________________
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: center">
-                            Ing. Jacinta María Mendoza Cusme
-                        </td>
-                        <td style="text-align: center">
-                            Ing. Danes Steven Cedeño Choez
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: center">
-                            Tesorera Municipal Juez de Coactiva
-                        </td>
-                        <td style="text-align: center">
-                            Director Financiero
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        @else
-            <div style="page-break-before: always;"></div>
-        @endif
-    @endif
+        <h2 style="text-align: center">TOTAL DE TÍTULO DE CRÉDITO: <span class="badge text-bg-secondary">{{$sumatotal}};</span></h2>
+        <p>CONCEPTO POR EL CUAL SE EMITE: PAGO DE IMPUESTO PREDIAL VENCIDO.
+            EL VALOR TOTAL DEL TÍTULO DE CRÉDITO CAUSARÁ EL INTERES RESPECTIVO A PARTIR DE LA FECHA DE
+            NOTIFICACIÓN SEGÚN LO EXPUESTO Y CONFORME LO ESTABLECE EL ART. 265 DEL COA LIQUIDACIÓN DE
+            INTERESES Y MULTAS</p>
+        <br>
+        <br>
+        
+        <table width="100%">
+            <tbody>
+                <tr>
+                    <td style="text-align: center">
+                        __________________________________________
+                    </td>
+                    <td style="text-align: center">
+                        __________________________________________
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center">
+                        Ing. Jacinta María Mendoza Cusme
+                    </td>
+                    <td style="text-align: center">
+                        Ing. Danes Steven Cedeño Choez
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center">
+                        Tesorera Municipal Juez de Coactiva
+                    </td>
+                    <td style="text-align: center">
+                        Director Financiero
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    @else
 
-    @if(sizeof($liquidacionRural)>0)
-        @foreach ($liquidacionRural as $d)
+        @foreach ($DatosLiquidaciones as $d)
 
             @php
                 $anio=explode("-",$d[0]->CarVe_NumTitulo);

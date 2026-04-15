@@ -190,7 +190,7 @@
                                 </td>
                                 
                             </tr>
-
+ 
 
                             @foreach($dato as $info)
                                 @php
