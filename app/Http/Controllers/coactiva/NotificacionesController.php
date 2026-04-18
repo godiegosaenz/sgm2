@@ -1149,7 +1149,7 @@ class NotificacionesController extends Controller
                     return ["mensaje"=>$generarTitulo['mensaje'], "error"=>true];
                 }
                 $datosUrbano = collect($generarTitulo['data']['DatosLiquidaciones'] ?? []);
-                dd($datosUrbano);
+               
 
             }
            
