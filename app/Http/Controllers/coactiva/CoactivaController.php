@@ -73,7 +73,9 @@ class CoactivaController extends Controller
 
     public function guardarConvenio(Request $request){
         try{
-           
+            
+            //***VALIDACIONES DE QUE NO HAYA OTRO CONVENIO****** */
+
             $verifica=Convenio::where('id_info_coact',$request->idcoa_conv)
             ->where('estado','Activo')
             ->first();
@@ -85,34 +87,39 @@ class CoactivaController extends Controller
             if($actualizaEstado['error']==true){
                 return ["mensaje"=>$actualizaEstado['mensaje'], "error"=>true];
             }
-  
-            //if($request->lugar_not=='Urbano'){
-                $dataNoti=DataNotifica::where('id_info_notifica',$request->idnotifica)
-                ->whereNotNull('id_liquidacion')
-                ->pluck('num_titulo')
-                ->toArray();
 
-        
-                $total=$this->coactiva->tituloCreditoUrb($dataNoti);
-               
-                $total_deuda=0;
+            $total_deuda=0;
+            
+            //******BUSQUEDA DE DEUDAS PREDIALES URBANAS********************************* */
+           
+            $dataNoti=DataNotifica::where('id_info_notifica',$request->idnotifica)
+            ->whereNotNull('id_liquidacion')
+            ->pluck('num_titulo')
+            ->toArray();
+
+            if(count($dataNoti)> 0){
+                $total=$this->coactiva->tituloCreditoUrb($dataNoti);                
+            
                 foreach($total['data']['DatosLiquidaciones'] as $data){
                     $total_deuda=$total_deuda + $data[0]->total_complemento;
                 }
-                
-            //}else{
-                $dataNoti=DataNotifica::where('id_info_notifica',$request->idnotifica)
-                ->whereNull('id_liquidacion')
-                ->pluck('num_titulo')
-                ->toArray();
-                $total=$this->coactiva->tituloCreditoRural($dataNoti);
-              
-                //$total_deuda=0;
+            }
+             
+            //******BUSQUEDA DE DEUDAS PREDIALES RURALES********************************* */
+
+            $dataNoti=DataNotifica::where('id_info_notifica',$request->idnotifica)
+            ->whereNull('id_liquidacion')
+            ->pluck('num_titulo')
+            ->toArray();
+            
+            if(count($dataNoti)> 0){
+                $total=$this->coactiva->tituloCreditoRural($dataNoti);            
+            
                 foreach($total['data']['DatosLiquidaciones'] as $data){
                     $total = $data[0]->total_pagar ? str_replace(',', '', $data[0]->total_pagar) : 0;
                     $total_deuda=$total_deuda + $total;
                 }
-           // }          
+            }             
            
             $total_deuda = (float) $total_deuda;
             $valorAdeudado = (float) $request->valor_adeudado;
@@ -139,8 +146,7 @@ class CoactivaController extends Controller
             $guarda->valor_cancelado=0;
             $guarda->save();
 
-            //cuotas.
-     
+          
             $fecha_ini = Carbon::parse($request->fecha_ini);
             for($i=0; $i<$request->num_cuotas; $i++){
                 if($i==0){
@@ -490,6 +496,7 @@ class CoactivaController extends Controller
             /* ================== CONSULTAS ================== */
 
             $consulta=$this->coactiva->consultarTitulosUrb($request->IdNotificaSele);
+            
             if($consulta['error']==true){
                 DB::connection('pgsql')->rollBack();
                 return ["mensaje"=>$consulta['mensaje'], "error"=>true];
@@ -504,6 +511,7 @@ class CoactivaController extends Controller
             }
 
             $todo = $consulta["resultado"]->merge($consulta1["resultado"]);
+           
             $listado_final = [];
             $anios = [];
             

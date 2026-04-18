@@ -116,7 +116,8 @@
                 </td>
             </tr>
             <tr style="font-size: 11px;">
-                <td><b>Contribuyente:</b> {{$d[0]->Ciu_Apellidos}} {{$d[0]->Ciu_Nombres}}</td>
+                <!-- <td><b>Contribuyente:</b> {{$d[0]->Ciu_Apellidos}} {{$d[0]->Ciu_Nombres}}</td> -->
+                  <td><b>Contribuyente:</b> {{$d[0]->nombre_cont}}</td>
             
                 <td style="width: 1%; text-align:left"></td>
 
@@ -125,7 +126,7 @@
             
             </tr>
             <tr style="font-size: 11px;">
-                <td><b>Ruc/CC:</b> {{$d[0]->CarVe_CI}}</td>
+                <td><b>Ruc/CC:</b> {{$d[0]->num_ident}}</td>
             
                 <td></td>
                 <td><b>Sitio Barrio:</b> {{$d[0]->nombre_sitio}}</td>

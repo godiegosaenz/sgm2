@@ -209,10 +209,11 @@ function detalleProcesoIniciaCoa(){
          
 			$.each(data.resultado,function(i, item){
                 let clave_matr=""
-                if(lugar=="Rural"){
-                    clave_matr=item.clave
+                //if(lugar=="Rural"){
+                if(item.num_predio==null){
+                    clave_matr=item.clave_cat
                 }else{
-                    clave_matr=item.predio
+                    clave_matr=item.num_predio
                 }
                
 				$('#tableProcesoNot').append(`<tr>

@@ -189,7 +189,10 @@ class TituloRuralController extends Controller
                     'tp.TitPr_ValorEmitido as CarVe_ValorEmitido',              
                     'tp.TitPr_DireccionCont as Pro_DireccionDomicilio',
                     'tp.TitPr_Recargo as recargo',
-                    'P.Ubi_Codigo',)
+                    'P.Ubi_Codigo',
+                    \DB::raw("CONCAT(c.Ciu_Apellidos, ' ', c.Ciu_Nombres) as nombre_cont"),
+                    'tp.Titpr_RUC_CI as num_ident'
+                    )
                     ->where('tp.TitPr_NumTitulo', '=', $valor_num)            
                     ->whereIn('tp.TitPr_Estado',['E','N'])
                     ->orderby('TitPr_NumTitulo','asc')
@@ -259,7 +262,16 @@ class TituloRuralController extends Controller
                     ,'cv.CarVe_ValorEmitido',
                     'cv.CarVe_direccPropietario as Pro_DireccionDomicilio',
                     'cv.Carve_Recargo as recargo',
-                    'P.Ubi_Codigo',)
+                    'P.Ubi_Codigo',
+                    'cv.CarVe_Nombres as nombre_cont',
+                    // 👇 AQUI EL CASE
+                    \DB::raw("
+                        CASE 
+                            WHEN cv.CarVe_CI = '0000000000' 
+                            THEN cv.CarVe_RUC 
+                            ELSE cv.CarVe_CI 
+                        END as num_ident
+                    "))
                     ->where('CarVe_NumTitulo', '=', $valor_num)
                     ->get();
                    
@@ -313,7 +325,7 @@ class TituloRuralController extends Controller
                 }
 
             }
-            //dd($liquidacionRural);
+            //dd($liquidacionRural); 
             $fecha_hoy=date('Y-m-d');
             setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES@euro', 'es_ES', 'esp');
             $fecha_timestamp = strtotime($fecha_hoy);
@@ -351,7 +363,7 @@ class TituloRuralController extends Controller
 
             return response()->json([
                 'error'=>true,
-                'mensaje'=>'Ocurrió un error' .$e->getLine()
+                'mensaje'=>'Ocurrió un error' .$e->getMessage()." Linea=> ".$e->getLine()
             ]);
 
         }

@@ -623,6 +623,7 @@ function ejecuta(){
 }
 
 function llenarTablaNotificacion(data){
+    console.log(data)
     $("#tbodyNotifica").html('');
     $('#tbodyNotifica').empty(); 
     var num_col = $("#tableNotifica thead tr th").length;

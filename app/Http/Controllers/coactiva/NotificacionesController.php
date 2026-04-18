@@ -275,94 +275,84 @@ class NotificacionesController extends Controller
        
         DB::connection('pgsql')->beginTransaction();
         try{
-            // if($lugar==1){
+                           
+            $generarPdf=$this->Liquidaciones->pagoVoluntario($cedula, $lugar, 1);
+            
+            if($generarPdf['error']==true){
+                return ["mensaje"=>$generarPdf['mensaje'], "error"=>true];
+            }
+
+            $verificaNoti=InfoNotifica::where('num_ident',$cedula)
+            ->whereIn('estado',['Notificado','Coactivado'])
+            ->first();
+
+            if(!is_null($verificaNoti)){
+                return ["mensaje"=>'El contribuyente ya tiene registrado una notificacion', "error"=>true];
+            }
+
+            $id_persona=DB::connection('pgsql')->table('sgm_app.cat_ente')
+            ->where('ci_ruc',$cedula)->select('id')->first();               
+
+            $guardaDataNotificacion=new InfoNotifica();
+            
+            if(!is_null($id_persona)){$guardaDataNotificacion->id_persona=$id_persona->id;}
+            $guardaDataNotificacion->num_ident=$cedula;
+            $guardaDataNotificacion->contribuyente=$generarPdf['listado_final'][0]->nombre_per;
+            $guardaDataNotificacion->save();
+            
+            $subtotal_emi=0;
+            $intereses_emi=0;
+            $descuento_emi=0;
+            $recargo_emi=0;
+            $total_emi=0;
+            foreach($generarPdf['listado_final'] as $data){
                 
-                $generarPdf=$this->Liquidaciones->pagoVoluntario($cedula, $lugar, 1);
-                // dd($generarPdf);
-                if($generarPdf['error']==true){
-                    return ["mensaje"=>$generarPdf['mensaje'], "error"=>true];
-                }
+                $subtotal  = $data->subtotal_emi ? str_replace(',', '', $data->subtotal_emi) : 0;
+                $interes   = $data->intereses ? str_replace(',', '', $data->intereses) : 0;
+                $recargo   = $data->recargo ? str_replace(',', '', $data->recargo) : 0;
+                $descuento = $data->descuento ? str_replace(',', '', $data->descuento) : 0;
+                $total     = $data->total_pagar ? str_replace(',', '', $data->total_pagar) : 0;
 
-                // $verificaNoti=InfoNotifica::where('id_persona',$generarPdf['listado_final'][0]->idpersona)
-                // ->whereIn('estado',['Notificado','Coactivado'])
-                // ->first();
-
-                 $verificaNoti=InfoNotifica::where('num_ident',$cedula)
-                ->whereIn('estado',['Notificado','Coactivado'])
-                ->first();
-
-                if(!is_null($verificaNoti)){
-                    return ["mensaje"=>'El contribuyente ya tiene registrado una notificacion', "error"=>true];
-                }
-
-                $id_persona=DB::connection('pgsql')->table('sgm_app.cat_ente')
-                ->where('ci_ruc',$cedula)->select('id')->first();
-
-               
-
-                $guardaDataNotificacion=new InfoNotifica();
-                
-                if(!is_null($id_persona)){$guardaDataNotificacion->id_persona=$id_persona->id;}
-                $guardaDataNotificacion->num_ident=$cedula;
-                $guardaDataNotificacion->contribuyente=$generarPdf['listado_final'][0]->nombre_per;
-                $guardaDataNotificacion->save();
-                
-                $subtotal_emi=0;
-                $intereses_emi=0;
-                $descuento_emi=0;
-                $recargo_emi=0;
-                $total_emi=0;
-                foreach($generarPdf['listado_final'] as $data){
-                    // dd($data);
-                    $subtotal  = $data->subtotal_emi ? str_replace(',', '', $data->subtotal_emi) : 0;
-                    $interes   = $data->intereses ? str_replace(',', '', $data->intereses) : 0;
-                    $recargo   = $data->recargo ? str_replace(',', '', $data->recargo) : 0;
-                    $descuento = $data->descuento ? str_replace(',', '', $data->descuento) : 0;
-                    $total     = $data->total_pagar ? str_replace(',', '', $data->total_pagar) : 0;
-
-                    $guardaData= new DataNotifica();
-                    $guardaData->id_info_notifica=$guardaDataNotificacion->id;
-                    if(isset($data->id)){$guardaData->id_liquidacion=$data->id;}
-                    if(isset($data->num_titulo)){$guardaData->num_titulo=$data->num_titulo;}
-                    
-                    
-                    $guardaData->subtotal=$subtotal;
-                    $guardaData->interes=$interes;
-                    $guardaData->recargo=$recargo ;
-                    $guardaData->descuento=$descuento;
-                    $guardaData->total=$total;
-                    $guardaData->estado='Notificado';
-                    $guardaData->save();
-
-                    $subtotal_emi=$subtotal_emi + $guardaData->subtotal;
-                
-                    $intereses_emi=$intereses_emi + $guardaData->interes;
-                    
-                    $recargo_emi=$intereses_emi + $guardaData->recargo;
-                    
-                    $descuento_emi=$descuento_emi + $guardaData->descuento;
-                    
-                    $total_emi=$total_emi + $guardaData->total;
-                    
-                }
-
-                $guardaDataNotificacion->estado="Notificado";
-                $guardaDataNotificacion->id_usuario_registra=auth()->user()->id;
-                $guardaDataNotificacion->fecha_registra=date('Y-m-d H:i:s');
-                $guardaDataNotificacion->subtotal_notificado=(float)$subtotal_emi;
-                $guardaDataNotificacion->interes_notificado=(float)$intereses_emi;
-                $guardaDataNotificacion->descuento_notificado=(float)$descuento_emi;
-                $guardaDataNotificacion->recargo_notificado=(float)$recargo_emi;
-                $guardaDataNotificacion->total_notificado=(float)$total_emi;
-                // $guardaDataNotificacion->predio='Urbano';
-                $guardaDataNotificacion->documento=$generarPdf['pdf'];
-                $guardaDataNotificacion->save();
-                DB::connection('pgsql')->commit();
-                return ["mensaje"=>'Notificacion registrada exitosamente', "error"=>false, "pdf"=>$generarPdf['pdf']];
-            // }else{
+                $guardaData= new DataNotifica();
+                $guardaData->id_info_notifica=$guardaDataNotificacion->id;
+                if(isset($data->id)){$guardaData->id_liquidacion=$data->id;}
+                if(isset($data->num_titulo)){$guardaData->num_titulo=$data->num_titulo;}
                 
                 
-            // }
+                $guardaData->subtotal=$subtotal;
+                $guardaData->interes=$interes;
+                $guardaData->recargo=$recargo ;
+                $guardaData->descuento=$descuento;
+                $guardaData->total=$total;
+                $guardaData->estado='Notificado';
+                $guardaData->save();
+
+                $subtotal_emi=$subtotal_emi + $guardaData->subtotal;
+            
+                $intereses_emi=$intereses_emi + $guardaData->interes;
+                
+                $recargo_emi=$intereses_emi + $guardaData->recargo;
+                
+                $descuento_emi=$descuento_emi + $guardaData->descuento;
+                
+                $total_emi=$total_emi + $guardaData->total;
+                
+            }
+
+            $guardaDataNotificacion->estado="Notificado";
+            $guardaDataNotificacion->id_usuario_registra=auth()->user()->id;
+            $guardaDataNotificacion->fecha_registra=date('Y-m-d H:i:s');
+            $guardaDataNotificacion->subtotal_notificado=(float)$subtotal_emi;
+            $guardaDataNotificacion->interes_notificado=(float)$intereses_emi;
+            $guardaDataNotificacion->descuento_notificado=(float)$descuento_emi;
+            $guardaDataNotificacion->recargo_notificado=(float)$recargo_emi;
+            $guardaDataNotificacion->total_notificado=(float)$total_emi;
+            
+            $guardaDataNotificacion->documento=$generarPdf['pdf'];
+            $guardaDataNotificacion->save();
+            DB::connection('pgsql')->commit();
+            return ["mensaje"=>'Notificacion registrada exitosamente', "error"=>false, "pdf"=>$generarPdf['pdf']];
+           
 
         }catch (\Exception $e) {
             DB::connection('pgsql')->rollBack();
@@ -454,8 +444,7 @@ class NotificacionesController extends Controller
 
             }
 
-            // dd($datos);
-                            
+           
             return ["resultado"=>$datos, "error"=>false];
 
         } catch (\Exception $e) {
@@ -472,7 +461,7 @@ class NotificacionesController extends Controller
             ->selectRaw("CURRENT_DATE - DATE(fecha_registra) AS dias_transcurridos")
             ->get();
 
-            // dd($datos);
+        
             foreach($datos as $key=> $data){
                
                 $usuarioRegistra=DB::connection('mysql')->table('users as u')
@@ -482,44 +471,38 @@ class NotificacionesController extends Controller
                 ->first();
                 $datos[$key]->profesional=$usuarioRegistra->nombres." ".$usuarioRegistra->apellidos;
 
-                // if($data->predio=='Rural'){
-                    $cedula=$data->num_ident;
-                   
-                    foreach($data->data as $key2=> $info){
-                        if(is_null($info->id_liquidacion)){
-                            $anio=$anio=explode("-",$info->num_titulo);  
+                $cedula=$data->num_ident;
+                
+                foreach($data->data as $key2=> $info){
+                    if(is_null($info->id_liquidacion)){
+                        $anio=$anio=explode("-",$info->num_titulo);  
+                        
+                        if($anio[0]==date('Y')){
+                            $contr=DB::connection('sqlsrv')->table('TITULOS_PREDIO as tp')
+                            ->whereIn('tp.TitPr_Estado',['E','N'])
+                            ->where('Titpr_RUC_CI',$cedula)
+                            ->where('TitPr_NumTitulo',$info->num_titulo)
+                            ->select('Pre_CodigoCatastral','TitPr_Nombres')
+                            ->first();
                             
-                            if($anio[0]==date('Y')){
-                                $contr=DB::connection('sqlsrv')->table('TITULOS_PREDIO as tp')
-                                ->whereIn('tp.TitPr_Estado',['E','N'])
-                                ->where('Titpr_RUC_CI',$cedula)
-                                ->where('TitPr_NumTitulo',$info->num_titulo)
-                                ->select('Pre_CodigoCatastral','TitPr_Nombres')
-                                ->first();
-                                
-                                $data->data[$key2]->clave_cat=$contr->Pre_CodigoCatastral;
-                                $data->data[$key2]->contrib=$contr->TitPr_Nombres;
-                                $data->data[$key2]->anio=$anio[0];
-                            }else{
-                                $contr=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
-                                ->whereIn('cv.CarVe_Estado',['E'])
-                                // ->where(function ($query) use($cedula){
-                                //     $query->where('carVe_CI',$cedula)
-                                //     ->orWhere('carVe_RUC',$cedula);
-                                // })
-                                ->where('CarVe_NumTitulo',$info->num_titulo)
-                                ->select('Pre_CodigoCatastral','CarVe_Nombres','CarVe_NumTitulo')
-                                ->first();
-                            
-                                $data->data[$key2]->clave_cat=$contr->Pre_CodigoCatastral;
-                                $data->data[$key2]->contrib=$contr->CarVe_Nombres;
-                                $data->data[$key2]->anio=$anio[0];
-                            } 
-                        }          
-                           
-                    }
-                // }
-
+                            $data->data[$key2]->clave_cat=$contr->Pre_CodigoCatastral;
+                            $data->data[$key2]->contrib=$contr->TitPr_Nombres;
+                            $data->data[$key2]->anio=$anio[0];
+                        }else{
+                            $contr=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
+                            ->whereIn('cv.CarVe_Estado',['E'])
+                            ->where('CarVe_NumTitulo',$info->num_titulo)
+                            ->select('Pre_CodigoCatastral','CarVe_Nombres','CarVe_NumTitulo')
+                            ->first();
+                        
+                            $data->data[$key2]->clave_cat=$contr->Pre_CodigoCatastral;
+                            $data->data[$key2]->contrib=$contr->CarVe_Nombres;
+                            $data->data[$key2]->anio=$anio[0];
+                        } 
+                    }          
+                        
+                }
+               
             }
             $datosCoa=[];
             if($datos[0]->estado=='Coactivado'){
@@ -537,40 +520,35 @@ class NotificacionesController extends Controller
                     ->select('p.nombres','p.apellidos','p.cedula')
                     ->first();
                     $datosCoact[$key]->profesional=$usuarioRegistra->nombres." ".$usuarioRegistra->apellidos;
-                    //if($data->predio=='Rural'){
-                        foreach($data2->data as $key2=> $info){
-                            if(is_null($info->id_liquidacion)){
-                                $anio=$anio=explode("-",$info->num_titulo);  
-                                if($anio[0]==date('Y')){
-                                    $contr=DB::connection('sqlsrv')->table('TITULOS_PREDIO as tp')
-                                    ->whereIn('tp.TitPr_Estado',['E','N'])
-                                    ->where('Titpr_RUC_CI',$cedula)
-                                    ->where('TitPr_NumTitulo',$info->num_titulo)
-                                    ->select('Pre_CodigoCatastral','TitPr_Nombres')
-                                    ->first();
-                                    
-                                    $data2->data[$key2]->clave_cat=$contr->Pre_CodigoCatastral;
-                                    $data2->data[$key2]->contrib=$contr->TitPr_Nombres;
-                                    $data2->data[$key2]->anio=$anio[0];
-                                }else{
-                                    $contr=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
-                                    ->whereIn('cv.CarVe_Estado',['E'])
-                                    // ->where(function ($query) use($cedula){
-                                    //     $query->where('carVe_CI',$cedula)
-                                    //     ->orWhere('carVe_RUC',$cedula);
-                                    // })
-                                    ->where('CarVe_NumTitulo',$info->num_titulo)
-                                    ->select('Pre_CodigoCatastral','CarVe_Nombres','CarVe_NumTitulo')
-                                    ->first();
+                   
+                    foreach($data2->data as $key2=> $info){
+                        if(is_null($info->id_liquidacion)){
+                            $anio=$anio=explode("-",$info->num_titulo);  
+                            if($anio[0]==date('Y')){
+                                $contr=DB::connection('sqlsrv')->table('TITULOS_PREDIO as tp')
+                                ->whereIn('tp.TitPr_Estado',['E','N'])
+                                ->where('Titpr_RUC_CI',$cedula)
+                                ->where('TitPr_NumTitulo',$info->num_titulo)
+                                ->select('Pre_CodigoCatastral','TitPr_Nombres')
+                                ->first();
                                 
-                                    $data2->data[$key2]->clave_cat=$contr->Pre_CodigoCatastral;
-                                    $data2->data[$key2]->contrib=$contr->CarVe_Nombres;
-                                    $data2->data[$key2]->anio=$anio[0];
-                                }          
-                            } 
-                        }
-                    //}
-
+                                $data2->data[$key2]->clave_cat=$contr->Pre_CodigoCatastral;
+                                $data2->data[$key2]->contrib=$contr->TitPr_Nombres;
+                                $data2->data[$key2]->anio=$anio[0];
+                            }else{
+                                $contr=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
+                                ->whereIn('cv.CarVe_Estado',['E'])
+                                ->where('CarVe_NumTitulo',$info->num_titulo)
+                                ->select('Pre_CodigoCatastral','CarVe_Nombres','CarVe_NumTitulo')
+                                ->first();
+                            
+                                $data2->data[$key2]->clave_cat=$contr->Pre_CodigoCatastral;
+                                $data2->data[$key2]->contrib=$contr->CarVe_Nombres;
+                                $data2->data[$key2]->anio=$anio[0];
+                            }          
+                        } 
+                    }
+                   
                 }
                 return ["resultado"=>$datos[0],"datosCoa"=>$datosCoact[0], "error"=>false];
 
@@ -583,45 +561,21 @@ class NotificacionesController extends Controller
         }
     }
 
-    // public function detalleNotificacionProceso($id,$lugar){
-    //     try{
-    //         if($lugar=='Urbano'){
-    //             $datos=$this->consultarTitulosUrb($id);
-    //             if($datos['error']==true){
-    //                 return ["mensaje"=>$datos['mensaje'], "error"=>true];
-    //             }
-           
-    //         }else{
-    //             $datos=$this->consultarTitulos($id);
-    //             if($datos['error']==true){
-    //                 return ["mensaje"=>$datos['mensaje'], "error"=>true];
-    //             }
-           
-    //         }
-                
-    //         return ["resultado"=>$datos['resultado'], "total"=>$datos['total_valor'], "error"=>false];
-
-    //     } catch (\Exception $e) {
-    //         return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
-    //     }
-    // }
-
     public function detalleNotificacionProceso($id,){
         try{
             
-                $datos=$this->consultarTitulosUrb($id);
-                if($datos['error']==true){
-                    return ["mensaje"=>$datos['mensaje'], "error"=>true];
-                }
+            $datos=$this->consultarTitulosUrb($id);
+            if($datos['error']==true){
+                return ["mensaje"=>$datos['mensaje'], "error"=>true];
+            }
            
-           
-                $datos1=$this->consultarTitulos($id);
-                if($datos1['error']==true){
-                    return ["mensaje"=>$datos['mensaje'], "error"=>true];
-                }
-           
-                $todo = $datos["resultado"]->merge($datos1["resultado"]);
-                
+            $datos1=$this->consultarTitulos($id);
+            if($datos1['error']==true){
+                return ["mensaje"=>$datos['mensaje'], "error"=>true];
+            }
+        
+            $todo = $datos["resultado"]->merge($datos1["resultado"]);
+                          
             // return ["resultado"=>$datos['resultado'], "total"=>$datos['total_valor'], "error"=>false];
             $total1 = (float) str_replace(',', '', $datos['total_valor']);
             $total2 = (float) str_replace(',', '', $datos1['total_valor']);
@@ -636,8 +590,21 @@ class NotificacionesController extends Controller
 
     public function consultarTitulosUrb($id){
         try {
+            
+            /*foreach($actualizar as $info){
+                $liquidaciones=PsqlLiquidacion::where('id', $info->id_liquidacion)
+                ->where('estado_liquidacion',2)
+                ->select('id_liquidacion','id') 
+                ->first();
+               
+                // validar que exista
+                if ($liquidaciones) {
+                    $info->num_titulo = $liquidaciones->id_liquidacion;
+                    $info->save();
+                }
+            }*/
+         
             $liquidaciones=DataNotifica::where('id_info_notifica',$id)
-        //    ->pluck('id_liquidacion')
             ->pluck('num_titulo')
             ->toArray();
            
@@ -791,7 +758,7 @@ class NotificacionesController extends Controller
                         ) AS recargo
                     "))
             
-            // ->whereIn('sgm_financiero.ren_liquidacion.predio',$predios_contribuyente)
+           
             ->whereIn('sgm_financiero.ren_liquidacion.id_liquidacion',$liquidaciones)
             ->where('sgm_app.cat_predio.estado','A')
             ->where('sgm_app.cat_predio_propietario.estado','A')
@@ -804,8 +771,7 @@ class NotificacionesController extends Controller
             foreach($liquidacionUrbana as $key=>$data){
                 $total_valor=$total_valor+$data->total_pagar;
             }
-            // dd("ss");
-          
+           
             return ["resultado"=>$liquidacionUrbana, 
                     "total_valor"=>number_format($total_valor,2),
                     "liquidaciones"=>$liquidaciones,
@@ -1031,9 +997,14 @@ class NotificacionesController extends Controller
     
     }
 
-    public function iniciaProcesoCoactiva1($id){
+    public function iniciaProcesoCoactiva($id){
+
         DB::connection('pgsql')->beginTransaction();
+
         try{
+
+            //*****VALIDACIONES RESPECTIVAS*******************************************/
+
             $noti=InfoNotifica::where('estado','Notificado')
             ->where('id',$id)
             ->first();
@@ -1058,139 +1029,99 @@ class NotificacionesController extends Controller
             $guardaCoa=new InfoCoa();
             $guardaCoa->id_info_notifica=$id;
             $guardaCoa->save();
-            if($noti->predio=="Urbano"){
-                $cedula=DB::connection('pgsql')->table('sgm_coactiva.info_notifica as n')
-                ->leftJoin('sgm_app.cat_ente as e', 'e.id', '=', 'n.id_persona')
-                ->select('ci_ruc')
-                ->where('n.id',$id)
-                ->first();
-
-                $consulta=$this->consultarTitulosUrb($id);
-                if($consulta['error']==true){
-                    DB::connection('pgsql')->rollBack();
-                    return ["mensaje"=>$consulta['mensaje'], "error"=>true];
-                    
-                }
             
-                $listado_final=[];
-
-                $subtotal_emi=0;
-                $intereses_emi=0;
-                $descuento_emi=0;
-                $recargo_emi=0;
-                $total_emi=0;
                 
-                foreach ($consulta["resultado"] as $key => $item){ 
-                    
-                    $subtotal  = $item->subtotal_emi ? str_replace(',', '', $item->subtotal_emi) : 0;
-                    $interes   = $item->intereses ? str_replace(',', '', $item->intereses) : 0;
-                    $recargo   = $item->recargo ? str_replace(',', '', $item->recargo) : 0;
-                    $descuento = $item->descuento ? str_replace(',', '', $item->descuento) : 0;
-                    $total     = $item->total_pagar ? str_replace(',', '', $item->total_pagar) : 0;
-
-                    $guardaData= new DataCoa();
-                    $guardaData->id_info_coact=$guardaCoa->id;
-                    $guardaData->id_liquidacion=$item->id;
-                    $guardaData->subtotal=$subtotal;
-                    $guardaData->interes=$interes;
-                    $guardaData->recargo=$recargo;
-                    $guardaData->descuento=$descuento;
-                    $guardaData->total=$total;
-                    $guardaData->estado='A';
-                    $guardaData->save();
-
-                    $subtotal_emi=$subtotal_emi + $guardaData->subtotal;
+            // TITULOS URBANOS
+            $consulta=$this->consultarTitulosUrb($id);
+            if($consulta['error']==true){
+                DB::connection('pgsql')->rollBack();
+                return ["mensaje"=>$consulta['mensaje'], "error"=>true];
                 
-                    $intereses_emi=$intereses_emi + $guardaData->interes;
-                    
-                    $recargo_emi=$intereses_emi + $guardaData->recargo;
-                    
-                    $descuento_emi=$descuento_emi + $guardaData->descuento;
-                    
-                    $total_emi=$total_emi + $guardaData->total; 
+            }
+            
+            // TITULOS RURALES
+            $consulta1=$this->consultarTitulos($id);
+            if($consulta1['error']==true){
+                DB::connection('pgsql')->rollBack();
+                return ["mensaje"=>$consulta1['mensaje'], "error"=>true];
+                
+            }
 
-                    $anios[] = $item->anio;              
+            //UNIMOS AMBAS DATA (URBANA Y RURAL)
+            $todo = $consulta["resultado"]->merge($consulta1["resultado"]);
+            
+            $listado_final=[];
+
+            $subtotal_emi=0;
+            $intereses_emi=0;
+            $descuento_emi=0;
+            $recargo_emi=0;
+            $total_emi=0;
+            
+            //RECORREMOS LA DATA PARA GUARDAR LOS DETALLES DE LA DATA
+            foreach ($todo as $key => $item){ 
+                
+                $subtotal  = $item->subtotal_emi ? str_replace(',', '', $item->subtotal_emi) : 0;
+                $interes   = $item->intereses ? str_replace(',', '', $item->intereses) : 0;
+                $recargo   = $item->recargo ? str_replace(',', '', $item->recargo) : 0;
+                $descuento = $item->descuento ? str_replace(',', '', $item->descuento) : 0;
+                $total     = $item->total_pagar ? str_replace(',', '', $item->total_pagar) : 0;
+
+                $guardaData= new DataCoa();
+                $guardaData->id_info_coact=$guardaCoa->id;
+                if(isset($item->id)){$guardaData->id_liquidacion=$item->id;}
+                if(isset($item->num_titulo)){$guardaData->num_titulo=$item->num_titulo;}
+                
+                $guardaData->subtotal=$subtotal;
+                $guardaData->interes=$interes;
+                $guardaData->recargo=$recargo;
+                $guardaData->descuento=$descuento;
+                $guardaData->total=$total;
+                $guardaData->estado='A';
+                $guardaData->save();
+
+                $subtotal_emi=$subtotal_emi + $guardaData->subtotal;
+            
+                $intereses_emi=$intereses_emi + $guardaData->interes;
+                
+                $recargo_emi=$intereses_emi + $guardaData->recargo;
+                
+                $descuento_emi=$descuento_emi + $guardaData->descuento;
+                
+                $total_emi=$total_emi + $guardaData->total; 
+
+                $anios[] = $item->anio;  
+                if(isset($item->num_predio)){    // SI VIENE NUM_PREDIO ES URBANA Y AGRUPAMOS POR ESO (MATRICULA INMOBILIARIA)         
                     if(!isset($listado_final[$item->num_predio])) {
                         $listado_final[$item->num_predio]=array($item);
                 
                     }else{
                         array_push($listado_final[$item->num_predio], $item);
                     }
-
-                    $nombre_persona=$item->nombre_per;
-                    $direcc_cont=$item->direcc_cont;
-                    $ci_ruc=$cedula->ci_ruc;
-                    if(is_null($item->nombre_per)){
-                        $nombre_persona=$item->nombre_contr1;
-                    }
-                } 
-            
-            }else{
-                $consulta=$this->consultarTitulos($id);
-                if($consulta['error']==true){
-                    DB::connection('pgsql')->rollBack();
-                    return ["mensaje"=>$consulta['mensaje'], "error"=>true];
-                    
-                }
-                
-                $listado_final=[];
-                $subtotal_emi=0;
-                $intereses_emi=0;
-                $descuento_emi=0;
-                $recargo_emi=0;
-                $total_emi=0;
-                
-                foreach ($consulta["resultado"] as $key => $item){ 
-
-                    $subtotal  = $item->subtotal_emi ? str_replace(',', '', $item->subtotal_emi) : 0;
-                    $interes   = $item->intereses ? str_replace(',', '', $item->intereses) : 0;
-                    $recargo   = $item->recargo ? str_replace(',', '', $item->recargo) : 0;
-                    $descuento = $item->descuento ? str_replace(',', '', $item->descuento) : 0;
-                    $total     = $item->total_pagar ? str_replace(',', '', $item->total_pagar) : 0;
-                   
-                    $guardaData= new DataCoa();
-                    $guardaData->id_info_coact=$guardaCoa->id;
-                    $guardaData->num_titulo=$item->num_titulo;
-                    $guardaData->subtotal=$subtotal;
-                    $guardaData->interes=$interes;
-                    $guardaData->recargo=$recargo;
-                    $guardaData->descuento=$descuento;
-                    $guardaData->total=$total;
-                    $guardaData->estado='A';
-                    $guardaData->save();
-
-                    $subtotal_emi=$subtotal_emi + $guardaData->subtotal;
-                
-                    $intereses_emi=$intereses_emi + $guardaData->interes;
-                    
-                    $recargo_emi=$intereses_emi + $guardaData->recargo;
-                    
-                    $descuento_emi=$descuento_emi + $guardaData->descuento;
-                    
-                    $total_emi=$total_emi + $guardaData->total; 
-
-                    $anios[] = $item->anio;              
+                }else{ // CASO CONTRARIO ES RURAL AGRUPAMOS POR CLAVE CATASTRAL
                     if(!isset($listado_final[$item->clave])) {
                         $listado_final[$item->clave]=array($item);
-                
+            
                     }else{
                         array_push($listado_final[$item->clave], $item);
                     }
+                }
 
-                    $nombre_persona=$item->nombre_per;
-                    $direcc_cont=$item->direcc_cont;
-                    $ci_ruc=$item->num_ident;
-                    if(is_null($item->nombre_per)){
-                        $nombre_persona=$item->nombre_contr1;
-                    }
-                } 
-            }
+                $nombre_persona=$item->nombre_per;
+                $direcc_cont=$item->direcc_cont;
+                $ci_ruc=$noti->num_ident;
+                if(is_null($item->nombre_per)){
+                    $nombre_persona=$item->nombre_contr1;
+                }
+            }            
             
+            //OBTENEMOS EL TITULO MENOR EN AÑOS ASI COMO EL MAYOR EN AÑOS
             $anio_min = min($anios);
             $anio_max = max($anios);
 
             $rango='DESDE EL '.($anio_min . ' HASTA EL EJERCICIO FISCAL ' . $anio_max);
-        
+
+            //DATA PARA EL PDF DE LOS FUNCIONARIOS 
             $funcionarios=DB::connection('pgsql')
             ->table('sgm_coactiva.parametro_coactiva')
             ->selectRaw("
@@ -1201,269 +1132,47 @@ class NotificacionesController extends Controller
             ->whereIn('codigo', ['TESO','JUEZ_COACT','SECRETARIO'])
             ->where('estado','A')
             ->first();
-           
-            if($noti->predio=="Urbano"){
-                $generarTitulo=$this->tituloCreditoUrb($consulta["liquidaciones"]);
-                if($generarTitulo['error']==true){
-                    DB::connection('pgsql')->rollBack();
-                    return ["mensaje"=>$generarTitulo['mensaje'], "error"=>true];
-                }
-            }else{
-                $generarTitulo=$this->tituloCreditoRural($consulta["liquidaciones"]);
-                if($generarTitulo['error']==true){
-                    DB::connection('pgsql')->rollBack();
-                    return ["mensaje"=>$generarTitulo['mensaje'], "error"=>true];
-                }
-            }
 
-            $ultimo_sec = InfoCoa::whereYear('fecha_registra', date('Y'))
-                ->whereNotNull('num_proceso')
-                ->orderByDesc('num_proceso')
-                ->first();
-             
-            if (is_null($ultimo_sec)) {
+            $datosUrbano = collect();
+            $datosRural  = collect();
 
-                $secuencial = Secuencial::where('descripcion', 'Proceso')
-                    ->where('anio', date('Y'))
-                    ->where('estado', 'A')
-                    ->lockForUpdate()
-                    ->first();
-
-                if (is_null($secuencial)) {
-
-                    $num_proceso = 1;
-
-                    Secuencial::create([
-                        'secuencia' => 1,
-                        'descripcion' => 'Proceso',
-                        'estado' => 'A',
-                        'anio' => date('Y')
-                    ]);
-
-                } else {
-
-                    $secuencial->increment('secuencia');
-                    $num_proceso = $secuencial->secuencia;
-                }
-
-            } else {
-
-                $num_proceso = $ultimo_sec->num_proceso + 1;
-            }
-
-            $nombrePDF="ProcesoCoactiva".date('YmdHis').".pdf";  
-            $guardaCoa->estado_proceso=1;
-            $guardaCoa->id_usuario_registra=auth()->user()->id;
-            $guardaCoa->fecha_registra=date('Y-m-d H:i:s');
-            $guardaCoa->subtotal_pago_inmediato=number_format(($subtotal_emi),2,'.', '');
-            $guardaCoa->interes_pago_inmediato=number_format(($intereses_emi),2,'.', '');
-            $guardaCoa->descuento_pago_inmediato=number_format(($descuento_emi),2,'.', '');
-            $guardaCoa->recargo_pago_inmediato=number_format(($recargo_emi),2,'.', '');
-            $guardaCoa->valor_pago_inmediato=number_format(($total_emi),2,'.', '');
-            $guardaCoa->documento=$nombrePDF;
-            $guardaCoa->estado_pago='Debe';
-            $guardaCoa->num_proceso=$num_proceso;
-            $guardaCoa->save();
-            
-                                         
-            $pdf = \PDF::loadView('reportes.procesoCoactiva', ['DatosLiquidacion'=>$listado_final,"nombre_persona"=>$nombre_persona, "direcc_cont"=>$direcc_cont, "ci_ruc"=>$ci_ruc, "rango"=>$rango, "funcionarios"=>$funcionarios, 'DatosLiquidaciones'=>$generarTitulo['data']['DatosLiquidaciones'], 'fecha_formateada'=>$generarTitulo['data']['fecha_formateada'], "lugar_predio"=>$noti->predio, "num_proceso"=>$num_proceso]);
-
-           
-            $estadoarch = $pdf->stream();
-            $disco="disksCoactiva";
-            \Storage::disk($disco)->put(str_replace("", "",$nombrePDF), $estadoarch);
-            $exists_destino = \Storage::disk($disco)->exists($nombrePDF);
-            if($exists_destino){
-
-                $noti->estado='Coactivado';
-                $noti->save();
-                DB::connection('pgsql')->commit();
-                return ["mensaje"=>'Proceso iniciado exitosamente', "error"=>false, "pdf"=>$nombrePDF];
-            }else{
-                DB::connection('pgsql')->rollBack();
-                return [
-                    'error'=>true,
-                    'mensaje'=>'No se pudo crear el documento'
-                ];
-            }
-
-       
-            // return $pdf->stream($nombrePDF);
-
-           
-
-        }catch (\Exception $e) {
-            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e->getMessage(). 'Linea=> '.$e->getLine(), "error"=>true];
-
-        }
-    }
-
-    public function iniciaProcesoCoactiva($id){
-        DB::connection('pgsql')->beginTransaction();
-        try{
-            $noti=InfoNotifica::where('estado','Notificado')
-            ->where('id',$id)
-            ->first();
-            if(is_null($noti)){
-                return ["mensaje"=>"La notificacion ya no esta disponible para coactivar", "error"=>true];
-            }
-
-            $notiConvenio=Convenio::where('id_info_notifica',$id)
-            ->where('estado','Activo')
-            ->first();
-            if(!is_null($notiConvenio)){
-                return ["mensaje"=>"La notificacion voluntaria tiene un convenio activo", "error"=>true];
-            }
-
-            $pagoConvenio=Pago::where('id_info_notifica',$id)
-            ->where('estado','Activo')
-            ->first();
-            if(!is_null($pagoConvenio)){
-                return ["mensaje"=>"La notificacion voluntaria tiene un pago activo", "error"=>true];
-            }
-           
-            $guardaCoa=new InfoCoa();
-            $guardaCoa->id_info_notifica=$id;
-            $guardaCoa->save();
-            
-                // $ci_ruc=
-
-
-
-
-
-
-
-
-                $consulta=$this->consultarTitulosUrb($id);
-                if($consulta['error']==true){
-                    DB::connection('pgsql')->rollBack();
-                    return ["mensaje"=>$consulta['mensaje'], "error"=>true];
-                    
-                }
-             
-                $consulta1=$this->consultarTitulos($id);
-                if($consulta1['error']==true){
-                    DB::connection('pgsql')->rollBack();
-                    return ["mensaje"=>$consulta1['mensaje'], "error"=>true];
-                    
-                }
-
-                $todo = $consulta["resultado"]->merge($consulta1["resultado"]);
-            
-                $listado_final=[];
-
-                $subtotal_emi=0;
-                $intereses_emi=0;
-                $descuento_emi=0;
-                $recargo_emi=0;
-                $total_emi=0;
-                
-                // dd($todo);
-                foreach ($todo as $key => $item){ 
-                    // dd($item);
-                    $subtotal  = $item->subtotal_emi ? str_replace(',', '', $item->subtotal_emi) : 0;
-                    $interes   = $item->intereses ? str_replace(',', '', $item->intereses) : 0;
-                    $recargo   = $item->recargo ? str_replace(',', '', $item->recargo) : 0;
-                    $descuento = $item->descuento ? str_replace(',', '', $item->descuento) : 0;
-                    $total     = $item->total_pagar ? str_replace(',', '', $item->total_pagar) : 0;
-
-                    $guardaData= new DataCoa();
-                    $guardaData->id_info_coact=$guardaCoa->id;
-                    if(isset($item->id)){$guardaData->id_liquidacion=$item->id;}
-                    if(isset($item->num_titulo)){$guardaData->num_titulo=$item->num_titulo;}
-                    // $guardaData->num_titulo=$item->num_titulo;
-                    $guardaData->subtotal=$subtotal;
-                    $guardaData->interes=$interes;
-                    $guardaData->recargo=$recargo;
-                    $guardaData->descuento=$descuento;
-                    $guardaData->total=$total;
-                    $guardaData->estado='A';
-                    $guardaData->save();
-
-                    $subtotal_emi=$subtotal_emi + $guardaData->subtotal;
-                
-                    $intereses_emi=$intereses_emi + $guardaData->interes;
-                    
-                    $recargo_emi=$intereses_emi + $guardaData->recargo;
-                    
-                    $descuento_emi=$descuento_emi + $guardaData->descuento;
-                    
-                    $total_emi=$total_emi + $guardaData->total; 
-
-                    $anios[] = $item->anio;  
-                    if(isset($item->num_predio)){            
-                        if(!isset($listado_final[$item->num_predio])) {
-                            $listado_final[$item->num_predio]=array($item);
-                    
-                        }else{
-                            array_push($listado_final[$item->num_predio], $item);
-                        }
-                    }else{
-                        if(!isset($listado_final[$item->clave])) {
-                            $listado_final[$item->clave]=array($item);
-                
-                        }else{
-                            array_push($listado_final[$item->clave], $item);
-                        }
-                    }
-
-                    $nombre_persona=$item->nombre_per;
-                    $direcc_cont=$item->direcc_cont;
-                    $ci_ruc=$noti->num_ident;
-                    if(is_null($item->nombre_per)){
-                        $nombre_persona=$item->nombre_contr1;
-                    }
-                } 
-            
-            
-            
-            $anio_min = min($anios);
-            $anio_max = max($anios);
-
-            $rango='DESDE EL '.($anio_min . ' HASTA EL EJERCICIO FISCAL ' . $anio_max);
-        
-            $funcionarios=DB::connection('pgsql')
-            ->table('sgm_coactiva.parametro_coactiva')
-            ->selectRaw("
-                MAX(CASE WHEN codigo = 'TESO' THEN valor END) AS tesorera,
-                MAX(CASE WHEN codigo = 'JUEZ_COACT' THEN valor END) AS juez_coactiva,
-                MAX(CASE WHEN codigo = 'SECRETARIO' THEN valor END) AS secretario
-            ")
-            ->whereIn('codigo', ['TESO','JUEZ_COACT','SECRETARIO'])
-            ->where('estado','A')
-            ->first();
-            // dd($consulta["liquidaciones"]);
+            // OBTENEMOS LOS NUM_TITULOS DE LA DATA NOTIFICADA PARA BUSCAR LOS TITULOS PREDIALES DE LA BD URBANA
             $dataNoti=DataNotifica::where('id_info_notifica',$noti->id)
                 ->whereNotNull('id_liquidacion')
                 ->pluck('num_titulo')
                 ->toArray();
-            // if($noti->predio=="Urbano"){
+
+            if(count($dataNoti)> 0){
                 $generarTitulo=$this->tituloCreditoUrb($dataNoti);
                 if($generarTitulo['error']==true){
                     DB::connection('pgsql')->rollBack();
                     return ["mensaje"=>$generarTitulo['mensaje'], "error"=>true];
                 }
-            // }else{
-              $dataNoti=DataNotifica::where('id_info_notifica',$noti->id)
-                ->whereNull('id_liquidacion')
-                ->pluck('num_titulo')
-                ->toArray();
+                $datosUrbano = collect($generarTitulo['data']['DatosLiquidaciones'] ?? []);
+                dd($datosUrbano);
 
+            }
+           
+            // OBTENEMOS LOS NUM_TITULOS DE LA DATA NOTIFICADA PARA BUSCAR LOS TITULOS PREDIALES DE LA BD RURAL
+            $dataNoti=DataNotifica::where('id_info_notifica',$noti->id)
+            ->whereNull('id_liquidacion')
+            ->pluck('num_titulo')
+            ->toArray();
+
+            if(count($dataNoti)> 0){    
                 $generarTitulo1=$this->tituloCreditoRural($dataNoti);
-                
+            
                 if($generarTitulo1['error']==true){
                     DB::connection('pgsql')->rollBack();
                     return ["mensaje"=>$generarTitulo1['mensaje'], "error"=>true];
                 }
-               
-                // $todo_cons = $generarTitulo['data']['DatosLiquidaciones']->merge($generarTitulo1['data']['DatosLiquidaciones']);
-                // dd($generarTitulo1);
-                // $todo_cons = $generarTitulo->merge($generarTitulo1);
-                $todo_cons = collect($generarTitulo['data']['DatosLiquidaciones'])->merge($generarTitulo1['data']['DatosLiquidaciones']);
-               
-            // }
-
+                $datosRural = collect($generarTitulo1['data']['DatosLiquidaciones'] ?? []);
+            }
+            
+            // UNIMOS AMBAS DATA
+            $todo_cons = $datosUrbano->merge($datosRural);            
+            
+            //SECUENCIAL PARA LOS INFORMES
             $ultimo_sec = InfoCoa::whereYear('fecha_registra', date('Y'))
                 ->whereNotNull('num_proceso')
                 ->orderByDesc('num_proceso')
@@ -1498,7 +1207,8 @@ class NotificacionesController extends Controller
 
                 $num_proceso = $ultimo_sec->num_proceso + 1;
             }
-
+            
+            // PROCEDEMOS AL REGISTRO EN LA BD
             $nombrePDF="ProcesoCoactiva".date('YmdHis').".pdf";  
             $guardaCoa->estado_proceso=1;
             $guardaCoa->id_usuario_registra=auth()->user()->id;
@@ -1512,12 +1222,29 @@ class NotificacionesController extends Controller
             $guardaCoa->estado_pago='Debe';
             $guardaCoa->num_proceso=$num_proceso;
             $guardaCoa->save();
-            
-                                         
-            $pdf = \PDF::loadView('reportes.procesoCoactiva', ['DatosLiquidacion'=>$listado_final,"nombre_persona"=>$nombre_persona, "direcc_cont"=>$direcc_cont, "ci_ruc"=>$ci_ruc, "rango"=>$rango, "funcionarios"=>$funcionarios, 'DatosLiquidaciones'=>$todo_cons, 'fecha_formateada'=>$generarTitulo['data']['fecha_formateada'], "lugar_predio"=>$noti->predio, "num_proceso"=>$num_proceso, "liquidacionUrb"=>$generarTitulo['data']['DatosLiquidaciones'], "liquidacionRural"=>$generarTitulo1['data']['DatosLiquidaciones']]);
 
-           
+            $fecha_hoy=date('Y-m-d');
+            setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES@euro', 'es_ES', 'esp');
+            $fecha_timestamp = strtotime($fecha_hoy);    
+            $fecha_formateada = strftime("%d de %B del %Y", $fecha_timestamp);
+            
+            // CREAMOS EL DOCUMENTO RESPECTIVO                             
+            $pdf = \PDF::loadView('reportes.procesoCoactiva', [
+                'DatosLiquidacion'=>$listado_final,
+                "nombre_persona"=>$nombre_persona, 
+                "direcc_cont"=>$direcc_cont,
+                "ci_ruc"=>$ci_ruc,
+                "rango"=>$rango, 
+                "funcionarios"=>$funcionarios, 
+                'DatosLiquidaciones'=>$todo_cons, 
+                'fecha_formateada'=>$fecha_formateada,
+                "lugar_predio"=>$noti->predio, 
+                "num_proceso"=>$num_proceso, 
+                "liquidacionUrb"=>$datosUrbano, 
+                "liquidacionRural"=>$datosRural]);           
             $estadoarch = $pdf->stream();
+
+            // LO GUARDAMOS EN EL DISCO
             $disco="disksCoactiva";
             \Storage::disk($disco)->put(str_replace("", "",$nombrePDF), $estadoarch);
             $exists_destino = \Storage::disk($disco)->exists($nombrePDF);
@@ -1535,10 +1262,6 @@ class NotificacionesController extends Controller
                 ];
             }
 
-       
-            // return $pdf->stream($nombrePDF);
-
-           
 
         }catch (\Exception $e) {
             return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e->getMessage(). 'Linea=> '.$e->getLine(), "error"=>true];
@@ -1672,19 +1395,7 @@ class NotificacionesController extends Controller
             ->where('estado','A')
             ->first();
 
-            // $secuencial=DB::connection('pgsql')
-            // ->table('sgm_coactiva.parametro_secuencial')
-            // ->selectRaw("
-            //     MAX(CASE WHEN descripcion = 'Oficio' THEN secuencia END) AS oficio,
-            //     MAX(CASE WHEN descripcion = 'Proceso' THEN secuencia END) AS proc
-            // ")
-            // ->whereIn('descripcion', ['Oficio','Proceso'])
-            // ->where('anio',date('Y'))
-            // ->where('estado','A')
-            // ->first();
-
-           
-
+          
             $nombrePDF="MedidasCoactiva".date('YmdHis').".pdf";                               
             $pdf = \PDF::loadView('reportes.medidasCoact', ['DatosLiquidacion'=>$listado_final,"nombre_persona"=>$nombre_persona, "direcc_cont"=>$direcc_cont, "ci_ruc"=>$ci_ruc, "rango"=>$rango, "funcionarios"=>$funcionarios, "lugar_predio"=>$noti->predio,"secr"=>$secr->valor2]);
 
@@ -1793,12 +1504,7 @@ class NotificacionesController extends Controller
                             END
                         END AS nombres
                     "),
-                    // DB::raw("
-                    //     CASE
-                    //         WHEN liq.comprador IS NULL THEN 'S/N'
-                    //         ELSE (SELECT ci_ruc FROM sgm_app.cat_ente WHERE cat_ente.id = liq.comprador)
-                    //     END AS cedula
-                    // "),
+                   
                     DB::raw("cdla.nombre || ' MZ: ' || pre.urb_mz || ' SL: ' || pre.urb_solarnew AS direccion1"),
                     'pre.clave_cat as cod_predial',
                     DB::raw("(SELECT razon_social FROM sgm_application.empresa) AS empresa"),
@@ -2027,12 +1733,7 @@ class NotificacionesController extends Controller
                                 END
                             END AS nombres
                         "),
-                        // DB::raw("
-                        //     CASE
-                        //         WHEN liq.comprador IS NULL THEN 'S/N'
-                        //         ELSE (SELECT ci_ruc FROM sgm_app.cat_ente WHERE cat_ente.id = liq.comprador)
-                        //     END AS cedula
-                        // "),
+                       
                         DB::raw("cdla.nombre || ' MZ: ' || pre.urb_mz || ' SL: ' || pre.urb_solarnew AS direccion1"),
                         'pre.clave_cat as cod_predial',
                         DB::raw("(SELECT razon_social FROM sgm_application.empresa) AS empresa"),
@@ -2600,7 +2301,9 @@ class NotificacionesController extends Controller
 
     public function guardarConvenioNot(Request $request){
         try{
-            // dd($request->all());
+
+            //***VALIDACIONES DE QUE NO HAYA OTRO CONVENIO O NO ESTE EN PROCESO COACTIVA****** */
+
             $verifica=Convenio::where('id_info_notifica',$request->idnot_conv)
             ->where('estado','Activo')
             ->first();
@@ -2614,37 +2317,42 @@ class NotificacionesController extends Controller
                 return ["mensaje"=>"Ya existe un proceso de coactiva inicializado", "error"=>true];
             }
             
-            // if($request->lugar_not=='Urbano'){
-                // $dataNoti=DataNotifica::where('id_info_notifica',$request->idnot_conv)->pluck('id_liquidacion')
-                // ->toArray();
-                $dataNoti=DataNotifica::where('id_info_notifica',$request->idnot_conv)
-                ->whereNotNull('id_liquidacion')
-                ->pluck('num_titulo')
-                // ->whereNotNull('id_liquidacion')
-                ->toArray();
-              
+        
+            $total_deuda=0;
+            
+            //******BUSQUEDA DE DEUDAS PREDIALES URBANAS********************************* */
+
+            $dataNoti=DataNotifica::where('id_info_notifica',$request->idnot_conv)
+            ->whereNotNull('id_liquidacion') // SI TENGO GUARDADO EL CAMPO ID_LIQUIDACION
+            ->pluck('num_titulo')                
+            ->toArray();
+                
+            if(count($dataNoti)> 0){
                 $total=$this->tituloCreditoUrb($dataNoti);
-               
-                $total_deuda=0;
+            
                 foreach($total['data']['DatosLiquidaciones'] as $data){
                     $total_deuda=$total_deuda + $data[0]->total_complemento;
                 }
-                
-            // }else{
-                $dataNoti=DataNotifica::where('id_info_notifica',$request->idnot_conv)
-                ->whereNull('id_liquidacion')
-                ->pluck('num_titulo')
-                
-                ->toArray();
+            }
+                    
+            //******BUSQUEDA DE DEUDAS PREDIALES RURALES********************************* */
+
+            $dataNoti=DataNotifica::where('id_info_notifica',$request->idnot_conv)
+            ->whereNull('id_liquidacion') // SI NO REGISTRE EL CAMPO ID_LIQUIDACION
+            ->pluck('num_titulo')
+            
+            ->toArray();
+            if(count($dataNoti)> 0){
                 $total=$this->tituloCreditoRural($dataNoti);
 
-                // $total_deuda=0;
                 foreach($total['data']['DatosLiquidaciones'] as $data){
                     $total = $data[0]->total_pagar ? str_replace(',', '', $data[0]->total_pagar) : 0;
                     $total_deuda=$total_deuda + $total;
                 }
-            // }          
-           
+            }          
+
+            //*****COMPROBACION DEL QUE ELVALOR NOTIFICADO NO HAYA CAMBIADDO AL INICCIARLIZAR EL PROCESO DE COACTICA */
+
             $total_deuda = (float) $total_deuda;
             $valorAdeudado = (float) $request->valor_adeudado;
             if(round($total_deuda,2) != round($valorAdeudado,2)){
@@ -2653,7 +2361,9 @@ class NotificacionesController extends Controller
                     "error" => true
                 ];
             }
-            
+
+            //**********REGISTRO DEL CONVENIO************************************** */
+
             $guarda=new Convenio();
             $guarda->id_info_notifica=$request->idnot_conv;
             $guarda->valor_adeudado = (float) $request->valor_adeudado; // Convertir a float
