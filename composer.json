@@ -17,6 +17,7 @@
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.8",
         "luecano/numero-a-letras": "^4.0",
+        "rap2hpoutre/laravel-log-viewer": "^2.5",
         "simplesoftwareio/simple-qrcode": "^4.2",
         "spatie/laravel-permission": "^6.9",
         "yajra/laravel-datatables-oracle": "^10.3.1"

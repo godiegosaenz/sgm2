@@ -69,6 +69,8 @@ use App\Http\Controllers\Convenio\ConvenioPagoController;
 //  })->name('sgm/login')->middleware('guest');
 // Route::redirect('/', '/sgm/login');
 
+Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);
+
 Route::get('/login', function () {
    return view('auth.login');
 })->name('login')->middleware('guest');
@@ -576,7 +578,7 @@ Route::get('/clear', function() {
 
     Artisan::call('cache:clear');
     Artisan::call('config:clear');
-    Artisan::call('config:cache');
+    //Artisan::call('config:cache');
     Artisan::call('view:clear');
 
     return "Cleared!";
