@@ -289,7 +289,7 @@ class TransitoImpuestoController extends Controller
 
     public function comboClaseTipoVehiculo(){
         try{
-            $tipo_vehiculo = ClaseVehiculo::where('estado','A')
+            $tipo_vehiculo = ClaseVehiculo::where('estado','A')->orderBy('descripcion','asc')
             // ->where('clase_tipo_vehiculo_id',$id)
             ->get();
             return["error"=>false, "resultado"=>$tipo_vehiculo];
@@ -430,8 +430,8 @@ class TransitoImpuestoController extends Controller
 
                 $valor=$lastDigit;
                 // dd($mes);
-                
-                if($valor<$mes && $valor>=1){
+                // dd($valor); 
+                if($valor<$mes-1 && $valor>=1){
                     $aplica_recargo=1;
                 }
 
