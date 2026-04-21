@@ -142,7 +142,7 @@
                             <td width="10%"></td>
 
                             <td width="40%" style="text-align: left;">
-                            <b>RESPONSABLE: </b>{{ auth()->user()->persona->nombres }} {{ auth()->user()->persona->apellidos }}
+                            <b>IMPRESO POR: </b>{{ auth()->user()->persona->nombres }} {{ auth()->user()->persona->apellidos }}
                             </td>
                             <td width="10%"></td>
 
