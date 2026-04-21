@@ -116,7 +116,7 @@
           
             <tr style="font-size: 10px"  class="fuenteSubtitulo " style=""> 
                 <th colspan="11" style="border-color:white;height:35px;text-align: center;border:0 px" width="100%"  >  
-                    PARTE DIARIO DE RECAUDACION - TESORERIA MUNICIPAL CANTON SAN VICENTE <br>DEL DIA {{$fecha}}</b></span>                             
+                    PARTE DIARIO DE RECAUDACION - TESORERIA MUNICIPAL CANTON SAN VICENTE  <br>DEL DIA {{$fecha}}</b></span>                             
                 </th>
             
             </tr>

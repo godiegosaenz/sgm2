@@ -295,15 +295,111 @@ class AnaliticaContribuyenteController extends Controller
             ini_set('max_execution_time', 0);
 
             $consultaInfo=$this->consultarPagos($request);
-            // dd($request->all());
+            
 
             if($consultaInfo['error']==true){
                 return (['mensaje'=>'Ocurrió un error al consultar los datos,intentelo más tarde','error'=>true]);
             }
 
+            $desde=$request->filtroDesde;
+            $hasta=$request->filtroHasta;
+
+            $concepto_data = DB::connection('pgsql')
+                ->table('sgm_transito.concepto_impuesto as ci')
+                ->leftJoin('sgm_transito.impuestos as i', 'i.id', '=', 'ci.impuesto_matriculacion_id')
+                ->leftJoin('sgm_transito.conceptos as c', 'c.id', '=', 'ci.concepto_id')
+                ->where('i.estado', 3)
+                ->whereBetween('ci.updated_at', [$desde, $hasta])
+                ->select(
+                    'c.concepto',
+                    DB::raw('SUM(ci.valor) as total')
+                )
+                ->groupBy('c.concepto')
+                ->get();
+
+            $concepto_data2 = DB::connection('pgsql')
+                ->table('sgm_transito.concepto_impuesto as ci')
+                ->leftJoin('sgm_transito.impuestos as i', 'i.id', '=', 'ci.impuesto_matriculacion_id')
+                ->leftJoin('sgm_transito.vehiculo as v', 'v.id', '=', 'i.vehiculo_id')
+                ->leftJoin('sgm_transito.clase_tipo_vehiculo as ctv', 'ctv.id', '=', 'v.tipo_clase_id')
+                ->leftJoin('sgm_transito.conceptos as c', 'c.id', '=', 'ci.concepto_id')
+                ->where('i.estado', 3)
+                ->where('c.concepto','=','REVISIÓN TÉCNICA VEHÍCULAR')
+                ->whereBetween('ci.updated_at', [$desde, $hasta])
+                ->select(
+                    'c.concepto',
+                    'ctv.descripcion',
+                    DB::raw('SUM(ci.valor) as total')
+                )
+                ->groupBy('c.concepto','ctv.descripcion')
+                ->get();
+
+            
+            foreach ($concepto_data2 as $key=> $data) {
+                if($data->descripcion=="BUSES Y CAMIONES CARGA MEDIANA" || $data->descripcion== "PESADO"){
+                    $concepto_data2[$key]->tipo='RTV PESADOS';
+                }else if($data->descripcion=='LIVIANOS' || $data->descripcion== 'TAXIS, BUSETAS, FURGONETAS, CAMIONETAS'){
+                    $concepto_data2[$key]->tipo= 'RTV LIVIANOS';
+                }else{
+                    $concepto_data2[$key]->tipo= 'RTV MOTOS';
+                }
+            }
+
+            $agrupado = $concepto_data2
+            ->groupBy('tipo')
+            ->map(function ($items) {
+                return $items->sum(function ($item) {
+                    return (float) $item->total;
+                });
+            });
+
+            $info=[];
+            foreach ($agrupado as $key => $data) {
+                array_push($info, ['concepto'=>$key, 'total'=>$data]);
+            }
+
+            $concepto_data3 = DB::connection('pgsql')
+            ->table('sgm_transito.concepto_impuesto as ci')
+            ->leftJoin('sgm_transito.impuestos as i', 'i.id', '=', 'ci.impuesto_matriculacion_id')
+            ->leftJoin('sgm_transito.vehiculo as v', 'v.id', '=', 'i.vehiculo_id')
+            
+            ->leftJoin('sgm_transito.conceptos as c', 'c.id', '=', 'ci.concepto_id')
+            ->where('i.estado', 3)
+            ->where('c.concepto','=','RECARGO POR CALENDARIZACIÓN')
+            ->whereBetween('ci.updated_at', [$desde, $hasta])
+            ->select(
+                'c.concepto',
+                'v.tipo_vehi',
+                DB::raw('SUM(ci.valor) as total')
+            )
+            ->groupBy('c.concepto','v.tipo_vehi')
+            ->get();
+
+            $info2=[];
+            foreach ($concepto_data3 as $key => $data) {
+                if($data->tipo_vehi=="PARTICULAR"){
+                    array_push($info2, ['concepto'=>'RECARGO POR RETRASO MATRICULACIÓN VEHICULAR-PARTICULAR', 'total'=>$data->total]);
+                }else {
+                    array_push($info2, ['concepto'=>'RECARGO POR RETRASO MATRICULACIÓN VEHICULAR-PUBLICOS', 'total'=>$data->total]);
+                }
+                    
+            }           
+
+            $datosPagos = $concepto_data
+            ->merge($info)
+            ->merge($info2);
+
+            $datos = collect($datosPagos)->map(function ($item) {
+                return (object) $item;
+            });
+
+            // foreach ($datosPagos as $key => $data) {
+            //     dd($data->concepto);
+            // }
+
             $nombrePDF="reporte_pago_transito.pdf";
 
-            $pdf=\PDF::LoadView('reportes.reporte_pago_transito',['datos'=>$consultaInfo['data'],'desde'=>$request->filtroDesde,'hasta'=>$request->filtroHasta,'tipo'=>$request->filtroTipo ]);
+            $pdf=\PDF::LoadView('reportes.reporte_pago_transito',['datos'=>$consultaInfo['data'],'desde'=>$request->filtroDesde,'hasta'=>$request->filtroHasta,'tipo'=>$request->filtroTipo, 'parte_diario'=>$datos ]);
             $pdf->setPaper("A4", "landscape");
             $estadoarch = $pdf->stream();
 

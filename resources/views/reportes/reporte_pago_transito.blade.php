@@ -335,13 +335,112 @@
                 </tfoot>
                 
                 </table>
-            </div>
+        </div>
             
            
-        </div>
 
         
-    </div>
+    <div style="page-break-after: always;"> </div>
+        <table class="ltable"  border="0" width="100%" style="padding-bottom:2px !important; margin-top:5px">
+                <tr style="font-size: 9px !important; background-color: #D3D3D3;line-height:15px; "> 
+                        
+                    <th width="10%" style="border: 0px; ;border-color: #D3D3D3; text-align: center; line-height:15px">CODIGO</th>
+
+                    <th width="40%" style="border: 0px; ;border-color: #D3D3D3; text-align: center; line-height:15px">DETALLE</th>
+
+                    <th width="10%" style="border: 0px; ;border-color: #D3D3D3; text-align: center">ANTERIORES </th>
+
+                    <th width="10%" style="border: 0px; ;border-color: #D3D3D3; text-align: center">AÑO {{ date('Y') }}</th>
+
+                    <th width="10%" style="border: 0px; ;border-color: #D3D3D3; text-align: center">TOTALES</th>
+
+                                    
+                </tr>
+
+                @if(isset($parte_diario))
+                    @php
+                        $total_valor=0;
+                    @endphp
+                    @foreach ($parte_diario as $info)
+
+                       
+                        @if(!in_array($info->concepto, [
+                                'REVISIÓN TÉCNICA VEHÍCULAR',
+                                'RECARGO POR CALENDARIZACIÓN'
+                            ]))
+
+                            @php
+                                $total_parcial=0;
+                                $total_valor=$total_valor+$info->total;
+                            @endphp
+                            <tr style="font-size: 9px !important;line-height:15px; "> 
+
+                                <td align="center" style="border-top: 0px; border-bottom: 0px;border-center:0px;border-right:0px;border-color: #D3D3D3">
+                                    
+                                </td>
+
+
+                                <td align="left" style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;border-color: #D3D3D3">
+                                    {{$info->concepto}}
+
+                                </td>
+
+                                <td align="right" style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;border-color: #D3D3D3">
+                                
+                                    
+                                </td>
+
+
+                                <td align="right" style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-right:0px;border-color: #D3D3D3">
+                                    
+                                    {{number_format($info->total,2)}}
+                                </td>
+
+                                <td align="right" style="border-top: 0px;border-left: 0px; border-bottom: 0px;border-center:0px;border-color: #D3D3D3">
+                                    {{number_format($info->total,2)}}
+                                </td>
+
+                            </tr>
+                        @endif
+                    @endforeach
+
+                    <tfoot >
+                        <tr style="font-size:10px !important;line-height:25px" style="">
+                            <td  colspan="3"style=" border-top: 0px; border-bottom: 0px;border-right:0px; font-size:10px; border-color: #D3D3D3;  text-align: right;">
+                               
+                            </td>
+                            <td style="border-top: 0px; border-bottom: 0px;border-left:0px;border-right:0px; border-color: #D3D3D3;  text-align: right; font-size:10px">
+                                <b>{{number_format($total_valor,2)}}</b> 
+                            
+                            </td>
+                            <td style="border-top: 0px; border-bottom: 0px;border-left:0px;border-color: #D3D3D3;  text-align: right; font-size:10px">
+                                <b>{{number_format($total_valor,2)}}</b> 
+                            
+                            </td>
+                        
+                        </tr>
+
+                        <tr style="font-size:5px !important;line-height:15px" style="">
+                            <td  colspan="3"style=" border-bottom: 0px;border-right:0px;border-left:0px; font-size:10px; border-color: #D3D3D3;  text-align: right;">
+                                <b style="color:white">xxx</b> 
+                            </td>
+                            <td style=" border-bottom: 0px;border-left:0px;border-right:0px; border-color: #D3D3D3;  text-align: right; font-size:10px">
+                                <b></b> 
+                            
+                            </td>
+                            <td style="border-bottom: 0px;border-left:0px;border-right:0px;border-color: #D3D3D3;  text-align: right; font-size:10px">
+                                <b></b> 
+                            
+                            </td>
+                        
+                        </tr>
+
+                        
+                    </tfoot>
+                @endif
+        </table>
+
+   
 
    
   <script type="text/php">
