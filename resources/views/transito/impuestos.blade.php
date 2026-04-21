@@ -404,6 +404,7 @@
                                         <option value="">Seleccione un tipo servicio </option>
                                         <option value="PUBLICO">PUBLICO</option>
                                         <option value="PARTICULAR">PARTICULAR</option>
+                                        <option value="COMERCIAL">COMERCIAL</option>
                                         
                                     </select>
                                     <div class="invalid-feedback" id="error-placa_v"></div>

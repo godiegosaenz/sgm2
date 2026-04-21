@@ -379,8 +379,10 @@ class AnaliticaContribuyenteController extends Controller
             foreach ($concepto_data3 as $key => $data) {
                 if($data->tipo_vehi=="PARTICULAR"){
                     array_push($info2, ['concepto'=>'RECARGO POR RETRASO MATRICULACIÓN VEHICULAR-PARTICULAR', 'total'=>$data->total]);
-                }else {
+                }else if($data->tipo_vehi=="PUBLICO"){
                     array_push($info2, ['concepto'=>'RECARGO POR RETRASO MATRICULACIÓN VEHICULAR-PUBLICOS', 'total'=>$data->total]);
+                }else {
+                    array_push($info2, ['concepto'=>'RECARGO POR RETRASO MATRICULACIÓN VEHICULAR-COMERCIAL', 'total'=>$data->total]);
                 }
                     
             }           

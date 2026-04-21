@@ -420,7 +420,7 @@ class TransitoImpuestoController extends Controller
                 $mes = date("n");
                 //$lastChar=(int)$lastChar;
                 //$valor=$lastChar+1;
-
+ 
                 if (preg_match_all('/\d/', $placa, $matches)) {
                     $lastDigit = end($matches[0]);   // '9' como string
                     $lastDigitInt = (int) $lastDigit; // 9 como entero, si lo necesitas
