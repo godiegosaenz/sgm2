@@ -751,7 +751,7 @@ class CoactivaController extends Controller
                     $inactivaCancelado=Pago::where('id_info_coact',$id)
                     ->where('estado','Activo')
                     ->first();
-                    if(!is_null($inactivaMedidas)){
+                    if(!is_null($inactivaCancelado)){
                         $inactivaCancelado->estado='Inactivo';
                         $inactivaCancelado->save();
                     }
