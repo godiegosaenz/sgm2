@@ -634,11 +634,11 @@ $("#FormConvenio").submit(function(e){
         return
     }
    
-    if(parseFloat(valor_adeudado)<parseFloat(valor_coa)){
-        alertNotificar("El valor adeudado no debe ser menor a "+valor_coa,"error")
-        $('#valor_adeudado').focus()
-        return
-    }
+    // if(parseFloat(valor_adeudado)<parseFloat(valor_coa)){
+    //     alertNotificar("El valor adeudado no debe ser menor a "+valor_coa,"error")
+    //     $('#valor_adeudado').focus()
+    //     return
+    // }
 
     if(cuota_inicial=="" || cuota_inicial==null){
         alertNotificar("Debe ingresar la cuota inicial","error")
