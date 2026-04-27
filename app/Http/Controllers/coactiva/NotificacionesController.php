@@ -1140,6 +1140,30 @@ class NotificacionesController extends Controller
             $datosRural  = collect();
 
             // OBTENEMOS LOS NUM_TITULOS DE LA DATA NOTIFICADA PARA BUSCAR LOS TITULOS PREDIALES DE LA BD URBANA
+
+            $verifica=DataNotifica::where('id_info_notifica',$noti->id)
+            ->select('num_titulo')
+            ->first();
+            if(is_null($verifica->num_titulo)){
+              
+                $obtenerLiquidacion=DataNotifica::where('id_info_notifica',$noti->id)
+                ->select('id', 'id_liquidacion')
+                ->get();
+                
+                foreach($obtenerLiquidacion as $data){
+                
+                    $buscaLiquidacion=PsqlLiquidacion::where('id',$data->id_liquidacion)
+                    ->select('id_liquidacion')
+                    ->first();
+                    
+                    if(!is_null($buscaLiquidacion)){
+                        $data->num_titulo=$buscaLiquidacion->id_liquidacion;
+                        $data->save();
+                    }
+                }
+            }
+
+
             $dataNoti=DataNotifica::where('id_info_notifica',$noti->id)
                 ->whereNotNull('id_liquidacion')
                 ->pluck('num_titulo')
@@ -1703,7 +1727,9 @@ class NotificacionesController extends Controller
             
             $dataArray = array();
             foreach($idliquidaciones as $clave => $valor){
+                
                 if(!is_null($valor)){
+                    // $valor='2023-007874-PU';
                    
                     $liquidacion = DB::connection('pgsql')->table('sgm_financiero.ren_liquidacion as liq')
 
@@ -1897,28 +1923,29 @@ class NotificacionesController extends Controller
                     ->whereIn('liq.estado_liquidacion',[2])
                     ->get();
 
-                    //dd($liquidacion[0]->id);
-                
+                    // dd($liquidacion);
                     $fecha_hoy=date('Y-m-d');
                     setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES@euro', 'es_ES', 'esp');
                     $fecha_timestamp = strtotime($fecha_hoy);    
                     $fecha_formateada = strftime("%d de %B del %Y", $fecha_timestamp);
             
+                    if ($liquidacion->isNotEmpty()) {
+                        $rubros = DB::connection('pgsql')->table('sgm_financiero.ren_det_liquidacion as rdl')
+                                                            ->join('sgm_financiero.ren_rubros_liquidacion as rrl', 'rdl.rubro', '=', 'rrl.id')
+                                                            ->select('rdl.id', 'rdl.liquidacion', 'rdl.rubro', 'rdl.valor', 'rdl.estado', 'rrl.descripcion')
+                                                            // ->where('rdl.liquidacion', $valor)
+                                                            ->where('rdl.liquidacion', $liquidacion[0]->id)
 
-                    $rubros = DB::connection('pgsql')->table('sgm_financiero.ren_det_liquidacion as rdl')
-                                                         ->join('sgm_financiero.ren_rubros_liquidacion as rrl', 'rdl.rubro', '=', 'rrl.id')
-                                                         ->select('rdl.id', 'rdl.liquidacion', 'rdl.rubro', 'rdl.valor', 'rdl.estado', 'rrl.descripcion')
-                                                        // ->where('rdl.liquidacion', $valor)
-                                                        ->where('rdl.liquidacion', $liquidacion[0]->id)
+                                                            ->get();
+                                                        
+                        $liquidacion['rubros'] = $rubros;
 
-                                                         ->get();
-                                                    
-                    $liquidacion['rubros'] = $rubros;
-
-                    array_push($dataArray, $liquidacion);
+                        array_push($dataArray, $liquidacion);
+                    }
+                    
                 }
             }
-            // dd($dataArray);
+            
             $data = [
                 'title' => 'Reporte de liquidacion',
                 'date' => date('m/d/Y'),
@@ -2324,6 +2351,28 @@ class NotificacionesController extends Controller
             $total_deuda=0;
             
             //******BUSQUEDA DE DEUDAS PREDIALES URBANAS********************************* */
+
+            $verifica=DataNotifica::where('id_info_notifica',$request->idnot_conv)
+            ->select('num_titulo')
+            ->first();
+            if(is_null($verifica->num_titulo)){
+              
+                $obtenerLiquidacion=DataNotifica::where('id_info_notifica',$request->idnot_conv)
+                ->select('id', 'id_liquidacion')
+                ->get();
+                
+                foreach($obtenerLiquidacion as $data){
+                
+                    $buscaLiquidacion=PsqlLiquidacion::where('id',$data->id_liquidacion)
+                    ->select('id_liquidacion')
+                    ->first();
+                    
+                    if(!is_null($buscaLiquidacion)){
+                        $data->num_titulo=$buscaLiquidacion->id_liquidacion;
+                        $data->save();
+                    }
+                }
+            }
 
             $dataNoti=DataNotifica::where('id_info_notifica',$request->idnot_conv)
             ->whereNotNull('id_liquidacion') // SI TENGO GUARDADO EL CAMPO ID_LIQUIDACION

@@ -12,6 +12,7 @@ use App\Models\Coactiva\InfoCoa;
 use App\Models\Coactiva\InfoNotifica;
 use App\Models\Coactiva\Medidas;
 use App\Models\Coactiva\Secuencial;
+use App\Models\PsqlLiquidacion;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -83,23 +84,43 @@ class CoactivaController extends Controller
                 return ["mensaje"=>"Ya existe un convenio activo", "error"=>true];
             }
 
-            $actualizaEstado=$this->actualizarEstadoCoa($request->idcoa_conv,'Conv','A');
-            if($actualizaEstado['error']==true){
-                return ["mensaje"=>$actualizaEstado['mensaje'], "error"=>true];
-            }
+            
 
             $total_deuda=0;
             
             //******BUSQUEDA DE DEUDAS PREDIALES URBANAS********************************* */
+
+            $verifica=DataNotifica::where('id_info_notifica',$request->idnotifica)
+            ->select('num_titulo')
+            ->first();
+            if(is_null($verifica->num_titulo)){
+               
+                $obtenerLiquidacion=DataNotifica::where('id_info_notifica',$request->idnotifica)
+                ->select('id', 'id_liquidacion')
+                ->get();
+                
+                foreach($obtenerLiquidacion as $data){
+                
+                    $buscaLiquidacion=PsqlLiquidacion::where('id',$data->id_liquidacion)
+                    ->select('id_liquidacion')
+                    ->first();
+                    
+                    if(!is_null($buscaLiquidacion)){
+                        $data->num_titulo=$buscaLiquidacion->id_liquidacion;
+                        $data->save();
+                    }
+                }
+            }
            
             $dataNoti=DataNotifica::where('id_info_notifica',$request->idnotifica)
             ->whereNotNull('id_liquidacion')
             ->pluck('num_titulo')
             ->toArray();
-
-            if(count($dataNoti)> 0){
-                $total=$this->coactiva->tituloCreditoUrb($dataNoti);                
             
+            
+            if(count($dataNoti)> 0){
+                $total=$this->coactiva->tituloCreditoUrb($dataNoti);  
+              
                 foreach($total['data']['DatosLiquidaciones'] as $data){
                     $total_deuda=$total_deuda + $data[0]->total_complemento;
                 }
@@ -130,7 +151,11 @@ class CoactivaController extends Controller
                     "error" => true
                 ];
             }
-             
+            
+            $actualizaEstado=$this->actualizarEstadoCoa($request->idcoa_conv,'Conv','A');
+            if($actualizaEstado['error']==true){
+                return ["mensaje"=>$actualizaEstado['mensaje'], "error"=>true];
+            }
             
             $guarda=new Convenio();
             $guarda->id_info_coact=$request->idcoa_conv;
