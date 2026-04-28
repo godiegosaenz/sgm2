@@ -1,0 +1,1232 @@
+globalThis.FormAccionRango=""
+globalThis.IdEditarRango=
+$('#modalEditarRangos').on('shown.bs.modal', function () {
+    // Tu acción aquí
+    llenarTabla()
+    FormAccionRango='R'
+});
+ 
+
+function llenarTabla(){
+    
+    $("#tablaRangos tbody").html('');
+    $('#tablaRangos tbody').empty(); 
+    var num_col = $("#tablaRangos thead tr th").length; //obtenemos el numero de columnas de la tabla
+    vistacargando("m", "Espere por favor")
+    $.get('llenar-tabla-rango', function(data){
+        console.log(data)
+       
+        vistacargando("")
+        if(data.error==true){
+			$("#tablaRangos tbody").html('');
+			$("#tablaRangos tbody").html(`<tr><td colspan="${num_col}" style="text-align:center>No existen registros</td></tr>`);
+			alertNotificar(data.mensaje,"error");
+            // cancelar()
+			return;   
+		}
+		if(data.error==false){
+			if(data.resultado.length==0){
+				$("#tablaRangos tbody").html('');
+				$("#tablaRangos tbody").html(`<tr><td colspan="${num_col}" style="text-align:center">No existen registros</td></tr>`);
+				alertNotificar("No se encontró información","error");
+                // cancelar()
+				return;
+			}
+			
+			$("#tablaRangos tbody").html('');
+         
+			$.each(data.resultado,function(i, item){
+                let valor_hasta="En Adelante"
+                if(item.hasta!=null){
+                    valor_hasta=item.hasta
+                }
+				$('#tablaRangos').append(`<tr>
+                                                <td style="width:30%; text-align:center; vertical-align:middle">
+                                                    ${item.desde} 
+                                                    
+                                                </td>
+
+                                                <td style="width:30%;  text-align:left; vertical-align:middle">
+                                                    ${valor_hasta} 
+                                                </td>
+                                               
+                                                <td style="width:30%; text-align:center; vertical-align:middle">
+                                                    ${item.valor}
+                                                </td>
+
+                                               
+                                                <td style="width:10%; text-align:right; vertical-align:middle">
+                                                    <button class="btn btn-sm btn-warning" onclick="editarRango('${item.id}','${item.desde}','${item.hasta}','${item.valor}')"><i class="bi bi-pencil-square"></i></button>
+                                                </td>
+                                                
+											
+										</tr>`);
+			})
+          
+
+            
+		}
+    
+    }).fail(function(){
+        vistacargando("")
+        alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+        $("#tablaRangos tbody").html('');
+		$("#tablaRangos tbody").html(`<tr><td colspan="${num_col}" style="text-align:center">Se produjo un error, por favor intentelo más tarde</td></tr>`);
+    });
+}
+
+function editarRango(id, desde, hasta, rango){
+    $('#desde_base').val(desde)
+    $('#hasta_base').val(hasta)
+    $('#valor_base').val(rango)
+    $('#id_base').val(id)
+    $('#btn_base').html('Actualizar')
+    FormAccionRango='A'
+    IdEditarRango=id
+}
+
+function cancelarRango(){
+    $('#desde_base').val('')
+    $('#hasta_base').val('')
+    $('#valor_base').val('')
+    $('#id_base').val('')
+    $('#btn_base').html('Guardar')
+    FormAccionRango='R'
+}
+
+
+$("#form_base").submit(function(e){
+    e.preventDefault();
+    
+    //validamos los campos obligatorios
+    let desde_base=$('#desde_base').val()
+    let hasta_base=$('#hasta_base').val()
+    let valor_base=$('#valor_base').val()
+   
+    if(desde_base=="" || desde_base==null){
+        alertNotificar("Debe ingresar desde","error")
+        $('#desde_base').focus()
+        return
+    } 
+
+    if (isNaN(desde_base) || desde_base.trim() === "") {
+        alertNotificar('Debe ingresar un número válido',"error");
+        $('#desde_base').focus()
+        return
+    }
+
+    // if(hasta_base=="" || hasta_base==null){
+    //     alertNotificar("Debe ingresar hasta","error")
+    //     $('#hasta_base').focus()
+    //     return
+    // } 
+
+    // if (isNaN(hasta_base) || hasta_base.trim() === "") {
+    //     alertNotificar('Debe ingresar un número válido',"error");
+    //     $('#hasta_base').focus()
+    //     return
+    // }
+
+    if(valor_base=="" || valor_base==null){
+        alertNotificar("Debe ingresar valor","error")
+        $('#valor_base').focus()
+        return
+    } 
+
+    if (isNaN(valor_base) || valor_base.trim() === "") {
+        alertNotificar('Debe ingresar un número válido',"error");
+        $('#valor_base').focus()
+        return
+    }
+
+    vistacargando("m","Espere por favor")
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    //comprobamos si es registro o edicion
+    let tipo=""
+    let url_form=""
+    if(FormAccionRango=="R"){
+        tipo="POST"
+        url_form="guardar-rango"
+    }else{
+        tipo="PUT"
+        url_form="actualizar-rango/"+IdEditarRango
+    }
+  
+    var FrmData=$("#form_base").serialize();
+
+    $.ajax({
+            
+        type: tipo,
+        url: url_form,
+        method: tipo,             
+		data: FrmData,      
+		
+        processData:false, 
+
+        success: function(data){
+            vistacargando("");                
+            if(data.error==true){
+                alertNotificar(data.mensaje,'error');
+                return;                      
+            }
+            cancelarRango()
+            alertNotificar(data.mensaje,"success");
+            llenarTabla()
+                            
+        }, error:function (data) {
+            console.log(data)
+
+            vistacargando("");
+            alertNotificar('Ocurrió un error','error');
+        }
+    });
+})
+
+function abrirModalMantenimiento(){
+  
+    $('#modalMantenimiento').modal('show')
+    llenarTablaMarca()
+    llenarTablaTipo()
+    llenarTablaConcepto()
+    llenarTablaClaseTipo()
+}
+
+function llenarTablaMarca(){
+    
+    $("#tablaMarca tbody").html('');
+    $('#tablaMarca tbody').empty(); 
+    var num_col = $("#tablaMarca thead tr th").length; //obtenemos el numero de columnas de la tabla
+    vistacargando("m", "Espere por favor")
+    $.get('llenar-tabla-marca', function(data){
+        console.log(data)
+       
+        vistacargando("")
+        if(data.error==true){
+			$("#tablaMarca tbody").html('');
+			$("#tablaMarca tbody").html(`<tr><td colspan="${num_col}" style="text-align:center>No existen registros</td></tr>`);
+			alertNotificar(data.mensaje,"error");
+            // cancelar()
+			return;   
+		}
+		if(data.error==false){
+			if(data.resultado.length==0){
+				$("#tablaMarca tbody").html('');
+				$("#tablaMarca tbody").html(`<tr><td colspan="${num_col}" style="text-align:center">No existen registros</td></tr>`);
+				alertNotificar("No se encontró información","error");
+                // cancelar()
+				return;
+			}
+			
+			$("#tablaMarca tbody").html('');
+         
+			$.each(data.resultado,function(i, item){
+
+              
+                
+				$('#tablaMarca').append(`<tr>
+                                                <td style="width:10%; text-align:center; vertical-align:middle">
+                                                    ${i+1} 
+                                                    
+                                                </td>
+
+                                                <td style="width:50%;  text-align:left; vertical-align:middle">
+                                                    ${item.descripcion} 
+                                                </td>
+
+                                             
+                                                <td style="width:10%; text-align:right; vertical-align:middle">
+                                                    <button class="btn btn-sm btn-warning" onclick="editarMarca('${item.id}','${item.descripcion}')"><i class="bi bi-pencil-square"></i></button>
+
+                                                     <button class="btn btn-sm btn-danger" onclick="eliminarMarca('${item.id}')"><i class="fa fa-trash"></i></button>
+                                                </td>
+
+
+                                                
+											
+										</tr>`);
+			})
+          
+
+            
+		}
+    
+    }).fail(function(){
+        vistacargando("")
+        alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+        $("#tablaMarca tbody").html('');
+		$("#tablaMarca tbody").html(`<tr><td colspan="${num_col}" style="text-align:center">Se produjo un error, por favor intentelo más tarde</td></tr>`);
+    });
+}
+globalThis.FormaAccionMarca="R"
+globalThis.IdEditarMarca=""
+function editarMarca(id, marca_vehi){
+    $('#marca_vehi').val(marca_vehi)
+    $('#id_marca_vehi').val(id)
+    $('#btn_marca').html('Actualizar')
+    FormaAccionMarca='A'
+    IdEditarMarca=id
+}
+
+function cancelarMarca(){
+    $('#marca_vehi').val('')
+    $('#id_marca_vehi').val('')
+    $('#btn_marca').html('Guardar')
+    FormaAccionMarca='R'
+}
+
+$("#form_marca").submit(function(e){
+    e.preventDefault();
+    
+    //validamos los campos obligatorios
+    let marca_vehi=$('#marca_vehi').val()
+   
+    if(marca_vehi=="" || marca_vehi==null){
+        alertNotificar("Debe ingresar la marca","error")
+        $('#marca_vehi').focus()
+        return
+    } 
+
+    vistacargando("m","Espere por favor")
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    //comprobamos si es registro o edicion
+    let tipo=""
+    let url_form=""
+    if(FormaAccionMarca=="R"){
+        tipo="POST"
+        url_form="guardar-marca"
+    }else{
+        tipo="PUT"
+        url_form="actualizar-marca/"+IdEditarMarca
+    }
+  
+    var FrmData=$("#form_marca").serialize();
+
+    $.ajax({
+            
+        type: tipo,
+        url: url_form,
+        method: tipo,             
+		data: FrmData,      
+		
+        processData:false, 
+
+        success: function(data){
+            vistacargando("");                
+            if(data.error==true){
+                alertNotificar(data.mensaje,'error');
+                return;                      
+            }
+            cancelarMarca()
+            alertNotificar(data.mensaje,"success");
+            llenarTablaMarca()
+                            
+        }, error:function (data) {
+            console.log(data)
+
+            vistacargando("");
+            alertNotificar('Ocurrió un error','error');
+        }
+    });
+})
+
+function eliminarMarca(id){
+    if(confirm('¿Quiere eliminar el registro?')){
+        vistacargando("m","Espere por favor")
+        $.get("eliminar-marca/"+id, function(data){
+            vistacargando("")
+            if(data.error==true){
+                alertNotificar(data.mensaje,"error");
+                return;   
+            }
+    
+            cancelarMarca()
+            alertNotificar(data.mensaje,"success");
+            llenarTablaMarca()
+           
+        }).fail(function(){
+            vistacargando("")
+            alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+        });
+    }
+}
+
+function llenarTablaTipo(){
+    
+    $("#tablaTipoVehiculo tbody").html('');
+    $('#tablaTipoVehiculo tbody').empty(); 
+    var num_col = $("#tablaTipoVehiculo thead tr th").length; //obtenemos el numero de columnas de la tabla
+    vistacargando("m", "Espere por favor")
+    $.get('llenar-tabla-tipo', function(data){
+        console.log(data)
+       
+        vistacargando("")
+        if(data.error==true){
+			$("#tablaTipoVehiculo tbody").html('');
+			$("#tablaTipoVehiculo tbody").html(`<tr><td colspan="${num_col}" style="text-align:center>No existen registros</td></tr>`);
+			alertNotificar(data.mensaje,"error");
+            // cancelar()
+			return;   
+		}
+		if(data.error==false){
+			if(data.resultado.length==0){
+				$("#tablaTipoVehiculo tbody").html('');
+				$("#tablaTipoVehiculo tbody").html(`<tr><td colspan="${num_col}" style="text-align:center">No existen registros</td></tr>`);
+				alertNotificar("No se encontró información","error");
+                // cancelar()
+				return;
+			}
+			
+			$("#tablaTipoVehiculo tbody").html('');
+         
+			$.each(data.resultado,function(i, item){
+
+              
+                
+				$('#tablaTipoVehiculo').append(`<tr>
+                                                <td style="width:10%; text-align:center; vertical-align:middle">
+                                                    ${i+1} 
+                                                    
+                                                </td>
+
+                                                <td style="width:45%;  text-align:left; vertical-align:middle">
+                                                    ${item.descripcion} 
+                                                </td>
+
+                                                 <td style="width:10%;  text-align:left; vertical-align:middle">
+                                                    ${item.valor} 
+                                                </td>
+
+                                             
+                                                <td style="width:20%; text-align:right; vertical-align:middle">
+                                                    <button class="btn btn-sm btn-warning" onclick="editarTipo('${item.id}','${item.descripcion}','${item.valor}')"><i class="bi bi-pencil-square"></i></button>
+
+                                                     <button class="btn btn-sm btn-danger" onclick="eliminarTipo('${item.id}')"><i class="fa fa-trash"></i></button>
+                                                </td>
+
+
+                                                
+											
+										</tr>`);
+			})
+          
+
+            
+		}
+    
+    }).fail(function(){
+        vistacargando("")
+        alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+        $("#tablaTipoVehiculo tbody").html('');
+		$("#tablaTipoVehiculo tbody").html(`<tr><td colspan="${num_col}" style="text-align:center">Se produjo un error, por favor intentelo más tarde</td></tr>`);
+    });
+}
+
+globalThis.FormaAccionTipo="R"
+globalThis.IdEditarTipo=""
+function editarTipo(id, tipo_vehi, valor){
+    $('#tipo_vehi').val(tipo_vehi)
+    $('#tipo_valor').val(valor)
+    $('#id_tipo_vehi').val(id)
+    $('#btn_tipo').html('Actualizar')
+    FormaAccionTipo='A'
+    IdEditarTipo=id
+}
+
+function cancelarTipo(){
+    $('#tipo_vehi').val('')
+    $('#tipo_valor').val('')
+    $('#id_tipo_vehi').val('')
+    $('#btn_tipo').html('Guardar')
+    FormaAccionTipo='R'
+}
+
+$("#form_tipo").submit(function(e){
+    e.preventDefault();
+    
+    //validamos los campos obligatorios
+    let tipo_vehi=$('#tipo_vehi').val()
+    let valor_vehi=$('#tipo_valor').val()
+   
+    if(tipo_vehi=="" || tipo_vehi==null){
+        alertNotificar("Debe ingresar el tipo","error")
+        $('#tipo_vehi').focus()
+        return
+    } 
+
+     if(valor_vehi=="" || valor_vehi==null){
+        alertNotificar("Debe ingresar el valor","error")
+        $('#valor_vehi').focus()
+        return
+    } 
+
+     if (isNaN(valor_vehi) || valor_vehi.trim() === "") {
+        alertNotificar('Debe ingresar un número válido',"error");
+        $('#valor_vehi').focus()
+        return
+    }
+
+
+    vistacargando("m","Espere por favor")
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    //comprobamos si es registro o edicion
+    let tipo=""
+    let url_form=""
+    if(FormaAccionTipo=="R"){
+        tipo="POST"
+        url_form="guardar-tipo"
+    }else{
+        tipo="PUT"
+        url_form="actualizar-tipo/"+IdEditarTipo
+    }
+  
+    var FrmData=$("#form_tipo").serialize();
+
+    $.ajax({
+            
+        type: tipo,
+        url: url_form,
+        method: tipo,             
+		data: FrmData,      
+		
+        processData:false, 
+
+        success: function(data){
+            vistacargando("");                
+            if(data.error==true){
+                alertNotificar(data.mensaje,'error');
+                return;                      
+            }
+            cancelarTipo()
+            alertNotificar(data.mensaje,"success");
+            llenarTablaTipo()
+                            
+        }, error:function (data) {
+            console.log(data)
+
+            vistacargando("");
+            alertNotificar('Ocurrió un error','error');
+        }
+    });
+})
+
+
+function eliminarTipo(id){
+    if(confirm('¿Quiere eliminar el registro?')){
+        vistacargando("m","Espere por favor")
+        $.get("eliminar-tipo/"+id, function(data){
+            vistacargando("")
+            if(data.error==true){
+                alertNotificar(data.mensaje,"error");
+                return;   
+            }
+    
+            cancelarTipo()
+            alertNotificar(data.mensaje,"success");
+            llenarTablaTipo()
+           
+        }).fail(function(){
+            vistacargando("")
+            alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+        });
+    }
+}
+globalThis.FormaAccionClaseTipo='R'
+globalThis.IdEditarClaseTipo=""
+$("#form_clase_tipo").submit(function(e){
+    e.preventDefault();
+    
+    //validamos los campos obligatorios
+    let tipo_vehi=$('#id_tipo').val()
+    let descripcion=$('#descripcion_clase').val()
+   
+    if(tipo_vehi=="" || tipo_vehi==null){
+        alertNotificar("Debe seleccionar el tipo","error")
+        return
+    } 
+
+     if(descripcion=="" || descripcion==null){
+        alertNotificar("Debe ingresar la descripcion","error")
+        $('#valor_descripcionvehi').focus()
+        return
+    } 
+
+    vistacargando("m","Espere por favor")
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    //comprobamos si es registro o edicion
+    let tipo=""
+    let url_form=""
+    if(FormaAccionClaseTipo=="R"){
+        tipo="POST"
+        url_form="guardar-clase-tipo"
+    }else{
+        tipo="PUT"
+        url_form="actualizar-clase-tipo/"+IdEditarClaseTipo
+    }
+  
+    var FrmData=$("#form_clase_tipo").serialize();
+
+    $.ajax({
+            
+        type: tipo,
+        url: url_form,
+        method: tipo,             
+		data: FrmData,      
+		
+        processData:false, 
+
+        success: function(data){
+            vistacargando("");                
+            if(data.error==true){
+                alertNotificar(data.mensaje,'error');
+                return;                      
+            }
+            cancelarClaseTipo()
+            alertNotificar(data.mensaje,"success");
+            llenarTablaClaseTipo()
+                            
+        }, error:function (data) {
+            console.log(data)
+
+            vistacargando("");
+            alertNotificar('Ocurrió un error','error');
+        }
+    });
+})
+
+function cancelarClaseTipo(){
+    $('#id_tipo').val('')
+    $('#descripcion_clase').val('')
+    $('#id_clase_vehi').val('')
+    $('#btn_tipo_clase').html('Guardar')
+    FormaAccionClaseTipo='R'
+}
+
+function llenarTablaClaseTipo(){
+    
+    $("#tablaTipoClaseVehiculo tbody").html('');
+    $('#tablaTipoClaseVehiculo tbody').empty(); 
+    var num_col = $("#tablaTipoClaseVehiculo thead tr th").length; //obtenemos el numero de columnas de la tabla
+    vistacargando("m", "Espere por favor")
+    $.get('llenar-tabla-clase-tipo', function(data){
+        console.log(data)
+       
+        vistacargando("")
+        if(data.error==true){
+			$("#tablaTipoClaseVehiculo tbody").html('');
+			$("#tablaTipoClaseVehiculo tbody").html(`<tr><td colspan="${num_col}" style="text-align:center>No existen registros</td></tr>`);
+			alertNotificar(data.mensaje,"error");
+            // cancelar()
+			return;   
+		}
+		if(data.error==false){
+			if(data.resultado.length==0){
+				$("#tablaTipoClaseVehiculo tbody").html('');
+				$("#tablaTipoClaseVehiculo tbody").html(`<tr><td colspan="${num_col}" style="text-align:center">No existen registros</td></tr>`);
+				// alertNotificar("No se encontró información","error");
+                // cancelar()
+				return;
+			}
+			
+			$("#tablaTipoClaseVehiculo tbody").html('');
+         
+			$.each(data.resultado,function(i, item){
+
+              
+                
+				$('#tablaTipoClaseVehiculo').append(`<tr>
+                                                <td style="width:10%; text-align:center; vertical-align:middle">
+                                                    ${i+1} 
+                                                    
+                                                </td>
+
+                                                <td style="width:45%;  text-align:left; vertical-align:middle">
+                                                    ${item.descripcion_tipo} 
+                                                </td>
+
+                                                 <td style="width:10%;  text-align:left; vertical-align:middle">
+                                                    ${item.descripcion_clase} 
+                                                </td>
+
+                                             
+                                                <td style="width:20%; text-align:right; vertical-align:middle">
+                                                    <button class="btn btn-sm btn-warning" onclick="editarClaseTipo('${item.id}','${item.idtipo}','${item.descripcion_clase}')"><i class="bi bi-pencil-square"></i></button>
+
+                                                     <button class="btn btn-sm btn-danger" onclick="eliminarTipo('${item.id}')"><i class="fa fa-trash"></i></button>
+                                                </td>
+
+
+                                                
+											
+										</tr>`);
+			})
+          
+
+            
+		}
+    
+    }).fail(function(){
+        vistacargando("")
+        alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+        $("#tablaTipoClaseVehiculo tbody").html('');
+		$("#tablaTipoClaseVehiculo tbody").html(`<tr><td colspan="${num_col}" style="text-align:center">Se produjo un error, por favor intentelo más tarde</td></tr>`);
+    });
+}
+
+
+function editarClaseTipo(id, idtipo, descripcion_clase){
+    $('#id_tipo').val(idtipo)
+    $('#descripcion_clase').val(descripcion_clase)
+    $('#id_clase_vehi').val(id)
+    $('#btn_tipo_clase').html('Actualizar')
+    FormaAccionClaseTipo='A'
+    IdEditarClaseTipo=id
+}
+
+$('#modalCrearEnte').on('hidden.bs.modal', function (e) {
+    $('#nombres').val('')
+    $('#apellidos').val('')
+    $('#direccion').val('')
+    $('#fecha_nacimiento').val('')
+    $('#correo').val('')
+    $('#telefono').val('')
+    $('#ci_ruc').val('')
+    $('#nombre_btn_persona').html('Guardar')
+
+});
+$('#modalCrearEnte').on('shown.bs.modal', function (e) {
+   $('#nombre_btn_persona').html('Guardar')
+   $('#btn_guarda_act_persona').removeClass('btn-warning');
+   $('#btn_guarda_act_persona').addClass('btn-primary');
+});
+
+function bloqueaInpust(input){
+    $('#btn_guarda_act_persona').prop('disabled',true)
+}
+
+globalThis.PersonaIdEditar=0
+function capturaInfoPersona(){
+    var ci_ruc=$('#ci_ruc').val()
+    var tipo=$('#es_persona').val()
+
+    $('#nombres').val('')
+    $('#apellidos').val('')
+    $('#direccion').val('')
+    $('#fecha_nacimiento').val('')
+    $('#correo').val('')
+    $('#telefono').val('')
+    $('#nombre_btn_persona').html('')
+    $('#btn_guarda_act_persona').prop('disabled',false)
+
+    // vistacargando("m","Espere por favor")
+    $.get("../carga-info-persona/"+ci_ruc, function(data){
+        vistacargando("")
+        PersonaIdEditar=data.id_persona
+        
+        if(PersonaIdEditar>0){
+            $('#nombre_btn_persona').html('Actualizar')
+            $('#btn_guarda_act_persona').removeClass('btn-primary');
+            $('#btn_guarda_act_persona').addClass('btn-warning');
+        }else{
+            $('#nombre_btn_persona').html('Guardar')
+            $('#btn_guarda_act_persona').removeClass('btn-warning');
+            $('#btn_guarda_act_persona').addClass('btn-primary');
+        }
+       
+        if(data.error==true){
+            // alertNotificar(data.mensaje,"error");
+            $('#nombres').val(data.data[0].nombre)
+            $('#apellidos').val(data.data[0].apellido)
+            $('#direccion').val(data.data[0].direccion)
+            $('#fecha_nacimiento').val(data.data[0].f_nacimiento)
+            $('#correo').val(data.data[0].correo)
+            $('#telefono').val(data.data[0].telefono)
+            return;   
+        }
+
+        $('#nombres').val(data.data[0].nombre)
+        $('#apellidos').val(data.data[0].apellido)
+        $('#direccion').val(data.data[0].direccion)
+        $('#fecha_nacimiento').val(data.data[0].f_nacimiento)
+        $('#correo').val(data.data[0].correo)
+        $('#telefono').val(data.data[0].telefono)
+        console.log(data)
+       
+         
+    }).fail(function(){
+        // vistacargando("")
+        alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+    });
+}
+
+$('#vehiculoModal').on('hidden.bs.modal', function (e) {
+    $('#avaluo_v').val('')
+    $('#tipo_v').val('')
+    $('#chasis_v').val('')
+    $('#year_v').val('')
+    $('#marca_v').val('')
+    $('#nombre_btn_vehiculo').html('Guardar')
+
+});
+$('#vehiculoModal').on('shown.bs.modal', function (e) {
+    $('#nombre_btn_vehiculo').html('Guardar')
+    $('#btn_guarda_act_vehiculo').removeClass('btn-warning');
+    $('#btn_guarda_act_vehiculo').addClass('btn-primary');
+});
+
+function convertirMayuscula(input){
+    input.value = input.value.toUpperCase();
+    $('#btn_guarda_act_vehiculo').prop('disabled',true)
+}
+
+
+globalThis.VehiculoIdEditar=0
+function capturaInfoVehiculo(){
+    var placa_cpn_ramv=$('#placa_v').val()
+
+    $('#avaluo_v').val('')
+    $('#tipo_v').val('')
+    $('#chasis_v').val('')
+    $('#year_v').val('')
+    $('#marca_v').val('')
+    $('#clase_tipo_v').val('')
+    $('#tipo_vehiculo').val('')
+    $('#nombre_btn_vehiculo').html('')
+    $('#btn_guarda_act_vehiculo').prop('disabled',false)
+
+    // vistacargando("m","Espere por favor")
+    $.get("../carga-info-vehiculo/"+placa_cpn_ramv, function(data){
+        vistacargando("")
+        VehiculoIdEditar=data.id_vehiculo
+        
+        if(VehiculoIdEditar>0){
+            $('#nombre_btn_vehiculo').html('Actualizar')
+            $('#btn_guarda_act_vehiculo').removeClass('btn-primary');
+            $('#btn_guarda_act_vehiculo').addClass('btn-warning');
+        }else{
+            $('#nombre_btn_vehiculo').html('Guardar')
+            $('#btn_guarda_act_vehiculo').removeClass('btn-warning');
+            $('#btn_guarda_act_vehiculo').addClass('btn-primary');
+        }
+       
+        if(data.error==true){
+            // alertNotificar(data.mensaje,"error");
+            return;   
+        }
+        if(data.data==null){return}
+
+        $('#avaluo_v').val(data.data.avaluo)
+        $('#tipo_v').val(data.data.tipo_clase_id)
+        $('#chasis_v').val(data.data.chasis)
+        $('#year_v').val(data.data.year)
+        $('#marca_v').val(data.data.marca_id)
+        $('#tipo_ident').val(data.data.tipo_identif)
+        console.log(data)
+        // cargaComboClaseTipoVeh()
+
+        // setTimeout(function() {
+        //     $('#clase_tipo_v').val(data.data.clase_id)
+        // }, 1000);
+        $('#clase_tipo_v').val(data.data.clase_id)
+        $('#tipo_vehiculo').val(data.data.tipo_vehi)
+         
+    }).fail(function(){
+        // vistacargando("")
+        alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+    });
+}
+
+function verpdf(ruta){
+   
+    var iframe=$('#iframePdf');
+    iframe.attr("src", "patente/documento/"+ruta);   
+    $("#vinculo").attr("href", 'patente/descargar-documento/'+ruta);
+    $("#documentopdf").modal("show");
+}
+
+$('#documentopdf').on('hidden.bs.modal', function (e) {
+    console.log('El modal se ha cerrado');
+    location.reload();
+});
+
+$('#vehiculoModal').on('show.bs.modal', function () {
+   cargaComboMarca()
+   cargaComboTipoVeh()
+   cargaComboClaseTipoVeh()
+});
+
+function cargaComboMarca(){
+    vistacargando("m","");
+    $.get('../carga-combo-marca', function(data){
+        console.log(data)
+        vistacargando("")
+        if(data.error==true){
+			alertNotificar(data.mensaje,"error");
+			return;   
+		}
+        $('#marca_v').html('');	
+        $('#marca_v').find('option').remove().end();
+        $('#marca_v').append('<option value="">Selecccione una marca</option>');
+        $.each(data.resultado, function(i,item){
+          			
+            $('#marca_v').append('<option class="" value="'+item.id+'">'+item.descripcion+'</option>');
+           
+        })
+         $("#marca_v").trigger("chosen:updated"); // actualizamos el combo 
+          
+        
+    }).fail(function(){
+        alertNotificar("Ocurrio un error","error");
+        vistacargando("")
+       
+    }); 
+}
+
+function cargaComboTipoVeh(){
+    vistacargando("m","");
+    $.get('../carga-combo-tipo-vehiculo', function(data){
+        console.log(data)
+        vistacargando("")
+        if(data.error==true){
+			alertNotificar(data.mensaje,"error");
+			return;   
+		}
+        $('#tipo_v').html('');	
+        $('#tipo_v').find('option').remove().end();
+        $('#tipo_v').append('<option value="">Selecccione un  tipo</option>');
+        $.each(data.resultado, function(i,item){
+          			
+            $('#tipo_v').append('<option class="" value="'+item.id+'">'+item.descripcion+'</option>');
+           
+        })
+         $("#tipo_v").trigger("chosen:updated"); // actualizamos el combo 
+          
+        
+    }).fail(function(){
+        alertNotificar("Ocurrio un error","error");
+        vistacargando("")
+       
+    }); 
+}
+
+function seleccionaTipoVeh(){
+    vistacargando("m","");
+    var clase_tipo_v=$('#clase_tipo_v').val()
+     $('#tipo_v').val('')
+    $.get('../busca-tipo-vehiculo/'+clase_tipo_v, function(data){
+        console.log(data)
+        vistacargando("")
+        if(data.error==true){
+			alertNotificar(data.mensaje,"error");
+			return;   
+		}
+        $('#tipo_v').val(data.resultado.clase_tipo_vehiculo_id)
+        
+    }).fail(function(){
+        alertNotificar("Ocurrio un error","error");
+        vistacargando("")
+       
+    }); 
+}
+
+$('#tipo_v').on('focus mousedown', function (e) {
+    e.preventDefault();
+});
+
+
+function cargaComboClaseTipoVeh(){
+    vistacargando("m","");
+    $.get('../carga-combo-clase-tipo-vehiculo', function(data){
+        console.log(data)
+        vistacargando("")
+        if(data.error==true){
+			alertNotificar(data.mensaje,"error");
+			return;   
+		}
+        $('#clase_tipo_v').html('');	
+        $('#clase_tipo_v').find('option').remove().end();
+        $('#clase_tipo_v').append('<option value="">Selecccione un  tipo</option>');
+        $.each(data.resultado, function(i,item){
+          			
+            $('#clase_tipo_v').append('<option class="" value="'+item.id+'">'+item.descripcion+'</option>');
+           
+        })
+         $("#clase_tipo_v").trigger("chosen:updated"); // actualizamos el combo 
+          
+        
+    }).fail(function(){
+        alertNotificar("Ocurrio un error","error");
+        vistacargando("")
+       
+    }); 
+}
+function cargaComboClaseTipoVeh1(){
+    var tipo_v=$('#tipo_v').val()
+    vistacargando("m","");
+    $.get('../carga-combo-clase-tipo-vehiculo/'+tipo_v, function(data){
+        console.log(data)
+        vistacargando("")
+        if(data.error==true){
+			alertNotificar(data.mensaje,"error");
+			return;   
+		}
+        $('#clase_tipo_v').html('');	
+        $('#clase_tipo_v').find('option').remove().end();
+        $('#clase_tipo_v').append('<option value="">Selecccione un  tipo</option>');
+        $.each(data.resultado, function(i,item){
+          			
+            $('#clase_tipo_v').append('<option class="" value="'+item.id+'">'+item.descripcion+'</option>');
+           
+        })
+         $("#clase_tipo_v").trigger("chosen:updated"); // actualizamos el combo 
+          
+        
+    }).fail(function(){
+        alertNotificar("Ocurrio un error","error");
+        vistacargando("")
+       
+    }); 
+}
+
+$('#vehiculoModal').on('hidden.bs.modal', function () {
+    $('body').removeClass('modal-open');
+    $('body').css('overflow', 'auto');
+
+    // Elimina backdrop si quedó alguno
+    $('.modal-backdrop').remove();
+});
+
+
+
+function generarPdf(id){
+    vistacargando("m","Espere por favor")
+    $.get("transito-imprimir/"+id+"/G", function(data){
+        vistacargando("")
+        if(data.error==true){
+            alertNotificar(data.mensaje,"error");
+            return;   
+        }
+        verpdf(data.pdf)
+        console.log(data)
+        
+        
+    }).fail(function(){
+        vistacargando("")
+        alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+    });
+}
+
+function calcularImpuesto(){
+    document.getElementById('btn-calcular').click();
+}
+
+document.querySelectorAll('.concepto-check').forEach(function(checkbox) {
+    checkbox.addEventListener('change', function(event) {
+        const isChecked = this.checked; // true o false
+        const conceptoId = this.getAttribute('data-id'); // obtener el data-id
+
+        if (isChecked) {
+            console.log('Marcado el checkbox con ID:', conceptoId);
+            calcularImpuesto()
+        } else {
+            console.log('Desmarcado el checkbox con ID:', conceptoId);
+            calcularImpuesto()
+        }
+    });
+});
+
+
+function llenarTablaConcepto(){
+    
+    $("#tablaConceptoVehiculo tbody").html('');
+    $('#tablaConceptoVehiculo tbody').empty(); 
+    var num_col = $("#tablaConceptoVehiculo thead tr th").length; //obtenemos el numero de columnas de la tabla
+    vistacargando("m", "Espere por favor")
+    $.get('llenar-tabla-concepto', function(data){
+        console.log(data)
+       
+        vistacargando("")
+        if(data.error==true){
+			$("#tablaConceptoVehiculo tbody").html('');
+			$("#tablaConceptoVehiculo tbody").html(`<tr><td colspan="${num_col}" style="text-align:center>No existen registros</td></tr>`);
+			alertNotificar(data.mensaje,"error");
+            // cancelar()
+			return;   
+		}
+		if(data.error==false){
+			if(data.resultado.length==0){
+				$("#tablaConceptoVehiculo tbody").html('');
+				$("#tablaConceptoVehiculo tbody").html(`<tr><td colspan="${num_col}" style="text-align:center">No existen registros</td></tr>`);
+				alertNotificar("No se encontró información","error");
+                // cancelar()
+				return;
+			}
+			
+			$("#tablaConceptoVehiculo tbody").html('');
+         
+			$.each(data.resultado,function(i, item){
+
+              
+                
+				$('#tablaConceptoVehiculo').append(`<tr>
+                                                <td style="width:10%; text-align:center; vertical-align:middle">
+                                                    ${i+1} 
+                                                    
+                                                </td>
+
+                                                <td style="width:65%;  text-align:left; vertical-align:middle">
+                                                    ${item.concepto} 
+                                                </td>
+
+                                                 <td style="width:10%;  text-align:left; vertical-align:middle">
+                                                    ${item.valor} 
+                                                </td>
+
+                                             
+                                                <td style="width:10%; text-align:right; vertical-align:middle">
+                                                    <button class="btn btn-sm btn-warning" onclick="editarConcepto('${item.id}','${item.concepto}','${item.valor}')"><i class="bi bi-pencil-square"></i></button>
+
+                                                    
+                                                </td>
+
+
+                                                
+											
+										</tr>`);
+			})
+          
+
+            
+		}
+    
+    }).fail(function(){
+        vistacargando("")
+        alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+        $("#tablaConceptoVehiculo tbody").html('');
+		$("#tablaConceptoVehiculo tbody").html(`<tr><td colspan="${num_col}" style="text-align:center">Se produjo un error, por favor intentelo más tarde</td></tr>`);
+    });
+}
+
+globalThis.FormaAccionConcepto="R"
+globalThis.IdEditarConcepto=""
+function editarConcepto(id, concepto, valor){
+    $('#txt_concepto').val(concepto)
+    $('#valor_concepto').val(valor)
+    $('#id_concepto').val(id)
+    $('#btn_concepto').html('Actualizar')
+    $('.btn_conc').prop('disabled',false)
+    FormaAccionConcepto='A'
+    IdEditarConcepto=id
+}
+
+function cancelarConcepto(){
+    $('#txt_concepto').val('')
+    $('#valor_concepto').val('')
+    $('#id_concepto').val('')
+    $('#btn_concepto').html('Guardar')
+    $('.btn_conc').prop('disabled',true)
+    FormaAccionConcepto='R'
+}
+
+$("#form_concepto").submit(function(e){
+    e.preventDefault();
+    
+    //validamos los campos obligatorios
+    let txt_concepto=$('#txt_concepto').val()
+    let valor_concepto=$('#valor_concepto').val()
+   
+    if(txt_concepto=="" || txt_concepto==null){
+        alertNotificar("Debe ingresar el concepto","error")
+        $('#txt_concepto').focus()
+        return
+    } 
+
+     if(valor_concepto=="" || valor_concepto==null){
+        alertNotificar("Debe ingresar el valor","error")
+        $('#valor_concepto').focus()
+        return
+    } 
+
+     if (isNaN(valor_concepto) || valor_concepto.trim() === "") {
+        alertNotificar('Debe ingresar un número válido',"error");
+        $('#valor_concepto').focus()
+        return
+    }
+
+
+    vistacargando("m","Espere por favor")
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    //comprobamos si es registro o edicion
+    let tipo=""
+    let url_form=""
+    if(FormaAccionConcepto=="R"){
+        tipo="POST"
+        url_form="guardar-concepto"
+    }else{
+        tipo="PUT"
+        url_form="actualizar-concepto/"+IdEditarConcepto
+    }
+  
+    var FrmData=$("#form_concepto").serialize();
+
+    $.ajax({
+            
+        type: tipo,
+        url: url_form,
+        method: tipo,             
+		data: FrmData,      
+		
+        processData:false, 
+
+        success: function(data){
+            vistacargando("");                
+            if(data.error==true){
+                alertNotificar(data.mensaje,'error');
+                return;                      
+            }
+            cancelarConcepto()
+            alertNotificar(data.mensaje,"success");
+            llenarTablaConcepto()
+                            
+        }, error:function (data) {
+            console.log(data)
+
+            vistacargando("");
+            alertNotificar('Ocurrió un error','error');
+        }
+    });
+})
+
+function cambioTipoidentif(){
+    var tipo=$('#tipo_ident').val()
+    if(tipo==""){return}
+    else if(tipo=="PLACA"){$('.label_plac_cpn_ramv').html('PLACA')}
+    else if(tipo=="CPN"){$('.label_plac_cpn_ramv').html('CPN')}
+    else if(tipo=="RAMV"){$('.label_plac_cpn_ramv').html('RAMV')}
+    
+}
+

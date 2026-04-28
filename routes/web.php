@@ -27,6 +27,7 @@ use App\Http\Controllers\analitica\AnaliticaPredioController;
 use App\Http\Controllers\configuracion\RolesController;
 use App\Http\Controllers\transito\TransitoEnteController;
 use App\Http\Controllers\transito\TransitoImpuestoController;
+use App\Http\Controllers\transito\EdicionTransitoImpuestoController;
 use App\Http\Controllers\transito\TransitoVehiculoController;
 use App\Http\Controllers\PredioController;
 use App\Http\Controllers\coactiva\CoactivaEmisionesController;
@@ -310,6 +311,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('busca-tipo-vehiculo/{idclase}', [TransitoImpuestoController::class, 'buscaTipoVehiculo'])->name('buscaTipoVehiculo.transito');
 
     Route::get('firma-p12/{documento}/{pdoce}/{clave}/{prefijo}/{disco}', [TransitoImpuestoController::class, 'firmarDocumento2'])->name('firmarDocumento2.transito');
+
+
+    //vista edicion antes de cobro
+    Route::get('transito-editar/lista', [EdicionTransitoImpuestoController::class, 'index'])->name('edicion.transito');
+    Route::post('transito-edicion/datatables', [EdicionTransitoImpuestoController::class, 'datatableEdicion']);
+    Route::get('editar-cobro-transito/{id}', [EdicionTransitoImpuestoController::class, 'editar']);
 
 
 

@@ -518,7 +518,30 @@ class CoactivaController extends Controller
             $guarda->documento = $nombrePDF;
             $guarda->save();
 
-            /* ================== CONSULTAS ================== */
+            /* ================== CONSULTAS ================== volver*/
+
+            $verifica=DataNotifica::where('id_info_notifica',$request->IdNotificaSele)
+            ->select('num_titulo')
+            ->first();
+            
+            if(is_null($verifica->num_titulo)){
+               
+                $obtenerLiquidacion=DataNotifica::where('id_info_notifica',$request->IdNotificaSele)
+                ->select('id', 'id_liquidacion')
+                ->get();
+                
+                foreach($obtenerLiquidacion as $data){
+                
+                    $buscaLiquidacion=PsqlLiquidacion::where('id',$data->id_liquidacion)
+                    ->select('id_liquidacion')
+                    ->first();
+                    
+                    if(!is_null($buscaLiquidacion)){
+                        $data->num_titulo=$buscaLiquidacion->id_liquidacion;
+                        $data->save();
+                    }
+                }
+            }
 
             $consulta=$this->coactiva->consultarTitulosUrb($request->IdNotificaSele);
             
@@ -539,6 +562,8 @@ class CoactivaController extends Controller
            
             $listado_final = [];
             $anios = [];
+
+            
             
             foreach ($todo as $key => $item){ 
                 $anios[] = $item->anio;
