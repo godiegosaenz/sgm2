@@ -582,8 +582,14 @@ class CoactivaController extends Controller
                         array_push($listado_final[$item->clave], $item);
                     }
                 }
+                
+                if(isset($item->nombre_contr1)){
+                    $nombre_persona=$item->nombre_contr1;
+                }
+                if(isset($item->nombre_per)){
+                    $nombre_persona=$item->nombre_per;
+                }
 
-                $nombre_persona=$item->nombre_per;
                 $direcc_cont=$item->direcc_cont;
                 if(isset($item->num_ident)){
                     $ci_ruc=$item->num_ident;
@@ -623,7 +629,7 @@ class CoactivaController extends Controller
                 ->select('num_proceso')
                 ->first();
         
-            /* ================== GENERAR PDF ================== */
+            /* ================== GENERAR PDF ==================. */
 
             $pdf = \PDF::loadView('reportes.medidasCoact', [
                 'DatosLiquidacion' => $listado_final,

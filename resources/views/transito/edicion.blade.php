@@ -207,6 +207,7 @@
                         <label for="propietario" class="form-label">Busqueda por cedula <span
                                 class="text-danger">*</span></label>
                         <div class="input-group">
+                            <input type="text" name="id_impuesto_editar" id="id_impuesto_editar">
                             <input type="number" class="form-control {{$errors->has('cliente_id') ? 'is-invalid' : ''}}"
                                 id="cliente_id" name="cliente_id" placeholder="Ingrese cedula o ruc"
                                 value="{{old('cliente_id')}}" required>
@@ -940,6 +941,10 @@
                 alertNotificar(data.mensaje,"error");
                 return;   
             }
+            if(data.resultado==null){
+                alertNotificar('La informacion ya no se encuentra disponible de actualizar',"error");
+                return; 
+            }
             
             $('#DetalleTitulo').modal('hide')
             $('.h2').html('Edicion de Impuesto Transito')
@@ -949,6 +954,8 @@
 
             $('#cliente_id').val(data.resultado.cliente.ci_ruc)
             $('#vehiculo_id').val(data.resultado.vehiculo.placa_cpn_ramv)
+
+            $('#id_impuesto_editar').val(id)
 
             let nombrescliente = data.resultado.cliente.apellidos + ' ' + data.resultado.cliente.nombres;
             let correocliente = data.resultado.cliente.correo ?? 'S/N';
@@ -982,28 +989,40 @@
             $('#tipo_vehi').val(tipo_vehi)
             
             $('#vehiculo_id_2').val(vehiculo_id_2)
+          
+            $('#last_year_declaracion').val(data.resultado.last_year_declaracion)
+            if(data.resultado.solo_duplicado != null){              
+                $('#solo_duplicado').val(data.resultado.solo_duplicado)
+            }
+
+            setTimeout(() => {
+                calcularImpuesto()
+            }, 1000);
+            
 
 
-            $.each(data.resultado.conceptos,function(i, item){
-                if(item.codigo=='IAV'){
-                    $('#check_valor_IAV').prop('checked',true)
-                }
 
-                if(item.codigo=='RTV'){
-                    $('#check_valor_RTV').prop('checked',true)
-                }
 
-                if(item.codigo=='SRV'){
-                    $('#check_valor_SRV').prop('checked',true)
-                }
+            // $.each(data.resultado.conceptos,function(i, item){
+            //     if(item.codigo=='IAV'){
+            //         $('#check_valor_IAV').prop('checked',true)
+            //     }
 
-                if(item.codigo=='TSA'){
-                    $('#check_valor_TSA').prop('checked',true)
-                }
+            //     if(item.codigo=='RTV'){
+            //         $('#check_valor_RTV').prop('checked',true)
+            //     }
+
+            //     if(item.codigo=='SRV'){
+            //         $('#check_valor_SRV').prop('checked',true)
+            //     }
+
+            //     if(item.codigo=='TSA'){
+            //         $('#check_valor_TSA').prop('checked',true)
+            //     }
 
 
             
-            })
+            // })
 
             
         }).fail(function(){
@@ -1400,6 +1419,144 @@
             } else {
                 alert('Selecciona al menos un concepto para calcular.');
             }
+        });
+
+
+        document.getElementById('btn-guardar').addEventListener('click', function () {
+
+            let nombres=$('#nombrescliente').val()
+            let avaluo_aux=$('#avaluo').val()
+                
+            if(avaluo_aux=="No encontrado"){
+                avaluo_aux=""
+            }
+
+            if(nombres=="" || avaluo_aux==""){
+                alertNotificar("Selecccione un Cliente y/o Vehiculo existente","error")
+                return
+            }
+
+            // limpiar errores
+            ['vehiculo_id', 'cliente_id', 'year_declaracion'].forEach(id => {
+                const input = document.getElementById(id);
+                const errorDiv = document.getElementById('error_' + id);
+
+                if (input) {
+                    input.addEventListener('input', limpiarError);
+                    input.addEventListener('change', limpiarError); // para tipo number y selects
+
+                    function limpiarError() {
+                        input.classList.remove('is-invalid');
+                        if (errorDiv) errorDiv.textContent = '';
+                    }
+                }
+            });
+
+            const id_impuesto_editar=$('#id_impuesto_editar').val()
+            const vehiculo_id_2 = document.getElementById('vehiculo_id_2').value;
+            const cliente_id_2 = document.getElementById('cliente_id_2').value;
+            const year_declaracion = document.getElementById('year_declaracion').value;
+            const last_year_declaracion = document.getElementById('last_year_declaracion').value;
+            const solo_dupli = document.getElementById('solo_duplicado').value;
+            const btn = document.getElementById('btn-guardar');
+            const spinner = btn.querySelector('.spinner-border');
+            btn.disabled = true;
+            spinner.classList.remove('d-none');
+
+            const conceptosSeleccionados = [];
+
+            document.querySelectorAll('.concepto-check:checked').forEach(function (checkbox) {
+                const id = checkbox.dataset.id;
+                const valor = document.getElementById('valor_' + id).value;
+                conceptosSeleccionados.push({
+                    id: id,
+                    valor: valor
+                });
+            });
+
+            // Validación simple: debe haber al menos uno
+            if (conceptosSeleccionados.length === 0) {
+                alert('Debes seleccionar al menos un concepto.');
+                // En el then o catch
+                btn.disabled = false;
+                spinner.classList.add('d-none');
+                return;
+            }
+
+            axios.post('{{ route("actualizar.transito") }}', {
+                _token: '{{ csrf_token() }}',
+                conceptos: conceptosSeleccionados,
+                vehiculo_id_2: vehiculo_id_2,
+                cliente_id_2: cliente_id_2,
+                year_declaracion: year_declaracion,
+                last_year_declaracion: last_year_declaracion,
+                solo_dupli:solo_dupli,
+                id_impuesto_editar:id_impuesto_editar
+            })
+                .then(function (res) {
+                    // limpiar errores
+                    ['vehiculo_id', 'cliente_id', 'year_declaracion','last_year_declaracion'].forEach(id => {
+                        const input = document.getElementById(id);
+                        const errorDiv = document.getElementById('error_' + id);
+
+                        if (input) {
+                            input.addEventListener('input', limpiarError);
+                            input.addEventListener('change', limpiarError); // para tipo number y selects
+
+                            function limpiarError() {
+                                input.classList.remove('is-invalid');
+                                if (errorDiv) errorDiv.textContent = '';
+                            }
+                        }
+                    });
+                    if (res.status == 200) {
+
+                        if(res.data.error==true){
+                            alertNotificar(res.data.mensaje,"error")
+                            return
+                        }
+                        const id = res.data.id;
+                        generarPdf(id)
+
+                    }
+                    console.log(res);
+                    // console.log(response.data.id)
+                    //const id = response.data.id; // Suponiendo que el id está en la respuesta
+                    // Redirigir a la página con el id obtenido
+                    //window.location.href = `/transito/previsualizar/${id}`; // Laravel buscará esta ruta con el id
+                })
+                .catch(function (err) {
+                    if (err.response && err.response.status === 422) {
+                        const errores = err.response.data.errors;
+
+                        // Mapear campos internos a visibles
+                        const campoVisible = {
+                            vehiculo_id_2: 'vehiculo_id',
+                            cliente_id_2: 'cliente_id',
+                            year_declaracion: 'year_declaracion',
+                            last_year_declaracion:'last_year_declaracion'
+                        };
+
+                        Object.keys(errores).forEach(function (campo) {
+                            const visibleCampo = campoVisible[campo] || campo;
+                            const input = document.getElementById(visibleCampo);
+                            const errorDiv = document.getElementById('error_' + visibleCampo);
+
+                            if (input && errorDiv) {
+                                input.classList.add('is-invalid');
+                                errorDiv.textContent = errores[campo][0];
+                            }
+                        });
+
+                    } else {
+                        alert('Error al guardar los datos.');
+                    }
+                })
+                .finally(function () {
+                    // En el then o catch
+                    btn.disabled = false;
+                    spinner.classList.add('d-none');
+                });
         });
 
 </script>

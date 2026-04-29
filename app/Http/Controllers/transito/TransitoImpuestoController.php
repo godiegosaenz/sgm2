@@ -224,6 +224,7 @@ class TransitoImpuestoController extends Controller
             $TransitoImpuesto->recargo_anio_actual = $aplica_recargo;
             $TransitoImpuesto->last_year_declaracion = $request->last_year_declaracion;
             $TransitoImpuesto->year_impuesto = $request->year_declaracion;
+            $TransitoImpuesto->solo_duplicado = $request->solo_dupli;
             $TransitoImpuesto->save();
 
             $total = 0;

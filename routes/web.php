@@ -317,6 +317,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('transito-editar/lista', [EdicionTransitoImpuestoController::class, 'index'])->name('edicion.transito');
     Route::post('transito-edicion/datatables', [EdicionTransitoImpuestoController::class, 'datatableEdicion']);
     Route::get('editar-cobro-transito/{id}', [EdicionTransitoImpuestoController::class, 'editar']);
+    Route::post('actualizar-transito', [EdicionTransitoImpuestoController::class, 'actualizar'])->name('actualizar.transito');
 
 
 
