@@ -472,7 +472,7 @@
                         'active' => request()->routeIs('vistaReportePatente.patente')
                     ],
                     [
-                        'name' => 'Impuesto transitos1',
+                        'name' => 'Impuesto transitos',
                         'route' => 'create.transito',
                         'permission' => 'Impuesto transitos',
                         'active' => request()->routeIs('create.transito')
