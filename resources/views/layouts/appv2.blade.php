@@ -472,7 +472,7 @@
                         'active' => request()->routeIs('vistaReportePatente.patente')
                     ],
                     [
-                        'name' => 'Impuesto transitos',
+                        'name' => 'Impuesto transitos1',
                         'route' => 'create.transito',
                         'permission' => 'Impuesto transitos',
                         'active' => request()->routeIs('create.transito')
@@ -506,7 +506,7 @@
                         'active' => request()->routeIs('emision_rural.index')
                     ],
                 ],
-                'active' => request()->routeIs('index.catastro') || request()->routeIs('create.catastro') || request()->routeIs('create.patente') || request()->routeIs('create.patente') || request()->routeIs('index.patente') || request()->routeIs('vistaReporteTransito.transito') || request()->routeIs('index.transito') || request()->routeIs('create.transito') || request()->routeIs('vistaReportePatente.patente') || request()->routeIs('emision_rural.index') 
+                'active' => request()->routeIs('index.catastro') || request()->routeIs('create.catastro') || request()->routeIs('create.patente') || request()->routeIs('create.patente') || request()->routeIs('index.patente') || request()->routeIs('vistaReporteTransito.transito') || request()->routeIs('index.transito') || request()->routeIs('create.transito') || request()->routeIs('vistaReportePatente.patente') || request()->routeIs('emision_rural.index') || request()->routeIs('edicion.transito')
             ],
             [
                 'name' => 'CONFIGURACION',
