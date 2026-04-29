@@ -858,8 +858,8 @@ function capturaInfoVehiculo(){
 function verpdf(ruta){
    
     var iframe=$('#iframePdf');
-    iframe.attr("src", "patente/documento/"+ruta);   
-    $("#vinculo").attr("href", 'patente/descargar-documento/'+ruta);
+    iframe.attr("src", "../patente/documento/"+ruta);   
+    $("#vinculo").attr("href", '../patente/descargar-documento/'+ruta);
     $("#documentopdf").modal("show");
 }
 
@@ -1019,7 +1019,7 @@ $('#vehiculoModal').on('hidden.bs.modal', function () {
 
 function generarPdf(id){
     vistacargando("m","Espere por favor")
-    $.get("transito-imprimir/"+id+"/G", function(data){
+    $.get("../transito-imprimir/"+id+"/G", function(data){
         vistacargando("")
         if(data.error==true){
             alertNotificar(data.mensaje,"error");

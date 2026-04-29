@@ -667,10 +667,10 @@
         });
     })
 
-    function generarPdf(id){
+    function generarPdf1(id){
        
         vistacargando("m","Espere por favor")
-        $.get("../transito-imprimir/"+id+'/G', function(data){
+        $.get("transito-imprimir/"+id+'/G', function(data){
             vistacargando("")
             if(data.error==true){
                 alertNotificar(data.mensaje,"error");
@@ -995,34 +995,44 @@
                 $('#solo_duplicado').val(data.resultado.solo_duplicado)
             }
 
+           
+
+            $.each(data.resultado.conceptos,function(i, item){
+                if(item.codigo=='IAV'){
+                    $('#check_valor_IAV').prop('checked',true)
+                }
+
+                if(item.codigo=='RTV'){
+                    $('#check_valor_RTV').prop('checked',true)
+                }
+
+                if(item.codigo=='SRV'){
+                    $('#check_valor_SRV').prop('checked',true)
+                }
+
+                if(item.codigo=='TSA'){
+                    $('#check_valor_TSA').prop('checked',true)
+                }
+
+                if(item.codigo=='DM'){
+                    $('#check_valor_DM').prop('checked',true)
+                }
+
+                if(item.codigo=='REC'){
+                    $('#check_valor_REC').prop('checked',true)
+                }
+
+                if(item.codigo=='DE'){
+                    $('#check_valor_DE').prop('checked',true)
+                }
+            
+            })
+
             setTimeout(() => {
                 calcularImpuesto()
             }, 1000);
             
 
-
-
-
-            // $.each(data.resultado.conceptos,function(i, item){
-            //     if(item.codigo=='IAV'){
-            //         $('#check_valor_IAV').prop('checked',true)
-            //     }
-
-            //     if(item.codigo=='RTV'){
-            //         $('#check_valor_RTV').prop('checked',true)
-            //     }
-
-            //     if(item.codigo=='SRV'){
-            //         $('#check_valor_SRV').prop('checked',true)
-            //     }
-
-            //     if(item.codigo=='TSA'){
-            //         $('#check_valor_TSA').prop('checked',true)
-            //     }
-
-
-            
-            // })
 
             
         }).fail(function(){

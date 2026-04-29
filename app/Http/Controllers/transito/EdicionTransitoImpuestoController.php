@@ -33,6 +33,10 @@ class EdicionTransitoImpuestoController extends Controller
 {
 
     public function index(){
+        if(!Auth()->user()->hasPermissionTo('Edicion impuestos transito'))
+        {
+            abort(403, 'No tienes acceso a esta seccion.');
+        }
         $vehiculos = TransitoVehiculo::all();
         $conceptos = TransitoConcepto::where('anio',date('Y'))->orderby('orden','asc')->WHERE('estado','A')->get();
         $year = TransitoYearImpuesto::all();

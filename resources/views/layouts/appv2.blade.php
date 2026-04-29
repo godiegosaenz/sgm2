@@ -477,6 +477,14 @@
                         'permission' => 'Impuesto transitos',
                         'active' => request()->routeIs('create.transito')
                     ],
+
+                    [
+                        'name' => 'Edicion impuestos transito',
+                        'route' => 'edicion.transito',
+                        'permission' => 'Edicion impuestos transito',
+                        'active' => request()->routeIs('edicion.transito')
+                    ],
+
                     [
                         'name' => 'Listar impuestos transito',
                         'route' => 'index.transito',
