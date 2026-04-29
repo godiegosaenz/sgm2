@@ -131,7 +131,7 @@ class LiquidacionesController extends Controller
             ->distinct('Pre_CodigoCatastral')
             ->pluck('Pre_CodigoCatastral')
             ->toArray();
-            dd($prediosRurales);
+            //dd($prediosRurales);
             
             $liquidacionRural=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
             ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
