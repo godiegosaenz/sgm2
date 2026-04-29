@@ -207,7 +207,7 @@
                         <label for="propietario" class="form-label">Busqueda por cedula <span
                                 class="text-danger">*</span></label>
                         <div class="input-group">
-                            <input type="text" name="id_impuesto_editar" id="id_impuesto_editar">
+                            <input type="hidden" name="id_impuesto_editar" id="id_impuesto_editar">
                             <input type="number" class="form-control {{$errors->has('cliente_id') ? 'is-invalid' : ''}}"
                                 id="cliente_id" name="cliente_id" placeholder="Ingrese cedula o ruc"
                                 value="{{old('cliente_id')}}" required>
