@@ -89,6 +89,7 @@
 
         @php
             $anio=explode("-",$d[0]->CarVe_NumTitulo);
+            $anio_titulo=$anio[0];
         @endphp
    
         <table class="cabecera">
@@ -215,6 +216,14 @@
                             <td>$</td>
                             <td style="text-align:right">{{number_format($d[0]->CarVe_TasaAdministrativa,2)}}</td>
                         </tr>
+
+                        @if($anio_titulo>2025)
+                            <tr>
+                                <td><b>Seguridad Ciudadana:</b></td>
+                                <td>$</td>
+                                <td style="text-align:right">{{ number_format($d[0]->valor1,2) }}</td>
+                            </tr>
+                        @endif
 
 
                         <tr>

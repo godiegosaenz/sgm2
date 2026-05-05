@@ -109,7 +109,7 @@
         if($es_copia=="copia"){
             $color='black';
         }
-    @endphp
+    @endphp 
     
     @foreach ($liquidacionRural as $key=>$data )
         @php

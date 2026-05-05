@@ -1994,7 +1994,7 @@ class NotificacionesController extends Controller
                     'tp.TitPr_ValorEmitido as CarVe_ValorEmitido',              
                     'tp.TitPr_DireccionCont as Pro_DireccionDomicilio',
                     'tp.TitPr_Recargo as recargo',
-                    'P.Ubi_Codigo',)
+                    'P.Ubi_Codigo','tp.TitPr_Valor1 as valor1',)
                     ->where('tp.TitPr_NumTitulo', '=', $valor_num)            
                     ->whereIn('tp.TitPr_Estado',['E','N'])
                     ->orderby('TitPr_NumTitulo','asc')
@@ -2064,7 +2064,7 @@ class NotificacionesController extends Controller
                     ,'cv.CarVe_ValorEmitido',
                     'cv.CarVe_direccPropietario as Pro_DireccionDomicilio',
                     'cv.Carve_Recargo as recargo',
-                    'P.Ubi_Codigo',)
+                    'P.Ubi_Codigo','cv.Carve_Valor1 as valor1',)
                     ->where('CarVe_NumTitulo', '=', $valor_num)
                     ->get();
                    
