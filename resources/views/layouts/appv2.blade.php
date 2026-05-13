@@ -500,10 +500,17 @@
                     ],
 
                     [
-                        'name' => 'Emision Predial',
+                        'name' => 'Emision Predial (BAJAS)',
                         'route' => 'emision_rural.index',
                         'permission' => 'Emision Predial',
                         'active' => request()->routeIs('emision_rural.index')
+                    ],
+
+                    [
+                        'name' => 'Emision Predial (NUEVA)',
+                        'route' => 'emision_rural.generar',
+                        'permission' => 'Emision Predial',
+                        'active' => request()->routeIs('emision_rural.generar')
                     ],
                 ],
                 'active' => request()->routeIs('index.catastro') || request()->routeIs('create.catastro') || request()->routeIs('create.patente') || request()->routeIs('create.patente') || request()->routeIs('index.patente') || request()->routeIs('vistaReporteTransito.transito') || request()->routeIs('index.transito') || request()->routeIs('create.transito') || request()->routeIs('vistaReportePatente.patente') || request()->routeIs('emision_rural.index') || request()->routeIs('edicion.transito')

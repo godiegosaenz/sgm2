@@ -573,6 +573,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
    Route::get('buscar-liquidacion-rurales-baja/{cedula}', [EmisionTituloRuralController::class, 'consultarTitulosBaja']);
    Route::post('simulacion-emision-rural', [EmisionTituloRuralController::class, 'simulacionEmisionRural']);
    Route::post('generacion-emision-rural', [EmisionTituloRuralController::class, 'generacionEmisionRural']);
+
+    //********** EMISION DE TITULO RURAL NUEVA ***********************/
+   Route::get('emision-predial', [EmisionTituloRuralController::class, 'vistaGenerar'])->name('emision_rural.generar');
+   Route::get('buscar-predios-rurales-emi/{cedula}', [EmisionTituloRuralController::class, 'consultarPredios']);
+   Route::post('simulacion-emision-rural-new', [EmisionTituloRuralController::class, 'simulacionEmisionRuralNew']);
     
 });
 

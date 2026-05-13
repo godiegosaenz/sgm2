@@ -802,7 +802,7 @@ function convertirMayuscula(input){
 globalThis.VehiculoIdEditar=0
 function capturaInfoVehiculo(){
     var placa_cpn_ramv=$('#placa_v').val()
-
+  
     $('#avaluo_v').val('')
     $('#tipo_v').val('')
     $('#chasis_v').val('')
@@ -870,10 +870,23 @@ $('#documentopdf').on('hidden.bs.modal', function (e) {
 
 $('#vehiculoModal').on('show.bs.modal', function () {
    cargaComboMarca()
-   cargaComboTipoVeh()
-   cargaComboClaseTipoVeh()
+//    cargaComboTipoVeh()
+//    cargaComboClaseTipoVeh()
+   $('#tipo_vehiculo').val('')
+
+   $('#clase_tipo_v').prop('disabled',true)
 });
 
+function seleccionServicio(){
+    var valor=$('#tipo_vehiculo').val()
+    if(valor==""){
+        $('#clase_tipo_v').prop('disabled',true)
+        return
+    }
+    cargaComboClaseTipoVeh()
+    cargaComboTipoVeh()
+    $('#clase_tipo_v').prop('disabled',false)
+}
 function cargaComboMarca(){
     vistacargando("m","");
     $.get('carga-combo-marca', function(data){
@@ -962,11 +975,21 @@ function cargaComboClaseTipoVeh(){
 			alertNotificar(data.mensaje,"error");
 			return;   
 		}
+        let tipo=$('#tipo_vehiculo').val()
+      
         $('#clase_tipo_v').html('');	
         $('#clase_tipo_v').find('option').remove().end();
         $('#clase_tipo_v').append('<option value="">Selecccione un  tipo</option>');
         $.each(data.resultado, function(i,item){
-          			
+          	if (tipo == "PARTICULAR" && item.id == 8) {
+                return true; // continúa con el siguiente elemento
+            }
+            // Cuando NO es PARTICULAR
+            if (tipo != "PARTICULAR" && item.id == 17) {
+                return true; // omite id 17
+            }
+
+		
             $('#clase_tipo_v').append('<option class="" value="'+item.id+'">'+item.descripcion+'</option>');
            
         })

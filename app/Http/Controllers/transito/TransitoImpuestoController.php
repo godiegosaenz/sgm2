@@ -952,7 +952,9 @@ class TransitoImpuestoController extends Controller
             ->first();
             if(!is_null($valida)){
                 if($valida->estado=="A"){
-                    return ["mensaje"=>"La informacion ingresada ya existe ", "error"=>true];
+                    if($request->descripcion_clase != "AUTOMOVIL"){
+                        return ["mensaje"=>"La informacion ingresada ya existe ", "error"=>true];
+                    }
                 }else{
                     $valida->descripcion=$request->descripcion_clase;
                     $valida->estado='A';

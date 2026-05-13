@@ -550,17 +550,8 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="tipo_v" class="form-label">Clase de vehiculo</label>
-                                    <select class="form-select {{ $errors->has('tipo_v') ? 'is-invalid' : '' }}" id="clase_tipo_v"
-                                        name="clase_tipo_v" required onchange="seleccionaTipoVeh()">
-
-                                    </select>
-                                    <div class="invalid-feedback" id="error_clasetipo_v"></div>
-                                </div>
-
-                                <div class="mb-3">
                                     <label for="placa_v" class="form-label">Tipo de servicio</label>
-                                    <select class="form-select {{ $errors->has('tipo_vehiculo') ? 'is-invalid' : '' }}" id="tipo_vehiculo"name="tipo_vehiculo" required >
+                                    <select class="form-select {{ $errors->has('tipo_vehiculo') ? 'is-invalid' : '' }}" id="tipo_vehiculo"name="tipo_vehiculo" required onchange="seleccionServicio()" >
                                         <option value="">Seleccione un tipo servicio </option>
                                         <option value="PUBLICO">PUBLICO</option>
                                         <option value="PARTICULAR">PARTICULAR</option>
@@ -569,6 +560,17 @@
                                     </select>
                                     <div class="invalid-feedback" id="error-placa_v"></div>
                                 </div>
+
+                                <div class="mb-3">
+                                    <label for="tipo_v" class="form-label">RTV Cuadro Tarifario</label>
+                                    <select class="form-select {{ $errors->has('tipo_v') ? 'is-invalid' : '' }}" id="tipo_v"
+                                        name="tipo_v" required >
+                                        
+                                    </select>
+                                    <div class="invalid-feedback" id="error_tipo_v"></div>
+                                </div>
+
+                               
                             </div>
 
                             <!-- Columna 2 -->
@@ -597,13 +599,15 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="tipo_v" class="form-label">RTV Cuadro Tarifario</label>
-                                    <select class="form-select {{ $errors->has('tipo_v') ? 'is-invalid' : '' }}" id="tipo_v"
-                                        name="tipo_v" required >
-                                        
+                                    <label for="tipo_v" class="form-label">Clase de vehiculo</label>
+                                    <select class="form-select {{ $errors->has('tipo_v') ? 'is-invalid' : '' }}" id="clase_tipo_v"
+                                        name="clase_tipo_v" required onchange="seleccionaTipoVeh()">
+
                                     </select>
-                                    <div class="invalid-feedback" id="error_tipo_v"></div>
+                                    <div class="invalid-feedback" id="error_clasetipo_v"></div>
                                 </div>
+
+                                
                                 
                             </div>
                         </div> <!-- End row -->
