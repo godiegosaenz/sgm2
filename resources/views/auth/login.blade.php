@@ -21,6 +21,7 @@
 </head>
 <body>
 <div class="container">
+   
     <div class="row justify-content-md-center">
         <div class="col-12">
             <section class="vh-100">
@@ -46,7 +47,11 @@
                                 </div>
 
                                 <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Inicia sesión en tu cuenta</h5>
-
+                                  @if(session('error'))
+                                      <span style="color: #ff6219">
+                                          {{ session('error') }}
+                                      </span>
+                                  @endif
                                 <div class="form-floating mb-4">
                                   <input type="email" id="email" name="email" class="form-control form-control-lg" placeholder="Correo electrónico" aria-describedby="validationemail"/>
                                   <label class="form-label" for="email">Correo electrónico</label>

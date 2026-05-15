@@ -131,7 +131,7 @@ function llenarTabla(){
     if (tipo == '1') {
         if (cedula === '') {
             $('#cedula').addClass('is-invalid');
-            alertNotificar('Ingrese la cedula','error')
+            // alertNotificar('Ingrese la cedula2','error')
             return
             
         }

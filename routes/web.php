@@ -525,10 +525,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('coactiva/documento-descargar/{ruta}', [NotificacionesController::class, 'descargarArchivo']);
 
     Route::get('listado-notificaciones', [NotificacionesController::class, 'vistaListaNotificacion'])->name('coactiva.lista_notificar');
-    Route::get('pago-notificaciones/{periodo}', [NotificacionesController::class, 'tablaNotificacion']);
+    Route::get('pago-notificaciones/{info}/{tipo}', [NotificacionesController::class, 'tablaNotificacion']);
     Route::get('pago-notificaciones-detalle/{id}', [NotificacionesController::class, 'detalleNotificacion']);
     Route::get('pago-notificaciones-detalle-proceso-coac/{id}', [NotificacionesController::class, 'detalleNotificacionProceso']);
     Route::post('guardar-documento-firmado-noti', [NotificacionesController::class, 'subirArchivoFirmado']);
+    Route::get('buscarContribuyente', [NotificacionesController::class, 'buscarContribuyente']);
 
     Route::get('pdf-proceso-coactiva/{id}/{lugar}', [NotificacionesController::class, 'pdfProcesoCoactiva']);
     Route::get('inicia-proceso-coactiva/{id}', [NotificacionesController::class, 'iniciaProcesoCoactiva']);
@@ -542,7 +543,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('ver-titulos-convenio/{id}/{lugar}/{noti_conv}', [NotificacionesController::class, 'obtenerTitulosConvenio']);
 
     Route::get('procesos-coactiva', [CoactivaController::class, 'index'])->name('coactiva.lista_coactiva');
-    Route::get('pago-coactivas/{periodo}', [CoactivaController::class, 'tablaCoactiva']);
+    Route::get('pago-coactivas/{data}/{tipo}', [CoactivaController::class, 'tablaCoactiva']);
     Route::post('guardar-cuota-conv', [CoactivaController::class, 'guardarConvenio']);
     Route::get('llenar-tabla-convenio/{id}', [CoactivaController::class, 'tablaConvenio']);
     Route::get('inactivar-convenio/{id}', [CoactivaController::class, 'inactivarConvenio']);
@@ -558,6 +559,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('contribuyentes-procesos-coactiva', [CoactivaController::class, 'vistaFiltra'])->name('coactiva.filtra_coactiva');
     Route::post('pago-coactivas-filtra', [CoactivaController::class, 'tablaCoactivaFiltra']);
+    Route::get('buscarContribuyenteCoactivados', [CoactivaController::class, 'buscarContribuyente']);
     Route::get('detalle-urb/{id}', [NotificacionesController::class, 'consultarTitulosUrb']);
 
 

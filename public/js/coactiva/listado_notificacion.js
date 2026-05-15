@@ -1,7 +1,37 @@
-
+function filtroSeleccionado(){
+    let tipo=$('#filtro_busq').val()
+    if(tipo==""){return}
+    $('.periodo').hide()
+    $('.contribuyente').hide()
+    $('.estado').hide()
+    $('.input_filtrado').val('')
+    $('#cmb_contribuyente').empty().trigger('change');
+    if(tipo=="PERSONA"){
+        $('.contribuyente').show()
+    }else if(tipo=="PERIODO"){
+        $('.periodo').show()
+    }else{
+        $('.estado').show()
+    }
+}
 function llenar_tabla_notificacion(){
+    let tipo=$('#filtro_busq').val()
+    let estado=$('#estado_not').val()
+    let idnot=$('#cmb_contribuyente').val()
     var periodo=$('#periodo').val()
-    if(periodo==""){return}
+    var data=""
+    if(tipo=="PERIODO"){
+       
+        if(periodo==""){return}
+        data=periodo
+    }else if(tipo=="ESTADO"){
+      
+        if(estado==""){return}
+        data=estado
+    }else{
+        if(idnot==null){return}
+        data=idnot
+    }
 
     // $("#tableNotificacion tbody").html('');
     // $('#tableNotificacion tbody').empty(); 
@@ -10,7 +40,7 @@ function llenar_tabla_notificacion(){
 	$('#tableNotificacion tbody').empty(); 
     var num_col = $("#tableNotificacion thead tr th").length; //obtenemos el numero de columnas de la tabla
     vistacargando("m", "Espere por favor")
-    $.get('pago-notificaciones/'+periodo, function(data){
+    $.get('pago-notificaciones/'+data+'/'+tipo, function(data){
         console.log(data)
        
         vistacargando("")
@@ -86,9 +116,7 @@ function llenar_tabla_notificacion(){
                                                     ${num_ident} <br>
                                                     ${nombre}                                                     
                                                 </td>
-                                                <td style="width:6%; text-align:center; vertical-align:middle">
-                                                    ${item.predio}                                                        
-                                                </td>
+                                                
                                                
                                                 <td style="width:10%; text-align:center; vertical-align:middle">
                                                     ${item.fecha_registra}                                                     
@@ -155,6 +183,29 @@ function cargar_estilos_datatable_con(idtabla){
 	$('.table-responsive').css({'padding-top':'12px','padding-bottom':'12px', 'border':'0', 'overflow-x':'inherit'});	
 }
 
+$('#cmb_contribuyente').select2({
+    ajax: {
+        url: 'buscarContribuyente',
+        dataType: 'json',
+        processResults: function (data) {
+            
+            return {
+                results: data.map(item => ({
+
+                    id: item.id,
+
+                    text: item.ente != null
+                        ? item.ente.ci_ruc + ' - ' +
+                          item.ente.apellidos + ' ' +
+                          item.ente.nombres
+                        : item.documento + ' - ' + item.nombre
+
+                }))
+            };
+        }
+    }
+});
+
 function cargar_estilos_datatable(idtabla){
 	$("#"+idtabla).DataTable({
 		'paging'      : true,
@@ -163,7 +214,7 @@ function cargar_estilos_datatable(idtabla){
 		'info'        : true,
 		'autoWidth'   : true,
 		"destroy":true,
-        order: [[ 3, "desc" ]],
+        order: [[ 2, "desc" ]],
 		pageLength: 10,
 		sInfoFiltered:false,
 		language: {

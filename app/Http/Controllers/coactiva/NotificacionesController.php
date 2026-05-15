@@ -420,15 +420,27 @@ class NotificacionesController extends Controller
     }
 
 
-    public function tablaNotificacion($periodo){
+    public function tablaNotificacion($info, $tipo){
         try{
+            $inicio="";
+            $fin="";
+            if($tipo=="PERIODO"){
+                $mes = $info; 
+                $inicio = $mes . '-01';
+                $fin = date("Y-m-t", strtotime($inicio)); // último día del mes
+            }
            
-            $mes = $periodo; 
-            $inicio = $mes . '-01';
-            $fin = date("Y-m-t", strtotime($inicio)); // último día del mes
-
             $datos=InfoNotifica::with('data','ente')->whereIn('estado',['Notificado','Coactivado'])
-            ->whereBetween('fecha_registra', [$inicio.' 00:00:00', $fin.' 23:59:59'])
+            ->where(function ($query) use($tipo, $info, $inicio, $fin){
+                if($tipo=="PERIODO"){
+                    $query->whereBetween('fecha_registra', [$inicio.' 00:00:00', $fin.' 23:59:59']);
+                }else if($tipo=="ESTADO"){
+                    $query->where('estado',$info);
+                }else{
+                    $query->where('id',$info);
+                }
+            })
+            
             ->select('*')
             ->selectRaw("CURRENT_DATE - DATE(fecha_registra) AS dias_transcurridos")
             ->get();        
@@ -587,6 +599,33 @@ class NotificacionesController extends Controller
             return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
         }
     }
+
+    public function buscarContribuyente(Request $request){
+        $data = [];
+        if($request->has('q')){
+           
+            $data = $request->q;
+            $info=InfoNotifica::with('ente')->where(function ($query) use($data) {
+               $query->whereHas('ente', function($query) use($data) { // Filtro en la relación 'ente' dentro de 'notificacion'
+                    $query->where('ci_ruc', '=',$data )
+                    ->orwhere(DB::raw("CONCAT(nombres, ' ', apellidos)"), 'ilike', '%'.$data.'%')
+                    ->orwhere(DB::raw("CONCAT(apellidos, ' ', nombres )"), 'ilike', '%'.$data.'%');
+                })
+                ->orwhere('num_ident','=',$data)
+                ->orwhere('contribuyente', 'ilike', '%'.$data.'%');
+            })
+            
+            ->select('id','contribuyente as nombre','num_ident as documento','id_persona')
+           
+            ->limit(10)
+            ->get();
+            
+        }
+
+
+        return response()->json($info);
+    }
+
 
     public function consultarTitulosUrb($id){
         try {

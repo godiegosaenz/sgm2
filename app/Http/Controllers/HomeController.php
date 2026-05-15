@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\PsqlEnte;
 use Illuminate\Support\Facades\DB;
 
+use Illuminate\Support\Facades\Auth;
+
+
 class HomeController extends Controller
 {
     /**
@@ -13,6 +16,14 @@ class HomeController extends Controller
      */
     public function index()
     {
+        if(auth()->user()->status == 0){
+
+            Auth::logout();
+
+           
+            return redirect('/login')
+                ->with('error', 'Su usuario ha sido dado de baja.');
+        }
         $totalContribuyentes = PsqlEnte::count();
         $contribuyentesConCedula = PsqlEnte::where('ci_ruc', 'like', '30000000000%')->count();
         $contribuyentesConCorreo = PsqlEnte::has('correo')->count();

@@ -35,15 +35,32 @@ class CoactivaController extends Controller
         return view('coactiva.lista_coactiva');
     }
 
-    public function tablaCoactiva($periodo){
+    public function tablaCoactiva($info, $tipo){
         try{
-           
-            $mes = $periodo; 
-            $inicio = $mes . '-01';
-            $fin = date("Y-m-t", strtotime($inicio)); // último día del mes
+            $inicio="";
+            $fin="";
+            if($tipo=="PERIODO"){
+                $mes = $info; 
+                $inicio = $mes . '-01';
+                $fin = date("Y-m-t", strtotime($inicio)); // último día del mes
+            }
+
+            // $mes = $periodo; 
+            // $inicio = $mes . '-01';
+            // $fin = date("Y-m-t", strtotime($inicio)); // último día del mes
 
             $datos=InfoCoa::with('data','notificacion')
-            ->whereBetween('fecha_registra', [$inicio.' 00:00:00', $fin.' 23:59:59'])
+            ->where(function ($query) use($tipo, $info, $inicio, $fin){
+                if($tipo=="PERIODO"){
+                    $query->whereBetween('fecha_registra', [$inicio.' 00:00:00', $fin.' 23:59:59']);
+                }else if($tipo=="ESTADO"){
+                    $query->where('estado_proceso',$info);
+                }else{
+                    $query->where('id',$info);
+                }
+            })
+
+            // ->whereBetween('fecha_registra', [$inicio.' 00:00:00', $fin.' 23:59:59'])
             ->select('*')
             ->selectRaw("CURRENT_DATE - DATE(fecha_registra) AS dias_transcurridos")
             ->get();
@@ -70,6 +87,34 @@ class CoactivaController extends Controller
         } catch (\Exception $e) {
             return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
         }
+    }
+
+    public function buscarContribuyente(Request $request){
+        $data = [];
+        if($request->has('q')){
+           
+            $data = $request->q;
+            $info=InfoCoa::with('data','notificacion')
+            ->whereHas('notificacion', function($query) use($data) { // Filtramos por la relación 'notificacion'
+                $query->whereHas('ente', function($query) use($data) { // Filtro en la relación 'ente' dentro de 'notificacion'
+                    $query->where('ci_ruc', '=',$data )
+                    ->orwhere(DB::raw("CONCAT(nombres, ' ', apellidos)"), 'ilike', '%'.$data.'%')
+                    ->orwhere(DB::raw("CONCAT(apellidos, ' ', nombres )"), 'ilike', '%'.$data.'%');
+                })
+                ->orwhere('num_ident','=',$data)
+                ->orwhere('contribuyente', 'ilike', '%'.$data.'%');
+            })
+            ->select('id','notificacion.ente.contribuyente as nombre','num_ident as documento','id_persona')
+           
+            ->limit(10)
+            ->get();
+
+            
+            
+        }
+
+
+        return response()->json($info);
     }
 
     public function guardarConvenio(Request $request){

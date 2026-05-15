@@ -1,13 +1,70 @@
+function filtroSeleccionado(){
+    let tipo=$('#filtro_busq').val()
+    if(tipo==""){return}
+    $('.periodo').hide()
+    $('.contribuyente').hide()
+    $('.estado').hide()
+    $('.input_filtrado').val('')
+    $('#cmb_contribuyente').empty().trigger('change');
+    if(tipo=="PERSONA"){
+        $('.contribuyente').show()
+    }else if(tipo=="PERIODO"){
+        $('.periodo').show()
+    }else{
+        $('.estado').show()
+    }
+}
+
+$('#cmb_contribuyente').select2({
+    ajax: {
+        url: 'buscarContribuyenteCoactivados',
+        dataType: 'json',
+        processResults: function (data) {
+            
+            return {
+                results: data.map(item => ({
+
+                    id: item.id,
+
+                    text: item.ente != null
+                        ? item.ente.ci_ruc + ' - ' +
+                          item.ente.apellidos + ' ' +
+                          item.ente.nombres
+                        : item.documento + ' - ' + item.nombre
+
+                }))
+            };
+        }
+    }
+});
 function llenar_tabla_notificacion(){
+    // var periodo=$('#periodo').val()
+    // if(periodo==""){return}
+
+    let tipo=$('#filtro_busq').val()
+    let estado=$('#estado_not').val()
+    let idnot=$('#cmb_contribuyente').val()
     var periodo=$('#periodo').val()
-    if(periodo==""){return}
+    var data=""
+    if(tipo=="PERIODO"){
+       
+        if(periodo==""){return}
+        data=periodo
+    }else if(tipo=="ESTADO"){
+      
+        if(estado==""){return}
+        data=estado
+    }else{
+        if(idnot==null){return}
+        data=idnot
+    }
 
     $("#tableCoactiva tbody").html('');
     $('#tableCoactiva').DataTable().destroy();
 	$('#tableCoactiva tbody').empty(); 
     var num_col = $("#tableCoactiva thead tr th").length; //obtenemos el numero de columnas de la tabla
     vistacargando("m", "Espere por favor")
-    $.get('pago-coactivas/'+periodo, function(data){
+    $.get('pago-coactivas/'+data+'/'+tipo, function(data){
         console.log(data)
        
         vistacargando("")

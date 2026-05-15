@@ -171,6 +171,28 @@
         0 0 0 3px rgba(29,185,84,0.25),
         0 4px 10px rgba(0,0,0,.35);
 }
+
+.checkbox-grande {
+    transform: scale(1.5);
+    /* Ajusta el número para el tamaño deseado */
+    margin-right: 8px;
+    /* Ajuste opcional */
+}
+
+.desabilita_txt {
+    display: block;
+}
+
+.readonly-checkbox {
+    pointer-events: none;
+    /* Evita la interacción */
+    opacity: 0.5;
+    /* Visualmente deshabilitado */
+}
+
+.select2-container .select2-selection--single {
+    height: 36px !important;
+}
 </style>
 
 
@@ -202,7 +224,7 @@
     <div>
       
         <div class="row mt-3">
-            <div class="col-md-12 row">
+            <!-- <div class="col-md-12 row">
                 <div class="col-md-3"></div>
                 <div class="col-6">
                     <div class="mb-3">
@@ -213,8 +235,76 @@
                 </div>
 
                 <div class="col-md-3"></div>
+            </div> -->
+
+             <div class="col-md-12 row">
+                <div class="row">
+                    <div class="col-md-3"></div>
+                    <div class="col-6">
+                        <div class="mb-3">
+                            <label for="num_predio">* Filtrar por: </label>
+                            <select class="form-select" aria-label="Default select example" id="filtro_busq" name="filtro_busq" onchange="filtroSeleccionado()">
+                                <option value="PERSONA">CONTRIBUYENTE</option>
+                                <option value="PERIODO" selected>PERIODO</option>
+                                <option value="ESTADO">ESTADO</option>
+                            
+                            </select>
+
+                        </div>
+
+                    </div>
+                    <div class="col-md-3"></div>
+                </div>
+              
+                <div class="periodo row" >
+                    <div class="col-md-3"></div>
+
+                    <div class="col-6">
+                        <div class="mb-3">
+                            <label for="num_predio">* Periodo: </label>
+                            <input type="month" class="form-control input_filtrado" name="periodo" id="periodo" onchange="llenar_tabla_notificacion()">
+
+                        </div>
+                    </div>
+                    <div class="col-md-3"></div>
+                </div>
+
+                <div class="contribuyente row" style="display:none">
+                    <div class="col-md-3"></div>
+                    <div class="col-6">
+                        <div class="mb-3">
+                            <label for="num_predio">* Contribuyente: </label>
+                            <select id="cmb_contribuyente" name="cmb_contribuyente"
+                                class="col-md-4 col-form-label fw-bold form-control input_filtrado" style="width: 100%;"
+                                data-bs-theme="dark" onchange="llenar_tabla_notificacion()" >
+                                <option value=""></option>
+                            </select>
+
+                        </div>
+                    </div>
+                    <div class="col-md-3"></div>
+                </div>
+
+                <div class="estado row" style="display:none">
+                    <div class="col-md-3"></div>
+                    <div class="col-6">
+                        <div class="mb-3">
+                            <label for="num_predio">* Estado: </label>
+                            <select class="form-select input_filtrado" aria-label="Default select example" id="estado_not" name="estado_not" onchange="llenar_tabla_notificacion()">
+                                <option value="" selected>Seleccione una opcion</option>
+                                <option value="1">ORDEN DE PAGO INMEDIATO</option>
+                                <option value="2" >EN EJECUCION CON MEDIDAS</option>
+                                <option value="3" >CANCELADO \ ARCHIVADO</option>
+                                <option value="4" >ACUERDO DE PAGO</option>
+                               
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3"></div>
+                </div>
+
             </div>
-           
+
             <div class="col-md-12">
                 @csrf
                 <div class="table-responsive">
