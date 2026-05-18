@@ -26,11 +26,7 @@ $('#cmb_contribuyente').select2({
 
                     id: item.id,
 
-                    text: item.ente != null
-                        ? item.ente.ci_ruc + ' - ' +
-                          item.ente.apellidos + ' ' +
-                          item.ente.nombres
-                        : item.documento + ' - ' + item.nombre
+                    text: item.documento_+ ' - ' + item.persona_name
 
                 }))
             };
@@ -411,12 +407,12 @@ function detalleNot(id){
             let ced_ruc=""
             ced_ruc=data.resultado.num_ident
 
-            /*if(data.resultado.predio=='Urbano'){
+            if(data.resultado.predio=='Urbano'){
                 ced_ruc=data.resultado.ente.ci_ruc
             }else{
                 ced_ruc=data.resultado.num_ident
-            }*/
-
+            }
+            // alert(ced_ruc)
             $('#num_ident_contr').html(cont)
             $('#nombre_contr').html(ced_ruc)
             $('.valor_notificado').html(data.resultado.total_notificado)

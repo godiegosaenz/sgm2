@@ -605,20 +605,40 @@ class NotificacionesController extends Controller
         if($request->has('q')){
            
             $data = $request->q;
+            // dd($data);
             $info=InfoNotifica::with('ente')->where(function ($query) use($data) {
                $query->whereHas('ente', function($query) use($data) { // Filtro en la relación 'ente' dentro de 'notificacion'
-                    $query->where('ci_ruc', '=',$data )
+                    $query->where('ci_ruc', 'ilike', '%'.$data.'%')
                     ->orwhere(DB::raw("CONCAT(nombres, ' ', apellidos)"), 'ilike', '%'.$data.'%')
                     ->orwhere(DB::raw("CONCAT(apellidos, ' ', nombres )"), 'ilike', '%'.$data.'%');
                 })
-                ->orwhere('num_ident','=',$data)
+                ->orwhere('num_ident','ilike', '%'.$data)
                 ->orwhere('contribuyente', 'ilike', '%'.$data.'%');
             })
             
-            ->select('id','contribuyente as nombre','num_ident as documento','id_persona')
-           
+            ->select('id','contribuyente as nombre','num_ident as documento','id_persona')           
             ->limit(10)
             ->get();
+
+            foreach($info as $key=> $item){
+
+                if(!is_null($item->ente)){
+                    if(!is_null($item->ente->razon_social)){
+                        $persona_name=$item->ente->razon_social;
+                        $documento_=$item->ente->ci_ruc;
+                    }else{
+                        $persona_name=$item->ente->apellidos." ".$item->ente->apellidos;
+                        $documento_=$item->ente->ci_ruc;
+                    }
+                    
+                }else{
+                    $persona_name=$item->contribuyente;
+                    $documento_=$item->num_ident;
+                }
+
+                $info[$key]->persona_name=$persona_name;
+                $info[$key]->documento_=$documento_;
+            }
             
         }
 

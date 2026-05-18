@@ -194,11 +194,8 @@ $('#cmb_contribuyente').select2({
 
                     id: item.id,
 
-                    text: item.ente != null
-                        ? item.ente.ci_ruc + ' - ' +
-                          item.ente.apellidos + ' ' +
-                          item.ente.nombres
-                        : item.documento + ' - ' + item.nombre
+                   text: item.documento_+ ' - ' + item.persona_name
+
 
                 }))
             };
@@ -428,6 +425,7 @@ function detalleNot(id){
             }else{
                 ced_ruc=data.resultado.num_ident
             }
+            
           
             $('#nombre_notificador').html(data.resultado.profesional)
             $('#fecha_notificacion').html(data.resultado.fecha_registra)

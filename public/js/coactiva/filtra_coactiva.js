@@ -982,16 +982,17 @@ function llenar_tabla_medidas(id){
 			$.each(data.resultado,function(i, item){
 
                 let disabled="disabled"
-                // if(item.estado=='Inactivo'){
-                //     disabled='disabled'
-                // }
+                let disabled_pdf=""
+                if(item.estado=='Inactivo'){
+                    disabled_pdf='disabled'
+                }
              
 				$('#tableMedidas').append(`<tr>
                                                 <td style="width:10%; text-align:center; vertical-align:middle">
                                                    <button type="button" ${disabled} class="btn btn-danger btn-sm" onclick="inactivarMedidas('${item.id}')">
                                                         <i class="fa fa-trash"></i>
                                                     </button>   
-                                                    <button type="button" ${disabled} class="btn btn-primary btn-sm" onclick="verpdf('${item.documento}')">
+                                                    <button type="button" ${disabled_pdf} class="btn btn-primary btn-sm" onclick="verpdf('${item.documento}')">
                                                         <i class="fa fa-file"></i>
                                                     </button>                                               
                                                 </td>

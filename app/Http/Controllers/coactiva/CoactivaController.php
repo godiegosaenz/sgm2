@@ -97,17 +97,39 @@ class CoactivaController extends Controller
             $info=InfoCoa::with('data','notificacion')
             ->whereHas('notificacion', function($query) use($data) { // Filtramos por la relación 'notificacion'
                 $query->whereHas('ente', function($query) use($data) { // Filtro en la relación 'ente' dentro de 'notificacion'
-                    $query->where('ci_ruc', '=',$data )
+                    $query->where('ci_ruc', 'ilike', '%'.$data.'%' )
                     ->orwhere(DB::raw("CONCAT(nombres, ' ', apellidos)"), 'ilike', '%'.$data.'%')
                     ->orwhere(DB::raw("CONCAT(apellidos, ' ', nombres )"), 'ilike', '%'.$data.'%');
                 })
                 ->orwhere('num_ident','=',$data)
                 ->orwhere('contribuyente', 'ilike', '%'.$data.'%');
             })
-            ->select('id','notificacion.ente.contribuyente as nombre','num_ident as documento','id_persona')
+            // ->select('id','notificacion.ente.contribuyente as nombre','num_ident as documento','id_persona')
+            // ->select('id','notificacion.num_ident as documento','id_persona')
+            ->select('id','id_info_notifica')
            
             ->limit(10)
             ->get();
+
+            foreach($info as $key=> $item){
+
+                if(!is_null($item->notificacion->ente)){
+                    if(!is_null($item->notificacion->ente->razon_social)){
+                        $persona_name=$item->notificacion->ente->razon_social;
+                        $documento_=$item->notificacion->ente->ci_ruc;
+                    }else{
+                        $persona_name=$item->notificacion->ente->apellidos." ".$item->notificacion->ente->apellidos;
+                        $documento_=$item->notificacion->ente->ci_ruc;
+                    }
+                    
+                }else{
+                    $persona_name=$item->notificacion->contribuyente;
+                    $documento_=$item->notificacion->num_ident;
+                }
+
+                $info[$key]->persona_name=$persona_name;
+                $info[$key]->documento_=$documento_;
+            }
 
             
             
