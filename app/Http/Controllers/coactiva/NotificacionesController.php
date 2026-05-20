@@ -430,7 +430,7 @@ class NotificacionesController extends Controller
                 $fin = date("Y-m-t", strtotime($inicio)); // último día del mes
             }
            
-            $datos=InfoNotifica::with('data','ente')->whereIn('estado',['Notificado','Coactivado'])
+            $datos=InfoNotifica::with('data','ente','proceso','convenio')->whereIn('estado',['Notificado','Coactivado'])
             ->where(function ($query) use($tipo, $info, $inicio, $fin){
                 if($tipo=="PERIODO"){
                     $query->whereBetween('fecha_registra', [$inicio.' 00:00:00', $fin.' 23:59:59']);
@@ -2529,6 +2529,13 @@ class NotificacionesController extends Controller
             ->first();
             if(!is_null($esta_coact)){
                 return ["mensaje"=>"Ya existe un proceso de coactiva inicializado", "error"=>true];
+            }
+
+            $tiene_convenio=InfoNotifica::with('convenio')
+            ->where('id',$request->idnot_pago)
+            ->first();
+            if(!is_null($tiene_convenio->convenio)){
+                return ["mensaje"=>"Existe un convenio activo", "error"=>true];
             }
 
             $guarda=new Pago();

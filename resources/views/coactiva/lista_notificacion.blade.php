@@ -151,6 +151,77 @@
 .select2-container .select2-selection--single {
     height: 36px !important;
 }
+
+.badge-notificado{
+   
+    background: linear-gradient(135deg,#0d6efd,#36a2ff);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .3px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.15);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.badge-orden {
+    background: linear-gradient(135deg, #ffa500, #ff7f00); /* Naranja bajo */
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .3px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .15);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.badge-cancelado {
+    background: linear-gradient(135deg, #007bff, #0056b3); /* Azul bajo */
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .3px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .15);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.badge-acuerdo {
+    background: linear-gradient(135deg, #28a745, #218838); /* Verde */
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .3px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .15);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.badge-medidas {
+    background: linear-gradient(135deg, #ec8c6f, #ec8c6f); /* Color dorado */
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .3px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .15);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
 </style>
 
 
@@ -260,14 +331,15 @@
                             <th>Fecha Notificacion</th>
                             <th scope="col">Deuda Total</th>
                             <th scope="col">Estado</th>
+                            <th scope="col">Estado Proceso</th>
                             
                             <th scope="col">Dias desde Notificacion</th>
-                            <th scope="col">Pago Total</th>
+                            <th scope="col">Valor Cancelado</th>
                             </tr>
                         </thead>
                         <tbody id="tbodyNotificacion">
                             <tr>
-                                <td colspan="7" style="text-align:center">No hay datos disponibles</td>
+                                <td colspan="8" style="text-align:center">No hay datos disponibles</td>
                             </tr>
                            
                         </tbody>

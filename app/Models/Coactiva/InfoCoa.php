@@ -22,6 +22,9 @@ class InfoCoa extends Model
         return $this->belongsTo('App\Models\Coactiva\InfoNotifica', 'id_info_notifica', 'id')->with('ente');
     }
 
-   
+    public function proceso(){
+        return $this->belongsTo('App\Models\Coactiva\EstadoProceso', 'estado_proceso', 'id');
+    }
+
    
 }

@@ -22,6 +22,14 @@ class InfoNotifica extends Model
         return $this->belongsTo('App\Models\PsqlEnte', 'id_persona', 'id');
     }
 
+    public function proceso(){
+        return $this->belongsTo('App\Models\Coactiva\InfoCoa', 'id', 'id_info_notifica')->with('proceso');
+    }
+
+    public function convenio(){
+        return $this->belongsTo('App\Models\Coactiva\Convenio', 'id', 'id_info_notifica')->where('estado','Activo');
+    }
+
    
    
 }

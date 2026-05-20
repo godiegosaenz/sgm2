@@ -102,6 +102,24 @@ function llenar_tabla_notificacion(){
                     nombre=item.contribuyente
                     num_ident=item.num_ident
                 }
+
+                let icono_proceso=``;
+                if(item.proceso!=null){
+                    if(item.proceso.estado_proceso==1){
+                        icono_proceso=`<span class="badge-orden" style="font-size: 12px;"> 💵 ORDEN DE PAGO INMEDIATO </span>`;
+                    }else if(item.proceso.estado_proceso==2){
+                    icono_proceso=`<span class="badge-medidas"> <i class="fa fa-balance-scale" style="font-size: 12px;"></i> EN EJECUCIÓN CON MEDIDAS </span>`;
+                    }else if(item.proceso.estado_proceso==3){
+                        icono_proceso=`<span class="badge-cancelado"> <i class="fa fa-archive" style="font-size: 12px;"></i> CANCELADO \ ARCHIVADO </span>`;
+                    }else if(item.proceso.estado_proceso==4){
+                        icono_proceso=`<span class="badge-acuerdo"> <i class="fa fa-handshake" style="font-size: 12px;"></i> ACUERDO DE PAGO </span>`;
+                    }
+                }else{
+                    if(item.convenio!=null){
+                        icono_proceso=`<span class="badge-acuerdo"> <i class="fa fa-handshake" style="font-size: 12px;"></i> ACUERDO DE PAGO </span>`;
+                    }
+                }
+
 				$('#tableNotificacion').append(`<tr>
                                                 <td style="width:9%; text-align:center; vertical-align:middle">
                                                    <button type="button" class="btn btn-success btn-sm" onclick="detalleNot('${item.id}')">
@@ -112,7 +130,7 @@ function llenar_tabla_notificacion(){
                                                     </button>                                               
                                                 </td>
 
-                                                <td style="width:35%; text-align:left; vertical-align:middle">
+                                                <td style="width:30%; text-align:left; vertical-align:middle">
                                                     ${num_ident} <br>
                                                     ${nombre}                                                     
                                                 </td>
@@ -127,9 +145,13 @@ function llenar_tabla_notificacion(){
                                                 <td style="width:10%; text-align:center; vertical-align:middle">
                                                     ${icono}                                                     
                                                 </td>
+
+                                                 <td style="width:18%; text-align:center; vertical-align:middle">
+                                                    ${icono_proceso}                                                     
+                                                </td>
                                                 
 
-                                                <td style="width:10%; text-align:center; vertical-align:middle">
+                                                <td style="width:7%; text-align:center; vertical-align:middle">
                                                     ${icono2}                                                     
                                                 </td>
                                                 <td style="width:10%; text-align:center; vertical-align:middle">
