@@ -1427,14 +1427,14 @@ class TransitoImpuestoController extends Controller
             'datosTitulo' => $dataArray,
             'fecha_formateada'=>$fecha_formateada
         ];
-        
+       
 
         $nombrePDF='reporte_titulo_impuesto'.$id.'.pdf';
 
         $pdf = PDF::loadView('transito.reporteTitulosTransito', $data);
 
-        // return $pdf->stream('a.pdf');
-        $estadoarch = $pdf->stream();
+        return $pdf->stream('a.pdf');
+        // $estadoarch = $pdf->stream();
 
         \Storage::disk('disksDocumentoRenta')->put(str_replace("", "",$nombrePDF), $estadoarch);
         $exists_destino = \Storage::disk('disksDocumentoRenta')->exists($nombrePDF);

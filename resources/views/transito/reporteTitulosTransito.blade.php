@@ -151,6 +151,10 @@
                 </td>
             </tr>
         </table>
+
+        @php
+            $iav=0;
+        @endphp
         
         <table class="tabla-principal" style="margin-top: 5px;">
             <tr>
@@ -230,6 +234,10 @@
                                         $concepto=$r->concepto ." (CALENDARIZACION ".$impuesto['calendarizacion'].")";
                                     }
 
+                                    if($r->codigo=='IAV'){
+                                        $iav=1;
+                                    }
+
 
                                 @endphp
                                 
@@ -249,13 +257,21 @@
                             </tr>
                         </tfoot>
                     </table>
+                    @if($impuesto->solo_duplicado=='no' && $iav==0)
+                        <table class="tabla-derecha">                            
+                            <tr>
+                                <td style="text-align:center; border: 0 px; border-color: white !important; font-size: 14px;" colspan="2">
+                                    <b>SERVICIO:</b> <span style="color: firebrick">REVISIÓN TÉCNICA VEHICULAR</span></td>                            
+                            </tr>                            
+                        </table>
+                    @endif
                 </td>
             </tr>
         </table>
-
+       
     @endforeach
-
-      <table width="100%" style="margin-top:0px">
+    
+    <table width="100%" style="margin-top:0px">
         <tbody>
 
             <tr style="line-height: 5px;">
