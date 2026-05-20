@@ -473,7 +473,7 @@ class NotificacionesController extends Controller
             ->selectRaw("CURRENT_DATE - DATE(fecha_registra) AS dias_transcurridos")
             ->get();
 
-        
+            // dd($datos);
             foreach($datos as $key=> $data){
                
                 $usuarioRegistra=DB::connection('mysql')->table('users as u')
@@ -496,20 +496,27 @@ class NotificacionesController extends Controller
                             ->where('TitPr_NumTitulo',$info->num_titulo)
                             ->select('Pre_CodigoCatastral','TitPr_Nombres')
                             ->first();
-                            
-                            $data->data[$key2]->clave_cat=$contr->Pre_CodigoCatastral;
-                            $data->data[$key2]->contrib=$contr->TitPr_Nombres;
-                            $data->data[$key2]->anio=$anio[0];
+                            if(!is_null($contr)){
+                                $data->data[$key2]->clave_cat=$contr->Pre_CodigoCatastral;
+                                $data->data[$key2]->contrib=$contr->TitPr_Nombres;
+                                $data->data[$key2]->anio=$anio[0];
+                            }
                         }else{
                             $contr=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
                             ->whereIn('cv.CarVe_Estado',['E'])
                             ->where('CarVe_NumTitulo',$info->num_titulo)
                             ->select('Pre_CodigoCatastral','CarVe_Nombres','CarVe_NumTitulo')
                             ->first();
+
+                            // dd($contr);
+                            if(!is_null($contr)){
+                                // dd($info->num_titulo);
+                                $data->data[$key2]->clave_cat=$contr->Pre_CodigoCatastral;
+                                $data->data[$key2]->contrib=$contr->CarVe_Nombres;
+                                $data->data[$key2]->anio=$anio[0];
+                            }
                         
-                            $data->data[$key2]->clave_cat=$contr->Pre_CodigoCatastral;
-                            $data->data[$key2]->contrib=$contr->CarVe_Nombres;
-                            $data->data[$key2]->anio=$anio[0];
+                            
                         } 
                     }          
                         
@@ -544,19 +551,22 @@ class NotificacionesController extends Controller
                                 ->select('Pre_CodigoCatastral','TitPr_Nombres')
                                 ->first();
                                 
-                                $data2->data[$key2]->clave_cat=$contr->Pre_CodigoCatastral;
-                                $data2->data[$key2]->contrib=$contr->TitPr_Nombres;
-                                $data2->data[$key2]->anio=$anio[0];
+                                if(!is_null($contr)){
+                                    $data2->data[$key2]->clave_cat=$contr->Pre_CodigoCatastral;
+                                    $data2->data[$key2]->contrib=$contr->TitPr_Nombres;
+                                    $data2->data[$key2]->anio=$anio[0];
+                                }
                             }else{
                                 $contr=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
                                 ->whereIn('cv.CarVe_Estado',['E'])
                                 ->where('CarVe_NumTitulo',$info->num_titulo)
                                 ->select('Pre_CodigoCatastral','CarVe_Nombres','CarVe_NumTitulo')
                                 ->first();
-                            
-                                $data2->data[$key2]->clave_cat=$contr->Pre_CodigoCatastral;
-                                $data2->data[$key2]->contrib=$contr->CarVe_Nombres;
-                                $data2->data[$key2]->anio=$anio[0];
+                                if(!is_null($contr)){
+                                    $data2->data[$key2]->clave_cat=$contr->Pre_CodigoCatastral;
+                                    $data2->data[$key2]->contrib=$contr->CarVe_Nombres;
+                                    $data2->data[$key2]->anio=$anio[0];
+                                }
                             }          
                         } 
                     }
