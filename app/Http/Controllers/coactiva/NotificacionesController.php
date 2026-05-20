@@ -491,7 +491,7 @@ class NotificacionesController extends Controller
                         
                         if($anio[0]==date('Y')){
                             $contr=DB::connection('sqlsrv')->table('TITULOS_PREDIO as tp')
-                            ->whereIn('tp.TitPr_Estado',['E','N'])
+                            ->whereIn('tp.TitPr_Estado',['E','N','C'])
                             ->where('Titpr_RUC_CI',$cedula)
                             ->where('TitPr_NumTitulo',$info->num_titulo)
                             ->select('Pre_CodigoCatastral','TitPr_Nombres')
@@ -503,7 +503,7 @@ class NotificacionesController extends Controller
                             }
                         }else{
                             $contr=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
-                            ->whereIn('cv.CarVe_Estado',['E'])
+                            ->whereIn('cv.CarVe_Estado',['E','C'])
                             ->where('CarVe_NumTitulo',$info->num_titulo)
                             ->select('Pre_CodigoCatastral','CarVe_Nombres','CarVe_NumTitulo')
                             ->first();
@@ -545,7 +545,7 @@ class NotificacionesController extends Controller
                             $anio=$anio=explode("-",$info->num_titulo);  
                             if($anio[0]==date('Y')){
                                 $contr=DB::connection('sqlsrv')->table('TITULOS_PREDIO as tp')
-                                ->whereIn('tp.TitPr_Estado',['E','N'])
+                                ->whereIn('tp.TitPr_Estado',['E','N','C'])
                                 ->where('Titpr_RUC_CI',$cedula)
                                 ->where('TitPr_NumTitulo',$info->num_titulo)
                                 ->select('Pre_CodigoCatastral','TitPr_Nombres')
@@ -558,7 +558,7 @@ class NotificacionesController extends Controller
                                 }
                             }else{
                                 $contr=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
-                                ->whereIn('cv.CarVe_Estado',['E'])
+                                ->whereIn('cv.CarVe_Estado',['E','C'])
                                 ->where('CarVe_NumTitulo',$info->num_titulo)
                                 ->select('Pre_CodigoCatastral','CarVe_Nombres','CarVe_NumTitulo')
                                 ->first();
