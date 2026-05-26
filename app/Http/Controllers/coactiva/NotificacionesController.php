@@ -2821,6 +2821,20 @@ class NotificacionesController extends Controller
             ->whereIn('cv.CarVe_Estado',['E'])
             ->pluck('Pre_CodigoCatastral')
             ->toArray();
+
+            $prediosActuales=DB::connection('sqlsrv')->table('TITULOS_PREDIO as tp')
+            ->where('Titpr_RUC_CI',$cedula)
+            ->whereIn('TitPr_Estado',['E'])
+            ->distinct('Pre_CodigoCatastral')
+            ->pluck('Pre_CodigoCatastral')
+            ->toArray();
+
+            $predios = array_values(
+                array_unique(
+                    array_merge($prediosRurales, $prediosActuales)
+                )
+            );
+
             
             $liquidacionRural=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
             ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
@@ -2837,7 +2851,7 @@ class NotificacionesController extends Controller
                 'cv.Carve_Recargo as recargo',
                 'cv.Carve_Descuento as descuento')
             ->where('P.Pre_Tipo','Rural')
-            ->whereIN('cv.Pre_CodigoCatastral',$prediosRurales)
+            ->whereIN('cv.Pre_CodigoCatastral',$predios)
             ->whereIn('cv.CarVe_Estado',['E']) //E=Emitidos, N=Nueva Emision
             ->orderby('cv.Pre_CodigoCatastral','asc')            
             ->distinct()
@@ -2994,5 +3008,105 @@ class NotificacionesController extends Controller
 
         }
     }
+
+       public function pdfConvenio($id,$lugar){
+        try{
+            
+            // TITULOS URBANOS
+            $consulta=$this->consultarTitulosUrb($id);
+            if($consulta['error']==true){
+                DB::connection('pgsql')->rollBack();
+                return ["mensaje"=>$consulta['mensaje'], "error"=>true];
+                
+            }
+            
+            // TITULOS RURALES
+            $consulta1=$this->consultarTitulos($id);
+            if($consulta1['error']==true){
+                DB::connection('pgsql')->rollBack();
+                return ["mensaje"=>$consulta1['mensaje'], "error"=>true];
+                
+            }
+
+            //UNIMOS AMBAS DATA (URBANA Y RURAL)
+            $todo = $consulta["resultado"]->merge($consulta1["resultado"]);
+            $listado_final=[];
+            foreach ($todo as $key => $item){   
+                
+                $anios[] = $item->anio;     
+                $nombre_persona=$item->nombre_per;
+                $direcc_cont=$item->direcc_cont;
+                $ci_ruc=$item->num_ident;
+                if(is_null($item->nombre_per)){
+                    $nombre_persona=$item->nombre_contr1;
+                } 
+
+                if(isset($item->num_predio)){    // SI VIENE NUM_PREDIO ES URBANA Y AGRUPAMOS POR ESO (MATRICULA INMOBILIARIA)         
+                    if(!isset($listado_final[$item->num_predio])) {
+                        $listado_final[$item->num_predio]=array($item);
+                
+                    }else{
+                        array_push($listado_final[$item->num_predio], $item);
+                    }
+                }else{ // CASO CONTRARIO ES RURAL AGRUPAMOS POR CLAVE CATASTRAL
+                    if(!isset($listado_final[$item->clave])) {
+                        $listado_final[$item->clave]=array($item);
+            
+                    }else{
+                        array_push($listado_final[$item->clave], $item);
+                    }
+                }
+              
+            } 
+
+           
+            $anio_min = min($anios);            
+            $anio_max = max($anios);
+
+            $rango='DESDE EL '.($anio_min . ' HASTA EL EJERCICIO FISCAL ' . $anio_max);
+        
+            $funcionarios=DB::connection('pgsql')
+            ->table('sgm_coactiva.parametro_coactiva')
+            ->selectRaw("
+                MAX(CASE WHEN codigo = 'TESO' THEN valor END) AS tesorera,
+                MAX(CASE WHEN codigo = 'JUEZ_COACT' THEN valor END) AS juez_coactiva,
+                MAX(CASE WHEN codigo = 'SECRETARIO' THEN valor END) AS secretario
+            ")
+            ->whereIn('codigo', ['TESO','JUEZ_COACT','SECRETARIO'])
+            ->where('estado','A')
+            ->first();
+
+         
+            $nombrePDF='Convenio'.date('YmdHis');
+
+            $fecha_hoy=date('Y-m-d');
+            setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES@euro', 'es_ES', 'esp');
+            $fecha_timestamp = strtotime($fecha_hoy);    
+            $fecha_formateada = strftime("%d de %B del %Y", $fecha_timestamp);
+
+            $num_proceso='009';
+             // CREAMOS EL DOCUMENTO RESPECTIVO                             
+            $pdf = \PDF::loadView('reportes.convenio', [
+                'DatosLiquidacion'=>$listado_final,
+                "nombre_persona"=>$nombre_persona, 
+                "direcc_cont"=>$direcc_cont,
+                "ci_ruc"=>$ci_ruc,
+                "rango"=>$rango, 
+                "funcionarios"=>$funcionarios, 
+                'DatosLiquidaciones'=>$todo, 
+                'fecha_formateada'=>$fecha_formateada,
+                "num_proceso"=>$num_proceso, 
+            ]);   
+            
+            return $pdf->stream($nombrePDF);
+            $estadoarch = $pdf->stream();
+
+           
+        }catch (\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+
+        }
+    }
+
 
 }

@@ -131,13 +131,25 @@ class LiquidacionesController extends Controller
             ->distinct('Pre_CodigoCatastral')
             ->pluck('Pre_CodigoCatastral')
             ->toArray();
-            //dd($prediosRurales);
-            
+
+            $prediosActuales=DB::connection('sqlsrv')->table('TITULOS_PREDIO as tp')
+            ->where('Titpr_RUC_CI',$cedula)
+            ->whereIn('TitPr_Estado',['E'])
+            ->distinct('Pre_CodigoCatastral')
+            ->pluck('Pre_CodigoCatastral')
+            ->toArray();
+
+            $predios = array_values(
+                array_unique(
+                    array_merge($prediosRurales, $prediosActuales)
+                )
+            );
+
             $liquidacionRural=DB::connection('sqlsrv')->table('CARTERA_VENCIDA as cv')
             ->Join('PREDIO as P', 'p.Pre_CodigoCatastral', '=', 'cv.Pre_CodigoCatastral')
             ->select('cv.Pre_CodigoCatastral as clave','cv.CarVe_FechaEmision as fecha_emi','cv.CarVe_NumTitulo as num_titulo','cv.CarVe_CI as num_ident','cv.CarVe_Estado','cv.CarVe_Nombres as nombre_per','cv.CarVe_ValorEmitido as valor_emitido','cv.CarVe_TasaAdministrativa as tasa','CarVe_Calle as direcc_cont','cv.Carve_Recargo as recargo','cv.Carve_Descuento as descuento')
             ->where('P.Pre_Tipo','Rural')
-            ->whereIN('cv.Pre_CodigoCatastral',$prediosRurales)
+            ->whereIN('cv.Pre_CodigoCatastral',$predios)
             ->whereIn('cv.CarVe_Estado',['E']) //E=Emitidos, N=Nueva Emision
             ->orderby('cv.Pre_CodigoCatastral','asc')            
             ->distinct()
