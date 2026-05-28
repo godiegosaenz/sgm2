@@ -201,6 +201,7 @@
                     <select class="form-select {{ $errors->has('solo_duplicado') ? 'is-invalid' : '' }}"
                         id="solo_duplicado" name="solo_duplicado" onchange="calcularImpuesto()">
                         <option value="no">No</option>
+                        <option value="rodaje">Solo Rodaje Cantonal</option>
                         <option value="sticker">Sí, duplicado de Sticker</option>
                         <option value="matricula">Sí, duplicado de Matrícula</option>
                     </select>
@@ -1164,6 +1165,16 @@
                             $('#check_valor_RTV').prop('checked',false)
                             $('#check_valor_REC').prop('checked',false)
                             $('#check_valor_DE').prop('checked',true)
+                        }
+
+                        if(solo_duplicado=='rodaje'){
+                            $('#check_valor_IAV').prop('checked',true)
+                            $('#check_valor_RTV').prop('checked',false)
+                            // $('#check_valor_SRV').prop('checked',false)
+                            $('#check_valor_DM').prop('checked',false)
+                            $('#check_valor_RTV').prop('checked',false)
+                            $('#check_valor_REC').prop('checked',false)
+                            // $('#check_valor_DE').prop('checked',true)
                         }
 
                         // Mostrar el total con dos decimales

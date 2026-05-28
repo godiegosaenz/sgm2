@@ -296,13 +296,12 @@
         2. La forma en la que se pagará la obligación; y,
         3. Indicación de la garantía para la obligación <br><br>
 
-        Que mediante resolución administrativa No. 103-DF-NMFM-2023 de fecha 01 de septiembre del 2023,  emitida por la Directora Financiera Municipal, se delega  la Tesorera para que proceda a realizar la actividad de suscribir los convenios de facilidades de pago, debiendo  verificar que se cumpla con los requisitos legales y se encuentre acorde a lo establecido en el Art. 474 y siguientes del Código Orgánico Administrativo, en perfecta relación con lo señalado en el Art. 142 y 153 del Código Tributario
-
-
-
-        <br><br><br><br><br><br><br><br><br><br>
+        Que mediante resolución administrativa No. 103-DF-NMFM-2023 de fecha 01 de septiembre del 2023,  emitida por la Directora Financiera Municipal, se delega  la Tesorera para que proceda a realizar la actividad de suscribir los convenios de facilidades de pago, debiendo  verificar que se cumpla con los requisitos legales y se encuentre acorde a lo establecido en el Art. 474 y siguientes del Código Orgánico Administrativo, en perfecta relación con lo señalado en el Art. 142 y 153 del Código Tributario. <br><br>
         
-       <b>VISTOS:</b> En lo principal, de los Títulos de Crédito respectivos emitidas por el órgano responsable de su emisión, desprendiéndose que el contribuyente  <strong>{{ strtoupper($nombre_persona) }} </strong> con C.I.  <strong>{{ $ci_ruc }}</strong> adeuda al Gobierno Autónomo Descentralizado Municipal del cantón San Vicente la suma de la CANTIDAD DE <strong>{{ numeroEnLetras($total_final) }}</strong> por el concepto de <b> impuesto predial</b>, la cual corresponde a la  
+        Que mediante oficio {{ $fecha_formateada }}, el contribuyente <strong>{{ strtoupper($nombre_persona) }} </strong> con C.I.  <strong>{{ $ci_ruc }}</strong>, presenta solicitud de pago mediante convenio  de las 
+
+
+
         @php
             $total_final=0;
             $coordenas_txt="";
@@ -329,14 +328,81 @@
        
           
                
-                <b>MATRICULA INMOBILIARIA</b>: <strong>{{ $key  }}</strong>, <b> DESDEL EL {{ $anio_uno }} HASTA EL EJERCICIO FISCAL {{ $info->anio }} 
+                <b>MATRICULA INMOBILIARIA</b>: <strong>{{ $key  }}</strong>, <b> de los años {{ $anio_uno }} hasta el año fiscal {{ $info->anio }}{{ !$loop->last ? ',' : ',' }} 
                     
                 @if (!$loop->last)/ @endif
+               
             </b>
             
          @endforeach
        
-      sin que a la presente fecha haya pagado la obligación tributaria liquida, determinada y de plazo vencido que actualmente exigible, por lo que de conformidad como lo establece el Art. 157 y siguientes del Código Tributario,  en perfecta relación con lo prescrito en el Art. 279 del COA, dicto el presente Auto De Pago, disponiendo que el deudor pague al ORGANO EJECUTOR DE COACTIVA DEL GAD MUNICIPAL DEL CANTÓN SAN VICENTE, en el término de 03 Días, la CANTIDAD DE <strong>{{ numeroEnLetras($total_final) }}</strong>, valor al que sumaran los intereses, recargos, costas procesales y otros valores adicionales que genere la obligación, hasta que no se dé la cancelación de la deuda; o dimita bienes equivalentes, previniéndole que de no hacerlo se procederá al embargue de bienes suficientes para cubrir las obligaciones vencidas. En uso de la facultad concedida en el Art. 164 del Código Tributario,  279, 280 y 281 del Código Orgánico Administrativo (COA), se tomara las medidas precautelarías que correspondan que a continuación se detallan hasta que cancele las obligaciones vencidas, se ordena: 1): Pagar o dimitir bienes en el término de tres días a partir de la citación, apercibiéndole que de no hacerlo, se embargarán los bienes equivalentes al capital, intereses, multas y costas.- 2): Bloquear y retener fondos de cuentas corrientes y/o ahorros, pólizas de acumulación o cualquier tipo de inversión  que tuviere la/el coactivada/o hasta por un valor de la <strong> CANTIDAD {{ numeroEnLetras($total_final) }}</strong>, para lo cual se oficiará a la Superintendencia de Bancos y a la Superintendencia de Economía Popular y Solidaria para lo cual se oficiará a la Superintendencia de Bancos y a la Superintendencia de Economía Popular y Solidaria.- 3): Prohibir la enajenación de los vehículos de propiedad de la/el coactivada/o, para lo cual se oficiará a la Agencia Nacional de Transito.- 4): Prohibir la enajenación de los bienes inmuebles que se hallaren inscritos a nombre de la/el coactivada/o en el Registro de la Propiedad del Cantón San Vicente.- 5) Poner en conocimiento al Ministerio de Trabajo que el/la coactivado/a es deudor del GAD Municipal de San Vicente, a fin que registre el impedimento de ejercer cargo público.-Actúe en calidad de Secretario de este Órgano Ejecutor {{$funcionarios->secretario}}; <strong>JUZGADO DE COACTIVA DEL GOBIERNO AUTONOMO DESCENTRALIZADO MUNICIPAL DE SAN VICENTE. El GOBIERNO AUTONOMO DESCENTRALIZADO MUNICIPAL SAN VICENTE</strong> se reserva el derecho expreso de continuar acciónales legales en contra de los obligados solidarios y subsidiarios conforme a las leyes, estatutos y reglamentos vigentes. Notifíquese al coactivado, con el contenido del acto administrativo conforme lo previsto en el Art. 280 del Código Orgánico Administrativo. Se previene al coactivado(a), de la obligación de señalar correo electrónico y/o casillero judicial para posteriores notificaciones. - CÚMPLASE, OFICIESE Y NOTIFÍQUESE.</p>
+        obligaciones pendientes de pago  por el valor de <strong>{{ numeroEnLetras($total_final) }}</strong>, para realizar un convenio de pago con un abono de <b>(USD $300) TRESCIENTOS DOLARES AMERICANOS</b> y la diferencia esto es la cantidad de <b>(USD. $108,27) CIENTO OCHO CON 27/100 DOLARES DE LOS ESTADOS UNIDOS</b> en el plazo de 3 meses con cuotas mensuales de <b>(USD $36,09) TREINTA Y SEIS CON   09/100 DOLARES AMERICANOS</b>, lo cual guarda coherencia con lo determinado en el Art. 274 y 275 del Código Orgánico Administrativo. <br><br>
+
+        En uso de sus atribuciones legales:
+
+
+
+        <center><b style="font-size: 14px;">RESUELVO</b></center> 
+        <p style="font-size: 14px; text-align: justify; line-height: 1;">
+        <b>PRIMERO. -</b>  Conceder facilidades de pago por tributos que el contribuyente <strong>{{ strtoupper($nombre_persona) }} </strong> con C.I.  <strong>{{ $ci_ruc }}</strong>, de la   
+
+         @php
+            $total_final=0;
+            $coordenas_txt="";
+        @endphp
+        @foreach ($DatosLiquidacion as $key=>$data)
+            @php
+                $total=0;
+                $anio_uno=0;
+                foreach($data as $key2=> $info){
+                    if($key2==0){
+                        $anio_uno=$info->anio;
+                    }
+                    $valor = $info->total_pagar ?? 0;                    
+                    $valor = str_replace(',', '', $valor);
+                    // Convertir a número y sumar
+                    $total += (float) $valor;
+                    
+
+                }
+                // $total_final=$total_final+$total;
+                $total_final = ($total_final ?? 0) + $total;
+                
+            @endphp
+       
+          
+               
+                <b>MATRICULA INMOBILIARIA</b>: <strong>{{ $key  }}</strong>, <b> de los años {{ $anio_uno }} hasta el año fiscal {{ $info->anio }}{{ !$loop->last ? ',' : ',' }} 
+                    
+                @if (!$loop->last)/ @endif
+               
+            </b>
+            
+         @endforeach
+       
+        obligaciones pendientes de pago  por el valor de <strong>{{ numeroEnLetras($total_final) }}</strong>, para realizar un convenio de pago con un abono de <b>(USD $300) TRESCIENTOS DOLARES AMERICANOS</b> y la diferencia esto es la cantidad de <b>(USD. $108,27) CIENTO OCHO CON 27/100 DOLARES DE LOS ESTADOS UNIDOS</b> en el plazo de 3 meses con cuotas mensuales de <b>(USD $36,09) TREINTA Y SEIS CON   09/100 DOLARES AMERICANOS</b>, lo cual guarda coherencia con lo determinado en el Art. 274 y 275 del Código Orgánico Administrativo, en perfecta relación con lo señalado en el Art. 142 y 153 del Código Tributario.<br><br>
+
+        <b>SEGUNDO:</b> El contribuyente <strong>{{ strtoupper($nombre_persona) }} </strong> con C.I.  <strong>{{ $ci_ruc }}</strong>, a partir de la fecha de esta notificación pagara la suma de <b>(USD $36,09) TREINTA Y SEIS CON   09/100 DOLARES AMERICANOS, más intereses por 3 meses contados a partir de la presente fecha</b>, estableciéndose la fecha de pago el {{ date('d') }} de cada mes y un saldo de <b>(USD. $108,27) CIENTO OCHO CON 27/100 DOLARES DE LOS ESTADOS UNIDOS.</b> <br><br>
+
+        <b>TERCERO. –</b> Con la aprobación de la presente facilidad de pago, se suspende el proceso coactivo, en contra <strong>{{ strtoupper($nombre_persona) }} </strong> con C.I.  <strong>{{ $ci_ruc }}</strong>. Advertir que la concesión de facilidades de pago está condicionada al cumplimiento estricto de los pagos determinados anteriormente. En consecuencia, si requerido el deudor para el pago de cualquiera de los dividendos en mora, no lo hiciera en el plazo de ocho días se tendrá por terminada la concesión de facilidades de pago y podrá disponer el reanudar el procedimiento coactivo de acuerdo a lo establecido en el COA. <br><br>
+
+        <b>CUARTO.-</b> Informar al contribuyente que el GADM San Vicente,  se reserva el derecho de verificar oportunamente la veracidad de la información que consta en el expediente administrativo y, si existiera un acto de simulación, ocultación,  falsedad o engaño que induzca a error de esta  resolución, se  considerara defraudación fiscal, sancionada según lo establece el Art. 342 y siguientes de la Codificación del Código Tributario  y la emisión del correspondiente título de crédito por el impuesto más los intereses de ley y multas correspondientes. <br><br>
+
+        <b>QUINTO.-</b> Verificar el estricto cumplimiento de los pagos parciales que se establecen en esta resolución.<br><br>
+
+        <b>SEXTO.-</b> Notificar al <strong>{{ strtoupper($nombre_persona) }} </strong> con C.I.  <strong>{{ $ci_ruc }}</strong>, en los términos establecido en el Art. 164 y siguientes del COA, para lo cual señala dirección física: San Vicente, Rancho Rojo, y teléfono No. 0999880478. <br><br>
+
+        Dado y firmado en el despacho de la Alcaldía del GAD Municipal del Cantón San Vicente, al 9 de marzo del año 2026.
+       
+       
+       
+       
+       </p>
+       
+       
+       
+       
+     
 
     <div style="margin-bottom:48px">
         <p>Atentamente,</p>
