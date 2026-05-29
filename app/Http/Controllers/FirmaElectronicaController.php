@@ -21,7 +21,7 @@ class FirmaElectronicaController extends Controller
     public function __construct(){
         try{
            
-            $ip2="http://192.168.0.42:82/";
+            $ip2="http://192.168.0.73:82/";
 
             $this->clienteFirmador = new Client([
                 'base_uri' =>$ip2,
@@ -78,7 +78,7 @@ class FirmaElectronicaController extends Controller
     public function mantenimiento(Request $request)
     {
         DB::beginTransaction(); // Iniciar la transacción
-
+        // dd($request->all());
         try {
 
             $existe=FirmaElectronica::where('id_usuario',auth()->user()->id)
@@ -91,7 +91,7 @@ class FirmaElectronicaController extends Controller
 
             
             if ($request->hasFile('p12') && $request->file('p12')->isValid()) {
-            
+                
                 $archivo_certificado = $request->file('p12');
                 $clave_certificado=$request->password;
                 $clave_certificado = mb_convert_encoding($clave_certificado, 'UTF-8', 'UTF-8');
@@ -107,6 +107,7 @@ class FirmaElectronicaController extends Controller
                 $nombreP12 = $hash . '.' . $extension;  
                
                 $path = $archivo_certificado->storeAs('documentosFirmar', $nombreP12);
+              
                 try{
                     $response = $this->clienteFirmador->request('POST', '/tics-soporte/api/verificar-p12', [
                         'multipart' => [
