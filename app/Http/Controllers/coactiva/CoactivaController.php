@@ -259,6 +259,11 @@ class CoactivaController extends Controller
                 $cuotas->save();
             }
 
+            $crearDocumentos=$this->coactiva->pdfConvenio($guarda->id);
+            if($crearDocumentos['error']==true){
+                return ["mensaje"=>"Ocurrio un error al crear los documentos ".$crearDocumentos['mensaje'], "error"=>true];
+            }
+
             return ["mensaje"=>"Informacion registrada exitosamente", "error"=>false];
             
         } catch (\Exception $e) {

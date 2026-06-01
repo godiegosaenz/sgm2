@@ -1043,6 +1043,29 @@ class NotificacionesController extends Controller
     
     }
 
+    public function subirArchivoFirmadoConvenio(Request $request){
+        
+        try{
+            $convenio=Convenio::find($request->idconvenio_);
+            $nombre_firmado="Convenio_firmado";
+            $documento=$request->archivo_conv;
+            $extension = pathinfo($documento->getClientOriginalName(), PATHINFO_EXTENSION);
+            if(!is_null($documento)){
+                \Storage::disk('disksCoactiva')->put($nombre_firmado . "." . $extension, \File::get($documento));
+                $convenio->documento_subido=$nombre_firmado.".".$extension;
+                $convenio->save();
+
+                return ["mensaje"=>"Documento subido exitosamente ", "error"=>false, "archivo"=>$convenio->documento_subido];
+            }
+         } catch (\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+
+        }
+    
+    }
+
+    
+
     public function subirArchivoFirmadoCoact(Request $request){
         
         try{
@@ -2521,7 +2544,7 @@ class NotificacionesController extends Controller
 
             $crearDocumentos=$this->pdfConvenio($guarda->id);
             if($crearDocumentos['error']==true){
-                return ["mensaje"=>"Ocurrio un error al crear los documentos ", "error"=>true];
+                return ["mensaje"=>"Ocurrio un error al crear los documentos ".$crearDocumentos['mensaje'], "error"=>true];
             }
 
             return ["mensaje"=>"Informacion registrada exitosamente", "error"=>false];
@@ -3100,7 +3123,7 @@ class NotificacionesController extends Controller
             ->first();
 
          
-            $nombrePDF='ConvenioResolucion_'.date('YmdHis');
+            $nombrePDF='ConvenioResolucion_'.date('YmdHis').'.pdf';
 
             $rutaLogo = public_path('fondo.png');
             $logoBase64 = '';
@@ -3155,6 +3178,7 @@ class NotificacionesController extends Controller
 
                 $num_proceso = $ultimo_sec->num_proceso + 1;
             }
+            // dd($num_proceso);
             
             // CREAMOS EL DOCUMENTO RESPECTIVO                             
             $pdf = \PDF::loadView('reportes.convenio', [
@@ -3171,7 +3195,7 @@ class NotificacionesController extends Controller
                 // ⬇️ AÑADE ESTAS DOS LÍNEAS CON PUBLIC_PATH ⬇️
                
             ]);  
-
+            // return $pdf->stream($nombrePDF);
             $estadoarch = $pdf->stream();
 
             // LO GUARDAMOS EN EL DISCO
@@ -3180,7 +3204,7 @@ class NotificacionesController extends Controller
             $exists_destino = \Storage::disk($disco)->exists($nombrePDF);
             if($exists_destino){
 
-                $nombrePDF2='AcuerdoConvenio_'.date('YmdHis');
+                $nombrePDF2='AcuerdoConvenio_'.date('YmdHis').'.pdf';
                 $pdf = \PDF::loadView('reportes.convenio_acuerdo', [
                     'DatosLiquidacion'=>$listado_final,
                     "nombre_persona"=>$nombre_persona, 
@@ -3196,13 +3220,15 @@ class NotificacionesController extends Controller
                 
                 ]);  
 
-                \Storage::disk($disco)->put(str_replace("", "",$nombrePDF2), $estadoarch);
+                $estadoarch1 = $pdf->stream();
+
+                \Storage::disk($disco)->put(str_replace("", "",$nombrePDF2), $estadoarch1);
                 $exists_destino = \Storage::disk($disco)->exists($nombrePDF2);
 
                 if($exists_destino){
                     $convenio->documento_resolucion=$nombrePDF;
                     $convenio->documento_acuerdo=$nombrePDF2;
-                    $convenio->num_proceso=$ultimo_sec;
+                    $convenio->num_proceso=$num_proceso;
                     $convenio->save();
 
                     return ["mensaje"=>'OK', "error"=>false];

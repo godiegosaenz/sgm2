@@ -529,6 +529,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('pago-notificaciones-detalle/{id}', [NotificacionesController::class, 'detalleNotificacion']);
     Route::get('pago-notificaciones-detalle-proceso-coac/{id}', [NotificacionesController::class, 'detalleNotificacionProceso']);
     Route::post('guardar-documento-firmado-noti', [NotificacionesController::class, 'subirArchivoFirmado']);
+    Route::post('guardar-documento-convenio', [NotificacionesController::class, 'subirArchivoFirmadoConvenio']);
     Route::get('buscarContribuyente', [NotificacionesController::class, 'buscarContribuyente']);
 
     Route::get('pdf-proceso-coactiva/{id}/{lugar}', [NotificacionesController::class, 'pdfProcesoCoactiva']);

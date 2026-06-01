@@ -160,7 +160,7 @@
         <table width="112.5%" class="ltable">
             <tr>
                 <td style="border:0;" align="left">
-                    <img src="fonfopiecoa.png" width="800px" height="120px">
+                    <img src="pieteso2.png" width="800px" height="120px">
                 </td>
             </tr>
         </table>
@@ -173,8 +173,10 @@
 
         if (!function_exists('numeroEnLetras')) {
             function numeroEnLetras($numero) {
-                $entero = floor($numero);
-                $decimal = round(($numero - $entero) * 100);
+                $valor = str_replace(',', '', $numero);
+                $valor = (float)$valor;
+                $entero = floor($valor);
+                $decimal = round(($valor - $entero) * 100);
                 $formatter = new \Luecano\NumeroALetras\NumeroALetras();
                 $letras = mb_strtoupper($formatter->toWords($entero), 'UTF-8');
 
@@ -186,8 +188,10 @@
 
         if (!function_exists('numeroEnLetras2')) {
             function numeroEnLetras2($numero) {
-                $entero = floor($numero);
-                $decimal = round(($numero - $entero) * 100);
+                $valor = str_replace(',', '', $numero);
+                $valor = (float)$valor;
+                $entero = floor($valor);
+                $decimal = round(($valor - $entero) * 100);
                 $formatter = new \Luecano\NumeroALetras\NumeroALetras();
                 $letras = mb_strtoupper($formatter->toWords($entero), 'UTF-8');
 
@@ -385,7 +389,7 @@
                         Elaborado
                     </td>
                     <td style="border:1px solid black; padding:2px; line-height:1.5;">
-                       {{ $funcionarios->secretario }}
+                       {{  ucwords(strtolower($funcionarios->secretario)) }}
                     </td>
                     <td style="border:1px solid black; padding:2px; line-height:1.5;">
                         Analista Jurídico Coactiva

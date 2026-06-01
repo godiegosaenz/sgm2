@@ -540,12 +540,36 @@ function verpdf(ruta){
     $("#documentopdf").modal("show");
 }
 
+function verpdfacuerdo(ruta){
+
+    var iframe=$('#iframePdf');
+    iframe.attr("src", "coactiva/documento/"+ruta);   
+    $("#vinculo").attr("href", 'coactiva/documento-descargar/'+ruta);
+    $("#documentopdf").modal("show");
+}
+
 function verpdf_subido(ruta,valor){
     $('#es_coact').val(valor)
     var iframe=$('#iframePdfSubido');
     iframe.attr("src", "coactiva/documento/"+ruta);   
     $("#vinculoSubido").attr("href", 'coactiva/documento-descargar/'+ruta);
     $("#documentopdf_subido").modal("show");
+}
+
+function verpdf_subido_convenio(ruta,valor){
+ 
+    var iframe=$('#iframePdfSubidoConvenio');
+    iframe.attr("src", "coactiva/documento/"+ruta);   
+    $("#vinculoSubidoConvenio").attr("href", 'coactiva/documento-descargar/'+ruta);
+    $("#documentopdf_subido_convenio").modal("show");
+}
+
+function abrirModalSubirConvenio(){
+    $('#archivo_conv').val('')
+    $("#documentopdf_subido_convenio").modal("hide");
+    $("#subir_documento_convenio").modal("show");
+    
+    
 }
 
 
@@ -607,6 +631,61 @@ $("#formArchivoFirmado").submit(function(e){
                 $('#doc_subido_coa').html(`<i class="fa fa-file-pdf" style="color:skyblue" onclick="verpdf_subido('${data.archivo}','${valor}')"><i>`)
             }
             $('#subir_documento').modal('hide')
+                            
+        }, error:function (data) {
+            console.log(data)
+
+            vistacargando("");
+            alertNotificar('Ocurrió un error','error');
+        }
+    });
+})
+
+
+$("#formArchivoFirmadoConvenio").submit(function(e){
+    e.preventDefault();
+    let documento=$('#archivo_conv').val()
+    if(documento=="" || documento==null){
+        alertNotificar("Debe subir el documento","error")
+        return
+    }
+
+    
+   
+    vistacargando("m","Espere por favor")
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+   
+   
+    let tipo="POST"
+    let url_form="guardar-documento-convenio"
+   
+    var FrmData = new FormData(this);
+   
+    $.ajax({
+            
+        type: tipo,
+        url: url_form,
+        method: tipo,             
+		data: FrmData,      
+		
+        contentType:false,
+        cache:false,
+        processData:false, 
+
+        success: function(data){
+            vistacargando("");                
+            if(data.error==true){
+                alertNotificar(data.mensaje,'error');
+                return;                      
+            }
+           
+            alertNotificar(data.mensaje,"success");
+            $('#doc_subido_convenio').html(`<i class="fa fa-file-pdf" style="color:skyblue" onclick="verpdf_subido('${data.archivo}','0')"><i>`)
+            $('#subir_documento_convenio').modal('hide')
                             
         }, error:function (data) {
             console.log(data)
@@ -915,6 +994,12 @@ function detalleConvenio(id){
         $('#fecha_conv_generado').html(data.resultado[0].convenio.fecha_registra)
         $('#convenio_contr').html($('.titulo_modal').html())
         $('#convenio_deuda').html(data.resultado[0].convenio.valor_adeudado)
+
+        $('#doc_resolucion').html(`<i class="fa fa-file-pdf" style="color:skyblue" onclick="verpdf('${data.resultado[0].convenio.documento_resolucion}')"><i>`)
+        $('#doc_acuerdo').html(`<i class="fa fa-file-pdf" style="color:skyblue" onclick="verpdfacuerdo('${data.resultado[0].convenio.documento_acuerdo}')"><i>`)
+        
+        $('#doc_subido_convenio').html(`<i class="fa fa-file-pdf" style="color:skyblue" onclick="verpdf_subido_convenio('${data.resultado.documento_subido}','0')"><i>`)
+        $('#idconvenio_').val(id)
 
     }).fail(function(){
         vistacargando("")

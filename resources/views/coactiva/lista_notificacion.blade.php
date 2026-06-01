@@ -883,6 +883,17 @@
                                 <b>Contribuyente:</b> <span id="convenio_contr"></span>
                             </div>
 
+                            <div class="col-md-6">
+                                <b>Documento Resolucion:</b> <span id="doc_resolucion"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <b>Documento Acuerdo:</b> <span id="doc_acuerdo"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <b>Documento Subido:</b> <span id="doc_subido_convenio"></span>
+                            </div>
+
                             <table class="table table-bordered table-hover"
                                 id="tableDetConvenio"
                                 style="width:100%">
@@ -968,6 +979,34 @@
         </div>
     </div>
 
+    <div class="modal fade" id="documentopdf_subido_convenio" tabindex="-1" aria-labelledby="ContribuyenteModalLabel" aria-hidden="true"
+     data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Documento Subido</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                @csrf
+                <div class="modal-body">
+                <div class="row">
+                        <div class="col-sm-12 col-xs-11 "style="height: auto ">
+                                <iframe width="100%" height="500" frameborder="0"id="iframePdfSubidoConvenio"></iframe>
+                                    <p style="color: #747373;font-size:15px"></p>
+                            </div>
+                        </div>
+                </div>
+                <div class="modal-footer"> 
+                    <center>
+                            <button class="btn btn-success" onclick="abrirModalSubirConvenio()">Subir</button>                           
+                            <a href=""id="vinculoSubidoConvenio"><button  type="button" id="descargarSubido"class="btn btn-primary"><i class="fa fa-mail"></i> Descargar</button> </a>
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" >Salir</button>                                 
+                    </center>               
+                </div>
+            </div>
+        </div>
+    </div>
+
     
     <div class="modal fade" id="subir_documento" tabindex="-1" aria-labelledby="ContribuyenteModalLabel" aria-hidden="true"
      data-bs-backdrop="static" data-bs-keyboard="false">
@@ -999,6 +1038,7 @@
                                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal" >Salir</button>                                 
                         </center>               
                     </div>
+                </div>
                 </form>
             </div>
         </div>
@@ -1028,6 +1068,41 @@
                             <button type="button" class="btn btn-danger" data-bs-dismiss="modal" >Salir</button>                                 
                     </center>               
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="subir_documento_convenio" tabindex="-1" aria-labelledby="ContribuyenteModalLabel" aria-hidden="true"
+     data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Subir Documento Convenio</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form class="" action="" id="formArchivoFirmadoConvenio" name="formArchivoFirmadoConvenio" method="post" enctype="multipart/form-data">
+                    @csrf
+               
+                <div class="modal-body">
+                    <div class="row">
+
+                        <div class="mb-3">
+                                <label for="cmb_ruc_rep" class="form-label">DOCUMENTOS</label>
+                                <input type="file" class="form-control txt_coact" name="archivo_conv" id="archivo_conv" >
+                                <input type="hidden" id="idconvenio_" name="idconvenio_">
+                             
+                        </div>
+
+                    </div>
+                    <div class="modal-footer"> 
+                        <center>
+                                <button class="btn btn-success" type="submit">Guardar</button>                           
+                            
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" >Salir</button>                                 
+                        </center>               
+                    </div>
+                </div>
+                </form>
             </div>
         </div>
     </div>
