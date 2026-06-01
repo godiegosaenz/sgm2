@@ -541,7 +541,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('llenar-tabla-pago-not/{id}', [NotificacionesController::class, 'tablaPagosNot']);
     Route::get('pdf-medida-coactiva/{id}', [NotificacionesController::class, 'pdfMedidas']);
     Route::get('ver-titulos-convenio/{id}/{lugar}/{noti_conv}', [NotificacionesController::class, 'obtenerTitulosConvenio']);
-    Route::get('documentos-convenio/{id}/{v}', [NotificacionesController::class, 'pdfConvenio']);
+    Route::get('documentos-convenio/{id}', [NotificacionesController::class, 'pdfConvenio']);
 
     Route::get('procesos-coactiva', [CoactivaController::class, 'index'])->name('coactiva.lista_coactiva');
     Route::get('pago-coactivas/{data}/{tipo}', [CoactivaController::class, 'tablaCoactiva']);

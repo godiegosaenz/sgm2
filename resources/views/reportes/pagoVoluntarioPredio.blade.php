@@ -299,7 +299,7 @@
                 </tr>
             </table>
             <p style="margin: 0; line-height: 1.2;">
-                <strong>Ab. Jessica Karina Zambrano Pincay</strong>
+                <strong>Ab. Betty Mera Montes</strong>
             </p>
             <p style="margin: 0; line-height: 1.2;">
                 <strong>ANALISTA JURÍDICO Y COACTIVAS DEL GAD MUNICIPAL DEL CANTÓN SAN VICENTE</strong>

@@ -2519,6 +2519,11 @@ class NotificacionesController extends Controller
                 $cuotas->save();
             }
 
+            $crearDocumentos=$this->pdfConvenio($guarda->id);
+            if($crearDocumentos['error']==true){
+                return ["mensaje"=>"Ocurrio un error al crear los documentos ", "error"=>true];
+            }
+
             return ["mensaje"=>"Informacion registrada exitosamente", "error"=>false];
             
         } catch (\Exception $e) {
@@ -3009,11 +3014,24 @@ class NotificacionesController extends Controller
         }
     }
 
-       public function pdfConvenio($id,$lugar){
+    public function pdfConvenio($id){
+
         try{
+            $convenio=Convenio::with('cuotas')
+            ->where('estado','Activo')
+            ->where('id',$id)
+            ->first();
+
+            if(is_null($convenio)){
+                return ["mensaje"=>"El convenio no se encuentra activo", "error"=>true];
+            }
+
+            $idInfo = $convenio->id_info_notifica 
+            ?? $convenio->coactiva->id_info_notifica;
+
             
             // TITULOS URBANOS
-            $consulta=$this->consultarTitulosUrb($id);
+            $consulta=$this->consultarTitulosUrb($idInfo);
             if($consulta['error']==true){
                 DB::connection('pgsql')->rollBack();
                 return ["mensaje"=>$consulta['mensaje'], "error"=>true];
@@ -3021,7 +3039,7 @@ class NotificacionesController extends Controller
             }
             
             // TITULOS RURALES
-            $consulta1=$this->consultarTitulos($id);
+            $consulta1=$this->consultarTitulos($idInfo);
             if($consulta1['error']==true){
                 DB::connection('pgsql')->rollBack();
                 return ["mensaje"=>$consulta1['mensaje'], "error"=>true];
@@ -3032,14 +3050,18 @@ class NotificacionesController extends Controller
             $todo = $consulta["resultado"]->merge($consulta1["resultado"]);
             $listado_final=[];
             foreach ($todo as $key => $item){   
-                
+                //dd($item);
                 $anios[] = $item->anio;     
-                $nombre_persona=$item->nombre_per;
+               
                 $direcc_cont=$item->direcc_cont;
-                $ci_ruc=$item->num_ident;
+               
                 if(is_null($item->nombre_per)){
                     $nombre_persona=$item->nombre_contr1;
-                } 
+                    $ci_ruc=$item->ci_ruc;
+                }else{
+                    $nombre_persona=$item->nombre_per;
+                    $ci_ruc=$item->num_ident;
+                }
 
                 if(isset($item->num_predio)){    // SI VIENE NUM_PREDIO ES URBANA Y AGRUPAMOS POR ESO (MATRICULA INMOBILIARIA)         
                     if(!isset($listado_final[$item->num_predio])) {
@@ -3070,22 +3092,71 @@ class NotificacionesController extends Controller
             ->selectRaw("
                 MAX(CASE WHEN codigo = 'TESO' THEN valor END) AS tesorera,
                 MAX(CASE WHEN codigo = 'JUEZ_COACT' THEN valor END) AS juez_coactiva,
-                MAX(CASE WHEN codigo = 'SECRETARIO' THEN valor END) AS secretario
+                MAX(CASE WHEN codigo = 'SECRETARIO' THEN valor END) AS secretario,
+                MAX(CASE WHEN codigo = 'TESO' THEN valor2 END) AS cedula_teso
             ")
             ->whereIn('codigo', ['TESO','JUEZ_COACT','SECRETARIO'])
             ->where('estado','A')
             ->first();
 
          
-            $nombrePDF='Convenio'.date('YmdHis');
+            $nombrePDF='ConvenioResolucion_'.date('YmdHis');
+
+            $rutaLogo = public_path('fondo.png');
+            $logoBase64 = '';
+            if (file_exists($rutaLogo)) {
+                $logoBase64 = 'data:image/' . pathinfo($rutaLogo, PATHINFO_EXTENSION) . ';base64,' . base64_encode(file_get_contents($rutaLogo));
+            }
+
+            // Convertimos el Pie a Base64
+            $rutaPie = public_path('fonfopiecoa.png');
+            $pieBase64 = '';
+            if (file_exists($rutaPie)) {
+                $pieBase64 = 'data:image/' . pathinfo($rutaPie, PATHINFO_EXTENSION) . ';base64,' . base64_encode(file_get_contents($rutaPie));
+            }
 
             $fecha_hoy=date('Y-m-d');
             setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES@euro', 'es_ES', 'esp');
             $fecha_timestamp = strtotime($fecha_hoy);    
             $fecha_formateada = strftime("%d de %B del %Y", $fecha_timestamp);
 
-            $num_proceso='009';
-             // CREAMOS EL DOCUMENTO RESPECTIVO                             
+             //SECUENCIAL PARA LOS INFORMES
+            $ultimo_sec = Convenio::whereYear('fecha_registra', date('Y'))
+                ->whereNotNull('num_proceso')
+                ->orderByDesc('num_proceso')
+                ->first();
+             
+            if (is_null($ultimo_sec)) {
+
+                $secuencial = Secuencial::where('descripcion', 'ConvenioResolucion')
+                    ->where('anio', date('Y'))
+                    ->where('estado', 'A')
+                    ->lockForUpdate()
+                    ->first();
+
+                if (is_null($secuencial)) {
+
+                    $num_proceso = 1;
+
+                    Secuencial::create([
+                        'secuencia' => 1,
+                        'descripcion' => 'ConvenioResolucion',
+                        'estado' => 'A',
+                        'anio' => date('Y')
+                    ]);
+
+                } else {
+
+                    $secuencial->increment('secuencia');
+                    $num_proceso = $secuencial->secuencia;
+                }
+
+            } else {
+
+                $num_proceso = $ultimo_sec->num_proceso + 1;
+            }
+            
+            // CREAMOS EL DOCUMENTO RESPECTIVO                             
             $pdf = \PDF::loadView('reportes.convenio', [
                 'DatosLiquidacion'=>$listado_final,
                 "nombre_persona"=>$nombre_persona, 
@@ -3096,12 +3167,51 @@ class NotificacionesController extends Controller
                 'DatosLiquidaciones'=>$todo, 
                 'fecha_formateada'=>$fecha_formateada,
                 "num_proceso"=>$num_proceso, 
-            ]);   
-            
-            return $pdf->stream($nombrePDF);
+                "convenio"=>$convenio, 
+                // ⬇️ AÑADE ESTAS DOS LÍNEAS CON PUBLIC_PATH ⬇️
+               
+            ]);  
+
             $estadoarch = $pdf->stream();
 
-           
+            // LO GUARDAMOS EN EL DISCO
+            $disco="disksCoactiva";
+            \Storage::disk($disco)->put(str_replace("", "",$nombrePDF), $estadoarch);
+            $exists_destino = \Storage::disk($disco)->exists($nombrePDF);
+            if($exists_destino){
+
+                $nombrePDF2='AcuerdoConvenio_'.date('YmdHis');
+                $pdf = \PDF::loadView('reportes.convenio_acuerdo', [
+                    'DatosLiquidacion'=>$listado_final,
+                    "nombre_persona"=>$nombre_persona, 
+                    "direcc_cont"=>$direcc_cont,
+                    "ci_ruc"=>$ci_ruc,
+                    "rango"=>$rango, 
+                    "funcionarios"=>$funcionarios, 
+                    'DatosLiquidaciones'=>$todo, 
+                    'fecha_formateada'=>$fecha_formateada,
+                    "num_proceso"=>$num_proceso, 
+                    "convenio"=>$convenio, 
+                    // ⬇️ AÑADE ESTAS DOS LÍNEAS CON PUBLIC_PATH ⬇️
+                
+                ]);  
+
+                \Storage::disk($disco)->put(str_replace("", "",$nombrePDF2), $estadoarch);
+                $exists_destino = \Storage::disk($disco)->exists($nombrePDF2);
+
+                if($exists_destino){
+                    $convenio->documento_resolucion=$nombrePDF;
+                    $convenio->documento_acuerdo=$nombrePDF2;
+                    $convenio->num_proceso=$ultimo_sec;
+                    $convenio->save();
+
+                    return ["mensaje"=>'OK', "error"=>false];
+              
+                }        
+
+            }
+
+            return ["mensaje"=>'Error', "error"=>true];
         }catch (\Exception $e) {
             return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
 
