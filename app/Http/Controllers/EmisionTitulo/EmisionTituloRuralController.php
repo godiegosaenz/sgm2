@@ -390,7 +390,10 @@ class EmisionTituloRuralController extends Controller
                         $valor = floatval(str_replace(',', '', $valor));             
                         $valor_intereses=number_format($valor,2);
 
-                     
+                        // dd($ipuNew);
+                        // dd( round(
+                        //         $ipuNew + $existeCV->Carve_Valor1 +$existeCV->CarVe_TasaAdministrativa + $bom_new, 2
+                        //     ));
 
                         $carteraVencida=DB::connection('sqlsrv')->table('CARTERA_VENCIDA')
                         ->where('CarVe_NumTitulo',$existeCV->CarVe_NumTitulo)
@@ -399,6 +402,7 @@ class EmisionTituloRuralController extends Controller
                             "Carve_Estado" => "E",
                             "Usu_usuario" => $name_user,
                             "CarVe_IPU" => round($ipuNew, 2),
+                            "CarVe_BaseImponible" => round($base_im, 2),
                             "CarVe_Interes" => round($valor_intereses, 2),  
                             "CarVe_Observaciones" => "Generado por sgm2",                          
                             "CarVe_Bomberos" => round($bom_new, 2), // ✔ formato numérico válido

@@ -287,13 +287,13 @@
         JUEZ DE COACTIVA: {{$funcionarios->juez_coactiva}}</p>
 
     <p style="margin: 0; line-height: 0; margin-top:20px; text-align: center; font-weigth: 500 !important; font-size: 16px;">
-        TESORERA MUNICIPAL</p>
+        TESORERA MUNICIPAL {{ env('TESORERA_MUNI') }}</p>
 
     <p style="margin: 0; line-height: 1.2; margin-top:50px; text-align: center; font-weigth: 500 !important; font-size: 16px;">
         SECRETARIO: {{$funcionarios->secretario}}</p>
 
     <p style="margin: 0; line-height: 0; margin-top:20px; text-align: center; font-weigth: 500 !important; font-size: 16px;">
-        ANALISTA JURIDICO COACTIVO GAD SAN VICENTE</p>
+        ANALISTA JURIDICO COACTIVO GAD SAN VICENTE {{env('COACTIVA_CARGO') }}</p>
 
     <div style="page-break-after: always;"></div>
 
@@ -314,7 +314,7 @@
        {{$funcionarios->tesorera}}</p>
 
     <p style="margin: 0; line-height: 0; margin-top:15px; text-align: left; font-weigth: 500 !important; font-size: 14px;">
-        TESORERA MUNICIPAL</p>
+        TESORERA MUNICIPAL {{ env('TESORERA_MUNI') }}</p>
 
     </div>
 
@@ -337,7 +337,7 @@
        {{$funcionarios->secretario}}</p>
 
     <p style="margin: 0; line-height: 0; margin-top:15px; text-align: left; font-weigth: 500 !important; font-size: 14px;">
-        ANALISTA JURIDICO COACTIVO GAD SAN VICENTE</p>
+        ANALISTA JURIDICO COACTIVO GAD SAN VICENTE {{env('COACTIVA_CARGO') }}</p>
 
 
     
@@ -433,7 +433,7 @@
             <strong>{{$funcionarios->tesorera}}</strong>
         </p>
         <p style="margin: 0; line-height: 1.2;">
-            <strong>TESORERA MUNICIPAL</strong>
+            <strong>TESORERA MUNICIPAL {{ env('TESORERA_MUNI') }}</strong>
         </p>
     </div>
 
@@ -628,7 +628,7 @@
                     </tr>
                     <tr>
                         <td style="text-align: center">
-                            Ing. Jacinta María Mendoza Cusme
+                            {{$funcionarios->tesorera}}
                         </td>
                         <td style="text-align: center">
                             Ing. Danes Steven Cedeño Choez
@@ -636,7 +636,7 @@
                     </tr>
                     <tr>
                         <td style="text-align: center">
-                            Tesorera Municipal Juez de Coactiva
+                            Tesorera Municipal Juez de Coactiva {{ env('TESORERA_MUNI') }}
                         </td>
                         <td style="text-align: center">
                             Director Financiero
@@ -873,15 +873,15 @@
                 </tr>
                 <tr>
                     <td style="text-align: center">
-                        Ing. Jacinta María Mendoza Cusme
+                        {{$funcionarios->tesorera}}
                     </td>
                     <td style="text-align: center">
-                        Ing. Danes Steven Cedeño Choez
+                    Ing. Danes Steven Cedeño Choez
                     </td>
                 </tr>
                 <tr>
                     <td style="text-align: center">
-                        Tesorera Municipal Juez de Coactiva
+                        Tesorera Municipal Juez de Coactiva {{ env('TESORERA_MUNI') }}
                     </td>
                     <td style="text-align: center">
                     Director Financiero

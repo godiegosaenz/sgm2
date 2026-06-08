@@ -362,7 +362,7 @@
                 <strong>{{ $funcionarios->cedula_teso }}</strong>
             </p>
             <p style="margin: 0; line-height: 0.9;">
-                <strong>TESORERA MUNICIPAL GAD SAN VICENTE</strong>
+                <strong>TESORERA MUNICIPAL GAD SAN VICENTE {{ env('TESORERA_MUNI') }}</strong>
             </p> 
         </div>
         
@@ -392,7 +392,7 @@
                        {{  ucwords(strtolower($funcionarios->secretario)) }}
                     </td>
                     <td style="border:1px solid black; padding:2px; line-height:1.5;">
-                        Analista Jurídico Coactiva
+                        Analista Jurídico Coactiva {{ env('COACTIVA_CARGO') }}
                     </td>
                     <td style="border:1px solid black; padding:2px; line-height:1.5;">
                         &nbsp;

@@ -343,7 +343,7 @@
                 <strong>{{$funcionarios->tesorera}}</strong>
             </p>
             <p style="margin: 0; line-height: 0.9;">
-                <strong>TESORERA MUNICIPAL (S)</strong>
+                <strong>TESORERA MUNICIPAL {{ env('TESORERA_MUNI') }}</strong>
             </p> 
         </center>
     </div>
@@ -384,7 +384,7 @@
                 <strong>{{$funcionarios->secretario}}</strong>
             </p>
             <p style="margin: 0; line-height: 0.9;">
-                <strong>ANALISTA JURIDICO Y DE COACTIVA DEL GAD SAN VICENTE (E)</strong>
+                <strong>ANALISTA JURIDICO Y DE COACTIVA DEL GAD SAN VICENTE {{env('COACTIVA_CARGO') }}</strong>
             </p>
         </center>
     </div>
@@ -432,7 +432,7 @@
                 <strong>{{$funcionarios->secretario}}</strong>
             </p>
             <p style="margin: 0; line-height: 0.9;">
-                <strong>ANALISTA JURIDICO Y DE COACTIVA DEL GAD SAN VICENTE (E)</strong>
+                <strong>ANALISTA JURIDICO Y DE COACTIVA DEL GAD SAN VICENTE {{env('COACTIVA_CARGO') }}</strong>
             </p>
         </center>
     </div>
@@ -485,7 +485,7 @@
                 <strong>{{$funcionarios->secretario}}</strong>
             </p>
             <p style="margin: 0; line-height: 0.9;">
-                <strong>ANALISTA JURIDICO Y DE COACTIVA DEL GAD SAN VICENTE (E)</strong>
+                <strong>ANALISTA JURIDICO Y DE COACTIVA DEL GAD SAN VICENTE {{env('COACTIVA_CARGO') }}</strong>
             </p>
         </center>
     </div>
