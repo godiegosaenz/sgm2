@@ -1387,7 +1387,7 @@ class NotificacionesController extends Controller
 
         }
     }
-    public function obtenerTitulosConvenio($id, $lugar, $noti_proc){
+    public function obtenerTitulosConvenio2($id, $lugar, $noti_proc){
         try{
            
             // Definir variables dinámicas
@@ -1414,6 +1414,7 @@ class NotificacionesController extends Controller
                 ->pluck($campoPluck)
                 ->toArray();
 
+
             $metodo = $lugar == "Urbano" ? 'tituloCreditoUrbAux' : 'tituloCreditoRuralAux';
 
             $consulta = $this->$metodo($obtenerLiquidaciones);
@@ -1426,6 +1427,87 @@ class NotificacionesController extends Controller
             }
 
             return['resultado'=>$consulta['data']['DatosLiquidaciones'],"error"=>false];
+
+
+        }catch(\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+        }
+    }
+
+      public function obtenerTitulosConvenio($id, $lugar, $noti_proc){
+        try{
+           
+            // Definir variables dinámicas
+            $esVoluntario = $noti_proc == "Voluntario";
+            $esUrbano = $lugar == "Urbano";
+
+            $campoInfo = $esVoluntario ? 'id_info_notifica' : 'id_info_coact';
+            $modeloData = $esVoluntario ? DataNotifica::class : DataCoa::class;
+            $campoPluck = $esUrbano ? 'id_liquidacion' : 'num_titulo';
+
+            // Obtener convenio
+            $obtenerId = Convenio::where('id', $id)
+                ->where('estado', 'Activo')
+                ->select($campoInfo)
+                ->first();
+            
+            if (is_null($obtenerId)) {
+                return ["mensaje" => "El convenio ya no se encuentra activo", "error" => true];
+            }
+
+            $datosUrbano = collect();
+            $datosRural  = collect();
+            
+            $dataNoti=DataNotifica::where('id_info_notifica',$obtenerId->id_info_notifica)
+                ->whereNotNull('id_liquidacion')
+                ->pluck('num_titulo')
+                ->toArray();
+
+            if(count($dataNoti)> 0){
+                $generarTitulo=$this->tituloCreditoUrb($dataNoti);
+                if($generarTitulo['error']==true){
+                    DB::connection('pgsql')->rollBack();
+                    return ["mensaje"=>$generarTitulo['mensaje'], "error"=>true];
+                }
+                $datosUrbano = collect($generarTitulo['data']['DatosLiquidaciones'] ?? []);
+               
+
+            }
+           
+            // OBTENEMOS LOS NUM_TITULOS DE LA DATA NOTIFICADA PARA BUSCAR LOS TITULOS PREDIALES DE LA BD RURAL
+            $dataNoti=DataNotifica::where('id_info_notifica',$obtenerId->id_info_coact)
+            ->whereNull('id_liquidacion')
+            ->pluck('num_titulo')
+            ->toArray();
+
+            if(count($dataNoti)> 0){    
+                $generarTitulo1=$this->tituloCreditoRural($dataNoti);
+            
+                if($generarTitulo1['error']==true){
+                    DB::connection('pgsql')->rollBack();
+                    return ["mensaje"=>$generarTitulo1['mensaje'], "error"=>true];
+                }
+                $datosRural = collect($generarTitulo1['data']['DatosLiquidaciones'] ?? []);
+            }
+            
+            // UNIMOS AMBAS DATA
+            $todo_cons = $datosUrbano->merge($datosRural);        
+            // dd($todo_cons);    
+            
+
+            // $metodo = $lugar == "Urbano" ? 'tituloCreditoUrbAux' : 'tituloCreditoRuralAux';
+
+            // $consulta = $this->$metodo($obtenerLiquidaciones);
+
+            // if ($consulta['error'] == true) {
+            //     return [
+            //         "mensaje" => $consulta['mensaje'],
+            //         "error" => true
+            //     ];
+            // }
+
+            // return['resultado'=>$consulta['data']['DatosLiquidaciones'],"error"=>false];
+            return['resultado'=>$todo_cons,"error"=>false];
 
 
         }catch(\Exception $e) {
@@ -2422,136 +2504,140 @@ class NotificacionesController extends Controller
    
 
     public function guardarConvenioNot(Request $request){
-        try{
+        DB::connection('pgsql')->beginTransaction();
+            try{
 
-            //***VALIDACIONES DE QUE NO HAYA OTRO CONVENIO O NO ESTE EN PROCESO COACTIVA****** */
+                //***VALIDACIONES DE QUE NO HAYA OTRO CONVENIO O NO ESTE EN PROCESO COACTIVA****** */
 
-            $verifica=Convenio::where('id_info_notifica',$request->idnot_conv)
-            ->where('estado','Activo')
-            ->first();
-            if(!is_null($verifica)){
-                return ["mensaje"=>"Ya existe un convenio activo", "error"=>true];
-            }
+                $verifica=Convenio::where('id_info_notifica',$request->idnot_conv)
+                ->where('estado','Activo')
+                ->first();
+                if(!is_null($verifica)){
+                    return ["mensaje"=>"Ya existe un convenio activo", "error"=>true];
+                }
 
-            $esta_coact=InfoCoa::where('id_info_notifica',$request->idnot_conv)
-            ->first();
-            if(!is_null($esta_coact)){
-                return ["mensaje"=>"Ya existe un proceso de coactiva inicializado", "error"=>true];
-            }
-            
-        
-            $total_deuda=0;
-            
-            //******BUSQUEDA DE DEUDAS PREDIALES URBANAS********************************* */
-
-            $verifica=DataNotifica::where('id_info_notifica',$request->idnot_conv)
-            ->select('num_titulo')
-            ->first();
-            if(is_null($verifica->num_titulo)){
-              
-                $obtenerLiquidacion=DataNotifica::where('id_info_notifica',$request->idnot_conv)
-                ->select('id', 'id_liquidacion')
-                ->get();
+                $esta_coact=InfoCoa::where('id_info_notifica',$request->idnot_conv)
+                ->first();
+                if(!is_null($esta_coact)){
+                    return ["mensaje"=>"Ya existe un proceso de coactiva inicializado", "error"=>true];
+                }
                 
-                foreach($obtenerLiquidacion as $data){
+            
+                $total_deuda=0;
                 
-                    $buscaLiquidacion=PsqlLiquidacion::where('id',$data->id_liquidacion)
-                    ->select('id_liquidacion')
-                    ->first();
+                //******BUSQUEDA DE DEUDAS PREDIALES URBANAS********************************* */
+
+                $verifica=DataNotifica::where('id_info_notifica',$request->idnot_conv)
+                ->select('num_titulo')
+                ->first();
+                if(is_null($verifica->num_titulo)){
+                
+                    $obtenerLiquidacion=DataNotifica::where('id_info_notifica',$request->idnot_conv)
+                    ->select('id', 'id_liquidacion')
+                    ->get();
                     
-                    if(!is_null($buscaLiquidacion)){
-                        $data->num_titulo=$buscaLiquidacion->id_liquidacion;
-                        $data->save();
+                    foreach($obtenerLiquidacion as $data){
+                    
+                        $buscaLiquidacion=PsqlLiquidacion::where('id',$data->id_liquidacion)
+                        ->select('id_liquidacion')
+                        ->first();
+                        
+                        if(!is_null($buscaLiquidacion)){
+                            $data->num_titulo=$buscaLiquidacion->id_liquidacion;
+                            $data->save();
+                        }
                     }
                 }
-            }
 
-            $dataNoti=DataNotifica::where('id_info_notifica',$request->idnot_conv)
-            ->whereNotNull('id_liquidacion') // SI TENGO GUARDADO EL CAMPO ID_LIQUIDACION
-            ->pluck('num_titulo')                
-            ->toArray();
-                
-            if(count($dataNoti)> 0){
-                $total=$this->tituloCreditoUrb($dataNoti);
-            
-                foreach($total['data']['DatosLiquidaciones'] as $data){
-                    $total_deuda=$total_deuda + $data[0]->total_complemento;
-                }
-            }
+                $dataNoti=DataNotifica::where('id_info_notifica',$request->idnot_conv)
+                ->whereNotNull('id_liquidacion') // SI TENGO GUARDADO EL CAMPO ID_LIQUIDACION
+                ->pluck('num_titulo')                
+                ->toArray();
                     
-            //******BUSQUEDA DE DEUDAS PREDIALES RURALES********************************* */
-
-            $dataNoti=DataNotifica::where('id_info_notifica',$request->idnot_conv)
-            ->whereNull('id_liquidacion') // SI NO REGISTRE EL CAMPO ID_LIQUIDACION
-            ->pluck('num_titulo')
-            
-            ->toArray();
-            if(count($dataNoti)> 0){
-                $total=$this->tituloCreditoRural($dataNoti);
-
-                foreach($total['data']['DatosLiquidaciones'] as $data){
-                    $total = $data[0]->total_pagar ? str_replace(',', '', $data[0]->total_pagar) : 0;
-                    $total_deuda=$total_deuda + $total;
+                if(count($dataNoti)> 0){
+                    $total=$this->tituloCreditoUrb($dataNoti);
+                
+                    foreach($total['data']['DatosLiquidaciones'] as $data){
+                        $total_deuda=$total_deuda + $data[0]->total_complemento;
+                    }
                 }
-            }          
+                        
+                //******BUSQUEDA DE DEUDAS PREDIALES RURALES********************************* */
 
-            //*****COMPROBACION DEL QUE ELVALOR NOTIFICADO NO HAYA CAMBIADDO AL INICCIARLIZAR EL PROCESO DE COACTICA */
+                $dataNoti=DataNotifica::where('id_info_notifica',$request->idnot_conv)
+                ->whereNull('id_liquidacion') // SI NO REGISTRE EL CAMPO ID_LIQUIDACION
+                ->pluck('num_titulo')
+                
+                ->toArray();
+                if(count($dataNoti)> 0){
+                    $total=$this->tituloCreditoRural($dataNoti);
 
-            $total_deuda = (float) $total_deuda;
-            $valorAdeudado = (float) $request->valor_adeudado;
-            if(round($total_deuda,2) != round($valorAdeudado,2)){
-                return [
-                    "mensaje" => "El valor adeudado actual ha cambiado a $" . number_format($total_deuda,2),
-                    "error" => true
-                ];
-            }
+                    foreach($total['data']['DatosLiquidaciones'] as $data){
+                        $total = $data[0]->total_pagar ? str_replace(',', '', $data[0]->total_pagar) : 0;
+                        $total_deuda=$total_deuda + $total;
+                    }
+                }          
 
-            //**********REGISTRO DEL CONVENIO************************************** */
+                //*****COMPROBACION DEL QUE ELVALOR NOTIFICADO NO HAYA CAMBIADDO AL INICCIARLIZAR EL PROCESO DE COACTICA */
 
-            $guarda=new Convenio();
-            $guarda->id_info_notifica=$request->idnot_conv;
-            $guarda->valor_adeudado = (float) $request->valor_adeudado; // Convertir a float
-            $guarda->cuota_inicial = (float) $request->cuota_inicial; // Convertir a float
-            $guarda->numero_cuotas=$request->num_cuotas;
-            $guarda->f_inicio=$request->f_ini;
-            $guarda->f_fin=$request->f_fin;
-            $guarda->usuario_registra=auth()->user()->persona->apellidos." ".auth()->user()->persona->nombres;
-            $guarda->fecha_registra=date('Y-m-d H:i:s');
-            $guarda->estado='Activo';
-            $guarda->estado_pago='Debe';
-            $guarda->valor_cancelado=0;
-            $guarda->save();
+                $total_deuda = (float) $total_deuda;
+                $valorAdeudado = (float) $request->valor_adeudado;
+                if(round($total_deuda,2) != round($valorAdeudado,2)){
+                    return [
+                        "mensaje" => "El valor adeudado actual ha cambiado a $" . number_format($total_deuda,2),
+                        "error" => true
+                    ];
+                }
 
-            $fecha_ini = Carbon::parse($request->fecha_ini);
-            for($i=0; $i<$request->num_cuotas; $i++){
-                if($i==0){
+                //**********REGISTRO DEL CONVENIO************************************** */
+
+                $guarda=new Convenio();
+                $guarda->id_info_notifica=$request->idnot_conv;
+                $guarda->valor_adeudado = (float) $request->valor_adeudado; // Convertir a float
+                $guarda->cuota_inicial = (float) $request->cuota_inicial; // Convertir a float
+                $guarda->numero_cuotas=$request->num_cuotas;
+                $guarda->f_inicio=$request->f_ini;
+                $guarda->f_fin=$request->f_fin;
+                $guarda->usuario_registra=auth()->user()->persona->apellidos." ".auth()->user()->persona->nombres;
+                $guarda->fecha_registra=date('Y-m-d H:i:s');
+                $guarda->estado='Activo';
+                $guarda->estado_pago='Debe';
+                $guarda->valor_cancelado=0;
+                $guarda->save();
+
+                $fecha_ini = Carbon::parse($request->fecha_ini);
+                for($i=0; $i<$request->num_cuotas; $i++){
+                    if($i==0){
+                        $cuotas=new CuotaConvenio();
+                        $cuotas->fecha=$guarda->f_inicio;
+                        $cuotas->valor_cuota=(float) $guarda->cuota_inicial ;
+                        $cuotas->estado='Pendiente';
+                        $cuotas->id_convenio=$guarda->id;
+                        $cuotas->cuota_inicial=true;
+                        $cuotas->save();
+                    }
+                    $fechaCuota = $fecha_ini->copy()->addMonthsNoOverflow($i+1);
                     $cuotas=new CuotaConvenio();
-                    $cuotas->fecha=$guarda->f_inicio;
-                    $cuotas->valor_cuota=(float) $guarda->cuota_inicial ;
+                    $cuotas->fecha=$fechaCuota;
+                    $cuotas->valor_cuota=(float) $request->valor_cuotas;
                     $cuotas->estado='Pendiente';
                     $cuotas->id_convenio=$guarda->id;
-                    $cuotas->cuota_inicial=true;
                     $cuotas->save();
                 }
-                $fechaCuota = $fecha_ini->copy()->addMonthsNoOverflow($i+1);
-                $cuotas=new CuotaConvenio();
-                $cuotas->fecha=$fechaCuota;
-                $cuotas->valor_cuota=(float) $request->valor_cuotas;
-                $cuotas->estado='Pendiente';
-                $cuotas->id_convenio=$guarda->id;
-                $cuotas->save();
-            }
 
-            $crearDocumentos=$this->pdfConvenio($guarda->id);
-            if($crearDocumentos['error']==true){
-                return ["mensaje"=>"Ocurrio un error al crear los documentos ".$crearDocumentos['mensaje'], "error"=>true];
-            }
+                $crearDocumentos=$this->pdfConvenio($guarda->id);
+                if($crearDocumentos['error']==true){
+                    return ["mensaje"=>"Ocurrio un error al crear los documentos ".$crearDocumentos['mensaje'], "error"=>true];
+                }
 
-            return ["mensaje"=>"Informacion registrada exitosamente", "error"=>false];
-            
-        } catch (\Exception $e) {
-            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e->getMessage(). " Linea => ".$e->getLine(), "error"=>true];
-        }
+                DB::connection('pgsql')->commit();
+
+                return ["mensaje"=>"Informacion registrada exitosamente", "error"=>false];
+                
+            } catch (\Exception $e) {
+                DB::connection('pgsql')->rollBack();
+                return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e->getMessage(). " Linea => ".$e->getLine(), "error"=>true];
+            }
     }
 
     public function guardarPagoNot(Request $request){
@@ -3071,6 +3157,7 @@ class NotificacionesController extends Controller
 
             //UNIMOS AMBAS DATA (URBANA Y RURAL)
             $todo = $consulta["resultado"]->merge($consulta1["resultado"]);
+            
             $listado_final=[];
             foreach ($todo as $key => $item){   
                 //dd($item);
@@ -3083,7 +3170,12 @@ class NotificacionesController extends Controller
                     $ci_ruc=$item->ci_ruc;
                 }else{
                     $nombre_persona=$item->nombre_per;
-                    $ci_ruc=$item->num_ident;
+                    if(isset($item->num_ident)){
+                        $ci_ruc=$item->num_ident;
+                    }else{
+                        $ci_ruc=$item->ci_ruc;
+                    }
+                        
                 }
 
                 if(isset($item->num_predio)){    // SI VIENE NUM_PREDIO ES URBANA Y AGRUPAMOS POR ESO (MATRICULA INMOBILIARIA)         

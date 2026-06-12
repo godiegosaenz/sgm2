@@ -131,9 +131,13 @@ function llenar_tabla_notificacion(){
 
 				$('#tableCoactiva').append(`<tr>
                                                 <td style="width:3%; text-align:center; vertical-align:middle">
-                                                   <button type="button" class="btn btn-success btn-sm" onclick="detalleNot('${item.notificacion.id}')">
+                                                    <button type="button" class="btn btn-success btn-sm" onclick="detalleNot('${item.notificacion.id}')">
                                                         <i class="fa fa-eye"></i>
-                                                    </button>                                               
+                                                    </button>  
+                                                    
+                                                     <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProceso('${item.id}','${item.num_proceso}')">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>  
                                                 </td>
 
                                                 <td style="width:33%; text-align:letf; vertical-align:middle">
@@ -181,6 +185,89 @@ function llenar_tabla_notificacion(){
 		$("#tableCoactiva tbody").html(`<tr><td colspan="${num_col}" style="text-align:center">Se produjo un error, por favor intentelo más tarde</td></tr>`);
     });
 }
+
+function eliminarProceso(id, proceso){
+    $('#idproceso_elimina').val(id)
+    $('#motivo_anula').val('')
+    $('#modalAnula').modal('show')
+    $("#titulo_anula_proceso").html('')
+    $('#titulo_anula_proceso').html('Anular Proceso # '+proceso)
+   
+}
+
+function anularProceso(){
+    let motivo_anula=$('#motivo_anula').val()
+    if(motivo_anula=="" || motivo_anula==null){
+        alertNotificar("Debe ingresar el motivo","error")
+        $('#motivo_anula').focus()
+        return
+    }
+
+    swal({
+        title: '¿Desea anular el proceso?',
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonClass: "btn-danger",
+        confirmButtonText: "Si, continuar",
+        cancelButtonText: "No, cancelar",
+        closeOnConfirm: false,
+        closeOnCancel: false
+    },
+    function(isConfirm) {
+        if (isConfirm) { 
+            $("#formAnulaProceso").submit()
+        }
+        sweetAlert.close();  
+    })
+}
+
+$("#formAnulaProceso").submit(function(e){
+    e.preventDefault();
+        
+    vistacargando("m","Espere por favor")
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    
+
+    let tipo="POST"
+    let url_form="anula-proceso"
+    
+    var FrmData = new FormData(this);
+
+    $.ajax({
+            
+        type: tipo,
+        url: url_form,
+        method: tipo,             
+        data: FrmData,      
+        
+        contentType:false,
+        cache:false,
+        processData:false, 
+
+        success: function(data){
+            vistacargando("");                
+            if(data.error==true){
+                alertNotificar(data.mensaje,'error');
+                return;                      
+            }
+        
+            alertNotificar(data.mensaje,"success");
+            $('#modalAnula').modal('hide')
+            llenar_tabla_notificacion()
+                            
+        }, error:function (data) {
+            console.log(data)
+
+            vistacargando("");
+            alertNotificar('Ocurrió un error','error');
+        }
+    });
+        
+})
 
 function cargar_estilos_datatable_con(idtabla){
 	$("#"+idtabla).DataTable({

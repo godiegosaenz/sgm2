@@ -839,10 +839,14 @@ function llenar_tabla_cuota(id){
 globalThis.IdConvenio=0
 globalThis.Urbano_Rural=""
 globalThis.Noti_o_Proceso=""
-function detalleConvenio(id, predio, not_proceso, contribuyente){
+globalThis.Contribuyente_selecc=""
+
+function detalleConvenio(id, predio, not_proceso, contribuyente, realiza_pago=null){
     IdConvenio=id
     Urbano_Rural=predio
     Noti_o_Proceso=not_proceso
+    Contribuyente_selecc=contribuyente
+
     $('#boton_titulos').html('')
     $('#tableDetConvenio tbody').html('')
     $('input[type="checkbox"]').prop('checked', false);
@@ -910,6 +914,7 @@ function detalleConvenio(id, predio, not_proceso, contribuyente){
                 icono=`<span class="badge-medidas"> <i class="fa fa-credit-card" style="font-size: 16px;"></i> Pendiente</span>`;
                 }else if(item.estado=="Abonada"){
                     icono=`<span class="badge-cancelado"> <i class="fa fa-archive" style="font-size: 16px;"></i> Abonada </span>`;
+                    disabled2=''
                 }
                 
                 $('#tableDetConvenio').append(`<tr>
@@ -930,29 +935,40 @@ function detalleConvenio(id, predio, not_proceso, contribuyente){
                                                 
                                                    
 
-                                                     <td style="width:15%; text-align:center; vertical-align:middle">
+                                                     <td style="width:8%; text-align:center; vertical-align:middle">
                                                         
                                                         ${item.valor_cuota}                                                          
                                                     </td>
 
-                                                     <td style="width:15%; text-align:center; vertical-align:middle">
+                                                     <td style="width:7%; text-align:center; vertical-align:middle">
                                                         
                                                         ${interes}                                                          
                                                     </td>
 
-                                                     <td style="width:15%; text-align:center; vertical-align:middle">
+                                                     <td style="width:10%; text-align:center; vertical-align:middle">
                                                         
                                                         ${item.saldo_abono === null ? '0.00' : item.saldo_abono}                                                          
                                                     </td>
-                                                    <td style="width:15%; text-align:center; vertical-align:middle">
+                                                    <td style="width:10%; text-align:center; vertical-align:middle">
                                                         ${cuota}                                                  
+                                                    </td>
+                                                    <td style="width:12%; text-align:center; vertical-align:middle">
+                                                        ${item.fecha_cobro === null ? '' :item.fecha_cobro}
+                                                    </td>
+                                                    <td style="width:10%; text-align:center; vertical-align:middle">
+                                                        ${item.valor_cobrado === null ? '' :item.valor_cobrado}
+                                                    </td>
+                                                    <td style="width:10%; text-align:center; vertical-align:middle">
+                                                        ${item.saldo_pendiente === null ? '' :item.saldo_pendiente}
                                                     </td>
                                                     <td style="width:20%; text-align:center; vertical-align:middle">
                                                         ${icono}                                                     
                                                     </td>
 
                                                      <td style="width:5%; text-align:center; vertical-align:middle">
-                                                        <i class="fa fa-file-pdf-o ${disabled2}" style="color:green" onclick="verPdfCuota(${item.id})"></i>                                                     
+                                                        <i class="fa fa-file-pdf-o ${disabled2}" style="color:green" onclick="verPdfCuota(${item.id})"></i> 
+                                                        
+                                                        <i class="fa fa-cc-paypal ${disabled2}" style="color:blue" onclick="verPdfCuota(${item.id})"></i> 
                                                     </td>
                                                 
                                             </tr>`);
@@ -960,7 +976,10 @@ function detalleConvenio(id, predio, not_proceso, contribuyente){
             vistacargando("")
 
             console.log(valor_final_paga)
-            $('#modalDetalleConvenio').modal('show')
+            if(realiza_pago==null){
+                $('#modalDetalleConvenio').modal('show')
+            }
+               
             $('#valor_cancelado').html(total_cancelado.toFixed(2))
             $('#valor_final').html(valor_final_paga.toFixed(2))
             $('#valor_pendiente').html(valor_pend.toFixed(2))
@@ -976,7 +995,7 @@ function detalleConvenio(id, predio, not_proceso, contribuyente){
         $('#convenio_contr').html($('.titulo_modal').html())
         $('#convenio_deuda').html(data.resultado[0].convenio.valor_adeudado)
 
-        $('#fecha_liquidacion').html('Titulos asociados al convenio <br> Liquidacion Generada al '+data.fechaFormateada)
+        $('#fecha_liquidacion').html('Titulos asociados al convenio <br> Liquidacion Generada al '+data.fecha_formateada)
 
         $('#boton_titulos').append(`<i class="fa fa-file-pdf" style="color:blue" onclick="verTitulos('S')"></i>`)
 
@@ -1109,9 +1128,11 @@ function cobrarCovenio(){
     total_seleccionado_cobra=total_seleccionado_cobra*1
     total_seleccionado_cobra=total_seleccionado_cobra.toFixed(2)
 
+    let valor_final=$('#valor_final').html()
+
     console.log(parseFloat(total_recibido))
     console.log(parseFloat(total_seleccionado_cobra))
-    if(parseFloat(total_recibido) < parseFloat(total_seleccionado_cobra)){
+    /*if(parseFloat(total_recibido) < parseFloat(total_seleccionado_cobra)){
       
         swal({
             title: "Valor inválido",
@@ -1120,7 +1141,7 @@ function cobrarCovenio(){
             type: "warning"
         });
         return
-    }
+    }*/
     
     swal({
         title: '¿Desea realizar el pago?',
@@ -1157,6 +1178,7 @@ function cobrarCovenio(){
                     total_seleccionado_cobra:total_seleccionado_cobra,
                     Urbano_Rural:Urbano_Rural,
                     Noti_o_Proceso:Noti_o_Proceso, 
+                    valor_final:valor_final, 
                    
                 },
                 success: function(data){
@@ -1168,10 +1190,13 @@ function cobrarCovenio(){
                     }
 
                     alertNotificar(data.mensaje,'success');
-                    $('#modalDetalleConvenio').modal('hide')
-                    llenar_tabla_notificacion()
-                    verpdf(data.pdf)
-                    
+                    // $('#modalDetalleConvenio').modal('hide')
+                    //llenar_tabla_notificacion()
+                   // verpdf(data.pdf)
+
+                 
+                  
+                    detalleConvenio(IdConvenio, Urbano_Rural, Noti_o_Proceso, Contribuyente_selecc, realiza_pago=1)
                 }, error:function (data) {
                     vistacargando("");
                     alertNotificar('Ocurrió un error','error');
@@ -1596,7 +1621,7 @@ function verTitulos(mostrar){
                 let descuento=""
                 let total_a_pagar=""
                 let estado=""
-                if(Urbano_Rural=="Urbano"){
+                if(item[0].id_liquidacion!=undefined){
                     num_titulo=item[0].id_liquidacion
                     subtotal=item[0].total_pago
                     int=item[0].interes
@@ -1647,7 +1672,7 @@ function verTitulos(mostrar){
                                                 </td>
 
                                                 <td style="width:10%; text-align:center; vertical-align:middle">
-                                                    ${descuento}
+                                                    ${descuento == null ? '0.00' :descuento}
                                                 </td>
                                                 
                                                 <td style="width:10%; text-align:center; vertical-align:middle">

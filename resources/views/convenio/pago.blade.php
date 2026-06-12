@@ -719,14 +719,17 @@
                                             
                                         </th>
                                         <th style="text-align:center"># Cuota</th>    
-                                        <th style="text-align:center">Fecha</th>     
+                                        <th style="text-align:center">Fecha Convenio</th>     
                                                                         
                                         <th style="text-align:center">Valor Convenio</th>
-                                        <th style="text-align:center">Valor Interes</th>
-                                        <th style="text-align:center">Valor Abono</th>    
+                                        <th style="text-align:center">Interes</th>
+                                        <th style="text-align:center">Saldo a Favor</th>    
                                         <th style="text-align:center">Valor A Pagar</th>
+                                        <th style="text-align:center">Fecha Pago</th>  
+                                        <th style="text-align:center">Valor Pagado</th>  
+                                        <th style="text-align:center">Saldo Pendiente</th>  
                                         <th style="text-align:center">Estado</th>  
-                                        <th style="text-align:center">Archivo</th>                                             
+                                        <th style="text-align:center"></th>                                             
                                         
                                         
                                         

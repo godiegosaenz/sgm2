@@ -59,7 +59,7 @@ class CoactivaController extends Controller
                     $query->where('id',$info);
                 }
             })
-
+            ->where('estado_proceso','!=',5)
             // ->whereBetween('fecha_registra', [$inicio.' 00:00:00', $fin.' 23:59:59'])
             ->select('*')
             ->selectRaw("CURRENT_DATE - DATE(fecha_registra) AS dias_transcurridos")
@@ -321,10 +321,16 @@ class CoactivaController extends Controller
             // );
             // dd($formato);
 
+            $fecha_hoy=date('Y-m-d');
+            setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES@euro', 'es_ES', 'esp');
+            $fecha_timestamp = strtotime($fecha_hoy);    
+            $fecha_formateada = strftime("%d de %B del %Y", $fecha_timestamp);
+
             return ["resultado"=>$detalle, 
                 // "fechaFormateada"=>$formato->format($fecha), 
+                "fecha_formateada"=>$fecha_formateada,
                 "error"=>false
-                ];
+            ];
 
         } catch (\Exception $e) {
             return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
@@ -1014,6 +1020,50 @@ class CoactivaController extends Controller
          
             return ["resultado"=>$datos, "error"=>false];
 
+        } catch (\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+        }
+    }
+
+    public function anularProceso(Request $request){
+        
+        try{
+            
+            $verifica=Convenio::where('id_info_coact',$request->idproceso_elimina)
+            ->where('estado','Activo')
+            ->first();
+            if(!is_null($verifica)){
+                return ["mensaje"=>"Ya existe un convenio activo, por lo que no se puede anular el proceso", "error"=>true];
+            }
+
+            $verificaMedidas=Medidas::where('id_info_coact',$request->idproceso_elimina)
+            ->where('estado','Activo')
+            ->first();
+            if(!is_null($verificaMedidas)){
+                return ["mensaje"=>"El contribuyente tiene medidas cautelares activas, por lo que no se puede anular el proceso", "error"=>true];
+            }
+
+            $anula=InfoCoa::where('id',$request->idproceso_elimina)->first();
+            if($anula->estado_proceso==4){
+                return ["mensaje"=>"El proceso seleccionado se encuentra cancelado, por lo que no se lo puede anular", "error"=>true];
+            }
+            else if($anula->estado_proceso==5){
+                return ["mensaje"=>"El proceso ya se encuentra anulado ", "error"=>true];
+            }else{
+                $anula->estado_proceso=5;
+                $anula->usuario_elimina=auth()->user()->persona->apellidos." ".auth()->user()->persona->nombres;
+                $anula->fecha_elimina=date('Y-m-d H:i:s');
+                $anula->motivo_anula=$request->motivo_anula;
+                $anula->save();
+
+                $notificacion=InfoNotifica::where('id',$anula->id_info_notifica)->first();
+                $notificacion->estado='Notificado';
+                $notificacion->save();
+
+                return ["mensaje"=>"Informacion anulada exitosamente", "error"=>false];
+            }
+            
+            
         } catch (\Exception $e) {
             return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
         }

@@ -1164,6 +1164,43 @@
         </div>
     </div>
 
+    <div class="modal fade" id="modalAnula" tabindex="-1" aria-labelledby="ContribuyenteModalLabel" aria-hidden="true"
+     data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h2 id="titulo_anula_proceso">Anular Proceso # </h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <form class="" action="" id="formAnulaProceso" name="formAnulaProceso" method="post" enctype="multipart/form-data">
+                    @csrf
+               
+                    <div class="modal-body">
+                        <div class="row">
+
+                            <div class="mb-3">
+                                <label for="cmb_ruc_rep" class="form-label">Motivo</label>
+                                <textarea class="form-control txt_coact" name="motivo_anula" id="motivo_anula" ></textarea>
+                                <input type="hidden" id="idproceso_elimina" name="idproceso_elimina">
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer"> 
+                        <center>
+                                <button class="btn btn-success" type="button" onclick="anularProceso()">Anular</button>                           
+                            
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" >Salir</button>                                 
+                        </center>               
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
     @include('coactiva.modal_subido_coa')
 
    

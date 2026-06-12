@@ -64,7 +64,7 @@ class ConvenioPagoController extends Controller
 
     public function pagaCuota(Request $request)
     {
-       
+        // dd($request->all());
         DB::connection('pgsql')->beginTransaction();
 
         try {
@@ -84,6 +84,9 @@ class ConvenioPagoController extends Controller
                 $cuota_o_abono = $info->estado == "Abonada"
                 ? $info->saldo_abono
                 : $info->valor_cuota;
+
+                // dd($valor_recibido);
+                // dd($cuota_o_abono);
                 
                 $valor_pagar=$info->valor_cuota;
                
@@ -98,10 +101,31 @@ class ConvenioPagoController extends Controller
                     
                     
                 }else{
+                   
                     if($valor_recibido>0){
-                        $info->saldo_abono=(float) $valor_recibido;
-                        $info->valor_cobrado=(float) $info->saldo_abono;
-                        $info->estado='Abonada';
+                        if($info->estado == "Abonada"){
+
+                            $valor_pagar=(float) $info->valor_cuota -  (float) $info->saldo_abono;
+                           
+                            if (round((float)$valor_recibido, 2) == round((float)$valor_pagar, 2)) {
+                                
+                                $info->saldo_abono=null;
+                                $info->valor_cobrado=(float) $info->valor_cuota;
+                                $info->estado='Pagada';
+
+                            }else{
+                                $info->saldo_abono=(float) $valor_recibido;
+                                $info->valor_cobrado=(float) $info->saldo_abono;
+                                $info->estado='Abonada';
+                            }
+                                
+                        }else{
+                            $info->saldo_abono=(float) $valor_recibido;
+                            $info->valor_cobrado=(float) $info->saldo_abono;
+                            $info->estado='Abonada';
+                        }
+
+                        // if($info->)
                     }else{
                         break;
                     }
@@ -109,9 +133,23 @@ class ConvenioPagoController extends Controller
 
                 $info->usuario_cobra=auth()->user()->persona->apellidos." ".auth()->user()->persona->nombres;
                 $info->fecha_cobro=date('Y-m-d H:i:s');
+                
+    
                 $info->save();
 
+                
+                $totalCuotaConvenio = CuotaConvenio::where('id_convenio', $request->IdConvenio)
+                ->whereIn('estado',['Pagada','Abonada'])
+                ->sum('valor_cobrado');
+
+                $info->saldo_pendiente=round((float)$request->valor_final, 2) - round((float)$totalCuotaConvenio, 2);
+                $info->save();
+
+
                 $valor_recibido=(float) $valor_recibido - (float) $valor_pagar;
+
+                
+
             }
             
             $actualizaConvenio=$this->actualizaConvenio($request->IdConvenio);
@@ -184,7 +222,8 @@ class ConvenioPagoController extends Controller
 
             return [
                 "mensaje" => "OK",
-                "error" => false
+                "error" => false,
+                
             ];
 
         } catch (\Exception $e) {
@@ -198,7 +237,7 @@ class ConvenioPagoController extends Controller
         }
     }
 
-    public function pdfPagoCuota($idcuota,$lugar,$noti_proc){       
+    public function pdfPagoCuota2($idcuota,$lugar,$noti_proc){       
         try {
             $nombrePDF="Convenio_Cuota_".$idcuota.".pdf";
             
@@ -311,7 +350,8 @@ class ConvenioPagoController extends Controller
           
             $total=0;
             foreach($dataTitulo['resultado'] as $data){
-                if($lugar=='Urbano'){
+                // dd($data);
+                if(isset($data[0]->id_liquidacion)){
                     $total=$total + $data[0]->total_complemento;
                 }else{
                     $total=$total + $data[0]->total_pagar;
@@ -341,6 +381,112 @@ class ConvenioPagoController extends Controller
                 "clave"=>$clave, 
                 "num_cuota"=>$num_cuota, 
                 "fecha_formateada"=>$fecha_formateada
+            ]);
+
+            // return $pdf->stream($nombrePDF);
+
+            $estadoarch = $pdf->stream();
+            $disco="disksCoactiva";
+            \Storage::disk($disco)->put(str_replace("", "",$nombrePDF), $estadoarch);
+            $exists_destino = \Storage::disk($disco)->exists($nombrePDF);
+            if($exists_destino){
+                return ["mensaje"=>'Documento generado exitosamente', "error"=>false, "pdf"=>$nombrePDF];
+            }else{
+                return [
+                    'error'=>true,
+                    'mensaje'=>'No se pudo crear el documento'
+                ];
+            }
+
+        }catch (\Exception $e) {
+            return [
+                'error'=>true,
+                'mensaje'=>'Ocurrio un error '.$e->getLine().' Mensaje '.$e->getMessage(),
+            ];
+        }
+    }
+
+    public function pdfPagoCuota($idcuota,$lugar,$noti_proc){       
+        try {
+            $nombrePDF="Convenio_Cuota_".$idcuota.".pdf";
+            
+            $disco="disksCoactiva";
+            $exists_destino = \Storage::disk($disco)->exists($nombrePDF);
+            if($exists_destino){
+                return ["pdf"=>$nombrePDF, "error"=>false];
+            }
+
+            $dataConvenio=Convenio::with('notificacion','coactiva','cuotas')
+            ->whereHas('cuotas', function($query) use($idcuota) { 
+               $query->where('id',$idcuota);    
+            })
+            ->first();
+            if(!is_null($dataConvenio->notificacion)){
+                $contr=$dataConvenio->notificacion->ente->apellidos." ".$dataConvenio->notificacion->ente->nombres;
+                $cedula=$dataConvenio->notificacion->ente->ci_ruc;}
+            else{
+                $contr=$dataConvenio->coactiva->notificacion->ente->apellidos." ".$dataConvenio->coactiva->notificacion->ente->nombres;
+                $cedula=$dataConvenio->coactiva->notificacion->ente->ci_ruc;
+            }    
+                    
+            $cuota = $dataConvenio->cuotas->firstWhere('id', $idcuota);
+           
+            $num_cuota="";
+            $recaudador="";
+            foreach ($dataConvenio->cuotas as $i=> $cuota_data) {
+                if($cuota_data->id==$idcuota){
+                    $num_cuota=$cuota->cuota_inicial === true ? 'Inicial': $i; 
+                    $recaudador=$cuota->usuario_cobra;
+                }
+            }
+          
+            $idConvenio=$dataConvenio->id;
+           
+            $dataTitulo=$this->coactiva->obtenerTitulosConvenio($idConvenio, $lugar, $noti_proc);
+           
+            $clave=[];
+            $total=0;
+            foreach($dataTitulo['resultado'] as $data){
+                
+                if(isset($data[0]->id_liquidacion)){
+                    $total=$total + $data[0]->total_complemento;
+                    array_push($clave, $data[0]->num_predio);
+                }else{
+                    $total=$total + $data[0]->total_pagar;
+                    array_push($clave, $data[0]->clave);
+                }
+
+               
+            }
+
+            $clave = array_unique($clave);
+
+          
+            $interes=0;
+            
+            if (round((float)$dataConvenio->valor_adeudado, 2) < round((float)$total, 2)) {
+                $interes=round((float)$total,2) - round((float)$dataConvenio->valor_adeudado,2);
+                
+            }
+            
+          
+            $fecha_hoy=date('Y-m-d');
+            setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES@euro', 'es_ES', 'esp');
+            $fecha_timestamp = strtotime($fecha_hoy);    
+            $fecha_formateada = strftime("%d de %B del %Y", $fecha_timestamp);
+
+            
+            $pdf = \PDF::loadView('reportes.pago_cuota_convenio', 
+                ["data"=>$dataConvenio,
+                "interes"=>round((float)$interes,2), 
+                "total"=>$total, 
+                "cuota"=>$cuota, 
+                "contr"=>$contr, 
+                "cedula"=>$cedula,
+                "clave"=>$clave, 
+                "num_cuota"=>$num_cuota, 
+                "fecha_formateada"=>$fecha_formateada,
+                "recaudador"=>$recaudador
             ]);
 
             // return $pdf->stream($nombrePDF);

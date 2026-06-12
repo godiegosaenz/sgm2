@@ -563,6 +563,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('contribuyentes-procesos-coactiva', [CoactivaController::class, 'vistaFiltra'])->name('coactiva.filtra_coactiva');
     Route::post('pago-coactivas-filtra', [CoactivaController::class, 'tablaCoactivaFiltra']);
     Route::get('buscarContribuyenteCoactivados', [CoactivaController::class, 'buscarContribuyente']);
+    Route::post('anula-proceso', [CoactivaController::class, 'anularProceso']);
     Route::get('detalle-urb/{id}', [NotificacionesController::class, 'consultarTitulosUrb']);
 
 
