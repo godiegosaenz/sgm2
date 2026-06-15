@@ -761,6 +761,30 @@
                             </table>
 
                         </div>
+
+                        <div class="col-md-12 mt-3 row listado_titulo_cuota" style="display:none">
+                            <center><h4 id="numero_cuota_pagada"></h4></center>
+                            <table class="table table-bordered table-hover"
+                                id="tableTitulo_Pagados"
+                                style="width:100%">
+                                <thead>
+                                    <tr> 
+                                        <th style="text-align:center">Titulo</th>    
+                                        <th style="text-align:center">Subtotal</th>     
+                                        <th style="text-align:center">Intereses</th>                                    
+                                        <th style="text-align:center">Coactiva</th>
+                                        <th style="text-align:center">Recargo</th>                                            
+                                        <th style="text-align:center">Descuento</th>   
+                                        <th style="text-align:center">Total</th>   
+                                        <th style="text-align:center">Estado</th>   
+                                        
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodyTitulo_"></tbody>
+                            </table>
+
+                        </div>
+
                     </div>
                 </div>
                 <div class="col-md-12 salir">

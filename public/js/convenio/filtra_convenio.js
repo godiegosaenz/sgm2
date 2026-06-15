@@ -917,7 +917,7 @@ function detalleConvenio(id, predio, not_proceso, contribuyente, realiza_pago=nu
                     disabled2=''
                 }
                 
-                $('#tableDetConvenio').append(`<tr>
+                $('#tableDetConvenio').append(`<tr id="${item.id}">
 
                                                     <td  style="width:5%; text-align:center; vertical-align:middle">
                                                         <input type="checkbox" ${disabled} name="predio_valor" id="predio_valor" value="${valor_final}" data-valor-cobrado="${item.valor_cuota}" data-orden="${cont}" data-idcuota="${item.id}"  >                
@@ -968,7 +968,7 @@ function detalleConvenio(id, predio, not_proceso, contribuyente, realiza_pago=nu
                                                      <td style="width:5%; text-align:center; vertical-align:middle">
                                                         <i class="fa fa-file-pdf-o ${disabled2}" style="color:green" onclick="verPdfCuota(${item.id})"></i> 
                                                         
-                                                        <i class="fa fa-cc-paypal ${disabled2}" style="color:blue" onclick="verPdfCuota(${item.id})"></i> 
+                                                        <i class="fa fa-cc-paypal ${disabled2}" style="color:blue" onclick="tituloCuota('${item.id}','${IdConvenio}', '${item.cuota_inicial === true ? "Inicial": i} )"></i> 
                                                     </td>
                                                 
                                             </tr>`);
@@ -1023,6 +1023,49 @@ function verPdfCuota(id){
         vistacargando("")
     
     });
+}
+
+function tituloCuota(id_cuota, idconvenio, num_cuota){
+    alert(id_cuota)
+    alert(idconvenio)
+
+     $('#numero_cuota_pagada').html('Cuota #')
+    $('.listado_titulo_cuota').show()
+    $('.listado_titulo').hide()
+    $('.detalle_principal').hide()
+    $('.salir').hide()
+    $('.detalle_btn').show()
+
+    let fila = $('#' + id_cuota);
+
+    if (fila.length > 0) {
+        let datos = [];
+
+        fila.find('td').each(function() {
+            datos.push($(this).text().trim());
+        });
+
+        console.log(datos);
+        return datos;
+    }
+
+    $('#numero_cuota_pagada').html('Cuota # '+num_cuota)
+
+    // vistacargando("m","Espere por favor")
+    // $.get('pdf-pago-convenio/'+id+'/'+Urbano_Rural+'/'+Noti_o_Proceso, function(data){
+    //     vistacargando("")	   
+    //     if(data.error==true){	
+    //     vistacargando("")		
+    //     alertNotificar(data.mensaje,"error");
+    //     return;   
+    // }
+    //     window.location.href='coactiva/documento-descargar/'+data.pdf
+    // }).fail(function(){
+    //     vistacargando("")
+    
+    // });
+
+
 }
 
 // Función para seleccionar/deseleccionar todas las filas
@@ -1598,7 +1641,12 @@ function verTitulos(mostrar){
         $("#tableTitulo tbody").html('');
         $('#tableTitulo').DataTable().destroy();
         $('#tableTitulo tbody').empty(); 
-    
+
+
+        $("#tableTitulo_Pagados tbody").html('');
+        $('#tableTitulo_Pagados').DataTable().destroy();
+        $('#tableTitulo_Pagados tbody').empty(); 
+
       
         $.get('ver-titulos-convenio/'+IdConvenio+'/'+Urbano_Rural+'/'+Noti_o_Proceso, function(data){
             console.log(data)
@@ -1650,7 +1698,7 @@ function verTitulos(mostrar){
                 }
                 total_final=parseFloat(total_final) + parseFloat(total_a_pagar);
               
-                $('#tableTitulo').append(`<tr>
+                $('#tableTitulo').append(`<tr id="${num_titulo}">
                                                 <td style="width:15%; text-align:center; vertical-align:middle">
                                                     ${num_titulo}                                              
                                                 </td>
@@ -1698,6 +1746,88 @@ function verTitulos(mostrar){
 
             let valor_pendiente= parseFloat(total_final) - parseFloat(total_cancelado) 
             // $('#valor_pendiente').html(valor_pendiente.toFixed(2))
+
+
+            $("#tableTitulo_Pagados tbody").html('');
+            let total_final1=0
+            let total_cancelado1=0
+            $.each(data.resultado,function(i, item){
+                let num_titulo=""
+                let subtotal=""
+                let int=""
+                let recargos=""
+                let descuento=""
+                let total_a_pagar=""
+                let estado=""
+                if(item[0].id_liquidacion!=undefined){
+                    num_titulo=item[0].id_liquidacion
+                    subtotal=item[0].total_pago
+                    int=item[0].interes
+                    recargos=item[0].recargos
+                    descuento=item[0].desc
+                    total_a_pagar=item[0].total_complemento
+                    estado=item[0].estado_liquidacion
+                    console.log("estado "+estado)
+                    if(estado==1){
+                        total_cancelado1=parseFloat(total_cancelado1) + parseFloat(total_a_pagar);
+                    }
+                }else{
+                    num_titulo=item[0].CarVe_NumTitulo
+                    subtotal=item[0].CarVe_ValorEmitido
+                    int=item[0].intereses
+                    recargos=item[0].recargo
+                    descuento="0.00"
+                    total_a_pagar=item[0].total_pagar
+                    estado=item[0].CarVe_Estado
+                    if(estado=="C"){
+                        estado=1
+                        total_cancelado1=parseFloat(total_cancelado1) + parseFloat(total_a_pagar);
+                    }else{
+                        estado=0
+                    }
+                }
+                total_final1=parseFloat(total_final1) + parseFloat(total_a_pagar);
+              
+                $('#tableTitulo_Pagados').append(`<tr id="${num_titulo}">
+                                                <td style="width:15%; text-align:center; vertical-align:middle">
+                                                    ${num_titulo}                                              
+                                                </td>
+
+                                                <td style="width:10%; text-align:center; vertical-align:middle">
+                                                    ${subtotal}
+                                                </td>
+
+                                                <td style="width:10%; text-align:center; vertical-align:middle">
+                                                    ${int}
+                                                </td>
+                                                
+                                                <td style="width:10%; text-align:center; vertical-align:middle">
+                                                    0.00                                               
+                                                </td>
+
+                                                <td style="width:10%; text-align:center; vertical-align:middle">
+                                                    ${recargos == null ? '0.00' : recargos}
+                                                </td>
+
+                                                <td style="width:10%; text-align:center; vertical-align:middle">
+                                                    ${descuento == null ? '0.00' :descuento}
+                                                </td>
+                                                
+                                                <td style="width:10%; text-align:center; vertical-align:middle">
+                                                    ${total_a_pagar}                                               
+                                                </td>
+
+                                                <td style="width:10%; text-align:center; vertical-align:middle">
+                                                    <input type="checkbox"
+                                                        class="chkEstado"
+                                                        data-id="${item.id}"}>                                           
+                                                </td>
+                                                
+                                            
+                                        </tr>`);
+            })
+            // alert(total_final)
+            cargar_estilos_datatable_con('tableTitulo_Pagados')
             
         }).fail(function(){
             
@@ -1708,6 +1838,7 @@ function verTitulos(mostrar){
     }else{
         $('.detalle_principal').hide()
         $('.listado_titulo').show()
+        $('.listado_titulo_cuota').hide()
         $('.salir').hide()
         $('.detalle_btn').show()
     }
@@ -1719,4 +1850,5 @@ function volverDetalle(){
 
     $('.detalle_principal').show()
     $('.listado_titulo').hide()
+    $('.listado_titulo_cuota').hide()
 }

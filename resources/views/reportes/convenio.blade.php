@@ -220,7 +220,7 @@
     <div>
         <div class="titulo" style="font-size:13px !important">
             <br>
-            <p style="margin: 0; line-height: 0.8; text-align:right">RESOLUCION -GADMCSV-DF-TES-{{ str_pad($num_proceso, 4, "0", STR_PAD_LEFT) }}-{{ date('Y') }}</p>
+            <p style="margin: 0; line-height: 0.8; text-align:right">RESOLUCION GADMCSV-DF-TES-{{ str_pad($num_proceso, 4, "0", STR_PAD_LEFT) }}-{{ date('Y') }}</p>
             <p style="margin: 0; line-height: 1.2;text-align:left">FACILIDADES DE PAGO. <br> TESORERA MUNICIPAL </p>
             <p style="margin: 0; line-height: 1.2;text-align:center">CONSIDERANDO</p>
         </div>
