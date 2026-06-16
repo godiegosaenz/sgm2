@@ -203,7 +203,7 @@ function cargar_estilos_datatable_con(idtabla){
 	$('.datatable_wrapper').children('.row').css('overflow','inherit !important');
 
 	$('.table-responsive').css({'padding-top':'12px','padding-bottom':'12px', 'border':'0', 'overflow-x':'inherit'});	
-}
+} 
 
 $('#cmb_contribuyente').select2({
     ajax: {
@@ -447,6 +447,8 @@ function detalleNot(id){
             }else{
                 ced_ruc=data.resultado.num_ident
             }
+
+            $('#cedula_ruc_contr').val(ced_ruc)
             
           
             $('#nombre_notificador').html(data.resultado.profesional)
@@ -948,6 +950,9 @@ $("#FormConvenio").submit(function(e){
     let num_cuotas=$('#num_cuotas').val()
     let f_ini=$('#f_ini').val()
     let f_fin=$('#f_fin').val()
+    let cedula_ruc=$('#cedula_ruc_contr').val()
+    let correo=$('#correo_contr').val()
+    let telefono=$('#telefono_contr').val()
     let valor_coa=$('.valor_coa').html()
     if(valor_adeudado=="" || valor_adeudado==null){
         alertNotificar("Debe ingresar el valor adeudado","error")
@@ -978,8 +983,29 @@ $("#FormConvenio").submit(function(e){
         $('#f_ini').focus()
         return
     }
+
     if(f_fin=="" || f_fin==null){
         alertNotificar("Debe ingresar la fecha de fin","error")
+        $('#f_fin').focus()
+        return
+    }
+
+    if(cedula_ruc=="" || cedula_ruc==null){
+        alertNotificar("Debe ingresar la cedula o ruc del contribuyente","error")
+        $('#cedula_ruc_contr').focus()
+        return
+    }
+
+   
+
+    if(correo=="" || correo==null){
+        alertNotificar("Debe ingresar el correo electronico del contribuyente","error")
+        $('#f_fin').focus()
+        return
+    }
+
+    if(telefono=="" || telefono==null){
+        alertNotificar("Debe ingresar el numero telefonico del contribuyente","error")
         $('#f_fin').focus()
         return
     }

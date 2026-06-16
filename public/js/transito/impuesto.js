@@ -738,6 +738,7 @@ function capturaInfoPersona(){
     $('#btn_guarda_act_persona').prop('disabled',false)
 
     // vistacargando("m","Espere por favor")
+    // $.get("carga-info-persona/"+ci_ruc, function(data){
     $.get("carga-info-persona/"+ci_ruc, function(data){
         vistacargando("")
         PersonaIdEditar=data.id_persona

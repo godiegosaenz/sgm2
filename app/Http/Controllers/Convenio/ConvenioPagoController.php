@@ -406,6 +406,26 @@ class ConvenioPagoController extends Controller
         }
     }
 
+    public function cuotaTitulo($idcuota){       
+        try {
+            $cuota_titulo=DB::connection('pgsql')
+                ->table('sgm_coactiva.cuota_titulo')
+                ->where('id_cuota',$idcuota)
+                ->get();
+
+            return [
+                'error'=>false,
+                'data'=>$cuota_titulo,
+            ];
+
+        }catch (\Exception $e) {
+            return [
+                'error'=>true,
+                'mensaje'=>'Ocurrio un error '.$e->getLine().' Mensaje '.$e->getMessage(),
+            ];
+        }
+    }
+
     public function pdfPagoCuota($idcuota,$lugar,$noti_proc){       
         try {
             $nombrePDF="Convenio_Cuota_".$idcuota.".pdf";

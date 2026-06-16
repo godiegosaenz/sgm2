@@ -333,7 +333,7 @@
 
             <b>QUINTO.-</b> Verificar el estricto cumplimiento de los pagos parciales que se establecen in esta resolución.<br><br>
 
-            <b>SEXTO.-</b> Notificar al <strong>{{ strtoupper($nombre_persona) }} </strong> con C.I. <strong>{{ $ci_ruc }}</strong>, en los términos establecido en el Art. 164 y siguientes del COA, para lo cual señala dirección física: San Vicente, Rancho Rojo, y teléfono No. 0999880478. <br><br>
+            <b>SEXTO.-</b> Notificar al <strong>{{ strtoupper($nombre_persona) }} </strong> con C.I. <strong>{{ $ci_ruc }}</strong>, en los términos establecido en el Art. 164 y siguientes del COA, para lo cual señala dirección física: San Vicente, {{ $direcc_cont }}, y teléfono No. {{ $telefono }}. <br><br>
 
             Dado y firmado en el despacho de la Alcaldía del GAD Municipal del Cantón San Vicente, al {{ $fecha_formateada }}.
         </p>

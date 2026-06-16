@@ -499,6 +499,8 @@ function detalleNot(id){
             }else{
                 ced_ruc=data.resultado.num_ident
             }
+
+            $('#cedula_ruc_contr').val(ced_ruc)
             // alert(ced_ruc)
             $('#num_ident_contr').html(cont)
             $('#nombre_contr').html(ced_ruc)
@@ -846,6 +848,9 @@ $("#FormConvenio").submit(function(e){
     let num_cuotas=$('#num_cuotas').val()
     let f_ini=$('#f_ini').val()
     let f_fin=$('#f_fin').val()
+    let cedula_ruc=$('#cedula_ruc_contr').val()
+    let correo=$('#correo_contr').val()
+    let telefono=$('#telefono_contr').val()
     let valor_coa=$('.valor_coa').html()
     if(valor_adeudado=="" || valor_adeudado==null){
         alertNotificar("Debe ingresar el valor adeudado","error")
@@ -879,6 +884,24 @@ $("#FormConvenio").submit(function(e){
     if(f_fin=="" || f_fin==null){
         alertNotificar("Debe ingresar la fecha de fin","error")
         $('#f_fin').focus()
+        return
+    }
+
+    if(cedula_ruc=="" || cedula_ruc==null){
+        alertNotificar("Debe ingresar la cedula o ruc del contribuyente","error")
+        $('#cedula_ruc_contr').focus()
+        return
+    }
+
+    if(correo=="" || correo==null){
+        alertNotificar("Debe ingresar el correo electronico del contribuyente","error")
+        $('#correo_contr').focus()
+        return
+    }
+
+    if(telefono=="" || telefono==null){
+        alertNotificar("Debe ingresar el numero telefonico del contribuyente","error")
+        $('#telefono_contr').focus()
         return
     }
 

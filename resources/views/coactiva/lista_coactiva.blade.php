@@ -720,7 +720,41 @@
                                            
                                         </div>
 
-                                         <div class="row mb-3 align-items-center">
+                                        <div class="row mb-3 align-items-center">
+                                            <label class="col-md-3 col-form-label " style="text-align: right;">
+                                                Cedula/Ruc<span class="text-danger"> *</span> 
+                                            </label>
+                                            <div class="col-md-7">
+                                                <input type="text" class="form-control txt_conv_ cal_mensual"name="cedula_ruc_contr" id="cedula_ruc_contr">
+                                                
+                                            </div>
+                                           
+                                        </div>
+
+                                        <div class="row mb-3 align-items-center">
+                                            <label class="col-md-3 col-form-label " style="text-align: right;">
+                                                Telefono<span class="text-danger"> *</span> 
+                                            </label>
+                                            <div class="col-md-7">
+                                                <input type="text" class="form-control txt_conv cal_mensual"name="telefono_contr" id="telefono_contr">
+                                                
+                                            </div>
+                                           
+                                        </div>
+
+                                        <div class="row mb-3 align-items-center">
+                                            <label class="col-md-3 col-form-label " style="text-align: right;">
+                                                Correo<span class="text-danger"> *</span> 
+                                            </label>
+                                            <div class="col-md-7">
+                                                <input type="email" class="form-control txt_conv cal_mensual"name="correo_contr" id="correo_contr">
+                                                
+                                            </div>
+                                           
+                                        </div>
+
+
+                                        <div class="row mb-3 align-items-center">
                                             <label class="col-md-3 col-form-label " style="text-align: right;">
                                                
                                             </label>

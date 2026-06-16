@@ -15,6 +15,7 @@ use App\Models\Coactiva\Secuencial;
 use App\Models\PsqlLiquidacion;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use App\Models\PsqlEnte;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Gate;
@@ -118,7 +119,7 @@ class CoactivaController extends Controller
                         $persona_name=$item->notificacion->ente->razon_social;
                         $documento_=$item->notificacion->ente->ci_ruc;
                     }else{
-                        $persona_name=$item->notificacion->ente->apellidos." ".$item->notificacion->ente->apellidos;
+                        $persona_name=$item->notificacion->ente->apellidos." ".$item->notificacion->ente->nombres;
                         $documento_=$item->notificacion->ente->ci_ruc;
                     }
                     
@@ -223,7 +224,22 @@ class CoactivaController extends Controller
             if($actualizaEstado['error']==true){
                 return ["mensaje"=>$actualizaEstado['mensaje'], "error"=>true];
             }
-            
+
+            $verifica=DataNotifica::where('id_info_notifica',$request->idnotifica)
+            ->first();
+            $infoNotifica=InfoNotifica::where('id',$verifica->id_info_notifica)
+            ->first();
+            if(!is_null($infoNotifica->id_persona)){    
+                $actualizaCedulaRuc=PsqlEnte::where('ci_ruc',$infoNotifica->id_persona)
+                ->update(['ci_ruc'=>$request->cedula_ruc_contr]);
+            }else{
+                $infoNotifica->num_ident=$request->cedula_ruc_contr;
+               
+            }
+            $infoNotifica->telefono_contribuyente=$request->telefono_contr;
+            $infoNotifica->correo_contribuyente=$request->correo_contr;
+            $infoNotifica->save();
+
             $guarda=new Convenio();
             $guarda->id_info_coact=$request->idcoa_conv;
             $guarda->valor_adeudado = (float) $request->valor_adeudado; // Convertir a float
@@ -238,7 +254,7 @@ class CoactivaController extends Controller
             $guarda->valor_cancelado=0;
             $guarda->save();
 
-          
+            $total=0;
             $fecha_ini = Carbon::parse($request->fecha_ini);
             for($i=0; $i<$request->num_cuotas; $i++){
                 if($i==0){
@@ -257,7 +273,13 @@ class CoactivaController extends Controller
                 $cuotas->estado='Pendiente';
                 $cuotas->id_convenio=$guarda->id;
                 $cuotas->save();
+
+                $total=$total +  $cuotas->valor_cuota;
             }
+
+            $guarda->valor_adeudado = number_format($total, 2); // Convertir a float
+            $guarda->save();
+
 
             $crearDocumentos=$this->coactiva->pdfConvenio($guarda->id);
             if($crearDocumentos['error']==true){

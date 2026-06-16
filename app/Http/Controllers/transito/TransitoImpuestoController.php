@@ -32,7 +32,11 @@ use Endroid\QrCode\Writer\PngWriter;
 class TransitoImpuestoController extends Controller
 {
     private $clientNacional = null;
-     private $clienteFirmador = null;
+    private $dinardapSV=null;
+    private $clienteFirmador = null;
+
+    private $clientGadC = null;
+    
 
     public function __construct(){
         try{
@@ -48,6 +52,18 @@ class TransitoImpuestoController extends Controller
 
             $this->clienteFirmador = new Client([
                 'base_uri' =>$ip2,
+                'verify' => false,
+            ]);
+
+            $ip_dinarpadSV="https://intranet.sanvicente.gob.ec/";
+
+            $this->dinardapSV = new Client([
+                'base_uri' =>$ip_dinarpadSV,
+                'verify' => false,
+            ]);
+
+             $this->clientGadC = new Client([
+                'base_uri' => env('URL_SERVICE_GADC', "https://ws.sucre.gob.ec"),
                 'verify' => false,
             ]);
 
@@ -1045,7 +1061,7 @@ class TransitoImpuestoController extends Controller
             $id_persona=0;
             $validaPersona=PsqlEnte::where('ci_ruc',$cedula)
             ->first();
-            
+            // dd($validaPersona);
             $id="";
             $nombres="";
             $apellidos="";
@@ -1079,31 +1095,73 @@ class TransitoImpuestoController extends Controller
                 if(!is_null($ultimoCorreo)){
                     $correo=$ultimoCorreo->email;
                 }
-            }
-            if($cedula){
-
-                $response = $this->clientNacional->request('GET', "api/v1.0/deudas/porIdentificacion1/{$cedula}",[
-                    'headers' => [
-                        // 'Authorization'=>'bearer '.$token,
-                        'Content-Type' => 'application/json'
-                    ],
-                ]);
-
-                $responseBody = json_decode($response->getBody(), true);
-
-                $separaNombre=$this->separarNombre($responseBody['contribuyente']['nombreComercial'] ?? 'Sin nombre');
-
 
                 $data[] = [
-                    'id' => $responseBody['contribuyente']['identificacion'] ?? null,
-                    'nombre' => $separaNombre[0],
-                    'apellido' => $separaNombre[1],
+                    'id' => $id_persona ?? null,
+                    'nombre' => $nombres,
+                    'apellido' => $apellidos,
                     'direccion' => $direccion,
                     'f_nacimiento' => $f_nacimiento,
                     'telefono' => $telefono,
                     'correo' => $correo,
                     
                 ];
+                return ['data'=>$data, 'error'=>false , 'id_persona'=>$id_persona];
+            }
+            if($cedula){
+
+                // $response = $this->clientNacional->request('GET', "api/v1.0/deudas/porIdentificacion1/{$cedula}",[
+                $cantidad=strlen($cedula);
+
+                if($cantidad==13){
+                    $response = $this->clientGadC->request('GET', "api/rentasinternas/ubicacion/{$cedula}",[
+                        'headers' => [
+                            'Authorization' => env('URL_SERVICE_GADC_APIKEY',"PQ232kQkLQfXksFUbpuaG8hVdGWuRW4TdANEKqyNJcDndU4qUNHEUwhg")
+                        ]
+                    ]); 
+                    $responseBody= json_decode((string) $response->getBody());
+                
+                    $data[] = [
+                        'id' => $responseBody['0']->valor ?? null,
+                        'nombre' => $responseBody['1']->valor ?? 'Sin nombre',
+                        'apellido' => "",
+                        'direccion' => $direccion,
+                        'f_nacimiento' => $f_nacimiento,
+                        'telefono' => $telefono,
+                        'correo' => $correo,
+                        
+                    ];
+                }else{
+                    $response = $this->clientGadC->request('GET', "api/registrocivil/{$cedula}",[
+                        'headers' => [
+                            'Authorization' => env('URL_SERVICE_GADC_APIKEY',"PQ232kQkLQfXksFUbpuaG8hVdGWuRW4TdANEKqyNJcDndU4qUNHEUwhg")
+                        ] 
+                    ]); 
+                    
+                    $responseBody = json_decode((string) $response->getBody(), true);
+                     
+                    $separaNombre=$this->separarNombre($responseBody['9']['valor'] ?? 'Sin nombre');
+                    // dd($responseBody['7']['valor']))
+                    // dd(\Carbon\Carbon::parse($responseBody['7']['valor'])->format('Y-m-d'));
+                    // dd(date('Y/m/d', strtotime($responseBody['7']['valor'])));
+                    $data[] = [
+                        'id' => $responseBody['0']['valor'] ?? null,
+                        'nombre' => $separaNombre[0],
+                        'apellido' => $separaNombre[1],
+                        'direccion' => $direccion,
+                        // 'f_nacimiento' => date('Y-m-d', strtotime($responseBody['7']['valor'])),
+                        'f_nacimiento' => '',
+                        'telefono' => $telefono,
+                        'correo' => $correo,
+                        
+                    ];
+
+                }
+               
+               
+
+
+              
             }
            
             // Siempre se devuelve la variable $data, esté llena o vacía

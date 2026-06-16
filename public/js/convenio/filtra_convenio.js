@@ -968,7 +968,7 @@ function detalleConvenio(id, predio, not_proceso, contribuyente, realiza_pago=nu
                                                      <td style="width:5%; text-align:center; vertical-align:middle">
                                                         <i class="fa fa-file-pdf-o ${disabled2}" style="color:green" onclick="verPdfCuota(${item.id})"></i> 
                                                         
-                                                        <i class="fa fa-cc-paypal ${disabled2}" style="color:blue" onclick="tituloCuota('${item.id}','${IdConvenio}', '${item.cuota_inicial === true ? "Inicial": i} )"></i> 
+                                                        <i class="fa fa-cc-paypal ${disabled2}" style="color:blue" onclick="tituloCuota('${item.id}','${IdConvenio}', '${item.cuota_inicial === true ? "Inicial": i}' )"></i> 
                                                     </td>
                                                 
                                             </tr>`);
@@ -1026,44 +1026,46 @@ function verPdfCuota(id){
 }
 
 function tituloCuota(id_cuota, idconvenio, num_cuota){
-    alert(id_cuota)
-    alert(idconvenio)
+   
 
-     $('#numero_cuota_pagada').html('Cuota #')
+    $('#numero_cuota_pagada').html('Cuota #'+num_cuota)
     $('.listado_titulo_cuota').show()
     $('.listado_titulo').hide()
     $('.detalle_principal').hide()
     $('.salir').hide()
     $('.detalle_btn').show()
 
-    let fila = $('#' + id_cuota);
+    // let fila = $('#' + id_cuota);
 
-    if (fila.length > 0) {
-        let datos = [];
+    // if (fila.length > 0) {
+    //     let datos = [];
 
-        fila.find('td').each(function() {
-            datos.push($(this).text().trim());
-        });
+    //     fila.find('td').each(function() {
+    //         datos.push($(this).text().trim());
+    //     });
 
-        console.log(datos);
-        return datos;
-    }
-
-    $('#numero_cuota_pagada').html('Cuota # '+num_cuota)
-
-    // vistacargando("m","Espere por favor")
-    // $.get('pdf-pago-convenio/'+id+'/'+Urbano_Rural+'/'+Noti_o_Proceso, function(data){
-    //     vistacargando("")	   
-    //     if(data.error==true){	
-    //     vistacargando("")		
-    //     alertNotificar(data.mensaje,"error");
-    //     return;   
+    //     console.log(datos);
+    //     return datos;
     // }
-    //     window.location.href='coactiva/documento-descargar/'+data.pdf
-    // }).fail(function(){
-    //     vistacargando("")
+
+    // $('#numero_cuota_pagada').html('Cuota # '+num_cuota)
+
+    vistacargando("m","Espere por favor")
+    $.get('cuota-titulo/'+id_cuota, function(data){
+        console.log(data)
+        vistacargando("")	   
+        if(data.error==true){	
+            vistacargando("")		
+            alertNotificar(data.mensaje,"error");
+            return;   
+        }
+
+        
+        
+    }).fail(function(){
+        vistacargando("")
     
-    // });
+    });
 
 
 }

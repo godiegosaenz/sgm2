@@ -11,6 +11,7 @@ use App\Models\Coactiva\InfoCoa;
 use App\Models\Coactiva\InfoNotifica;
 use App\Models\Coactiva\Pago;
 use App\Models\Coactiva\Secuencial;
+use App\Models\PsqlEnte;
 use Illuminate\Http\Request;
 use App\Models\PsqlYearDeclaracion;
 use App\Models\PsqlLiquidacion;
@@ -637,7 +638,7 @@ class NotificacionesController extends Controller
                         $persona_name=$item->ente->razon_social;
                         $documento_=$item->ente->ci_ruc;
                     }else{
-                        $persona_name=$item->ente->apellidos." ".$item->ente->apellidos;
+                        $persona_name=$item->ente->apellidos." ".$item->ente->nombres;
                         $documento_=$item->ente->ci_ruc;
                     }
                     
@@ -2531,7 +2532,7 @@ class NotificacionesController extends Controller
                 ->select('num_titulo')
                 ->first();
                 if(is_null($verifica->num_titulo)){
-                
+                                   
                     $obtenerLiquidacion=DataNotifica::where('id_info_notifica',$request->idnot_conv)
                     ->select('id', 'id_liquidacion')
                     ->get();
@@ -2589,11 +2590,28 @@ class NotificacionesController extends Controller
                     ];
                 }
 
+                $verifica=DataNotifica::where('id_info_notifica',$request->idnot_conv)
+                ->first();
+
+                $infoNotifica=InfoNotifica::where('id',$verifica->id_info_notifica)
+                ->first();
+                if(!is_null($infoNotifica->id_persona)){    
+                    $actualizaCedulaRuc=PsqlEnte::where('ci_ruc',$infoNotifica->id_persona)
+                    ->update(['ci_ruc'=>$request->cedula_ruc_contr]);
+                }else{
+                    $infoNotifica->num_ident=$request->cedula_ruc_contr;
+                   
+                }
+
+                $infoNotifica->telefono_contribuyente=$request->telefono_contr;
+                $infoNotifica->correo_contribuyente=$request->correo_contr;
+                $infoNotifica->save();
+
                 //**********REGISTRO DEL CONVENIO************************************** */
 
                 $guarda=new Convenio();
                 $guarda->id_info_notifica=$request->idnot_conv;
-                $guarda->valor_adeudado = (float) $request->valor_adeudado; // Convertir a float
+                // $guarda->valor_adeudado = (float) $request->valor_adeudado; // Convertir a float
                 $guarda->cuota_inicial = (float) $request->cuota_inicial; // Convertir a float
                 $guarda->numero_cuotas=$request->num_cuotas;
                 $guarda->f_inicio=$request->f_ini;
@@ -2606,6 +2624,7 @@ class NotificacionesController extends Controller
                 $guarda->save();
 
                 $fecha_ini = Carbon::parse($request->fecha_ini);
+                $total=0;
                 for($i=0; $i<$request->num_cuotas; $i++){
                     if($i==0){
                         $cuotas=new CuotaConvenio();
@@ -2623,7 +2642,12 @@ class NotificacionesController extends Controller
                     $cuotas->estado='Pendiente';
                     $cuotas->id_convenio=$guarda->id;
                     $cuotas->save();
+
+                    $total=$total +  $cuotas->valor_cuota;
                 }
+
+                $guarda->valor_adeudado = number_format($total, 2); // Convertir a float
+                $guarda->save();
 
                 $crearDocumentos=$this->pdfConvenio($guarda->id);
                 if($crearDocumentos['error']==true){
@@ -3126,10 +3150,19 @@ class NotificacionesController extends Controller
     public function pdfConvenio($id){
 
         try{
-            $convenio=Convenio::with('cuotas')
+            $convenio=Convenio::with('cuotas','notificacion','coactiva')
             ->where('estado','Activo')
             ->where('id',$id)
             ->first();
+            // dd($convenio);
+
+            if(!is_null($convenio->notificacion)){
+                $telefono=$convenio->notificacion->telefono_contribuyente;
+                $correo=$convenio->notificacion->correo_contribuyente;
+            }else{
+                $telefono=$convenio->coactiva->notificacion->telefono_contribuyente;
+                $correo=$convenio->coactiva->notificacion->correo_contribuyente;
+            }
 
             if(is_null($convenio)){
                 return ["mensaje"=>"El convenio no se encuentra activo", "error"=>true];
@@ -3284,6 +3317,9 @@ class NotificacionesController extends Controller
                 'fecha_formateada'=>$fecha_formateada,
                 "num_proceso"=>$num_proceso, 
                 "convenio"=>$convenio, 
+                "telefono"=>$telefono, 
+                "correo"=>$correo,
+                // "direccion"=>$direccion, 
                 // ⬇️ AÑADE ESTAS DOS LÍNEAS CON PUBLIC_PATH ⬇️
                
             ]);  
@@ -3308,6 +3344,8 @@ class NotificacionesController extends Controller
                     'fecha_formateada'=>$fecha_formateada,
                     "num_proceso"=>$num_proceso, 
                     "convenio"=>$convenio, 
+                    "telefono"=>$telefono, 
+                    "correo"=>$correo,
                     // ⬇️ AÑADE ESTAS DOS LÍNEAS CON PUBLIC_PATH ⬇️
                 
                 ]);  
