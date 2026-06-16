@@ -227,10 +227,14 @@
             $coordenas_txt="";
             $diferencia=$convenio->valor_adeudado-$convenio->cuota_inicial;
             $diferencia=number_format($diferencia,2);
+            $txt_compareciente = "Del contribuyente <strong>" . strtoupper($nombre_persona) . "</strong> con C.I. <strong>" . $ci_ruc . "</strong>";
+            if($es_otro=="S"){
+                $txt_compareciente = "el/la <strong>Sr(a). " . strtoupper($nombre_otro) . "</strong> con C.I. <strong>{$cedula_otro}</strong> en representación del contribuyente <strong>" . strtoupper($nombre_persona) . "</strong> con C.I. <strong>{$ci_ruc}</strong>";
+            }
         @endphp
 
         <p style="font-size: 14px; text-align: justify; line-height: 1; margin-top: 20px;">
-            Refiriéndome al predio signado con matrícula inmobiliaria No. 1104; del contribuyente <strong>{{ strtoupper($nombre_persona) }} </strong> con C.I. <strong>{{ $ci_ruc }}</strong>, al amparo de lo establecido en el 273 y siguiente Código Orgánico Administrativo, me permito solicitar a Usted muy comedidamente se me otorgue facilidades de pago.
+            Refiriéndome al predio signado con matrícula inmobiliaria No. 1104; {!! $txt_compareciente !!}, al amparo de lo establecido en el 273 y siguiente Código Orgánico Administrativo, me permito solicitar a Usted muy comedidamente se me otorgue facilidades de pago.
             <br><br>
             Me comprometo a cumplir con las obligaciones pendientes de pago por el valor de  <strong>{{ numeroEnLetras($convenio->valor_adeudado) }}</strong>, para realizar un convenio de pago con un abono de <b>(USD ${{$convenio->cuota_inicial  }}) {{ numeroEnLetras2($convenio->cuota_inicial) }}</b> y la diferencia esto es la cantidad de <b>(USD. ${{$diferencia}}) {{ numeroEnLetras2($diferencia) }}</b> en el plazo de {{$convenio->numero_cuotas}} meses con cuotas mensuales de <b>(USD ${{$convenio->cuotas[1]->valor_cuota  }}) {{ numeroEnLetras2($convenio->cuotas[1]->valor_cuota ) }}</b>, los cuales estarán sujetos al interés que por ley corresponda lo cual guarda coherencia con lo determinado en el Art. 274 y 275 del Código Orgánico Administrativo. <br><br>
 
@@ -242,13 +246,15 @@
            
         <div style="text-align: center;">  
             <p style="margin: 0; line-height: 0.9;">
-                <strong>{{ strtoupper($nombre_persona) }}</strong>
+                
+                <strong>{{ $es_otro == 'S' ? strtoupper($nombre_otro) : strtoupper($nombre_persona) }}</strong>
             </p>
             <p style="margin: 0; line-height: 0.9;">
-                <strong>{{ $ci_ruc }}</strong>
+                <strong>{{ $es_otro == 'S' ? $cedula_otro : $ci_ruc }}</strong>
             </p>
             <p style="margin: 0; line-height: 0.9;">
-                <strong>CONTRIBUYENTE</strong>
+               
+                <strong>{{ $es_otro == 'S' ? 'REPRESENTANTE DEL CONTRIBUYENTE' : 'CONTRIBUYENTE' }}</strong>
             </p> 
         </div>
 

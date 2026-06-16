@@ -14,6 +14,18 @@ function filtroSeleccionado(){
         $('.estado').show()
     }
 }
+function filtroSeleccionadoCompareciente(){
+    let tipo=$('#filtro_compareciente').val()
+    $('.input_compareciente').val('')
+    if(tipo==""){return}
+    
+    if(tipo=="OTRA"){
+        $('#comparecente_seccion').show()
+    }else{
+        $('#comparecente_seccion').hide()
+    }
+}
+
 
 $('#cmb_contribuyente').select2({
     ajax: {
@@ -393,6 +405,10 @@ function detalleNot(id){
     $('.label_not').html('')
     $("#tableDetNot tbody").html('');
     $('#tableDetNot tbody').empty(); 
+
+    $('#comparecente_seccion').hide()
+    $('#filtro_compareciente').val('CONTRIBUYENTE')
+
     var num_col = $("#tableDetNot thead tr th").length; //obtenemos el numero de columnas de la tabla
     vistacargando("m", "Espere por favor")
     IdNotificaSele=id
@@ -851,6 +867,10 @@ $("#FormConvenio").submit(function(e){
     let cedula_ruc=$('#cedula_ruc_contr').val()
     let correo=$('#correo_contr').val()
     let telefono=$('#telefono_contr').val()
+    let filtro_compareciente=$('#filtro_compareciente').val()
+    let cedula_compareciente=$('#cedula_compareciente').val()
+    let nombre_compareciente=$('#nombre_compareciente').val()
+    let direccion_compareciente=$('#direccion_compareciente').val()
     let valor_coa=$('.valor_coa').html()
     if(valor_adeudado=="" || valor_adeudado==null){
         alertNotificar("Debe ingresar el valor adeudado","error")
@@ -903,6 +923,26 @@ $("#FormConvenio").submit(function(e){
         alertNotificar("Debe ingresar el numero telefonico del contribuyente","error")
         $('#telefono_contr').focus()
         return
+    }
+
+    if(filtro_compareciente=="OTRA"){
+        if(cedula_compareciente=="" || cedula_compareciente==null){
+            alertNotificar("Debe ingresar el numero de identificacion","error")
+            $('#cedula_compareciente').focus()
+            return
+        }
+
+        if(nombre_compareciente=="" || nombre_compareciente==null){
+            alertNotificar("Debe ingresar el nombre","error")
+            $('#nombre_compareciente').focus()
+            return
+        }
+
+        if(direccion_compareciente=="" || direccion_compareciente==null){
+            alertNotificar("Debe ingresar la direccion","error")
+            $('#direccion_compareciente').focus()
+            return
+        }
     }
 
     let startDate = new Date(f_ini.split('/').reverse().join('/')); // Cambiamos el formato dd/mm/yyyy a yyyy/mm/dd

@@ -2505,6 +2505,7 @@ class NotificacionesController extends Controller
    
 
     public function guardarConvenioNot(Request $request){
+        
         DB::connection('pgsql')->beginTransaction();
             try{
 
@@ -2605,6 +2606,18 @@ class NotificacionesController extends Controller
 
                 $infoNotifica->telefono_contribuyente=$request->telefono_contr;
                 $infoNotifica->correo_contribuyente=$request->correo_contr;
+                if($request->filtro_compareciente=="OTRA"){
+                    $infoNotifica->compareciente_es_otro=true;
+                    $infoNotifica->cedula_otro=$request->cedula_compareciente;
+                    $infoNotifica->nombre_otro=$request->nombre_compareciente;
+                    $infoNotifica->direccion_otro=$request->direccion_compareciente;
+                }else{
+                    $infoNotifica->compareciente_es_otro=false;
+                    $infoNotifica->cedula_otro=null;
+                    $infoNotifica->nombre_otro=null;
+                    $infoNotifica->direccion_otro=null;
+                }
+                // dd($infoNotifica);
                 $infoNotifica->save();
 
                 //**********REGISTRO DEL CONVENIO************************************** */
@@ -2647,6 +2660,7 @@ class NotificacionesController extends Controller
                 }
 
                 $guarda->valor_adeudado = number_format($total, 2); // Convertir a float
+              
                 $guarda->save();
 
                 $crearDocumentos=$this->pdfConvenio($guarda->id);
@@ -3154,14 +3168,31 @@ class NotificacionesController extends Controller
             ->where('estado','Activo')
             ->where('id',$id)
             ->first();
-            // dd($convenio);
-
+          
+            $es_otro="N";
+            $cedula_otro="";
+            $nombre_otro="";
+            $direccion_otro="";
             if(!is_null($convenio->notificacion)){
                 $telefono=$convenio->notificacion->telefono_contribuyente;
                 $correo=$convenio->notificacion->correo_contribuyente;
+                
+                if($convenio->notificacion->compareciente_es_otro==true){
+                    $es_otro="S";
+                    $cedula_otro=$convenio->notificacion->cedula_otro;
+                    $nombre_otro=$convenio->notificacion->nombre_otro;
+                    $direccion_otro=$convenio->notificacion->direccion_otro;
+                }
             }else{
                 $telefono=$convenio->coactiva->notificacion->telefono_contribuyente;
                 $correo=$convenio->coactiva->notificacion->correo_contribuyente;
+
+                if($convenio->coactiva->notificacion->compareciente_es_otro==true){
+                    $es_otro="S";
+                    $cedula_otro=$convenio->coactiva->notificacion->cedula_otro;
+                    $nombre_otro=$convenio->coactiva->notificacion->nombre_otro;
+                    $direccion_otro=$convenio->coactiva->notificacion->direccion_otro;
+                }
             }
 
             if(is_null($convenio)){
@@ -3319,6 +3350,12 @@ class NotificacionesController extends Controller
                 "convenio"=>$convenio, 
                 "telefono"=>$telefono, 
                 "correo"=>$correo,
+                "es_otro"=>$es_otro,
+                "cedula_otro"=>$cedula_otro,
+                "nombre_otro"=>$nombre_otro,
+                "direccion_otro"=>$direccion_otro,
+
+
                 // "direccion"=>$direccion, 
                 // ⬇️ AÑADE ESTAS DOS LÍNEAS CON PUBLIC_PATH ⬇️
                
@@ -3346,6 +3383,10 @@ class NotificacionesController extends Controller
                     "convenio"=>$convenio, 
                     "telefono"=>$telefono, 
                     "correo"=>$correo,
+                    "es_otro"=>$es_otro,
+                    "cedula_otro"=>$cedula_otro,
+                    "nombre_otro"=>$nombre_otro,
+                    "direccion_otro"=>$direccion_otro,
                     // ⬇️ AÑADE ESTAS DOS LÍNEAS CON PUBLIC_PATH ⬇️
                 
                 ]);  

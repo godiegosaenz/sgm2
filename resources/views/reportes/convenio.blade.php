@@ -257,8 +257,15 @@
             3. Indicación de la garantía para la obligación <br><br>
 
             Que mediante resolución administrativa No. 103-DF-NMFM-2023 de fecha 01 de septiembre del 2023, emitida por la Directora Financiera Municipal, se delega la Tesorera para que proceda a realizar la actividad de suscribir los convenios de facilidades de pago, debiendo verificar que se cumpla con los requisitos legales y se encuentre acorde a lo establecido en el Art. 474 y siguientes del Código Orgánico Administrativo, en perfecta relación con lo señalado en el Art. 142 y 153 del Código Tributario. <br><br>
+
+            @php
+                $txt_compareciente = "el contribuyente <strong>" . strtoupper($nombre_persona) . "</strong> con C.I. <strong>" . $ci_ruc . "</strong>";
+                if($es_otro=="S"){
+                    $txt_compareciente = "el/la <strong>Sr(a). " . strtoupper($nombre_otro) . "</strong> con C.I. <strong>{$cedula_otro}</strong> en representación del contribuyente <strong>" . strtoupper($nombre_persona) . "</strong> con C.I. <strong>{$ci_ruc}</strong>";
+                }
+            @endphp
             
-            Que mediante oficio {{ $fecha_formateada }}, el contribuyente <strong>{{ strtoupper($nombre_persona) }} </strong> con C.I. <strong>{{ $ci_ruc }}</strong>, presenta solicitud de pago mediante convenio de las 
+            Que mediante oficio {{ $fecha_formateada }}, {!! $txt_compareciente !!}, presenta solicitud de pago mediante convenio de las 
 
             @php
                 $total_final=0;
@@ -296,7 +303,7 @@
         <center><b style="font-size: 14px;">RESUELVO</b></center> 
         
         <p style="font-size: 14px; text-align: justify; line-height: 1;">
-            <b>PRIMERO. -</b> Conceder facilidades de pago por tributos que el contribuyente <strong>{{ strtoupper($nombre_persona) }} </strong> con C.I. <strong>{{ $ci_ruc }}</strong>, de la   
+            <b>PRIMERO. -</b> Conceder facilidades de pago por tributos que {!! $txt_compareciente !!}, de la   
 
             @php
                 $total_final=0;
@@ -325,7 +332,7 @@
            
             obligaciones pendientes de pago por el valor de <strong>{{ numeroEnLetras($convenio->valor_adeudado) }}</strong>, para realizar un convenio de pago con un abono de <b>(USD ${{$convenio->cuota_inicial  }}) {{ numeroEnLetras2($convenio->cuota_inicial) }}</b> y la diferencia esto es la cantidad de <b>(USD. ${{$diferencia}}) {{ numeroEnLetras2($diferencia) }}</b> en el plazo de {{$convenio->numero_cuotas}} meses con cuotas mensuales de <b>(USD ${{$convenio->cuotas[1]->valor_cuota  }}) {{ numeroEnLetras2($convenio->cuotas[1]->valor_cuota ) }}</b>,, lo cual guarda coherencia con lo determinado en el Art. 274 y 275 del Código Orgánico Administrativo, en perfecta relación con lo señalado en el Art. 142 y 153 del Código Tributario.<br><br>
 
-            <b>SEGUNDO:</b> El contribuyente <strong>{{ strtoupper($nombre_persona) }} </strong> con C.I. <strong>{{ $ci_ruc }}</strong>, a partir de la fecha de esta notificación pagara la suma de <b>(USD $36,09) TREINTA Y SEIS CON   09/100 DOLARES AMERICANOS, más intereses por 3 meses contados a partir de la presente fecha</b>, estableciéndose la fecha de pago el {{ date('d') }} de cada mes y un saldo de <b>(USD. $108,27) CIENTO OCHO CON 27/100 DOLARES DE LOS ESTADOS UNIDOS.</b> <br><br>
+            <b>SEGUNDO:</b>{!! ucfirst($txt_compareciente) !!}, a partir de la fecha de esta notificación pagara la suma de <b>(USD $36,09) TREINTA Y SEIS CON   09/100 DOLARES AMERICANOS, más intereses por 3 meses contados a partir de la presente fecha</b>, estableciéndose la fecha de pago el {{ date('d') }} de cada mes y un saldo de <b>(USD. $108,27) CIENTO OCHO CON 27/100 DOLARES DE LOS ESTADOS UNIDOS.</b> <br><br>
 
             <b>TERCERO. –</b> Con la aprobación de la presente facilidad de pago, se suspende el proceso coactivo, en contra <strong>{{ strtoupper($nombre_persona) }} </strong> con C.I. <strong>{{ $ci_ruc }}</strong>. Advertir que la concesión de facilidades de pago está condicionada al cumplimiento estricto de los pagos determinados anteriormente. En consecuencia, si requerido el deudor para el pago de cualquiera de los dividendos en mora, no lo hiciera en el plazo de ocho días se tendrá por terminada la concesión de facilidades de pago y podrá disponer el reanudar el procedimiento coactivo de acuerdo a lo establecido en el COA. <br><br>
 
@@ -333,7 +340,7 @@
 
             <b>QUINTO.-</b> Verificar el estricto cumplimiento de los pagos parciales que se establecen in esta resolución.<br><br>
 
-            <b>SEXTO.-</b> Notificar al <strong>{{ strtoupper($nombre_persona) }} </strong> con C.I. <strong>{{ $ci_ruc }}</strong>, en los términos establecido en el Art. 164 y siguientes del COA, para lo cual señala dirección física: San Vicente, {{ $direcc_cont }}, y teléfono No. {{ $telefono }}. <br><br>
+            <b>SEXTO.-</b> Notificar a {!! $txt_compareciente !!}, en los términos establecido en el Art. 164 y siguientes del COA, para lo cual señala dirección física: San Vicente, {{ $es_otro == 'S' ? $direccion_otro : $direcc_cont }}, y teléfono No. {{ $telefono }}. <br><br>
 
             Dado y firmado en el despacho de la Alcaldía del GAD Municipal del Cantón San Vicente, al {{ $fecha_formateada }}.
         </p>
@@ -342,13 +349,13 @@
            
         <div style="text-align: center;">  
             <p style="margin: 0; line-height: 0.9;">
-                <strong>{{ strtoupper($nombre_persona) }}</strong>
+                <strong>{{ $es_otro == 'S' ? strtoupper($nombre_otro) : strtoupper($nombre_persona) }}</strong>
             </p>
             <p style="margin: 0; line-height: 0.9;">
-                <strong>{{ $ci_ruc }}</strong>
+                <strong>{{ $es_otro == 'S' ? $cedula_otro : $ci_ruc }}</strong>
             </p>
             <p style="margin: 0; line-height: 0.9;">
-                <strong>CONTRIBUYENTE</strong>
+                <strong>{{ $es_otro == 'S' ? 'REPRESENTANTE DEL CONTRIBUYENTE' : 'CONTRIBUYENTE' }}</strong>
             </p> 
         </div>
 

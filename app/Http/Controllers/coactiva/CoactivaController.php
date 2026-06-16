@@ -238,6 +238,17 @@ class CoactivaController extends Controller
             }
             $infoNotifica->telefono_contribuyente=$request->telefono_contr;
             $infoNotifica->correo_contribuyente=$request->correo_contr;
+            if($request->filtro_compareciente=="OTRA"){
+                $infoNotifica->compareciente_es_otro=true;
+                $infoNotifica->cedula_otro=$request->cedula_compareciente;
+                $infoNotifica->nombre_otro=$request->nombre_compareciente;
+                $infoNotifica->direccion_otro=$request->direccion_compareciente;
+            }else{
+                $infoNotifica->compareciente_es_otro=false;
+                $infoNotifica->cedula_otro=null;
+                $infoNotifica->nombre_otro=null;
+                $infoNotifica->direccion_otro=null;
+            }
             $infoNotifica->save();
 
             $guarda=new Convenio();

@@ -770,6 +770,58 @@
                                            
                                         </div>
 
+                                        <div class="row mb-3 align-items-center">
+                                            <label class="col-md-3 col-form-label " style="text-align: right;">
+                                                Compareciente<span class="text-danger"> *</span> 
+                                            </label>
+                                            <div class="col-md-7">
+                                                <select class="form-select" aria-label="Default select example" id="filtro_compareciente" name="filtro_compareciente" onchange="filtroSeleccionadoCompareciente()">
+                                                    <option value="CONTRIBUYENTE" selected>CONTRIBUYENTE</option>
+                                                    <option value="OTRA" >OTRA PERSONA</option>
+                                                   
+                                                
+                                                </select>
+
+                                                
+                                            </div>
+                                           
+                                        </div>
+
+                                        <div id="comparecente_seccion" style="display:none">
+                                            <div class="row mb-3 align-items-center">
+                                                <label class="col-md-3 col-form-label " style="text-align: right;">
+                                                    Cedula/RUC<span class="text-danger"> *</span> 
+                                                </label>
+                                                <div class="col-md-7">
+                                                    <input type="text" class="form-control txt_conv input_compareciente"name="cedula_compareciente" id="cedula_compareciente">
+                                                    
+                                                </div>
+                                            
+                                            </div>
+
+                                            <div class="row mb-3 align-items-center">
+                                                <label class="col-md-3 col-form-label " style="text-align: right;">
+                                                    Nombres<span class="text-danger"> *</span> 
+                                                </label>
+                                                <div class="col-md-7">
+                                                    <input type="text" class="form-control txt_conv input_compareciente"name="nombre_compareciente" id="nombre_compareciente">
+                                                    
+                                                </div>
+                                            
+                                            </div>
+
+                                             <div class="row mb-3 align-items-center">
+                                                <label class="col-md-3 col-form-label " style="text-align: right;">
+                                                    Direccion<span class="text-danger"> *</span> 
+                                                </label>
+                                                <div class="col-md-7">
+                                                    <input type="text" class="form-control txt_conv input_compareciente"name="direccion_compareciente" id="direccion_compareciente">
+                                                    
+                                                </div>
+                                            
+                                            </div>
+                                        </div>
+
 
                                         <div class="row mb-3 align-items-center">
                                             <label class="col-md-3 col-form-label " style="text-align: right;">
