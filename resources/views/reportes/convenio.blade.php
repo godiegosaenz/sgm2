@@ -340,7 +340,7 @@
 
             <b>QUINTO.-</b> Verificar el estricto cumplimiento de los pagos parciales que se establecen in esta resolución.<br><br>
 
-            <b>SEXTO.-</b> Notificar a {!! $txt_compareciente !!}, en los términos establecido en el Art. 164 y siguientes del COA, para lo cual señala dirección física: San Vicente, {{ $es_otro == 'S' ? $direccion_otro : $direcc_cont }}, y teléfono No. {{ $telefono }}. <br><br>
+            <b>SEXTO.-</b> Notificar a {!! $txt_compareciente !!}, en los términos establecido en el Art. 164 y siguientes del COA, para lo cual señala el correo electrónico {{ $correo }} y teléfono No. {{ $telefono }}. <br><br>
 
             Dado y firmado en el despacho de la Alcaldía del GAD Municipal del Cantón San Vicente, al {{ $fecha_formateada }}.
         </p>
