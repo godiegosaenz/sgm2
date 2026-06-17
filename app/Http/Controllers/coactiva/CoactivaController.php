@@ -288,10 +288,10 @@ class CoactivaController extends Controller
                 $total=$total +  $cuotas->valor_cuota;
             }
 
-            $total=$total +$guarda->cuota_inicial;
+            //$total=$total +$guarda->cuota_inicial;
 
-            $guarda->valor_adeudado = number_format($total, 2); // Convertir a float
-            $guarda->save();
+            //$guarda->valor_adeudado = number_format($total, 2); // Convertir a float
+            //$guarda->save();
 
 
             $crearDocumentos=$this->coactiva->pdfConvenio($guarda->id);

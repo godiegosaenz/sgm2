@@ -2625,7 +2625,7 @@ class NotificacionesController extends Controller
 
                 $guarda=new Convenio();
                 $guarda->id_info_notifica=$request->idnot_conv;
-                // $guarda->valor_adeudado = (float) $request->valor_adeudado; // Convertir a float
+                $guarda->valor_adeudado = (float) $request->valor_adeudado; // Convertir a float
                 $guarda->cuota_inicial = (float) $request->cuota_inicial; // Convertir a float
                 $guarda->numero_cuotas=$request->num_cuotas;
                 $guarda->f_inicio=$request->f_ini;
@@ -2659,11 +2659,11 @@ class NotificacionesController extends Controller
 
                     $total=$total +  $cuotas->valor_cuota;
                 }
-                $total=$total +$guarda->cuota_inicial;
+                //$total=$total +$guarda->cuota_inicial;
                 
-                $guarda->valor_adeudado = number_format($total, 2); // Convertir a float
+                //$guarda->valor_adeudado = number_format($total, 2); // Convertir a float
               
-                $guarda->save();
+                //$guarda->save();
 
                 $crearDocumentos=$this->pdfConvenio($guarda->id);
                 if($crearDocumentos['error']==true){
