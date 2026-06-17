@@ -2493,6 +2493,7 @@ class NotificacionesController extends Controller
         try{
            
             $datos=Convenio::where('id_info_notifica',$id)
+            ->where('estado','Activo')
             ->get();
          
             return ["resultado"=>$datos, "error"=>false];
@@ -2658,7 +2659,8 @@ class NotificacionesController extends Controller
 
                     $total=$total +  $cuotas->valor_cuota;
                 }
-
+                $total=$total +$guarda->cuota_inicial;
+                
                 $guarda->valor_adeudado = number_format($total, 2); // Convertir a float
               
                 $guarda->save();
