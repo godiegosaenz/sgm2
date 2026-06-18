@@ -254,7 +254,7 @@
             </p>
             <p style="margin: 0; line-height: 0.9;">
                
-                <strong>{{ $es_otro == 'S' ? 'REPRESENTANTE DEL CONTRIBUYENTE' : 'CONTRIBUYENTE' }}</strong>
+                <strong>{{ $es_otro == 'S' ? '' : 'CONTRIBUYENTE' }}</strong>
             </p> 
         </div>
 
