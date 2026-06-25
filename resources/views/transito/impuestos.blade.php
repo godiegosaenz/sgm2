@@ -204,6 +204,7 @@
                         <option value="rodaje">Solo Rodaje Cantonal</option>
                         <option value="sticker">Sí, duplicado de Sticker</option>
                         <option value="matricula">Sí, duplicado de Matrícula</option>
+                        <option value="manual">Manual</option>
                     </select>
                   
                 </div>
@@ -1073,6 +1074,11 @@
             }else{
                 if(solo_duplicado=='no'){
                     $('#check_valor_RTV').prop('checked',true)
+                }else if(solo_duplicado=="manual"){
+                    // $('#check_valor_RTV').prop('checked',false)
+                    $('#check_valor_RTV')
+                    .prop('checked', false)
+                    .prop('disabled', false);
                 }
             }
 

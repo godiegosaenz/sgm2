@@ -36,6 +36,7 @@ class TransitoVehiculoController extends Controller
             'avaluo_v'  => 'required|numeric|min:0',
             'year_v'    => 'required|integer|min:1900|max:' . (date('Y') + 1),
             'marca_v'   => 'required',
+            'clase_tipo_v'   => 'required',
             'tipo_v'    => 'required' // Validamos que exista en la tabla tipos
         ]);
         // Guardado mapeando los campos del formulario a los de la base de datos

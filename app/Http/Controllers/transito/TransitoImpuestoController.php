@@ -1112,7 +1112,7 @@ class TransitoImpuestoController extends Controller
 
                 // $response = $this->clientNacional->request('GET', "api/v1.0/deudas/porIdentificacion1/{$cedula}",[
                 $cantidad=strlen($cedula);
-
+               
                 if($cantidad==13){
                     $response = $this->clientGadC->request('GET', "api/rentasinternas/ubicacion/{$cedula}",[
                         'headers' => [
@@ -1120,6 +1120,7 @@ class TransitoImpuestoController extends Controller
                         ]
                     ]); 
                     $responseBody= json_decode((string) $response->getBody());
+                  
                 
                     $data[] = [
                         'id' => $responseBody['0']->valor ?? null,
@@ -1132,6 +1133,7 @@ class TransitoImpuestoController extends Controller
                         
                     ];
                 }else{
+                   
                     $response = $this->clientGadC->request('GET', "api/registrocivil/{$cedula}",[
                         'headers' => [
                             'Authorization' => env('URL_SERVICE_GADC_APIKEY',"PQ232kQkLQfXksFUbpuaG8hVdGWuRW4TdANEKqyNJcDndU4qUNHEUwhg")
@@ -1139,6 +1141,7 @@ class TransitoImpuestoController extends Controller
                     ]); 
                     
                     $responseBody = json_decode((string) $response->getBody(), true);
+                 
                      
                     $separaNombre=$this->separarNombre($responseBody['9']['valor'] ?? 'Sin nombre');
                     // dd($responseBody['7']['valor']))

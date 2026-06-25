@@ -196,10 +196,10 @@
                             <tr style="line-height: 8px;">
                                 <td width="30%"><strong>Año de modelo:</strong></td>
                                 <td width="70%">{{$item['vehiculo']->year}}</td>
-                            </tr>
+                            </tr> 
                             <tr style="line-height: 8px;">
                                 <td width="30%"><strong>Clase tipo:</strong></td>
-                                <td width="70%">{{$item['vehiculo']->clase_vehiculo->descripcion}}</td>
+                                <td width="70%">{{ $item['vehiculo']->clase_vehiculo?->descripcion ?? '' }}</td>
                             </tr>
                             <tr style="line-height: 8px;">
                                 <td width="30%"><strong>Marca:</strong></td>
