@@ -29,6 +29,7 @@ use App\Http\Controllers\transito\TransitoEnteController;
 use App\Http\Controllers\transito\TransitoImpuestoController;
 use App\Http\Controllers\transito\EdicionTransitoImpuestoController;
 use App\Http\Controllers\transito\TransitoVehiculoController;
+use App\Http\Controllers\transito\TransitoImpuestoCertificacionController;
 use App\Http\Controllers\PredioController;
 use App\Http\Controllers\coactiva\CoactivaEmisionesController;
 use App\Http\Controllers\coactiva\NotificacionesController;
@@ -311,6 +312,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('busca-tipo-vehiculo/{idclase}', [TransitoImpuestoController::class, 'buscaTipoVehiculo'])->name('buscaTipoVehiculo.transito');
 
     Route::get('firma-p12/{documento}/{pdoce}/{clave}/{prefijo}/{disco}', [TransitoImpuestoController::class, 'firmarDocumento2'])->name('firmarDocumento2.transito');
+
+
+
+    //certificaciones transito
+    Route::get('certificaciones-transito', [TransitoImpuestoCertificacionController::class, 'index']);
+    Route::get('llenar-tabla-certif-vehicular/{id}', [TransitoImpuestoCertificacionController::class, 'llenarCertVehicular']);
 
 
     //vista edicion antes de cobro

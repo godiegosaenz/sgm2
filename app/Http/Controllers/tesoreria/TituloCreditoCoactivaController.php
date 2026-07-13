@@ -153,7 +153,7 @@ class TituloCreditoCoactivaController extends Controller
                                 +
                                 COALESCE((
                                     CASE
-                                        WHEN ren_liquidacion.anio = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM NOW()) > 7 THEN
+                                        WHEN ren_liquidacion.anio = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM NOW()) >= 7 THEN
                                             ROUND((d.valor * 0.10), 2)
                                         WHEN ren_liquidacion.anio < EXTRACT(YEAR FROM NOW()) THEN
                                             ROUND((d.valor * 0.10), 2)
@@ -304,7 +304,7 @@ class TituloCreditoCoactivaController extends Controller
                         (
                             SELECT
                                 CASE
-                                    WHEN liq.anio = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM NOW()) > 7 THEN
+                                    WHEN liq.anio = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM NOW()) >= 7 THEN
                                         ROUND((d.valor * 0.10), 2)
                                     WHEN liq.anio < EXTRACT(YEAR FROM NOW()) THEN
                                         ROUND((d.valor * 0.10), 2)
@@ -352,7 +352,7 @@ class TituloCreditoCoactivaController extends Controller
                                 +
                                 COALESCE((
                                     CASE
-                                        WHEN liq.anio = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM NOW()) > 7 THEN
+                                        WHEN liq.anio = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM NOW()) >= 7 THEN
                                             ROUND((d.valor * 0.10), 2)
                                         WHEN liq.anio < EXTRACT(YEAR FROM NOW()) THEN
                                             ROUND((d.valor * 0.10), 2)
@@ -524,7 +524,7 @@ class TituloCreditoCoactivaController extends Controller
                             (
                                 SELECT
                                     CASE
-                                        WHEN liq.anio = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM NOW()) > 7 THEN
+                                        WHEN liq.anio = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM NOW()) >= 7 THEN
                                             ROUND((d.valor * 0.10), 2)
                                         WHEN liq.anio < EXTRACT(YEAR FROM NOW()) THEN
                                             ROUND((d.valor * 0.10), 2)
@@ -583,7 +583,7 @@ class TituloCreditoCoactivaController extends Controller
                                     +
                                     COALESCE((
                                         CASE
-                                            WHEN liq.anio = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM NOW()) > 7 THEN
+                                            WHEN liq.anio = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM NOW()) >= 7 THEN
                                                 ROUND(COALESCE((
                                                     SELECT SUM(d.valor)
                                                     FROM sgm_financiero.ren_det_liquidacion d

@@ -745,7 +745,7 @@ class LiquidacionesController extends Controller
                                     +
                                     COALESCE((
                                         CASE
-                                            WHEN ren_liquidacion.anio = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM NOW()) > 7 THEN
+                                            WHEN ren_liquidacion.anio = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM NOW()) >= 7 THEN
                                                 ROUND(COALESCE((
                                                     SELECT SUM(d.valor)
                                                     FROM sgm_financiero.ren_det_liquidacion d
@@ -812,7 +812,7 @@ class LiquidacionesController extends Controller
                         (
                             SELECT
                                 CASE
-                                    WHEN ren_liquidacion.anio = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM NOW()) > 7 THEN
+                                    WHEN ren_liquidacion.anio = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM NOW()) >= 7 THEN
                                         ROUND((d.valor * 0.10), 2)
                                     WHEN ren_liquidacion.anio < EXTRACT(YEAR FROM NOW()) THEN
                                         ROUND((d.valor * 0.10), 2)
@@ -928,7 +928,7 @@ class LiquidacionesController extends Controller
                                 +
                                 COALESCE((
                                     CASE
-                                        WHEN ren_liquidacion.anio = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM NOW()) > 7 THEN
+                                        WHEN ren_liquidacion.anio = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM NOW()) >= 7 THEN
                                             ROUND((d.valor * 0.10), 2)
                                         WHEN ren_liquidacion.anio < EXTRACT(YEAR FROM NOW()) THEN
                                             ROUND((d.valor * 0.10), 2)
@@ -940,7 +940,7 @@ class LiquidacionesController extends Controller
                         WHERE d.liquidacion = ren_liquidacion.id 
                         AND d.rubro = 2
                         LIMIT 1
-                    ) AS total_pagar'), DB::raw("
+                    ) AS total_pagar_'), DB::raw("
                         (
                             SELECT
                                 CASE
@@ -986,7 +986,7 @@ class LiquidacionesController extends Controller
                         (
                             SELECT
                                 CASE
-                                    WHEN ren_liquidacion.anio = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM NOW()) > 7 THEN
+                                    WHEN ren_liquidacion.anio = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM NOW()) >= 7 THEN
                                         ROUND((d.valor * 0.10), 2)
                                     WHEN ren_liquidacion.anio < EXTRACT(YEAR FROM NOW()) THEN
                                         ROUND((d.valor * 0.10), 2)
@@ -1008,8 +1008,9 @@ class LiquidacionesController extends Controller
             ->distinct('num_titulo','clave_cat','anio')
             ->get();
             $total_valor=0;
+            
             foreach($liquidacionUrbana as $key=>$data){
-                $total_valor=$total_valor+$data->total_pagar;
+                $total_valor=$total_valor+$liquidacionUrbana[$key]->total_pagar;
                 $detalleLiquidacion=DB::connection('pgsql')->table('sgm_financiero.ren_det_liquidacion as dl')
                 ->join('sgm_financiero.ren_rubros_liquidacion as rl', 'rl.id', '=', 'dl.rubro')
                 ->where('liquidacion', $data->id_liquidacion)
@@ -1018,6 +1019,7 @@ class LiquidacionesController extends Controller
                 ->get();
 
                 $liquidacionUrbana[$key]->detalles=$detalleLiquidacion;
+              
             }
 
            

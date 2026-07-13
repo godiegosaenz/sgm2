@@ -1255,10 +1255,11 @@ class TransitoImpuestoController extends Controller
     }
 
     public function generar_firma_qr($nombre_firma,$nombre_img){
-        $nombre_firma="CARLOS ALBERTO CANCHINGRE INTRIAGO";
-        $nombre_img="05ENEC";       
-        $fecha = "2026-01-09 12:55:25";
-        $textoQR = "FIRMADO POR: $nombre_firma\nRAZON: \nLOCALIZACION: \nFECHA: $fecha \nVALIDAR CON: https://www.firmadigital.gob.ec \nFirmado digitalmente con FirmaEC 4.0.1 Windows 11 10.0";
+        $nombre_firma="ROBERTH FABRICIO LARA LOOR";
+        $nombre_img="alcalde";       
+        // $fecha = "2026-06-17 14:00:38";
+        $fecha = "";
+        $textoQR = "FIRMADO POR: $nombre_firma\nRAZON: \nLOCALIZACION: \nFECHA: $fecha \nVALIDAR CON: https://www.firmadigital.gob.ec \nFirmado digitalmente con FirmaEC 5.1.0 Windows 11 10.0";
 
         // $fecha = date('Y-m-d H:i:s');       
         // $textoQR = "GADM SAN VICENTE\nFirmado por: $nombre_firma\nFecha: $fecha";
@@ -1284,8 +1285,8 @@ class TransitoImpuestoController extends Controller
 
         // Separar nombre
         $nombres = $this->separarNombre($nombre_firma); // [apellido, nombre]
-        $texto1 = "Firmado electrónicamente por:\n";
-        $texto2 = "{$nombres[1]}\n";
+        $texto1 = "Validar únicamente en FirmaEC.\nFirmado electrónicamente por:\n";
+        $texto2 = "\n{$nombres[1]}\n\n";
         $texto3 = $nombres[0];
        
 
@@ -1298,9 +1299,9 @@ class TransitoImpuestoController extends Controller
         $font_size1 = 80;
         $font_size2 = 145;
         $text_x = 1002;
-        $text_y1 = 400;
-        $text_y2 = $text_y1 + 145;
-        $text_y3 = $text_y2 + 145;
+        $text_y1 = 300;
+        $text_y2 = $text_y1 + 155;
+        $text_y3 = $text_y2 + 325;
 
         imagettftext($nueva_imagen, $font_size1, 0, $text_x, $text_y1, $text_color, $font_path1, $texto1);
         imagettftext($nueva_imagen, $font_size2, 0, $text_x, $text_y2, $text_color, $font_path2, $texto2);
