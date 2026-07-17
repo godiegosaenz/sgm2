@@ -15,15 +15,23 @@ function agregarImpuesto(){
         if(data.error==true){
             alertNotificar(data.mensaje,"error");
         }
+        $('#id_descripcion_cambio').val('')
+        $('#descripcion_cambio').val('')
+        $('#descripcion_cambio_txt').val('')
+        $('#descripcionConceptoModal').modal('show')
         $('#tabla-conceptos-cert').append(`<tr>
                                                 <td style="width:5%; text-align:center; vertical-align:middle">
-                                                    <button class="btn btn-danger btn-sm">
+                                                    <button class="btn btn-danger btn-sm" onclick="eliminarFila(this)">
                                                         <i class="fa fa-trash"></i>
                                                     </button>
                                                     
                                                 </td>
-                                                <td style="width:65%; text-align:center; vertical-align:middle">
-                                                    ${data.resultado.concepto} 
+                                                <td style="width:65%; text-align:center; vertical-align:middle" >
+                                                   
+                                                    <span id="${data.resultado.id}">${data.resultado.concepto}</span>
+
+                                                    <input type="hidden" class="form-control ${data.resultado.id}" readonly name="descripcion_cambio_add[]"
+                                                    required>
                                                     
                                                 </td>
                                                 <td style="width:30%; text-align:center; vertical-align:middle">
@@ -32,11 +40,77 @@ function agregarImpuesto(){
                                                 </td>
                                             </tr>    
                                             `)
+
+        $('#descripcion_cambio').val(data.resultado.concepto)
+        $('#id_descripcion_cambio').val(data.resultado.id)
+
+        calcularTotal()
     }).fail(function(){
         vistacargando("")
     })
 }
 
+
+// 1. Función para aplicar Negrita o Cursiva al texto seleccionado
+function aplicarFormato(comando) {
+    document.execCommand(comando, false, null);
+    document.getElementById('descripcion-editor').focus();
+}
+
+// 2. Sincronizar el contenido del Editor con tu Input oculto 
+// (Esto asegura que cuando envíes el formulario a tu backend, viaje con el formato HTML)
+// document.getElementById('descripcion-editor').addEventListener('input', function() {
+//     const htmlConFormato = this.innerHTML;
+//     document.getElementById('descripcion-real').value = htmlConFormato;
+// });
+function eliminarFila(boton) {
+    // Preguntamos al usuario si está seguro
+    if (confirm('¿Está seguro de que desea eliminar este registro?')) {
+        // 'boton.parentNode' es el <td>, y su 'parentNode' es el <tr> (la fila)
+        const fila = boton.parentNode.parentNode;
+        fila.parentNode.removeChild(fila);
+        calcularTotal();
+    }
+}
+
+function calcularTotal() {
+    let suma = 0;
+    
+    // Selecciona todas las filas del cuerpo de la tabla
+    const filas = document.querySelectorAll("#tabla-conceptos-cert tr");
+
+    filas.forEach(fila => {
+        const celdaValor = fila.lastElementChild; // Toma la última celda (Valor USD)
+        if (celdaValor) {
+            const valor = parseFloat(celdaValor.textContent.trim());
+            if (!isNaN(valor)) {
+                suma += valor;
+            }
+        }
+    });
+
+    // Actualiza el input del total
+    document.getElementById("total_concepto").value = suma.toFixed(2);
+}
+
+
+function guardarDescripcionCambio(){
+    let id=$('#id_descripcion_cambio').val()
+    let dato=$('#descripcion_cambio').val()
+    let valor=$('#descripcion_cambio_txt').val()
+
+    $('#'+id).html('')
+    $('#'+id).html(dato +" "+valor)
+    // alert(dato)
+
+    $("."+id).val(valor)
+
+    cerrarModalDescripcionCambio()
+}
+
+function cerrarModalDescripcionCambio(){
+     $('#descripcionConceptoModal').modal('hide')
+}
 
 function llenarTabla(){
     

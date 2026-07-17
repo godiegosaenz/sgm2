@@ -123,6 +123,10 @@
     @foreach($datosTitulo as $item)
     @php
         $impuesto = $item['TransitoImpuesto'];
+        $color='white';
+        if($copia=="copia"){
+            $color='red';
+        }
     @endphp
 
         <table class="cabecera" style="font-size:10px !important">
@@ -249,6 +253,7 @@
                                     </tr>                             
                                     
                             @endforeach
+                            
                         </tbody>
                         <tfoot>
                             <tr>
@@ -256,6 +261,11 @@
                                 <td style="text-align: right;"><STRONg>$ {{$impuesto->total_pagar}}</STRonG> </td>
                             </tr>
                         </tfoot>
+                    </table>
+                    <table>
+                            <tr>
+                                <td colspan="2" style="font-size:16px;text:align:center; color:{{ $color }}"><b>FIEL COPIA DEL TITULO ORIGINAL</b></td>
+                            </tr>
                     </table>
                     @if($impuesto->solo_duplicado=='no' && $iav==0)
                         <table class="tabla-derecha">                            

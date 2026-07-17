@@ -216,7 +216,7 @@ function descargarPdf(){
 
 function descargarReporte(id){
     vistacargando("m","Espere por favor")
-    $.get("../transito-imprimir/"+id+'/G', function(data){
+    $.get("../transito-imprimir-copia/"+id+'/G'+'/copia', function(data){
         vistacargando("")
         if(data.error==true){
             alertNotificar(data.mensaje,"error");

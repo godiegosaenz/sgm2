@@ -1487,7 +1487,227 @@ class TransitoImpuestoController extends Controller
             'title' => 'Reporte de liquidacion',
             'date' => date('m/d/Y'),
             'datosTitulo' => $dataArray,
-            'fecha_formateada'=>$fecha_formateada
+            'fecha_formateada'=>$fecha_formateada,
+            'copia'=>null
+        ];
+       
+
+        $nombrePDF='reporte_titulo_impuesto'.$id.'.pdf';
+
+        $pdf = PDF::loadView('transito.reporteTitulosTransito', $data);
+
+        // return $pdf->stream('a.pdf');
+        $estadoarch = $pdf->stream();
+
+        \Storage::disk('disksDocumentoRenta')->put(str_replace("", "",$nombrePDF), $estadoarch);
+        $exists_destino = \Storage::disk('disksDocumentoRenta')->exists($nombrePDF);
+        if($exists_destino){
+           return [
+                'error'=>false,
+                'pdf'=>$nombrePDF
+            ];
+            // if($tipo=='G'){
+            //     return [
+            //         'error'=>false,
+            //         'pdf'=>$nombrePDF
+            //     ];
+            // }
+            
+            // $procesaFirma=$this->firmarDocumento($nombrePDF,$archivoFirmaRentas,$claveFirmaRentas, $archivoFirmaTesoreria, $claveFirmaTesoreria, $archivoFirmaRecaudador, $claveFirmaRecaudador);
+           
+            // if($procesaFirma['error']==false){
+            //     $TransitoImpuesto->documento_firmado=$procesaFirma['pdf'];
+            //     $TransitoImpuesto->save();
+            //     return [
+            //         'error'=>false,
+            //         'pdf'=>$procesaFirma['pdf']
+            //     ];
+            // }
+
+            // return[
+            //     'error'=>true,
+            //     'mensaje'=>$procesaFirma['mensaje']
+            // ];
+            
+
+        }else{
+            return[
+                'error'=>true,
+                'mensaje'=>'No se pudo crear el documento'
+            ];
+        }
+
+    }
+
+    public function pdfTransitoCopia($id,$tipo,$copia)
+    {
+        $dataArray = array();
+        $TransitoImpuesto = TransitoImpuesto::with('cliente','vehiculo')->find($id);
+       
+        if($TransitoImpuesto->estado==3 && $tipo=='C'){
+            return [
+                'error'=>false,
+                'pdf'=>$TransitoImpuesto->documento_firmado
+            ];
+        }
+      
+        $vehiculo =  $TransitoImpuesto->vehiculo;
+        $cliente = $TransitoImpuesto->cliente;
+        $transitoimpuestoconcepto = $TransitoImpuesto->conceptos;
+        
+        // $clase=\DB::connection('psql')->table('clase_vehiculo')-
+
+        foreach($transitoimpuestoconcepto as $key => $data){
+           
+            if($data->codigo=='RTV'){
+                $obtener= DB::connection('pgsql')
+                ->table('sgm_transito.clase_tipo_vehiculo')
+                ->where('valor', $data->pivot->valor)
+                ->pluck('descripcion')
+                ->toArray();
+                
+                $transitoimpuestoconcepto[$key]->agrupado=$obtener;
+            }           
+
+        }
+        // dd($TransitoImpuesto);
+       
+        $fecha_documento=$TransitoImpuesto->created_at;
+        $fecha_hoy=date('d-m-Y', strtotime($fecha_documento));
+
+        setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES@euro', 'es_ES', 'esp');
+        $fecha_timestamp = strtotime($fecha_hoy);
+        $fecha_formateada = strftime("%d de %B del %Y", $fecha_timestamp);
+
+        $liquidacion['TransitoImpuesto'] = $TransitoImpuesto;
+        $liquidacion['vehiculo'] = $vehiculo;
+        $liquidacion['cliente'] = $cliente;
+        $liquidacion['transitoimpuestoconcepto'] = $transitoimpuestoconcepto;
+        
+        array_push($dataArray, $liquidacion);
+
+        // $qr_Rentas = DB::connection('mysql')
+        //             ->table('area as a')
+        //             ->leftJoin('jefe_area as ja', 'ja.id_area', '=', 'a.id_area')
+        //             ->leftJoin('archivo_p12 as pdoce', 'pdoce.id_usuario', '=', 'ja.id_usuario')
+        //             ->leftJoin('users as u', 'u.id', '=', 'ja.id_usuario')
+        //             ->leftJoin('personas as p', 'p.id', '=', 'u.idpersona')
+        //             ->select(DB::raw("CONCAT(nombres,' ',apellidos) AS nombre"),'pdoce.archivo', 'pdoce.password')
+        //             ->where('a.descripcion', 'Rentas')
+        //             ->where('a.estado', 'A')
+        //             ->where('ja.estado', 'A')
+        //             ->where('pdoce.estado', 'A')
+        //             ->first();
+                   
+        // if(is_null($qr_Rentas)) {
+            
+        //     return [
+        //         'error' => true,
+        //         'mensaje' => "No existe un Certificado Vigente para el encargado de Rentas"
+        //     ];
+        // }
+
+        // $qr_Tesoreria = DB::connection('mysql')
+        //             ->table('area as a')
+        //             ->leftJoin('jefe_area as ja', 'ja.id_area', '=', 'a.id_area')
+        //             ->leftJoin('archivo_p12 as pdoce', 'pdoce.id_usuario', '=', 'ja.id_usuario')
+        //             ->leftJoin('users as u', 'u.id', '=', 'ja.id_usuario')
+        //             ->leftJoin('personas as p', 'p.id', '=', 'u.idpersona')
+        //             ->select(DB::raw("CONCAT(nombres,' ',apellidos) AS nombre"),'pdoce.archivo', 'pdoce.password')
+        //             ->where('a.descripcion', 'Rentas')
+        //             ->where('a.estado', 'A')
+        //             ->where('ja.estado', 'A')
+        //             ->where('pdoce.estado', 'A')
+        //             ->first();
+
+        // if(is_null($qr_Tesoreria)) {
+        //     return [
+        //         'error' => true,
+        //         'mensaje' => "No existe un Certificado Vigente para el encargado de Tesoreria"
+        //     ];
+        // }
+      
+        // $nombreRentas=$qr_Rentas->nombre;
+        // $archivoFirmaRentas=$qr_Rentas->archivo;
+        // $claveFirmaRentas=$qr_Rentas->password;
+        
+
+        // $imagenRentas="";
+        // $imagenRentas=$this->generar_firma_qr($nombreRentas, 'Rentas');
+        // if($imagenRentas['error']==true){
+        //     return [
+        //         'error' => true,
+        //         'mensaje' => $imagenRentas['error']
+        //     ];
+        // }
+
+        // $qr_Tesoreria = DB::connection('mysql')
+        //             ->table('area as a')
+        //             ->leftJoin('jefe_area as ja', 'ja.id_area', '=', 'a.id_area')
+        //             ->leftJoin('archivo_p12 as pdoce', 'pdoce.id_usuario', '=', 'ja.id_usuario')
+        //             ->leftJoin('users as u', 'u.id', '=', 'ja.id_usuario')
+        //             ->leftJoin('personas as p', 'p.id', '=', 'u.idpersona')
+        //             ->select(DB::raw("CONCAT(nombres,' ',apellidos) AS nombre"),'pdoce.archivo', 'pdoce.password')
+        //             ->where('a.descripcion', 'Rentas')
+        //             ->where('a.estado', 'A')
+        //             ->where('ja.estado', 'A')
+        //             ->where('pdoce.estado', 'A')
+        //             ->first();
+
+        // if(is_null($qr_Tesoreria)) {
+        //     return [
+        //         'error' => true,
+        //         'mensaje' => "No existe un Certificado Vigente para el encargado de Tesoreria"
+        //     ];
+        // }
+        // $nombreTesoreria=$qr_Tesoreria->nombre;
+        // $archivoFirmaTesoreria=$qr_Tesoreria->archivo;
+        // $claveFirmaTesoreria=$qr_Tesoreria->password;
+
+        // $imagenTesoreria="";
+        // $imagenTesoreria=$this->generar_firma_qr($nombreTesoreria, 'Tesoreria');
+        // if($imagenTesoreria['error']==true){
+        //     return [
+        //         'error' => true,
+        //         'mensaje' => $imagenTesoreria['error']
+        //     ];
+        // }
+
+        // $qr_Recaudador = DB::connection('mysql')
+        //             ->table('archivo_p12 as pdoce')
+        //             ->leftJoin('users as u', 'u.id', '=', 'pdoce.id_usuario')
+        //             ->leftJoin('personas as p', 'p.id', '=', 'u.idpersona')
+        //             ->select(DB::raw("CONCAT(nombres,' ',apellidos) AS nombre"),'pdoce.archivo', 'pdoce.password')
+        //             ->where('pdoce.id_usuario', auth()->user()->id)
+        //             ->where('pdoce.estado', 'A')
+        //             ->first();
+        // if(is_null($qr_Recaudador)) {
+        //     return [
+        //         'error' => true,
+        //         'mensaje' => "No existe un Certificado Vigente para el encargado de Recaudacion"
+        //     ];
+        // }
+
+        // $nombreRecaudador=$qr_Recaudador->nombre;
+        // $archivoFirmaRecaudador=$qr_Recaudador->archivo;
+        // $claveFirmaRecaudador=$qr_Recaudador->password;
+
+        // $imagenTesoreria="";
+        // $imagenTesoreria=$this->generar_firma_qr($nombreRecaudador, 'Recaudador');
+        // if($imagenTesoreria['error']==true){
+        //     return [
+        //         'error' => true,
+        //         'mensaje' => $imagenTesoreria['error']
+        //     ];
+        // }
+
+        // dd($dataArray);
+        $data = [
+            'title' => 'Reporte de liquidacion',
+            'date' => date('m/d/Y'),
+            'datosTitulo' => $dataArray,
+            'fecha_formateada'=>$fecha_formateada,
+            'copia'=>$copia
         ];
        
 

@@ -15,7 +15,7 @@
 @section('content') 
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <h3 class="h2">Certificaciones de Transito</h3>
-        <div class="btn-toolbar mb-2 mb-md-0">
+        <!-- <div class="btn-toolbar mb-2 mb-md-0">
             <div class="btn-group me-2">
                 <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal"
                     data-bs-target="#modalEditarRangos"> <i class="bi bi-table"></i> Impuesto Rodaje Municipal </button>
@@ -25,7 +25,7 @@
             <button type="button" class="btn btn-sm btn-outline-secondary d-flex align-items-center">
                 <i class="bi bi-info-circle"></i>
             </button>
-        </div>
+        </div> -->
     </div>
     @if(@session('error'))
         <div class="alert alert-danger">
@@ -175,7 +175,7 @@
             <div class="row align-items-end mb-3">
 
                 
-                <div class="col-md-9">
+                <div class="col-md-12">
                     <label for="nombresRepresentante" class="form-label">Tipo Certificado</label>
                     <select class="form-select {{ $errors->has('tipo_cert') ? 'is-invalid' : '' }}"
                         id="tipo_cert" name="tipo_cert" onchange="agregarImpuesto()">
@@ -187,13 +187,7 @@
                   
                 </div>
 
-                <div class="col-md-3 d-grid gap-2">
-                    <button class="btn btn-primary" id="btn-calcular">
-                        <span id="btn-text">Calcular</span>
-                        <span id="spinner-btn" class="spinner-border spinner-border-sm d-none" role="status"
-                            aria-hidden="true"></span>
-                    </button>
-                </div>
+               
             </div>
             <div class="mb-3">
                 <label class="form-label">Rubros</label>
@@ -213,7 +207,7 @@
                             <tr>
                                 <th></th>
                                 <th>TOTAL</th>
-                                <th><input type="number" step="0.01" class="form-control" id="total_concepto" value=""></th>
+                                <th style="text-align: center;"><input type="number" step="0.01" class="form-control" id="total_concepto" value="" readonly></th>
                             </tr>
                         </tfoot>
                     </table>
@@ -850,6 +844,81 @@
         </div>
     </div>
 
+    <div class="modal fade" id="descripcionConceptoModal" tabindex="-1" aria-labelledby="vehiculoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg"> <!-- Aumentamos el tamaño del modal -->
+            <form id="vehiculoForm" autocomplete="off">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">DETALLE</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <!-- Columna 1 -->
+                            <div class="col-md-12">
+
+                                <div class="mb-3">
+                                     <input type="hidden" class="form-control" readonly id="id_descripcion_cambio" name="id_descripcion_cambio"
+                                                required>
+                                    <label for="placa_v" class="form-label">Certificado</label>
+                                    <input type="text" class="form-control" readonly id="descripcion_cambio" name="descripcion_cambio"
+                                                required>
+                                    <div class="invalid-feedback" id="error-placa_v"></div>
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-12">
+
+                                <div class="mb-3">
+                                    <label for="placa_v" class="form-label">Descripcion</label>
+                                    <input type="text" class="form-control" id="descripcion_cambio_txt" name="descripcion_cambio_txt"
+                                                required onkeyup="convertirMayuscula(this)">
+                                    <div class="invalid-feedback" id="error-placa_v"></div>
+                                </div>
+
+                            </div>
+                             <!-- <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label class="form-label text-light">Descripción</label>
+                           
+                                    <div class="btn-group btn-group-sm mb-1 d-flex" style="max-width: 80px;">
+                                        <button type="button" class="btn btn-dark border-secondary text-white" onclick="aplicarFormato('bold')" title="Negrita">
+                                        <b>B</b>
+                                        </button>
+                                        <button type="button" class="btn btn-dark border-secondary text-white" onclick="aplicarFormato('italic')" title="Cursiva">
+                                        <i>I</i>
+                                        </button>
+                                    </div>
+
+                                   
+                                    <div 
+                                        id="descripcion-editor" 
+                                        contenteditable="true" 
+                                        class="form-control" 
+                                        style="min-height: 120px; height: auto; background-color: #1e222b; color: #fff; border: 1px solid #495057; overflow-y: auto;"
+                                        placeholder="Escribe la descripción aquí..."
+                                    ></div>
+
+                                    <input type="hidden" name="descripcion" id="descripcion-real">
+                                </div>
+                            </div> -->
+
+                            
+                        </div> <!-- End row -->
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" onclick="guardarDescripcionCambio()">
+                            Guardar
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
 
 
 
@@ -1007,168 +1076,7 @@
                 }
             }
         });
-        document.getElementById('btn-calcular').addEventListener('click', function (e) {
-            e.preventDefault(); // Previene que el formulario se envíe si está dentro de uno
-
-            const conceptos = [];
-            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            const vehiculo_id = document.getElementById('vehiculo_id_2').value;
-            const cliente_id = document.getElementById('cliente_id_2').value;
-            const year = document.getElementById('year_declaracion').value;
-            const last_year_declaracion = document.getElementById('last_year_declaracion').value;
-            const solo_duplicado = document.getElementById('solo_duplicado').value;
-            const tipo_serv = document.getElementById('tipo_vehi').value;
-            const year_modelo = document.getElementById('year_modelo').value;
-
-            const currentYear = new Date().getFullYear();
-            let menos3=currentYear-3
-            
-            if(tipo_serv=="PARTICULAR" && year_modelo > menos3){
-              
-                $('#check_valor_RTV').prop('checked',false)
-            }else{
-                if(solo_duplicado=='no'){
-                    $('#check_valor_RTV').prop('checked',true)
-                }else if(solo_duplicado=="manual"){
-                    // $('#check_valor_RTV').prop('checked',false)
-                    $('#check_valor_RTV')
-                    .prop('checked', false)
-                    .prop('disabled', false);
-                }
-            }
-
-            // alert(year)
-
-            if (!vehiculo_id || !cliente_id || !year) {
-                alert('Por favor llene los campos: vehiculo, cliente y Año de impuesto');
-                return;
-            }
-
-            // Mostrar spinner en el botón
-            document.getElementById('spinner-btn').classList.remove('d-none');
-            document.getElementById('btn-text').textContent = 'Calculando...';
-
-            document.querySelectorAll('.concepto-check:checked').forEach(checkbox => {
-                const id = checkbox.getAttribute('data-id');
-                const valor = parseFloat(document.getElementById(`valor_${id}`).value) || 0;
-                conceptos.push({ id, valor });
-            });
-
-            
-            if (conceptos.length > 0) {
-                
-                const spinner = document.getElementById('spinner-total');
-                if (spinner) spinner.style.display = 'inline-block';
-
-                axios.post('{{ route("calcular.transito") }}', {
-                    _token: token,
-                    conceptos: conceptos,
-                    vehiculo_id: vehiculo_id,
-                    cliente_id: cliente_id,
-                    year: year,
-                    last_year_declaracion: last_year_declaracion,
-                    solo_duplicado: solo_duplicado,
-                    tipo_serv:tipo_serv
-                }).then(function (res) {
-                    console.log("txt")
-                    console.log(res)
-
-                    if (res.status === 200) {
-                        // Reemplazar los valores en los inputs
-                        let total = 0;
-                        res.data.conceptos.forEach(function (concepto) {
-                            console.log(concepto)
-                            const input = document.getElementById('valor_' + concepto.id);
-                            if (input) {
-                                console.log(input)
-                                input.value = concepto.nuevo_valor.toFixed(2);
-                                // var valor = Number(concepto.nuevo_valor)
-                                // input.value = valor.toFixed(2);
-                                total += parseFloat(concepto.nuevo_valor);
-                            }
-
-                            
-                        });
-
-                        
-                        // $('#check_valor_RTV').prop('checked',true)
-                        // $('#check_valor_IAV').prop('checked',true)
-                        // $('#check_valor_SRV').prop('checked',true)
-                        // $('#check_valor_DM').prop('checked',false)
-                        // $('#check_valor_DE').prop('checked',false)
-                        // $('#check_valor_TSA').prop('readonly',true)
-                        // $('#check_valor_RTV').prop('checked',true)
-
-
-                        // if(res.data.desmarca_rtv=="S"){
-                        //    $('#check_valor_RTV').prop('checked',false)
-                        // }else{
-                        //     $('#check_valor_RTV').prop('checked',true)
-                        // }
-                       
-                        if(solo_duplicado=='matricula'){
-                            
-                            $('#check_valor_IAV').prop('checked',false)
-                            $('#check_valor_RTV').prop('checked',false)
-                            $('#check_valor_SRV').prop('checked',false)
-                            $('#check_valor_DE').prop('checked',false)
-                            $('#check_valor_RTV').prop('checked',false)
-                            $('#check_valor_REC').prop('checked',false)
-                            $('#check_valor_DM').prop('checked',true)
-                        }
-
-                        if(solo_duplicado=='sticker'){
-                           
-                            $('#check_valor_IAV').prop('checked',false)
-                            $('#check_valor_RTV').prop('checked',false)
-                            $('#check_valor_SRV').prop('checked',false)
-                            $('#check_valor_DM').prop('checked',false)
-                            $('#check_valor_RTV').prop('checked',false)
-                            $('#check_valor_REC').prop('checked',false)
-                            $('#check_valor_DE').prop('checked',true)
-                        }
-
-                        if(solo_duplicado=='rodaje'){
-                            $('#check_valor_IAV').prop('checked',true)
-                            $('#check_valor_RTV').prop('checked',false)
-                            // $('#check_valor_SRV').prop('checked',false)
-                            $('#check_valor_DM').prop('checked',false)
-                            $('#check_valor_RTV').prop('checked',false)
-                            $('#check_valor_REC').prop('checked',false)
-                            // $('#check_valor_DE').prop('checked',true)
-                        }
-
-                        // Mostrar el total con dos decimales
-                        document.getElementById('total_concepto').value = total.toFixed(2);
-                        console.log(total);
-                    }
-                    if (spinner) spinner.style.display = 'none';
-                }).catch(function (err) {
-                    console.log(err)
-                    if (err.request.status === 500) {
-                        console.log('Error al consultar al servidor.');
-                    }
-                    if (err.request.status === 419) {
-                        console.log('Sesión caducada, vuelve a iniciar sesión.');
-                    }
-                    if (spinner) spinner.style.display = 'none';
-                }).finally(function () {
-                    // Aquí se detiene el spinner y se restaura el texto del botón
-                    document.getElementById('spinner-btn').classList.add('d-none');
-                    document.getElementById('btn-text').textContent = 'Calcular';
-                });;
-
-                // 2. Poner en 0.00 los NO seleccionados
-            document.querySelectorAll('.concepto-check:not(:checked)').forEach(checkbox => {
-                const id = checkbox.getAttribute('data-id');
-                const input = document.getElementById(`valor_${id}`);
-                input.value = '0.00';
-            });
-
-            } else {
-                alert('Selecciona al menos un concepto para calcular.');
-            }
-        });
+       
 
         document.getElementById('btn-guardar').addEventListener('click', function () {
 

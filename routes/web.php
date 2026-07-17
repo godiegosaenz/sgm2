@@ -301,6 +301,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('carga-info-persona/{ci}', [TransitoImpuestoController::class, 'infoPersona'])->name('infoPersona.transito');
     Route::get('carga-info-vehiculo/{ci}', [TransitoImpuestoController::class, 'infoVehiculo']);
     Route::get('transito-imprimir/{id}/{tipo}', [TransitoImpuestoController::class, 'pdfTransito'])->name('pdfTransito.transito');
+    Route::get('transito-imprimir-copia/{id}/{tipo}/{copia}', [TransitoImpuestoController::class, 'pdfTransitoCopia'])->name('pdfTransito.transito');
     Route::post('baja-titulo-transito', [TransitoImpuestoController::class, 'bajaTituloTransito'])->name('bajaTituloTransito.transito');
     Route::get('detalle-titulo/{id}', [TransitoImpuestoController::class, 'detalleTitulo'])->name('detalleTitulo.transito');
     Route::get('registrar-cobro-transito/{id}', [TransitoImpuestoController::class, 'realizarCobro'])->name('realizarCobro.transito');
