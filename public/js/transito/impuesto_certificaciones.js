@@ -18,7 +18,9 @@ function agregarImpuesto(){
         $('#id_descripcion_cambio').val('')
         $('#descripcion_cambio').val('')
         $('#descripcion_cambio_txt').val('')
-        $('#descripcionConceptoModal').modal('show')
+        if(data.resultado.tiene_detalle=='S'){
+            $('#descripcionConceptoModal').modal('show')
+        }
         $('#tabla-conceptos-cert').append(`<tr>
                                                 <td style="width:5%; text-align:center; vertical-align:middle">
                                                     <button class="btn btn-danger btn-sm" onclick="eliminarFila(this)">
@@ -32,6 +34,9 @@ function agregarImpuesto(){
 
                                                     <input type="hidden" class="form-control ${data.resultado.id}" readonly name="descripcion_cambio_add[]"
                                                     required>
+
+                                                    <input type="hidden" class="form-control" readonly name="id_descripcion_cambio_add[]"
+                                                    required value="${data.resultado.id}">
                                                     
                                                 </td>
                                                 <td style="width:30%; text-align:center; vertical-align:middle">

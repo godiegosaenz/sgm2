@@ -319,6 +319,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //certificaciones transito
     Route::get('certificaciones-transito', [TransitoImpuestoCertificacionController::class, 'index']);
     Route::get('llenar-tabla-certif-vehicular/{id}', [TransitoImpuestoCertificacionController::class, 'llenarCertVehicular']);
+    Route::post('transito-cert', [TransitoImpuestoCertificacionController::class, 'store'])->name('store.transito-cert');
 
 
     //vista edicion antes de cobro

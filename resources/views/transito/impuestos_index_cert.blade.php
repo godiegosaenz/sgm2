@@ -1079,7 +1079,7 @@
        
 
         document.getElementById('btn-guardar').addEventListener('click', function () {
-
+            
             let nombres=$('#nombrescliente').val()
             let avaluo_aux=$('#avaluo').val()
                 
@@ -1109,13 +1109,23 @@
             });
             const vehiculo_id_2 = document.getElementById('vehiculo_id_2').value;
             const cliente_id_2 = document.getElementById('cliente_id_2').value;
-            const year_declaracion = document.getElementById('year_declaracion').value;
-            const last_year_declaracion = document.getElementById('last_year_declaracion').value;
-            const solo_dupli = document.getElementById('solo_duplicado').value;
+            // const year_declaracion = document.getElementById('year_declaracion').value;
+            // const last_year_declaracion = document.getElementById('last_year_declaracion').value;
+            // const solo_dupli = document.getElementById('solo_duplicado').value;
             const btn = document.getElementById('btn-guardar');
             const spinner = btn.querySelector('.spinner-border');
             btn.disabled = true;
             spinner.classList.remove('d-none');
+
+            // const id_descripcion_cambio_add=document.getElementsByName('id_descripcion_cambio_add').value;
+            // 1. Recorremos todos los inputs dinámicos por su atributo 'name' y extraemos su valor
+            let idsCambio = $("input[name='id_descripcion_cambio_add[]']").map(function() {
+                return $(this).val();
+            }).get(); // .get() lo convierte en un array estándar de JavaScript
+
+            let descripcionesCambio = $("input[name='descripcion_cambio_add[]']").map(function() {
+                return $(this).val();
+            }).get();
 
             const conceptosSeleccionados = [];
 
@@ -1128,8 +1138,9 @@
                 });
             });
 
-            // Validación simple: debe haber al menos uno
-            if (conceptosSeleccionados.length === 0) {
+            
+            let filas=$('#tabla-conceptos-cert tr').length
+            if(filas==0){
                 alert('Debes seleccionar al menos un concepto.');
                 // En el then o catch
                 btn.disabled = false;
@@ -1137,14 +1148,15 @@
                 return;
             }
 
-            axios.post('{{ route("store.transito") }}', {
+
+            axios.post('{{ route("store.transito-cert") }}', {
                 _token: '{{ csrf_token() }}',
-                conceptos: conceptosSeleccionados,
+                idsCambio: idsCambio,
+                descripcionesCambio:descripcionesCambio,
                 vehiculo_id_2: vehiculo_id_2,
                 cliente_id_2: cliente_id_2,
-                year_declaracion: year_declaracion,
-                last_year_declaracion: last_year_declaracion,
-                solo_dupli:solo_dupli
+                // year_declaracion: year_declaracion,
+                
             })
                 .then(function (res) {
                     // limpiar errores

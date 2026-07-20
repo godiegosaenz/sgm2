@@ -1362,7 +1362,12 @@ class NotificacionesController extends Controller
                 "num_proceso"=>$num_proceso, 
                 "liquidacionUrb"=>$datosUrbano, 
                 "liquidacionRural"=>$datosRural]);           
-            $estadoarch = $pdf->stream();
+            // $estadoarch = $pdf->stream();
+            // 🛠️ SE AGREGA AQUÍ: Fuerza a dompdf a incrustar correctamente subconjuntos de fuentes
+            $pdf->getDomPDF()->set_option('enable_font_subsetting', true);
+
+            // 🛑 EXTRACCIÓN LIMPIA: Obtenemos el string binario puro del PDF sin cabeceras HTTP
+            $estadoarch = $pdf->output();
 
             // LO GUARDAMOS EN EL DISCO
             $disco="disksCoactiva";
@@ -3363,7 +3368,13 @@ class NotificacionesController extends Controller
                
             ]);  
             // return $pdf->stream($nombrePDF);
-            $estadoarch = $pdf->stream();
+            // $estadoarch = $pdf->stream();
+
+            // 🛠️ SE AGREGA AQUÍ: Fuerza a dompdf a incrustar correctamente subconjuntos de fuentes
+            $pdf->getDomPDF()->set_option('enable_font_subsetting', true);
+
+            // 🛑 EXTRACCIÓN LIMPIA: Obtenemos el string binario puro del PDF sin cabeceras HTTP
+            $estadoarch = $pdf->output();
 
             // LO GUARDAMOS EN EL DISCO
             $disco="disksCoactiva";
@@ -3393,7 +3404,12 @@ class NotificacionesController extends Controller
                 
                 ]);  
 
-                $estadoarch1 = $pdf->stream();
+                // $estadoarch1 = $pdf->stream();
+                // 🛠️ SE AGREGA AQUÍ: Fuerza a dompdf a incrustar correctamente subconjuntos de fuentes
+                $pdf->getDomPDF()->set_option('enable_font_subsetting', true);
+
+                // 🛑 EXTRACCIÓN LIMPIA: Obtenemos el string binario puro del PDF sin cabeceras HTTP
+                $estadoarch1 = $pdf->output();
 
                 \Storage::disk($disco)->put(str_replace("", "",$nombrePDF2), $estadoarch1);
                 $exists_destino = \Storage::disk($disco)->exists($nombrePDF2);
