@@ -1079,6 +1079,8 @@
                     $('#check_valor_RTV')
                     .prop('checked', false)
                     .prop('disabled', false);
+
+                    //  $('#check_valor_REC').prop('checked',true)
                 }
             }
 

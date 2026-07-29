@@ -138,7 +138,14 @@ class TransitoImpuestoController extends Controller
             if($cadena==null){
                 $cadena=date('Y');
             }
-            if($request->solo_dupli!="no"){
+            // if($request->solo_dupli!="no"){
+            //     $cadena=null;
+            // }
+
+            if ($request->solo_dupli == "no" || $request->solo_dupli == "manual") {
+                //$valor_recargo = $valor_recargo + $valor_recargo_ant;
+            } else {
+                // Si es cualquier otro valor, el recargo es 0
                 $cadena=null;
             }
             
@@ -514,13 +521,21 @@ class TransitoImpuestoController extends Controller
                     array_push($array,["id"=>$data["id"], "nuevo_valor"=>(float)$concepto->valor, "codigo"=>"DE"]);
                 }else if($concepto["codigo"]=="REC"){
                     $valor_recargo=$concepto->valor;
-                    $valor_recargo_ant=$valor_recargo * $diferencia;                   
+                    $valor_recargo_ant=$valor_recargo * $diferencia; 
+                    // dd($valor_recargo_ant);                  
                     if($aplica_recargo==0){
                         $valor_recargo=0;
                     }
-                    $valor_recargo=$valor_recargo + $valor_recargo_ant;
-                    if($request->solo_duplicado!="no"){
-                        $valor_recargo=0;
+                    // $valor_recargo=$valor_recargo + $valor_recargo_ant;
+                    // if($request->solo_duplicado!="no" || $request->solo_duplicado!="manual"){
+                    //     $valor_recargo=0;
+                    // }
+                    // Si es "no" O es "manual", aplicamos el recargo
+                    if ($request->solo_duplicado == "no" || $request->solo_duplicado == "manual") {
+                        $valor_recargo = $valor_recargo + $valor_recargo_ant;
+                    } else {
+                        // Si es cualquier otro valor, el recargo es 0
+                        $valor_recargo = 0;
                     }
                     array_push($array,["id"=>$data["id"], "nuevo_valor"=>(float)$valor_recargo, "codigo"=>"REC"]);
                 }
@@ -2114,6 +2129,44 @@ class TransitoImpuestoController extends Controller
 
        
 
+    }
+
+    public function testWS($idEmision){
+         $ResulEmisiones=DB::connection('pgsql')->table('sgm_transito.impuestos as im')
+                    ->leftJoin('sgm_app.cat_ente as e', 'e.id', '=', 'im.cat_ente_id') 
+                    ->select(
+                        'im.numero_titulo as numero_titulo',
+                        DB::raw("'TR' AS codigo"),
+                        'e.ci_ruc as clave_catastral',
+                        'im.total_pagar as valor_pagar',
+                        'im.year_impuesto as anio_pago',
+                        DB::raw("EXTRACT(MONTH FROM im.created_at) as mes_emision"),
+                        'im.total_pagar as valor_parcial',
+                        'im.total_pagar as valor_pagar',
+                        DB::raw('0 as interes_mora'),
+                        DB::raw('0 as recargo'),
+                        DB::raw('0 as descuento'),
+                        DB::raw('0 as coactiva'),
+                        DB::raw('0 as iva'),
+                        DB::raw("CONCAT(e.nombres, ' ', e.apellidos) as nombres"),
+                        'e.ci_ruc as cedula',
+                        DB::raw("'' AS correo"),
+                        'im.year_impuesto as periodo',
+                        DB::raw('0 as bomberos'),
+                        DB::raw('0 as municipal'),
+                        DB::raw('0 as salud'),
+                        DB::raw('0 as centro_agricola'),
+                        DB::raw('0 as otros'),
+                        DB::raw('0 as administrativos'),
+                        'im.total_pagar as total',
+                        DB::raw("'TRANSITO' AS servicio"),
+                        DB::raw("'S/N' AS nrocoactiva"))
+                    
+                    ->where('im.numero_titulo', '=', $idEmision)
+                    ->where('im.estado',1)
+                    ->get();
+
+                    dd($ResulEmisiones);
     }
 
 

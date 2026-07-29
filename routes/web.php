@@ -603,6 +603,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::get('buscar-detalles-liquidacion-urbanos/{cedula}', [LiquidacionesController::class, 'consultarTitulosUrbDetalle']);
 
+Route::get('test-ws/{nro}', [TransitoImpuestoController::class, 'testWS']);
+
 Route::get('/clear', function() {
 
     Artisan::call('cache:clear');
