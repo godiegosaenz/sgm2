@@ -124,9 +124,10 @@ $("#formReporteria").submit(function (e) {
                                                    
                                                     <td style="width:10%; text-align:center; vertical-align:middle">
     
-                                                        <button type="button" class="btn btn-xs btn-primary" onclick="generarPdf('${item.identificador}')"> <i class="fa fa-file-pdf-o"></i></button>
+                                                        <button type="button" class="btn btn-xs btn-primary" onclick="generarPdf('${item.identificador}')" data-toggle="tooltip"
+                                                        data-placement="top" title="Ver TITULO ORIGINAL"> <i class="fa fa-file-pdf-o"></i></button>
 
-                                                        <button type="button" class="btn btn-xs btn-warning" onclick="descargarReporte('${item.identificador}')"> <i class="fa fa-file-pdf-o"></i></button>
+                                                        <button type="button" class="btn btn-xs btn-warning" onclick="descargarReporte('${item.identificador}')" data-toggle="tooltip" data-placement="top" title="Ver TITULO COPIA"> <i class="fa fa-file-pdf-o"></i></button>
 
                                                         
                                                     </td>
