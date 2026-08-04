@@ -1,5 +1,61 @@
 @extends('layouts.appv2')
 @section('title', 'Catastro contribuyente')
+<style>
+     /* Menú desplegable */
+    .dt-dropdown-content{
+        display:none;
+        position:absolute;
+        right:0;
+        top:100%;
+        margin-top:2px;
+        background:#fff;
+        min-width:180px;
+        box-shadow:0 6px 16px rgba(0,0,0,.15);
+        border-radius:8px;
+        overflow:hidden;
+        z-index:9999;
+        border:1px solid #e5e7eb;
+    }
+
+    /* Mostrar con clic (NO hover) */
+    .dt-dropdown.active .dt-dropdown-content{
+        display:block;
+    }
+
+    /* Opciones */
+    .dt-dropdown-content a{
+        display:flex;
+        align-items:center;
+        gap:8px;
+        padding:9px 12px;
+        text-decoration:none;
+        color:#374151;
+        font-size:13px;
+        transition:background .15s ease, padding-left .15s ease;
+    }
+
+    .dt-dropdown-content a:hover{
+        background:#f3f4f6;
+        padding-left:16px;
+    }
+
+    /* Divisor */
+    .dt-divider{
+        height:1px;
+        background:#e5e7eb;
+        margin:4px 0;
+    }
+
+    /* Eliminar */
+    .dt-dropdown-content a.eliminar{
+        color:#dc2626;
+    }
+
+    .dt-dropdown-content a.eliminar:hover{
+        background:#fee2e2;
+    }
+
+</style>
 @push('styles')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link href="{{ asset('css/dataTables.bootstrap5.min.css') }}" rel="stylesheet">
@@ -32,7 +88,7 @@
                     <option value="Urbano">Urbano</option>
                     <option value="Rural">Rural</option>
                 </select>
-            </div>
+            </div> 
             <!-- <div class="col-md-3">
                 <button class="btn btn-primary" id="btnFiltrar">Filtrar</button>
             </div> -->
@@ -114,6 +170,10 @@
 @push('scripts')
 <!-- jQuery -->
 <script src="{{ asset('js/jquery-3.5.1.js') }}"></script>
+
+<!-- DataTables Buttons -->
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+
 <!-- DataTables -->
 
 <script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>

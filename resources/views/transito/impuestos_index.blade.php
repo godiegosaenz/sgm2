@@ -413,7 +413,7 @@
 
                 $('#tablaImpuestoDetalle').append(`<tr>
                                                 <td style="width:75%; text-align:left; vertical-align:middle">
-                                                    ${concepto}
+                                                    ${concepto} ${item.pivot.descripcion}
                                                 </td>
                                                 <td style="width:25%; text-align:right; vertical-align:middle">
                                                     ${item.pivot.valor}

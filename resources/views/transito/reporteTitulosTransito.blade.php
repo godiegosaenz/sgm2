@@ -228,7 +228,7 @@
                         <tbody>
                             @foreach($item['transitoimpuestoconcepto'] as $r)
                                 @php
-                                    $concepto=$r->concepto;
+                                    $concepto=$r->concepto." ".$r->pivot->descripcion;
                                     $quitar=0;
                                     if($r->codigo=='RTV'){
                                         $concepto=$r->concepto ." (".$item['vehiculo']->tipo_vehiculo->descripcion. ")";

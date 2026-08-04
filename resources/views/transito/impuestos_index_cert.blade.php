@@ -1127,6 +1127,10 @@
                 return $(this).val();
             }).get();
 
+            let valorCambio = $("input[name='id_valor_cambio_add[]']").map(function() {
+                return $(this).val();
+            }).get();
+
             const conceptosSeleccionados = [];
 
             document.querySelectorAll('.concepto-check:checked').forEach(function (checkbox) {
@@ -1153,6 +1157,7 @@
                 _token: '{{ csrf_token() }}',
                 idsCambio: idsCambio,
                 descripcionesCambio:descripcionesCambio,
+                valorCambio:valorCambio,
                 vehiculo_id_2: vehiculo_id_2,
                 cliente_id_2: cliente_id_2,
                 // year_declaracion: year_declaracion,

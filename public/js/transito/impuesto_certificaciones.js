@@ -37,6 +37,9 @@ function agregarImpuesto(){
 
                                                     <input type="hidden" class="form-control" readonly name="id_descripcion_cambio_add[]"
                                                     required value="${data.resultado.id}">
+
+                                                    <input type="hidden" class="form-control" readonly name="id_valor_cambio_add[]"
+                                                    required value="${data.resultado.valor}">
                                                     
                                                 </td>
                                                 <td style="width:30%; text-align:center; vertical-align:middle">

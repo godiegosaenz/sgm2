@@ -259,11 +259,13 @@ class TransitoImpuestoController extends Controller
                 ]);
                 $total += $concepto['valor'];
             }
-
-            $verificaNum=TransitoImpuesto::whereNotNull('numero_titulo')
+            
+            $verificaNum=TransitoImpuesto::where('year_impuesto',date('Y'))
             ->select('numero_titulo')
-            ->where('year_impuesto',date('Y'))
+            ->whereNotNull('numero_titulo')
+            ->whereNull('certificacion')
             ->orderBy('id','desc')->first();
+            // dd($verificaNum);
 
             $num=0;
             if(is_null($verificaNum)){
@@ -1270,10 +1272,10 @@ class TransitoImpuestoController extends Controller
     }
 
     public function generar_firma_qr($nombre_firma,$nombre_img){
-        $nombre_firma="ROBERTH FABRICIO LARA LOOR";
-        $nombre_img="alcalde";       
+        $nombre_firma="MONICA ALEXANDRA OREJUELA MARTINEZ";
+        $nombre_img="MONICA";       
         // $fecha = "2026-06-17 14:00:38";
-        $fecha = "";
+        $fecha = "2026-07-27 11:12:00";
         $textoQR = "FIRMADO POR: $nombre_firma\nRAZON: \nLOCALIZACION: \nFECHA: $fecha \nVALIDAR CON: https://www.firmadigital.gob.ec \nFirmado digitalmente con FirmaEC 5.1.0 Windows 11 10.0";
 
         // $fecha = date('Y-m-d H:i:s');       
@@ -1350,7 +1352,7 @@ class TransitoImpuestoController extends Controller
         $vehiculo =  $TransitoImpuesto->vehiculo;
         $cliente = $TransitoImpuesto->cliente;
         $transitoimpuestoconcepto = $TransitoImpuesto->conceptos;
-        
+        // dd($transitoimpuestoconcepto);
         // $clase=\DB::connection('psql')->table('clase_vehiculo')-
 
         foreach($transitoimpuestoconcepto as $key => $data){

@@ -16,6 +16,7 @@ class TransitoImpuestoConcepto extends Model
         'impuesto_matriculacion_id',
         'concepto_id',
         'valor',
+        'descripcion',
         'id',
     ];
 }
