@@ -485,12 +485,12 @@
                         'active' => request()->routeIs('edicion.transito')
                     ],
 
-                    // [
-                    //     'name' => 'Certificacion transitos',
-                    //     'route' => 'index.transito-cert',
-                    //     'permission' => 'Certificacion transito',
-                    //     'active' => request()->routeIs('index.transito-cert')
-                    // ],
+                    [
+                        'name' => 'Certificacion transitos',
+                        'route' => 'index.transito-cert',
+                        'permission' => 'Certificacion transito',
+                        'active' => request()->routeIs('index.transito-cert')
+                    ],
 
                     [
                         'name' => 'Listar impuestos transito',

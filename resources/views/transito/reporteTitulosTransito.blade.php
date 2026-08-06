@@ -158,6 +158,11 @@
 
         @php
             $iav=0;
+            $cert=0;
+            $separar=explode("-",$impuesto->numero_titulo);
+            if($separar[1]=="CERT"){
+                $titulo="ÁREA DE MATRICULACIÓN Y REVISIÓN VEHICULAR";
+            }
         @endphp
         
         <table class="tabla-principal" style="margin-top: 5px;">
@@ -165,10 +170,15 @@
                 <td class="columna-izquierda">
                     <table class="tabla-izquierda" style="font-size: 11px;">
                         <tr>
-                            <td width="50%"><b>UNIDAD MUNICIPAL DE TRANSITO, TRANSPORTE TERRESTRE <br>Y SEGURIDAD VIAL</b></td>
+                            <td width="50%"><b>UNIDAD MUNICIPAL DE TRANSITO, TRANSPORTE TERRESTRE
+                                Y SEGURIDAD VIAL</b></td>
                         </tr>                     
                         <tr>
-                            <td width="50%"><b>Proceso de Matriculacion Vehicular :</b>{{$impuesto->year_impuesto}} </td>
+                            @if($separar[1]=="CERT")
+                                <td width="50%"><b>AREA DE MATRICULACIÓN Y REVISIÓN VEHICULAR</b></td>
+                            @else
+                                <td width="50%"><b>Proceso de Matriculacion Vehicular :</b>{{$impuesto->year_impuesto}} </td>
+                            @endif
                         </tr>  
                         <tr>
                             <td width="50%" style=" line-height: 15px;">
