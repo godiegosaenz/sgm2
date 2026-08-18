@@ -591,6 +591,8 @@ class NotificacionesController extends Controller
             if($datos['error']==true){
                 return ["mensaje"=>$datos['mensaje'], "error"=>true];
             }
+
+            // dd($datos);
            
             $datos1=$this->consultarTitulos($id);
             if($datos1['error']==true){
@@ -677,6 +679,7 @@ class NotificacionesController extends Controller
             $liquidaciones=DataNotifica::where('id_info_notifica',$id)
             ->pluck('num_titulo')
             ->toArray();
+           
            
             $liquidacionUrbana = DB::connection('pgsql')->table('sgm_financiero.ren_liquidacion')
             ->join('sgm_app.cat_predio', 'sgm_financiero.ren_liquidacion.predio', '=', 'sgm_app.cat_predio.id')

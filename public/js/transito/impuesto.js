@@ -814,9 +814,9 @@ function capturaInfoVehiculo(){
     $('#nombre_btn_vehiculo').html('')
     $('#btn_guarda_act_vehiculo').prop('disabled',false)
 
-    // vistacargando("m","Espere por favor")
+    vistacargando("m","Espere por favor")
     $.get("carga-info-vehiculo/"+placa_cpn_ramv, function(data){
-        vistacargando("")
+        
         VehiculoIdEditar=data.id_vehiculo
         
         if(VehiculoIdEditar>0){
@@ -830,10 +830,16 @@ function capturaInfoVehiculo(){
         }
        
         if(data.error==true){
-            // alertNotificar(data.mensaje,"error");
+            vistacargando("")
             return;   
         }
-        if(data.data==null){return}
+
+        
+        if(data.data==null){
+            consultarPlaca(placa_cpn_ramv)
+            vistacargando("") 
+            return
+        }
 
         $('#avaluo_v').val(data.data.avaluo)
         $('#tipo_v').val(data.data.tipo_clase_id)
@@ -841,20 +847,132 @@ function capturaInfoVehiculo(){
         $('#year_v').val(data.data.year)
         $('#marca_v').val(data.data.marca_id)
         $('#tipo_ident').val(data.data.tipo_identif)
-        console.log(data)
-        // cargaComboClaseTipoVeh()
-
-        // setTimeout(function() {
-        //     $('#clase_tipo_v').val(data.data.clase_id)
-        // }, 1000);
+        
         $('#clase_tipo_v').val(data.data.clase_id)
         $('#tipo_vehiculo').val(data.data.tipo_vehi)
+
+        consultarPlaca(placa_cpn_ramv)
+        vistacargando("") 
          
     }).fail(function(){
-        // vistacargando("")
+        vistacargando("")
         alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
     });
 }
+
+function consultarPlaca(placa) {
+  
+    // const baseUrl = 'http://localhost:3000';
+    const baseUrl = 'http://192.168.0.124:3000';
+
+    fetch(`${baseUrl}/consultar?placa=${encodeURIComponent(placa)}`)
+        .then(response => response.json())
+        .then(res => {
+            console.log(res)
+            if (res.success && res.raw) {
+                // 1. Extraer el arreglo de identificación
+                const listaIdentificacion = res.raw.lsDatosIdentificacion || [];
+
+                // 2. Buscar el objeto específico donde la etiqueta sea "VIN:"
+                const objetoVin = listaIdentificacion.find(item => item.etiqueta === 'VIN:');
+                
+                // 3. Obtener el valor de forma segura
+                const vinReal = objetoVin ? objetoVin.valor : 'No encontrado';
+
+                console.log('--- DATOS EXTRAÍDOS DE RAW ---');
+                console.log('VIN Real:', vinReal);
+
+                $('#chasis_v').val(vinReal)
+
+                // --- OTRAS BÚSQUEDAS DE EJEMPLO ---
+
+                // Buscar Motor
+                const objetoMotor = listaIdentificacion.find(item => item.etiqueta === 'Motor:');
+                console.log('Motor Real:', objetoMotor ? objetoMotor.valor : 'No encontrado');
+                //$('#chasis_v').val(vinReal)
+
+                //const listaModeloAnio = res.raw.lsDatosModelo || [];
+               
+
+                // Buscar Marca desde lsDatosModelo
+                const listaModelo = res.raw.lsDatosModelo || [];
+                const objetoMarca = listaModelo.find(item => item.etiqueta === 'Marca:');
+                console.log('Marca:', objetoMarca ? objetoMarca.valor : 'No encontrado');
+
+
+                const objetoAnio = listaModelo.find(item => item.etiqueta === 'Año Fabricación:');
+                console.log('Año Fabricación:', objetoAnio ? objetoAnio.valor : 'No encontrado');
+                $('#year_v').val(objetoAnio.valor)
+
+                // Si marcaTexto = "TUNDRA", busca el <option> que contenga "TUNDRA" y asigna su val()
+                var marcaTexto = obtenerValorRaw(res.raw.lsDatosModelo, 'Marca:');
+
+                if (marcaTexto) {
+                    var optionEncontrada = $('#marca_v option').filter(function() {
+                        return $(this).text().trim().toUpperCase() === marcaTexto.toUpperCase();
+                    });
+
+                    if (optionEncontrada.length > 0) {
+                        $('#marca_v').val(optionEncontrada.val()).trigger('change');
+                    } else {
+                        console.warn('La marca "' + marcaTexto + '" no existe en el catálogo desplegable.');
+                    }
+                }
+
+
+                var servicioTexto = res.raw.lsServicio
+                console.log(servicioTexto)
+                if (servicioTexto) {
+                    let txt_servicio=""
+                    if(servicioTexto=="USO PUBLICO"){
+                        txt_servicio="PUBLICO"
+                    }else if(servicioTexto=="USO PARTICULAR"){
+                        txt_servicio="PARTICULAR"
+                    }else{
+                        return
+                    }
+                    var optionEncontrada = $('#tipo_vehiculo option').filter(function() {
+                        return $(this).text().trim().toUpperCase() === txt_servicio.toUpperCase();
+                    });
+
+                    if (optionEncontrada.length > 0) {
+                        $('#tipo_vehiculo').val(optionEncontrada.val()).trigger('change');
+                    } else {
+                        console.warn('Tipo Servicio "' + txt_servicio + '" no existe en el catálogo desplegable.');
+                    }
+                }
+                setTimeout(function() {
+                    var claseVehiTexto = obtenerValorRaw(res.raw.lsOtrasCaracteristicas, 'Clase Vehículo:');
+                
+                    if (claseVehiTexto) {
+                        var optionEncontrada = $('#clase_tipo_v option').filter(function() {
+                            return $(this).text().trim().toUpperCase() === claseVehiTexto.toUpperCase();
+                        });
+                    
+                        if (optionEncontrada.length > 0) {
+                            $('#clase_tipo_v').val(optionEncontrada.val()).trigger('change');
+                        } else {
+                            console.warn('La marca "' + claseVehiTexto + '" no existe en el catálogo desplegable.');
+                        }
+                    }
+                }, 3000)
+                   
+
+            } else {
+                console.error('Error del servidor:', res.error);
+            }
+        })
+        .catch(error => console.error('Error de red:', error));
+}
+
+function obtenerValorRaw(lista, etiquetaBuscada) {
+    if (!Array.isArray(lista)) return '';
+    const encontrado = lista.find(item => item.etiqueta === etiquetaBuscada);
+    return encontrado && encontrado.valor ? encontrado.valor.trim() : '';
+}
+
+// Ejemplo de uso:
+//consultarPlaca('IQ143U');
 
 function verpdf(ruta){
    

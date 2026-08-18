@@ -1060,6 +1060,7 @@ class TransitoImpuestoController extends Controller
             if(!is_null($buscaVehiculo)){
                 $id_vehiculo=$buscaVehiculo->id;
             }
+            
             return ['data'=>$buscaVehiculo, 'error'=>false, 'id_vehiculo'=>$id_vehiculo];
 
         } catch (Exception $e) {
