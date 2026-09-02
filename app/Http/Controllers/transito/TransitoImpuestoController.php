@@ -1060,7 +1060,7 @@ class TransitoImpuestoController extends Controller
             if(!is_null($buscaVehiculo)){
                 $id_vehiculo=$buscaVehiculo->id;
             }
-            
+
             return ['data'=>$buscaVehiculo, 'error'=>false, 'id_vehiculo'=>$id_vehiculo];
 
         } catch (Exception $e) {
@@ -1273,10 +1273,10 @@ class TransitoImpuestoController extends Controller
     }
 
     public function generar_firma_qr($nombre_firma,$nombre_img){
-        $nombre_firma="MONICA ALEXANDRA OREJUELA MARTINEZ";
-        $nombre_img="MONICA";       
+        $nombre_firma="MARIA ALEJANDRA BARBERAN MOREIRA";
+        $nombre_img="ALEJANDRABARBERAN";       
         // $fecha = "2026-06-17 14:00:38";
-        $fecha = "2026-07-27 11:12:00";
+        $fecha = "2026-05-13 09:55:50";
         $textoQR = "FIRMADO POR: $nombre_firma\nRAZON: \nLOCALIZACION: \nFECHA: $fecha \nVALIDAR CON: https://www.firmadigital.gob.ec \nFirmado digitalmente con FirmaEC 5.1.0 Windows 11 10.0";
 
         // $fecha = date('Y-m-d H:i:s');       

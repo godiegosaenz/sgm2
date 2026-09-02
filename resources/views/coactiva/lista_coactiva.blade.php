@@ -1033,7 +1033,7 @@
                             <div class="col-md-6">
                                 <b>Documento Subido:</b> <span id="doc_subido_convenio"></span>
                             </div>
-
+                            
                             <table class="table table-bordered table-hover"
                                 id="tableDetConvenio"
                                 style="width:100%">
@@ -1056,7 +1056,8 @@
                 </div>
                 <div class="modal-footer"> 
                     <center>
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" >Salir</button>                                 
+                        <button type="button" class="btn btn-success" onclick="descargarTablaConvenio()" >Descargar</button>       
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" >Salir</button>                                 
                     </center>               
                 </div>
             </div>

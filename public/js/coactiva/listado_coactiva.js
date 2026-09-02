@@ -1588,3 +1588,24 @@ function calculaValorMensual(){
     $('#f_fin').val(fechaFinal);
 
 }
+
+function descargarTablaConvenio(){
+    
+    window.open('imprimir-detalle-convenio/'+$('#idconvenio_').val()+'/'+$('.titulo_modal').html(), '_blank');
+    // vistacargando("m","Espere por favor")
+    // $.get('imprimir-detalle-convenio/'+$('#idconvenio_').val(), function(data){
+    //     console.log(data)
+    
+    //     vistacargando("")
+    //     if(data.error==true){			
+    //         alertNotificar(data.mensaje,"error");
+    //         return;   
+    //     }
+    //     console.log(data)
+
+    // }).fail(function(){
+    //     vistacargando("")
+        
+    // });
+    
+}

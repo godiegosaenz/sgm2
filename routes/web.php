@@ -559,6 +559,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('llenar-tabla-convenio/{id}', [CoactivaController::class, 'tablaConvenio']);
     Route::get('inactivar-convenio/{id}', [CoactivaController::class, 'inactivarConvenio']);
     Route::get('detalle-convenio/{id}', [CoactivaController::class, 'detalleConvenio']);
+
+    Route::get('imprimir-detalle-convenio/{id}/{cont}', [CoactivaController::class, 'imprimirDetalleConvenio']);
   
 
     Route::post('guardar-medidas-conv', [CoactivaController::class, 'guardarMedidas']);

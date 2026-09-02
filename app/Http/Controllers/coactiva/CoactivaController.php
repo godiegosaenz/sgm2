@@ -349,13 +349,6 @@ class CoactivaController extends Controller
             ->orderBy('id','asc')
             ->get();
             
-            // $fecha = new \DateTime();
-            // $formato = new \IntlDateFormatter(
-            //     'es_ES',
-            //     \IntlDateFormatter::LONG,
-            //     \IntlDateFormatter::NONE
-            // );
-            // dd($formato);
 
             $fecha_hoy=date('Y-m-d');
             setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES@euro', 'es_ES', 'esp');
@@ -363,10 +356,37 @@ class CoactivaController extends Controller
             $fecha_formateada = strftime("%d de %B del %Y", $fecha_timestamp);
 
             return ["resultado"=>$detalle, 
-                // "fechaFormateada"=>$formato->format($fecha), 
                 "fecha_formateada"=>$fecha_formateada,
                 "error"=>false
             ];
+
+        } catch (\Exception $e) {
+            return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];
+        }
+    }
+
+    public function imprimirDetalleConvenio($id, $nombre){
+        try{
+           
+            $data=$this->detalleConvenio($id);
+            if($data['error']==true){
+                return ["mensaje"=>$data['mensaje'], "error"=>true];
+            }
+
+            
+            /* ================== GENERAR PDF ================== */
+
+            $pdf = \PDF::loadView('reportes.cuotasConvenio', [
+                'Datos' => $data['resultado'],
+                'nombre' => $nombre,
+                "fecha_formateada" => $data['fecha_formateada'],
+            ]);
+
+            return $pdf->stream('sss.pdf');
+            // return ["resultado"=>$data['resultado'], 
+            //     "fecha_formateada"=>$data['fecha_formateada'],
+            //     "error"=>false
+            // ];
 
         } catch (\Exception $e) {
             return ["mensaje"=>"Ocurrio un error intentelo mas tarde ".$e, "error"=>true];

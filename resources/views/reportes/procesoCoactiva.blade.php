@@ -187,6 +187,7 @@
         .no-header-footer footer {
             display: none;
         }
+        
 
 
     </style>
@@ -350,6 +351,9 @@
         <p style="margin: 0; line-height: 0.8;">ORGANO EJECUTOR DE COACTIVA DEL GAD MUNICIPAL DEL CANTÓN<br>
         SAN VICENTE <br>PROCESO No. {{ str_pad($num_proceso, 3, "0", STR_PAD_LEFT) }}-{{ date('Y') }}</p>
         <p style="margin: 0; line-height: 1.2;">ORDEN DE PAGO INMEDIATO</p>
+    </div>
+    <div class="fecha">
+        San Vicente, {{ fechaFormatoTexto() }}
     </div>
 
     <p style="font-size: 14px; text-align: justify; line-height: 1; margin-top: 28px;">

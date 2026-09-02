@@ -350,7 +350,10 @@
         <p style="margin: 0; line-height: 0.8;">ORGANO EJECUTOR DE COACTIVA DEL GAD MUNICIPAL DEL CANTÓN<br>
         SAN VICENTE <br>PROCESO No. {{ str_pad($num_proceso, 3, "0", STR_PAD_LEFT) }}-{{ date('Y') }}</p>
         <p style="margin: 0; line-height: 1.2;">ORDEN DE PAGO INMEDIATO</p>
+
+        
     </div>
+    
 
     <p style="font-size: 14px; text-align: justify; line-height: 1; margin-top: 28px;">
        <b>VISTOS:</b> En lo principal, de los Títulos de Crédito respectivos emitidas por el órgano responsable de su emisión, desprendiéndose que el contribuyente  <strong>{{ strtoupper($nombre_persona) }} </strong> con C.I.  <strong>{{ $ci_ruc }}</strong> adeuda al Gobierno Autónomo Descentralizado Municipal del cantón San Vicente la suma de la CANTIDAD DE <strong>{{ numeroEnLetras($total_final) }}</strong> por el concepto de <b>{{ $predio_txt }}</b>, la cual corresponde a la  
