@@ -925,6 +925,7 @@
 @endsection
 @push('scripts')
     <script>
+       let inicia=1;
         
         $('#check_valor_TSA').prop('disabled', true)
         let token = "{{csrf_token()}}";
@@ -1352,6 +1353,70 @@
             iframe.contentWindow.focus();
             iframe.contentWindow.print();
         }
+        agregarImpuesto()
+        // $('#tipo_cert').val(16)
+        
+        function agregarImpuesto(){
+            var btn=` <button class="btn btn-danger btn-sm" onclick="eliminarFila(this)">
+                            <i class="fa fa-trash"></i>
+                        </button>`
+            let id=$('#tipo_cert').val()
+            if(inicia==1){
+                id=16
+                inicia=0
+                btn=` <button class="btn btn-danger btn-sm" disabled>
+                            <i class="fa fa-trash"></i>
+                        </button>`
+            }
+            vistacargando("m", "Espere por favor")
+            $.get('llenar-tabla-certif-vehicular/'+id, function(data){
+                vistacargando("")
+                console.log(data)
+                if(data.error==true){
+                    alertNotificar(data.mensaje,"error");
+                }
+                $('#id_descripcion_cambio').val('')
+                $('#descripcion_cambio').val('')
+                $('#descripcion_cambio_txt').val('')
+                if(data.resultado.tiene_detalle=='S'){
+                    $('#descripcionConceptoModal').modal('show')
+                }
+                $('#tabla-conceptos-cert').append(`<tr>
+                                                        <td style="width:5%; text-align:center; vertical-align:middle">
+                                                            ${btn}
+                                                            
+                                                        </td>
+                                                        <td style="width:65%; text-align:center; vertical-align:middle" >
+                                                        
+                                                            <span id="${data.resultado.id}">${data.resultado.concepto}</span>
+
+                                                            <input type="hidden" class="form-control ${data.resultado.id}" readonly name="descripcion_cambio_add[]"
+                                                            required>
+
+                                                            <input type="hidden" class="form-control" readonly name="id_descripcion_cambio_add[]"
+                                                            required value="${data.resultado.id}">
+
+                                                            <input type="hidden" class="form-control" readonly name="id_valor_cambio_add[]"
+                                                            required value="${data.resultado.valor}">
+                                                            
+                                                        </td>
+                                                        <td style="width:30%; text-align:center; vertical-align:middle">
+                                                            ${data.resultado.valor} 
+                                                            
+                                                        </td>
+                                                    </tr>    
+                                                    `)
+
+                $('#descripcion_cambio').val(data.resultado.concepto)
+                $('#id_descripcion_cambio').val(data.resultado.id)
+
+                calcularTotal()
+            }).fail(function(){
+                vistacargando("")
+            })
+        }
     </script>
+    
     <script src="{{ asset('js/transito/impuesto_certificaciones.js?v=' . rand())}}"></script>
+    
 @endpush

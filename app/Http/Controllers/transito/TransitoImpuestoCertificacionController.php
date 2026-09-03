@@ -21,7 +21,7 @@ class TransitoImpuestoCertificacionController extends Controller
 {
     public function index(){
         $vehiculos = TransitoVehiculo::all();
-        $conceptos = TransitoConcepto::whereNull('anio')->orderby('concepto','asc')->WHERE('estado','A')->get();
+        $conceptos = TransitoConcepto::whereNull('anio')->orderby('concepto','asc')->WHERE('estado','A')->where('id','!=',16)->get();
         $year = TransitoYearImpuesto::all();
         $marcas = TransitoMarca::where('estado','A')->get();
         $tipo_vehiculo = TransitoTipoVehiculo::where('estado','A')->get();

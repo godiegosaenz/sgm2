@@ -1,62 +1,17 @@
 globalThis.FormAccionRango=""
 globalThis.IdEditarRango=
+
+function marcarServicioAdm(){
+  
+    $('#tipo_cert').val(16)
+}
 $('#modalEditarRangos').on('shown.bs.modal', function () {
     // Tu acción aquí
     llenarTabla()
     FormAccionRango='R'
 });
  
-function agregarImpuesto(){
-    let id=$('#tipo_cert').val()
-    vistacargando("m", "Espere por favor")
-    $.get('llenar-tabla-certif-vehicular/'+id, function(data){
-        vistacargando("")
-        console.log(data)
-        if(data.error==true){
-            alertNotificar(data.mensaje,"error");
-        }
-        $('#id_descripcion_cambio').val('')
-        $('#descripcion_cambio').val('')
-        $('#descripcion_cambio_txt').val('')
-        if(data.resultado.tiene_detalle=='S'){
-            $('#descripcionConceptoModal').modal('show')
-        }
-        $('#tabla-conceptos-cert').append(`<tr>
-                                                <td style="width:5%; text-align:center; vertical-align:middle">
-                                                    <button class="btn btn-danger btn-sm" onclick="eliminarFila(this)">
-                                                        <i class="fa fa-trash"></i>
-                                                    </button>
-                                                    
-                                                </td>
-                                                <td style="width:65%; text-align:center; vertical-align:middle" >
-                                                   
-                                                    <span id="${data.resultado.id}">${data.resultado.concepto}</span>
 
-                                                    <input type="hidden" class="form-control ${data.resultado.id}" readonly name="descripcion_cambio_add[]"
-                                                    required>
-
-                                                    <input type="hidden" class="form-control" readonly name="id_descripcion_cambio_add[]"
-                                                    required value="${data.resultado.id}">
-
-                                                    <input type="hidden" class="form-control" readonly name="id_valor_cambio_add[]"
-                                                    required value="${data.resultado.valor}">
-                                                    
-                                                </td>
-                                                <td style="width:30%; text-align:center; vertical-align:middle">
-                                                    ${data.resultado.valor} 
-                                                    
-                                                </td>
-                                            </tr>    
-                                            `)
-
-        $('#descripcion_cambio').val(data.resultado.concepto)
-        $('#id_descripcion_cambio').val(data.resultado.id)
-
-        calcularTotal()
-    }).fail(function(){
-        vistacargando("")
-    })
-}
 
 
 // 1. Función para aplicar Negrita o Cursiva al texto seleccionado
