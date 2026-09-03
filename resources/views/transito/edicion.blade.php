@@ -359,6 +359,7 @@
                             <option value="no">No</option>
                             <option value="sticker">Sí, duplicado de Sticker</option>
                             <option value="matricula">Sí, duplicado de Matrícula</option>
+                            <option value="manual">Manual</option>
                         </select>
                     
                     </div>
