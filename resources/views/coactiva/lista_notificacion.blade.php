@@ -1002,7 +1002,8 @@
                 </div>
                 <div class="modal-footer"> 
                     <center>
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" >Salir</button>                                 
+                        <button type="button" class="btn btn-success" onclick="descargarTablaConvenio()" >Descargar</button> 
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" >Salir</button>                                 
                     </center>               
                 </div>
             </div>
