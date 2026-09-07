@@ -631,6 +631,7 @@ class LiquidacionesController extends Controller
                 ,DB::raw("CONCAT(e.ciudad, '-', e.direccion) AS direccion"))
                 ->WhereRaw("LOWER(nombres) LIKE LOWER(?)", ["%$valor%"])
                 ->orWhereRaw("LOWER(apellidos) LIKE LOWER(?)", ["%$valor%"])
+                ->orWhereRaw("LOWER(razon_social) LIKE LOWER(?)", ["%$valor%"])
                 ->limit(20)
                 ->get();
             }
@@ -667,6 +668,7 @@ class LiquidacionesController extends Controller
             ->where('e.ci_ruc',$cedula)
             ->pluck('pp.predio')
             ->toArray();
+          
             
             $liquidacionUrbana = DB::connection('pgsql')->table('sgm_financiero.ren_liquidacion')
             ->join('sgm_app.cat_predio', 'sgm_financiero.ren_liquidacion.predio', '=', 'sgm_app.cat_predio.id')
