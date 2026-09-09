@@ -174,6 +174,10 @@
             <legend class="float-none w-auto px-3 fs-5">Detalle de impuesto</legend>
             <div class="row align-items-end mb-3">
 
+                <div class="container mt-0 div_sms_anio_revison" >
+                    
+                </div>
+
                 <div class="col-md-3">
                     <label for="nombresRepresentante" class="form-label"> Proceso de Matriculacion Vehicular </label>
                     <select class="form-select {{ $errors->has('year_declaracion') ? 'is-invalid' : '' }}"
@@ -205,7 +209,7 @@
                         <option value="sticker">Sí, duplicado de Sticker</option>
                         <option value="matricula">Sí, duplicado de Matrícula</option>
                         <option value="manual">Manual</option>
-                    </select>
+                    </select> 
                   
                 </div>
 
@@ -363,11 +367,15 @@
                     </div>
                     <div class="modal-body">
                         <div class="row g-3">
+
+                            <div class="container mt-0 div_sms_anio_revison">
+                    
+                            </div>
                             <!-- Columna 1 -->
                             <div class="col-md-6">
 
                                 <div class="mb-3">
-                                    <label for="placa_v" class="form-label">Tipo Identificacipn</label>
+                                    <label for="placa_v" class="form-label">Tipo Identificacion</label>
                                     <select class="form-select {{ $errors->has('tipo_ident') ? 'is-invalid' : '' }}" id="tipo_ident"
                                         name="tipo_ident" required onchange="cambioTipoidentif()">
                                         <!-- <option value="">Seleccione tipo</option> -->

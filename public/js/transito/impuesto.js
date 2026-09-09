@@ -861,14 +861,14 @@ function capturaInfoVehiculo(){
 }
 
 function consultarPlaca(placa) {
-  
+    $('#div_sms_anio_revison').html('')
     // const baseUrl = 'http://localhost:3000';
     const baseUrl = 'http://192.168.0.124:3000';
 
     fetch(`${baseUrl}/consultar?placa=${encodeURIComponent(placa)}`)
         .then(response => response.json())
         .then(res => {
-            console.log(res)
+            
             if (res.success && res.raw) {
                 // 1. Extraer el arreglo de identificación
                 const listaIdentificacion = res.raw.lsDatosIdentificacion || [];
@@ -956,7 +956,39 @@ function consultarPlaca(placa) {
                         }
                     }
                 }, 3000)
-                   
+
+                
+                const listaRevision = res.raw.lsRevision || [];
+                const objetoRevision = listaRevision.find(item => item.etiqueta === 'Año Última Revisión:');
+                console.log('Año revision:', objetoRevision ? objetoRevision.valor : 'No encontrado');
+
+                let anio_revision=objetoRevision ? objetoRevision.valor : 'No encontrado'
+                if(anio_revision>0){
+                    
+                    // 1. Estructura del HTML del alerta
+                    const htmlAlerta = `
+                        <div class="row alerta-temporal">
+                            <div class="col-12">
+                                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                    <strong>¡Atención!</strong> El vehículo con placa <b>${placa}</b> su último año de revisión fue <b>${anio_revision}</b>.
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    // 2. Insertamos una copia (.clone) en cada contenedor con la clase
+                    $('.div_sms_anio_revison').each(function() {
+                        $(this).html(htmlAlerta);
+                    });
+
+                    // 3. Ocultamos y removemos todas las alertas creadas a los 5 segundos
+                    setTimeout(function() {
+                        $('.div_sms_anio_revison .alerta-temporal').fadeOut(10000, function() {
+                            $(this).remove();
+                        });
+                    }, 5000);
+                }                                 
 
             } else {
                 console.error('Error del servidor:', res.error);

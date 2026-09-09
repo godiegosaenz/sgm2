@@ -316,7 +316,7 @@
                             <div class="col-md-6">
 
                                 <div class="mb-3">
-                                    <label for="placa_v" class="form-label">Tipo Identificacipn</label>
+                                    <label for="placa_v" class="form-label">Tipo Identificacion</label>
                                     <select class="form-select {{ $errors->has('tipo_ident') ? 'is-invalid' : '' }}" id="tipo_ident"
                                         name="tipo_ident" required onchange="cambioTipoidentif()">
                                         <!-- <option value="">Seleccione tipo</option> -->
