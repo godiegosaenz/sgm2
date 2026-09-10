@@ -150,6 +150,10 @@ class LiquidacionesController extends Controller
             ->select('cv.Pre_CodigoCatastral as clave','cv.CarVe_FechaEmision as fecha_emi','cv.CarVe_NumTitulo as num_titulo','cv.CarVe_CI as num_ident','cv.CarVe_Estado','cv.CarVe_Nombres as nombre_per','cv.CarVe_ValorEmitido as valor_emitido','cv.CarVe_TasaAdministrativa as tasa','CarVe_Calle as direcc_cont','cv.Carve_Recargo as recargo','cv.Carve_Descuento as descuento')
             ->where('P.Pre_Tipo','Rural')
             ->whereIN('cv.Pre_CodigoCatastral',$predios)
+              ->where(function ($query) use($cedula){
+                $query->where('CarVe_CI',$cedula)
+                ->orWhere('CarVe_RUC',$cedula);
+            })
             ->whereIn('cv.CarVe_Estado',['E']) //E=Emitidos, N=Nueva Emision
             ->orderby('cv.Pre_CodigoCatastral','asc')            
             ->distinct()
