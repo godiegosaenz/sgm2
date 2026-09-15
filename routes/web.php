@@ -553,6 +553,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('ver-titulos-convenio/{id}/{lugar}/{noti_conv}', [NotificacionesController::class, 'obtenerTitulosConvenio']);
     Route::get('documentos-convenio/{id}', [NotificacionesController::class, 'pdfConvenio']);
 
+    Route::get('estado-cta/{cedula}', [NotificacionesController::class, 'pdfEstadoCuenta']);
+
+
     Route::get('procesos-coactiva', [CoactivaController::class, 'index'])->name('coactiva.lista_coactiva');
     Route::get('pago-coactivas/{data}/{tipo}', [CoactivaController::class, 'tablaCoactiva']);
     Route::post('guardar-cuota-conv', [CoactivaController::class, 'guardarConvenio']);
@@ -615,5 +618,18 @@ Route::get('/clear', function() {
     Artisan::call('view:clear');
 
     return "Cleared!";
+
+ });
+
+Route::get('/token', function() {
+
+    // 1. Obtener un usuario de la base de datos (por ID o email)
+    $user = App\Models\User::find(1);
+
+    // 2. Crear el token asignándole un nombre descriptivo
+    $token = $user->createToken('token-para-servidor-consumidor')->plainTextToken;
+
+    // 3. Imprimir el token completo
+    dd($token);
 
  });

@@ -2787,6 +2787,38 @@ class NotificacionesController extends Controller
         }
     }
 
+    public function pdfEstadoCuenta($cedula){
+        $cedula=decrypt($cedula);
+        $data=$this->deudasContribuyente($cedula);
+       
+        $listado_final=[];
+        foreach ($data["resultado"] as $key => $item){      
+            if(isset($item->num_predio))          
+                if(!isset($listado_final[$item->num_predio])) {
+                    $listado_final[$item->num_predio]=array($item);
+            
+                }else{
+                    array_push($listado_final[$item->num_predio], $item);
+                }
+            else{
+                if(!isset($listado_final[$item->clave])) {
+                    $listado_final[$item->clave]=array($item);
+            
+                }else{
+                    array_push($listado_final[$item->clave], $item);
+                }
+            }
+        } 
+       
+        $nombrePDF="Liquidacion".date('YmdHis').".pdf";                               
+        $pdf = \PDF::loadView('reportes.reporteLiquidacionCta', ['DatosLiquidacion'=>$listado_final]);
+
+        $pdf->setPaper("A4", "portrait");
+
+        return $pdf->stream($nombrePDF);
+        
+    }
+
     public function deudasContribuyente($cedula){
          try {
             $predios_contribuyente= DB::connection('pgsql')->table('sgm_app.cat_ente as e')
