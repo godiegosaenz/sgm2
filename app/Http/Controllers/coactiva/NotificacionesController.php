@@ -2788,7 +2788,7 @@ class NotificacionesController extends Controller
     }
 
     public function pdfEstadoCuenta($cedula){
-        $cedula=decrypt($cedula);
+        // $cedula=decrypt($cedula);
         $data=$this->deudasContribuyente($cedula);
        
         $listado_final=[];
