@@ -863,7 +863,7 @@ function capturaInfoVehiculo(){
 function consultarPlaca(placa) {
     $('#div_sms_anio_revison').html('')
     // const baseUrl = 'http://localhost:3000';
-    const baseUrl = 'http://192.168.0.133:3000';
+    const baseUrl = 'http://192.168.0.132:3000';
 
     fetch(`${baseUrl}/consultar?placa=${encodeURIComponent(placa)}`)
         .then(response => response.json())
