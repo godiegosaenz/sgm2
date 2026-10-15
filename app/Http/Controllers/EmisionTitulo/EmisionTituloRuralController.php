@@ -176,9 +176,11 @@ class EmisionTituloRuralController extends Controller
                     }else{
                        $ipuNew=$base_im *  0.001;
                     }
-                    $total_emitido= $obtenerCV->Carve_Valor1 + $obtenerCV->Carve_Valor2 + $ipuNew + $obtenerCV->CarVe_Bomberos + $obtenerCV->CarVe_TasaAdministrativa;
+                  
                     $bom=floatval(str_replace(',', '', $obtenerCV->CarVe_ValComerPredio));
                     $bom_new=$bom * 0.00015;
+
+                    $total_emitido= $obtenerCV->Carve_Valor1 + $obtenerCV->Carve_Valor2 + $ipuNew + $bom_new + $obtenerCV->CarVe_TasaAdministrativa;
 
                     $cedulaUser=auth()->user()->persona->cedula;
                    
