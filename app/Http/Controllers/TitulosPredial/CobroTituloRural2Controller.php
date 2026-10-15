@@ -134,7 +134,7 @@ class CobroTituloRural2Controller extends Controller
                     ->select('IntMo_Valor')
                     ->first();
 
-                    $valor=(($consultaInteresMora->IntMo_Valor/100) * ($data->valor_emitido - $data->tasa));                
+                    $valor=(($consultaInteresMora->IntMo_Valor/100) * ($data->valor_emitido));                
                     $valor=number_format($valor,2);
                     $liquidacionRural[$key]->porcentaje_intereses=$consultaInteresMora->IntMo_Valor;
                 }else{
@@ -178,7 +178,7 @@ class CobroTituloRural2Controller extends Controller
                 ->first();
                 
                 if(!is_null($consultaInteresMora)){
-                    $valor=(($consultaInteresMora->IntMo_Valor/100) * ($data->valor_emitido - $data->tasa));
+                    $valor=(($consultaInteresMora->IntMo_Valor/100) * ($data->valor_emitido));
                     
                     $valor=number_format($valor,2);
 

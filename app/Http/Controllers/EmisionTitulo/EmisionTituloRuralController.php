@@ -63,7 +63,7 @@ class EmisionTituloRuralController extends Controller
                     ->select('IntMo_Valor')
                     ->first();
                     
-                    $valor=(($consultaInteresMora->IntMo_Valor/100) * ($data->valor_emitido - $data->tasa));   
+                    $valor=(($consultaInteresMora->IntMo_Valor/100) * ($data->valor_emitido));   
                     $valor = floatval(str_replace(',', '', $valor));             
                     $valor=number_format($valor,2);
                     
