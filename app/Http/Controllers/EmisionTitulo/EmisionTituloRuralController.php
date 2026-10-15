@@ -176,6 +176,7 @@ class EmisionTituloRuralController extends Controller
                     }else{
                        $ipuNew=$base_im *  0.001;
                     }
+                    $total_emitido= $obtenerCV->Carve_Valor1 + $obtenerCV->Carve_Valor2 + $ipuNew + $obtenerCV->CarVe_Bomberos + $obtenerCV->CarVe_TasaAdministrativa;
                     $bom=floatval(str_replace(',', '', $obtenerCV->CarVe_ValComerPredio));
                     $bom_new=$bom * 0.00015;
 
@@ -195,6 +196,7 @@ class EmisionTituloRuralController extends Controller
                         "Carve_Estado" => "E",
                         "Usu_usuario" => $usuario_sic->USU_NICK,
                         "CarVe_IPU" => round($ipuNew, 2),
+                        "CarVe_ValorEmitido" => round($total_emitido, 2),
                         "CarVe_Bomberos" => round($bom_new, 2) // ✔ formato numérico válido
                     ]);
 
